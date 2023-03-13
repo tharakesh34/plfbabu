@@ -70,7 +70,6 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -114,8 +113,11 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
+import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -134,7 +136,6 @@ public class ReceiptCalculator {
 	private LatePayMarkingService latePayMarkingService;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private AssetClassificationService assetClassificationService;
 
 	private static final String DESC_INC_TAX = " (Inclusive)";
@@ -357,10 +358,19 @@ public class ReceiptCalculator {
 					if (allocate.getAllocationType().equals(alloc.getAllocationType())
 							&& allocate.getAllocationTo() == alloc.getAllocationTo()) {
 						if (!receiptData.isForeClosure()) {
-							allocate.setPaidAmount(alloc.getPaidAmount());
-							allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getTdsPaid()));
-							allocate.setPaidGST(allocate.getDueGST());
-							allocate.setTdsPaid(alloc.getTdsPaid());
+							if (allocate.getAllocationType().equals(Allocation.FEE)) {
+								allocate.setWaivedAmount(alloc.getWaivedAmount());
+								allocate.setPaidAmount(alloc.getTotalDue());
+								allocate.setPaidGST(allocate.getDueGST());
+								allocate.setTotalPaid(alloc.getTotalDue().add(alloc.getTdsPaid()));
+								allocate.setTdsPaid(alloc.getTdsPaid());
+							} else {
+								allocate.setPaidAmount(alloc.getPaidAmount());
+								allocate.setPaidGST(alloc.getPaidGST());
+								allocate.setTotalPaid(alloc.getPaidAmount().add(alloc.getTdsPaid()));
+								allocate.setTdsPaid(alloc.getTdsPaid());
+							}
+
 							allocate.setWaivedAmount(alloc.getWaivedAmount());
 							allocate.setWaivedGST(alloc.getWaivedGST());
 						} else {
@@ -647,7 +657,7 @@ public class ReceiptCalculator {
 		return index;
 	}
 
-	private List<ReceiptAllocationDetail> resetAllocationList(FinReceiptData rd) {
+	public List<ReceiptAllocationDetail> resetAllocationList(FinReceiptData rd) {
 		List<ReceiptAllocationDetail> allocationsList = new ArrayList<>(1);
 		FinanceProfitDetail pfd = rd.getFinanceDetail().getFinScheduleData().getFinPftDeatil();
 		RepayMain rm = rd.getRepayMain();
@@ -1100,10 +1110,7 @@ public class ReceiptCalculator {
 		// Penalty Tax Details
 		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);
 
-		FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
-		if (finODPenaltyRate == null && finODPenaltyRateDAO != null) {
-			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "_AView");
-		}
+		FinODPenaltyRate finODPenaltyRate = PenaltyCalculator.getEffectiveRate(reqMaxODDate, fm.getPenaltyRates());
 
 		if (ObjectUtils.isNotEmpty(finODPenaltyRate)
 				&& (!finODPenaltyRate.isoDTDSReq() || rd.getReceiptHeader().isExcldTdsCal())) {
@@ -1325,6 +1332,7 @@ public class ReceiptCalculator {
 			xcessPayable.setTotPaidNow(BigDecimal.ZERO);
 			xcessPayable.setReserved(BigDecimal.ZERO);
 			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
+			xcessPayable.setReceiptID(excess.getReceiptID());
 			xcessPayableList.add(xcessPayable);
 		}
 
@@ -1997,6 +2005,11 @@ public class ReceiptCalculator {
 			}
 		}
 
+		if (AllocationType.NO_ALLOC.equals(rch.getAllocationType())) {
+			setTotals(rd, 0);
+			return rd;
+		}
+
 		if (receiptPurposeCtg == 2 && !rd.isAdjSchedule()) {
 			rd = earlySettleAllocation(rd);
 			if (rd.isSetPaidValues()) {
@@ -2203,18 +2216,24 @@ public class ReceiptCalculator {
 
 	private FinReceiptData earlySettleAllocation(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
-			receiptData = adjustAdvanceInt(receiptData);
-			for (XcessPayables xcess : rch.getXcessPayables()) {
-				if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
-					continue;
+		String receiptPurpose = rch.getReceiptPurpose();
+		RequestSource requestSource = receiptData.getRequestSource();
+
+		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE.equals(receiptPurpose))) {
+			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
+				receiptData = adjustAdvanceInt(receiptData);
+				for (XcessPayables xcess : rch.getXcessPayables()) {
+					if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcess.getPayableType())) {
+						continue;
+					}
+					BigDecimal balAmount = xcess.getBalanceAmt();
+					recalEarlyStlAlloc(receiptData, xcess.getBalanceAmt());
+					xcess.setTotPaidNow(balAmount);
+					xcess.setBalanceAmt(xcess.getBalanceAmt().subtract(balAmount));
 				}
-				BigDecimal balAmount = xcess.getBalanceAmt();
-				recalEarlyStlAlloc(receiptData, xcess.getBalanceAmt());
-				xcess.setTotPaidNow(balAmount);
-				xcess.setBalanceAmt(xcess.getBalanceAmt().subtract(balAmount));
 			}
 		}
+
 		if (!receiptData.isForeClosure() && rch.getReceiptAmount().compareTo(BigDecimal.ZERO) > 0) {
 			recalEarlyStlAlloc(receiptData, rch.getReceiptAmount());
 		}
@@ -2376,7 +2395,7 @@ public class ReceiptCalculator {
 				if (allocate.getAllocationTo() <= 0) {
 					continue;
 				}
-				if (dueData.getAdviseId() != allocate.getAllocationTo()) {
+				if (dueData != null && dueData.getAdviseId() != allocate.getAllocationTo()) {
 					continue;
 				}
 			}
@@ -2449,32 +2468,46 @@ public class ReceiptCalculator {
 	}
 
 	private FinReceiptData updateFinFeeDetails(FinReceiptData rd, ReceiptAllocationDetail allocate) {
-		List<FinFeeDetail> feeDtls = rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		FinanceDetail fd = rd.getFinanceDetail();
+		List<FinFeeDetail> feeList = fd.getFinScheduleData().getFinFeeDetailList();
 
-		if (CollectionUtils.isNotEmpty(feeDtls)) {
-			FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
-			for (FinFeeDetail feeDtl : feeDtls) {
-				if (allocate.getAllocationTo() == -(feeDtl.getFeeTypeID())) {
-					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-						feeDtl.setPaidAmountOriginal(
-								allocate.getPaidAmount().add(allocate.getTdsPaid()).subtract(allocate.getPaidGST()));
-						feeDtl.setRemainingFeeOriginal(feeDtl.getActualAmountOriginal()
-								.subtract(allocate.getWaivedNow()).subtract(feeDtl.getPaidAmountOriginal()));
-					}
-					feeDtl.setPaidAmount(feeDtl.getPaidAmount().add(allocate.getPaidNow()));
-					feeDtl.setWaivedAmount(feeDtl.getWaivedAmount().add(allocate.getWaivedNow()));
-					feeDtl.setRemainingFee(
-							feeDtl.getActualAmount().subtract(feeDtl.getPaidAmount().add(feeDtl.getWaivedAmount())));
-					feeDtl.setPaidTDS(allocate.getTdsPaid());
-					feeDtl.setPaidCalcReq(true);
-					break;
-				}
-			}
-
-			Map<String, BigDecimal> map = GSTCalculator.getTaxPercentages(fm.getCustID(), fm.getFinCcy(), null,
-					fm.getFinBranch(), rd.getFinanceDetail().getFinanceTaxDetail());
-			feeCalculator.calculateFeeDetail(rd, map);
+		if (CollectionUtils.isEmpty(feeList)) {
+			return rd;
 		}
+
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		for (FinFeeDetail fee : feeList) {
+			if (allocate.getAllocationTo() == -(fee.getFeeTypeID())) {
+				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+					BigDecimal paidAmountOriginal = BigDecimal.ZERO;
+					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidAmount());
+					paidAmountOriginal = paidAmountOriginal.add(allocate.getTdsPaid());
+					paidAmountOriginal = paidAmountOriginal.add(allocate.getPaidGST());
+
+					fee.setPaidAmountOriginal(paidAmountOriginal);
+
+					BigDecimal remainingFeeOriginal = BigDecimal.ZERO;
+					remainingFeeOriginal = remainingFeeOriginal.add(fee.getActualAmountOriginal());
+					remainingFeeOriginal = remainingFeeOriginal.subtract(allocate.getWaivedNow());
+					remainingFeeOriginal = remainingFeeOriginal.subtract(fee.getPaidAmountOriginal());
+
+					fee.setRemainingFeeOriginal(remainingFeeOriginal);
+				}
+
+				fee.setPaidAmount(fee.getPaidAmount().add(allocate.getPaidNow()));
+				fee.setWaivedAmount(fee.getWaivedAmount().add(allocate.getWaivedNow()));
+				fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount().add(fee.getWaivedAmount())));
+				fee.setPaidTDS(allocate.getTdsPaid());
+				fee.setPaidCalcReq(true);
+
+				break;
+			}
+		}
+
+		Map<String, BigDecimal> map = GSTCalculator.getTaxPercentages(fm.getCustID(), fm.getFinCcy(), null,
+				fm.getFinBranch(), fd.getFinanceTaxDetail());
+
+		feeCalculator.calculateFeeDetail(rd, map);
 
 		return rd;
 	}
@@ -4083,6 +4116,13 @@ public class ReceiptCalculator {
 			return;
 		}
 
+		allocation.setPaidCGST(BigDecimal.ZERO);
+		allocation.setPaidSGST(BigDecimal.ZERO);
+		allocation.setPaidUGST(BigDecimal.ZERO);
+		allocation.setPaidIGST(BigDecimal.ZERO);
+		allocation.setPaidCESS(BigDecimal.ZERO);
+		allocation.setPaidGST(BigDecimal.ZERO);
+
 		calAllocationPaidGST(fd, paidNow, allocation, taxType);
 		calAllocationWaiverGST(fd, allocation.getWaivedAmount(), allocation);
 
@@ -4700,9 +4740,6 @@ public class ReceiptCalculator {
 		BigDecimal excessAmount = BigDecimal.ZERO;
 
 		for (XcessPayables payable : xcessPayables) {
-			if (RepayConstants.EXAMOUNTTYPE_TEXCESS.equals(payable.getPayableType())) {
-				continue;
-			}
 			excessAmount = excessAmount.add(payable.getBalanceAmt());
 		}
 
@@ -4727,6 +4764,8 @@ public class ReceiptCalculator {
 			payType = ReceiptMode.CASHCLT;
 		} else if (ReceiptMode.DSF.equals(mode)) {
 			payType = ReceiptMode.DSF;
+		} else if (ReceiptMode.TEXCESS.equals(mode)) {
+			payType = ReceiptMode.TEXCESS;
 		} else {
 			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
 		}
@@ -4743,10 +4782,10 @@ public class ReceiptCalculator {
 
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finID);
 
-		if (CollectionUtils.isEmpty(overdueList)) {
-			logger.debug(Literal.LEAVING);
-			return overdueList;
-		}
+		// FIXME: PV 16FEB2023. COMMENTED TO TEST LOANS CREATED WITH OD AND RECEIPT TAKEN BEFORE THE FIRST EOD
+		/*
+		 * if (CollectionUtils.isEmpty(overdueList)) { logger.debug(Literal.LEAVING); return overdueList; }
+		 */
 
 		if (CollectionUtils.isEmpty(schedules)) {
 			schedules = schdData.getFinanceScheduleDetails();
@@ -5195,10 +5234,6 @@ public class ReceiptCalculator {
 
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
-		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
 	@Autowired

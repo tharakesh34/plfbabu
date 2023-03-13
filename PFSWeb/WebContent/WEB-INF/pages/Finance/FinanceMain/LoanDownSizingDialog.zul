@@ -79,7 +79,7 @@
 													<label id="label_LoanDownsizing_CustCIF" value="${c:l('label_LoanDownsizing_CustCIF.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<textbox id="custCIF" width="180px" maxlength="19" readonly="true" />
+														<textbox id="custCIF" width="180px" readonly="true" />
 													</hbox>
 													<label id="label_LoanDownsizing_CustShrtName" value="${c:l('label_LoanDownsizing_CustShrtName.value')}" />
 													<hbox>

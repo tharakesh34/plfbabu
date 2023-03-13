@@ -22,7 +22,6 @@ public class RuleConfigCache {
 		try {
 			sqlRule = sqlRuleCache.get(code);
 		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from Rule cache: ", e);
 			sqlRule = getRuleByCode(code);
 		}
 		return sqlRule;
@@ -33,7 +32,6 @@ public class RuleConfigCache {
 		try {
 			rule = ruleObjCache.get(id);
 		} catch (ExecutionException e) {
-			logger.warn("Unable to load data from Rule cache: ", e);
 			rule = getRuleById(id);
 		}
 		return rule;

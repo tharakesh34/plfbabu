@@ -41,6 +41,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -439,21 +440,62 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	@Override
 	public List<CollateralSetup> getCollateralSetupByCustomer(long custID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where DepositorId = ?");
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
 
-		logger.debug(Literal.SQL + sql.toString());
+			sql.append(" Where DepositorId in");
+			sql.append(" ( Select distinct CustID From (");
+			sql.append(
+					" Select CustID from Customers Where CustCoreBank = (Select CustCoreBank From Customers Where CustID = "
+							+ custID + ")");
+			sql.append(" Union All");
+			sql.append(
+					" Select CustID from Customers_Temp Where CustCoreBank = (Select CustCoreBank From Customers_Temp Where CustID = "
+							+ custID + ")");
+			sql.append(") T)");
 
-		return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+			logger.debug(Literal.SQL + sql.toString());
+
+			return jdbcOperations.query(sql.toString(), new CollateralSetupRM());
+
+		} else {
+			sql.append(" Where DepositorId = ?");
+
+			logger.debug(Literal.SQL + sql.toString());
+
+			return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+		}
+
 	}
 
 	@Override
 	public List<CollateralSetup> getCollateralSetupByReference(long custID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where CollateralRef in (Select CollateralRef From CollateralThirdParty Where CustomerId = ?)");
 
-		logger.debug(Literal.SQL + sql.toString());
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
 
-		return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+			sql.append(" Where CollateralRef in (Select CollateralRef From CollateralThirdParty Where CustomerId in ");
+			sql.append(" ( Select distinct CustID From (");
+			sql.append(
+					" Select CustID from Customers Where CustCoreBank = (Select CustCoreBank From Customers Where CustID = "
+							+ custID + ")");
+			sql.append(" Union All");
+			sql.append(
+					" Select CustID from Customers_Temp Where CustCoreBank = (Select CustCoreBank From Customers_Temp Where CustID = "
+							+ custID + ")");
+			sql.append(") T))");
+
+			logger.debug(Literal.SQL + sql.toString());
+
+			return jdbcOperations.query(sql.toString(), new CollateralSetupRM());
+
+		} else {
+			sql.append(" Where CollateralRef in (Select CollateralRef From CollateralThirdParty Where CustomerId = ?)");
+
+			logger.debug(Literal.SQL + sql.toString());
+
+			return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+		}
+
 	}
 
 	@Override
@@ -478,9 +520,10 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" CollateralRef, CollateralType, CollateralCcy, CollateralValue");
-		sql.append(", BankValuation, MultiLoanAssignment, ExpiryDate");
-		sql.append(" From CollateralSetup");
+		sql.append(" cs.CollateralRef, cs.DepositorId, c.CustCIF, cs.CollateralType, cs.CollateralCcy");
+		sql.append(", cs.CollateralValue , cs.BankValuation, cs.MultiLoanAssignment, cs.ExpiryDate");
+		sql.append(" From CollateralSetup cs");
+		sql.append(" Inner join Customers c on c.CustID = cs.DepositorId");
 
 		return sql;
 	}
@@ -492,6 +535,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			CollateralSetup cs = new CollateralSetup();
 
 			cs.setCollateralRef(rs.getString("CollateralRef"));
+			cs.setDepositorCif(rs.getString("CustCIF"));
 			cs.setCollateralType(rs.getString("CollateralType"));
 			cs.setCollateralCcy(rs.getString("CollateralCcy"));
 			cs.setCollateralValue(rs.getBigDecimal("CollateralValue"));

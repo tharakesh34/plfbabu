@@ -27,8 +27,6 @@ package com.pennant.webui.commitment.commitment;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -76,7 +74,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
  */
 public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(CommitmentListCtrl.class);
 
 	protected Window window_CommitmentList;
 	protected Borderlayout borderLayout_CommitmentList;

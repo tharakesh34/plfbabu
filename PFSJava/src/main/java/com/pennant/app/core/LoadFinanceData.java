@@ -11,13 +11,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -33,6 +36,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -43,9 +47,15 @@ import com.pennanttech.pff.core.util.ProductUtil;
 public class LoadFinanceData extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LoadFinanceData.class);
 
-	public void prepareFinEODEvents(CustEODEvent custEODEvent, long custID) throws Exception {
-		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(custID, true);
-		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(custID, true);
+	private AutoRefundService autoRefundService;
+
+	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
+		Customer customer = custEODEvent.getCustomer();
+
+		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(customer);
+		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(customer);
+
+		autoRefundService.loadAutoRefund(custEODEvent);
 
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
@@ -111,7 +121,7 @@ public class LoadFinanceData extends ServiceHelper {
 		custFinMains.clear();
 	}
 
-	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, long finID) throws Exception {
+	public CustEODEvent prepareInActiveFinEODEvents(CustEODEvent custEODEvent, long finID) {
 		logger.debug(Literal.ENTERING);
 
 		FinEODEvent finEODEvent = new FinEODEvent();
@@ -137,7 +147,7 @@ public class LoadFinanceData extends ServiceHelper {
 		return custEODEvent;
 	}
 
-	private void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
+	private void setEventFlags(CustEODEvent custEODEvent, FinEODEvent finEODEvent) {
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		Date valueDate = custEODEvent.getEodValueDate();
 		Date businessDate = custEODEvent.getEventProperties().getBusinessDate();
@@ -237,16 +247,13 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		// Check If LPP Method on capitalization basis and Due Index not exists
-		if (finEODEvent.getIdxPD() <= 0) {
-			if (isLPPCpzReq(finEODEvent)) {
-				finEODEvent.setIdxPD(1);
-				custEODEvent.setPastDueExist(true);
-			}
+		if (finEODEvent.getIdxPD() <= 0 && isLPPCpzReq(finEODEvent)) {
+			finEODEvent.setIdxPD(1);
+			custEODEvent.setPastDueExist(true);
 		}
 	}
 
-	private void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd)
-			throws Exception {
+	private void setDateRollover(CustEODEvent custEODEvent, FinEODEvent finEODEvent, Date schdDate, int iSchd) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 
 		Date grcEndDate = fm.getGrcPeriodEndDate();
@@ -296,13 +303,10 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 
 		// Set Next Repayment Profit Review Date
-		if (fm.isAllowRepayRvw()) {
-			if (schdDate.compareTo(fm.getNextRepayRvwDate()) == 0) {
-				finEODEvent.setIdxRpyPftRvw(iSchd);
-				custEODEvent.setDateRollover(true);
-			}
+		if (fm.isAllowRepayRvw() && schdDate.compareTo(fm.getNextRepayRvwDate()) == 0) {
+			finEODEvent.setIdxRpyPftRvw(iSchd);
+			custEODEvent.setDateRollover(true);
 		}
-
 	}
 
 	public void updateFinEODEvents(CustEODEvent custEODEvent) throws Exception {
@@ -379,14 +383,11 @@ public class LoadFinanceData extends ServiceHelper {
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
 			List<FinODDetails> odDetailsLBD = finEODEvent.getFinODDetailsLBD();
 			if (odDetails != null && !odDetails.isEmpty()) {
-
-				if (finEODEvent.getIdxPD() > 1) {
-					if (isLPPCpzReq(finEODEvent)) {
-						finEODEvent.setIdxPD(1);
-					}
+				if (finEODEvent.getIdxPD() > 1 && isLPPCpzReq(finEODEvent)) {
+					finEODEvent.setIdxPD(1);
 				}
+
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
-				Date odSchDateIncGrc = odschd.getSchDate();
 				Date appDate = fm.getEventProperties().getAppDate();
 				String productCategory = fm.getProductCategory();
 
@@ -406,7 +407,7 @@ public class LoadFinanceData extends ServiceHelper {
 								odGraceDays = odGraceDays + extnODGrcDays;
 							}
 
-							odSchDateIncGrc = DateUtil.addDays(odschd.getSchDate(), odGraceDays);
+							Date odSchDateIncGrc = DateUtil.addDays(odschd.getSchDate(), odGraceDays);
 
 							if (appDate.compareTo(odSchDateIncGrc) < 0) {
 								continue;
@@ -418,6 +419,15 @@ public class LoadFinanceData extends ServiceHelper {
 						}
 
 						boolean exists = checkExsistInList(od, odDetailsLBD);
+
+						if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
+								|| custEODEvent.getEventProperties().isEomOnEOD()) {
+							od.setLppDueAmt(od.getTotPenaltyAmt());
+							od.setLppDueTillDate(custEODEvent.getEodDate());
+							od.setLpiDueAmt(od.getLPIAmt());
+							od.setLpiDueTillDate(custEODEvent.getEodDate());
+						}
+
 						if (exists) {
 							listupdate.add(od);
 						} else {
@@ -433,14 +443,34 @@ public class LoadFinanceData extends ServiceHelper {
 						logger.info("{} Overdue details are created", savedCount);
 					}
 
-					listSave = null;
 					if (!listupdate.isEmpty()) {
 						logger.info("updating existing overdue details into FinODDetails table...");
 						updateCount = finODDetailsDAO.updateODDetailsBatch(listupdate);
 
 						logger.info("{} overdue details are created", updateCount);
 					}
-					listupdate = null;
+
+					List<FinOverDueCharges> finODCAmounts = finEODEvent.getFinODCAmounts();
+
+					if (CollectionUtils.isNotEmpty(finODCAmounts)) {
+						List<FinOverDueCharges> saveList = new ArrayList<>();
+						List<FinOverDueCharges> updateList = new ArrayList<>();
+
+						for (FinOverDueCharges finODCAmount : finODCAmounts) {
+							if (finODCAmount.isNewRecord()) {
+								saveList.add(finODCAmount);
+							} else {
+								updateList.add(finODCAmount);
+							}
+						}
+
+						if (!saveList.isEmpty()) {
+							finODCAmountDAO.saveFinODCAmts(saveList);
+						}
+						if (!updateList.isEmpty()) {
+							finODCAmountDAO.updateFinODCAmts(updateList);
+						}
+					}
 
 					logger.info("{} are the total overdue", savedCount + updateCount);
 				}
@@ -500,9 +530,9 @@ public class LoadFinanceData extends ServiceHelper {
 		logger.info("Updating EOD Events for the CustID >> {} completed.", custID);
 	}
 
-	private boolean checkExsistInList(FinODDetails finODDetails, List<FinODDetails> odDetails_PRV) {
+	private boolean checkExsistInList(FinODDetails finODDetails, List<FinODDetails> fodDetails) {
 
-		for (FinODDetails finODDet : odDetails_PRV) {
+		for (FinODDetails finODDet : fodDetails) {
 			if (finODDetails.getFinODSchdDate().compareTo(finODDet.getFinODSchdDate()) == 0) {
 				return true;
 			}
@@ -612,7 +642,7 @@ public class LoadFinanceData extends ServiceHelper {
 			if (CollectionUtils.isEmpty(projAccrualList)) {
 				continue;
 			}
-			int count = projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
+			projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
 		}
 	}
 
@@ -624,8 +654,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
 
-			List<ProjectedAmortization> projSaveAMZList = new ArrayList<ProjectedAmortization>(1);
-			List<ProjectedAmortization> projUpdateAMZList = new ArrayList<ProjectedAmortization>(1);
+			List<ProjectedAmortization> projSaveAMZList = new ArrayList<>();
+			List<ProjectedAmortization> projUpdateAMZList = new ArrayList<>();
 
 			List<ProjectedAmortization> incomeAMZList = finEODEvent.getIncomeAMZList();
 
@@ -652,8 +682,8 @@ public class LoadFinanceData extends ServiceHelper {
 		}
 	}
 
-	public void updateCustomerDate(long custId, Date date, String newCustStatus, Date nextDate) {
-		customerDAO.updateCustAppDate(custId, nextDate, newCustStatus);
+	public void updateCustomerDate(CustEODEvent custEODEvent) {
+		customerDAO.updateCustAppDate(custEODEvent);
 	}
 
 	private long saveFinLogEntryDetail(FinanceMain fm) {
@@ -738,7 +768,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 	private void listSave(FinEODEvent finEODEvent, String tableType, long logKey) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
-		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
+		Map<Date, Integer> mapDateSeq = new HashMap<>();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
@@ -831,5 +861,14 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 		}
 		return null;
+	}
+
+	public static void setLogger(Logger logger) {
+		LoadFinanceData.logger = logger;
+	}
+
+	@Autowired
+	public void setAutoRefundService(AutoRefundService autoRefundService) {
+		this.autoRefundService = autoRefundService;
 	}
 }

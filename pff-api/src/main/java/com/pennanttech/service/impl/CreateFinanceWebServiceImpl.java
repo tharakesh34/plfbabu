@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
-import org.jsoup.helper.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1213,7 +1212,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 				List<AgreementData> aggList = createFinanceController.getAgreements(fd, aggReq);
 				for (AgreementData agreementData : aggList) {
 					WSReturnStatus wrs = agreementData.getReturnStatus();
-					if (wrs != null && StringUtil.isBlank(wrs.getReturnCode())) {
+					if (wrs != null && StringUtils.isBlank(wrs.getReturnCode())) {
 						ad.setReturnStatus(agreementData.getReturnStatus());
 						return ad;
 					}

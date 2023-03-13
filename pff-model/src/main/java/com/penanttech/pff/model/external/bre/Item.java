@@ -2,9 +2,8 @@ package com.penanttech.pff.model.external.bre;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)

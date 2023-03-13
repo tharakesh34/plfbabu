@@ -71,6 +71,18 @@ public class FinODDetails implements Serializable {
 	private BigDecimal totPenaltyPaid = BigDecimal.ZERO;
 	private BigDecimal totPenaltyBal = BigDecimal.ZERO;
 
+	private BigDecimal priPenalty = BigDecimal.ZERO;
+	private BigDecimal pftPenalty = BigDecimal.ZERO;
+	private BigDecimal priPenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal priPenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal priPenaltyBal = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyBal = BigDecimal.ZERO;
+	private BigDecimal pastDuePri = BigDecimal.ZERO;
+	private BigDecimal actPriPenBal = BigDecimal.ZERO;
+	private BigDecimal actPftPenBal = BigDecimal.ZERO;
+
 	@XmlElement(name = "odPft")
 	private BigDecimal lPIAmt = BigDecimal.ZERO;
 	@XmlElement(name = "odPftPaid")
@@ -104,6 +116,11 @@ public class FinODDetails implements Serializable {
 	private BigDecimal curOverdraftTxnChrg = BigDecimal.ZERO;
 	private BigDecimal maxOverdraftTxnChrg = BigDecimal.ZERO;
 	private Long presentmentID;
+	private Date odGrcDate;
+	private BigDecimal lppDueAmt = BigDecimal.ZERO;
+	private Date lppDueTillDate;
+	private BigDecimal lpiDueAmt = BigDecimal.ZERO;
+	private Date lpiDueTillDate;
 
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
@@ -165,6 +182,22 @@ public class FinODDetails implements Serializable {
 		entity.setPresentmentID(this.presentmentID);
 		entity.setCurOverdraftTxnChrg(this.curOverdraftTxnChrg);
 		entity.setMaxOverdraftTxnChrg(this.maxOverdraftTxnChrg);
+		entity.setPriPenalty(this.priPenalty);
+		entity.setPftPenalty(this.pftPenalty);
+		entity.setPriPenaltyPaid(this.priPenaltyPaid);
+		entity.setPriPenaltyWaived(this.priPenaltyWaived);
+		entity.setPftPenaltyPaid(this.pftPenaltyPaid);
+		entity.setPftPenaltyWaived(this.pftPenaltyWaived);
+		entity.setPriPenaltyBal(this.priPenaltyBal);
+		entity.setPftPenaltyBal(this.pftPenaltyBal);
+		entity.setActPriPenBal(this.actPriPenBal);
+		entity.setActPftPenBal(this.actPftPenBal);
+		entity.setPastDuePri(this.pastDuePri);
+		entity.setOdGrcDate(this.odGrcDate);
+		entity.setLppDueAmt(this.lppDueAmt);
+		entity.setLppDueTillDate(this.lppDueTillDate);
+		entity.setLpiDueAmt(this.lpiDueAmt);
+		entity.setLpiDueTillDate(this.lpiDueTillDate);
 
 		return entity;
 	}
@@ -546,4 +579,131 @@ public class FinODDetails implements Serializable {
 		this.maxOverdraftTxnChrg = maxOverdraftTxnChrg;
 	}
 
+	public BigDecimal getPriPenalty() {
+		return priPenalty;
+	}
+
+	public void setPriPenalty(BigDecimal priPenalty) {
+		this.priPenalty = priPenalty;
+	}
+
+	public BigDecimal getPftPenalty() {
+		return pftPenalty;
+	}
+
+	public void setPftPenalty(BigDecimal pftPenalty) {
+		this.pftPenalty = pftPenalty;
+	}
+
+	public BigDecimal getPftPenaltyPaid() {
+		return pftPenaltyPaid;
+	}
+
+	public void setPftPenaltyPaid(BigDecimal pftPenaltyPaid) {
+		this.pftPenaltyPaid = pftPenaltyPaid;
+	}
+
+	public BigDecimal getPriPenaltyWaived() {
+		return priPenaltyWaived;
+	}
+
+	public void setPriPenaltyWaived(BigDecimal priPenaltyWaived) {
+		this.priPenaltyWaived = priPenaltyWaived;
+	}
+
+	public BigDecimal getPftPenaltyWaived() {
+		return pftPenaltyWaived;
+	}
+
+	public void setPftPenaltyWaived(BigDecimal pftPenaltyWaived) {
+		this.pftPenaltyWaived = pftPenaltyWaived;
+	}
+
+	public BigDecimal getPriPenaltyBal() {
+		return priPenaltyBal;
+	}
+
+	public void setPriPenaltyBal(BigDecimal priPenaltyBal) {
+		this.priPenaltyBal = priPenaltyBal;
+	}
+
+	public BigDecimal getPftPenaltyBal() {
+		return pftPenaltyBal;
+	}
+
+	public void setPftPenaltyBal(BigDecimal pftPenaltyBal) {
+		this.pftPenaltyBal = pftPenaltyBal;
+	}
+
+	public BigDecimal getPastDuePri() {
+		return pastDuePri;
+	}
+
+	public void setPastDuePri(BigDecimal pastDuePri) {
+		this.pastDuePri = pastDuePri;
+	}
+
+	public BigDecimal getPriPenaltyPaid() {
+		return priPenaltyPaid;
+	}
+
+	public void setPriPenaltyPaid(BigDecimal priPenaltyPaid) {
+		this.priPenaltyPaid = priPenaltyPaid;
+	}
+
+	public BigDecimal getActPriPenBal() {
+		return actPriPenBal;
+	}
+
+	public void setActPriPenBal(BigDecimal actPriPenBal) {
+		this.actPriPenBal = actPriPenBal;
+	}
+
+	public BigDecimal getActPftPenBal() {
+		return actPftPenBal;
+	}
+
+	public void setActPftPenBal(BigDecimal actPftPenBal) {
+		this.actPftPenBal = actPftPenBal;
+	}
+
+	public Date getOdGrcDate() {
+		return odGrcDate;
+	}
+
+	public void setOdGrcDate(Date odGrcDate) {
+		this.odGrcDate = odGrcDate;
+	}
+
+	public BigDecimal getLppDueAmt() {
+		return lppDueAmt;
+	}
+
+	public void setLppDueAmt(BigDecimal lppDueAmt) {
+		this.lppDueAmt = lppDueAmt;
+	}
+
+	public Date getLppDueTillDate() {
+		return lppDueTillDate;
+	}
+
+	public void setLppDueTillDate(Date lppDueTillDate) {
+		this.lppDueTillDate = lppDueTillDate;
+	}
+
+	public BigDecimal getLpiDueAmt() {
+		return lpiDueAmt;
+	}
+
+	public void setLpiDueAmt(BigDecimal lpiDueAmt) {
+		this.lpiDueAmt = lpiDueAmt;
+	}
+
+	public Date getLpiDueTillDate() {
+		return lpiDueTillDate;
+	}
+
+	public void setLpiDueTillDate(Date lpiDueTillDate) {
+		this.lpiDueTillDate = lpiDueTillDate;
+	}
 }

@@ -1,5 +1,7 @@
 package com.pennant.pff.presentment.tasklet;
 
+import javax.sql.DataSource;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.JobParameters;
@@ -7,6 +9,8 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.pff.presentment.service.PresentmentEngine;
@@ -16,11 +20,18 @@ import com.pennanttech.pff.presentment.model.PresentmentHeader;
 public class GroupingTasklet implements Tasklet {
 	private final Logger logger = LogManager.getLogger(GroupingTasklet.class);
 
+	private static final String SQL = "Select ID, DefSchdDate, EntityCode, BankCode, PartnerBankId, InstrumentType From PRMNT_EXTRACTION_STAGE Where BatchID = ?";
+
 	private PresentmentEngine presentmentEngine;
 
-	public GroupingTasklet(PresentmentEngine presentmentEngine) {
+	private JdbcOperations jdbcOperations;
+
+	public GroupingTasklet(DataSource dataSource, PresentmentEngine presentmentEngine) {
 		super();
 		this.presentmentEngine = presentmentEngine;
+		NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcOperations = jdbcTemplate.getJdbcOperations();
+
 	}
 
 	@Override
@@ -48,11 +59,12 @@ public class GroupingTasklet implements Tasklet {
 		ph.setGroupByBank(Boolean.valueOf(jobParameters.getString("GroupByBank")));
 		ph.setGroupByPartnerBank(ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK);
 
-		presentmentEngine.grouping(ph);
+		jdbcOperations.query(SQL, rs -> {
+			presentmentEngine.grouping(rs, ph);
+		}, batchId);
 
 		logger.debug(Literal.LEAVING);
 
 		return RepeatStatus.FINISHED;
 	}
-
 }

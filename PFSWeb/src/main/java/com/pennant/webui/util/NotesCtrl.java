@@ -113,7 +113,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 
 	// not auto wired variables
 	private Notes notes; // overHanded per parameter
-	private NotesCtrl notesCtrl;
 
 	private transient NotesService notesService;
 	// not auto wired variables
@@ -216,7 +215,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		this.remarks.setCustomConfigurationsPath(PTCKeditor.SIMPLE_LIST);
 
 		getBorderLayoutHeight();
-		listboxNotes.setHeight("100%");
 
 		// set Field Properties
 		doSetFieldProperties();
@@ -248,7 +246,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			this.div_toolbar.setVisible(false);
 			this.separator1.setVisible(false);
 			this.separator2.setVisible(false);
-			// listboxNotes.setHeight(borderLayoutHeight-175+"px");
 		}
 	}
 
@@ -261,7 +258,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			this.hlayout_cbType.setVisible(false);
 			this.separator1.setVisible(false);
 			this.separator2.setVisible(false);
-			// listboxNotes.setHeight(borderLayoutHeight-175+"px");
 		}
 	}
 
@@ -327,7 +323,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
-		// window_notesDialog.detach();
+
 		logger.debug("Leaving");
 	}
 
@@ -415,13 +411,13 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				getRecommendations();
 				this.tabpanel.appendChild(this.window_notesDialog);
 				this.window_notesDialog.setWidth("100%");
+				if (!isEnquiry) {
+					this.window_notesDialog.setHeight("680px");
+				}
 				this.label_NotesDialog_Type.setValue("Type");
 				this.label_NotesDialog_Type.setStyle("color:#555");
 				this.space_type1.setWidth("5px");
 				this.space_type2.setWidth("180px");
-				if (!isEnquiry) {
-					this.window_notesDialog.setHeight(borderLayoutHeight - 3 + "px");
-				}
 				this.btnClose.setVisible(false);
 				this.label_title.setValue(Labels.getLabel("MemoDetails"));
 
@@ -502,14 +498,10 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			this.listboxNotes.getItems().clear();
 
 			if (this.isFinanceNotes) {
-
-				// setRecommendTypeList();
 				getRecommendations();
 				this.tabpanel.appendChild(this.window_notesDialog);
 				this.window_notesDialog.setTitle("");
-				this.window_notesDialog.setWidth("100%");
-				this.window_notesDialog.setHeight("90%");
-				// this.div_toolbar.setVisible(false);
+
 				this.btnClose.setVisible(false);
 				this.label_title.setValue(Labels.getLabel("MemoDetails"));
 
@@ -674,7 +666,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 
 				item = new Listitem();
-				// item.setStyle("vertical-align:top;text-align:center;");
+
 				// 1
 				lc = new Listcell(note.getUsrName());
 				lc.setStyle("cursor:default;text-align:center;");
@@ -731,10 +723,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		}
 	}
 
-	public void doSetLabels(ArrayList<Object> finHeaderList) {
-		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -753,14 +741,6 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 
 	public void setNotesService(NotesService notesService) {
 		this.notesService = notesService;
-	}
-
-	public NotesCtrl getNotesCtrl() {
-		return notesCtrl;
-	}
-
-	public void setNotesCtrl(NotesCtrl notesCtrl) {
-		this.notesCtrl = notesCtrl;
 	}
 
 	public void setValidationOn(boolean validationOn) {

@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -46,6 +48,8 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -67,6 +71,8 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	private Listheader listheaderExcessHeaderDialogButton;
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl;
 	private List<FinExcessAmount> paymentDetailList = new ArrayList<>();
+
+	private List<ManualAdvise> payables;
 	private int ccyFormatter = 0;
 
 	public ExcessEnquiryDialogCtrl() {
@@ -93,6 +99,11 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		} else {
 			this.paymentDetailList = new ArrayList<>();
 		}
+		if (arguments.containsKey("payables")) {
+			this.payables = (List<ManualAdvise>) arguments.get("payables");
+		} else {
+			this.payables = null;
+		}
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (int) arguments.get("ccyFormatter");
 		}
@@ -101,7 +112,6 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
 					.get("financeEnquiryHeaderDialogCtrl");
 		}
-
 		doShowDialog();
 		logger.debug(Literal.LEAVING);
 	}
@@ -109,10 +119,26 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
+		if (CollectionUtils.isNotEmpty(payables)) {
+			for (ManualAdvise manualAdvise : payables) {
+				FinExcessAmount finExcess = new FinExcessAmount();
+				finExcess.setAmountType(String.valueOf(manualAdvise.getAdviseType()));
+				finExcess.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+				finExcess.setTaxComponent(manualAdvise.getTaxComponent());
+				finExcess.setAmount(manualAdvise.getAdviseAmount());
+				finExcess.setUtilisedAmt(manualAdvise.getPaidAmount());
+				finExcess.setReservedAmt(manualAdvise.getReservedAmt());
+				finExcess.setBalanceAmt(manualAdvise.getBalanceAmt());
+				finExcess.setValueDate(manualAdvise.getValueDate());
+				this.paymentDetailList.add(finExcess);
+			}
+		}
+
 		try {
 			doFillHeaderList(this.paymentDetailList);
 
 			if (tabPanel_dialogWindow != null) {
+
 				getBorderLayoutHeight();
 				int rowsHeight = financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20;
 				this.listBoxExcess.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
@@ -122,7 +148,6 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -158,6 +183,10 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 			if (AdviseType.isPayable(fa.getAmountType())) {
 				excessType = String.valueOf(AdviseType.PAYABLE.id());
+			}
+
+			if (AdviseType.isSettlement(fa.getAmountType())) {
+				excessType = String.valueOf(AdviseType.Settlement.id());
 			}
 
 			List<FinExcessAmount> feaList = map.get(excessType);
@@ -209,11 +238,16 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		lc.setParent(item);
 
 		// Amount Type
-		String amountType = Labels.getLabel("label_Excess_Type_" + excessType);
-		if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
-			amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
-		}
+		String amountType = null;
+		if (excessType.equals("S")) {
+			amountType = Labels.getLabel("label_Settlement_" + excessType);
+		} else {
+			amountType = Labels.getLabel("label_Excess_Type_" + excessType);
 
+			if (String.valueOf(AdviseType.PAYABLE.id()).equals(excessType)) {
+				amountType = Labels.getLabel("label_PaymentHeaderDialog_ManualAdvisePayable.value");
+			}
+		}
 		lc = new Listcell(amountType);
 		lc.setSpan(3);
 		lc.setParent(item);
@@ -250,8 +284,6 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 		lc = new Listcell();
 		lc.setParent(item);
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	private void doFillChildDetail(List<FinExcessAmount> feDetail) {
@@ -262,14 +294,19 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			BigDecimal paidAmount = pd.getUtilisedAmt();
 			BigDecimal reserveAmt = pd.getReservedAmt();
 			BigDecimal balAmt = pd.getBalanceAmt();
-
+			String desc = pd.getFeeTypeDesc();
+			if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+				desc = desc.concat(" (Inclusive)");
+			} else if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+				desc = desc.concat(" (Exclusive)");
+			}
 			Listitem item = new Listitem();
 
 			Listcell lc = new Listcell();
 			lc.setParent(item);
 
 			// Amount Type
-			lc = new Listcell("");
+			lc = new Listcell(desc);
 			lc.setParent(item);
 			item.appendChild(new Listcell(pd.getReceiptID() == null ? "" : String.valueOf(pd.getReceiptID())));
 			item.appendChild(new Listcell(DateUtil.formatToLongDate(pd.getValueDate())));
@@ -296,7 +333,6 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 			this.listBoxExcess.appendChild(item);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

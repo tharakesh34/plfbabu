@@ -36,6 +36,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -98,6 +100,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean isDelete = false;
 	private boolean oldCheque;
+	private String chequeSerialNumber;
 
 	public ChequeDetail() {
 		super();
@@ -127,6 +130,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("isDelete");
 		excludeFields.add("oldCheque");
+		excludeFields.add("chequeSerialNumber");
 		return excludeFields;
 	}
 
@@ -171,11 +175,23 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	}
 
 	public int getChequeSerialNo() {
-		return chequeSerialNo;
+		return Integer.valueOf(getChequeSerialNumber());
 	}
 
 	public void setChequeSerialNo(int chequeSerialNo) {
 		this.chequeSerialNo = chequeSerialNo;
+		this.chequeSerialNumber = StringUtils.leftPad("" + chequeSerialNo, 6, "0");
+	}
+
+	public String getChequeSerialNumber() {
+		if (chequeSerialNumber == null) {
+			this.chequeSerialNumber = StringUtils.leftPad("" + chequeSerialNo, 6, "0");
+		}
+		return chequeSerialNumber;
+	}
+
+	public void setChequeSerialNumber(String chequeSerialNumber) {
+		this.chequeSerialNumber = chequeSerialNumber;
 	}
 
 	public Date getChequeDate() {

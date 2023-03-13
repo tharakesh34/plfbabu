@@ -47,6 +47,7 @@ import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -1177,7 +1178,9 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				// set customer details
 				detail.setCustomerIncomeList(getJointAccountIncomeList(detail.getCustID()));
 				detail.setCustomerExtLiabilityList(getJointExtLiabilityByCustomer(detail.getCustID()));
-				detail.setCustFinanceExposureList(getJointCustFinanceExposureByCustomer(detail.getCustID()));
+				detail.setCustFinanceExposureList(getJointCustFinanceExposureByCustomer(
+						new Customer(detail.getCustID(), detail.getCustCoreBank())));
+
 				detail.setCustomerDetails(
 						customerDataService.getCustomerDetailsbyID(detail.getCustID(), true, "_AView"));
 
@@ -1199,8 +1202,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	}
 
 	@Override
-	public List<FinanceEnquiry> getJointCustFinanceExposureByCustomer(long custID) {
-		return getCustomerDAO().getCustomerFinanceDetailById(custID);
+	public List<FinanceEnquiry> getJointCustFinanceExposureByCustomer(Customer customer) {
+		return getCustomerDAO().getCustomerFinanceDetailById(customer);
 	}
 
 	@Override

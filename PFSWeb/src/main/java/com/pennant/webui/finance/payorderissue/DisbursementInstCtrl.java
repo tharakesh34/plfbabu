@@ -57,6 +57,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -709,7 +710,15 @@ public class DisbursementInstCtrl {
 	}
 
 	private List<ErrorDetail> validate(List<FinAdvancePayments> list, boolean loanApproved) {
-		return finAdvancePaymentsService.validateFinAdvPayments(list, financeDisbursements, financeMain, loanApproved);
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setDisbursementDetails(financeDisbursements);
+		schdData.setFinanceMain(financeMain);
+
+		fd.setAdvancePaymentsList(list);
+
+		return finAdvancePaymentsService.validateFinAdvPayments(fd, loanApproved);
 	}
 
 	private boolean isApprovedDisbursments(FinAdvancePayments aFinAdvancePayments) {

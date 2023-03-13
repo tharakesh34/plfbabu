@@ -46,7 +46,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -237,7 +236,6 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		Filter[] filter = new Filter[1];
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.entityCode.setFilters(filter);
-		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
 
 		// loanType
 		this.loanType.setWidth("120px");

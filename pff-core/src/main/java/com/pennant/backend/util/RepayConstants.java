@@ -74,6 +74,7 @@ public class RepayConstants {
 	public static final String EXAMOUNTTYPE_CASHCLT = "CASHCLT";
 	public static final String EXAMOUNTTYPE_DSF = "DSF";
 	public static final String EXAMOUNTTYPE_TEXCESS = "T";
+	public static final String EXAMOUNTTYPE_SETTLEMENT = "S";
 
 	// Excess Adjustment to in Receipts
 	public static final String EXCESSADJUSTTO_EXCESS = "E";
@@ -81,8 +82,8 @@ public class RepayConstants {
 	public static final String EXCESSADJUSTTO_PAYABLE = "P";
 	public static final String EXCESSADJUSTTO_BOUNCE = "B";
 	public static final String EXCESSADJUSTTO_SETTLEMENT = "S";
-	public static final String EXCESSADJUSTTO_PARTPAY = "S";
 	public static final String EXCESSADJUSTTO_TEXCESS = "T";
+	public static final String EXCESSADJUSTTO_RECADJ = "R";
 
 	public static final String REQTYPE_INQUIRY = "Inquiry";
 	public static final String REQTYPE_POST = "Post";
@@ -95,14 +96,12 @@ public class RepayConstants {
 	public static final String RECEIPTTYPE_PAYABLE = "P";
 	public static final String RECEIPTTYPE_ADJUST = "A";
 	public static final String RECEIPTTYPE_PRESENTMENT = "I";
+	public static final String RECEIPTTYPE_TRANSFER = "T";
 
 	// Receipt Types
 	public static final String RECEIPTTO_FINANCE = "F";
 	public static final String RECEIPTTO_CUSTOMER = "C";
 	public static final String RECEIPTTO_OTHER = "O";
-
-	public static final String KNOCKOFF_TYPE_AUTO = "A";
-	public static final String KNOCKOFF_TYPE_MANUAL = "M";
 
 	// Receipt Payment Type
 	public static final String PAYTYPE_CASH = "CASH";
@@ -229,4 +228,12 @@ public class RepayConstants {
 	public static final String DUETYPE_BOUNCE = "B";
 	public static final String DUETYPE_MANUALADVISE = "M";
 	public static final String DUETYPE_FEES = "F"; //
+
+	public static final String SETTLEMENT_STATUS_INITIATED = "I";
+	public static final String SETTLEMENT_STATUS_PROCESSED = "P";
+	public static final String SETTLEMENT_STATUS_CANCELLED = "C";
+
+	public static final String SETTLEMENT_STATUS_INIT_MSG = "Initiated";
+	public static final String SETTLEMENT_STATUS_PROC_MSG = "Processed";
+	public static final String SETTLEMENT_STATUS_CANC_MSG = "Cancelled";
 }

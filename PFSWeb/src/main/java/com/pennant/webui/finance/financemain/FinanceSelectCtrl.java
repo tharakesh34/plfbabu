@@ -35,8 +35,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -142,7 +140,6 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
  */
 public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private static final long serialVersionUID = -5081318673331825306L;
-	private static final Logger logger = LogManager.getLogger(FinanceSelectCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file

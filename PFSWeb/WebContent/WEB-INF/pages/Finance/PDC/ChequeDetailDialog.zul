@@ -109,7 +109,7 @@
 									<label value="${c:l('label_ChequeDetailDialog_Micr.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="micr" maxlength="50" width="200px" readonly="true" />
+										<extendedcombobox id="micr" maxlength="50" width="200px" />
 									</hbox>
 									<label value="${c:l('label_ChequeDetailDialog_Ifsc.value')}" />
 									<hbox>

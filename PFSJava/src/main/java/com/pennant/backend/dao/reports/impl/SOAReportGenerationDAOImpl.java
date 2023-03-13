@@ -292,7 +292,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Left Join Bouncereasons T3 ON T1.bounceid = T3.BounceId");
-		selectSql.append(" Where FinReference = :FinReference");
+		selectSql.append(" Where FinReference = :FinReference and T1.AdviseAmount > 0");
 		selectSql.append(" and ValueDate <= :ValueDate and (Status is null or Status ='M')");
 		selectSql.append(" ORDER by T1.adviseID");
 
@@ -708,30 +708,20 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	 */
 	@Override
 	public List<FinExcessAmount> getFinExcessAmountsList(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Amount, AmountType, BalanceAmt FROM FinExcessAmount");
 		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL.concat(sql.toString()));
 
-		List<FinExcessAmount> list = jdbcOperations.query(sql.toString(), new Object[] { finReference },
-				new RowMapper<FinExcessAmount>() {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinExcessAmount excessAmount = new FinExcessAmount();
+			excessAmount.setAmount(rs.getBigDecimal("Amount"));
+			excessAmount.setAmountType(rs.getString("AmountType"));
+			excessAmount.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			return excessAmount;
+		}, finReference);
 
-					@Override
-					public FinExcessAmount mapRow(ResultSet rs, int rowNum) throws SQLException {
-						FinExcessAmount excessAmount = new FinExcessAmount();
-						excessAmount.setAmount(rs.getBigDecimal("Amount"));
-						excessAmount.setAmountType(rs.getString("AmountType"));
-						excessAmount.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
-						return excessAmount;
-					}
-				});
-
-		logger.debug(Literal.LEAVING);
-
-		return list;
 	}
 
 	@Override
@@ -1056,7 +1046,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select finreference, fwh.valuedate,fwd.CURRWAIVERAMOUNT, fwd.FeetypeCode ");
-		sql.append(", fwd.waiverId, fwd.feetypedesc, fwh,postingdate, fwh.valuedate ");
+		sql.append(", fwd.waiverId, fwd.feetypedesc, fwh.postingdate, fwh.valuedate ");
 		sql.append(" From FEEWAIVERHEADER fwh ");
 		sql.append(" inner join  FEEWAIVERdetails fwd on fwh.WAIVERID=fwd.WAIVERID  ");
 		sql.append(" where   fwh.FinReference =:FinReference");

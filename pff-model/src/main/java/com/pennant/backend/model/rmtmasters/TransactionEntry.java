@@ -25,6 +25,11 @@
 
 package com.pennant.backend.model.rmtmasters;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -82,10 +87,15 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private boolean bulking = false;
 	private String glCode;
 
-	/*
-	 * TransactionEntry singleFeeCGSTTxn = null; TransactionEntry singleFeeSGSTTxn = null; TransactionEntry
-	 * singleFeeUGSTTxn = null; TransactionEntry singleFeeIGSTTxn = null; TransactionEntry singleFeeCESSTxn = null;
-	 */
+	private List<TransactionEntry> singleFeeCGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeSGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeUGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeIGSTTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeCESSTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeTDSTxn = new ArrayList<>();
+	private List<TransactionEntry> singleFeeWaiverOrRefundTxn = new ArrayList<>();
+
+	private boolean singelFeeEntry;
 
 	// ### END SFA_20210405 <--
 
@@ -138,6 +148,13 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		entity.setAssignmentEntry(this.assignmentEntry);
 		entity.setBulking(this.bulking);
 		entity.setGlCode(this.glCode);
+		entity.setSingleFeeCGSTTxn(this.singleFeeCGSTTxn);
+		entity.setSingleFeeSGSTTxn(this.singleFeeSGSTTxn);
+		entity.setSingleFeeUGSTTxn(this.singleFeeUGSTTxn);
+		entity.setSingleFeeIGSTTxn(this.singleFeeIGSTTxn);
+		entity.setSingleFeeCESSTxn(this.singleFeeCESSTxn);
+		entity.setSingleFeeTDSTxn(this.singleFeeTDSTxn);
+		entity.setSingleFeeWaiverOrRefundTxn(this.singleFeeWaiverOrRefundTxn);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -150,6 +167,21 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
 		return entity;
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("glCode");
+		excludeFields.add("singleFeeCGSTTxn");
+		excludeFields.add("singleFeeSGSTTxn");
+		excludeFields.add("singleFeeUGSTTxn");
+		excludeFields.add("singleFeeIGSTTxn");
+		excludeFields.add("singleFeeCESSTxn");
+		excludeFields.add("singleFeeTDSTxn");
+		excludeFields.add("singleFeeWaiverOrRefundTxn");
+		excludeFields.add("singelFeeEntry");
+
+		return excludeFields;
 	}
 
 	// Getter and Setter methods
@@ -489,25 +521,69 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	public void setGlCode(String glCode) {
 		this.glCode = glCode;
 	}
-	/*
-	 * public TransactionEntry getSingleFeeCGSTTxn() { return singleFeeCGSTTxn; }
-	 * 
-	 * public void setSingleFeeCGSTTxn(TransactionEntry singleFeeCGSTTxn) { this.singleFeeCGSTTxn = singleFeeCGSTTxn; }
-	 * 
-	 * public TransactionEntry getSingleFeeSGSTTxn() { return singleFeeSGSTTxn; }
-	 * 
-	 * public void setSingleFeeSGSTTxn(TransactionEntry singleFeeSGSTTxn) { this.singleFeeSGSTTxn = singleFeeSGSTTxn; }
-	 * 
-	 * public TransactionEntry getSingleFeeUGSTTxn() { return singleFeeUGSTTxn; }
-	 * 
-	 * public void setSingleFeeUGSTTxn(TransactionEntry singleFeeUGSTTxn) { this.singleFeeUGSTTxn = singleFeeUGSTTxn; }
-	 * 
-	 * public TransactionEntry getSingleFeeIGSTTxn() { return singleFeeIGSTTxn; }
-	 * 
-	 * public void setSingleFeeIGSTTxn(TransactionEntry singleFeeIGSTTxn) { this.singleFeeIGSTTxn = singleFeeIGSTTxn; }
-	 * 
-	 * public TransactionEntry getSingleFeeCESSTxn() { return singleFeeCESSTxn; }
-	 * 
-	 * public void setSingleFeeCESSTxn(TransactionEntry singleFeeCESSTxn) { this.singleFeeCESSTxn = singleFeeCESSTxn; }
-	 */
+
+	public List<TransactionEntry> getSingleFeeCGSTTxn() {
+		return singleFeeCGSTTxn;
+	}
+
+	public void setSingleFeeCGSTTxn(List<TransactionEntry> singleFeeCGSTTxn) {
+		this.singleFeeCGSTTxn = singleFeeCGSTTxn;
+	}
+
+	public List<TransactionEntry> getSingleFeeSGSTTxn() {
+		return singleFeeSGSTTxn;
+	}
+
+	public void setSingleFeeSGSTTxn(List<TransactionEntry> singleFeeSGSTTxn) {
+		this.singleFeeSGSTTxn = singleFeeSGSTTxn;
+	}
+
+	public List<TransactionEntry> getSingleFeeUGSTTxn() {
+		return singleFeeUGSTTxn;
+	}
+
+	public void setSingleFeeUGSTTxn(List<TransactionEntry> singleFeeUGSTTxn) {
+		this.singleFeeUGSTTxn = singleFeeUGSTTxn;
+	}
+
+	public List<TransactionEntry> getSingleFeeIGSTTxn() {
+		return singleFeeIGSTTxn;
+	}
+
+	public void setSingleFeeIGSTTxn(List<TransactionEntry> singleFeeIGSTTxn) {
+		this.singleFeeIGSTTxn = singleFeeIGSTTxn;
+	}
+
+	public List<TransactionEntry> getSingleFeeCESSTxn() {
+		return singleFeeCESSTxn;
+	}
+
+	public void setSingleFeeCESSTxn(List<TransactionEntry> singleFeeCESSTxn) {
+		this.singleFeeCESSTxn = singleFeeCESSTxn;
+	}
+
+	public List<TransactionEntry> getSingleFeeTDSTxn() {
+		return singleFeeTDSTxn;
+	}
+
+	public void setSingleFeeTDSTxn(List<TransactionEntry> singleFeeTDSTxn) {
+		this.singleFeeTDSTxn = singleFeeTDSTxn;
+	}
+
+	public List<TransactionEntry> getSingleFeeWaiverOrRefundTxn() {
+		return singleFeeWaiverOrRefundTxn;
+	}
+
+	public void setSingleFeeWaiverOrRefundTxn(List<TransactionEntry> singleFeeWaiverOrRefundTxn) {
+		this.singleFeeWaiverOrRefundTxn = singleFeeWaiverOrRefundTxn;
+	}
+
+	public boolean isSingelFeeEntry() {
+		return singelFeeEntry;
+	}
+
+	public void setSingelFeeEntry(boolean singelFeeEntry) {
+		this.singelFeeEntry = singelFeeEntry;
+	}
+
 }

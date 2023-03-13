@@ -24,6 +24,7 @@
 									<radio id="newCust" label="${c:l('label_SelectFinanceTypeDialog_NewCust.value')}" selected="true"
 										style="margin-right:10px;" />
 									<radio id="existingCust" label="${c:l('label_SelectFinanceTypeDialog_ExistingCust.value')}" style="margin-right:10px;" />
+									<radio id="prospectAsCif" label="${c:l('label_SelectFinanceTypeDialog_ProspectAsCif.value')}" style="margin-right:10px;" />
 									<radio id="preApprovedCust" label="${c:l('label_SelectFinanceTypeDialog_PreApprovedCust.value')}" />
 								</radiogroup>
 							</row>

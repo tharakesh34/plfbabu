@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="windowSelectCrossLoanKnockOffDialog" apply="${selectCrossLoanKnockOffDialogCtrl}" width="55%"
+			height="400px" style="align:start;" sizable="false" closable="true">
+
+			<borderlayout id="borderLayout_ReceiptPayment">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<toolbar align="start" sclass="toolbar-start">
+
+							</toolbar>
+							<!-- SEARCH AREA -->
+						<toolbar align="center" style="toolbar-center">
+							<label value="${c:l('window_CrossLoan_KnockOff_Dialog.title')}" sclass="label-heading" style="white-space: nowrap;"/>
+						</toolbar>
+						
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<groupbox>
+						<grid sclass="GridLayoutNoBorder" sizedByContent="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="250px" />
+								<column />
+							</columns>
+							<rows>
+								<row id="row_Customer">
+									<label id="label_ReceiptPayment_Customer"
+										value="${c:l('label_ReceiptPayment_Customer.value')}" style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="custCIF" width="150px" />
+										<button id="btnSearchCustCIF"
+											tooltiptext="${c:l('label_SelectFinanceTypeDialog_CustID.tooltiptext')}" image="/images/icons/more.png"
+											autodisable="btnSearchCustCIF" />
+										<space spacing="4px" />
+										<label id="labelCustomerName" />
+									</hbox>
+								</row>
+								<row >
+									<label id="label_ReceiptPayment_LoanReference"
+										value="${c:l('label_ReceiptPayment_FromLoanReference.value')}" style="padding-left:12px;" />
+									<extendedcombobox id="fromFinReference" width="250px" />
+								</row>
+								<row id="rowKnockOffFrom" visible="false">
+									<label id="label_LoanClosurePayment_ReceiptMode"
+										value="${c:l('label_LoanClosurePayment_kncockoffFrom.value')}" style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="knockOffFrom" width="190px" />
+									</hbox>
+								</row>
+								<row id="rowReferenceId" visible="false">
+									<label id="label_LoanClosurePayment_RefId"
+										value="${c:l('label_LoanClosurePayment_RefId.value')}" style="padding-left:12px;" />
+									<extendedcombobox id="referenceId" width="250px" />
+								</row>
+								<row >
+									<label id="label_ReceiptPayment_ToReference"
+										value="${c:l('label_ReceiptPayment_ToReference.value')}" style="padding-left:12px;" />
+									<extendedcombobox id="toFinReference" width="250px" />
+								</row>
+								<row id="rowReceiptPurpose" visible="true">
+									<label id="label_ReceiptPayment_ReceiptPurpose"
+										value="${c:l('label_ReceiptPayment_ReceiptPurpose.value')}" style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="receiptPurpose" width="190px" />
+									</hbox>
+								</row>
+								<row id="rowReceiptAmount" visible="true">
+									<label id="label_ReceiptPayment_ReceiptAmount"
+										value="${c:l('label_ReceiptPayment_TransferAmt.value')}" style="padding-left:12px;" />
+									<currencyBox id="receiptAmount" width="125px" />
+								</row>
+								<row>
+									<label id="label_ReceiptPayment_ReceiptDate"
+										value="${c:l('label_ReceiptPayment_ReceiptDate.value')}" style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="receiptDate" width="190px" />
+									</hbox>
+								</row>
+								<row id="rowValueDate" visible="false">
+									<label id="label_ReceiptPayment_ValueDate"
+										value="${c:l('label_ReceiptPayment_ValueDate.value')}" style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="valueDate" width="190px" />
+									</hbox>
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<div>
+											<hbox>
+												<button id="btnValidate"
+													label="${c:l('label_ReceiptPayment_btnValidate.value')}" width="88px" sclass="z-toolbarbutton" />
+												<button id="btnProceed"
+													label="${c:l('label_ReceiptPayment_btnProceed.value')}" width="88px" sclass="z-toolbarbutton" />
+											</hbox>
+										</div>
+									</cell>
+								</row>
+								<row visible="true">
+									<label id="label_ReceiptPayment_ReceiptDues"
+										value="${c:l('label_ReceiptPayment_ReceiptDues.value')}" style="padding-left:12px;" />
+									<currencyBox id="receiptDues" width="125px" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</center>
+				<south border="none" />
+			</borderlayout>
+		</window>
+	</window>
+</zk>

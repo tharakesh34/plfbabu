@@ -2,8 +2,6 @@ package com.pennant.webui.organization.school;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -29,8 +27,6 @@ import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 
 public class IncomeExpenseDetailListCtrl extends GFCBaseListCtrl<IncomeExpenseHeader> {
 	private static final long serialVersionUID = 1L;
-
-	private static final Logger logger = LogManager.getLogger(IncomeExpenseDetailListCtrl.class);
 
 	protected Window window_IncomeExpenseList;
 	protected Borderlayout borderLayout_IncomeExpenseList;

@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +29,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
@@ -43,50 +46,27 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(long finId) {
 		StringBuilder sql = getExcessAmountSqlQuery();
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinID = ? and Amount > ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		ExcessAmountRowMapper rowMapper = new ExcessAmountRowMapper();
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index, finId);
+		List<FinExcessAmount> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finId);
+			ps.setInt(2, 0);
 		}, rowMapper);
+
+		return list.stream().sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public void saveExcess(FinExcessAmount fe) {
-		if (fe.getId() == 0 || fe.getId() == Long.MIN_VALUE) {
-			fe.setId(getNextValue("SeqFinExcessAmount"));
-		}
+		List<FinExcessAmount> list = new ArrayList<>();
+		list.add(fe);
 
-		StringBuilder sql = new StringBuilder("Insert into");
-		sql.append(" FinExcessAmount ");
-		sql.append("(ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt");
-		sql.append(" , ReceiptId, PostDate, ValueDate");
-		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(")");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
-
-			ps.setLong(++index, fe.getExcessID());
-			ps.setLong(++index, fe.getFinID());
-			ps.setString(++index, fe.getFinReference());
-			ps.setString(++index, fe.getAmountType());
-			ps.setBigDecimal(++index, fe.getAmount());
-			ps.setBigDecimal(++index, fe.getUtilisedAmt());
-			ps.setBigDecimal(++index, fe.getReservedAmt());
-			ps.setBigDecimal(++index, fe.getBalanceAmt());
-			ps.setLong(++index, fe.getReceiptID());
-			ps.setDate(++index, JdbcUtil.getDate(fe.getPostDate()));
-			ps.setDate(++index, JdbcUtil.getDate(fe.getValueDate()));
-
-		});
+		saveExcessList(list);
 	}
 
 	@Override
@@ -194,7 +174,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	public void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt) {
 		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
 		sql.append(" Set ReservedAmt = ReservedAmt + ?, BalanceAmt = BalanceAmt - ?");
-		sql.append(" Where ExcessID = ? and (BalanceAmt-ReservedAmt) >= ? ");
+		sql.append(" Where ExcessID = ? and BalanceAmt >= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -213,14 +193,14 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public FinExcessAmountReserve getExcessReserve(long receiptSeqID, long payAgainstID) {
-		String sql = "Select ReceiptSeqID, ExcessID, ReservedAmt From FinExcessAmountReserve Where ReceiptSeqID = ? and ExcessID = ?";
+	public FinExcessAmountReserve getExcessReserve(long receiptSeqID, long payAgainstID, String paymentType) {
+		String sql = "Select ReceiptSeqID, ExcessID, ReservedAmt From FinExcessAmountReserve Where ReceiptSeqID = ? and ExcessID = ? and PaymentType=?";
 
 		logger.debug(Literal.SQL + sql);
 
 		ExcessReserveRowMapper rowMapper = new ExcessReserveRowMapper();
 		try {
-			return this.jdbcOperations.queryForObject(sql, rowMapper, receiptSeqID, payAgainstID);
+			return this.jdbcOperations.queryForObject(sql, rowMapper, receiptSeqID, payAgainstID, paymentType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -379,7 +359,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRefAndType(long finID, Date valueDate, String amountType) {
 		StringBuilder sql = getExcessAmountSqlQuery();
-		sql.append(" Where FinID = ? and ValueDate = ? and AmountType = ?");
+		sql.append(" Where FinID = ? and ValueDate <= ? and AmountType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -420,18 +400,19 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
-	public int updExcessAfterRealize(long finID, String amountType, BigDecimal amount) {
-		String sql = "Update FinExcessAmount Set BalanceAmt = BalanceAmt + ?, ReservedAmt = ReservedAmt - ? Where FinID = ? and AmountType = ?";
+	public int updExcessAfterRealize(long finID, String amountType, BigDecimal amount, long receiptID) {
+		String sql = "Update FinExcessAmount Set BalanceAmt = BalanceAmt + ?, ReservedAmt = ReservedAmt - ? Where FinID = ? and ReceiptId = ? and AmountType = ? ";
 
 		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.update(sql, ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setBigDecimal(index++, amount);
-			ps.setBigDecimal(index++, amount);
-			ps.setLong(index++, finID);
-			ps.setString(index, amountType);
+			ps.setBigDecimal(++index, amount);
+			ps.setBigDecimal(++index, amount);
+			ps.setLong(++index, finID);
+			ps.setLong(++index, receiptID);
+			ps.setString(++index, amountType);
 
 		});
 	}
@@ -883,7 +864,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			return ea;
 		}
-
 	}
 
 	private class ExcessReserveRowMapper implements RowMapper<FinExcessAmountReserve> {
@@ -939,11 +919,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public FinExcessAmount getExcessAmountsByReceiptId(long receiptId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
+		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
 		sql.append(" From FinExcessAmount");
 		sql.append(" Where ReceiptId = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -971,9 +952,10 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public FinExcessAmount getExcessAmountsByReceiptId(long finID, String amountType, long receiptId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt");
+		sql.append(", ReservedAmt, BalanceAmt, ReceiptID, ValueDate");
 		sql.append(" From FinExcessAmount");
-		sql.append("Where FinID = ? and AmountType = ? and ReceiptId = ?");
+		sql.append(" Where FinID = ? and AmountType = ? and ReceiptId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1003,10 +985,10 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public List<FinExcessMovement> getExcessMovementList(long id, String movementType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ExcessId, MovementType, Amount, fem.ReceiptId, TranType");
+		sql.append(" ExcessId, MovementType, Amount, ReceiptId, TranType");
 		sql.append(" From FinExcessMovement");
 		sql.append(" Where ReceiptId = ? and MovementType = ?");
-		sql.append(" Order by fem.ExcessID");
+		sql.append(" Order by ExcessID");
 
 		logger.debug("selectSql: " + sql.toString());
 
@@ -1021,5 +1003,161 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 			return fem;
 		}, id, movementType);
+	}
+
+	@Override
+	public int updateTerminationExcess(long excessID, BigDecimal amount, BigDecimal balns, BigDecimal reserved) {
+		String sql = "Update FinExcessAmount Set BalanceAmt = ?, UtilisedAmt = ?, ReservedAmt = ReservedAmt - ? Where ExcessID = ?";
+
+		return this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, balns);
+			ps.setBigDecimal(index++, amount);
+			ps.setBigDecimal(index++, reserved);
+			ps.setLong(index++, excessID);
+		});
+	}
+
+	@Override
+	public BigDecimal getExcessBalance(long finID) {
+		String sql = "Select coalesce(Sum(BalanceAmt), 0) Amount From FinExcessAmount Where FinID = ? and AmountType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, BigDecimal.class, finID, RepayConstants.EXAMOUNTTYPE_EXCESS);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
+
+	@Override
+	public List<FinExcessAmount> getExcessRcdList(long finID, Date maxValueDate) {
+		StringBuilder sql = getExcessAmountSqlQuery();
+		sql.append(" Where FinID = ? and AmountType = ? and BalanceAmt > ? and ValueDate <= ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setString(++index, RepayConstants.EXAMOUNTTYPE_EXCESS);
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
+			ps.setDate(++index, JdbcUtil.getDate(maxValueDate));
+		}, new ExcessAmountRowMapper());
+	}
+
+	@Override
+	public BigDecimal getSettlementAmountReceived(long finId) {
+		String sql = "Select coalesce(sum(BalanceAmt), 0) From FinExcessAmount Where FinID = ? and AmountType= ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finId, "S");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return BigDecimal.ZERO;
+		}
+	}
+
+	public FinExcessAmount getFinExcessAmountById(long excessID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt");
+		sql.append(" From FinExcessAmount");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ExcessID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinExcessAmount fea = new FinExcessAmount();
+
+				fea.setExcessID(rs.getLong("ExcessID"));
+				fea.setFinID(rs.getLong("FinID"));
+				fea.setFinReference(rs.getString("FinReference"));
+				fea.setAmountType(rs.getString("AmountType"));
+				fea.setAmount(rs.getBigDecimal("Amount"));
+				fea.setUtilisedAmt(rs.getBigDecimal("UtilisedAmt"));
+				fea.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+				fea.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+
+				return fea;
+			}, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public void saveExcessList(List<FinExcessAmount> list) {
+		for (FinExcessAmount fe : list) {
+			if (fe.getId() == 0 || fe.getId() == Long.MIN_VALUE) {
+				fe.setId(getNextValue("SeqFinExcessAmount"));
+			}
+		}
+
+		StringBuilder sql = new StringBuilder("Insert into");
+		sql.append(" FinExcessAmount ");
+		sql.append("(ExcessID, FinID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt");
+		sql.append(" , ReceiptId, PostDate, ValueDate");
+		sql.append(") values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FinExcessAmount fe = list.get(i);
+
+				int index = 0;
+
+				ps.setLong(++index, fe.getExcessID());
+				ps.setLong(++index, fe.getFinID());
+				ps.setString(++index, fe.getFinReference());
+				ps.setString(++index, fe.getAmountType());
+				ps.setBigDecimal(++index, fe.getAmount());
+				ps.setBigDecimal(++index, fe.getUtilisedAmt());
+				ps.setBigDecimal(++index, fe.getReservedAmt());
+				ps.setBigDecimal(++index, fe.getBalanceAmt());
+				ps.setLong(++index, fe.getReceiptID());
+				ps.setDate(++index, JdbcUtil.getDate(fe.getPostDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fe.getValueDate()));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return list.size();
+			}
+		});
+	}
+
+	@Override
+	public void updateExcessreserved(long receiptID, BigDecimal excessAmt) {
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set ReservedAmt = ReservedAmt - ?, BalanceAmt = BalanceAmt + ?");
+		sql.append(" Where receiptID = ? ");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setBigDecimal(++index, excessAmt);
+			ps.setBigDecimal(++index, excessAmt);
+			ps.setLong(++index, receiptID);
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
 	}
 }

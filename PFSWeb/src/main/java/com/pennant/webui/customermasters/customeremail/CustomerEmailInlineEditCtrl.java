@@ -74,13 +74,13 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void doRenderEmailsList(List<CustomerEMail> customerEMails, Listbox listbox, String custcif,
-			boolean isFinance) {
+			boolean isFinance, boolean isEnquiry) {
 		// render start
 		listbox.getItems().clear();
 		if (CollectionUtils.isNotEmpty(customerEMails)) {
 			for (CustomerEMail customerEMail : customerEMails) {
 				customerEMail.setLovDescCustCIF(custcif);
-				doFillEmails(customerEMail, listbox, isFinance);
+				doFillEmails(customerEMail, listbox, isFinance, isEnquiry);
 			}
 		}
 	}
@@ -92,7 +92,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param listbox
 	 * @param isFinance
 	 */
-	public void doFillEmails(CustomerEMail customerEMail, Listbox listbox, boolean isFinance) {
+	public void doFillEmails(CustomerEMail customerEMail, Listbox listbox, boolean isFinance, boolean isEnquiry) {
 		logger.debug(Literal.ENTERING);
 		isFinanceProcess = isFinance;
 		Space space = null;
@@ -122,7 +122,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Object[] emailData = new Object[1];
 		emailData[0] = cellCustomerID;
 		custEmailType.addForward("onFulfill", self, "onFulfillCustEmailType", emailData);
-		custEmailType.setReadonly(getUserWorkspace().isReadOnly("CustomerDialog_custEmailType"));
+		custEmailType.setReadonly(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custEmailType"));
 		custEmailType.setTextBoxWidth(150);
 		if (!customerEMail.isNewRecord()) {
 			custEmailType.setReadonly(true);
@@ -136,7 +136,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 		space.setSclass(PennantConstants.mandateSclass);
 		emailId.setMaxlength(100);
 		emailId.setWidth("275px");
-		emailId.setReadonly(getUserWorkspace().isReadOnly("CustomerDialog_custEmail"));
+		emailId.setReadonly(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custEmail"));
 		emailId.setValue(customerEMail.getCustEMail());
 		hbox.appendChild(space);
 		hbox.appendChild(emailId);
@@ -148,7 +148,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 		space.setSpacing("2px");
 		space.setSclass(PennantConstants.mandateSclass);
 		priority.setMaxlength(30);
-		priority.setDisabled(getUserWorkspace().isReadOnly("CustomerDialog_custEmailPriority"));
+		priority.setDisabled(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custEmailPriority"));
 		fillComboBox(priority, String.valueOf(customerEMail.getCustEMailPriority()), customerPriorityList, "");
 		hbox.appendChild(space);
 		hbox.appendChild(priority);
@@ -162,7 +162,7 @@ public class CustomerEmailInlineEditCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Button button = new Button();
 		button.setSclass("z-toolbarbutton");
 		button.setLabel(Labels.getLabel("btnDelete.label"));
-		button.setDisabled(getUserWorkspace().isReadOnly("CustomerDialog_custEmailButtonDelete"));
+		button.setDisabled(isEnquiry || getUserWorkspace().isReadOnly("CustomerDialog_custEmailButtonDelete"));
 		button.addForward("onClick", self, "onClickEmailButtonDelete", item);
 		hbox.appendChild(space);
 		hbox.appendChild(button);

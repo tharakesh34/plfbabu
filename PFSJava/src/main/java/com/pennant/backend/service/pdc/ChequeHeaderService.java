@@ -34,4 +34,7 @@ public interface ChequeHeaderService {
 	ErrorDetail validateBasicDetails(FinanceDetail fd, String type);
 
 	ErrorDetail processChequeDetail(FinanceDetail fd, String type, LoggedInUser loggedInUser);
+
+	ChequeHeader getApprovedChequeHeaderForEnq(long finID);
+
 }

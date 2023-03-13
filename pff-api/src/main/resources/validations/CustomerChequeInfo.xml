@@ -9,7 +9,7 @@
 	<bean class="com.pennant.backend.model.customermasters.CustomerChequeInfo">
 
 		<field name="chequeSeq">
-			<constraint annotation="javax.validation.constraints.DecimalMin">
+			<constraint annotation="jakarta.validation.constraints.DecimalMin">
 				<message>chequeSeq should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -17,7 +17,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>chequeSeq allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -28,7 +28,7 @@
 		</field>
 
 		<field name="monthYear">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>monthYear is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -38,7 +38,7 @@
 		</field>
 
 		<field name="totChequePayment">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>totChequePayment should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -46,7 +46,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>totChequePayment allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -58,7 +58,7 @@
 
 
 		<field name="salary">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>salary should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -66,7 +66,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>salary allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -77,7 +77,7 @@
 		</field>
 
 		<field name="returnChequeAmt">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>returnChequeAmt should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -85,7 +85,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>returnChequeAmt allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -97,7 +97,7 @@
 
 
 		<field name="returnChequeCount">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>returnChequeCount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -105,7 +105,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>returnChequeCount allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

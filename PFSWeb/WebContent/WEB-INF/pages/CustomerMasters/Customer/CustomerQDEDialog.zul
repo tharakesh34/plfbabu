@@ -52,7 +52,7 @@
 								<label id="label_CustomerDialog_CustCIF" value="${c:l('label_CustomerDialog_CustCIF.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="custCIF" maxlength="12" width="108px" style="overflow: hidden;" />
+									<uppercasebox id="custCIF" width="108px" style="overflow: hidden;" />
 								</hbox>
 								<label id="label_CustomerDialog_CustCoreBank" value="${c:l('label_CustomerDialog_CustCoreBank.value')}" />
 								<hbox>

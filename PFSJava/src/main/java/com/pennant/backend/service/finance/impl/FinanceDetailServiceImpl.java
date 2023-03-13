@@ -85,10 +85,7 @@ import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.dao.finance.ExtendedFieldMaintenanceDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
-import com.pennant.backend.dao.finance.FinFeeDetailDAO;
-import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
-import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
-import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinFlagsHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.HoldDisbursementDAO;
@@ -100,11 +97,8 @@ import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
-import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
-import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
-import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
@@ -200,6 +194,7 @@ import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -274,6 +269,8 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
+import com.pennant.pff.holdrefund.model.FinanceHoldDetail;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -323,7 +320,9 @@ import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.overdraft.service.VariableOverdraftSchdService;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.service.sampling.SamplingService;
+import com.pennattech.pff.receipt.model.ReceiptDTO;
 import com.rits.cloning.Cloner;
 
 /**
@@ -335,8 +334,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private CustomerIncomeDAO customerIncomeDAO;
 	private IncomeTypeDAO incomeTypeDAO;
-	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
-	private RuleDAO ruleDAO;
 	private AccountTypeDAO accountTypeDAO;
 	private CustomerLimitIntefaceService custLimitIntefaceService;
 	private FinanceWriteoffDAO financeWriteoffDAO;
@@ -355,16 +352,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LimitCheckDetails limitCheckDetails;
 	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
 	private FlagDetailValidation flagDetailValidation;
-	private FinFlagDetailsDAO finFlagDetailsDAO;
 	private FinChequeHeaderService finChequeHeaderService;
 	private VASRecordingDAO vasRecordingDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private VasRecordingValidation vasRecordingValidation;
-	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private PromotionDAO promotionDAO;
-	private FinFeeDetailDAO finFeeDetailDAO;
-	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	private PSLDetailDAO pSLDetailDAO;
 	private FinanceTaxDetailService financeTaxDetailService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
@@ -381,7 +373,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
 	private PaymentsProcessService paymentsProcessService;
-	private ProvisionDAO provisionDAO;
+	private HoldRefundUploadDAO holdRefundUploadDAO;
+	private FinFlagsHeaderDAO finFlagsHeaderDAO;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -1445,8 +1438,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Fetch Stage Accounting AccountingSetId List
 		List<Long> accSetIdList = new ArrayList<Long>();
-		accSetIdList.addAll(getFinanceReferenceDetailDAO().getRefIdListByFinType(finType.getFinType(),
-				FinServiceEvent.ORG, null, "_ACView"));
+		accSetIdList.addAll(financeReferenceDetailDAO.getRefIdListByFinType(finType.getFinType(), FinServiceEvent.ORG,
+				null, "_ACView"));
 		if (accSetId != Long.MIN_VALUE) {
 			accSetIdList.add(Long.valueOf(accSetId));
 		}
@@ -1548,7 +1541,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setFinServiceInstructions(finServiceInstructionDAO.getOrgFinServiceInstructions(finID, tableType));
 
 		// Finance Overdue Penalty Rate Details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		// Plan EMI Holiday Details
 		int sdSize = schdData.getFinanceScheduleDetails().size();
@@ -1656,43 +1649,38 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setFinFeeDetailList(finOriginationFeeList);
 
 		// Finance Fee Schedule Details
-		if (finOriginationFeeList != null && !finOriginationFeeList.isEmpty()) {
-			List<Long> feeIDList = new ArrayList<>();
-			for (FinFeeDetail feeDetail : finOriginationFeeList) {
-				feeIDList.add(feeDetail.getFeeID());
-				feeDetail.setRcdVisible(false);
+		List<Long> feeIDList = new ArrayList<>();
+		for (FinFeeDetail feeDetail : finOriginationFeeList) {
+			feeIDList.add(feeDetail.getFeeID());
+			feeDetail.setRcdVisible(false);
+		}
+
+		List<FinFeeScheduleDetail> feeScheduleList = new ArrayList<>();
+
+		if (CollectionUtils.isNotEmpty(feeIDList)) {
+			feeScheduleList.addAll(finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList, false, ""));
+		}
+
+		Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
+		for (FinFeeScheduleDetail schdFee : feeScheduleList) {
+			List<FinFeeScheduleDetail> schList = new ArrayList<>();
+
+			if (schFeeMap.containsKey(schdFee.getFeeID())) {
+				schList = schFeeMap.get(schdFee.getFeeID());
+				schFeeMap.remove(schdFee.getFeeID());
 			}
 
-			if (!feeIDList.isEmpty()) {
-				List<FinFeeScheduleDetail> feeScheduleList = finFeeScheduleDetailDAO.getFeeScheduleByFinID(feeIDList,
-						false, "");
+			schList.add(schdFee);
+			schFeeMap.put(schdFee.getFeeID(), schList);
 
-				if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-					Map<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
-					for (int i = 0; i < feeScheduleList.size(); i++) {
-						FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+		}
 
-						List<FinFeeScheduleDetail> schList = new ArrayList<>();
-						if (schFeeMap.containsKey(schdFee.getFeeID())) {
-							schList = schFeeMap.get(schdFee.getFeeID());
-							schFeeMap.remove(schdFee.getFeeID());
-						}
-						schList.add(schdFee);
-						schFeeMap.put(schdFee.getFeeID(), schList);
-
-					}
-
-					for (int i = 0; i < finOriginationFeeList.size(); i++) {
-						FinFeeDetail feeDetail = finOriginationFeeList.get(i);
-						if (schFeeMap.containsKey(feeDetail.getFeeID())) {
-							feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
-						}
-					}
-				}
+		for (FinFeeDetail feeDetail : finOriginationFeeList) {
+			if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+				feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
 			}
 		}
 
-		// Finance Overdue Penalty Rate Details
 		if (!isWIF) {
 			fd.setFinFlagsDetails(
 					finFlagDetailsDAO.getFinFlagsByFinRef(finReference, FinanceConstants.MODULE_NAME, type));
@@ -1711,7 +1699,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Overdue Penalty Rates
-			schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID,
+			schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID,
 					StringUtils.equals(tableType, "") ? type : tableType));
 
 			// Overdraft Schedule Detail
@@ -2536,8 +2524,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Flag Details
 			// =======================================
-			if (fd.getFinFlagsDetails() != null && fd.getFinFlagsDetails().size() > 0) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+			if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+				details = processingFinFlagHeader(details, table);
+				auditDetails.addAll(details);
+
+				details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				details = processingFinFlagDetailList(details, table);
 				auditDetails.addAll(details);
 			}
@@ -3159,14 +3151,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
-	 * 
-	 * @param auditDetails
-	 * @param financeDetail
-	 * @param type
-	 * @return
-	 */
 	private List<AuditDetail> processingFinFlagDetailList(List<AuditDetail> auditDetails, String type) {
 		logger.debug(Literal.ENTERING);
 
@@ -3943,8 +3927,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Flag Details
-			if (fd.getFinFlagsDetails() != null && !fd.getFinFlagsDetails().isEmpty()) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+			if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+				finFlagsHeaderDAO.delete(((FinanceFlag) details.get(0).getModelData()), "");
+				auditDetails.addAll(details);
+
+				details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				finFlagDetailsDAO.deleteList(finReference, FinanceConstants.MODULE_NAME, "");
 				auditDetails.addAll(details);
 			}
@@ -4235,7 +4223,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				saveLMSServiceLogs(schdData, "");
 
 				if (FinServiceEvent.ADDDISB.equals(fd.getModuleDefiner())) {
-					schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, ""));
+					schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, ""));
 				}
 
 				listDeletion(schdData, moduleDefiner, "", isWIF);
@@ -4516,8 +4504,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				// Fin Flag Details
-				if (fd.getFinFlagsDetails() != null && fd.getFinFlagsDetails().size() > 0) {
-					List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+				if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+					List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+					details = processingFinFlagHeader(details, "");
+					auditDetails.addAll(details);
+
+					details = fd.getAuditDetailMap().get("FinFlagsDetail");
 					details = processingFinFlagDetailList(details, "");
 					auditDetails.addAll(details);
 				}
@@ -4835,8 +4827,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeStepDetailDAO.deleteList(finID, isWIF, "_Temp");
 
 					// Finance Flag Details
-					if (fd.getFinFlagsDetails() != null && !fd.getFinFlagsDetails().isEmpty()) {
-						List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+					if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+						List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+						finFlagsHeaderDAO.delete(((FinanceFlag) details.get(0).getModelData()), "_Temp");
+						auditDetailList.addAll(details);
+
+						details = fd.getAuditDetailMap().get("FinFlagsDetail");
 						finFlagDetailsDAO.deleteList(finReference, FinanceConstants.MODULE_NAME, "_Temp");
 						auditDetailList.addAll(details);
 					}
@@ -6174,7 +6170,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				return auditHeader;
 			}
 		}
-		String tranType = PennantConstants.TRAN_DEL;
+
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		fm.setFinIsActive(false);
 		FinanceMain financeMainAvl = financeMainDAO.getFinanceMainById(finID, "_Temp", false);
@@ -6526,8 +6522,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Flag Details
-			if (fd.getFinFlagsDetails() != null && !fd.getFinFlagsDetails().isEmpty()) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
+			if (CollectionUtils.isNotEmpty(fd.getFinFlagsDetails())) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsHeader");
+				finFlagsHeaderDAO.delete(((FinanceFlag) details.get(0).getModelData()), "_Temp");
+				auditDetails.addAll(details);
+
+				details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				finFlagDetailsDAO.deleteList(finReference, FinanceConstants.MODULE_NAME, "_Temp");
 				if (details != null) {
 					auditDetails.addAll(details);
@@ -7076,7 +7076,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Finance Flag details Validation
 			List<FinFlagsDetail> finFlagsDetailList = fd.getFinFlagsDetails();
-			if (finFlagsDetailList != null && !finFlagsDetailList.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(finFlagsDetailList)) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				details = getFlagDetailValidation().vaildateDetails(details, method, usrLanguage);
 				auditDetails.addAll(details);
@@ -7351,6 +7351,33 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (financeMainDAO.isFinReferenceExists(fm.getFinReference(), "_Temp", false)) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
+			}
+		}
+
+		if (StringUtils.isNotEmpty(fm.getAdvType()) && PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
+			int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
+			BigDecimal actualAmbnt = BigDecimal.ZERO;
+			BigDecimal netfinamnt = BigDecimal.ZERO;
+			BigDecimal disbAmount = BigDecimal.ZERO;
+
+			if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
+				for (FinFeeDetail fee : fd.getFinScheduleData().getFinFeeDetailList()) {
+					actualAmbnt = actualAmbnt.add(fee.getActualAmount());
+					netfinamnt = fm.getFinAmount().subtract(actualAmbnt);
+				}
+
+				fm.setDeductFeeDisb(actualAmbnt);
+
+				for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
+					disbAmount = disbAmount.add(fap.getAmtToBeReleased());
+				}
+
+				if (disbAmount.compareTo(netfinamnt) != 0) {
+					String[] vprm = new String[2];
+					vprm[0] = PennantApplicationUtil.amountFormate(disbAmount, ccyFormat);
+					vprm[1] = PennantApplicationUtil.amountFormate(netfinamnt, ccyFormat);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60401", vprm)));
+				}
 			}
 		}
 
@@ -7641,9 +7668,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance Flag details
-		if (financeDetail.getFinFlagsDetails() != null && financeDetail.getFinFlagsDetails().size() > 0) {
+		if (CollectionUtils.isNotEmpty(financeDetail.getFinFlagsDetails())) {
 			auditDetailMap.put("FinFlagsDetail", setFinFlagAuditData(financeDetail, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinFlagsDetail"));
+
+			auditDetailMap.put("FinFlagsHeader", prepareFinFlagHeader(financeDetail, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("FinFlagsHeader"));
 		}
 
 		if (!financeDetail.isExtSource()) {
@@ -8317,6 +8347,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData schdData = new FinScheduleData();
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
 
+		FinanceHoldDetail financeHoldDetails = holdRefundUploadDAO.getFinanceHoldDetails(finID, type, false);
+		if (financeHoldDetails != null) {
+			fm.setHoldStatus(financeHoldDetails.getHoldStatus());
+			fm.setReason(financeHoldDetails.getReason());
+		}
+
 		String productCategory = fm.getProductCategory();
 		String finReference = fm.getFinReference();
 
@@ -8343,7 +8379,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
 
 		// od penality details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		if (summaryRequired) {
 			FinanceType financeType = financeTypeDAO.getFinanceTypeByFinType(fm.getFinType());
@@ -9166,7 +9202,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
 
 		// Finance Overdue Penalty Rate Details
-		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, type));
+		schdData.setFinODPenaltyRate(finODPenaltyRateDAO.getEffectivePenaltyRate(finID, type));
 
 		// Fetch Finance Premium Details
 		// financeDetail.setPremiumDetail(getFinancePremiumDetailDAO().getFinPremiumDetailsById(finReference,
@@ -9594,20 +9630,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.customerIncomeDAO = customerIncomeDAO;
 	}
 
-	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
-		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-		return financeReferenceDetailDAO;
-	}
-
 	public RuleDAO getRuleDAO() {
 		return ruleDAO;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
 	}
 
 	public CustomerLimitIntefaceService getCustLimitIntefaceService() {
@@ -9776,10 +9800,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return this.flagDetailValidation;
 	}
 
-	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
-		this.finFlagDetailsDAO = finFlagDetailsDAO;
-	}
-
 	public void setVasRecordingDAO(VASRecordingDAO vasRecordingDAO) {
 		this.vasRecordingDAO = vasRecordingDAO;
 	}
@@ -9791,10 +9811,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return this.vasRecordingValidation;
 	}
 
-	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
-		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
-	}
-
 	@Override
 	public BigDecimal getFinAssetValue(long finID) {
 		return financeMainDAO.getFinAssetValue(finID);
@@ -9802,14 +9818,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setPromotionDAO(PromotionDAO promotionDAO) {
 		this.promotionDAO = promotionDAO;
-	}
-
-	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
-		this.finFeeDetailDAO = finFeeDetailDAO;
-	}
-
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
 	}
 
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
@@ -11071,6 +11079,140 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	}
 
+	private List<AuditDetail> prepareFinFlagHeader(FinanceDetail fd, String auditTranType, String method) {
+		boolean isRcdType = false;
+
+		FinanceFlag flag = new FinanceFlag();
+
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
+		flag.setFinID(fm.getFinID());
+		flag.setFinReference(fm.getFinReference());
+		flag.setFinFlagDetailList(fd.getFinFlagsDetails());
+		flag.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		flag.setRecordStatus(fm.getRecordStatus());
+		flag.setWorkflowId(fm.getWorkflowId());
+		flag.setRecordType(fm.getRecordType());
+		flag.setNewRecord(fm.isNewRecord());
+		flag.setTaskId(fm.getTaskId());
+		flag.setNextTaskId(fm.getNextTaskId());
+		flag.setRoleCode(fm.getRoleCode());
+		flag.setNextRoleCode(fm.getNextRoleCode());
+		flag.setVersion(1);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			flag.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			isRcdType = true;
+		} else if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			flag.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			if (fm.isWorkflow()) {
+				isRcdType = true;
+			}
+		} else if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			flag.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		}
+
+		if ("saveOrUpdate".equals(method) && (isRcdType)) {
+			flag.setNewRecord(true);
+		}
+
+		if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+			if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				auditTranType = PennantConstants.TRAN_ADD;
+			} else if (fm.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+					|| fm.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				auditTranType = PennantConstants.TRAN_DEL;
+			} else {
+				auditTranType = PennantConstants.TRAN_UPD;
+			}
+		}
+		if (StringUtils.isNotEmpty(fm.getRecordType())) {
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceFlag(), flag.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], flag.getBefImage(), flag));
+		}
+
+		return auditDetails;
+	}
+
+	private List<AuditDetail> processingFinFlagHeader(List<AuditDetail> auditDetails, String type) {
+		logger.debug(Literal.ENTERING);
+
+		boolean saveRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			FinanceFlag flag = (FinanceFlag) auditDetails.get(i).getModelData();
+
+			if (StringUtils.isEmpty(flag.getRecordType())) {
+				continue;
+			}
+
+			saveRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				flag.setRoleCode("");
+				flag.setNextRoleCode("");
+				flag.setTaskId("");
+				flag.setNextTaskId("");
+				flag.setWorkflowId(0);
+			}
+
+			if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (flag.isNewRecord()) {
+				saveRecord = true;
+				if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					flag.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					flag.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					flag.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				}
+			} else if (flag.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (flag.isNewRecord()) {
+					saveRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = flag.getRecordType();
+				recordStatus = flag.getRecordStatus();
+				flag.setRecordType("");
+				flag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				finFlagsHeaderDAO.save(flag, type);
+			}
+
+			if (deleteRecord) {
+				finFlagsHeaderDAO.delete(flag, type);
+			}
+
+			if (approveRec) {
+				flag.setRecordType(rcdType);
+				flag.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(flag);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return auditDetails;
+
+	}
+
 	@Override
 	public String getFinCategory(String finReference) {
 		return financeMainDAO.getFinCategory(finReference);
@@ -11114,10 +11256,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setpSLDetailService(PSLDetailService pSLDetailService) {
 		this.pSLDetailService = pSLDetailService;
-	}
-
-	public void setpSLDetailDAO(PSLDetailDAO pSLDetailDAO) {
-		this.pSLDetailDAO = pSLDetailDAO;
 	}
 
 	public void setLegalDetailService(LegalDetailService legalDetailService) {
@@ -11213,10 +11351,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.postExteranalServiceHook = postExteranalServiceHook;
 	}
 
-	public void setProvisionDAO(ProvisionDAO provisionDAO) {
-		this.provisionDAO = provisionDAO;
-	}
-
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
 		this.taxHeaderDetailsService = taxHeaderDetailsService;
 	}
@@ -11268,5 +11402,38 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	public void setExternalFinanceSystemService(ExternalFinanceSystemService externalFinanceSystemService) {
 		this.externalFinanceSystemService = externalFinanceSystemService;
+	}
+
+	public void setHoldRefundUploadDAO(HoldRefundUploadDAO holdRefundUploadDAO) {
+		this.holdRefundUploadDAO = holdRefundUploadDAO;
+	}
+
+	@Autowired
+	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
+		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
+	}
+
+	@Override
+	public ReceiptDTO prepareReceiptDTO(FinanceDetail fd) {
+		Date appDate = SysParamUtil.getAppDate();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceType financeType = schdData.getFinanceType();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		ReceiptDTO receiptDTO = new ReceiptDTO();
+
+		receiptDTO.setFinanceMain(fm);
+		receiptDTO.setSchedules(schdData.getFinanceScheduleDetails());
+		receiptDTO.setOdDetails(schdData.getFinODDetails());
+		receiptDTO.setManualAdvises(manualAdviseDAO.getReceivableAdvises(fm.getFinID(), appDate, "_AView"));
+		receiptDTO.getFees().addAll(schdData.getFinFeeDetailList());
+
+		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
+		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
+		receiptDTO.setFinType(financeType);
+		receiptDTO.setValuedate(appDate);
+
+		return receiptDTO;
 	}
 }

@@ -2,10 +2,6 @@ package com.pennanttech.pffws;
 
 import java.util.List;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
@@ -18,6 +14,10 @@ import com.pennanttech.ws.model.finance.EligibilitySummaryResponse;
 import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
 import com.pennanttech.ws.model.miscellaneous.CovenantResponse;
 import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface MiscellaneousSoapService {

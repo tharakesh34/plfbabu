@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -80,6 +79,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -812,9 +812,22 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public void cancelFutureDatedAdvises(CustEODEvent custEODEvent) {
 		logger.debug(Literal.ENTERING);
+		int closedNdays = SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN);
 
 		List<FinanceMain> fmList = new ArrayList<>();
-		custEODEvent.getFinEODEvents().forEach(fod -> fmList.add(fod.getFinanceMain()));
+
+		custEODEvent.getFinEODEvents().forEach(fod -> {
+			FinanceMain aFm = fod.getFinanceMain();
+			FinanceMain fm = new FinanceMain();
+			fm.setFinID(aFm.getFinID());
+			if (fm.isFinIsActive()) {
+				fm.setAppDate(aFm.getMaturityDate());
+			} else {
+				fm.setAppDate(DateUtil.addDays(custEODEvent.getEodDate(), closedNdays + 1));
+			}
+
+			fmList.add(fm);
+		});
 
 		manualAdviseDAO.cancelFutureDatedAdvises(fmList);
 
@@ -838,26 +851,47 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	@Override
 	public void cancelManualAdvises(FinanceMain fm) {
-		List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(fm.getFinReference(), "");
+		logger.debug(Literal.ENTERING);
+
+		if (!PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus())) {
+			return;
+		}
+
+		List<ManualAdvise> manualAdvise = manualAdviseDAO.getAdviseStatus(fm.getFinID());
 
 		List<ManualAdvise> updateList = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(manualAdvise)
-				&& PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus())) {
-			for (ManualAdvise md : manualAdvise) {
-				Date valueDate = md.getValueDate();
+		if (CollectionUtils.isEmpty(manualAdvise)) {
+			return;
+		}
 
-				if (!PennantConstants.MANUALADVISE_CANCEL.equals(md.getStatus())
-						&& DateUtility.compare(valueDate, fm.getMaturityDate()) > 0) {
-					md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
-					md.setAdviseID(md.getAdviseID());
+		Date appDate = fm.getAppDate();
 
-					updateList.add(md);
-				}
+		if (appDate == null) {
+			appDate = SysParamUtil.getAppDate();
+		}
+
+		int closedNdays = SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_N_DAYS_CLOSED_LAN);
+
+		for (ManualAdvise md : manualAdvise) {
+			Date valueDate = md.getValueDate();
+
+			if (fm.isFinIsActive()) {
+				appDate = fm.getMaturityDate();
+			} else {
+				appDate = DateUtil.addDays(appDate, closedNdays + 1);
 			}
 
-			manualAdviseDAO.updateStatus(updateList, "");
+			if (DateUtil.compare(valueDate, appDate) > 0) {
+				md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+				md.setAdviseID(md.getAdviseID());
+
+				updateList.add(md);
+			}
 		}
+
+		manualAdviseDAO.updateStatus(updateList, "");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void postManualAdvise(FinEODEvent fodEvent, CustEODEvent codEvent, ManualAdvise ma) {
@@ -982,7 +1016,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public BigDecimal getEligibleAmount(ManualAdvise ma, FeeType feeType) {
 		logger.debug(Literal.ENTERING);
 
-		String reference = ma.getFinReference();
+		long finID = ma.getFinID();
 		Date valueDate = ma.getValueDate();
 
 		long feeTypeID = feeType.getFeeTypeID();
@@ -991,17 +1025,29 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		BigDecimal eligibleAmt = BigDecimal.ZERO;
 		if (Allocation.MANADV.equals(linkTo) && recvId != null) {
-			eligibleAmt = manualAdviseDAO.getPaidAmountsByFeeType(reference, recvId, valueDate);
+			eligibleAmt = manualAdviseDAO.getPaidAmount(finID, recvId, valueDate);
+			eligibleAmt = eligibleAmt.add(manualAdviseDAO.getFeePaidAmount(finID, recvId));
 		} else {
-			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(reference, linkTo, valueDate);
+			eligibleAmt = manualAdviseDAO.getPaidAmountsbyAllocation(finID, linkTo, valueDate);
 		}
 
-		eligibleAmt = eligibleAmt.subtract(manualAdviseDAO.getExistingPayableAmount(reference, feeTypeID));
+		eligibleAmt = eligibleAmt.subtract(manualAdviseDAO.getExistingPayableAmount(finID, feeTypeID));
 
 		logger.debug(Literal.LEAVING);
 		return eligibleAmt.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO : eligibleAmt;
 	}
 
+	@Override
+	public BigDecimal getRefundedAmount(long finID, long feeTypeID) {
+		return manualAdviseDAO.getRefundedAmount(finID, feeTypeID);
+	}
+
+	@Override
+	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID) {
+		return manualAdviseDAO.getRefundedAmt(finID, receivableID, receivableFeeTypeID);
+	}
+
+	@Override
 	public boolean isDuplicatePayble(long finID, long feeTypeId, String linkTo) {
 		return manualAdviseDAO.isDuplicatePayble(finID, feeTypeId, linkTo);
 	}
@@ -1009,6 +1055,21 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public boolean isPaybleExist(long finID, long feeTypeID, String linkTo) {
 		return manualAdviseDAO.isPaybleExist(finID, feeTypeID, linkTo);
+	}
+
+	@Override
+	public boolean isManualAdviseExist(long finID) {
+		return manualAdviseDAO.isManualAdviseExist(finID);
+	}
+
+	@Override
+	public boolean isAdviseUploadExist(long finID) {
+		return manualAdviseDAO.isAdviseUploadExist(finID);
+	}
+
+	@Override
+	public boolean isunAdjustablePayables(long finID) {
+		return manualAdviseDAO.isunAdjustablePayables(finID);
 	}
 
 	@Autowired

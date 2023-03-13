@@ -91,6 +91,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity {
 	private String auditYear;
 
 	private Date lovCustDob;
+	private String custCoreBank;
 
 	public JointAccountDetail() {
 		super();
@@ -119,6 +120,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity {
 		excludeFields.add("custFinanceExposureList");
 		excludeFields.add("auditYear");
 		excludeFields.add("lovCustDob");
+		excludeFields.add("custCoreBank");
 
 		return excludeFields;
 	}
@@ -361,5 +363,13 @@ public class JointAccountDetail extends AbstractWorkflowEntity {
 
 	public void setLovCustDob(Date lovCustDob) {
 		this.lovCustDob = lovCustDob;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 }

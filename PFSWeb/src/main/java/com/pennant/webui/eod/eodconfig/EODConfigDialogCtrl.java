@@ -237,7 +237,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.space_FromName.setSclass("mandatory");
 		this.space_FromEmailAddress.setSclass("mandatory");
 		this.space_ToEmailAddress.setSclass("mandatory");
-		this.space_CCEmailAddress.setSclass("mandatory");
+		// this.space_CCEmailAddress.setSclass("mandatory");
 		this.space_SMTPHost.setSclass("mandatory");
 		this.space_SMTPPort.setSclass("mandatory");
 		this.space_reminderFrequency.setSclass("mandatory");
@@ -415,6 +415,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 		this.eMailNotificationsRequired.setChecked(aEODConfig.isEmailNotifReqrd());
 		this.publishNotificationsRequired.setChecked(aEODConfig.isPublishNotifReqrd());
+		this.recordStatus.setValue(aEODConfig.getRecordStatus());
 
 		Date cronToDate = cronToDate(aEODConfig.getReminderFrequency());
 

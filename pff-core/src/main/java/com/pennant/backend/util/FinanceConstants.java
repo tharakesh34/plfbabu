@@ -31,7 +31,6 @@
  * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ******************************************************************************************** 
  */
-
 package com.pennant.backend.util;
 
 /**
@@ -95,7 +94,7 @@ public class FinanceConstants {
 	public static final String ODCALON_STOT = "STOT";
 	public static final String ODCALON_PIPD_FRQ = "PIPDF";
 	public static final String ODCALON_PIPD_EOM = "PIPDM";
-	public static final String ODCALON_PIPD = "PIPD";
+	// public static final String ODCALON_PIPD = "PIPD";
 
 	// Schedule Apportionment Types
 	public static final String PAY_APPORTIONMENT_SPRI = "SPRI";
@@ -107,15 +106,6 @@ public class FinanceConstants {
 	public static final String PAY_APPORTIONMENT_TO_PASTDUE = "PASTDUE";
 	public static final String PAY_APPORTIONMENT_TO_SUSPENSE = "SUSPENSE";
 	public static final String PAY_APPORTIONMENT_TO_ALL = "ALL";
-
-	// Schedule Overdue Charge Types
-	public static final String PENALTYTYPE_NA = "N";
-	public static final String PENALTYTYPE_FLAT = "F";
-	public static final String PENALTYTYPE_PERC_ONETIME = "P";
-	public static final String PENALTYTYPE_PERC_ON_DUEDAYS = "D";
-	public static final String PENALTYTYPE_PERC_ON_PD_MTH = "M";
-	public static final String PENALTYTYPE_FLAT_ON_PD_MTH = "A";
-	public static final String PENALTYTYPE_RULEFXDD = "R";
 
 	// Schedule Types
 	public static final String SCH_TYPE_SCHEDULE = "S";
@@ -182,6 +172,10 @@ public class FinanceConstants {
 	public static final String CLOSE_STATUS_CANCELLED = "C";
 	public static final String CLOSE_STATUS_WRITEOFF = "W";
 	public static final String CLOSE_STATUS_EARLYSETTLE = "E";
+
+	// Loan Status of Hold
+	public static final String FEE_REFUND_HOLD = "H";
+	public static final String FEE_REFUND_RELEASE = "R";
 
 	// Limit Rule
 	public static final String LIMITRULE_CUSTOMER = "Customer";
@@ -390,15 +384,6 @@ public class FinanceConstants {
 	public static final String FIXED_AMOUNT = "FA";
 	public static final String PERCENTAGE = "P";
 
-	public static final String FEE_IE = "FEE_IE";
-	public static final String FEE_IE_CGST = "FEE_IE_CGST";
-	public static final String FEE_IE_SGST = "FEE_IE_SGST";
-	public static final String FEE_IE_IGST = "FEE_IE_IGST";
-	public static final String FEE_IE_UGST = "FEE_IE_UGST";
-	public static final String FEE_IE_CESS = "FEE_IE_CESS";
-
-	public static final String FEE_WR = "FEE_WR";
-
 	public static final String OD_BILLING_DUE_PRINCIPLE = "ODBDP";
 	public static final String OD_BILLING_DUE_INTEREST = "ODBDI";
 	public static final String OD_BILLING_DUE_PRINCIPLE_AND_INTEREST = "ODBDPAI";
@@ -406,4 +391,16 @@ public class FinanceConstants {
 	public static final String OD_TRANCHE_AMOUNT = "Tranche Amount";
 
 	public static final String ACCOUNTTYPE_FIN = "F";
+
+	// Fee Refund Constants
+	public static final int MANUAL_ADVISE_PAYABLE = 2;
+	public static final String FEE_REFUND_APPROVAL = "FEERFND";
+
+	public static final String SETTLEMENT = "SETTLEMENT";
+	public static final String SETTLEMENT_CANCEL = "SETTLEMENT_CANCEL";
+	public static final String CROSS_LOAN_KNOCKOFF_APPROVER = "CROSS_LOAN_KNOCKOFF_APPROVER";
+	public static final String CROSS_LOAN_KNOCKOFF_MAKER = "CROSS_LOAN_KNOCKOFF_MAKER";
+	public static final String CROSS_LOAN_KNOCKOFF_ENQUIRY = "CROSS_LOAN_KNOCKOFF_ENQUIRY";
+	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_MAKER = "CROSS_LOAN_KNOCKOFF_CANCEL_MAKER";
+	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER = "CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER";
 }

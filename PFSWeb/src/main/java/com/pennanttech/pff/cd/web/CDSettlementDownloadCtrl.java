@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -38,7 +36,6 @@ import com.pennanttech.pff.cd.upload.CDSettlementResponseUpload;
 
 public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProcess> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(CDSettlementDownloadCtrl.class);
 
 	private Window window_cdSettlementDownload;
 	private Borderlayout borderLayout_SettlementProcessDownload;

@@ -27,8 +27,6 @@ package com.pennant.webui.financemanagement.provision;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -87,7 +85,6 @@ import com.pennanttech.pff.core.TableType;
  */
 public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	private static final long serialVersionUID = 4481377123949925578L;
-	private static final Logger logger = LogManager.getLogger(ProvisionListCtrl.class);
 
 	/*
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file

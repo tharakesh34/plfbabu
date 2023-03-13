@@ -25,14 +25,14 @@
 				</groups>
 			</constraint>
 		</field>
-		<!-- s<field name="finAmount"> <constraint annotation="javax.validation.constraints.Min"> <message>90127</message> <groups> 
+		<!-- s<field name="finAmount"> <constraint annotation="jakarta.validation.constraints.Min"> <message>90127</message> <groups> 
 			<value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.CreateFinanceGroup</value> </groups> 
 			<element name="value">1</element> </constraint> </field> -->
-		<!-- <field name="finStartDate"> <constraint annotation="javax.validation.constraints.NotNull"> <message>90128</message> 
+		<!-- <field name="finStartDate"> <constraint annotation="jakarta.validation.constraints.NotNull"> <message>90128</message> 
 			<groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.CreateFinanceGroup</value> 
 			</groups> </constraint> </field> -->
 		<!--  s<field name="finAmount">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>90127</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -42,7 +42,7 @@
 			</constraint>
 		</field> -->
 		<!-- <field name="finStartDate">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>90128</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

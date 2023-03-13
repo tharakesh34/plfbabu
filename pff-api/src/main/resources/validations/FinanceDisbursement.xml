@@ -9,7 +9,7 @@
 
 	<bean class="com.pennant.backend.model.finance.FinanceDisbursement" ignore-annotations="false">
 		<field name="disbDate">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>disbDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -18,11 +18,11 @@
 				</groups>
 			</constraint>
 		</field>
-		<!-- <field name="feeChargeAmt"> <constraint annotation="javax.validation.constraints.Min"> <message>feeChargeAmt should 
+		<!-- <field name="feeChargeAmt"> <constraint annotation="jakarta.validation.constraints.Min"> <message>feeChargeAmt should 
 			be Positive</message> <groups> <value>com.pennant.validation.CreateFinanceGroup</value> </groups> <element name="value">1</element> 
 			</constraint> </field> -->
 		<field name="disbAmount">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>disbAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>
@@ -31,7 +31,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>disbAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.CreateFinanceGroup</value>

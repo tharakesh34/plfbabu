@@ -38,6 +38,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
 
 public class FinReceiptData implements Serializable {
 	private static final long serialVersionUID = -6980706459904425002L;
@@ -121,7 +122,14 @@ public class FinReceiptData implements Serializable {
 	private FinDueData dueData;
 	private boolean isClosrMaturedLAN = false;
 	private String excessType;
-	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;;
+	private BigDecimal calculatedClosureAmt = BigDecimal.ZERO;
+	private RequestSource requestSource = RequestSource.UI;
+
+	private boolean isOTSByEod = false;
+	private boolean isSettlement = false;
+	private boolean isSettlementGrace = false;
+
+	private List<FinanceScheduleDetail> partPayschedules = new ArrayList<>();
 
 	public FinReceiptData() {
 		super();
@@ -225,6 +233,11 @@ public class FinReceiptData implements Serializable {
 		entity.setClosrMaturedLAN(this.isClosrMaturedLAN);
 		entity.setExcessType(this.excessType);
 		entity.setCalculatedClosureAmt(this.calculatedClosureAmt);
+		entity.setRequestSource(this.requestSource);
+		entity.setOTSByEod(this.isOTSByEod);
+		entity.setSettlement(this.isSettlement);
+		entity.setSettlementGrace(this.isSettlementGrace);
+		entity.setPartPayschedules(this.partPayschedules);
 
 		return entity;
 	}
@@ -788,4 +801,65 @@ public class FinReceiptData implements Serializable {
 	public void setCalculatedClosureAmt(BigDecimal calculatedClosureAmt) {
 		this.calculatedClosureAmt = calculatedClosureAmt;
 	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
+	public boolean isOTSByEod() {
+		return isOTSByEod;
+	}
+
+	public void setOTSByEod(boolean isOTSByEod) {
+		this.isOTSByEod = isOTSByEod;
+	}
+
+	public boolean isSettlement() {
+		return isSettlement;
+	}
+
+	public void setSettlement(boolean isSettlement) {
+		this.isSettlement = isSettlement;
+	}
+
+	public boolean isSettlementGrace() {
+		return isSettlementGrace;
+	}
+
+	public void setSettlementGrace(boolean isSettlementGrace) {
+		this.isSettlementGrace = isSettlementGrace;
+	}
+
+	public List<FinanceScheduleDetail> getPartPayschedules() {
+		return partPayschedules;
+	}
+
+	public void setPartPayschedules(List<FinanceScheduleDetail> partPayschedules) {
+		this.partPayschedules = partPayschedules;
+	}
+
+	/*
+	 * public FinRecoveryChargeConfig getRecoveryChargeConfig() { return recoveryChargeConfig; }
+	 * 
+	 * public void setRecoveryChargeConfig(FinRecoveryChargeConfig recoveryChargeConfig) { this.recoveryChargeConfig =
+	 * recoveryChargeConfig; }
+	 * 
+	 * public FinRecoveryCharges getRecoveryCharges() { return recoveryCharges; }
+	 * 
+	 * public void setRecoveryCharges(FinRecoveryCharges recoveryCharges) { this.recoveryCharges = recoveryCharges; }
+	 * 
+	 * public List<FinRecoveryCharges> getFrcList() { return frcList; }
+	 * 
+	 * public void setFrcList(List<FinRecoveryCharges> frcList) { this.frcList = frcList; }
+	 * 
+	 * public List<FinRecoveryDetails> getRecoveryDetails() { return recoveryDetails; }
+	 * 
+	 * public void setRecoveryDetails(List<FinRecoveryDetails> recoveryDetails) { this.recoveryDetails =
+	 * recoveryDetails; }
+	 */
+
 }

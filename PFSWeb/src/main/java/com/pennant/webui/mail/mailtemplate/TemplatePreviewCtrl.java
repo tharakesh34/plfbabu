@@ -329,7 +329,7 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 			String content = mailContent;
 			loader.putTemplate("Template", content);
 
-			Configuration configuration = new Configuration();
+			Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 			configuration.setTemplateLoader(loader);
 			Template template = configuration.getTemplate("Template");
 			this.previewTabDiv

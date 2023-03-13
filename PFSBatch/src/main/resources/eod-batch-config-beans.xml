@@ -136,7 +136,6 @@
 	</bean>
 
 	<bean id="customerInterfaceService" class="com.pennant.Interface.service.impl.CustomerInterfaceServiceImpl">
-		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="designationDAO" ref="designationDAO" />
 	</bean>
 
@@ -366,27 +365,7 @@
 	<bean id="limitStructureDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitStructureDetailDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="limitRebuild" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="limitRebuildServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="limitRebuildServiceTarget" class="com.pennant.backend.service.limitservice.impl.LimitRebuildService">
-		<!--<property name="ruleDAO" ref="ruleDAO" /> -->
-	</bean>
+	<bean name="limitRebuild" class="com.pennant.backend.service.limitservice.impl.LimitRebuildService" />
 
 	<!-- EODConfig -->
 	<bean id="eODConfigDAO" class="com.pennant.backend.dao.eod.impl.EODConfigDAOImpl" parent="sequenceDao" />
@@ -409,14 +388,6 @@
 
 	<bean id="finExpenseDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinExpenseDetailsDAOImpl"
 		parent="sequenceDao" />
-
-	<!-- SnapShotConfiguration -->
-	<!-- <bean id="snapShotConfigurationDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConfigurationDAOImpl" parent="basicDao"/> 
-		<bean id="snapShotConditionsDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotConditionsDAOImpl" parent="basicDao"/> 
-		SnapShotColumn <bean id="snapShotColumnDAO" class="com.pennant.backend.dao.eodsnapshot.impl.SnapShotColumnDAOImpl" parent="basicDao"/> 
-		<bean name="snapShotService" class="com.pennant.eod.SnapShotService"> <property name="snapShotConfigurationDAO" ref="snapShotConfigurationDAO" 
-		/> <property name="snapShotConditionsDAO" ref="snapShotConditionsDAO" /> <property name="snapShotColumnDAO" ref="snapShotColumnDAO" 
-		/> <property name="snapShotDataSource" ref="snapShotDatasource" /> </bean> -->
 
 	<bean id="emailEngine" class="com.pennanttech.pennapps.notification.email.EmailEngine">
 		<constructor-arg ref="dataSource" />
@@ -448,24 +419,7 @@
 	<!-- GST Invoice -->
 	<bean id="gstInvoiceTxnDAO" class="com.pennant.backend.dao.finance.impl.GSTInvoiceTxnDAOImpl" parent="sequenceDao" />
 
-	<bean id="gstInvoiceTxnService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="gstInvoiceTxnServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-	<bean name="gstInvoiceTxnServiceTarget" class="com.pennant.backend.service.finance.impl.GSTInvoiceTxnServiceImpl">
+	<bean name="gstInvoiceTxnService" class="com.pennant.backend.service.finance.impl.GSTInvoiceTxnServiceImpl">
 		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 		<property name="entityDAO" ref="entityDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
@@ -478,106 +432,30 @@
 		<property name="gstDetailDAO" ref="gstDetailDAO" />
 	</bean>
 
-	<bean id="entityService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="entityServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
 	<!-- Entity -->
 	<bean id="entityDAO" class="com.pennant.backend.dao.applicationmaster.impl.EntityDAOImpl" parent="basicDao" />
 
-	<bean name="entityServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.EntityServiceImpl">
+	<bean name="entityService" class="com.pennant.backend.service.applicationmaster.impl.EntityServiceImpl">
 		<property name="entityDAO" ref="entityDAO" />
 	</bean>
 
 	<bean id="clusterHierarchyDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterHierarchyDAOImpl"
 		parent="basicDao" />
 
-	<bean id="provinceService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="provinceServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="provinceServiceTarget" class="com.pennant.backend.service.systemmasters.impl.ProvinceServiceImpl">
+	<bean name="provinceService" class="com.pennant.backend.service.systemmasters.impl.ProvinceServiceImpl">
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="taxDetailDAO" ref="taxDetailDAO" />
 		<property name="taxDetailService" ref="taxDetailService" />
 	</bean>
 
-	<!-- TaxDetail -->
-	<bean id="taxDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.TaxDetailDAOImpl"
-		parent="sequenceDao" />
-
-	<bean id="taxDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="taxDetailServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="taxDetailServiceTarget"
-		class="com.pennant.backend.service.applicationmaster.impl.TaxDetailServiceImpl">
+	<bean name="taxDetailService" class="com.pennant.backend.service.applicationmaster.impl.TaxDetailServiceImpl">
 		<property name="taxDetailDAO" ref="taxDetailDAO" />
 	</bean>
 
-	<!-- Finance Tax Detail -->
-	<bean id="financeTaxDetailService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="financeTaxDetailServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
+	<bean id="taxDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.TaxDetailDAOImpl"
+		parent="sequenceDao" />
 
-	<bean name="financeTaxDetailServiceTarget"
-		class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
+	<bean name="financeTaxDetailService" class="com.pennant.backend.service.finance.impl.FinanceTaxDetailServiceImpl">
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 	</bean>
 
@@ -585,46 +463,6 @@
 
 	<bean id="financeReferenceDetailService"
 		class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" />
-
-	<!--============ Customer Details ============== -->
-	<bean id="customerDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="customerDetailsServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="getNewProspectCustomerCIF*">PROPAGATION_NOT_SUPPORTED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="customerDetailsServiceTarget"
-		class="com.pennant.backend.service.customermasters.impl.CustomerDetailsServiceImpl">
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
-		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
-		<property name="customerRatingDAO" ref="customerRatingDAO" />
-		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="customerEMailDAO" ref="customerEMailDAO" />
-		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
-		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
-		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
-		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
-		<property name="directorDetailDAO" ref="directorDetailDAO" />
-		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
-		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
-		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-		<property name="collateralSetupService" ref="collateralSetupService" />
-	</bean>
 
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
 		parent="sequenceDao" />
@@ -662,25 +500,7 @@
 	<bean id="directorDetailDAO" class="com.pennant.backend.dao.customermasters.impl.DirectorDetailDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="customerServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="customerServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerServiceImpl">
+	<bean name="customerService" class="com.pennant.backend.service.customermasters.impl.CustomerServiceImpl">
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
@@ -702,7 +522,6 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 	</bean>
 
 	<bean id="freemarkerMailConfiguration"
@@ -855,7 +674,12 @@
 		parent="basicDao" />
 
 	<bean name="receiptCancellationService"
-		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl" />
+		class="com.pennant.backend.service.finance.impl.ReceiptCancellationServiceImpl">
+		<property name="tdsReceivablesTxnService" ref="tdsReceivablesTxnService" />
+		<property name="feeReceiptService" ref="feeReceiptService" />
+		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+	</bean>
 
 	<bean id="presentmentExcludeCodeDAO" class="com.pennant.pff.presentment.dao.impl.PresentmentExcludeCodeDAOImpl"
 		parent="sequenceDao" />
@@ -866,7 +690,7 @@
 		parent="sequenceDao" />
 
 	<bean name="presentmentEngine" class="com.pennant.pff.presentment.service.PresentmentEngine" />
-	
+
 	<bean name="presentmentDetailService"
 		class="com.pennant.backend.service.financemanagement.impl.PresentmentDetailServiceImpl">
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
@@ -898,8 +722,52 @@
 
 	<bean id="defaultPresentmentRequest" class="com.pennanttech.pff.external.presentment.DefaultPresentmentRequest"
 		parent="abstractInterface" />
-	
+
 	<bean id="defaultDocumentValidation" class="com.pennant.pff.document.service.DefaultDocumentValidation" />
-	
-	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>
+	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao" />
+
+	<bean id="jointAccountDetailDAO" class="com.pennant.backend.dao.finance.impl.JointAccountDetailDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="holdRefundUploadDAO" class="com.pennant.pff.holdrefund.dao.impl.HoldRefundUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess" />
+
+	<bean id="finTypePartnerBankDAO" class="com.pennant.backend.dao.rmtmasters.impl.FinTypePartnerBankDAOImpl"
+		parent="sequenceDao" />
+
+	<!-- Auto Refund Process -->
+	<bean id="autoRefundService" class="com.pennant.pff.autorefund.serviceimpl.AutoRefundServiceImpl" />
+
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary" />
+
+	<bean id="autoRefundDAO" class="com.pennant.backend.dao.finance.impl.AutoRefundDAOImpl" parent="basicDao" />
+
+	<bean id="paymentHeaderDAO" class="com.pennant.backend.dao.payment.impl.PaymentHeaderDAOImpl" parent="sequenceDao" />
+
+	<bean id="mandateDAO" class="com.pennant.backend.dao.mandate.impl.MandateDAOImpl" parent="sequenceDao" />
+
+	<bean name="paymentHeaderService" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl" />
+
+	<bean name="paymentInstructionService"
+		class="com.pennant.backend.service.payment.impl.PaymentInstructionServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
+		<property name="paymentsProcessService" ref="paymentsProcessService" />
+	</bean>
+
+	<bean id="paymentInstructionDAO" class="com.pennant.backend.dao.payment.impl.PaymentInstructionDAOImpl"
+		parent="sequenceDao" />
+
+	<bean name="paymentsProcessService" class="com.pennant.backend.service.payment.PaymentsProcessService" />
+	<bean id="paymentDetailDAO" class="com.pennant.backend.dao.payment.impl.PaymentDetailDAOImpl" parent="sequenceDao" />
+	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl" />
+	<bean id="bankBranchDAO" class="com.pennant.backend.dao.bmtmasters.impl.BankBranchDAOImpl" parent="sequenceDao" />
+	<bean id="clusterDAO" class="com.pennant.backend.dao.applicationmaster.impl.ClusterDAOImpl" parent="sequenceDao" />
+
+	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService" />
+
+	<!--============ Finance Flags Details ============== -->
+	<bean id="finFlagsHeaderDAO" class="com.pennant.backend.dao.finance.impl.FinFlagsHeaderDAOImpl" parent="basicDao" />
 </beans>

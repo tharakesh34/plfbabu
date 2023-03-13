@@ -72,7 +72,6 @@ public class ImplementationConstants {
 		ALLOW_ADDDBSF = getValueAsBoolean("ALLOW_ADDDBSF", false);
 		UPFRONT_ADJUST_PAYABLEADVISE = getValueAsBoolean("UPFRONT_ADJUST_PAYABLEADVISE", false);
 		CO_APP_ENQ_SAME_AS_CUST_ENQ = getValueAsBoolean("CO_APP_ENQ_SAME_AS_CUST_ENQ", true);
-		PAN_DUPLICATE_NOT_ALLOWED = getValueAsBoolean("PAN_DUPLICATE_NOT_ALLOWED", true);
 		ALLOW_AUTO_DISBURSEMENTS = getValueAsBoolean("ALLOW_AUTO_DISBURSEMENTS", false);
 
 		ALLOW_COSTOFFUNDS = getValueAsBoolean("ALLOW_COSTOFFUNDS", true);
@@ -246,7 +245,6 @@ public class ImplementationConstants {
 		ADV_EMI_STAGE_REAR_END = getValueAsBoolean("ADV_EMI_STAGE_REAR_END", false);
 		ADV_EMI_STAGE_REPAY_TERMS = getValueAsBoolean("ADV_EMI_STAGE_REPAY_TERMS", false);
 		AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT = getValueAsBoolean("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", false);
-		RECEIPTS_SHOW_ACCOUNTING_TAB = getValueAsBoolean("RECEIPTS_SHOW_ACCOUNTING_TAB", true);
 		BRANCHWISE_RCU_INITIATION = getValueAsBoolean("BRANCHWISE_RCU_INITIATION", false);
 		ALLOW_NON_LAN_RECEIPTS = getValueAsBoolean("ALLOW_NON_LAN_RECEIPTS", false);
 		ALLOW_BUILDER_BENEFICIARY_DETAILS = getValueAsBoolean("ALLOW_BUILDER_BENEFICIARY_DETAILS", false);
@@ -298,6 +296,8 @@ public class ImplementationConstants {
 		DISB_STP = getValueAsBoolean("DISB_STP", false);
 		COLLECTION_DOWNLOAD_REQ = getValueAsBoolean("COLLECTION_DOWNLOAD_REQ", true);
 
+		AUTO_WAIVER_REQUIRED_FROMSCREEN = getValueAsBoolean("AUTO_WAIVER_REQUIRED_FROMSCREEN", false);
+
 		setVerificationConstants();
 	}
 
@@ -342,7 +342,6 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ADDDBSF;
 	public static boolean UPFRONT_ADJUST_PAYABLEADVISE;
 	public static boolean CO_APP_ENQ_SAME_AS_CUST_ENQ;
-	public static boolean PAN_DUPLICATE_NOT_ALLOWED;
 	public static boolean ALLOW_AUTO_DISBURSEMENTS;
 
 	public static boolean ALLOW_COSTOFFUNDS;
@@ -374,8 +373,6 @@ public class ImplementationConstants {
 	public static boolean INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS;
 	public static boolean DISBURSEMENT_AUTO_DOWNLOAD;
 	public static boolean DISBURSEMENT_AUTO_UPLOAD;
-	public static boolean MANDATE_AUTO_DOWNLOAD;
-	public static boolean MANDATE_AUTO_UPLOAD;
 	public static boolean PRESENTMENT_AUTO_DOWNLOAD;
 	public static boolean PRESENTMENT_AUTO_UPLOAD;
 	public static boolean VALIDATE_BENFICIARY_ACCOUNT;
@@ -474,7 +471,6 @@ public class ImplementationConstants {
 	public static int PRESENTMENT_EXPORT_STATUS_MIN_LENGTH;
 	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
 	public static boolean AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT;
-	public static boolean RECEIPTS_SHOW_ACCOUNTING_TAB;
 	/* Cibil report must generate based on entity code */
 	public static boolean CIBIL_BASED_ON_ENTITY;
 	public static boolean PENALTY_CALC_ON_REPRESENTATION;
@@ -627,6 +623,7 @@ public class ImplementationConstants {
 
 	public static boolean CUSTOMIZED_SOAREPORT;
 	public static boolean COLLECTION_DOWNLOAD_REQ;
+	public static boolean AUTO_WAIVER_REQUIRED_FROMSCREEN;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

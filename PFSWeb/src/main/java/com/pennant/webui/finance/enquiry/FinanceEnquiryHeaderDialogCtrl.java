@@ -68,6 +68,10 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.pdc.ChequeDetailDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -75,6 +79,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -91,10 +96,12 @@ import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceGraphReportData;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
@@ -123,6 +130,7 @@ import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
 import com.pennant.backend.service.financemanagement.SuspenseService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.tds.receivables.TdsReceivablesTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -130,6 +138,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.configuration.vasrecording.VASRecordingDialogCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
@@ -161,30 +170,30 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_FinEnqHeaderDialog; // autoWired
-	protected Borderlayout borderlayoutFinEnqHeader; // autoWired
-	public Grid grid_BasicDetails; // autoWired
-	protected Tabpanel tabPanel_dialogWindow; // autoWired
+	protected Window window_FinEnqHeaderDialog;
+	protected Borderlayout borderlayoutFinEnqHeader;
+	public Grid grid_BasicDetails;
+	protected Tabpanel tabPanel_dialogWindow;
 
-	protected Textbox finReference_header; // autoWired
+	protected Textbox finReference_header;
 	protected Textbox finStatus_Reason;
-	protected Textbox finStatus_header; // autoWired
-	protected Textbox finType_header; // autoWired
-	protected Textbox finCcy_header; // autoWired
-	protected Textbox scheduleMethod_header; // autoWired
-	protected Textbox profitDaysBasis_header; // autoWired
-	protected Textbox finBranch_header; // autoWired
-	protected Textbox custCIF_header; // autoWired
-	protected Label custShrtName; // autoWired
-	protected Label label_window_FinEnqHeaderDialog; // autoWired
-	protected Checkbox reqRePayment; // autoWired
-	protected Row row_ReqRePayment; // autoWired
+	protected Textbox finStatus_header;
+	protected Textbox finType_header;
+	protected Textbox finCcy_header;
+	protected Textbox scheduleMethod_header;
+	protected Textbox profitDaysBasis_header;
+	protected Textbox finBranch_header;
+	protected Textbox custCIF_header;
+	protected Label custShrtName;
+	protected Label label_window_FinEnqHeaderDialog;
+	protected Checkbox reqRePayment;
+	protected Row row_ReqRePayment;
 
-	protected Label label_FinEnqHeader_Filter; // autoWired
-	protected Space space_menubar; // autoWired
-	protected Menu menu_filter; // autoWired
-	protected Menupopup menupopup_filter; // autoWired
-	protected Button btnPrint; // autoWired
+	protected Label label_FinEnqHeader_Filter;
+	protected Space space_menubar;
+	protected Menu menu_filter;
+	protected Menupopup menupopup_filter;
+	protected Button btnPrint;
 	protected Component childWindow;
 	protected Menubar menubar;
 
@@ -209,6 +218,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceDeviationsService deviationDetailsService;
 	private FinFeeDetailService finFeeDetailService;
 	private UploadHeaderService uploadHeaderService;
+
 	@Autowired
 	private FinSamplingService finSamplingService;
 
@@ -226,6 +236,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected boolean customer360;
 	private boolean isModelWindow = false;
 	private VASRecordingDAO vASRecordingDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ChequeHeaderDAO chequeHeaderDAO;
+	private ChequeDetailDAO chequeDetailDao;
+	private ChequeHeaderService chequeHeaderService;
 
 	int listRows;
 	private String assetCode = "";
@@ -251,6 +265,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private JointAccountDetailService jointAccountDetailService;
 	@Autowired
 	private CreditApplicationReviewService creditApplicationReviewService;
+	@Autowired
+	private ManualAdviseDAO manualAdviseDAO;
 
 	/**
 	 * default constructor.<br>
@@ -485,6 +501,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finID", this.finID);
 			map.put("finReference", this.finReference);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
+
+			if (finScheduleData != null) {
+				map.put("PenaltyRate", this.finScheduleData.getFinODPenaltyRate());
+			}
+
 			path = "/WEB-INF/pages/Enquiry/OverDueInquiry/OverdueDetailList.zul";
 
 		} else if ("SUSENQ".equals(this.enquiryType)) {
@@ -603,7 +624,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinSecurityMandateEnquiry"));
 
 			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
-			jdbcSearchObject.addTabelName("Mandates_View");
+			jdbcSearchObject.addTabelName("Mandates_AView");
 			jdbcSearchObject
 					.addFilters(new Filter[] { new Filter("OrgReference", enquiry.getFinReference(), Filter.OP_EQUAL),
 							new Filter("SecurityMandate", 1, Filter.OP_EQUAL) });
@@ -806,7 +827,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("EXCESSENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExcessEnquiry"));
 			List<FinExcessAmount> excessDetails = getFinExcessAmountDAO().getExcessAmountsByRef(this.finID);
+			List<ManualAdvise> payables = getManualAdviseDAO().getAdvisesList(this.finID, AdviseType.PAYABLE.id(),
+					"_View");
 			map.put("excessDetails", excessDetails);
+			map.put("payables", payables);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExcessEnquiryDialog.zul";
 		} else if ("OCRENQ".equals(this.enquiryType)) {
@@ -917,6 +941,25 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("finReference", this.finReference);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Finance/Overdraft/OverdraftTransactionsDialog.zul";
+		} else if ("FINCHECKENQ".equals(this.enquiryType)) {
+			this.btnPrint.setVisible(false);
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_Cheque_Enquiry.value"));
+
+			ChequeHeader ch = chequeHeaderService.getApprovedChequeHeaderForEnq(this.finID);
+
+			if (ch != null) {
+				List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(this.finID,
+						"_AView", false);
+				map.put("financeSchedules", schedules);
+				map.put("chequeHeader", ch);
+				map.put("chequeDetail", ch.getChequeDetailList());
+				map.put("finID", this.finID);
+				map.put("enqiryModule", true);
+				map.put("parentTabPanel", tabPanel_dialogWindow);
+				map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+				path = "/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul";
+
+			}
 		}
 
 		if (StringUtils.isNotEmpty(path)) {
@@ -1001,6 +1044,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		boolean mandate = isMandate(StringUtils.trimToEmpty(getFinanceEnquiry().getFinRepayMethod()), mandateList);
 
+		ChequeHeader chequeHeader = chequeHeaderDAO.getChequeHeaderForEnq(this.finID);
+		if (chequeHeader != null) {
+			chequeHeader.setChequeDetailList(chequeDetailDao.getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
+		}
+
 		if (enquiryList != null && enquiryList.size() > 0) {
 			for (ValueLabel enquiry : enquiryList) {
 				String value = enquiry.getValue();
@@ -1013,6 +1061,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if ("FINSECMANDENQ".equals(value) && getFinanceEnquiry().getSecurityMandateID() == null) {
+					continue;
+				}
+
+				if ("FINCHECKENQ".equals(value) && chequeHeader == null) {
 					continue;
 				}
 
@@ -1456,6 +1508,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
 	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
 		this.overdrafLoanService = overdrafLoanService;
 	}
@@ -1473,6 +1530,29 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	public void setTdsReceivablesTxnService(TdsReceivablesTxnService tdsReceivablesTxnService) {
 		this.tdsReceivablesTxnService = tdsReceivablesTxnService;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
+
+	@Autowired
+	public void setChequeDetailDao(ChequeDetailDAO chequeDetailDao) {
+		this.chequeDetailDao = chequeDetailDao;
+	}
+
+	@Autowired
+	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
+		this.chequeHeaderDAO = chequeHeaderDAO;
 	}
 
 }

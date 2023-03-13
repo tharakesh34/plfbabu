@@ -213,6 +213,9 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.facility.Facility;
+import com.pennant.backend.model.feerefund.FeeRefundDetail;
+import com.pennant.backend.model.feerefund.FeeRefundHeader;
+import com.pennant.backend.model.feerefund.FeeRefundInstruction;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
@@ -221,6 +224,7 @@ import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -441,17 +445,20 @@ import com.pennant.backend.model.tds.receivables.TdsReceivable;
 import com.pennant.backend.model.tds.receivables.TdsReceivablesTxn;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
+import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
+import com.pennant.pff.settlement.model.FinSettlementHeader;
+import com.pennant.pff.settlement.model.SettlementSchedule;
+import com.pennant.pff.settlement.model.SettlementTypeDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.finance.tds.cerificate.model.TanDetail;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.model.dms.DMSDocumentDetails;
-import com.pennanttech.pennapps.core.cache.CacheStats;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -507,14 +514,11 @@ public class PennantJavaUtil {
 
 	private static String custDetailWF = "CUSTOMER_MSTGRP";
 	private static String facilityWF = "FACILITY_TERM_SHEET";
-	// private static String retailWF = "AUTO_FIN_PROCESS";
 	private static String finMaintainWF = "FIN_RATECHANGE";
 	private static String securityWF = "SECURITY_USERS";
 	private static String crReviewCommWF = "CREDIT_REVIEW_COMMERCIAL";
-	// private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";sa
 	private static String crReviewCorpWF = "CORPORATECREDITREVIEW";
 	private static String facilityCommitWF = "MSTGRP1";
-	// private static String scoreGrpWF = "SCORGRP";
 	private static String realizationWF = "RECEIPT_REALIZATION";
 	private static String receiptBounceWF = "RECEIPT_BOUNCE";
 	private static String receiptCancelWF = "RECEIPT_CANCEL";
@@ -550,18 +554,12 @@ public class PennantJavaUtil {
 	private final static String org_School_WF = "ORGANIZATION_SCHOOL";
 	private static String feeWaiverWF = "FEE_WAIVER";
 	private final static String PaymentWF = "PAYMENTINSTRUCTION";
-	private static String insuranceDetails = "INSURANCE_DETAILS";
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
 	private final static String WF_RECEIPTUPLOAD = "RECEIPTUPLOAD";
 	private static String FEEREFUND_WF = "FINFEEREFUND_PROCESS";
-	// private static String WF_DEPOSITDETAILS = "DEPOSITDETAILS";
-	// private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
-	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
 	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
-	private final static String baseRate_WF = "BASERATE_WORKFLOW";
-	private final static String WF_REPRESENT_UPLOAD = "REPRESENT_UPLOAD";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -908,7 +906,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PartnerBankModes",
 				new ModuleMapping("PartnerBankModes", PartnerBankModes.class,
 						new String[] { "PartnerBankModes", "PartnerBankModes_AView" }, masterWF,
-						new String[] { "PartnerBankCode", "PartnerBankName" }, null, 300));
+						new String[] { "PartnerBankCode", "PartnerBankName", "DivisionCode" }, null, 300));
 
 		ModuleUtil.register("FinTypePartnerBank",
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
@@ -2653,9 +2651,11 @@ public class PennantJavaUtil {
 						new String[] { "AccountMapping", "AccountMapping_AView" }, hostGLMapping_WF,
 						new String[] { "Account", "HostAccount" }, null, 600));
 
-		ModuleUtil.register("FinTypePartner", new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
-				new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
-				new String[] { "PartnerBankCode", "PartnerBankName" }, new Object[][] { { "Active", "0", 1 } }, 450));
+		ModuleUtil.register("FinTypePartner",
+				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
+						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
+						new String[] { "FinType", "PartnerBankCode", "PartnerBankName", "PaymentMode" },
+						new Object[][] { { "Active", "0", 1 } }, 450));
 
 		ModuleUtil.register("Locality",
 				new ModuleMapping("Locality", Locality.class, new String[] { "Locality", "Locality_AView" }, masterWF,
@@ -2738,9 +2738,6 @@ public class PennantJavaUtil {
 						new String[] { "CHEQUEDETAIL", "CHEQUEDETAIL_AView" }, CHEQUE_WF, new String[] { "HeaderID",
 								"BankBranchID", "AccountNo", "ChequeSerialNo", "ChequeDate", "ChequeCcy", "Status" },
 						null, 600));
-
-		ModuleUtil.register("CacheStats", new ModuleMapping("CacheStats", CacheStats.class,
-				new String[] { "CACHE_PARAMETERS", "CACHE_PARAMETERS" }, null, new String[] { "" }, null, 600));
 
 		/* Interface Mapping */
 
@@ -3111,7 +3108,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Cluster",
 				new ModuleMapping("Cluster", Cluster.class, new String[] { "Clusters", "Clusters_aview" }, CLUSTERS,
-						new String[] { "Code", "Name", "ClusterType" }, null, 600));
+						new String[] { "Id", "Code", "Name", "ClusterType" }, null, 600));
 
 		// FIX ME
 		// It's temporary fix related to workflow once workflow related issue fixed. we required to change the workflow
@@ -3176,7 +3173,7 @@ public class PennantJavaUtil {
 						new String[] { "COLLECTION_AGENCIES", "COLLECTION_AGENCIES" }, BUSINESS_VERTICAL,
 						new String[] { "id", "code", "Description" }, null, 600));
 
-		ModuleUtil.register("Excess", new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+		ModuleUtil.register("FinExcess", new ModuleMapping("ExcessAmount", FinExcessAmount.class,
 				new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "ReceiptID", "ValueDate",
 						"Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
 				new String[][] { { "AmountType", "0", "E" } }, 850));
@@ -3811,32 +3808,136 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FileUploadHeader",
 				new ModuleMapping("FileUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("RepresentUploadHeader",
 				new ModuleMapping("RepresentUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("HoldRefundUploadHeader",
+				new ModuleMapping("HoldRefundUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("MandateUploadHeader",
 				new ModuleMapping("MandateUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LPPUploadHeader",
+				new ModuleMapping("LPPUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("FateCorrection",
 				new ModuleMapping("FateCorrection", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("ChequeUpload",
 				new ModuleMapping("ChequeUpload", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_REPRESENT_UPLOAD,
-						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("FinTypePartnerBankBranch",
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
 						new String[] { "FinTypePartnerBanks", "FinTypePartnerBanks_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, null, 300));
+
+		ModuleUtil.register("PaymentInstructionUploadHeader",
+				new ModuleMapping("PaymentInstructionUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("FeeRefundHeader",
+				new ModuleMapping("FeeRefundHeader", FeeRefundHeader.class,
+						new String[] { "Fee_Refund_Header", "Fee_Refund_Header_View" }, masterWF, new String[] {
+								"CustCif", "CustShrtName", "FinReference", "PaymentAmount", "LoanType", "BranchName" },
+						null, 600));
+
+		ModuleUtil.register("FeeRefundDetail",
+				new ModuleMapping("FeeRefundDetail", FeeRefundDetail.class,
+						new String[] { "Fee_Refund_DetailS", "Fee_Refund_Details_AView" }, masterWF,
+						new String[] { "ReceivableType", "ReceivableRefId" }, null, 600));
+
+		ModuleUtil.register("FeeRefundInstruction",
+				new ModuleMapping("FeeRefundInstruction", FeeRefundInstruction.class,
+						new String[] { "Fee_Refund_Instructions", "Fee_Refund_Instructions_AView" }, masterWF,
+						new String[] { "PaymentType", "PaymentAmount", "BankCode", "PaymentCCy" }, null, 600));
+
+		ModuleUtil.register("SettlementTypeDetail",
+				new ModuleMapping("SettlementTypeDetail", SettlementTypeDetail.class,
+						new String[] { "Settlement_Types", "Settlement_Types_AView" }, masterWF,
+						new String[] { "Id", "settlementCode", "settlementDesc" },
+						new Object[][] { { "Active", "0", 1 } }, 750));
+
+		ModuleUtil.register("Settlement",
+				new ModuleMapping("Settlement", FinSettlementHeader.class,
+						new String[] { "Settlement", "Settlement_View" }, masterWF,
+						new String[] { "settlementHeaderID", "finReference", "FinId" }, null, 750));
+
+		ModuleUtil.register("FinSettlementHeader",
+				new ModuleMapping("FinSettlementHeader", FinSettlementHeader.class,
+						new String[] { "Fin_Settlement_Header", "Fin_Settlement_Header_VIEW" }, masterWF,
+						new String[] { "id", "finReference", "FinId" }, null, 750));
+
+		ModuleUtil.register("SettlementSchedule",
+				new ModuleMapping("SettlementSchedule", SettlementSchedule.class,
+						new String[] { "Settlement_Schedule", "Settlement_Schedule_View" }, masterWF,
+						new String[] { "id", "settlementDetailID", "settlementAmount" }, null, 750));
+
+		ModuleUtil.register("SettlementCancelReasons",
+				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
+						new String[] { "Id", "Code", "Description" },
+						new Object[][] { { "Active", "0", 1 }, { "ReasonTypeCode", "0", "SETCANC" } }, 600));
+
+		ModuleUtil.register("SettlementFinanceMain",
+				new ModuleMapping("SettlementFinanceMain", FinanceMain.class,
+						new String[] { "FM_Settlement_VIEW", "FM_Settlement_VIEW" }, null,
+						new String[] { "FinReference", "FinType" }, null, 350));
+
+		ModuleUtil.register("FinExcessTransfer",
+				new ModuleMapping("FinExcessTransfer", FinExcessTransfer.class,
+						new String[] { "Excess_Transfer_Details", "Excess_Transfer_Details_View" }, masterWF,
+						new String[] { "Id", "FinID" }, null, 300));
+
+		ModuleUtil
+				.register("ExcessTrf",
+						new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+								new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "Amount",
+										"UtilisedAmt", "ReservedAmt", "BalanceAmt", "ReceiptID", "ValueDate" },
+								null, 750));
+
+		ModuleUtil.register("Excess", new ModuleMapping("ExcessAmount", FinExcessAmount.class,
+				new String[] { "FinExcessAmount_LovView" }, null, new String[] { "ExcessID", "Amount", "UtilisedAmt",
+						"ReservedAmt", "BalanceAmt", "ReceiptID", "ValueDate" },
+				new String[][] { { "AmountType", "0", "E" } }, 750));
+
+		ModuleUtil.register("ExcessTransferUpload",
+				new ModuleMapping("ExcessTransferUpload", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("ManualKnockOff",
+				new ModuleMapping("ManualKnockOff", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("CrossLoanKnockOff",
+				new ModuleMapping("CrossLoanKnockOff", CrossLoanKnockOff.class,
+						new String[] { "CROSS_LOAN_KNOCKOFF", "RECEIPTDETAILS_TVIEW" }, "RECEIPTS_WORKFLOW",
+						new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
+
+		ModuleUtil.register("CrossLoanKnockOffUploadHeader",
+				new ModuleMapping("CrossLoanKnockOffUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("CancelCrossLoanKnockOff",
+				new ModuleMapping("CancelCrossLoanKnockOff", CrossLoanKnockOff.class,
+						new String[] { "CROSS_LOAN_KNOCKOFF", "RECEIPTDETAILS_TVIEW" }, "RECEIPTS_WORKFLOW",
+						new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
 
 		registerCustomModules();
 	}

@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+ * g * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. All
  * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
@@ -253,36 +253,6 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Fetch the Record SecurityRole details by key field
-	 * 
-	 * @param roleCode (String)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return SecurityRole
-	 */
-	@Override
-	public List<SecurityRole> getApprovedSecurityRole() {
-		logger.debug("Entering");
-		String type = "_View"; // AView
-		SecurityRole secRoles = getSecurityRole();
-
-		StringBuilder selectSql = new StringBuilder("Select RoleID, RoleApp, RoleCd, RoleDesc, RoleCategory");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,lovDescRoleAppName ");
-		}
-		selectSql.append(" From SecRoles_View"); // SecRoles_AView
-
-		logger.debug("selectSql:" + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRoles);
-		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
-		logger.debug("Leaving");
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
 	@Override
 	public List<SecurityRole> getSecurityRole(String roleCode) {
 		logger.debug("Entering");
@@ -301,23 +271,41 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
-	/**
-	 * Fetch the Record SecurityRole details by key field
-	 * 
-	 * @return SecurityRole
-	 */
 	@Override
 	public List<SecurityRole> getApprovedSecurityRoles() {
-		logger.debug("Entering");
-
 		SecurityRole secRole = new SecurityRole();
-		StringBuilder selectSql = new StringBuilder("SELECT * FROM SecRoles ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder("Select * From SecRoles");
+		sql.append(" Where RoleID not in (");
+		sql.append(" Select RoleID From SecRoleGroups srg");
+		sql.append(" Inner Join SecGroupRights sgr on sgr.GrpID = srg.GrpID");
+		sql.append(" Inner Join SecRights sr on sr.RightID = sgr.RightID and sr.RightType = 0");
+		sql.append(")");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secRole);
 		RowMapper<SecurityRole> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityRole.class);
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+	}
+
+	@Override
+	public List<SecurityRole> getApprovedSecurityRole() {
+		String sql = "Select RoleID, RoleCd, RoleDesc From SecRoles";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcTemplate.query(sql, (rs, rowNum) -> {
+			SecurityRole role = new SecurityRole();
+
+			role.setRoleID(rs.getLong("RoleID"));
+			role.setRoleCd(rs.getString("RoleCd"));
+			role.setRoleDesc(rs.getString("RoleDesc"));
+
+			return role;
+
+		});
 	}
 
 	/**

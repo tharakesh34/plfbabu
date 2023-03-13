@@ -277,4 +277,35 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 	private void log(String sql) {
 		logger.debug(Literal.SQL.concat(sql));
 	}
+
+	@Override
+	public void updatesize(ChequeHeader ch) {
+		String sql = "Update ChequeHeader Set NoOfCheques = NoOfCheques - ? Where HeaderID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		int recordCount = jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, ch.getNoOfCheques());
+			ps.setLong(2, ch.getHeaderID());
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public ChequeHeader getChequeHeaderForEnq(long finID) {
+		StringBuilder sql = getSqlQuery("");
+		sql.append(" Where FinId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new ChequeHeaderRM(), finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

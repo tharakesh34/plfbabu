@@ -144,7 +144,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<SecurityRole> getUserRolesByUserID(long userID) {
-		return userDAO.getUserRolesByUserID(userID);
+		List<SecurityRole> roles = userDAO.getUserRolesByUserID(userID);
+
+		List<SecurityRole> menuRroles = userDAO.getMenuRoles(userID);
+
+		for (SecurityRole role : menuRroles) {
+			if (StringUtils.endsWith(role.getRoleCd(), "_VIEW")) {
+				roles.removeIf(roleCode -> roleCode.getRoleCd().equals(role.getRoleCd()));
+			}
+		}
+
+		return roles;
 	}
 
 	@Override

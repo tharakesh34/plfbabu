@@ -25,12 +25,10 @@
 
 package com.pennant.webui.mandate.mandate;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -39,14 +37,15 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
@@ -67,10 +66,8 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  * ************************************************************<br>
  * 
  */
-public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Serializable {
-
+public class MandateListCtrl extends GFCBaseListCtrl<Mandate> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(MandateListCtrl.class);
 
 	protected Window window_MandateList;
 	protected Borderlayout borderLayout_MandateList;
@@ -93,7 +90,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Button button_MandateList_NewMandate;
 	protected Button button_MandateList_MandateSearch;
 
-	protected Intbox mandateID;
+	protected Longbox mandateID;
 	protected Textbox custCIF;
 	protected Combobox mandateType;
 	protected Textbox custShrtName;
@@ -104,6 +101,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected Datebox expiryDate;
 	protected Datebox inputDate;
 	protected Checkbox securityMandate;
+	protected ExtendedCombobox loanReference;
+	protected Listbox sortOperator_LoanReference;
 
 	protected Listbox sortOperator_MandateID;
 	protected Listbox sortOperator_CustCIF;
@@ -138,12 +137,49 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 
 	@Override
 	protected void doAddFilters() {
+		searchObject.addWhereClause(null);
 
 		super.doAddFilters();
+
+		this.searchObject = (JdbcSearchObject<Mandate>) searchObject.removeFiltersOnProperty("OrgReference");
+
 		if (!enqiryModule && !searchObject.getFilters().isEmpty()) {
 			searchObject.addFilterEqual("active", 1);
 			searchObject.addFilterNotEqual("Status", MandateStatus.FIN);
 		}
+
+		String frn = this.loanReference.getValue();
+		if (StringUtils.isNotEmpty(frn)) {
+			searchObject.addWhereClause(getWhereClause(frn, securityMandate.isChecked()));
+		}
+	}
+
+	private String getWhereClause(String frn, boolean securityMandate) {
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" MandateID In (Select MandateID From (");
+		if (securityMandate) {
+			sql.append(" Select MandateID From Mandates Where SecurityMandate = 1 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select MandateID From Mandates_temp Where SecurityMandate = 1 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select SecurityMandateID From FinanceMain Where FinReference = '");
+			sql.append(frn).append("'");
+		} else {
+			sql.append(" Select MandateID From Mandates Where SecurityMandate = 0 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select MandateID From Mandates_temp Where SecurityMandate = 0 and OrgReference = '");
+			sql.append(frn).append("'");
+			sql.append(" Union All");
+			sql.append(" Select MandateID From FinanceMain Where FinReference = '");
+			sql.append(frn).append("'");
+		}
+		sql.append(" ) T )");
+
+		return sql.toString();
 	}
 
 	/**
@@ -186,6 +222,8 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 		registerField("securityMandate", listheader_SecurityMandate, SortOrder.NONE, securityMandate,
 				sortOperator_SecurityMandate, Operators.SIMPLE_NUMARIC);
 
+		doSetFieldProperties();
+
 		// Render the page and display the data.
 		doRenderPage();
 
@@ -198,6 +236,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_MandateList_MandateSearch(Event event) {
+		this.loanReference.setErrorMessage("");
 		search();
 	}
 
@@ -207,6 +246,9 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		this.loanReference.setValue("");
+		this.loanReference.setDescription("");
+		this.loanReference.setErrorMessage("");
 		doReset();
 		search();
 	}
@@ -399,6 +441,14 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 			this.custCIF.setValue("");
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetFieldProperties() {
+		this.loanReference.setModuleName("FinanceMain");
+		this.loanReference.setTextBoxWidth(155);
+		this.loanReference.setValueColumn("FinReference");
+		this.loanReference.setDescColumn("FinType");
+		this.loanReference.setValidateColumns(new String[] { "FinReference" });
 	}
 
 	/**

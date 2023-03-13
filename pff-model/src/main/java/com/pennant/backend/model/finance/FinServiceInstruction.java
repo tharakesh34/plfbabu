@@ -208,7 +208,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	@XmlElement
 	private String receiptChannel;
 	@XmlElement
-	private long collectionAgentId = 0;
+	private Long collectionAgentId;
 	@XmlElement
 	private String receivedFrom;
 	@XmlElement
@@ -227,6 +227,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String moduleType;
 
 	private List<FinanceScheduleDetail> oldShedules = new ArrayList<>();
+	private List<FinReceiptDetail> receiptDetails = new ArrayList<>();
 
 	public String getRestructuringType() {
 		return restructuringType;
@@ -363,6 +364,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String collectionAgency;
 	@XmlElement
 	private String division;
+	private boolean knockOffReceipt;
+	private String knockoffType;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -551,6 +554,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setOverdraftChrgAmtOrPerc(this.overdraftChrgAmtOrPerc);
 		fsi.setFinAssetValue(this.finAssetValue);
 		fsi.setNumberOfTerms(this.numberOfTerms);
+		fsi.setKnockOffReceipt(this.knockOffReceipt);
 
 		fsi.setRecordStatus(super.getRecordStatus());
 		fsi.setRoleCode(super.getRoleCode());
@@ -1522,11 +1526,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		this.receiptChannel = receiptChannel;
 	}
 
-	public long getCollectionAgentId() {
+	public Long getCollectionAgentId() {
 		return collectionAgentId;
 	}
 
-	public void setCollectionAgentId(long collectionAgentId) {
+	public void setCollectionAgentId(Long collectionAgentId) {
 		this.collectionAgentId = collectionAgentId;
 	}
 
@@ -1824,6 +1828,30 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setOldShedules(List<FinanceScheduleDetail> oldShedules) {
 		this.oldShedules = oldShedules;
+	}
+
+	public boolean isKnockOffReceipt() {
+		return knockOffReceipt;
+	}
+
+	public void setKnockOffReceipt(boolean knockOffReceipt) {
+		this.knockOffReceipt = knockOffReceipt;
+	}
+
+	public List<FinReceiptDetail> getReceiptDetails() {
+		return receiptDetails;
+	}
+
+	public void setReceiptDetails(List<FinReceiptDetail> receiptDetails) {
+		this.receiptDetails = receiptDetails;
+	}
+
+	public String getKnockoffType() {
+		return knockoffType;
+	}
+
+	public void setKnockoffType(String knockoffType) {
+		this.knockoffType = knockoffType;
 	}
 
 }

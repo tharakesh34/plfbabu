@@ -39,7 +39,7 @@
 								<row visible="false">
 									<label id="label_MandateList_MandateID" value="${c:l('label_MandateList_MandateID.value')}" />
 									<listbox id="sortOperator_MandateID" width="43px" mold="select" rows="1" />
-									<longbox id="mandateID" width="171px" maxlength="26" />
+									<longbox id="mandateID" width="171px" />
 									<label id="label_MandateList_MandateRef" value="${c:l('label_MandateList_MandateRef.value')}" />
 									<listbox id="sortOperator_MandateRef" width="43px" mold="select" rows="1" />
 									<textbox id="mandateRef" width="171px" maxlength="50" />

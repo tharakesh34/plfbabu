@@ -25,6 +25,7 @@
 package com.pennant.backend.service.payment.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,19 +40,22 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -67,13 +71,12 @@ import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.feetype.FeeTypeService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -85,6 +88,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -101,18 +105,15 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private PaymentHeaderDAO paymentHeaderDAO;
 	private PaymentDetailService paymentDetailService;
 	private PaymentInstructionService paymentInstructionService;
-	private transient PostingsPreparationUtil postingsPreparationUtil;
+	private PostingsPreparationUtil postingsPreparationUtil;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
-	private FinFeeDetailService finFeeDetailService;
-	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	private CustomerAddresDAO customerAddresDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
-	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	private FinanceMainDAO financeMainDAO;
 	private FeeTypeService feeTypeService;
-	@Autowired(required = false)
-	@Qualifier("paymentInstructionPostValidationHook")
+	private FinOverDueService finOverDueService;
+	private FinExcessAmountDAO finExcessAmountDAO;
+
 	private PostValidationHook postValidationHook;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -203,12 +204,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	@Override
 	public PaymentHeader getPaymentHeader(long paymentId) {
-		PaymentHeader paymentHeader = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
-		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentHeader.getPaymentId(),
-				"_View");
+		PaymentHeader ph = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
+		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentId, "_View");
+
+		ph.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(ph.getFinID()));
+		ph.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(ph.getFinID(), false));
 
 		if (list != null) {
-			paymentHeader.setPaymentDetailList(list);
+			ph.setPaymentDetailList(list);
 			for (PaymentDetail pd : list) {
 				if (pd.getTaxHeaderId() != null) {
 					pd.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(pd.getTaxHeaderId(), "_View"));
@@ -220,13 +223,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 
 		PaymentInstruction paymentInstruction = this.paymentInstructionService
-				.getPaymentInstructionDetails(paymentHeader.getPaymentId(), "_View");
+				.getPaymentInstructionDetails(ph.getPaymentId(), "_View");
 		if (paymentInstruction != null) {
-			paymentHeader.setPaymentInstruction(paymentInstruction);
+			ph.setPaymentInstruction(paymentInstruction);
 		}
-		return paymentHeader;
+		return ph;
 	}
 
+	@Override
 	public PaymentHeader getApprovedPaymentHeader(long paymentId) {
 		return paymentHeaderDAO.getPaymentHeader(paymentId, "_AView");
 	}
@@ -303,6 +307,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			// PaymentDetails
 			if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
 				List<AuditDetail> paymentDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
+				for (PaymentDetail pd : paymentHeader.getPaymentDetailList()) {
+					if (pd.getPaymentId() <= 0) {
+						pd.setPaymentId(paymentHeader.getPaymentId());
+					}
+				}
 				if (paymentDetails != null && !paymentDetails.isEmpty()) {
 					paymentDetails = this.paymentDetailService.processPaymentDetails(paymentDetails, TableType.MAIN_TAB,
 							"doApprove", paymentHeader.getLinkedTranId(), paymentHeader.getFinID());
@@ -314,6 +323,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				List<AuditDetail> paymentinstructions = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
 
 				if (paymentinstructions != null && !paymentinstructions.isEmpty()) {
+					paymentHeader.getPaymentInstruction().setPaymentId(paymentHeader.getPaymentId());
 					paymentinstructions = this.paymentInstructionService.processPaymentInstrDetails(paymentinstructions,
 							TableType.MAIN_TAB, "doApprove");
 					auditDetails.addAll(paymentinstructions);
@@ -321,7 +331,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 		}
 
-		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())) {
+		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())
+				&& !StringUtils.equals(FinanceConstants.FEE_REFUND_APPROVAL, paymentHeader.getFinSource())
+				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentHeader.getFinSource())
+				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentHeader.getFinSource())) {
 			auditHeader
 					.setAuditDetails(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentHeader(), paymentHeader.getExcludeFields());
@@ -349,7 +362,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -374,7 +387,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		auditHeader = prepareChildsAudit(auditHeader, method);
 		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
@@ -392,13 +405,59 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
-		// Write the required validation over hear.
+		PaymentHeader ph = (PaymentHeader) auditDetail.getModelData();
+
+		FinanceMain fm = getFinanceDetails(ph.getFinID());
+
+		AutoRefundLoan arl = new AutoRefundLoan();
+		arl.setFinID(fm.getFinID());
+		arl.setWriteOffLoan(fm.isWriteoffLoan());
+		arl.setDpdDays(0);
+		arl.setHoldStatus(fm.getHoldStatus());
+
+		ErrorDetail error = null;
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method)) {
+			error = validateRefund(arl, false);
+		}
+
+		if (error != null) {
+			auditDetail.getErrorDetails().add(error);
+		}
+
+		String finSource = ph.getFinSource();
+		BigDecimal odAgainstCustomer = ph.getOdAgainstCustomer();
+		BigDecimal odAgainstLoan = ph.getOdAgainstLoan();
+
+		if (!UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)
+				&& (odAgainstCustomer.compareTo(BigDecimal.ZERO) > 0 || odAgainstLoan.compareTo(BigDecimal.ZERO) > 0)) {
+			if ("saveOrUpdate".equals(method) || "doApprove".equals(method)) {
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "REFUND_050", null, null)));
+			}
+
+		}
+
+		List<PaymentDetail> pdtl = ph.getPaymentDetailList();
+
+		for (PaymentDetail pdt : pdtl) {
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pdt.getAmountType())) {
+				FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(pdt.getReferenceId());
+				List<Long> receiptID = paymentHeaderDAO.getReceiptPurpose(fea.getExcessID());
+
+				if (CollectionUtils.isNotEmpty(receiptID)) {
+					String[] parameters = new String[1];
+					parameters[0] = "Excess is in reserved state, since receipt is in progress with Receipt IDs "
+							+ receiptID;
+					auditDetail.setErrorDetail(new ErrorDetail("REFUND_050", parameters[0], null));
+				}
+
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
-	// =================================== List maintaince
 	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
@@ -575,6 +634,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (paymentInstruction != null) {
 			amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
+			amountCodes.setPaymentType(paymentInstruction.getPaymentType());
 			aeEvent.setValueDate(paymentInstruction.getPostDate());
 		}
 
@@ -854,75 +914,214 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public boolean getPaymentHeadersByFinReference(long finID, String type) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId) {
 		return this.paymentInstructionService.getPaymentInstruction(paymentId);
 	}
 
 	@Override
-	public boolean isInstructionInProgress(String finReference) {
-		return this.paymentInstructionService.isInstructionInProgress(finReference);
+	public boolean isInProgress(long finID) {
+		return this.paymentInstructionService.isInProgress(finID);
 	}
 
+	@Override
+	public Map<Long, BigDecimal> getAdvisesInProgess(long finId) {
+		return this.paymentHeaderDAO.getAdvisesInProgess(finId);
+	}
+
+	@Override
+	public BigDecimal getInProgressExcessAmt(long finId, Long receiptId) {
+		return this.paymentHeaderDAO.getInProgressExcessAmt(finId, receiptId);
+	}
+
+	@Override
+	public PaymentHeader prepareRefund(AutoRefundLoan arl) {
+		logger.debug(Literal.ENTERING);
+
+		List<PaymentDetail> payDtlList = arl.getPaymentDetails();
+
+		PaymentInstruction payInst = arl.getPaymentInstruction();
+
+		LoggedInUser userDetails = null;
+		long userid = 0;
+		if (PFSBatchAdmin.startedBy != null) {
+			userDetails = PFSBatchAdmin.loggedInUser;
+			userid = userDetails.getUserId();
+		} else if (SessionUserDetails.getLogiedInUser() != null) {
+			userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			userid = userDetails.getUserId();
+		} else {
+			userid = 1000L;
+		}
+		Timestamp sysDate = new Timestamp(System.currentTimeMillis());
+		Date businessDate = arl.getBusinessDate();
+
+		PaymentHeader ph = new PaymentHeader();
+		ph.setFinID(arl.getFinID());
+		ph.setFinReference(arl.getFinReference());
+		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
+		ph.setCreatedOn(sysDate);
+		ph.setApprovedOn(sysDate);
+		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
+		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ph.setNewRecord(true);
+		ph.setVersion(1);
+		ph.setLastMntBy(userid);
+		ph.setLastMntOn(sysDate);
+		ph.setCreatedOn(sysDate);
+		ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		ph.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
+		ph.setFinSource(UploadConstants.FINSOURCE_ID_AUTOPROCESS);
+
+		BigDecimal totRefund = BigDecimal.ZERO;
+		for (PaymentDetail pd : payDtlList) {
+			pd.setRecordType(PennantConstants.RCD_ADD);
+			pd.setNewRecord(true);
+			pd.setVersion(1);
+			pd.setUserDetails(userDetails);
+			pd.setLastMntBy(userid);
+			pd.setLastMntOn(sysDate);
+			pd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+			totRefund = totRefund.add(pd.getAmount());
+		}
+
+		ph.setPaymentAmount(totRefund);
+
+		payInst.setPostDate(businessDate);
+		payInst.setPaymentAmount(totRefund);
+		payInst.setValueDate(businessDate);
+		payInst.setPaymentCCy(arl.getFinCcy());
+		payInst.setStatus(DisbursementConstants.STATUS_NEW);
+		payInst.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		payInst.setRecordType(PennantConstants.RCD_ADD);
+		payInst.setNewRecord(true);
+		payInst.setVersion(1);
+		payInst.setLastMntBy(userid);
+		payInst.setLastMntOn(sysDate);
+
+		ph.setPaymentDetailList(payDtlList);
+		ph.setPaymentInstruction(payInst);
+
+		logger.debug(Literal.LEAVING);
+		return ph;
+	}
+
+	@Override
+	public ErrorDetail validateRefund(AutoRefundLoan arl, boolean isEOD) {
+		logger.debug(Literal.ENTERING);
+
+		long finId = arl.getFinID();
+		boolean writeOffLoan = arl.isWriteOffLoan();
+		int dpdDays = arl.getDpdDays();
+		String holdStatus = arl.getHoldStatus();
+
+		/* Verifying if the loan is write off or not */
+		if (writeOffLoan) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_008");
+		}
+
+		if (FinanceConstants.FEE_REFUND_HOLD.equals(holdStatus)) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_009");
+		}
+
+		/* DPD Days validation against System parameter Configuration */
+		if (dpdDays >= arl.getAutoRefCheckDPD() && isEOD) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_001", String.valueOf(dpdDays + 1),
+					String.valueOf(arl.getAutoRefCheckDPD() + 1));
+		}
+
+		/* Verification against Refunds, if any of the refund against loan in process */
+		if (paymentHeaderDAO.isRefundInProcess(finId) && isEOD) {
+			logger.debug(Literal.LEAVING);
+			return ErrorUtil.getError("REFUND_003");
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public void cancelPaymentInstruction(long receiptID) {
+		Long paymentId = paymentHeaderDAO.getPaymetIDByReceiptID(receiptID);
+
+		if (paymentId == null) {
+			return;
+		}
+
+		PaymentHeader ph = getPaymentHeader(paymentId);
+		AuditDetail ad = new AuditDetail(PennantConstants.TRAN_WF, 1, ph.getBefImage(), ph);
+		AuditHeader ah = new AuditHeader(paymentId.toString(), null, null, null, ad, ph.getUserDetails(), null);
+		doReject(ah);
+
+	}
+
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
 		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
 
+	@Autowired
 	public void setPaymentDetailService(PaymentDetailService paymentDetailService) {
 		this.paymentDetailService = paymentDetailService;
 	}
 
+	@Autowired
 	public void setPaymentInstructionService(PaymentInstructionService paymentInstructionService) {
 		this.paymentInstructionService = paymentInstructionService;
 	}
 
+	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
+	@Autowired
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
 	}
 
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
-	}
-
-	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
-		this.customerAddresDAO = customerAddresDAO;
-	}
-
+	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	@Autowired
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
-	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
-		this.instrumentwiseLimitService = instrumentwiseLimitService;
-	}
-
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Autowired
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
+	}
+
+	@Autowired(required = false)
+	@Qualifier("paymentInstructionPostValidationHook")
+	public void setPostValidationHook(PostValidationHook postValidationHook) {
+		this.postValidationHook = postValidationHook;
+	}
+
+	@Autowired
+	public void setFinOverDueService(FinOverDueService finOverDueService) {
+		this.finOverDueService = finOverDueService;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 }

@@ -104,15 +104,13 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_VARIABLE_SCHEDULE = "VARIABLECHEDULE";
 	public static final String UNIQUE_ID_ISRADETAILS = "ISRA_DETAILS";
 	public static final String UNIQUE_ID_SECURITYMANDATE = "SECMAN";
-
-	public static final int DEFAULT_ITEMNO = 1;
-
 	public static final String UNIQUE_ID_EXPENSES = "EXPENSES";
 	public static final String UNIQUE_ID_FINANCIALSUMMARY = "FINANCIALSUMMARY";
 	public static final String UNIQUE_ID_OCRDETAILS = "OCRDETAILS";
 	public static final String UNIQUE_ID_DMSINTERFACE = "DMSINTERFACE";
 	public static final String UNIQUE_ID_EXTERNALAGREEMENTS = "EXTERNALAGREEMENTS";
-
 	public static final String UNIQUE_ID_PMAY = "PMAY";
+	public static final String UNIQUE_ID_BASICDETAILS = "LOANBASICDETAILS";
 
+	public static final int DEFAULT_ITEMNO = 1;
 }

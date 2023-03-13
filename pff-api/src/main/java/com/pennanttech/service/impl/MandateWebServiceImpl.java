@@ -2,6 +2,7 @@ package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,9 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 
 		ErrorDetail error = response.getError();
 		if (error != null) {
-			mandate.setReturnStatus(getFailedStatus(error.getCode(), error.getError()));
+			response.setReturnStatus(getFailedReturnStatus(error.getCode(), error.getError()));
+		} else {
+			response.setReturnStatus(getSuccessStatus());
 		}
 
 		doEmptyResponseObject(response);
@@ -92,7 +95,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		ErrorDetail error = mandateService.updateMandate(mandate);
 
 		if (error != null) {
-			return getFailedStatus(error.getCode(), error.getError());
+			return getFailedReturnStatus(error.getCode(), error.getError());
 		}
 
 		return getSuccessStatus();
@@ -108,10 +111,12 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 
 		logReference(String.valueOf(mandateID));
 
-		ErrorDetail error = mandateService.deleteMandate(mandateID);
+		LoggedInUser loggedInUser = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+		ErrorDetail error = mandateService.deleteMandate(mandateID, loggedInUser);
 
 		if (error != null) {
-			return getFailedStatus(error.getCode(), error.getError());
+			return getFailedReturnStatus(error.getCode(), error.getError());
 		}
 
 		return getSuccessStatus();
@@ -143,7 +148,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		ErrorDetail error = mandateService.loanMandateSwapping(finReference, oldMandateId, newMandateId);
 
 		if (error != null) {
-			return getFailedStatus(error.getCode(), error.getError());
+			return getFailedReturnStatus(error.getCode(), error.getError());
 		}
 
 		return getSuccessStatus();
@@ -165,7 +170,9 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 
 		ErrorDetail error = response.getError();
 		if (error != null) {
-			mandate.setReturnStatus(getFailedStatus(error.getCode(), error.getError()));
+			mandate.setReturnStatus(getFailedReturnStatus(error.getCode(), error.getError()));
+		} else {
+			response.setReturnStatus(getSuccessStatus());
 		}
 
 		if (response.getMandateID() != Long.MIN_VALUE) {
@@ -187,7 +194,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		ErrorDetail error = mandateService.updateStatus(mandate);
 
 		if (error != null) {
-			return getFailedStatus(error.getCode(), error.getError());
+			return getFailedReturnStatus(error.getCode(), error.getError());
 		}
 
 		return getSuccessStatus();
@@ -206,7 +213,7 @@ public class MandateWebServiceImpl extends AbstractService implements MandateRes
 		ErrorDetail error = mandateService.updateApprovedMandate(mandate);
 
 		if (error != null) {
-			return getFailedStatus(error.getCode(), error.getError());
+			return getFailedReturnStatus(error.getCode(), error.getError());
 		}
 
 		logger.debug(Literal.LEAVING);

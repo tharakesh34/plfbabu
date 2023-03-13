@@ -2,10 +2,10 @@ package com.pennanttech.explore;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.testng.annotations.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 

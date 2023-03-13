@@ -51,5 +51,5 @@ public interface PaymentInstructionDAO extends BasicCrudDao<PaymentInstruction> 
 
 	long getPymntsCustId(long paymentId);
 
-	boolean isInstructionInProgress(String finReference);
+	boolean isInProgress(long finID);
 }

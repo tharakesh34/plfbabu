@@ -34,15 +34,21 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -56,6 +62,8 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
+	private BankBranchDAO bankBranchDAO;
+	private CustomerDAO customerDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -242,14 +250,14 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 			if (count > 0) {
 				String[] parameters = new String[4];
 				parameters[0] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_FinType.value")
-						+ ": " + fpb.getFinType();
+						+ ": " + fpb.getFinType() + ", ";
 				parameters[1] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PaymentType.value")
-						+ ": " + fpb.getPaymentMode();
+						+ ": " + fpb.getPaymentMode() + ", ";
 				parameters[2] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_Purpose.value")
-						+ ": " + fpb.getPurpose();
+						+ ": " + fpb.getPurpose() + ", ";
 				parameters[3] = PennantJavaUtil.getLabel("label_LoanTypePartnerbankMappingDialogue_PartnerBank.value")
-						+ ": " + fpb.getPartnerBankCode();
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+						+ ": " + fpb.getPartnerBankCode() + " is Already Exists";
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30550", parameters, null));
 			}
 		}
 
@@ -327,8 +335,7 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	}
 
 	@Override
-	public List<AuditDetail> setAuditData(List<FinTypePartnerBank> fpbList,
-			String auditTranType, String method) {
+	public List<AuditDetail> setAuditData(List<FinTypePartnerBank> fpbList, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -467,8 +474,46 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	}
 
 	@Override
-	public List<FinTypePartnerBank> getByFinTypeAndPurpose(FinTypePartnerBank fab) {
-		return finTypePartnerBankDAO.getByFinTypeAndPurpose(fab);
+	public List<FinTypePartnerBank> getFinTypePartnerBanks(FinTypePartnerBank fab) {
+		List<FinTypePartnerBank> list = finTypePartnerBankDAO.getFinTypePartnerBanks(fab);
+
+		if (fab.getFinID() <= 0) {
+			return list;
+		}
+
+		String paymentMode = fab.getPaymentMode();
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentMode)
+				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentMode)) {
+
+			String payableLoc = getPayableLoc(paymentMode);
+
+			String custShrtName = customerDAO.getCustShrtNameByFinID(fab.getFinID());
+
+			for (FinTypePartnerBank ftpb : list) {
+				BankBranch bb = bankBranchDAO.getPrintingLoc(fab.getFinID(), ftpb.getIssuingBankCode(), paymentMode);
+
+				if (bb != null) {
+					ftpb.setPrintingLoc(bb.getBranchCode());
+					ftpb.setPrintingLocDesc(bb.getBranchDesc());
+				}
+
+				ftpb.setFavourName(custShrtName);
+				ftpb.setPayableLoc(payableLoc);
+			}
+		}
+
+		return list;
+	}
+
+	@Override
+	public FinTypePartnerBank getFinTypePartnerBank(FinTypePartnerBank fab) {
+		List<FinTypePartnerBank> list = getFinTypePartnerBanks(fab);
+
+		if (list.size() > 0) {
+			return list.get(0);
+		}
+
+		return null;
 	}
 
 	@Override
@@ -491,6 +536,16 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 		return finTypePartnerBankDAO.getFintypePartnerBankByBranch(branchCode, clusterId);
 	}
 
+	private String getPayableLoc(String paymentMode) {
+		String sysParamCode = SMTParameterConstants.PAYMENT_INSTRUCTION_CHEQUE_PAYABLE_LOCATION;
+
+		if (DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentMode)) {
+			sysParamCode = SMTParameterConstants.PAYMENT_INSTRUCTION_DD_PAYABLE_LOCATION;
+		}
+
+		return SysParamUtil.getValueAsString(sysParamCode);
+	}
+
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -499,6 +554,16 @@ public class FinTypePartnerBankServiceImpl extends GenericService<FinTypePartner
 	@Autowired
 	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
 		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
+
+	@Autowired
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 }

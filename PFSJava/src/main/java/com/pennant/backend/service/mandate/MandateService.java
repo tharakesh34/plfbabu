@@ -34,10 +34,12 @@ import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public interface MandateService {
@@ -110,7 +112,7 @@ public interface MandateService {
 
 	ErrorDetail updateMandate(Mandate mandate);
 
-	ErrorDetail deleteMandate(long mandateID);
+	ErrorDetail deleteMandate(long mandateID, LoggedInUser loggedInUser);
 
 	Mandate approveMandate(Mandate mandate);
 
@@ -121,4 +123,7 @@ public interface MandateService {
 	List<Mandate> getMandatesByCif(String cif);
 
 	ErrorDetail loanMandateSwapping(String finReference, Long oldMandateId, Long newMandateId);
+
+	PaymentInstruction getBeneficiatyDetailsByMandateId(Long mandateId);
+
 }

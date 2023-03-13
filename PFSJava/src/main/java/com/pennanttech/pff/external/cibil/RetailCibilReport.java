@@ -512,7 +512,15 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		/* Current New Member Code */
 		cell = row.createCell(33);
-		cell.setCellValue(memberDetails.getMemberId().substring(0, memberDetails.getMemberId().lastIndexOf("_")));
+		String memberId = memberDetails.getMemberId();
+
+		int lastIndexOf = memberId.lastIndexOf("_");
+
+		if (lastIndexOf <= 0) {
+			lastIndexOf = memberId.length();
+		}
+
+		cell.setCellValue(memberId.substring(0, lastIndexOf));
 
 		/* Current New Member Name */
 		cell = row.createCell(34);

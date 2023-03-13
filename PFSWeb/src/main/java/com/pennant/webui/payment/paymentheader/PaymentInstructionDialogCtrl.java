@@ -48,13 +48,13 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.payment.feerefundheader.FeeRefundHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.TableType;
 
 public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction> {
 	private static final long serialVersionUID = 1L;
@@ -68,7 +68,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	protected Datebox postDate;
 	protected Combobox paymentType;
-	protected CurrencyBox paymentAmount;
+	public CurrencyBox paymentAmount;
 	protected ExtendedCombobox partnerBankID;
 	protected Textbox remarks;
 	protected Textbox tranReference;
@@ -79,8 +79,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected ExtendedCombobox issuingBank;
 	protected Textbox favouringName;
 	protected Textbox payableLoc;
-	protected Textbox printingLoc;
-	protected Space madndatory_PrintingLoc;
+	protected ExtendedCombobox printingLoc;
 	protected Datebox valueDate;
 	protected Textbox chequeOrDDumber;
 
@@ -107,6 +106,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	private transient BankDetailService bankDetailService;
 	private PaymentInstruction paymentInstruction;
 	private PaymentHeaderDialogCtrl paymentHeaderDialogCtrl;
+	private FeeRefundHeaderDialogCtrl feeRefundHeaderDialogCtrl;
 	private PaymentHeader paymentHeader;
 	private FinanceMain financeMain;
 	private FinTypePartnerBankService finTypePartnerBankService;
@@ -158,6 +158,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			if (arguments.containsKey("paymentHeaderDialogCtrl")) {
 				setPaymentHeaderDialogCtrl((PaymentHeaderDialogCtrl) arguments.get("paymentHeaderDialogCtrl"));
 				getPaymentHeaderDialogCtrl().setDisbursementInstructionsDialogCtrl(this);
+			}
+
+			if (arguments.containsKey("feeRefundHeaderDialogCtrl")) {
+				setFeeRefundHeaderDialogCtrl((FeeRefundHeaderDialogCtrl) arguments.get("feeRefundHeaderDialogCtrl"));
+				feeRefundHeaderDialogCtrl.setDisbursementInstructionsDialogCtrl(this);
 			}
 
 			if (arguments.containsKey("paymentHeader")) {
@@ -254,12 +259,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.acctNumber.setReadonly(isReadOnly("PaymentInstructionDialog_acctNumber"));
 		this.acctHolderName.setReadonly(isReadOnly("PaymentInstructionDialog_acctHolderName"));
 		this.phoneNumber.setReadonly(isReadOnly("PaymentInstructionDialog_phoneNumber"));
-		this.issuingBank.setReadonly(isReadOnly("PaymentInstructionDialog_issuingBank"));
+		this.issuingBank.setReadonly(true);
 		this.favouringName.setReadonly(isReadOnly("PaymentInstructionDialog_favouringName"));
 		this.chequeOrDDumber.setReadonly(isReadOnly("PaymentInstructionDialog_chequeOrDDumber"));
 		this.payableLoc.setReadonly(isReadOnly("PaymentInstructionDialog_payableLoc"));
 		this.printingLoc.setReadonly(isReadOnly("PaymentInstructionDialog_printingLoc"));
-		this.valueDate.setReadonly(isReadOnly("PaymentInstructionDialog_valueDate"));
+		this.valueDate.setDisabled(isReadOnly("PaymentInstructionDialog_valueDate"));
 		this.partnerBankID.setReadonly(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 		this.leiNumber.setReadonly(isReadOnly("PaymentInstructionDialog_leiNumber"));
 
@@ -290,7 +295,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.issuingBank.setReadonly(true);
 		this.bankBranchID.setReadonly(true);
 		this.payableLoc.setDisabled(true);
-		this.printingLoc.setDisabled(true);
+		this.printingLoc.setReadonly(true);
 		this.valueDate.setDisabled(true);
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
@@ -323,11 +328,13 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.postDate.setWidth("150px");
 		this.valueDate.setWidth("150px");
 		this.chequeOrDDumber.setWidth("150px");
-		this.remarks.setWidth("150px");
-		this.printingLoc.setWidth("150px");
 
-		this.partnerBankID.setButtonDisabled(true);
-		this.partnerBankID.setReadonly(true);
+		this.printingLoc.setModuleName("BankBranch");
+		this.printingLoc.setMandatoryStyle(true);
+		this.printingLoc.setValueColumn("BranchCode");
+		this.printingLoc.setDescColumn("BranchDesc");
+		this.printingLoc.setValidateColumns(new String[] { "BranchCode" });
+
 		this.partnerBankID.setModuleName("FinTypePartner");
 		this.partnerBankID.setMandatoryStyle(true);
 		this.partnerBankID.setValueColumn("PartnerBankCode");
@@ -349,6 +356,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.issuingBank.setDescColumn("BankName");
 		this.issuingBank.setDisplayStyle(2);
 		this.issuingBank.setValidateColumns(new String[] { "BankCode" });
+		this.issuingBank.setReadonly(true);
 
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
@@ -363,54 +371,54 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doWriteBeanToComponents(PaymentInstruction paymentInstruction) {
+	public void doWriteBeanToComponents(PaymentInstruction pi) {
 		logger.debug(Literal.ENTERING);
 
-		if (this.paymentHeader.isNewRecord() && paymentInstruction.getPostDate() == null) {
+		if (this.paymentHeader.isNewRecord() && pi.getPostDate() == null) {
 			this.postDate.setValue(SysParamUtil.getAppDate());
 		} else {
-			this.postDate.setValue(paymentInstruction.getPostDate());
+			this.postDate.setValue(pi.getPostDate());
 		}
 
-		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(), PennantStaticListUtil.getPaymentTypes(),
-				"");
-		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
-			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
-			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());
-			this.partnerBankID.setValue(paymentInstruction.getPartnerBankCode(),
-					paymentInstruction.getPartnerBankName());
+		fillComboBox(this.paymentType, pi.getPaymentType(), PennantStaticListUtil.getPaymentTypes(), "");
+
+		if (pi.getPartnerBankId() != Long.MIN_VALUE && pi.getPartnerBankId() != 0) {
+			this.partnerBankID.setReadonly(isReadOnly("PaymentInstructionDialog_partnerBankID"));
+			this.partnerBankID.setAttribute("partnerBankId", pi.getPartnerBankId());
+			this.partnerBankID.setValue(pi.getPartnerBankCode(), pi.getPartnerBankName());
 		}
+
+		this.issuingBank.setReadonly(true);
+		this.issuingBank.setAttribute("issuingBank", pi.getIssuingBank());
+		this.issuingBank.setValue(pi.getIssuingBank(), pi.getIssuingBankName());
 
 		this.paymentAmount.setValue(
 				PennantApplicationUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
-		this.remarks.setValue(paymentInstruction.getRemarks());
-		this.tranReference.setValue(paymentInstruction.getTransactionRef());
-		this.status.setValue(paymentInstruction.getStatus());
-		this.rejectReason.setValue(paymentInstruction.getRejectReason());
+		this.remarks.setValue(pi.getRemarks());
+		this.tranReference.setValue(pi.getTransactionRef());
+		this.status.setValue(pi.getStatus());
+		this.rejectReason.setValue(pi.getRejectReason());
 
-		if (paymentInstruction.getBankBranchId() != Long.MIN_VALUE && paymentInstruction.getBankBranchId() != 0) {
-			this.bankBranchID.setAttribute("bankBranchID", paymentInstruction.getBankBranchId());
-			this.bankBranchID.setValue(paymentInstruction.getBankBranchIFSC(), paymentInstruction.getBankBranchCode());
-			this.bank.setValue(StringUtils.trimToEmpty(paymentInstruction.getBankName()));
-			this.branch.setValue(paymentInstruction.getBranchDesc());
-			this.city.setValue(StringUtils.trimToEmpty(paymentInstruction.getpCCityName()));
+		if (pi.getBankBranchId() != Long.MIN_VALUE && pi.getBankBranchId() != 0) {
+			this.bankBranchID.setAttribute("bankBranchID", pi.getBankBranchId());
+			this.bankBranchID.setValue(pi.getBankBranchIFSC(), pi.getBankBranchCode());
+			this.bank.setValue(StringUtils.trimToEmpty(pi.getBankName()));
+			this.branch.setValue(pi.getBranchDesc());
+			this.city.setValue(StringUtils.trimToEmpty(pi.getpCCityName()));
 		}
 
-		this.acctNumber.setValue(paymentInstruction.getAccountNo());
-		this.acctHolderName.setValue(paymentInstruction.getAcctHolderName());
-		this.phoneNumber.setValue(paymentInstruction.getPhoneNumber());
+		this.acctNumber.setValue(pi.getAccountNo());
+		this.acctHolderName.setValue(pi.getAcctHolderName());
+		this.phoneNumber.setValue(pi.getPhoneNumber());
 
-		this.issuingBank.setAttribute("issuingBank", paymentInstruction.getIssuingBank());
-		this.issuingBank.setValue(StringUtils.trimToEmpty(paymentInstruction.getIssuingBank()),
-				StringUtils.trimToEmpty(paymentInstruction.getIssuingBankName()));
-
-		this.chequeOrDDumber.setValue(paymentInstruction.getFavourNumber());
-		this.favouringName.setValue(paymentInstruction.getFavourName());
-		this.payableLoc.setValue(paymentInstruction.getPayableLoc());
-		this.printingLoc.setValue(paymentInstruction.getPrintingLoc());
-		this.valueDate.setValue(paymentInstruction.getValueDate());
-		this.leiNumber.setValue(paymentInstruction.getLei());
-		checkPaymentType(paymentInstruction.getPaymentType());
+		this.chequeOrDDumber.setValue(pi.getFavourNumber());
+		this.favouringName.setValue(pi.getFavourName());
+		this.payableLoc.setValue(pi.getPayableLoc());
+		this.printingLoc.setValue(pi.getPrintingLoc());
+		this.printingLoc.setDescription(pi.getPrintingLocDesc());
+		this.valueDate.setValue(pi.getValueDate());
+		this.leiNumber.setValue(pi.getLei());
+		checkPaymentType(pi.getPaymentType());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -418,16 +426,16 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param paymentInstruction
+	 * @param pi
 	 * @throws InterruptedException
 	 */
-	public PaymentInstruction doWriteComponentsToBean(PaymentInstruction paymentInstruction) {
+	public PaymentInstruction doWriteComponentsToBean(PaymentInstruction pi) {
 		logger.debug(Literal.ENTERING);
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 
 		if (this.paymentHeader.isNewRecord()) {
-			paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
+			pi.setStatus(DisbursementConstants.STATUS_NEW);
 		}
 
 		try {
@@ -436,60 +444,62 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				throw new WrongValueException(this.postDate,
 						"Payment Date should be greater than or equal to :" + appDate);
 			}
-			paymentInstruction.setPostDate(this.postDate.getValue());
+			pi.setPostDate(this.postDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setPaymentType(this.paymentType.getSelectedItem().getValue().toString());
+			pi.setPaymentType(this.paymentType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setPaymentAmount(
+			pi.setPaymentAmount(
 					PennantApplicationUtil.unFormateAmount(this.paymentAmount.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setRemarks(this.remarks.getValue());
+			pi.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			this.partnerBankID.getValidatedValue();
-			Object obj = this.partnerBankID.getAttribute("partnerBankId");
+			Object obj = (Object) this.partnerBankID.getObject();
+
 			if (obj != null) {
-				paymentInstruction.setPartnerBankId(Long.valueOf(String.valueOf(obj)));
+				FinTypePartnerBank ftpb = (FinTypePartnerBank) obj;
+				pi.setPartnerBankId(ftpb.getPartnerBankID());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setAccountNo(this.acctNumber.getValue());
+			pi.setAccountNo(this.acctNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setAcctHolderName(this.acctHolderName.getValue());
+			pi.setAcctHolderName(this.acctHolderName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setFavourNumber(this.chequeOrDDumber.getValue());
+			pi.setFavourNumber(this.chequeOrDDumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setFavourName(this.favouringName.getValue());
+			pi.setFavourName(this.favouringName.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -498,27 +508,42 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.issuingBank.getValidatedValue();
 			Object obj = this.issuingBank.getAttribute("issuingBank");
 			if (obj != null) {
-				paymentInstruction.setIssuingBank(String.valueOf(obj));
+				pi.setIssuingBank(String.valueOf(obj));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setPayableLoc(this.payableLoc.getValue());
+			pi.setPayableLoc(this.payableLoc.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setPrintingLoc(this.printingLoc.getValue());
+			boolean mandatory = false;
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+				mandatory = true;
+			}
+
+			this.printingLoc.clearErrorMessage();
+
+			this.printingLoc.setErrorMessage("");
+
+			if (!this.printingLoc.isReadonly()) {
+				this.printingLoc.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"), null, mandatory));
+			}
+			pi.setPrintingLoc(this.printingLoc.getValue());
+			pi.setPrintingLocDesc(this.printingLoc.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
 			if (this.valueDate.getValue() != null) {
-				paymentInstruction.setValueDate(this.valueDate.getValue());
+				pi.setValueDate(this.valueDate.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -528,7 +553,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.bankBranchID.getValidatedValue();
 			Object obj = this.bankBranchID.getAttribute("bankBranchID");
 			if (obj != null) {
-				paymentInstruction.setBankBranchId(Long.valueOf(String.valueOf(obj)));
+				pi.setBankBranchId(Long.valueOf(String.valueOf(obj)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -545,19 +570,19 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				this.phoneNumber.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_FinAdvancePaymentsDialog_PhoneNumber.value"), mandatory));
 			}
-			paymentInstruction.setPhoneNumber(this.phoneNumber.getValue());
+			pi.setPhoneNumber(this.phoneNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setPaymentCCy(financeMain.getFinCcy());
+			pi.setPaymentCCy(financeMain.getFinCcy());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			paymentInstruction.setLei(this.leiNumber.getValue());
+			pi.setLei(this.leiNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -575,7 +600,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 
 		logger.debug(Literal.LEAVING);
-		return paymentInstruction;
+		return pi;
 	}
 
 	/**
@@ -595,10 +620,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 					Labels.getLabel("label_DisbInstructionsDialog_DisbAmount.value"), ccyFormatter, true, false));
 		}
 
-		if (!this.partnerBankID.isReadonly()) {
-			this.partnerBankID.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true));
-		}
+		/*
+		 * if (!this.partnerBankID.isReadonly()) { this.partnerBankID.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_DisbInstructionsDialog_Partnerbank.value"), null, true)); }
+		 */
 
 		if (!this.remarks.isReadonly()) {
 			this.remarks.setConstraint(
@@ -630,7 +655,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_PrintingLoc.value"),
 								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
-			if (!this.valueDate.isReadonly()) {
+			if (!this.valueDate.isDisabled()) {
 				Date appDate = SysParamUtil.getAppDate();
 				Date todate = DateUtility.addMonths(appDate, 6);
 				this.valueDate.setConstraint(new PTDateValidator(
@@ -739,7 +764,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	}
 
 	public void onFulfill$bankBranchID(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		Object dataObject = bankBranchID.getObject();
 
@@ -769,23 +794,6 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onFulfill$issuingBank(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		Object dataObject = issuingBank.getObject();
-		if (dataObject instanceof String) {
-			this.issuingBank.setValue(dataObject.toString());
-		} else {
-			BankDetail details = (BankDetail) dataObject;
-			if (details != null) {
-				this.issuingBank.setAttribute("issuingBank", details.getBankCode());
-				this.issuingBank.setValue(details.getBankCode());
-				this.issuingBank.setDescription(details.getBankName());
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
 	/**
 	 * Change the partnerBankID for the Account on changing the finance Branch
 	 * 
@@ -800,48 +808,74 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				this.partnerBankID.setValue(dataObject.toString());
 				this.partnerBankID.setDescription("");
 			}
-		} else {
-			FinTypePartnerBank partnerBank = (FinTypePartnerBank) dataObject;
-			if (partnerBank != null) {
-				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankID());
-				this.paymentInstruction.setPartnerBankName(partnerBank.getPartnerBankName());
-				this.paymentInstruction.setPartnerBankAc(partnerBank.getAccountNo());
-				this.paymentInstruction.setPartnerBankAcType(partnerBank.getAccountType());
-			}
+
+			doSetPartnerBank();
+			logger.debug(Literal.LEAVING);
+			return;
 		}
+
+		FinTypePartnerBank ftpb = (FinTypePartnerBank) dataObject;
+		if (ftpb != null) {
+
+			setFilters(ftpb, null);
+
+			ftpb = finTypePartnerBankService.getFinTypePartnerBank(ftpb);
+		}
+
+		if (ftpb != null) {
+			doSetPartnerBank(ftpb);
+		} else {
+			doSetPartnerBank();
+		}
+
+		this.partnerBankID.setAttribute("partnerBankId", ftpb.getPartnerBankID());
+		this.paymentInstruction.setPartnerBankName(ftpb.getPartnerBankName());
+		this.paymentInstruction.setPartnerBankAc(ftpb.getAccountNo());
+		this.paymentInstruction.setPartnerBankAcType(ftpb.getAccountType());
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$issuingBank(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		this.printingLoc.setValue("");
+		Object dataObject = issuingBank.getObject();
+		String paymentType = getComboboxValue(this.paymentType);
+
+		if (dataObject instanceof String) {
+			this.issuingBank.setValue(dataObject.toString());
+
+			logger.debug(Literal.LEAVING);
+
+			return;
+		}
+
+		BankDetail details = (BankDetail) dataObject;
+		if (details != null) {
+			this.issuingBank.setAttribute("bankCode", details.getBankCode());
+			Filter[] filters = new Filter[2];
+			filters[0] = new Filter("BankCode", ((BankDetail) dataObject).getBankCode(), Filter.OP_EQUAL);
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
+				filters[1] = new Filter("Cheque", true, Filter.OP_EQUAL);
+			}
+			if (DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+				filters[1] = new Filter("DD", true, Filter.OP_EQUAL);
+			}
+			this.printingLoc.setFilters(filters);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$paymentType(Event event) {
 		String sPaymentType = this.paymentType.getSelectedItem().getValue().toString();
-		this.partnerBankID.setButtonDisabled(false);
-		this.partnerBankID.setReadonly(false);
+
+		doSetPartnerBank();
 
 		if (PartnerBankExtension.BRANCH_WISE_MAPPING) {
 			doAddBranchWiseFilter(sPaymentType);
 			checkPaymentType(sPaymentType);
-			return;
-		}
-
-		FinTypePartnerBank item = new FinTypePartnerBank();
-		item.setFinType(financeMain.getFinType());
-		item.setPaymentMode(sPaymentType);
-		item.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
-		item.setEntityCode(financeMain.getLovDescEntityCode());
-
-		List<FinTypePartnerBank> partnerBanks = finTypePartnerBankService.getPartnerBanksList(item,
-				TableType.AVIEW);
-		if (partnerBanks.size() == 1) {
-			item = partnerBanks.get(0);
-			this.partnerBankID.setAttribute("partnerBankId", item.getPartnerBankID());
-			this.paymentInstruction.setPartnerBankName(item.getPartnerBankName());
-			this.paymentInstruction.setPartnerBankAc(item.getAccountNo());
-			this.paymentInstruction.setPartnerBankAcType(item.getAccountType());
-			this.partnerBankID.setButtonDisabled(true);
-			this.partnerBankID.setValue(item.getPartnerBankCode(), item.getPartnerBankName());
-
-			checkPaymentType(sPaymentType);
-
 			return;
 		}
 
@@ -851,6 +885,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		filters[2] = new Filter("PaymentMode", sPaymentType, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 		filters[4] = new Filter("EntityCode", financeMain.getLovDescEntityCode(), Filter.OP_EQUAL);
+
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setConstraint("");
 		this.partnerBankID.setErrorMessage("");
@@ -882,14 +917,15 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			this.acctNumber.setValue("");
 			this.acctHolderName.setValue("");
 			this.phoneNumber.setValue("");
-			if (type.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
+
+			if (type.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+					|| type.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
 				readOnlyComponent(isReadOnly("PaymentInstructionDialog_printingLoc"), this.printingLoc);
-				this.madndatory_PrintingLoc.setSclass("mandatory");
+				this.printingLoc.setMandatoryStyle(true);
 			} else {
-				this.printingLoc.setValue("");
-				readOnlyComponent(true, this.printingLoc);
-				this.madndatory_PrintingLoc.setSclass("");
+				this.printingLoc.setSclass("");
 			}
+
 		} else {
 			doaddFilter(type);
 			this.caption_FinAdvancePaymentsDialog_NeftDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
@@ -908,40 +944,111 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 				this.contactNumber.setSclass("");
 			}
 		}
+
+		Filter[] filtersPrintLoc = new Filter[2];
+		filtersPrintLoc[0] = new Filter("BankCode", issuingBank.getValue(), Filter.OP_EQUAL);
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(type)) {
+			filtersPrintLoc[1] = new Filter("Cheque", true, Filter.OP_EQUAL);
+		}
+
+		if (DisbursementConstants.PAYMENT_TYPE_DD.equals(type)) {
+			filtersPrintLoc[1] = new Filter("DD", true, Filter.OP_EQUAL);
+		}
+
+		this.printingLoc.setFilters(filtersPrintLoc);
+
+	}
+
+	private void doSetPartnerBank(FinTypePartnerBank fpb) {
+		this.partnerBankID.setAttribute("bankBranchID", fpb.getPartnerBankID());
+		// this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+		// this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+		this.partnerBankID.setValue(fpb.getPartnerBankCode());
+		this.partnerBankID.setDescription(fpb.getPartnerBankName());
+		this.partnerBankID.setReadonly(true);
+
+		this.issuingBank.setValue(fpb.getIssuingBankCode());
+		this.issuingBank.setDescription(fpb.getIssuingBankName());
+
+		this.printingLoc.setValue(fpb.getPrintingLoc());
+		this.printingLoc.setDescription(fpb.getPrintingLocDesc());
+
+		this.payableLoc.setValue(fpb.getPayableLoc());
+
+		this.favouringName.setValue(fpb.getFavourName());
+
+	}
+
+	private void doSetPartnerBank() {
+		this.partnerBankID.setAttribute("bankBranchID", null);
+		// this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
+		// this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
+		this.partnerBankID.setValue("");
+		this.partnerBankID.setDescription("");
+		this.partnerBankID.setReadonly(false);
+
+		this.issuingBank.setValue("");
+		this.issuingBank.setDescription("");
+
+		this.printingLoc.setValue("");
+		this.printingLoc.setDescription("");
+
+		this.payableLoc.setValue("");
+	}
+
+	private void setFilters(FinTypePartnerBank fpb, Filter[] filters) {
+		long finID = financeMain.getFinID();
+		String finType = financeMain.getFinType();
+		String finBranch = financeMain.getFinBranch();
+		String paymentMode = this.paymentType.getSelectedItem().getValue().toString();
+
+		Long clusterId = null;
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+			clusterId = clusterService.getClustersFilter(finBranch);
+		}
+
+		if (filters != null) {
+			if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
+				filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
+			} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
+				filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
+			}
+		}
+
+		fpb.setFinID(finID);
+		fpb.setFinType(finType);
+		fpb.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
+		fpb.setPaymentMode(paymentMode);
+		fpb.setBranchCode(finBranch);
+		fpb.setClusterId(clusterId);
+
 	}
 
 	private void doAddBranchWiseFilter(String payMode) {
-		String finBranch = financeMain.getFinBranch();
-
 		Filter[] filters = new Filter[4];
 		filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
 		filters[1] = new Filter("Purpose", AccountConstants.PARTNERSBANK_PAYMENT, Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", payMode, Filter.OP_EQUAL);
 
-		Long clusterId = null;
-		if (PartnerBankExtension.MAPPING.equals("B")) {
-			filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
-			clusterId = clusterService.getClustersFilter(finBranch);
-			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
-		}
-
 		FinTypePartnerBank fpb = new FinTypePartnerBank();
-		fpb.setFinType(financeMain.getFinType());
-		fpb.setPurpose(AccountConstants.PARTNERSBANK_PAYMENT);
-		fpb.setPaymentMode(payMode);
-		fpb.setBranchCode(finBranch);
-		fpb.setClusterId(clusterId);
+		setFilters(fpb, filters);
 
-		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankService.getFinTypePartnerBanks(fpb);
 
 		if (fintypePartnerbank.size() == 1) {
 			fpb = fintypePartnerbank.get(0);
-			this.partnerBankID.setAttribute("partnerBankId", fpb.getPartnerBankID());
-			this.partnerBankID.setAttribute("partnerBankAc", fpb.getAccountNo());
-			this.partnerBankID.setAttribute("partnerBankAcType", fpb.getAccountType());
-			this.partnerBankID.setValue(fpb.getPartnerBankCode());
-			this.partnerBankID.setDescription(fpb.getPartnerBankName());
+			doSetPartnerBank(fpb);
+		} else if (fintypePartnerbank.size() > 1) {
+			doSetPartnerBank();
+		}
+
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(payMode)
+				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(payMode)) {
+
+			if (valueDate.getValue() == null) {
+				this.valueDate.setValue(SysParamUtil.getAppDate());
+			}
+
 		}
 
 		this.partnerBankID.setFilters(filters);
@@ -982,6 +1089,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 	public void setPaymentHeaderDialogCtrl(PaymentHeaderDialogCtrl paymentHeaderDialogCtrl) {
 		this.paymentHeaderDialogCtrl = paymentHeaderDialogCtrl;
+	}
+
+	public void setFeeRefundHeaderDialogCtrl(FeeRefundHeaderDialogCtrl feeRefundHeaderDialogCtrl) {
+		this.feeRefundHeaderDialogCtrl = feeRefundHeaderDialogCtrl;
 	}
 
 	public PaymentHeader getPaymentHeader() {

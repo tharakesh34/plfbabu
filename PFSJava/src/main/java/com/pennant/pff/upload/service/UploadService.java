@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.TableType;
 
 public interface UploadService {
@@ -16,7 +18,7 @@ public interface UploadService {
 	void doValidate(FileUploadHeader header, Object detail);
 
 	List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type);
+			Date toDate, String type, String stage, String usrLogin);
 
 	List<Entity> getEntities();
 
@@ -29,4 +31,17 @@ public interface UploadService {
 	void doReject(List<FileUploadHeader> headers);
 
 	String getSqlQuery();
+
+	ProcessRecord getProcessRecord();
+
+	DataEngineStatus getDEStatus(long executionID);
+
+	void updateDownloadStatus(long headerID, int status);
+
+	void updateInProcessStatus(long headerID, int status);
+
+	String isValidateApprove(List<FileUploadHeader> selectedHeaders);
+
+	void updateFailRecords(int sucessRecords, int faildrecords, long headerId);
+
 }

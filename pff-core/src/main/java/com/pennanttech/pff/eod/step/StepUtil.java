@@ -10,8 +10,8 @@ public class StepUtil {
 		manualAdvisesCancellation, datesUpdate, snapShotPreparation, ledgerDownLoad, ledgerNotification, gstDownload,
 		collectionDataDownLoad, collectionNotification, loadCollateralRevaluationData, collateralRevaluation,
 		endOfMonthDecider, retailcibil, corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess,
-		notifyLoanClosureDetailsToEFS, customerDataPreperation, masterDataPreparation,
-		prepareAmortizationQueue
+		notifyLoanClosureDetailsToEFS, customerDataPreperation, masterDataPreparation, prepareAmortizationQueue,
+		financeHoldRelease, autoRefundExecution
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
@@ -52,9 +52,15 @@ public class StepUtil {
 
 	public static final DataEngineStatus NPA_CLASSIFICATION = new DataEngineStatus("NPA_CLASSIFICATION");
 
+	public static final DataEngineStatus OTS = new DataEngineStatus("OTS");
+
 	public static final DataEngineStatus EFF_NPA_CLASSIFICATION = new DataEngineStatus("EFF_NPA_CLASSIFICATION");
 
 	public static final DataEngineStatus PROVISION_CALC = new DataEngineStatus("PROVISION_CALC");
+
+	public static final DataEngineStatus FIN_HOLD_RELEASE = new DataEngineStatus("FIN_HOLD_RELEASE");
+
+	public static final DataEngineStatus AUTO_REFUND_PROCESS = new DataEngineStatus("AUTO_REFUND_PROCESS");
 
 	private StepUtil() {
 		super();

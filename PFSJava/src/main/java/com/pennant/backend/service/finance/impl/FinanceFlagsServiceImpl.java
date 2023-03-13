@@ -27,7 +27,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> implements FinanceFlagsService {
 	private static final Logger logger = LogManager.getLogger(FinanceFlagsServiceImpl.class);
@@ -55,7 +54,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		}
 
 		finFlag.setFinFlagDetailList(
-				finFlagDetailsDAO.getFinFlagsByFinRef(finFlag.getFinReference(), FinServiceEvent.FINFLAGS, type));
+				finFlagDetailsDAO.getFinFlagsByFinRef(finFlag.getFinReference(), FinanceConstants.MODULE_NAME, type));
 		return finFlag;
 	}
 

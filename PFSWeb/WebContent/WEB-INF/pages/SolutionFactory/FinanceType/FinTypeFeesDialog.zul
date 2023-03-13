@@ -98,7 +98,7 @@
 							<row id="row_FeeScheduleMethod">
 								<label id="label_FinTypeFeesDialog_FeeScheduleMethod" value="${c:l('label_FinTypeFeesDialog_FeeScheduleMethod.value')}" />
 								<hbox id="hbox_feeScheduleMethod">
-									<space spacing="2px" sclass="mandatory" />
+									<space spacing="2px" />
 									<combobox id="feeScheduleMethod" readonly="true" />
 								</hbox>
 								<label id="label_FinTypeFeesDialog_AlwModifyFeeSchdMthd" value="${c:l('label_FinTypeFeesDialog_AlwModifyFeeSchdMthd.value')}" />

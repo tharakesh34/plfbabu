@@ -2301,7 +2301,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		this.partnerBankID.setButtonDisabled(false);
 		this.partnerBankID.setReadonly(false);
-		
+
 		doLoadPartnerbankData();
 
 		Filter[] filtersPrintLoc = new Filter[1];
@@ -2350,10 +2350,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[1] = new Filter("Purpose", "D", Filter.OP_EQUAL);
 		filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[3] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
 
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(finBranch);
 			filters[3] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
 		}
@@ -2365,7 +2365,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		fpb.setBranchCode(finBranch);
 		fpb.setClusterId(clusterId);
 
-		List<FinTypePartnerBank> list = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getFinTypePartnerBanks(fpb);
 
 		if (list.size() == 1) {
 			fpb = list.get(0);
@@ -2553,7 +2553,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			return;
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 				|| str.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
-			doaddFilter(str);
+			doAddFilter(str);
 			caption_FinAdvancePaymentsDialog_ChequeDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_ChequeDetails.setVisible(true);
 			gb_NeftDetails.setVisible(false);
@@ -2579,7 +2579,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			this.btnGetCustBeneficiary.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnGetCustBeneficiary"));
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_IST)) {
-			doaddFilter(str);
+			doAddFilter(str);
 			gb_NeftDetails.setVisible(false);
 			gb_ChequeDetails.setVisible(false);
 			this.bankCode.setValue("");
@@ -2602,7 +2602,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.printingLoc.setSclass("");
 			this.btnGetCustBeneficiary.setVisible(false);
 		} else {
-			doaddFilter(str);
+			doAddFilter(str);
 			caption_FinAdvancePaymentsDialog_NeftDetails.setLabel(this.paymentType.getSelectedItem().getLabel());
 			gb_NeftDetails.setVisible(true);
 			gb_ChequeDetails.setVisible(false);
@@ -2622,7 +2622,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 	}
 
-	public void doaddFilter(String paymentMode) {
+	public void doAddFilter(String paymentMode) {
 		if (!PartnerBankExtension.BRANCH_WISE_MAPPING) {
 			Filter[] filters = new Filter[4];
 			filters[0] = new Filter("FinType", financeMain.getFinType(), Filter.OP_EQUAL);
@@ -2644,10 +2644,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		filters[2] = new Filter("PaymentMode", paymentMode, Filter.OP_EQUAL);
 		filters[3] = new Filter("Active", 1, Filter.OP_EQUAL);
 
-		if (PartnerBankExtension.MAPPING.equals("B")) {
+		if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("B")) {
 			filters[4] = new Filter("BranchCode", finBranch, Filter.OP_EQUAL);
-
-		} else if (PartnerBankExtension.MAPPING.equals("C")) {
+		} else if (PartnerBankExtension.BRANCH_OR_CLUSTER.equals("C")) {
 			clusterId = clusterService.getClustersFilter(finBranch);
 			filters[4] = new Filter("ClusterId", clusterId, Filter.OP_EQUAL);
 		}
@@ -2659,7 +2658,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		fpb.setBranchCode(finBranch);
 		fpb.setClusterId(clusterId);
 
-		List<FinTypePartnerBank> list = finTypePartnerBankService.getByFinTypeAndPurpose(fpb);
+		List<FinTypePartnerBank> list = finTypePartnerBankService.getFinTypePartnerBanks(fpb);
 		if (list.size() == 1) {
 			fpb = list.get(0);
 			this.partnerBankID.setAttribute("partnerBankId", fpb.getPartnerBankID());

@@ -33,7 +33,6 @@
  */
 package com.pennant.backend.endofday.tasklet;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +42,7 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -50,6 +50,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.script.ScriptEngine;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class PartitioningMaster implements Partitioner {
@@ -60,14 +61,12 @@ public class PartitioningMaster implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		EventProperties eventProperties = EODUtil.EVENT_PROPS;
-		Date valueDate = null;
+
 		int threadCount = 0;
 
 		if (eventProperties.isParameterLoaded()) {
-			valueDate = eventProperties.getAppValueDate();
 			threadCount = eventProperties.getEodThreadCount();
 		} else {
-			valueDate = SysParamUtil.getAppValueDate();
 			threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
 		}
 
@@ -78,44 +77,45 @@ public class PartitioningMaster implements Partitioner {
 		boolean recordsLessThanThread = false;
 		/* Configured thread count */
 
-		/* Update Running Count of Loans */
 		eodCustomerQueueDAO.handleFailures(new BatchJobQueue());
 
-		long loanCount = eodCustomerQueueDAO.getQueueCount(new BatchJobQueue());
+		long loanCount = eodCustomerQueueDAO.getCount();
+		long queueCount = eodCustomerQueueDAO.getQueueCount();
 		long totalCustomers = 0;
 
-		if (loanCount != 0) {
-			long noOfRows = Math.round((new Double(loanCount) / new Double(threadCount)));
+		if (queueCount == 0) {
+			return partitionData;
+		}
 
-			if (loanCount < threadCount) {
-				recordsLessThanThread = true;
-				noOfRows = loanCount;
+		long noOfRows = Math.round((Long.valueOf(queueCount) / Long.valueOf(threadCount)));
+
+		if (queueCount < threadCount) {
+			recordsLessThanThread = true;
+			noOfRows = queueCount;
+		}
+
+		long from = 0;
+		long to = 0;
+		for (int i = 1; i <= threadCount; i++) {
+
+			int customerCount = 0;
+			if (i == threadCount) {
+				/* Last thread will have the remaining records */
+				noOfRows = queueCount;
 			}
 
-			long from = 0;
-			long to = 0;
-			for (int i = 1; i <= threadCount; i++) {
+			to = to + noOfRows;
+			customerCount = eodCustomerQueueDAO.updateThreadID(from, to, i);
+			from = to;
 
-				int customerCount = 0;
-				if (i == threadCount) {
-					/* Last thread will have the remaining records */
-					noOfRows = loanCount;
-				}
+			totalCustomers = totalCustomers + customerCount;
 
-				to = to + noOfRows;
-				customerCount = eodCustomerQueueDAO.updateThreadID(from, to, i);
-				from = to;
+			ExecutionContext execution = addExecution(i, loanCount, customerCount);
+			partitionData.put(Integer.toString(i), execution);
 
-				totalCustomers = totalCustomers + customerCount;
-
-				ExecutionContext execution = addExecution(i, loanCount, customerCount);
-				partitionData.put(Integer.toString(i), execution);
-
-				if (recordsLessThanThread && noOfRows == customerCount) {
-					break;
-				}
+			if (recordsLessThanThread && noOfRows == customerCount) {
+				break;
 			}
-
 		}
 
 		logger.info("Thread allocation completed.");
@@ -134,6 +134,8 @@ public class PartitioningMaster implements Partitioner {
 		status.setTotalRecords(customersPerThread);
 		execution.put(status.getName(), status);
 		execution.put(EodConstants.THREAD, String.valueOf(threadID));
+		RuleExecutionUtil.EOD_SCRIPT_ENGINE_MAP.put("PLF_EOD_THREAD_".concat(String.valueOf(threadID)),
+				new ScriptEngine(true));
 
 		return execution;
 	}

@@ -26,6 +26,10 @@ public class PresentmentJobListener implements JobExecutionListener {
 
 	@Override
 	public void afterJob(JobExecution jobExecution) {
+
+		logger.debug("Listener process started...");
+		logger.info("Listener process started...");
+
 		String jobName = jobExecution.getJobInstance().getJobName();
 
 		JobParameters jobParameters = jobExecution.getJobParameters();
@@ -41,6 +45,9 @@ public class PresentmentJobListener implements JobExecutionListener {
 		presentmentDAO.updateEndTimeStatus(jobQueue);
 
 		String sysDate = DateUtil.getSysDate(DateFormat.LONG_DATE_TIME);
+
+		logger.debug("Listener process completed...");
+		logger.info("Listener process completed...");
 
 		logger.info("{} completed at {} with Batch_ID {} and Batch_Status {} ", jobName, sysDate, batchId, exitStatus);
 	}

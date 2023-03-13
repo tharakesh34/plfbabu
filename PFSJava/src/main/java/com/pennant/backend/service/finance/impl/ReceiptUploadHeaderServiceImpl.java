@@ -256,6 +256,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi);
 
 			FinScheduleData schd = financeDetail.getFinScheduleData();
+
+			FinServiceInstruction finServInstr = schd.getFinServiceInstruction();
 			if (!schd.getErrorDetails().isEmpty()) {
 				ErrorDetail error = schd.getErrorDetails().get(0);
 				rud.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
@@ -267,6 +269,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			} else {
 				rud.setProcessingStatus(ReceiptDetailStatus.SUCCESS.getValue());
 				rud.setReason("");
+				rud.setAllocationType(finServInstr.getAllocationType());
+				rud.setReceiptPurpose(finServInstr.getReceiptPurpose().code());
 			}
 			rut.incrementProgress();
 		});

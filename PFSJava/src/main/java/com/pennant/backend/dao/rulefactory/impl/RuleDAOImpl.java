@@ -325,14 +325,14 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	@Override
 	public List<Rule> getRuleByModuleAndEvent(final String module, final String event, String type) {
 		StringBuilder sql = getSelectQuery(type);
-		sql.append(" Where RuleModule = ? and RuleEvent = ?");
+		sql.append(" Where RuleModule = ? and RuleEvent = ? and Active = ?");
 		sql.append(" Order BY SeqOrder");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		RuleRowMapper rowMapper = new RuleRowMapper(type);
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { module, event }, rowMapper);
+		return this.jdbcOperations.query(sql.toString(), rowMapper, module, event, 1);
 	}
 
 	/**

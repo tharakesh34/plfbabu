@@ -148,7 +148,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 				ps.setString(index++, entity.getEntityPOBox());
 				ps.setBoolean(index++, entity.isActive());
 				ps.setBoolean(index++, entity.isGstinAvailable());
-				ps.setLong(index++, entity.getPinCodeId());
+				ps.setObject(index++, entity.getPinCodeId());
 				ps.setString(index++, entity.getcINNumber());
 				ps.setInt(index++, entity.getVersion());
 				ps.setLong(index++, entity.getLastMntBy());
@@ -200,7 +200,7 @@ public class EntityDAOImpl extends BasicDao<Entity> implements EntityDAO {
 			ps.setString(index++, entity.getEntityAddrStreet());
 			ps.setString(index++, entity.getEntityPOBox());
 			ps.setBoolean(index++, entity.isGstinAvailable());
-			ps.setLong(index++, entity.getPinCodeId());
+			ps.setObject(index++, entity.getPinCodeId());
 			ps.setString(index++, entity.getcINNumber());
 			ps.setBoolean(index++, entity.isActive());
 			ps.setInt(index++, entity.getVersion());

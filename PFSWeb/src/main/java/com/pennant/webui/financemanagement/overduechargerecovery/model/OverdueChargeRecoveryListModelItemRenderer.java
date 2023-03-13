@@ -46,6 +46,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 		implements ListitemRenderer<OverdueChargeRecovery>, Serializable {
 
 	private static final long serialVersionUID = 3995133144435008423L;
+	private BigDecimal cummulativePenalityAmt = BigDecimal.ZERO;
 
 	public OverdueChargeRecoveryListModelItemRenderer() {
 
@@ -82,6 +83,14 @@ public class OverdueChargeRecoveryListModelItemRenderer
 			lc.setParent(item);
 
 			lc = new Listcell(CurrencyUtil.format(overdueChargeRecovery.getFinCurODAmt(), format));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+
+			if (overdueChargeRecovery.isDueCreation()) {
+				cummulativePenalityAmt = cummulativePenalityAmt.add(overdueChargeRecovery.getPenalty());
+			}
+
+			lc = new Listcell(CurrencyUtil.format(cummulativePenalityAmt, format));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 

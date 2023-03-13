@@ -2,17 +2,12 @@ package com.pennant.menuroles;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -35,7 +30,10 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.administration.SecurityGroup;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.dataengine.util.ExcelUtil;
 import com.pennanttech.framework.core.SearchOperator;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.web.components.SearchFilterControl;
@@ -47,12 +45,10 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.menu.MainMenu;
 import com.pennanttech.pennapps.web.menu.Menu;
 import com.pennanttech.pennapps.web.menu.MenuItem;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
-
 	private static final long serialVersionUID = 1L;
-
-	private static final Logger logger = LogManager.getLogger(MenuRolesListCtrl.class);
 
 	protected Window window_MenuRolesList;
 	protected Borderlayout borderLayout_MenuRolesList;
@@ -74,7 +70,6 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 	private SearchProcessor searchProcessor;
 
 	private List<MenuItem> menuItemFinalList;
-	private List<MenuItem> menuItemDupList;
 
 	public MenuRolesListCtrl() {
 		super();
@@ -102,11 +97,12 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 	}
 
 	public void onClick$button_MenuRolesList_MenuSearch(Event event) {
+		logger.debug(Literal.ENTERING);
 
 		String opr = String.valueOf(sortOperator_menuName.getSelectedIndex());
 		String menuname = menuName.getValue();
 
-		menuItemDupList = new ArrayList<>();
+		List<MenuItem> menuItemDupList = new ArrayList<>();
 		menuItemDupList.addAll(menuItemFinalList);
 
 		if (!opr.isEmpty() && menuname.isEmpty()) {
@@ -143,22 +139,23 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 
 		getPagedListWrapper().initList(menuItemDupList, listBoxMenuRoles, pagingMenuRolesList);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnRefresh(Event event) {
+		logger.debug(Literal.ENTERING);
+
 		sortOperator_menuName.setSelectedIndex(0);
 		SearchFilterControl.resetFilters(menuName);
 		getPagedListWrapper().initList(menuItemFinalList, listBoxMenuRoles, pagingMenuRolesList);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		try {
-			createFile();
-		} catch (IOException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		createFile();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -176,116 +173,65 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		}
 	}
 
-	private void createFile() throws IOException {
-		int rowIndex = 0;
+	/**
+	 * Create the excel file and download to user's desktop.
+	 */
+	private void createFile() {
 		String name = "Menu Roles and Rights";
-		ByteArrayOutputStream bos = null;
-		Workbook workbook = null;
-		Sheet sheet = null;
-		try {
-			workbook = new XSSFWorkbook();
-			sheet = workbook.createSheet(name);
 
-			Row row = sheet.createRow((int) rowIndex++);
+		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream stream = new ByteArrayOutputStream();) {
+			// Create a new sheet.
+			Sheet sheet = workbook.createSheet(name);
 
-			Cell cell = row.createCell(0);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Menu");
+			// Create header row.
+			ExcelUtil.createRow(sheet, 0, "Menu", "Level1", "Level2", "Level3", "Right", "Groups", "Roles");
 
-			cell = row.createCell(1);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Level1");
-
-			cell = row.createCell(2);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Level2");
-
-			cell = row.createCell(3);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Level3");
-
-			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Right");
-
-			cell = row.createCell(5);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Groups");
-
-			cell = row.createCell(6);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue("Roles");
+			// Create data row for each menu item.
+			int rowIndex = 1;
 
 			for (MenuItem menuItem : MainMenu.getMenuItems()) {
-				rowIndex = createMenu(rowIndex, 0, sheet, menuItem);
+				rowIndex = createMenu(sheet, rowIndex, 0, menuItem);
 			}
 
-			bos = new ByteArrayOutputStream();
-			workbook.write(bos);
-			workbook.close();
-			Filedownload.save(new AMedia(name, "xlsx", DocType.XLSX.getContentType(), bos.toByteArray()));
-		} catch (Exception e) {
+			// Write out the workbook to stream and download the file at the client.
+			workbook.write(stream);
+
+			Filedownload.save(new AMedia(name, "xlsx", DocType.XLSX.getContentType(), stream.toByteArray()));
+		} catch (IOException e) {
 			logger.error(Literal.EXCEPTION, e);
-			throw e;
-		} finally {
-			if (bos != null) {
-				bos.close();
-				bos.flush();
-				bos = null;
-			}
-			if (workbook != null) {
-				workbook = null;
-			}
-			sheet = null;
+			MessageUtil.showMessage(
+					"Unable to generate the file. Please try again later or contact the system administrator.");
 		}
 	}
 
-	private int createMenu(int rowIndex, int celIndex, Sheet sheet, MenuItem menuItem) {
-		Row row = sheet.createRow((int) rowIndex++);
+	private int createMenu(Sheet sheet, int rowIndex, int columnIndex, MenuItem menuItem) {
+		// Create a row.
+		Row row = sheet.createRow(rowIndex++);
+
+		// Create a cell for the menu item.
+		Cell cell = row.createCell(columnIndex);
+		cell.setCellValue(Labels.getLabel(menuItem.getId()));
+
+		// Create a cell for the right.
+		cell = row.createCell(4);
+		cell.setCellValue(menuItem.getRightName());
+
+		// Create cells for groups and roles if the right available.
+		if (StringUtils.isNotEmpty(menuItem.getRightName())) {
+			cell = row.createCell(5);
+			cell.setCellValue(getGroups(menuItem.getRightName(), ","));
+
+			cell = row.createCell(6);
+			cell.setCellValue(getRoles(menuItem.getRightName(), ","));
+		}
+
+		// Create data row for each child if available.
 		if (menuItem instanceof Menu) {
-			Cell cell = row.createCell(celIndex++);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
-
-			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue(menuItem.getRightName());
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(5);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
-			}
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(6);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(getRoles(menuItem.getRightName(), ","));
-			}
-
 			Menu menu = (Menu) menuItem;
+			columnIndex++;
+
 			for (MenuItem item : menu.getItems()) {
-				rowIndex = createMenu(rowIndex, celIndex, sheet, item);
-			}
-		} else {
-			Cell cell = row.createCell(celIndex++);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
-
-			cell = row.createCell(4);
-			cell.setCellType(CellType.STRING);
-			cell.setCellValue(menuItem.getRightName());
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(5);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(getGroups(menuItem.getRightName(), ","));
-			}
-
-			if (StringUtils.isNotEmpty(menuItem.getRightName())) {
-				cell = row.createCell(6);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(getRoles(menuItem.getRightName(), ","));
+				rowIndex = createMenu(sheet, rowIndex, columnIndex, item);
 			}
 		}
 
@@ -293,53 +239,63 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 	}
 
 	private String getRoles(String rightName, String appender) {
-		StringBuilder data = new StringBuilder();
-		StringBuilder sql = new StringBuilder();
+		// Prepare the where clause.
+		StringBuilder whereClause = new StringBuilder();
+		whereClause.append(" RoleId in (");
+		whereClause.append(" Select RoleId from SecRoleGroups where  GrpID in (");
+		whereClause.append(" Select GrpID from SecGroups where GrpID in (");
+		whereClause.append(" Select GrpID from SecGroupRights where RightId = (");
+		whereClause.append(" Select RightId from SecRights where RightName = '" + rightName + "'))))");
+
+		// Create the search object.
 		Search search = new Search();
+		search.setSearchClass(SecurityRole.class);
 		search.addField("RoleCd");
 		search.addTabelName("SecRoles");
-		sql.append(" RoleId in (");
-		sql.append(" Select RoleId from SecRoleGroups where  GrpID in (");
-		sql.append(" Select GrpID from SecGroups where GrpID in (");
-		sql.append(" Select GrpID from SecGroupRights where RightId = (");
-		sql.append(" Select RightId from SecRights where RightName ='" + rightName + "'))))");
-		search.addWhereClause(sql.toString());
+		search.addWhereClause(whereClause.toString());
 
-		List<Object> result = searchProcessor.getResults(search);
+		// Get the results.
+		List<SecurityRole> result = searchProcessor.getResults(search);
 
-		for (Object object : result) {
-			Map<String, Object> map = (Map) object;
+		StringBuilder data = new StringBuilder();
+
+		for (SecurityRole object : result) {
 			if (data.length() > 0) {
 				data.append(appender);
 			}
 
-			data.append(map.get("rolecd"));
+			data.append(object.getRoleCd());
 		}
 
 		return data.toString();
 	}
 
 	private String getGroups(String rightName, String appender) {
-		StringBuilder data = new StringBuilder();
-		StringBuilder sql = new StringBuilder();
+		// Prepare the where clause.
+		StringBuilder whereClause = new StringBuilder();
+		whereClause.append(" GrpID in (");
+		whereClause.append(" Select GrpID from SecGroups where GrpID in (");
+		whereClause.append(" Select GrpID from SecGroupRights where RightId = (");
+		whereClause.append(" Select RightId from SecRights where RightName = '" + rightName + "')))");
+
+		// Create the search object.
 		Search search = new Search();
+		search.setSearchClass(SecurityGroup.class);
 		search.addField("GrpCode");
 		search.addTabelName("SecGroups");
-		sql.append(" GrpID in (");
-		sql.append(" Select GrpID from SecGroups where GrpID in (");
-		sql.append(" Select GrpID from SecGroupRights where RightId = (");
-		sql.append(" Select RightId from SecRights where RightName ='" + rightName + "')))");
-		search.addWhereClause(sql.toString());
+		search.addWhereClause(whereClause.toString());
 
-		List<Object> result = searchProcessor.getResults(search);
+		// Get the results.
+		List<SecurityGroup> result = searchProcessor.getResults(search);
 
-		for (Object object : result) {
-			Map<String, Object> map = (Map) object;
+		StringBuilder data = new StringBuilder();
+
+		for (SecurityGroup object : result) {
 			if (data.length() > 0) {
 				data.append(appender);
 			}
 
-			data.append(map.get("grpcode"));
+			data.append(object.getGrpCode());
 		}
 
 		return data.toString();
@@ -348,19 +304,16 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 	/**
 	 * Item renderer for listItems in the listBox.
 	 */
-	private class MenuRolesListModelItemRenderer implements ListitemRenderer<MenuItem>, Serializable {
-		private static final long serialVersionUID = 1L;
-
+	private class MenuRolesListModelItemRenderer implements ListitemRenderer<MenuItem> {
 		@Override
-		public void render(Listitem item, MenuItem menuItem, int count) {
-
+		public void render(Listitem item, MenuItem data, int index) {
 			Listcell lc;
 
-			lc = new Listcell(org.zkoss.util.resource.Labels.getLabel(menuItem.getId()));
+			lc = new Listcell(org.zkoss.util.resource.Labels.getLabel(data.getId()));
 			lc.setParent(item);
 
 			lc = new Listcell();
-			String strGroups = getGroups(menuItem.getRightName(), "\n");
+			String strGroups = getGroups(data.getRightName(), "\n");
 			Label label = new Label();
 			label.setValue(strGroups);
 			label.setMultiline(true);
@@ -368,13 +321,12 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 			lc.setParent(item);
 
 			lc = new Listcell();
-			String strRoles = getRoles(menuItem.getRightName(), "\n");
+			String strRoles = getRoles(data.getRightName(), "\n");
 			Label label1 = new Label();
 			label1.setValue(strRoles);
 			label1.setMultiline(true);
 			lc.appendChild(label1);
 			lc.setParent(item);
-
 		}
 	}
 }

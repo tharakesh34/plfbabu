@@ -72,6 +72,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private long custID;
 	@XmlElement(name = "cif")
 	private String custCIF;
+	private String custCoreBank;
 	private String custShrtName;
 	private Long bankBranchID;
 	@XmlElement
@@ -197,6 +198,11 @@ public class Mandate extends AbstractWorkflowEntity {
 	private Mandate validateMandate = this;
 
 	private Date loanMaturityDate;
+	private boolean externalMandate;
+	private String strExternalMandate;
+	private String strOpenMandate;
+	private String strSwapIsActive;
+
 	private ErrorDetail error;
 
 	public Mandate() {
@@ -261,6 +267,11 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("employerName");
 		excludeFields.add("loanMaturityDate");
 		excludeFields.add("error");
+		excludeFields.add("custCoreBank");
+		excludeFields.add("externalMandate");
+		excludeFields.add("strExternalMandate");
+		excludeFields.add("strOpenMandate");
+		excludeFields.add("strSwapIsActive");
 
 		return excludeFields;
 	}
@@ -466,6 +477,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 
 	public String getBranchCode() {
@@ -1034,6 +1053,38 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setError(ErrorDetail error) {
 		this.error = error;
+	}
+
+	public boolean isExternalMandate() {
+		return externalMandate;
+	}
+
+	public void setExternalMandate(boolean externalMandate) {
+		this.externalMandate = externalMandate;
+	}
+
+	public String getStrExternalMandate() {
+		return strExternalMandate;
+	}
+
+	public void setStrExternalMandate(String strExternalMandate) {
+		this.strExternalMandate = strExternalMandate;
+	}
+
+	public String getStrOpenMandate() {
+		return strOpenMandate;
+	}
+
+	public void setStrOpenMandate(String strOpenMandate) {
+		this.strOpenMandate = strOpenMandate;
+	}
+
+	public String getStrSwapIsActive() {
+		return strSwapIsActive;
+	}
+
+	public void setStrSwapIsActive(String strSwapIsActive) {
+		this.strSwapIsActive = strSwapIsActive;
 	}
 
 }

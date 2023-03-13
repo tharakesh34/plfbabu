@@ -10,7 +10,7 @@
 
 
 		<field name="seqNo">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>liabilitySeq should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -18,7 +18,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>liabilitySeq allow 3 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -68,7 +68,7 @@
 
 
 		<field name="instalmentAmount">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>InstalmentAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -76,7 +76,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>InstalmentAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -88,7 +88,7 @@
 
 
 		<field name="outstandingBalance">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>OutStandingBal should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -96,7 +96,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>OutStandingBal allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -108,7 +108,7 @@
 
 
 		<field name="originalAmount">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>OriginalAmount should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -116,7 +116,7 @@
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>OriginalAmount allow 18 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -127,7 +127,7 @@
 		</field>
 
 		<field name="finDate">
-			<constraint annotation="javax.validation.constraints.NotNull">
+			<constraint annotation="jakarta.validation.constraints.NotNull">
 				<message>finDate is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

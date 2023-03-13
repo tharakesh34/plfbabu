@@ -28,8 +28,6 @@ package com.pennant.webui.collateral.collateralsetup;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -73,9 +71,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
  * 
  */
 public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
-
 	private static final long serialVersionUID = -6298187334342045748L;
-	private static final Logger logger = LogManager.getLogger(CollateralSetupListCtrl.class);
 
 	protected Window window_CollateralSetupList;
 	protected Borderlayout borderLayout_CollateralSetupList;

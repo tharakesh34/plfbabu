@@ -242,7 +242,9 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 			FinRepayHeader rph = rch.getReceiptDetails().get(0).getRepayHeader();
 			if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-				finExcessAmountDAO.updExcessAfterRealize(finID, rch.getExcessAdjustTo(), rph.getExcessAmount());
+				long receiptID = rch.getReceiptID();
+				finExcessAmountDAO.updExcessAfterRealize(finID, rch.getExcessAdjustTo(), rph.getExcessAmount(),
+						receiptID);
 			}
 		}
 

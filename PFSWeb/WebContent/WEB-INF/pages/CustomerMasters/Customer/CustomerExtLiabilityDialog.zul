@@ -59,7 +59,7 @@
 										<label id="label_CustomerExtLiabilityDialog_CustID" value="${c:l('label_CustomerExtLiabilityDialog_CustID.value')}" />
 										<space spacing="2px" />
 										<longbox id="custID" width="150px" maxlength="26" visible="false" />
-										<textbox id="custCIF" width="148px" readonly="true" maxlength="50" style="overflow: hidden;" />
+										<textbox id="custCIF" width="148px" readonly="true" style="overflow: hidden;" />
 
 										<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
 										<label id="custShrtName" width="150px" style="margin-left:10px;display:inline-block;padding-top:3px;" />

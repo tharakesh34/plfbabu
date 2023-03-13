@@ -719,7 +719,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 			this.acPurpose.setConstraint(new StaticListValidator(PennantStaticListUtil.getAccountPurpose(),
 					Labels.getLabel("label_AccountTypeDialog_AcPurpose.value")));
 		}
-		if (!this.extractionType.isDisabled()) {
+		if (!(this.extractionType.isReadonly() || this.extractionType.isDisabled())) {
 			this.extractionType.setConstraint(new StaticListValidator(PennantStaticListUtil.getExtractionTypes(),
 					Labels.getLabel("label_AccountTypeDialog_ExtractionType.value")));
 		}

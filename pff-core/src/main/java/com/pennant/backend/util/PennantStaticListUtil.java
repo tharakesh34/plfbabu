@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -142,7 +143,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> postingGroupList;
 	private static List<ValueLabel> PftDaysBasisList;
 	private static List<ValueLabel> schMthdList;
-	private static List<ValueLabel> repayMethodList;
 	private static List<ValueLabel> limitCategoryList;
 	private static List<ValueLabel> limitcheckTypes;
 	private static List<ValueLabel> facilityLevels;
@@ -192,8 +192,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> presentmentExclusionList;
 	private static List<Property> presentmentBatchStatusList;
 	private static List<RoundingTarget> roundingTargetList;
-	private static List<ValueLabel> jvPostingPurposeList;
-	private static List<ValueLabel> postingPurposeList;
 	private static List<ValueLabel> authTypes;
 	private static List<ValueLabel> presentmentsStatusList;
 	private static List<ValueLabel> presentmentsStatusListReport;
@@ -215,10 +213,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> disbursmentParty;
 	private static List<ValueLabel> disbursmentStatus;
 	private static List<ValueLabel> disbStatusList;
-	private static List<ValueLabel> chequeTypesList;
 
 	private static List<ValueLabel> feeTaxTypes;
-	private static List<ValueLabel> mandateMapping;
 	private static List<ValueLabel> presentmentMapping;
 	private static List<ValueLabel> responseStatus;
 	private static List<ValueLabel> expenseCalculatedOn;
@@ -344,7 +340,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> productTypeList;
 	private static List<ValueLabel> txFinTypeList;
 	private static List<ValueLabel> percType;
-	private static List<ValueLabel> betaConfiguration;
 	private static List<ValueLabel> purgEnvList = getPurgEnvironment();
 	private static List<ValueLabel> purgTypeList = getPurgType();
 	private static List<ValueLabel> purgActionList = getPurgAction();
@@ -373,6 +368,9 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> minPrePaymentCalculationTypes;
 	private static List<ValueLabel> maxPrePaymentCalculationTypes;
 	private static List<ValueLabel> prePaymentCalculatedOn;
+	private static List<String> allowedExcessTypeList;
+	private static List<ValueLabel> enqSettlementStatus;
+	private static List<ValueLabel> excessTransferHead;
 
 	/**
 	 * Gets the list of applications.
@@ -1188,19 +1186,19 @@ public class PennantStaticListUtil {
 
 		if (overDuechargeTypes == null) {
 			overDuechargeTypes = new ArrayList<ValueLabel>(6);
+			overDuechargeTypes.add(new ValueLabel(ChargeType.FLAT, Labels.getLabel("label_FlatOneTime")));
+			overDuechargeTypes.add(
+					new ValueLabel(ChargeType.FLAT_ON_PD_MTH, Labels.getLabel("label_FixedAmtOnEveryPastDueMonth")));
 			overDuechargeTypes
-					.add(new ValueLabel(FinanceConstants.PENALTYTYPE_FLAT, Labels.getLabel("label_FlatOneTime")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH,
-					Labels.getLabel("label_FixedAmtOnEveryPastDueMonth")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ONETIME,
-					Labels.getLabel("label_PercentageOneTime")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH,
-					Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
-			overDuechargeTypes.add(new ValueLabel(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS,
-					Labels.getLabel("label_PercentageOnDueDays")));
+					.add(new ValueLabel(ChargeType.PERC_ONE_TIME, Labels.getLabel("label_PercentageOneTime")));
+			overDuechargeTypes.add(
+					new ValueLabel(ChargeType.PERC_ON_PD_MTH, Labels.getLabel("label_PercentageOnEveryPastDueMonth")));
+			overDuechargeTypes
+					.add(new ValueLabel(ChargeType.PERC_ON_DUE_DAYS, Labels.getLabel("label_PercentageOnDueDays")));
+			overDuechargeTypes.add(new ValueLabel(ChargeType.PERC_ON_EFF_DUE_DAYS,
+					Labels.getLabel("label_PercentageOnDueDaysOnEffectiveDate")));
 			if (ImplementationConstants.ALW_LPP_RULE_FIXED) {
-				overDuechargeTypes.add(
-						new ValueLabel(FinanceConstants.PENALTYTYPE_RULEFXDD, Labels.getLabel("label_FixedByDueDays")));
+				overDuechargeTypes.add(new ValueLabel(ChargeType.RULE, Labels.getLabel("label_FixedByDueDays")));
 			}
 
 		}
@@ -1304,6 +1302,8 @@ public class PennantStaticListUtil {
 
 			enquiryTypes.add(new ValueLabel("FINMANDENQ", Labels.getLabel("label_FINMANDEnquiry")));
 			enquiryTypes.add(new ValueLabel("FINSECMANDENQ", Labels.getLabel("label_FinSecurityMandateEnquiry")));
+			enquiryTypes.add(new ValueLabel("FINCHECKENQ", Labels.getLabel("label_FINCHECKENQEnquiry")));
+
 			// Module to display Loan extended details where label will be
 			// replaced with tab heading
 			enquiryTypes.add(new ValueLabel("LOANEXTDET", Labels.getLabel("label_ExtendedFieldsEnquiry")));
@@ -1855,11 +1855,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ImportData_CustomerRating.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_COUNTRY,
 					Labels.getLabel("label_ImportData_CountryDetails.value")));
-			// Below BMTCustStatusCodes download commented because of improper
-			// data from core system(duedays are 0 for all statuscodes named
-			// with 'M')
-			// importTablesList.add(new ValueLabel("BMTCustStatusCodes",
-			// Labels.getLabel("label_ImportData_CustStatusCodeDetails.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_INDUSTRY,
 					Labels.getLabel("label_ImportData_IndustryDetails.value")));
 			importTablesList.add(new ValueLabel(PennantConstants.DAILYDOWNLOAD_BRANCH,
@@ -2340,6 +2335,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 			events.add(new FinServicingEvent(FinServiceEvent.PRINH,
 					Labels.getLabel("label_FinSerEvent_PrincipleHoliday"), "PRINH"));
+			events.add(new FinServicingEvent(FinServiceEvent.CROSS_LOAN_KNOCKOFF,
+					Labels.getLabel("label_FinSerEvent_CrossLoanKnockOff"), "CROSCROSS_LOAN_KNOCKOFFSLOANKNOCKOFF"));
 		}
 		return events;
 	}
@@ -2804,6 +2801,7 @@ public class PennantStaticListUtil {
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_DOWNPAYRULE, "Down Payment"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_LMTLINE, "Limit Rule Definition"));
 			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_IRLFILTER, "Institution Limit Check"));
+			ruleModulesList.add(new ValueLabel(RuleConstants.MODULE_AUTOREFUND, "Auto Refund Rule"));
 		}
 		return ruleModulesList;
 	}
@@ -3119,6 +3117,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
 			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
 					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
+			excessAdjustTo.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_SETTLEMENT,
+					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
 
 			if (ImplementationConstants.ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS) {
 				excessAdjustTo.add(new ValueLabel(ReceiptMode.CASHCLT,
@@ -3218,6 +3218,8 @@ public class PennantStaticListUtil {
 			allocationMethods.add(new ValueLabel(AllocationType.AUTO, Labels.getLabel("label_AllocationMethod_Auto")));
 			allocationMethods
 					.add(new ValueLabel(AllocationType.MANUAL, Labels.getLabel("label_AllocationMethod_Manual")));
+			allocationMethods
+					.add(new ValueLabel(AllocationType.NO_ALLOC, Labels.getLabel("label_AllocationMethod_NO")));
 		}
 		return allocationMethods;
 	}
@@ -5208,15 +5210,6 @@ public class PennantStaticListUtil {
 		return percType;
 	}
 
-	public static List<ValueLabel> getBetaConfiguration() {
-		if (betaConfiguration == null) {
-			betaConfiguration = new ArrayList<ValueLabel>(1);
-			betaConfiguration.add(new ValueLabel("Old", "Old"));
-		}
-
-		return betaConfiguration;
-	}
-
 	public static List<ValueLabel> getNPAPaymentTypes() {
 		if (npaPaymentTypesList == null) {
 			npaPaymentTypesList = new ArrayList<>(2);
@@ -5598,4 +5591,37 @@ public class PennantStaticListUtil {
 		return minPrePaymentCalculationTypes;
 	}
 
+	public static List<String> getAllowedExcessTypeList() {
+		if (allowedExcessTypeList == null) {
+			allowedExcessTypeList = new ArrayList<>(1);
+			allowedExcessTypeList.add(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		}
+		return allowedExcessTypeList;
+	}
+
+	public static List<ValueLabel> getEnquirySettlementStatus() {
+		if (enqSettlementStatus == null) {
+			enqSettlementStatus = new ArrayList<>(3);
+			enqSettlementStatus.add(new ValueLabel(RepayConstants.SETTLEMENT_STATUS_INITIATED,
+					Labels.getLabel("label_ReceiptModeStatus_Initiated")));
+			enqSettlementStatus.add(new ValueLabel(RepayConstants.SETTLEMENT_STATUS_PROCESSED,
+					Labels.getLabel("label_SettlementStatus_Processed")));
+			enqSettlementStatus.add(new ValueLabel(RepayConstants.SETTLEMENT_STATUS_CANCELLED,
+					Labels.getLabel("label_ReceiptModeStatus_Cancel")));
+		}
+		return enqSettlementStatus;
+	}
+
+	public static List<ValueLabel> getExcessTransferTypes() {
+		if (excessTransferHead == null) {
+			excessTransferHead = new ArrayList<>(3);
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EXCESS,
+					Labels.getLabel("label_ExcessAdjustTo_ExcessAmount")));
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_EMIINADV,
+					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
+					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
+		}
+		return excessTransferHead;
+	}
 }

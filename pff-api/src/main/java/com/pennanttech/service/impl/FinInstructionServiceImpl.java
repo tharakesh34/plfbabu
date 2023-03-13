@@ -143,6 +143,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.model.external.collection.CollectionAPIDetail;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pffws.FinServiceInstRESTService;
@@ -1103,12 +1104,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	/**
-	 * Method for perform updateLoanPenaltyDetails
-	 * 
-	 * @param fsi
-	 * @throws JaxenException
-	 */
 	@Override
 	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
@@ -1121,6 +1116,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
 		if (finID != null) {
 			fsi.setWif(false);
 		} else {
@@ -1139,7 +1135,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
-		FinODPenaltyRate finOd = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
+		FinODPenaltyRate finOd = finODPenaltyRateDAO.getEffectivePenaltyRate(finID, "");
 
 		FinODPenaltyRate odPenaltyRate = new FinODPenaltyRate();
 
@@ -1166,10 +1162,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return beanValidation("odChargeType");
 			}
 
-			if (StringUtils.isBlank(pr.getODChargeCalOn())
-					&& FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(pr.getODChargeType())
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(pr.getODChargeType())
-					|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(pr.getODChargeType())) {
+			if (StringUtils.isBlank(pr.getODChargeCalOn()) && ChargeType.PERC_ONE_TIME.equals(pr.getODChargeType())
+					|| ChargeType.PERC_ON_DUE_DAYS.equals(pr.getODChargeType())
+					|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(pr.getODChargeType())
+					|| ChargeType.PERC_ON_PD_MTH.equals(pr.getODChargeType())) {
 				return beanValidation("odChargeCalOn");
 			}
 
@@ -1233,8 +1229,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return APIErrorHandlerService.getFailedStatus("90315", valueParm);
 			}
 		}
-		if (FinanceConstants.PENALTYTYPE_FLAT.equals(pr.getODChargeType())
-				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(pr.getODChargeType())) {
+		if (ChargeType.FLAT.equals(pr.getODChargeType()) || ChargeType.FLAT_ON_PD_MTH.equals(pr.getODChargeType())) {
 			pr.setODChargeCalOn("");
 		}
 
@@ -1588,9 +1583,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			if (!finODChargeTypeSts) {
 				String[] valueParm = new String[2];
 				valueParm[0] = finODPenaltyRate.getODChargeType();
-				valueParm[1] = FinanceConstants.PENALTYTYPE_FLAT + "," + FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH
-						+ "," + FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS + ","
-						+ FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH + "," + FinanceConstants.PENALTYTYPE_PERC_ONETIME;
+				valueParm[1] = ChargeType.FLAT + "," + ChargeType.FLAT_ON_PD_MTH + "," + ChargeType.PERC_ON_DUE_DAYS
+						+ "," + ChargeType.PERC_ON_PD_MTH + "," + ChargeType.PERC_ONE_TIME + ","
+						+ ChargeType.PERC_ON_EFF_DUE_DAYS;
 				return getErrorDetails("90316", valueParm);
 			}
 		}
@@ -1604,12 +1599,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					break;
 				}
 			}
-			if (!odChargeCalOnSts && (StringUtils.equals(finODPenaltyRate.getODChargeType(),
-					FinanceConstants.PENALTYTYPE_PERC_ONETIME)
-					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
-							FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-					|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
-							FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH))) {
+			if (!odChargeCalOnSts && (StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ONE_TIME)
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ON_DUE_DAYS)
+					|| StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ON_PD_MTH))) {
 				String[] valueParm = new String[2];
 				valueParm[0] = finODPenaltyRate.getODChargeCalOn();
 				valueParm[1] = FinanceConstants.ODCALON_STOT + "," + FinanceConstants.ODCALON_SPFT + ","
@@ -1617,10 +1609,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return getErrorDetails("90317", valueParm);
 			}
 		}
-		if (StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ONETIME)
-				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-				|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
-						FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+		if (StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ONE_TIME)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ON_DUE_DAYS)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ON_EFF_DUE_DAYS)
+				|| StringUtils.equals(finODPenaltyRate.getODChargeType(), ChargeType.PERC_ON_PD_MTH)) {
 			if (finODPenaltyRate.getODChargeAmtOrPerc().compareTo(new BigDecimal(100)) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "ODChargeAmtOrPerc";

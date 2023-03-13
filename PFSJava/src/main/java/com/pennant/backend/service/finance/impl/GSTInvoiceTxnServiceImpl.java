@@ -827,7 +827,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 					cust = fd.getCustomerDetails().getCustomer();
 				}
 				if (cust == null) {
-					cust = this.customerDAO.checkCustomerByID(fm.getCustID(), "");
+					cust = this.customerDAO.getCustomer(fm.getCustID());
 				}
 
 				if (cust == null) {

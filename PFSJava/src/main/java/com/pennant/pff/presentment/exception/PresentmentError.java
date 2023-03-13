@@ -18,7 +18,7 @@ public enum PresentmentError {
 
 	PRMNT507("Presentment response already marked as bounce."),
 
-	PRMNT508("The presentment not proceed with schedule date greater than application bussiness date."),
+	PRMNT508("The presentment not proceed with schedule date greater than application business date."),
 
 	PRMNT5010("Receipt not exists to bounce."),
 
@@ -44,13 +44,25 @@ public enum PresentmentError {
 
 	REPRMNT521("There is no over dues for this Reference."),
 
-	REPRMNT522("Due date should be in current month only."),
+	REPRMNT522("Due date reached the next installment date."),
 
 	REPRMNT523(""),
 
-	FC_601("Fate Correction already proceessed for this schedule."),
+	FC_601("Fate correction already proceessed for this schedule."),
 
-	FC_602("Presentment is not found for this respective schedule.");
+	FC_602("Presentment is not found for this respective schedule."),
+
+	FC_603("Clearing status in invalid in Fate Correction Upload File."),
+
+	FC_604("If Clearing status is 'B' then BounceCode & BounceRemarks are Mandatory."),
+
+	FC_605("Previous presentment status should be either BOUNCE or SUCCESS."),
+
+	FC_606("Previous re-presentment status should be either BOUNCE or SUCCESS."),
+
+	FC_607("Clearing status should be 'B', since the previous presentment status is 'SUCCESS'"),
+
+	FC_608("Clearing status should be 'S', since the previous presentment status is 'BOUNCE'");
 
 	private String description;
 

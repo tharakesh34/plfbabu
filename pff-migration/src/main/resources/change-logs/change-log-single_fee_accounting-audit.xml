@@ -116,5 +116,15 @@
 	<changeSet id="ST#3007.12" author="vijaya.a">
 		<addNotNullConstraint tableName="ADTFINTYPEFEES" columnName="InclForAssignment" columnDataType="boolean" />
 	</changeSet>
+	
+	<changeSet id="ST#3007.13" author="saikrishna.b">
+		<renameColumn newColumnName="IncomeOrExpenseAcType" oldColumnName="FeeIncomeORExpense" tableName="ADTFEETYPES" />
+	</changeSet>
+	
+	<changeSet id="ST#3007.14" author="saikrishna.b">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="WaiverOrRefundAcType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

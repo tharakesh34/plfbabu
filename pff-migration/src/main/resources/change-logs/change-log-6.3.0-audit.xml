@@ -400,4 +400,869 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="TK#2509.12" author="Anilkumar.G">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="AllowAutoRefund" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="TK#2509.29" author="AnilKumar.G">
+		<addColumn tableName="ADTRMTBRANCHES">
+			<column name="DefChequeDDPrintLoc" type="varchar(15)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="TK#2566.1" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Header">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustCif" type="varchar(10)" />
+			<column name="FinID" type="bigint" />
+			<column name="PaymentType" type="varchar(5)" />
+			<column name="FinType" type="varchar(10)" />
+			<column name="BranchName" type="varchar(20)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="Status" type="varchar(5)" />
+			<column name="ApprovalStatus" type="varchar(5)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566.2" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Details">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableType" type="VARCHAR(5)" />
+			<column name="TotalAmount" type="Decimal(18,0)" />
+			<column name="PaidAmount" type="Decimal(18,0)" />
+			<column name="PrevRefundAmount" type="Decimal(18,0)" />
+			<column name="currRefundAmount" type="Decimal(18,0)" />
+			<column name="AvailableAmount" type="Decimal(18,0)" />
+			<column name="ReceivableRefId" type="bigint" />
+			<column name="FeeTypeCode" type="VARCHAR(10)" />
+			<column name="FeeTypeDesc" type="VARCHAR(50)" />
+			<column name="PayableFeeTypeCode" type="VARCHAR(10)" />
+			<column name="PayableFeeTypeDesc" type="VARCHAR(50)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566.3" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Instructions">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentType" type="VARCHAR(5)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="Remarks" type="VARCHAR(100)" />
+			<column name="PartnerBankId" type="bigint" />
+			<column name="IssuingBank" type="VARCHAR(8)" />
+			<column name="FavourName" type="VARCHAR(200)" />
+			<column name="FavourNumber" type="VARCHAR(100)" />
+			<column name="PayableLoc" type="VARCHAR(50)" />
+			<column name="PrintingLoc" type="VARCHAR(50)" />
+			<column name="ValueDate" type="Datetime" />
+			<column name="PostDate" type="Datetime" />
+			<column name="BankBranchId" type="bigint" />
+			<column name="AcctHolderName" type="VARCHAR(200)" />
+			<column name="AccountNo" type="VARCHAR(100)" />
+			<column name="PhoneCountryCode" type="VARCHAR(5)" />
+			<column name="PhoneNumber" type="VARCHAR(12)" />
+			<column name="ClearingDate" type="Datetime" />
+			<column name="Status" type="VARCHAR(50)" />
+			<column name="Active" type="boolean" />
+			<column name="PaymentCCy" type="VARCHAR(3)" />
+			<column name="Lei" type="VARCHAR(100)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="STLMT#1" author="saikiran.n">
+		<comment>New Audit Table for Settlement Type Detail</comment>
+		<createTable tableName="ADTSETTLEMENTTYPES">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SettlementTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="SettlementCode" type="VARCHAR(20)" />
+			<column name="SettlementDesc" type="VARCHAR(200)" />
+			<column name="AlwGracePeriod" type="smallint" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="STLMT#2" author="saikiran.n">
+		<comment>New Audit Table for Settlement Detail</comment>
+		<createTable tableName="ADTSETTLEMENT">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="settlementHeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint" />
+			<column name="finReference" type="VarChar(20)" />
+			<column name="settlementType" type="bigint" />
+			<column name="settlementStatus" type="VarChar(5)" />
+			<column name="startDate" type="datetime" />
+			<column name="otsDate" type="datetime" />
+			<column name="endDate" type="datetime" />
+			<column name="settlementReason" type="VarChar(50)" />
+			<column name="settlementAmount" type="Decimal(18,0)" />
+			<column name="noOfGraceDays" type="bigint" />
+			<column name="settlementEndAfterGrace" type="datetime" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="STLMT#3" author="saikiran.n">
+		<comment>New Audit Table for settlement Allocation Details</comment>
+		<createTable tableName="ADTSETTLEMENTALLOCATIONDTLS">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SETTLEMENTHEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ALLOCATIONID" type="Decimal(10,0)" />
+			<column name="ALLOCATIONTYPE" type="Char(8)" />
+			<column name="ALLOCATIONTO" type="bigint" />
+			<column name="PAIDAMOUNT" type="Decimal(18,0)" />
+			<column name="TOTALDUE" type="Decimal(18,0)" />
+			<column name="WAIVEDAMOUNT" type="Decimal(18,0)" />
+			<column name="SETTLEMENTALLOCATIONID" type="bigint" />
+			<column name="PAIDGST" type="Decimal(18,0)" />
+			<column name="WAIVEDREQAMOUNT" type="Decimal(18,0)" />
+			<column name="WAIVERACCEPTED" type="Char(1)" />
+			<column name="WAIVEDGST" type="Decimal(18,0)" />
+			<column name="TAXHEADERID" type="bigint" />
+			<column name="TDSDUE" type="Decimal(18,0)" />
+			<column name="TDSPAID" type="Decimal(18,0)" />
+			<column name="TDSWAIVED" type="Decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="STLMT#4" author="saikiran.n">
+		<comment>New Audit Table for Settlement Schedule</comment>
+		<createTable tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="settlementInstalDate" type="datetime" />
+			<column name="settlementAmount" type="Decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1325.67" author="Sravani.M">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="underSettlement" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1325.68" author="Sravani.M">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN SET underSettlement=0 WHERE underSettlement IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1325.69" author="Sravani.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="underSettlement" tableName="ADTFINANCEMAIN" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1325.70" author="Sravani.M" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINANCEMAIN ADD CONSTRAINT DF_P_ADT_underSett DEFAULT 0 FOR underSettlement;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#267.26" author="Sravani.M">
+		<renameTable newTableName="ADTFinSettlementHeader" oldTableName="ADTSettlement" />
+	</changeSet>
+
+	<changeSet id="DE#267.35.1" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="Version" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.2" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="LastMntBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.3" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="LastMntOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.4" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="RecordStatus" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.5" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="RoleCode" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.6" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="NextRoleCode" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.7" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="TaskId" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.8" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="NextTaskId" type="varchar(200)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.9" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="RecordType" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#267.35.10" author="Sravani.M">
+		<addColumn tableName="ADTSETTLEMENTSCHEDULE">
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="PSD#213383.25" author="Sravani.M">
+		<addColumn tableName="ADTFINSETTLEMENTHEADER">
+			<column name="settlementReasonId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<!-- Modified -->
+
+	<changeSet id="OTS#1" author="saikiran.n">
+		<renameTable newTableName="ADTSETTLEMENT_TYPES" oldTableName="ADTSETTLEMENTTYPES" />
+	</changeSet>
+
+	<changeSet id="OTS#1.1" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTTYPEID" tableName="ADTSETTLEMENT_TYPES" />
+	</changeSet>
+
+	<changeSet id="OTS#2" author="saikiran.n">
+		<renameTable newTableName="ADTFIN_SETTLEMENT_HEADER" oldTableName="ADTFINSETTLEMENTHEADER" />
+	</changeSet>
+
+	<changeSet id="OTS#2.2" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="SETTLEMENTHEADERID" tableName="ADTFIN_SETTLEMENT_HEADER" />
+	</changeSet>
+
+	<changeSet id="OTS#3" author="saikiran.n">
+		<renameTable newTableName="ADTSETTLEMENT_SCHEDULE" oldTableName="ADTSETTLEMENTSCHEDULE" />
+	</changeSet>
+
+	<changeSet id="OTS#4" author="saikiran.n">
+		<renameTable newTableName="ADTSETTLEMENT_ALLOC_DTLS" oldTableName="ADTSETTLEMENTALLOCATIONDTLS" />
+	</changeSet>
+
+	<changeSet id="OTS#4.4" author="saikiran.n">
+		<renameColumn newColumnName="ID" oldColumnName="ALLOCATIONID" tableName="ADTSETTLEMENT_ALLOC_DTLS" />
+		<renameColumn newColumnName="HEADERID" oldColumnName="SETTLEMENTHEADERID"
+			tableName="ADTSETTLEMENT_ALLOC_DTLS" />
+		<renameColumn newColumnName="ALLOCATIONID" oldColumnName="SETTLEMENTALLOCATIONID"
+			tableName="ADTSETTLEMENT_ALLOC_DTLS" />
+	</changeSet>
+
+	<changeSet id="ST#165.7" author="Sravani.M">
+		<addColumn tableName="ADTFeeWaiverHeader">
+			<column name="WMDetailId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#165.8" author="Sravani.M">
+		<addColumn tableName="ADTFeeWaiverHeader">
+			<column name="AlwCondWaiver" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#165.9.1" author="Sravani.M">
+		<addColumn tableName="ADTFeeWaiverHeader">
+			<column name="waiverFullFillAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#165.10" author="Sravani.M">
+		<addColumn tableName="ADTFeeWaiverHeader">
+			<column name="waiverFullFillDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#171.6" author="Sravani.M">
+		<addColumn tableName="ADTFEEWAIVERHEADER">
+			<column name="LinkedTranId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#171.7" author="Sravani.M">
+		<addColumn tableName="ADTFEEWAIVERHEADER">
+			<column name="Status" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#712_01" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Update AdtCustomers set CustCoreBank = -1*CustID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#712_02" author="murthy.y">
+		<addNotNullConstraint tableName="AdtCustomers" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#712_03" author="murthy.y">
+		<createIndex tableName="AdtCustomers" indexName="idx_Customers_AdtCustCoreBank">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="TK#2658.1.0.2" author="Sravani">
+		<comment>New Audit Table for ExcessTransfer</comment>
+		<createTable tableName="ADTExcess_Transfer_Details">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransferDate" type="datetime" />
+			<column name="TransferToType" type="varchar(8)" />
+			<column name="TransferToId" type="bigint" />
+			<column name="TransferFromType" type="varchar(8)" />
+			<column name="TransferFromId" type="bigint" />
+			<column name="LinkedTranId" type="bigint" />
+			<column name="Status" type="varchar(50)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransferAmount" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#722.01" author="Rahul">
+		<createTable tableName="AdtCROSS_LOAN_TRANSFER">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceiptId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FromFinID" type="bigint" />
+			<column name="ToFinID" type="bigint" />
+			<column name="FromFinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ToFinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessAmount" type="decimal(18,0)" />
+			<column name="UtiliseAmount" type="decimal(18,0)" />
+			<column name="ReserveAmount" type="decimal(18,0)" />
+			<column name="AvailableAmount" type="decimal(18,0)" />
+			<column name="TransferAmount" type="decimal(18,0)" />
+			<column name="ExcessId" type="bigint" />
+			<column name="ToLinkedTranId" type="bigint" />
+			<column name="FromLinkedTranId" type="bigint" />
+			<column name="ToExcessId" type="bigint" />
+			<column name="Source" type="Varchar(20)" />
+			<column name="ExcessType" type="Varchar(10)" />
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#722.01.1" author="Rahul" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AdtCROSS_LOAN_TRANSFER ADD CONSTRAINT DF_ACLT_TOEXCESSID DEFAULT 0 FOR TOEXCESSID;
+				ALTER TABLE AdtCROSS_LOAN_TRANSFER ADD CONSTRAINT DF_ACLT_WORKFLOWID DEFAULT 0 FOR WORKFLOWID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#722.01.1" author="Rahul" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ToExcessId" tableName="AdtCROSS_LOAN_TRANSFER" defaultValue="0" />
+		<addDefaultValue columnName="WorkFlowId" tableName="AdtCROSS_LOAN_TRANSFER" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#722.02" author="Somasekhar.P">
+		<createTable tableName="AdtCROSS_LOAN_KNOCKOFF">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="TransferId" type="bigint" />
+			<column name="KnockOffId" type="bigint" />
+			<column name="ValueDate" type="datetime" />
+			<column name="PostDate" type="datetime" />
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#722.06.1" author="Rahul" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTCROSS_LOAN_KNOCKOFF ADD CONSTRAINT DF_ACLK_WORKFLOWID DEFAULT 0 FOR WORKFLOWID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#722.06.1" author="Rahul" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WorkFlowId" tableName="AdtCROSS_LOAN_KNOCKOFF" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="PSD#217695.1" author="saisandeep.b">
+		<modifyDataType tableName="ADTRULES" columnName="RULEMODULE" newDataType="varchar(20)" />
+		<modifyDataType tableName="ADTRULES" columnName="RULEEVENT" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="TK#2566_100" author="murthy.y">
+		<sql>
+         	<![CDATA[
+            	DELETE FROM ADTFEE_REFUND_DETAILS;
+            	DELETE FROM ADTFEE_REFUND_HEADER;	
+         	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566_102" author="murthy.y">
+		<dropColumn tableName="AdtFee_Refund_Header" columnName="CustCif" />
+		<dropColumn tableName="AdtFee_Refund_Header" columnName="FinType" />
+		<dropColumn tableName="AdtFee_Refund_Header" columnName="BranchName" />
+	</changeSet>
+
+	<changeSet id="TK#2566_103" author="murthy.y">
+		<modifyDataType tableName="AdtFee_Refund_Header" columnName="ApprovalStatus" newDataType="int" />
+	</changeSet>
+
+	<changeSet id="TK#2566_104" author="murthy.y">
+		<dropTable tableName="AdtFee_Refund_Details" />
+	</changeSet>
+
+	<changeSet id="TK#2566_108" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Details">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableFeeTypeID" type="bigint" />
+			<column name="PayableFeeTypeID" type="bigint" />
+			<column name="ReceivableID" type="bigint" />
+			<column name="PayableID" type="bigint" />
+			<column name="RefundAmount" type="Decimal(18,0)" />
+			<column name="TaxHeaderId" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566_109" author="Gopal.p">
+		<modifyDataType tableName="AdtFee_Refund_Instructions" columnName="PaymentType" newDataType="varchar(8)"/>
+	</changeSet>
+	
+	<changeSet id="TK#2566_200" author="murthy.y">
+		<sql>
+         	<![CDATA[
+            	DELETE FROM ADTFEE_REFUND_DETAILS;
+            	DELETE FROM ADTFEE_REFUND_HEADER;	
+         	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#2566_201" author="murthy.y">
+		<dropTable tableName="AdtFee_Refund_Details" />
+		<dropTable tableName="AdtFee_Refund_Header" />
+	</changeSet>
+	
+	<changeSet id="TK#2566_205" author="murthy.y">
+		<createTable tableName="AdtFee_Refund_Header">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="RefundType" type="char(1)" />
+			<column name="PaymentAmount" type="Decimal(18,0)" />
+			<column name="OverDueAgainstLoan" type="Decimal(18,0)" />
+			<column name="OverDueAgainstCustomer" type="Decimal(18,0)" />
+			<column name="Override" type="boolean" />
+			<column name="Status" type="varchar(5)" />
+			<column name="ApprovalStatus" type="int" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#2566_202" author="sampath.d">
+		<createTable tableName="AdtFee_Refund_Details">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableFeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableFeeTypeID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PayableID" type="bigint" />
+			<column name="RefundAmount" type="Decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxHeaderId" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -233,6 +234,15 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 				eODConfig.setRecordType("");
 				getEODConfigDAO().update(eODConfig, TableType.MAIN_TAB);
 			}
+
+			if (ImplementationConstants.AUTO_EOD_REQUIRED) {
+				eODConfigDAO.updateJobDetails("AUTO_EOD_JOB", eODConfig.getEODStartJobFrequency(),
+						eODConfig.isEnableAutoEod());
+				eODConfigDAO.updateJobDetails("EOD_REMINDER_JOB", eODConfig.getReminderFrequency(),
+						eODConfig.isEmailNotifReqrd());
+				eODConfigDAO.updateJobDetails("EOD_DELAY_JOB", eODConfig.getDelayFrequency(),
+						eODConfig.isDelayNotifyReq());
+			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -242,19 +252,6 @@ public class EODConfigServiceImpl extends GenericService<EODConfig> implements E
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(eODConfig);
 		getAuditHeaderDAO().addAudit(auditHeader);
-
-		// FIXME MURTHY
-		/*
-		 * if (ImplementationConstants.AUTO_EOD_REQUIRED && eODConfig.isAutoEodRequired()) { DefaultJobSchedular
-		 * defaultJobSchedular = (DefaultJobSchedular) SpringBeanUtil .getBean("defaultJobSchedular"); try { if
-		 * (eODConfig.isAutoEodRequired()) { defaultJobSchedular.reScheduleJob(AutoEODJob.JOB_KEY,
-		 * eODConfig.getEODStartJobFrequency()); } if (eODConfig.isEmailNotifReqrd()) {
-		 * defaultJobSchedular.reScheduleJob(EODReminderJob.JOB_KEY, eODConfig.getReminderFrequency()); } if
-		 * (eODConfig.isDelayNotifyReq()) { defaultJobSchedular.reScheduleJob(EODDelayJob.JOB_KEY,
-		 * eODConfig.getDelayFrequency()); }
-		 * 
-		 * } catch (SchedulerException e) { e.printStackTrace(); } }
-		 */
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;

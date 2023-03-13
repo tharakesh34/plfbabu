@@ -27,13 +27,11 @@ package com.pennant.backend.dao.receipts.impl;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -45,6 +43,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 /**
  * DAO methods implementation for the <b>Finance Repayments</b> class.<br>
@@ -212,15 +211,15 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 	public List<ReceiptAllocationDetail> getManualAllocationsByRef(long finID, long curReceiptID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" rad.AllocationType AllocationType, rad.AllocationTo AllocationTo");
-		sql.append(", SUM(rad.PaidAmount) PaidAmount, SUM(rad.WaivedAmount) WaivedAmount");
-		sql.append(", SUM(rad.PaidGST) PaidGST, SUM(rad.WaivedGST) WaivedGST");
-		sql.append(" FROM RECEIPTALLOCATIONDETAIL_TEMP rad");
-		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP rch ON rad.RECEIPTID = rch.RECEIPTID ");
+		sql.append(", sum(rad.PaidAmount) PaidAmount, sum(rad.WaivedAmount) WaivedAmount");
+		sql.append(", sum(rad.PaidGST) PaidGST, sum(rad.WaivedGST) WaivedGST");
+		sql.append(" From ReceiptAllocationDetail_Temp rad");
+		sql.append(" Inner Join FinReceiptHeader_Temp rch On rad.ReceiptId = rch.ReceiptId ");
 		sql.append(" Where rch.FinID = ? and rch.ReceiptID <> ?");
-		sql.append(" and rch.ALLOCATIONTYPE = ? and rch.CANCELREASON IS NULL ");
-		sql.append(" GROUP BY rad.AllocationType, rad.AllocationTo ");
+		sql.append(" and rch.AllocationType = ? and rch.CancelReason is null");
+		sql.append(" Group by rad.AllocationType, rad.AllocationTo");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -242,20 +241,51 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 	}
 
 	@Override
-	public BigDecimal getPartPayAmount(long finID, Date fromDate, Date toDate) {
-		StringBuilder sql = new StringBuilder("Select  sum(PaidAmount)");
-		sql.append(" From ReceiptAllocationDetail rad");
-		sql.append(" Inner Join FinreceiptHeader rch on rch.receiptid = rad.receiptid");
-		sql.append(" Where rch.ReceiptPurpose = ? and rad.AllocationType = ?");
-		sql.append(" and rch.FinID = ? and rch.receiptdate >= ? and rch.receiptdate <= ?");
+	public List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" sum(PaidAmount) PaidAmount, rad.AllocationType, rad.AllocationTo, rad.ReceiptId");
+		sql.append(" From ReceiptAllocationDetail_Temp rad");
+		sql.append(" Inner Join FinReceiptHeader_Temp rch on rch.ReceiptId = rad.ReceiptId");
+		sql.append(" Where FinID = ? and PaidAmount > ?");
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		try {
-			return jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, "EarlyPayment", "PP", finID,
-					fromDate, toDate);
-		} catch (EmptyResultDataAccessException eda) {
-			return BigDecimal.ZERO;
+		if (Allocation.MANADV.equals(allocType)) {
+			sql.append(" and rad.AllocationType in(?, ?)");
+		} else {
+			sql.append(" and rad.AllocationType = ?");
 		}
+
+		sql.append(" and rch.ReceiptModeStatus in (?, ?)");
+		sql.append(" group by rad.AllocationType, rad.AllocationTo, rad.ReceiptId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
+
+			if (Allocation.MANADV.equals(allocType)) {
+				ps.setString(++index, "MANADV");
+				ps.setString(++index, "BOUNCE");
+			} else if (Allocation.ODC.equals(allocType)) {
+				ps.setString(++index, "ODC");
+			} else if (Allocation.LPFT.equals(allocType)) {
+				ps.setString(++index, "LPFT");
+			} else {
+				ps.setString(++index, "FEE");
+			}
+
+			ps.setString(++index, "C");
+			ps.setString(++index, "B");
+		}, (rs, rowNum) -> {
+			ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
+			rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			rad.setAllocationType(rs.getString("AllocationType"));
+			rad.setAllocationTo(rs.getLong("AllocationTo"));
+			rad.setReceiptID(rs.getLong("ReceiptId"));
+
+			return rad;
+		});
 	}
 }

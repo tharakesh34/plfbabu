@@ -654,20 +654,6 @@
 		<property name="customerNotesTypeService" ref="customerNotesTypeService" />
 	</bean>
 
-	<!--============ Customer Status Codes ============== -->
-
-	<bean id="customerStatusCodeListCtrl"
-		class="com.pennant.webui.applicationmaster.customerstatuscode.CustomerStatusCodeListCtrl" parent="basisListCtrl"
-		scope="prototype">
-		<property name="customerStatusCodeService" ref="customerStatusCodeService" />
-	</bean>
-
-	<bean id="customerStatusCodeDialogCtrl"
-		class="com.pennant.webui.applicationmaster.customerstatuscode.CustomerStatusCodeDialogCtrl" parent="basisCtrl"
-		scope="prototype">
-		<property name="customerStatusCodeService" ref="customerStatusCodeService" />
-	</bean>
-
 	<!-- Finance Credit Review Sub Category -->
 	<bean id="finCreditRevSubCategoryListCtrl"
 		class="com.pennant.webui.customermasters.fincreditrevsubcategory.FinCreditRevSubCategoryListCtrl"
@@ -1993,11 +1979,6 @@
 		<property name="securityGroupService" ref="securityGroupService" />
 	</bean>
 
-	<bean id="securityGroupSearchCtrl" class="com.pennant.webui.administration.securitygroup.SecurityGroupSearchCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="securityGroupService" ref="securityGroupService" />
-	</bean>
-
 	<!--============= Security RoleGroup Details ============== -->
 
 	<bean id="securityRoleGroupsDailogCtrl"
@@ -2577,14 +2558,7 @@
 
 	<bean id="overdueChargeRecoveryListCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryListCtrl" parent="basisListCtrl"
-		scope="prototype">
-		<property name="pagedListService" ref="pagedListService" />
-		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
-		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="latePayInterestService" ref="latePayInterestService" />
-	</bean>
+		scope="prototype"/>
 
 	<bean id="overdueChargeRecoveryDialogCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryDialogCtrl" parent="basisCtrl"
@@ -2787,6 +2761,7 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="feeTypeService" ref="feeTypeService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="settlementService" ref="settlementService" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl" class="com.pennant.webui.finance.enquiry.ChequePrintingDialogCtrl"
@@ -3097,12 +3072,6 @@
 		class="com.pennant.webui.lmtmasters.facilityreferencedetail.FacilityReferenceDetailDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
-		<property name="facilityReferenceDetailService" ref="facilityReferenceDetailService" />
-	</bean>
-
-	<bean id="facilityReferenceDetailSearchCtrl"
-		class="com.pennant.webui.lmtmasters.facilityreferencedetail.FacilityReferenceDetailSearchCtrl" parent="basisCtrl"
-		scope="prototype">
 		<property name="facilityReferenceDetailService" ref="facilityReferenceDetailService" />
 	</bean>
 
@@ -3487,7 +3456,10 @@
 	</bean>	
 
 	<bean id="securityMandateDialogCtrl" class="com.pennant.webui.mandate.mandate.SecurityMandateDialogCtrl"
-		parent="basisCtrl" scope="prototype" />
+		parent="basisCtrl" scope="prototype" >
+		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />
+		<property name="clusterService" ref="clusterService" />
+		</bean>
 
 
 	<bean id="mandateRegistrationDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl"
@@ -4115,6 +4087,14 @@
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="refundBeneficiary" ref="refundBeneficiary" />
+		<property name ="crossLoanKnockOffDAO" ref="crossLoanKnockOffDAO" />
+	</bean>
+	
+	<!-- Refund Beneficiary  -->
+	<bean id="refundBeneficiary" class="com.pennanttech.pff.autorefund.RefundBeneficiary">
+		<property name="mandateDAO" ref="mandateDAO" />
+		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 	</bean>
 
 	<!-- DMS DocumentDetails -->
@@ -4128,6 +4108,7 @@
 		class="com.pennant.webui.payment.paymentheader.SelectPaymentHeaderDialogCtrl" parent="basisListCtrl" scope="prototype">
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="feeRefundHeaderService" ref ="feeRefundHeaderService"/>
 	</bean>
 
 	<!-- DisbursementsInstructionsDialogCtrl -->
@@ -4345,17 +4326,6 @@
 		scope="prototype" />
 	<bean id="reasonDetailsLogDialogCtrl" class="com.pennant.webui.reason.detail.ReasonDetailsLogDialogCtrl"
 		parent="basisListCtrl" scope="prototype" />
-
-	<!-- ============ CacheAdministrator ============ -->
-	<bean id="cacheNodesListCtrl" class="com.pennanttech.pennapps.core.cache.CacheNodesListCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="cacheAdmin" ref="cacheAdmin" />
-	</bean>
-
-	<bean id="cacheParameterDialogCtrl" class="com.pennanttech.pennapps.core.cache.CacheParameterDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="cacheAdmin" ref="cacheAdmin" />
-	</bean>
 
 	<!-- Collection -->
 	<bean id="collectionDialogCtrl" class="com.pennant.webui.collections.CollectionDialogCtrl" parent="basisCtrl"
@@ -6095,4 +6065,107 @@
 	parent="uploadList" />
 	
 	<bean id="chequeUploadListCtrl" class="com.pennant.pff.pdc.upload.list.PDCUploadListCtrl" parent="uploadList" />
+
+	<bean id="paymentInstructionUploadList" class="com.pennant.pff.paymentInstruction.upload.list.PaymentInstructionUploadListCtrl"
+	parent="uploadList" />
+	
+	<!-- FeeRefundHeader -->
+	<bean id="feeRefundHeaderListCtrl" class="com.pennant.webui.payment.feerefundheader.FeeRefundHeaderListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="feeRefundApprovalProcess" ref="feeRefundApprovalProcess" />
+	</bean>
+	<bean id="feeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.FeeRefundHeaderDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="eventManager" ref="eventManager" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="feeTypeService" ref="feeTypeService" />
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="refundBeneficiary" ref="refundBeneficiary" />
+		<property name="feeRefundDetailService" ref="feeRefundDetailService" />
+	</bean>
+	<bean id="selectFeeRefundHeaderDialogCtrl" class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO" />
+	</bean>
+	<bean id="feeRefundInstructionDialogCtrl" class="com.pennant.webui.payment.feerefundheader.FeeRefundInstructionDialogCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="bankDetailService" ref="bankDetailService" />
+	</bean>
+	
+	<bean id="holdRefundUploadList" class="com.pennant.pff.holdrefund.upload.list.HoldRefundUploadListCtrl"
+	parent="uploadList" />
+
+	<bean id="settlementTypeDetailListCtrl" class="com.pennant.pff.settlement.web.SettlementTypeDetailListCtrl"
+	parent="basisListCtrl" scope="prototype" />
+
+	<bean id="settlementTypeDetailDialogCtrl" class="com.pennant.pff.settlement.web.SettlementTypeDetailDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+
+	<bean id="settlementListCtrl" class="com.pennant.pff.settlement.web.SettlementListCtrl" parent="basisListCtrl"
+		scope="prototype" />
+
+	<bean id="settlementDialogCtrl" class="com.pennant.pff.settlement.web.SettlementDialogCtrl" parent="basisCtrl"
+		scope="prototype" />
+
+	<bean id="settlementScheduleInlineEditCtrl"
+		class="com.pennant.pff.settlement.web.SettlementScheduleInlineEditCtrl" parent="basisCtrl" scope="prototype" />
+
+	<bean id="selectSettlementDialogCtrl" class="com.pennant.pff.settlement.web.SelectSettlementDialogCtrl"
+		parent="basisCtrl" scope="prototype" />
+	
+	<!--============ FinExcess Transfer ============== -->
+
+	<bean id="excessTransferListCtrl"
+		class = "com.pennant.pff.excess.web.ExcessTransferListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="excessTransferService" ref="excessTransferService" />
+		<property name="financeMainService" ref="financeMainService" />
+	</bean>
+
+	<bean id="excessTransferDialogCtrl"
+		class="com.pennant.pff.excess.web.ExcessTransferDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="excessTransferService" ref="excessTransferService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+	</bean>
+	
+	<bean id="selectExcessTransferCtrl"
+		class="com.pennant.pff.excess.web.SelectExcessTransferCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="excessTransferService" ref="excessTransferService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="customerService" ref="customerService" />
+		<property name="financeMainService" ref="financeMainService"/>
+	</bean>
+	
+	<bean id="excessTransferUploadListCtrl" class="com.pennant.pff.excess.web.ExcessTransferUploadListCtrl" parent="uploadList"/>
+
+	<bean id="manualKnockOffUploadListCtrl" class="com.pennant.pff.manualknockoff.upload.list.ManualKnockOffUploadListCtrl"
+	parent="uploadList" />
+	
+	<bean id="lppUploadList" class="com.pennant.pff.lpp.upload.list.LPPUploadListCtrl"
+	parent="uploadList" />
+
+	<!-- Cross Loan KnocK Off Changes -->
+	<bean id="crossLoanKnockOffListCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffListCtrl" parent="basisListCtrl"
+		scope="prototype"/>
+	
+	<bean id="selectCrossLoanKnockOffDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectCrossLoanKnockOffDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />		
+	</bean>
+	
+	<bean id="crossLoanKnockOffDialogCtrl" class="com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="receiptService" ref="receiptService"/>	
+	</bean>
+	
+	<bean id="crossLoanKnockOffUploadList" class="com.pennant.pff.crossloanknockoff.upload.list.CrossLoanKnockoffUploadListCtrl" parent="uploadList" />
 </beans>

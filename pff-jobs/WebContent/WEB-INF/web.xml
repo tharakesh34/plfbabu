@@ -17,7 +17,8 @@
  				classpath:interfaceContext.xml,
  				classpath:extensionContext.xml,
  				classpath:applicationContext-jobs.xml,
-				classpath:applicationContext-api.xml
+				classpath:applicationContext-api.xml,
+				classpath:batch-jobs.xml
 		</param-value>
 	</context-param>
 	<context-param>

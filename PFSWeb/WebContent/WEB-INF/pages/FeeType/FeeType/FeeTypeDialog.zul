@@ -74,6 +74,9 @@
 								<row id="refundableFeeRow">
 									<label value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
 									<checkbox id="refundableFee" />
+									<label id="label_FeeTypeDialog_AllowAutuRefund"
+										value="${c:l('label_FeeTypeDialog_AllowAutuRefund.value')}" />
+									<checkbox id="allowAutoRefund" />
 								</row>
 								<row id="manualAdviceRow">
 									<label value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
@@ -116,10 +119,13 @@
 									<label value="${c:l('label_FeeTypeDialog_IsTdsReq.value')}" />
 									<checkbox id="tdsReq" checked="false" />
 								</row>
-								<row id="feeIncomeOrExpenseRow">
-									<label value="${c:l('label_FeeTypeDialog_FeeIncomeOrExpense.value')}"
+								<row id="incomeOrExpenseAcTypeRow">
+									<label id = "labelIncomeOrExpenseAcType" value="${c:l('label_FeeTypeDialog_IncomeOrExpenseAcType.value')}"
 										visible="true" />
-									<extendedcombobox id="feeIncomeOrExpense" />
+									<extendedcombobox id="incomeOrExpenseAcType" />
+									<label id = "labelWaiverOrRefundAcType" value="${c:l('label_FeeTypeDialog_WaiverOrRefundAcType.value')}"
+										visible="true" />
+									<extendedcombobox id="waiverOrRefundAcType" />
 								</row>
 								<row>
 									<label value="${c:l('label_FeeTypeDialog_Active.value')}" />

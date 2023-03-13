@@ -475,7 +475,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			MessageUtil.confirm(msg, evnt -> {
 				if (Messagebox.ON_YES.equals(evnt.getName())) {
 					PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
-
+					PFSBatchAdmin.loggedInUser = getUserWorkspace().getLoggedInUser();
 					closeOtherTabs();
 					PFSBatchAdmin.getInstance();
 					estimatedTime.setValue(BatchMonitor.getEstimateTime());

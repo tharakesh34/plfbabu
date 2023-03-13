@@ -23,7 +23,7 @@
 							autodisable="button_FFinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog,button_FinTypeParterbankMappingList_PrintList,button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_LoanTypePartnerbankMappingDialogue_LoanTypePartnerbankMappingDialogueSearchDialog.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="button_FinTypeParterbankMappingList_PrintList" visible="false"
+						<button id="button_FinTypeParterbankMappingList_PrintList" visible="true"
 							label="${c:l('label_Print')}"
 							autodisable="button_FinTypeParterbankMappingList_FinTypeParterbankMappingSearchDialog,button_FinTypeParterbankMappingList_PrintList,button_FinTypeParterbankMappingList_NewFinTypeParterbankMapping,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_LoanTypePartnerbankMappingList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
@@ -64,7 +64,7 @@
 									<label id="label_LoanTypePartnerbankMappingDialogue_FinType"
 										value="${c:l('label_LoanTypePartnerbankMappingDialogue_FinType.value')}" />
 									<listbox id="sortOperator_finType" width="43px" mold="select" rows="1" />
-									<uppercasebox id="finType" width="100px" maxlength="8" />
+									<extendedcombobox id="finType" removeSpace="true"/>
 									<label id="label_LoanTypePartnerbankMappingDialogue_FinTypeDescription"
 										value="${c:l('label_LoanTypePartnerbankMappingDialogue_FinTypeDescription.value')}" />
 									<listbox id="sortOperator_finTypeDesc" width="43px" mold="select" rows="1" />
@@ -79,7 +79,7 @@
 									<label id="label_LoanTypePartnerbankMappingDialogue_PartnerBank"
 										value="${c:l('label_LoanTypePartnerbankMappingDialogue_PartnerBank.value')}" />
 									<listbox id="sortOperator_partnerBank" width="43px" mold="select" rows="1" />
-									<extendedcombobox id="partnerBank" />
+									<extendedcombobox id="partnerBank" removeSpace="true"/>
 								</row>
 
 								<row>
@@ -90,7 +90,7 @@
 									<label id="label_LoanTypePartnerbankMappingDialogue_BranchOrCluster"
 										value="${c:l('label_LoanTypePartnerbankMappingDialogue_BranchOrCluster.value')}" />
 									<listbox id="sortOperator_branchOrCluster" width="43px" mold="select" rows="1" />
-									<extendedcombobox id="branchOrCluster" />
+									<extendedcombobox id="branchOrCluster" removeSpace="true"/>
 								</row>
 
 								<row>

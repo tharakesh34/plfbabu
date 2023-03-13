@@ -40,31 +40,54 @@
 					<textbox id="recoveryCode" value="Y" visible="false" />
 				</north>
 				<center border="none">
-					<groupbox>
-						<listbox id="listBoxOverdueChargeRecovery" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-							sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
-							multiple="false">
-							<listhead sizable="true">
-								<listheader id="listheader_FinODDate" label="${c:l('listheader_FinOdDate.label')}" sort="false"
-									hflex="true" />
-								<listheader id="listheader_FinODDays" label="${c:l('listheader_FinODDays.label')}" sort="false"
-									hflex="true" />
-								<listheader id="listheader_FinODPri" label="${c:l('listheader_FinODPri.label')}" sort="false" hflex="true" />
-								<listheader id="listheader_FinODPft" label="${c:l('listheader_FinODPft.label')}" sort="false" hflex="true" />
-								<listheader id="listheader_FinODTot" label="${c:l('listheader_FinODTot.label')}" sort="false" hflex="true" />
-								<listheader id="listheader_FinODCPenalty" label="${c:l('listheader_FinODCPenalty.label')}" sort="false"
-									hflex="true" />
-								<listheader id="listheader_FinODCWaived" label="${c:l('listheader_FinODCWaived.label')}" sort="false"
-									hflex="true" />
-								<listheader id="listheader_FinODCPenaltyPaid" label="${c:l('listheader_FinODCPenaltyPaid.label')}"
-									sort="false" hflex="true" />
-								<listheader id="listheader_FinODCPenaltyBal" label="${c:l('listheader_FinODCPenaltyBal.label')}"
-									sort="false" hflex="true" />
-								<listheader id="listheader_FinODCRecoverySts" label="${c:l('listheader_FinODCRecoverySts.label')}"
-									sort="false" hflex="true" />
-							</listhead>
-						</listbox>
-					</groupbox>
+					<div>
+						<grid id="listGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="padding-left:20px;">
+							<columns>
+								<column width="190px" />
+								<column />
+								<column width="190px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_OverdueChargeRecovery_penaltyType.value')}" />
+									<combobox id="penaltyType" width="250px" />
+									<label value="${c:l('label_OverdueChargeRecovery_chargeCalculatedOn.value')}" />
+									<combobox id="chargeCalculatedOn" width="250px"  />
+								</row>
+								<row>
+									<label value="${c:l('label_OverdueChargeRecovery_chargeAmtOrPer.value')}" />
+									<decimalbox id="chargeAmtOrPer" width="250px"  />
+								</row>
+							</rows>
+						</grid>
+						<groupbox>
+							<listbox id="listBoxOverdueChargeRecovery" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+								sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+								multiple="false">
+								<listhead sizable="true">
+									<listheader id="listheader_FinODDate" label="${c:l('listheader_FinOdDate.label')}" sort="false"
+										hflex="true" />
+									<listheader id="listheader_FinODDays" label="${c:l('listheader_FinODDays.label')}" sort="false"
+										hflex="true" />
+									<listheader id="listheader_FinODPri" label="${c:l('listheader_FinODPri.label')}" sort="false" hflex="true" />
+									<listheader id="listheader_FinODPft" label="${c:l('listheader_FinODPft.label')}" sort="false" hflex="true" />
+									<listheader id="listheader_FinODTot" label="${c:l('listheader_FinODTot.label')}" sort="false" hflex="true" />
+									<listheader id="listheader_FinODCCumPenalty" label="${c:l('listheader_FinODCCumPenalty.label')}" sort="false" hflex="true" />
+									<listheader id="listheader_FinODCPenalty" label="${c:l('listheader_FinODCPenalty.label')}" sort="false"
+										hflex="true" />
+									<listheader id="listheader_FinODCWaived" label="${c:l('listheader_FinODCWaived.label')}" sort="false"
+										hflex="true" />
+									<listheader id="listheader_FinODCPenaltyPaid" label="${c:l('listheader_FinODCPenaltyPaid.label')}"
+										sort="false" hflex="true" />
+									<listheader id="listheader_FinODCPenaltyBal" label="${c:l('listheader_FinODCPenaltyBal.label')}"
+										sort="false" hflex="true" />
+									<listheader id="listheader_FinODCRecoverySts" label="${c:l('listheader_FinODCRecoverySts.label')}"
+										sort="false" hflex="true" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					</div>
 				</center>
 			</borderlayout>
 		</window>

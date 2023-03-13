@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Path;
@@ -54,8 +55,10 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -110,6 +113,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private transient boolean validationOn;
 	private transient UploadHeaderService uploadHeaderService;
 	private transient ReceiptUploadHeaderService receiptUploadHeaderService;
+	private transient ManualAdviseService manualAdviseService;
 	private transient FinanceMainService financeMainService;
 
 	private static final String MODULE_NAME = "ManualAdvise";
@@ -331,6 +335,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		this.txtFileName.setText("");
 		this.fileImport = null;
+		Clients.clearWrongValue(this.btnBrowse);
 
 		doRemoveValidation();
 		this.media = event.getMedia();
@@ -484,14 +489,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			uploadHeader.setFileName(this.txtFileName.getValue());
-			getUploadedAdvises(uploadHeader);
-
 		} catch (WrongValueException we) {
 			wve.add(we);
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showError(e);
-			return false;
 		}
 
 		doRemoveValidation();
@@ -503,6 +502,14 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
+		}
+
+		try {
+			getUploadedAdvises(uploadHeader);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			MessageUtil.showError(e);
+			return false;
 		}
 
 		uploadHeader.setRecordStatus(this.recordStatus.getValue());
@@ -692,6 +699,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		// Fee Type
 		String feeType = row.get(2);
+		FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 		if (StringUtils.isBlank(feeType)) {
 			reason.append("Fee Type is mandatory.");
 			error = true;
@@ -701,7 +709,6 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				error = true;
 				feeType = feeType.substring(0, 8);
 			} else {
-				FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 				if (fee == null) {
 					reason.append("Fee type doesn't exist.");
 					error = true;
@@ -758,10 +765,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		} else {
 			try {
 				advise = new BigDecimal(manualAdviseAmount);
-				if (advise.compareTo(BigDecimal.ZERO) < 1) {
-					throw new Exception("Advise amount can't be negative.");
-				}
 
+				if (advise.compareTo(BigDecimal.ZERO) < 1) {
+					throw new Exception("Advise amount should be greater than ZERO.");
+				}
 			} catch (NumberFormatException e) {
 				reason.append("Advise Amount is invalid.");
 				error = true;
@@ -775,6 +782,23 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			advise = PennantApplicationUtil.unFormateAmount(advise, 2);
 		}
 		adviseUpload.setAdviseAmount(advise);
+
+		if (UploadConstants.UPLOAD_PAYABLE_ADVISE.equals(type)) {
+
+			// eligibility amount validation
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setFinReference(finReference);
+			ma.setFinID(fm.getFinID());
+			ma.setValueDate(valueDate);
+
+			BigDecimal eblAmount = manualAdviseService.getEligibleAmount(ma, fee);
+
+			if (advise.compareTo(eblAmount) > 0) {
+				reason.append("Advise Amount should be less than or equal to Eligible Amount.");
+				error = true;
+			}
+		}
 
 		// Remarks
 		String remarks = row.get(5);
@@ -810,13 +834,22 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					error = true;
 				}
 			}
-			/*
-			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
-			 * null && (FinServiceEvent.ADDDISB.equals(finMain1. getRcdMaintainSts()) ||
-			 * FinServiceEvent.RATECHG.equals(finMain1. getRcdMaintainSts()) ||
-			 * FinServiceEvent.EARLYRPY.equals(finMain1. getRcdMaintainSts()))) { reason =
-			 * "Loan Reference is in rescheduling process,upload isn't allowed." ; error = true; }
-			 */
+
+			if (manualAdviseService.isManualAdviseExist(fm.getFinID())) {
+				reason.append(Labels.getLabel("Finance_Inprogresss_ManualAdvise"));
+				error = true;
+			}
+
+			if (manualAdviseService.isAdviseUploadExist(fm.getFinID())) {
+				reason.append("Not allowed to maintain the LAN as It is already initiated for Manual Advise.");
+				error = true;
+			}
+
+			String rcdMntnSts = financeMainService.getFinanceMainByRcdMaintenance(fm.getFinID());
+			if (StringUtils.isNotEmpty(rcdMntnSts)) {
+				reason.append(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+				error = true;
+			}
 		}
 
 		adviseUpload.setNewRecord(true);
@@ -1070,8 +1103,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
-				// throw new WrongValueException(this.btnBrowse,
-				// Labels.getLabel("empty_file"));
+				throw new WrongValueException(this.btnBrowse, Labels.getLabel("empty_file"));
 			} else {
 				boolean fileExist = this.uploadHeaderService.isFileNameExist(this.txtFileName.getValue());
 				if (fileExist) {
@@ -1395,7 +1427,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
 
-		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aUploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aUploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		aUploadHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 
@@ -1623,4 +1655,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.financeMainService = financeMainService;
 	}
 
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
 }

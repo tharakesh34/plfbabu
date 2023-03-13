@@ -3336,7 +3336,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
 			}
 		}
-		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(cd.getCustomer()));
 
 		logger.debug(Literal.LEAVING);
 		return cd;

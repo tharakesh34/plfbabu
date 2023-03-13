@@ -2,8 +2,6 @@ package com.pennant.webui.sampling;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -28,7 +26,6 @@ import com.pennanttech.pff.service.sampling.SamplingService;
 
 public class SamplingListCtrl extends GFCBaseListCtrl<Sampling> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(SamplingListCtrl.class);
 
 	protected Window window_SamplingList;
 	protected Borderlayout borderLayout_SamplingList;

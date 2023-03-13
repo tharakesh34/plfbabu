@@ -11,6 +11,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -19,6 +20,7 @@ import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -138,4 +140,16 @@ public interface ReceiptService {
 	void waiveThresholdLimit(FinReceiptData receiptData);
 
 	ReceiptDTO prepareReceiptDTO(FinReceiptData rd);
+
+	List<ReceiptAllocationDetail> getReceiptAllocDetail(long finID, String allocType);
+
+	FinReceiptData doApproveReceipt(FinReceiptData rd);
+
+	FinReceiptData getExcessAndManualAdviseData(FinReceiptData receiptData, long fromLanFinid);
+
+	boolean doProcessTerminationExcess(FinReceiptData receiptData);
+
+	List<FinReceiptDetail> prepareReceiptDetails(List<FinExcessAmount> excessList, ReceiptUploadDetail rud);
+
+	List<OverdueChargeRecovery> prepareODCRecovery(Long finID);
 }

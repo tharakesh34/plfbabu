@@ -246,6 +246,10 @@
 											<row id="row_employeeName">
 												<label id="label_FinanceMainDialog_EmployeeName" value="${c:l('label_FinanceMainDialog_EmployeeName.value')}" />
 												<extendedcombobox id="employeeName" />
+												<label id="label_LoanBasicDetailsDialog_Settlement" value="${c:l('label_LoanBasicDetailsDialog_Settlement.value')}" visible="false" />
+													<a id="settlementEnq" label="${c:l('label_FinanceMainDialog_settlementEnq.value')}"
+														tooltiptext="${c:l('settlementEnq.tooltiptext')}" visible="false"/>
+													<space />
 											</row>
 											<row id="row_salesDept">
 												<label id="label_FinanceMainDialog_SalesDepartment" value="${c:l('label_FinanceMainDialog_SalesDepartment.value')}" />
@@ -401,6 +405,18 @@
 												<label id="label_FinanceMainDialog_ManufacturerDealer"
 													value="${c:l('label_FinanceMainDialog_ManufacturerDealer.value')}" />
 												<extendedcombobox id="manufacturerDealer" readonly="true" />
+											</row>
+											<row>
+												<label id="label_FinanceMainDialog_BlockRefunds" value="${c:l('label_FinanceMainDialog_BlockRefunds.value')}"/>
+												<hbox>
+													<space spacing="2px" />
+													<uppercasebox id="blockRefunds" width="170px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_ReasonForBlock" value="${c:l('label_FinanceMainDialog_ReasonForBlock.value')}"/>
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="reasonForBlock" width="170px" />
+												</hbox>
 											</row>
 										</rows>
 									</grid>

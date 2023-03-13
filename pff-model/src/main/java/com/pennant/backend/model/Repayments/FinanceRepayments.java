@@ -43,6 +43,13 @@ public class FinanceRepayments implements Serializable {
 	private BigDecimal RepayWaiver = BigDecimal.ZERO;
 	private BigDecimal RepayRefund = BigDecimal.ZERO;
 
+	private BigDecimal priPenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal priPenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal pftPenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal lpftWaived = BigDecimal.ZERO;
+	private BigDecimal lpftPaid = BigDecimal.ZERO;
+
 	// Profit waiver
 	private long waiverId;
 
@@ -350,6 +357,54 @@ public class FinanceRepayments implements Serializable {
 
 	public void setWaiverId(long waiverId) {
 		this.waiverId = waiverId;
+	}
+
+	public BigDecimal getPriPenaltyPaid() {
+		return priPenaltyPaid;
+	}
+
+	public void setPriPenaltyPaid(BigDecimal priPenaltyPaid) {
+		this.priPenaltyPaid = priPenaltyPaid;
+	}
+
+	public BigDecimal getPftPenaltyPaid() {
+		return pftPenaltyPaid;
+	}
+
+	public void setPftPenaltyPaid(BigDecimal pftPenaltyPaid) {
+		this.pftPenaltyPaid = pftPenaltyPaid;
+	}
+
+	public BigDecimal getPriPenaltyWaived() {
+		return priPenaltyWaived;
+	}
+
+	public void setPriPenaltyWaived(BigDecimal priPenaltyWaived) {
+		this.priPenaltyWaived = priPenaltyWaived;
+	}
+
+	public BigDecimal getPftPenaltyWaived() {
+		return pftPenaltyWaived;
+	}
+
+	public void setPftPenaltyWaived(BigDecimal pftPenaltyWaived) {
+		this.pftPenaltyWaived = pftPenaltyWaived;
+	}
+
+	public BigDecimal getLpftWaived() {
+		return lpftWaived;
+	}
+
+	public void setLpftWaived(BigDecimal lpftWaived) {
+		this.lpftWaived = lpftWaived;
+	}
+
+	public BigDecimal getLpftPaid() {
+		return lpftPaid;
+	}
+
+	public void setLpftPaid(BigDecimal lpftPaid) {
+		this.lpftPaid = lpftPaid;
 	}
 
 }

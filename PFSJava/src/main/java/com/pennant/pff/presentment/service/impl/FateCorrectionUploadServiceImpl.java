@@ -14,6 +14,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
@@ -78,15 +79,37 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		detail.setPresentmentReference(pd.getPresentmentRef());
+		String status = pd.getStatus();
 
-		if (RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
-			detail.setClearingStatus(RepayConstants.PEXC_SUCCESS);
-		} else {
-			detail.setClearingStatus(RepayConstants.PEXC_BOUNCE);
-			detail.setBounceCode(null); // FIXME
-			detail.setBounceRemarks(null);
+		if (!(RepayConstants.PEXC_BOUNCE.equals(status)) && !(RepayConstants.PEXC_SUCCESS.equals(status))) {
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
+				setError(detail, PresentmentError.FC_606);
+			} else {
+				setError(detail, PresentmentError.FC_605);
+			}
+			return;
 		}
+
+		if (status.equals(detail.getClearingStatus())) {
+			if (RepayConstants.PEXC_BOUNCE.equals(status)) {
+				setError(detail, PresentmentError.FC_607);
+			}
+
+			if (RepayConstants.PEXC_SUCCESS.equals(status)) {
+				setError(detail, PresentmentError.FC_608);
+			}
+			return;
+		}
+
+		if (RepayConstants.PEXC_BOUNCE.equals(detail.getClearingStatus())
+				&& (StringUtils.isEmpty(detail.getBounceCode()) || StringUtils.isEmpty(detail.getBounceRemarks()))) {
+			setError(detail, PresentmentError.FC_604);
+			return;
+		}
+
+		detail.setPresentmentReference(pd.getPresentmentRef());
+		detail.setBounceCode(detail.getBounceCode());
+		detail.setBounceRemarks(detail.getBounceRemarks());
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");

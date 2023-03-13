@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -59,7 +57,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(ClusterHierarcheyListCtrl.class);
 
 	protected Window window_ClusterHierarcheyList;
 	protected Borderlayout borderLayout_ClusterHierarcheyList;

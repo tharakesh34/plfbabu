@@ -4,42 +4,47 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class PartPayAndEarlySettleValidator implements Serializable {
 	private static final long serialVersionUID = -3026697995639794179L;
 
 	private static final Logger logger = LogManager.getLogger(PartPayAndEarlySettleValidator.class);
 
-	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private static final BigDecimal BG_ZERO = BigDecimal.ZERO;
 
-	public ErrorDetail validatePartPay(FinScheduleData schdData, BigDecimal recieptAmount) {
+	public ErrorDetail validatePartPay(FinReceiptData receiptData) {
 		logger.debug(Literal.ENTERING);
 
 		ErrorDetail error = null;
-
+		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
 		Date appDate = SysParamUtil.getAppDate();
 
-		if (schdData == null || schdData.getFinanceMain() == null || schdData.getFinanceType() == null) {
+		if (schdData == null || schdData.getFinanceMain() == null || schdData.getFinanceType() == null
+				|| schdData.getFinanceScheduleDetails() == null) {
 			return error;
 		}
 
@@ -48,7 +53,24 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 
 		fm.setAppDate(appDate);
 
-		if (recieptAmount.compareTo(BigDecimal.ZERO) == 0) {
+		BigDecimal recieptAmount = BG_ZERO;
+
+		RequestSource requestSource = receiptData.getRequestSource();
+		if (RequestSource.API == requestSource || RequestSource.UPLOAD == requestSource
+				|| RequestSource.EOD == requestSource) {
+			List<ReceiptAllocationDetail> allocations = receiptData.getReceiptHeader().getAllocationsSummary();
+			if (CollectionUtils.isNotEmpty(allocations)) {
+				for (ReceiptAllocationDetail alloc : allocations) {
+					if (Allocation.PP.equals(alloc.getAllocationType())) {
+						recieptAmount = recieptAmount.add(alloc.getPaidAmount());
+					}
+				}
+			}
+		} else {
+			recieptAmount = recieptAmount.add(receiptData.getReceiptHeader().getBalAmount());
+		}
+
+		if (recieptAmount.compareTo(BG_ZERO) == 0) {
 			return null;
 		}
 
@@ -69,7 +91,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 			return error;
 		}
 
-		error = validatePartPaymentAmount(ft, fm, recieptAmount, ccyFormat);
+		error = validatePartPaymentAmount(receiptData, recieptAmount, ccyFormat);
 
 		logger.debug(Literal.LEAVING);
 		return error;
@@ -88,7 +110,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 
 		int months = DateUtil.getMonthsBetween(fm.getFinStartDate(), appDate);
 		if (months <= esLockPeriod) {
-			return new ErrorDetail("ESL", "Early Settlement not allowed in lock period", null);
+			return ErrorUtil.getError("92021", "Early Settlement not allowed in lock period");
 		}
 
 		return null;
@@ -102,7 +124,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		int months = DateUtil.getMonthsBetween(finStartDate, appDate);
 
 		if (months < ppLockPeriod) {
-			return new ErrorDetail("PPL", Labels.getLabel("label_pplockinperiod"), new String[1]);
+			return ErrorUtil.getError("92021", Labels.getLabel("label_pplockinperiod"));
 		}
 
 		return null;
@@ -114,7 +136,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		BigDecimal ppAmount = ft.getMinPPAmount();
 		BigDecimal ppPercentage = ft.getMinPPPercentage();
 
-		BigDecimal currAssetValue = PennantApplicationUtil.formateAmount(fm.getFinCurrAssetValue(), ccyFormat);
+		BigDecimal currAssetValue = fm.getFinCurrAssetValue();
 
 		switch (paymentMethod) {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE:
@@ -122,16 +144,14 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 				BigDecimal perAmount = calculateAmount(fm, currAssetValue, ppPercentage);
 
 				if (recieptAmount.compareTo(perAmount) < 0) {
-					return new ErrorDetail("PPA", "Minimum Part Payment Amount Allowed : " + perAmount, null);
+					getError("30550", "Minimum Part Payment Amount Allowed ", ppAmount, ccyFormat);
 				}
 			}
 
 			break;
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
-			BigDecimal fixAmount = PennantApplicationUtil.formateAmount(ppAmount, ccyFormat);
-
-			if (recieptAmount.compareTo(fixAmount) < 0) {
-				return new ErrorDetail("PPA", "Minimum Part Payment Amount Allowed : " + fixAmount, null);
+			if (recieptAmount.compareTo(ppAmount) < 0) {
+				return getError("30550", "Minimum Part Payment Amount Allowed ", ppAmount, ccyFormat);
 			}
 
 			break;
@@ -148,7 +168,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		BigDecimal ppAmount = ft.getMaxPPAmount();
 		BigDecimal ppPercentage = ft.getMaxPPPercentage();
 
-		BigDecimal currAssetValue = PennantApplicationUtil.formateAmount(fm.getFinCurrAssetValue(), ccyFormat);
+		BigDecimal currAssetValue = fm.getFinCurrAssetValue();
 
 		switch (paymentMethod) {
 		case PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE:
@@ -156,15 +176,13 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 				BigDecimal perAmount = calculateAmount(fm, currAssetValue, ppPercentage);
 
 				if (recieptAmount.compareTo(perAmount) > 0) {
-					return new ErrorDetail("PPA", "Maximum Part Payment Amount Allowed : " + perAmount, null);
+					return getError("30550", "Maximum Part Payment Amount Allowed ", perAmount, ccyFormat);
 				}
 			}
 			break;
 		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
-			BigDecimal fixAmount = PennantApplicationUtil.formateAmount(ppAmount, ccyFormat);
-
-			if (recieptAmount.compareTo(fixAmount) > 0) {
-				return new ErrorDetail("PPA", "Maximum Part Payment Amount Allowed : " + fixAmount, null);
+			if (recieptAmount.compareTo(ppAmount) > 0) {
+				return getError("30550", "Maximum Part Payment Amount Allowed ", ppAmount, ccyFormat);
 			}
 			break;
 		default:
@@ -174,56 +192,66 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		return null;
 	}
 
-	private ErrorDetail validatePartPaymentAmount(FinanceType ft, FinanceMain fm, BigDecimal recieptAmount,
-			int ccyFormat) {
+	private ErrorDetail validatePartPaymentAmount(FinReceiptData receiptData, BigDecimal recieptAmount, int ccyFormat) {
+		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
+		FinanceType ft = schdData.getFinanceType();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = receiptData.getPartPayschedules();
+
 		String paymentMethod = ft.getMaxFPPCalType();
 		String paymentOn = ft.getMaxFPPCalOn();
 		BigDecimal ppAmount = ft.getMaxFPPAmount();
 		BigDecimal ppPercentage = ft.getMaxFPPPer();
 
-		Date finStartDate = fm.getFinStartDate();
-		BigDecimal finCurAssetValue = fm.getFinCurrAssetValue();
-		long finID = fm.getFinID();
-
 		Date appDate = fm.getAppDate();
 
-		Date fStartDate = getFinancialYearStart(finStartDate);
-		Date fEndDate = getFinancialYearEnd(finStartDate);
+		Date fStartDate = getFinancialYearStart(appDate);
+		Date fEndDate = getFinancialYearEnd(appDate);
 
-		boolean isInFincialYear = DateUtil.compare(appDate, fEndDate) <= 0;
+		BigDecimal totalAmount = null;
+		BigDecimal curPartPayAmount = recieptAmount;
+		BigDecimal oldPartPayAmount = BG_ZERO;
+		BigDecimal partPayDisAmount = BG_ZERO;
 
-		switch (paymentMethod) {
-		case PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE:
-			if (PennantConstants.PARTPAYMENT_CALCULATEDON_POS.equals(paymentOn)) {
-				BigDecimal totalAmount = finCurAssetValue;
+		for (FinanceScheduleDetail schd : schedules) {
+			if (DateUtil.compare(schd.getSchDate(), fStartDate) >= 0
+					&& DateUtil.compare(schd.getSchDate(), fEndDate) <= 0) {
 
-				if (isInFincialYear) {
-					BigDecimal partPayAmount = receiptAllocationDetailDAO.getPartPayAmount(finID, fStartDate, fEndDate);
-					BigDecimal partPayDisAmount = financeScheduleDetailDAO.getPartPayDisAmount(finID, fStartDate,
-							fEndDate);
-
-					totalAmount = totalAmount.subtract(partPayAmount).add(partPayDisAmount);
-				} else {
-					totalAmount = financeScheduleDetailDAO.getClosureBalance(finID, appDate);
+				if (totalAmount == null) {
+					totalAmount = schd.getClosingBalance();
 				}
+				oldPartPayAmount = oldPartPayAmount.add(schd.getPartialPaidAmt());
 
-				totalAmount = PennantApplicationUtil.formateAmount(totalAmount, ccyFormat);
+				if ("R".equals(schd.getSpecifier())) {
+					partPayDisAmount = partPayDisAmount.add(schd.getDisbAmount());
+
+				}
+			}
+		}
+
+		if (PennantConstants.PREPYMT_CALCTN_TYPE_PERCENTAGE.equals(paymentMethod)) {
+			if (PennantConstants.PARTPAYMENT_CALCULATEDON_POS.equals(paymentOn)) {
+				if (totalAmount == null) {
+					totalAmount = BG_ZERO;
+				}
+				// partPayAmount = partPayAmount.subtract(recieptAmount);
+
+				totalAmount = totalAmount.add(partPayDisAmount);
 
 				BigDecimal perAmount = calculateAmount(fm, totalAmount, ppPercentage);
 
-				if (recieptAmount.compareTo(perAmount) > 0) {
-					return new ErrorDetail("PPA", "Maximum Part Payment Amount Allowed Rs : " + perAmount, null);
+				perAmount = perAmount.subtract(oldPartPayAmount);
+
+				if (curPartPayAmount.compareTo(perAmount) > 0) {
+					return getError("30550", "Maximum Part Payment Amount Allowed Rs ", perAmount, ccyFormat);
 				}
 			}
-			break;
-		case PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT:
-			BigDecimal fixAmount = PennantApplicationUtil.formateAmount(ppAmount, ccyFormat);
-
-			if (recieptAmount.compareTo(fixAmount) > 0) {
-				return new ErrorDetail("PPA", "Maximum Part Payment Amount Allowed : " + fixAmount, null);
+		} else if (PennantConstants.PREPYMT_CALCTN_TYPE_FIXEDAMT.equals(paymentMethod)) {
+			BigDecimal totalPartPaid = curPartPayAmount.add(oldPartPayAmount);
+			if (totalPartPaid.compareTo(ppAmount) > 0) {
+				return getError("30550", "Maximum Part Payment Amount Allowed Rs ", ppAmount.subtract(oldPartPayAmount),
+						ccyFormat);
 			}
-
-			break;
 		}
 
 		return null;
@@ -249,7 +277,7 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 			year = year - 1;
 		}
 
-		return DateUtil.getDate(year, 3, 1);
+		return DateUtil.getDate(year, 2, 1);
 	}
 
 	private static Date getFinancialYearEnd(Date date) {
@@ -264,14 +292,10 @@ public class PartPayAndEarlySettleValidator implements Serializable {
 		return DateUtil.getDate(year + 1, 2, 31);
 	}
 
-	@Autowired
-	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
-		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
-	}
+	private ErrorDetail getError(String code, String message, BigDecimal perAmount, int ccyFormat) {
+		String amount = PennantApplicationUtil.amountFormate(perAmount, ccyFormat);
 
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+		return ErrorUtil.getError(code, message, " : ", amount);
 	}
 
 }

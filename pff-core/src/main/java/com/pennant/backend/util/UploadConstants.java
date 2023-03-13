@@ -63,6 +63,7 @@ public class UploadConstants {
 	public static final String FINSOURCE_ID_UPLOAD = "UPL";
 	public static final String FINSOURCE_ID_CD_UPLOAD = "CDUPL";
 	public static final String FINSOURCE_ID_CD_PAY_UPLOAD = "CDPUPL";
+	public static final String FINSOURCE_ID_AUTOPROCESS = "EOD";
 
 	// Voucher Details Upload Type
 	public static final String UPLOAD_TYPE_NEW = "NEW";
@@ -88,4 +89,8 @@ public class UploadConstants {
 	// Waiver Stages
 	public static final String FEE_WAIVER_MAKER = "FeeWaiverMaker";
 	public static final String FEE_WAIVER_APPROVER = "FeeWaiverApprover";
+
+	// Hold Refund
+	public static final String REFUND_HOLD = "H";
+	public static final String REFUND_RELEASE = "R";
 }

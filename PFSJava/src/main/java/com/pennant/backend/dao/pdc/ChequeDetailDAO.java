@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.ChequeDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -37,7 +38,7 @@ public interface ChequeDetailDAO {
 
 	List<ChequeDetail> getChequeDetailList(long headerID, String type);
 
-	boolean isDuplicateKey(long chequeID, long branchID, String accountNo, int chequeSerial, TableType type);
+	boolean isDuplicateKey(long chequeID, long branchID, String accountNo, String chequeSerial, TableType type);
 
 	String save(ChequeDetail cheque, TableType type);
 
@@ -54,4 +55,17 @@ public interface ChequeDetailDAO {
 	boolean isChequeExists(long headerID, Date chequeDate);
 
 	boolean isRelisedAllCheques(long finId);
+
+	Long getChequeDetailID(long finID);
+
+	Long getChequeDetailIDByAppDate(long finID, Date appDate);
+
+	PaymentInstruction getBeneficiary(long id);
+
+	void deleteCheques(ChequeDetail cheque);
+
+	String getChequeStatus(String chequeSerial, String accountNo);
+
+	boolean isDuplicateKeyPresent(String accountNo, String chequeSerial, TableType type);
+
 }

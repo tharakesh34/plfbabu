@@ -1,10 +1,10 @@
 package com.pennant.api.user.service;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
-
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.administration.SecurityUser;
+
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 @WebService
 public interface SecurityUserSoapService {

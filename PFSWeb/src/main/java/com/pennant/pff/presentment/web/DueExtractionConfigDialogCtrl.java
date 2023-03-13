@@ -72,7 +72,6 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 		super.pageRightName = "DueExtractionConfigDialog";
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onCreate$windowDueExtractionConfigDialog(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
@@ -254,9 +253,6 @@ public class DueExtractionConfigDialogCtrl extends GFCBaseCtrl<InstrumentTypes> 
 	}
 
 	public void onChangeExtractionDate(ForwardEvent event) {
-		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
-		List<Listcell> cell = item.getChildren();
-
 		Datebox datebox = (Datebox) event.getOrigin().getTarget();
 
 		DueExtractionConfig pec = (DueExtractionConfig) datebox.getAttribute("PEC");

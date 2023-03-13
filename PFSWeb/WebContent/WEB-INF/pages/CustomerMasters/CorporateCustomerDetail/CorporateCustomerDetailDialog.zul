@@ -58,7 +58,7 @@
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<longbox id="custId" maxlength="20" width="180px" visible="false" />
-									<textbox id="custCIF" width="150px" maxlength="50" style="overflow: hidden;" />
+									<textbox id="custCIF" width="150px" style="overflow: hidden;" />
 									<label id="custShrtName" width="150px" />
 								</hbox>
 							</row>

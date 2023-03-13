@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -76,6 +77,8 @@ public interface MandateDAO {
 
 	BigDecimal getMaxRepayAmount(Long mandateID);
 
+	BigDecimal getMaxRepayAmount(String finReference);
+
 	boolean entityExistMandate(String entityCode, String type);
 
 	Mandate getMandateStatusById(String finReference, Long mandateID);
@@ -114,4 +117,15 @@ public interface MandateDAO {
 
 	List<Mandate> getMandatesForAutoSwap(long finID);
 
+	PaymentInstruction getBeneficiary(long mandateId);
+
+	Long getMandateId(long finID);
+
+	PaymentInstruction getBeneficiaryForSI(Long mandateId);
+
+	String getMandateTypeById(Long mandateId, String string);
+
+	void updateFinMandateId(Long mandateId, String finreference);
+
+	Long getSecurityMandateIdByRef(String finreference);
 }

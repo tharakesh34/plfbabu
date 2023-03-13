@@ -272,8 +272,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		logger.debug(Literal.ENTERING);
 
 		BankDetail bankDetail = bankDetailService.getAccNoLengths(this.bankDetail.getBankCode());
-		int minAcNoLength = bankDetail.getMinAccNoLength();
-		int maxAccNoLen = bankDetail.getAccNoLength();
 
 		doSetLOVValidation();
 
@@ -300,27 +298,33 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 		try {
 
 			if (this.accNoLength.getValue() == null) {
-				throw new WrongValueException(this.accNoLength, Labels.getLabel("NUMBER_MINVALUE_EQ", new String[] {
+				throw new WrongValueException(this.accNoLength, Labels.getLabel("FIELD_IS_GREATER", new String[] {
 						Labels.getLabel("label_BankDetailDialog_AccNoLength.value"), "minAccNoLength" }));
-			} else if (maxAccNoLen != 0 && this.accNoLength.getValue() < maxAccNoLen) {
-				throw new WrongValueException(this.accNoLength, Labels.getLabel("FIELD_IS_EQUAL_OR_GREATER",
-						new String[] { Long.toString(this.accNoLength.getValue()), Long.toString(maxAccNoLen) }));
+			} else if (this.accNoLength.getValue() != 0
+					&& this.accNoLength.getValue() < this.minAccNoLength.getValue()) {
+				throw new WrongValueException(this.accNoLength,
+						Labels.getLabel("FIELD_IS_GREATER",
+								new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),
+										Labels.getLabel("label_BankDetailDialog_MinimumAccNoLength.value") }));
 			}
 
 			aBankDetail.setAccNoLength(this.accNoLength.getValue());
 
 			if (this.minAccNoLength.getValue() == null) {
-				throw new WrongValueException(this.minAccNoLength, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-						new String[] { Long.toString(this.minAccNoLength.getValue()), Long.toString(minAcNoLength) }));
+				throw new WrongValueException(this.minAccNoLength,
+						Labels.getLabel("FIELD_IS_LESSER", new String[] { Long.toString(this.minAccNoLength.getValue()),
+								Long.toString(this.minAccNoLength.getValue()) }));
 			} else if (aBankDetail.getMinAccNoLength() != 0
 					&& aBankDetail.getAccNoLength() < aBankDetail.getMinAccNoLength()) {
 				throw new WrongValueException(this.accNoLength,
-						Labels.getLabel("FIELD_IS_EQUAL_OR_GREATER",
+						Labels.getLabel("FIELD_IS_LESSER",
 								new String[] { Labels.getLabel("label_BankDetailDialog_AccNoLength.value"),
 										Labels.getLabel("label_BankDetailDialog_MinimumAccNoLength.value") }));
-			} else if (minAcNoLength != 0 && this.minAccNoLength.getValue() > minAcNoLength) {
-				throw new WrongValueException(this.minAccNoLength, Labels.getLabel("FIELD_IS_EQUAL_OR_LESSER",
-						new String[] { Long.toString(this.minAccNoLength.getValue()), Long.toString(minAcNoLength) }));
+			} else if (this.minAccNoLength.getValue() != 0
+					&& this.minAccNoLength.getValue() > this.minAccNoLength.getValue()) {
+				throw new WrongValueException(this.minAccNoLength,
+						Labels.getLabel("FIELD_IS_LESSER", new String[] { Long.toString(this.minAccNoLength.getValue()),
+								Long.toString(this.minAccNoLength.getValue()) }));
 			}
 
 			aBankDetail.setMinAccNoLength(this.minAccNoLength.getValue());

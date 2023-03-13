@@ -29,7 +29,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerCoreBank;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -133,9 +137,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
 
-	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
-
-	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);
+	List<FinanceMain> getFinMainsForEODByCustId(Customer customer);
 
 	FinanceMain getFinMainsForEODByFinRef(long finID, boolean isActive);
 
@@ -410,4 +412,12 @@ public interface FinanceMainDAO {
 	Date getMaturityDate(String finReference);
 
 	FinanceMain getEntityByRef(String finReference);
+
+	List<AutoRefundLoan> getAutoRefunds(CustEODEvent cee);
+
+	void updateSettlementFlag(long finID, boolean isUnderSettlement);
+
+	FinanceMain getFinanceMainForExcessTransfer(long finId);
+
+	List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank);
 }

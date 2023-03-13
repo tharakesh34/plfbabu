@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -35,12 +32,10 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.odsettlementprocess.model.ODSettlementProcess;
-import com.pennanttech.pff.overdraft.OverdraftConstants;
 import com.pennanttech.pff.overdraft.upload.OverdraftSettlementResponseUpload;
 
 public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettlementProcess> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(OverdraftSettlementDownloadListCtrl.class);
 
 	private Window window_overDraftSettlementDownload;
 	private Borderlayout borderLayout_ODSettlementProcessDownload;
@@ -50,13 +45,9 @@ public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettl
 	protected Timer timer;
 	private Button downlaod;
 
-	private Media media = null;
-	private File file = null;
 	String module = null;
 
 	private long userId;
-	private DataEngineStatus OD_SETTLEMENT_REQUEST_DOWNLOAD = new DataEngineStatus(
-			OverdraftConstants.OD_SETTLEMENT_REQUEST_DOWNLOAD);
 
 	protected DataEngineConfig dataEngineConfig;
 	private OverdraftSettlementResponseUpload overdraftSettlementResponseUpload;

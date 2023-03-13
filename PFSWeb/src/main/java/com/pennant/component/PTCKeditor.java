@@ -22,7 +22,6 @@
  * 12-11-2011 Satish/Chaitanya 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-
 package com.pennant.component;
 
 import org.zkforge.ckez.CKeditor;
@@ -30,8 +29,8 @@ import org.zkforge.ckez.CKeditor;
 public class PTCKeditor extends CKeditor {
 	private static final long serialVersionUID = -4246285143621221275L;
 
-	public static final String ckEditorReadonlyUrl = "/ptjs/ckEditorReadonlyConfig.js";
-	public static final String ckEditorUrl = "/ptjs/ckEditorConfig.js";
+	public static final String READONLY_URL = "/ptjs/ckEditorReadonlyConfig.js";
+	public static final String URL = "/ptjs/ckEditorConfig.js";
 	public static final String SIMPLE_LIST = "/ptjs/ckEditorConfigSimpleList.js";
 
 	/**
@@ -39,23 +38,18 @@ public class PTCKeditor extends CKeditor {
 	 */
 	public PTCKeditor() {
 		super();
-		this.setCustomConfigurationsPath(ckEditorUrl);
+		this.setCustomConfigurationsPath(URL);
 	}
 
 	public void setReadonly(boolean readonly) {
 		if (readonly) {
-			this.setCustomConfigurationsPath(ckEditorReadonlyUrl);
+			this.setCustomConfigurationsPath(READONLY_URL);
 		} else {
-			this.setCustomConfigurationsPath(ckEditorUrl);
+			this.setCustomConfigurationsPath(URL);
 		}
-		// this.setCustomConfigurationsPath(ckEditorUrl); --TODO : Commented for setting Readonly Condition
 	}
 
 	public boolean isReadonly() {
-		if (this.getCustomConfigurationsPath().equals(ckEditorReadonlyUrl)) {
-			return true;
-		}
-		return false;
+		return READONLY_URL.equals(getCustomConfigurationsPath());
 	}
-
 }

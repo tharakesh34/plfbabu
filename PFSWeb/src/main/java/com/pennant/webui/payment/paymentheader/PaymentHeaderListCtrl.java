@@ -27,8 +27,6 @@ package com.pennant.webui.payment.paymentheader;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -61,7 +59,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(PaymentHeaderListCtrl.class);
 
 	protected Window window_PaymentHeaderList;
 	protected Borderlayout borderLayout_PaymentHeaderList;
@@ -108,8 +105,6 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		super.doAddFilters();
 		if (!enqiryModule) {
 			this.searchObject.addFilterNotEqual("recordStatus", PennantConstants.RCD_STATUS_APPROVED);
-		} else {
-			this.searchObject.addFilterEqual("recordStatus", PennantConstants.RCD_STATUS_APPROVED);
 		}
 	}
 
@@ -142,7 +137,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		registerField("paymentInstrType", listheader_PaymentType, SortOrder.NONE, paymentType, sortOperator_PaymentType,
 				Operators.STRING);
 		registerField("approvedOn", listheader_ApprovedOn, SortOrder.NONE, approvedOn, sortOperator_ApprovedOn,
-				Operators.DATE);
+				Operators.DATE_RANGE_BETWEEN);
 
 		// Render the page and display the data.
 		doRenderPage();

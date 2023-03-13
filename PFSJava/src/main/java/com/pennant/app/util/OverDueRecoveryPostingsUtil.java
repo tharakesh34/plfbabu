@@ -95,6 +95,8 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.overdue.constants.ChargeType;
+import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 
 public class OverDueRecoveryPostingsUtil implements Serializable {
 	private static final long serialVersionUID = 6161809223570900644L;
@@ -651,20 +653,29 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		FinODDetails odDetails = finODDetailsDAO.getFinODDetailsForBatch(finID, finRepayQueue.getRpyDate());
 
-		// Finance Overdue Details Save or Updation
-		if (odDetails != null) {
-			odDetails = prepareOverDueData(odDetails, dateValueDate, finRepayQueue, isAfterRecovery);
-			if (!isEnqPurpose) {
-				finODDetailsDAO.updateBatch(odDetails);
-			}
-		} else {
-			odDetails = prepareOverDueData(odDetails, dateValueDate, finRepayQueue, isAfterRecovery);
-			if (!isEnqPurpose && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0) {
-				List<FinODDetails> odDList = new ArrayList<>();
-				odDList.add(odDetails);
+		boolean isSave = false;
+		if (odDetails == null) {
+			isSave = true;
+			odDetails = new FinODDetails();
+		}
 
-				finODDetailsDAO.saveList(odDList);
-			}
+		prepareOverDueData(odDetails, dateValueDate, finRepayQueue, isAfterRecovery, isSave);
+
+		if (isEnqPurpose) {
+			logger.debug(Literal.LEAVING);
+			return odDetails;
+		}
+
+		if (isSave && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0) {
+			List<FinODDetails> odDList = new ArrayList<>();
+
+			odDetails.setLppDueTillDate(dateValueDate);
+			odDetails.setLppDueAmt(odDetails.getTotPenaltyPaid().add(odDetails.getTotWaived()));
+
+			odDList.add(odDetails);
+			finODDetailsDAO.saveList(odDList);
+		} else {
+			finODDetailsDAO.updateBatch(odDetails);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -722,8 +733,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (searchForPenalty) {
 				prvRecovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finID, schdDate, odFor, "_AMView");
 
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null
-						&& prvRecovery.isRcdCanDel() && !isEnqPurpose) {
+				if (ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && prvRecovery != null && prvRecovery.isRcdCanDel()
+						&& !isEnqPurpose) {
 					recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 				}
 			} else if (!searchForPenalty) {
@@ -759,7 +770,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				BigDecimal prvPenalty = BigDecimal.ZERO;
 				BigDecimal prvPenaltyBal = BigDecimal.ZERO;
 
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null
+				if (ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && prvRecovery != null
 						&& prvRecovery.isRcdCanDel()) {
 
 					String tableType = "_AMView";
@@ -775,7 +786,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				boolean resetTotals = true;
 				int seqNo = 1;
 				// Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
-				if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && recovery != null
+				if (!ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && recovery != null
 						&& (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
 								|| recovery.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0)) {
 
@@ -794,7 +805,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 						resetTotals = false;
 					}
 
-					if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null) {
+					if (!ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType) && prvRecovery != null) {
 						if (!isEnqPurpose) {
 							recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 						}
@@ -844,13 +855,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				// Overdue Penalty Amount Calculation Depends on applied Charge Type
 				switch (odChargeType) {
-				case FinanceConstants.PENALTYTYPE_FLAT:
+				case ChargeType.FLAT:
 					recovery.setPenalty(od.getODChargeAmtOrPerc());
 					break;
-				case FinanceConstants.PENALTYTYPE_PERC_ONETIME:
+				case ChargeType.PERC_ONE_TIME:
 					penatlyOnOneTime(od, recovery);
 					break;
-				case FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS:
+				case ChargeType.PERC_ON_DUE_DAYS:
 					penaltyOnDueDays(od, valueDate, profitDayBasis, isAfterRecovery, recovery, odDate);
 					break;
 				default:
@@ -861,7 +872,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				prvPenalty = recovery.getPenalty().add(prvPenalty);
 				prvPenaltyBal = recovery.getPenalty().add(prvPenaltyBal);
 
-				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType)) {
+				if (ChargeType.PERC_ON_DUE_DAYS.equals(odChargeType)) {
 					recovery.setPenaltyBal(recovery.getPenalty().add(recovery.getPenaltyBal()));
 					recovery.setPenaltyPaid(BigDecimal.ZERO);
 					recovery.setWaivedAmt(BigDecimal.ZERO);
@@ -940,14 +951,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 	}
 
-	private FinODDetails prepareOverDueData(FinODDetails fod, Date valueDate, FinRepayQueue queue,
-			boolean isAfterRecovery) {
-		boolean isSave = false;
-
-		if (fod == null) {
-			isSave = true;
-			fod = new FinODDetails();
-		}
+	private void prepareOverDueData(FinODDetails fod, Date valueDate, FinRepayQueue queue, boolean isAfterRecovery,
+			boolean isSave) {
 
 		fod.setFinID(queue.getFinID());
 		fod.setFinReference(queue.getFinReference());
@@ -958,27 +963,17 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		fod.setCustID(queue.getCustomerID());
 
 		// Prepare Overdue Penalty rate Details & set to Finance Overdue Details
-		FinODPenaltyRate fodPr = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinID(), "");
+		List<FinODPenaltyRate> penaltyRates = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinID(), "");
+		FinODPenaltyRate penaltyRate = PenaltyCalculator.getEffectiveRate(queue.getRpyDate(), penaltyRates);
 
-		if (fodPr != null) {
-			fod.setApplyODPenalty(fodPr.isApplyODPenalty());
-			fod.setODIncGrcDays(fodPr.isODIncGrcDays());
-			fod.setODChargeType(fodPr.getODChargeType());
-			fod.setODChargeAmtOrPerc(fodPr.getODChargeAmtOrPerc());
-			fod.setODChargeCalOn(fodPr.getODChargeCalOn());
-			fod.setODGraceDays(fodPr.getODGraceDays());
-			fod.setODAllowWaiver(fodPr.isODAllowWaiver());
-			fod.setODMaxWaiverPerc(fodPr.getODMaxWaiverPerc());
-		} else {
-			fod.setApplyODPenalty(false);
-			fod.setODIncGrcDays(false);
-			fod.setODChargeType("");
-			fod.setODChargeAmtOrPerc(BigDecimal.ZERO);
-			fod.setODChargeCalOn("");
-			fod.setODGraceDays(0);
-			fod.setODAllowWaiver(false);
-			fod.setODMaxWaiverPerc(BigDecimal.ZERO);
-		}
+		fod.setApplyODPenalty(penaltyRate.isApplyODPenalty());
+		fod.setODIncGrcDays(penaltyRate.isODIncGrcDays());
+		fod.setODChargeType(penaltyRate.getODChargeType());
+		fod.setODChargeAmtOrPerc(penaltyRate.getODChargeAmtOrPerc());
+		fod.setODChargeCalOn(penaltyRate.getODChargeCalOn());
+		fod.setODGraceDays(penaltyRate.getODGraceDays());
+		fod.setODAllowWaiver(penaltyRate.isODAllowWaiver());
+		fod.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
 
 		fod.setFinCurODAmt(queue.getSchdPft().add(queue.getSchdPri()).subtract(queue.getSchdPftPaid())
 				.subtract(queue.getSchdPriPaid()));
@@ -1002,14 +997,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		fod.setFinODTillDate(valueDate);
 		fod.setFinCurODDays(DateUtil.getDaysBetween(valueDate, fod.getFinODSchdDate()));
+
 		if (isAfterRecovery) {
 			fod.setFinCurODDays(fod.getFinCurODDays() + 1);
 		}
 		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
 		// worked.
 		fod.setFinLMdfDate(SysParamUtil.getAppDate());
-
-		return fod;
 	}
 
 	private BigDecimal getDayPercValue(BigDecimal odCalculatedBalance, BigDecimal odPercent, Date odEffectiveDate,

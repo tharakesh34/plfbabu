@@ -27,8 +27,6 @@ package com.pennant.webui.systemmasters.transactionmapping;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -53,7 +51,6 @@ import com.pennanttech.pff.transactionmapping.webui.TransactionMappingListModelI
 
 public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMapping> {
 	private static final long serialVersionUID = 259921702952389829L;
-	private static final Logger logger = LogManager.getLogger(TransactionMappingListCtrl.class);
 
 	protected Window window_TransactionMappingList;
 	protected Borderlayout borderLayout_TransactionMappingList;

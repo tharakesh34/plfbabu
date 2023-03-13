@@ -203,7 +203,6 @@ import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
-import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.rits.cloning.Cloner;
 
@@ -371,12 +370,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerEMail> customerEmailDetailList = new ArrayList<CustomerEMail>();
 
 	protected Button btnNew_BankInformation;
-	protected Groupbox gp_BankInformationDetail;
 	protected Listbox listBoxCustomerBankInformation;
 	private List<CustomerBankInfo> customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
 
 	protected Button btnNew_ChequeInformation;
-	protected Groupbox gp_ChequeInformation;
 	protected Listbox listBoxCustomerChequeInformation;
 	private List<CustomerChequeInfo> customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
 
@@ -509,7 +506,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private LVerificationCtrl lVerificationCtrl;
 	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	private FieldVerificationDialogCtrl fieldVerificationDialogCtrl;
-	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
 	protected Groupbox finBasicdetails;
 
 	public boolean validateAllDetails = true;
@@ -803,10 +799,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 220 + "px");
 				this.grid_BankDetails.setHeight(borderLayoutHeight - 220 + "px");
 				this.grid_CardSales.setHeight(borderLayoutHeight - 220 + "px");
-				this.listBoxCustomerBankInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
-				this.listBoxCustomerChequeInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
-				this.listBoxCustomerFinExposure.setHeight(semiBorderlayoutHeights - 125 + "px");
-				this.listBoxCustomerExternalLiability.setHeight(semiBorderlayoutHeights - 125 + "px");
 				this.listBoxCustomerCardSalesInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
 			} else {
 				int divKycHeight = this.borderLayoutHeight - 80;
@@ -835,9 +827,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 40 + "px");
 
-				this.listBoxCustomerChequeInformation.setHeight(borderlayoutHeights - 130 + "px");
-				this.listBoxCustomerFinExposure.setHeight(borderlayoutHeights - 130 + "px");
-				this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerCardSalesInformation.setHeight(borderlayoutHeights - 130 + "px");
 			}
 
@@ -2274,7 +2263,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// HL change for financial
 		@SuppressWarnings("rawtypes")
 		Map<String, List> customerIncomes = incomeAndExpenseCtrl.prepareCustomerIncomeExpenseData(aCustomerDetails,
-				this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+				this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 		if (customerIncomes.get("errorList") != null) {
 			@SuppressWarnings("unchecked")
 			ArrayList<WrongValueException> errorlist = (ArrayList<WrongValueException>) customerIncomes
@@ -2989,7 +2979,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
-								PennantRegularExpressions.REGEX_RETAIL_CUST_NAME, isMandValidate));
+								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
 			}
 
 			if (!this.custLocalLngName.isReadonly()) {
@@ -6209,7 +6199,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		customerIncome.setWorkflowId(0);
 		customerIncome.setRecordType(PennantConstants.RCD_ADD);
 		incomeAndExpenseCtrl.doFillIncomeAndExpense(customerIncome, this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
-				true);
+				true, PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 		logger.debug("Leaving");
 	}
 
@@ -6570,7 +6560,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		reallocateRights("CustomerDialog_custPhoneNumber");
 		customerPhoneNumber.setRecordType(PennantConstants.RCD_ADD);
 		customerPhoneNumberInLineEditCtrl.doFillPhoneNumbers(customerPhoneNumber,
-				this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess);
+				this.listBoxCustomerPhoneNumbersInlineEdit, isFinanceProcess,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -6610,7 +6601,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		this.listBoxCustomerPhoneNumbers.getItems().clear();
 		customerPhoneNumberInLineEditCtrl.doRenderPhoneNumberList(customerPhoneNumDetails,
-				listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess);
+				listBoxCustomerPhoneNumbersInlineEdit, this.custCIF.getValue(), isFinanceProcess,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 		logger.debug("Leaving");
 	}
 
@@ -6632,7 +6624,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		reallocateRights("CustomerDialog_custEmail");
 		customerEMail.setRecordType(PennantConstants.RCD_ADD);
-		customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit, isFinanceProcess);
+		customerEmailInlineEditCtrl.doFillEmails(customerEMail, this.listBoxCustomerEmailsInlineEdit, isFinanceProcess,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug("Leaving");
 	}
@@ -6672,7 +6665,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.listBoxCustomerEmails.getItems().clear();
 
 		customerEmailInlineEditCtrl.doRenderEmailsList(customerEmailDetails, listBoxCustomerEmailsInlineEdit,
-				this.custCIF.getValue(), isFinanceProcess);
+				this.custCIF.getValue(), isFinanceProcess, PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug("Leaving");
 	}
@@ -7215,7 +7208,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doFillCustomerIncome(List<CustomerIncome> incomes) {
 		logger.debug("Entering");
 		setIncomeList(incomes);
-		incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter);
+		incomeAndExpenseCtrl.doRenderIncomeList(incomes, this.listBoxCustomerIncomeInLineEdit, ccyFormatter,
+				PennantConstants.MODULETYPE_ENQ.equals(this.moduleType));
 
 		logger.debug("Leaving");
 	}
@@ -7277,7 +7271,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		byte[] cibildata = FileUtils.readFileToByteArray(ftlFile);
 		loader.putTemplate("CIBILFinalTemplate.FTL", new String(cibildata));
 
-		Configuration config = new Configuration();
+		Configuration config = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		config.setClassForTemplateLoading(CustomerDialogCtrl.class, "CIBILFinalTemplate.FTL");
 		config.setTemplateLoader(loader);
 		config.setDefaultEncoding("UTF-8");
@@ -7739,7 +7733,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				cbDefault.setId("GstState_" + gstDetail.getStateCode());
 				cbDefault.setParent(lc);
 				cbDefault.setChecked(gstDetail.isDefaultGST());
-				cbDefault.setDisabled(!getUserWorkspace().isAllowed("btnNew_CustomerDialog_GSTDetails"));
+				cbDefault.setDisabled(
+						this.enqiryModule || !getUserWorkspace().isAllowed("btnNew_CustomerDialog_GSTDetails"));
 				if (!cbDefault.isDisabled()) {
 					cbDefault.addForward("onCheckGstDefault", this.window_CustomerDialog, "onCheckDefault", gstDetail);
 				}
@@ -7986,11 +7981,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setCustomerBankInfoList(List<CustomerBankInfo> customerBankInfoList) {
 		CustomerBankInfoList = customerBankInfoList;
-	}
-
-	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
-		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
-
 	}
 
 	public List<CustCardSales> getCustomerCardSales() {

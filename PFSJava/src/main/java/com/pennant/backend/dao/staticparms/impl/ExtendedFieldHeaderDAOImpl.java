@@ -526,22 +526,41 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 */
 	@Override
 	public void dropTable(String module, String subModule) {
-		/*
-		 * logger.debug("Entering");
-		 * 
-		 * for (int i = 0; i < 3; i++) { String tableType = ""; if(i == 0){ tableType = "_Temp"; }
-		 * 
-		 * //For SQL server StringBuilder syntax = new StringBuilder(); syntax.append("drop table "); if(i == 2){
-		 * syntax.append("Adt"); } syntax.append(module); syntax.append("_"); syntax.append(subModule);
-		 * syntax.append("_ED"); syntax.append(StringUtils.trimToEmpty(tableType));
-		 * 
-		 * try { logger.debug("dropsql: " + syntax.toString()); if(i == 2){// Audit DB
-		 * this.adtNamedParameterJdbcTemplate.getJdbcOperations().update(syntax.toString()); }else{
-		 * this.jdbcTemplate.getJdbcOperations().update(syntax.toString()); } } catch (Exception e) {
-		 * logger.debug("Exception: ", e); }
-		 * 
-		 * }
-		 */}
+
+		logger.debug("Entering");
+
+		for (int i = 0; i < 3; i++) {
+			String tableType = "";
+			if (i == 0) {
+				tableType = "_Temp";
+			}
+
+			// For SQL server
+			StringBuilder syntax = new StringBuilder();
+			syntax.append("drop table ");
+			if (i == 2) {
+				syntax.append("Adt");
+			}
+			syntax.append(module);
+			syntax.append("_");
+			syntax.append(subModule);
+			syntax.append("_ED");
+			syntax.append(StringUtils.trimToEmpty(tableType));
+
+			try {
+				logger.debug("dropsql: " + syntax.toString());
+				if (i == 2) {// Audit DB
+					this.auditJdbcTemplate.getJdbcOperations().update(syntax.toString());
+				} else {
+					this.jdbcTemplate.getJdbcOperations().update(syntax.toString());
+				}
+			} catch (Exception e) {
+				logger.debug("Exception: ", e);
+			}
+
+		}
+
+	}
 
 	@Override
 	public List<ExtendedFieldHeader> getExtFieldHeaderListByModuleName(String moduleName, String event, String type) {

@@ -9,7 +9,7 @@
 
 	<bean class="com.pennant.backend.model.limit.LimitDetails">
 		<field name="limitStructureDetailsID">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>structureDetailId is Mandatory</message>
 				<groups>
 					<value>com.pennant.validation.UpdateValidationGroup</value>
@@ -18,7 +18,7 @@
 				<element name="value">1</element>
 
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>structureDetailId allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>
@@ -42,7 +42,7 @@
 
 
 		<field name="limitSanctioned">
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>limitSanctioned allow 21 digits only</message>
 				<groups>
 					<value>com.pennant.validation.SaveValidationGroup</value>

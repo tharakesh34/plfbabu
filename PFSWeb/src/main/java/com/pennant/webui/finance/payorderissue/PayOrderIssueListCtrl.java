@@ -27,8 +27,6 @@ package com.pennant.webui.finance.payorderissue;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -60,7 +58,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
  */
 public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> {
 	private static final long serialVersionUID = -6951358943287040101L;
-	private static final Logger logger = LogManager.getLogger(PayOrderIssueListCtrl.class);
 
 	protected Window window_PayOrderIssueList;
 	protected Borderlayout borderLayout_PayOrderIssueList;

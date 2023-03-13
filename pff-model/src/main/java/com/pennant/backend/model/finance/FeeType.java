@@ -38,7 +38,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  */
 public class FeeType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-	
+
 	private long feeTypeID = Long.MIN_VALUE;
 	private String feeTypeCode;
 	private String feeTypeDesc;
@@ -63,12 +63,14 @@ public class FeeType extends AbstractWorkflowEntity {
 	private boolean tdsReq;
 	private String acType;
 	private String acTypeDesc;
-	private String feeIncomeOrExpense;
+	private String incomeOrExpenseAcType;
 	private String payableLinkTo;
 	private Long recvFeeTypeId;
 	private String recvFeeTypeCode;
 	private String recvFeeTypeDesc;
 	private String allocationtype;
+	private String waiverOrRefundAcType;
+	private boolean allowAutoRefund;
 
 	public FeeType() {
 		super();
@@ -106,12 +108,14 @@ public class FeeType extends AbstractWorkflowEntity {
 		entity.setTdsReq(this.tdsReq);
 		entity.setAcType(this.acType);
 		entity.setAcTypeDesc(this.acTypeDesc);
-		entity.setFeeIncomeOrExpense(this.feeIncomeOrExpense);
+		entity.setIncomeOrExpenseAcType(this.incomeOrExpenseAcType);
 		entity.setPayableLinkTo(this.payableLinkTo);
 		entity.setRecvFeeTypeId(this.recvFeeTypeId);
 		entity.setRecvFeeTypeCode(this.recvFeeTypeCode);
 		entity.setRecvFeeTypeDesc(this.recvFeeTypeDesc);
 		entity.setAllocationtype(this.allocationtype);
+		entity.setWaiverOrRefundAcType(this.waiverOrRefundAcType);
+		entity.setAllowAutoRefund(this.allowAutoRefund);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -345,12 +349,12 @@ public class FeeType extends AbstractWorkflowEntity {
 		this.acTypeDesc = acTypeDesc;
 	}
 
-	public String getFeeIncomeOrExpense() {
-		return feeIncomeOrExpense;
+	public String getIncomeOrExpenseAcType() {
+		return incomeOrExpenseAcType;
 	}
 
-	public void setFeeIncomeOrExpense(String feeIncomeOrExpense) {
-		this.feeIncomeOrExpense = feeIncomeOrExpense;
+	public void setIncomeOrExpenseAcType(String incomeOrExpenseAcType) {
+		this.incomeOrExpenseAcType = incomeOrExpenseAcType;
 	}
 
 	public String getPayableLinkTo() {
@@ -392,4 +396,21 @@ public class FeeType extends AbstractWorkflowEntity {
 	public void setAllocationtype(String allocationtype) {
 		this.allocationtype = allocationtype;
 	}
+
+	public String getWaiverOrRefundAcType() {
+		return waiverOrRefundAcType;
+	}
+
+	public void setWaiverOrRefundAcType(String waiverOrRefundAcType) {
+		this.waiverOrRefundAcType = waiverOrRefundAcType;
+	}
+
+	public boolean isAllowAutoRefund() {
+		return allowAutoRefund;
+	}
+
+	public void setAllowAutoRefund(boolean allowAutoRefund) {
+		this.allowAutoRefund = allowAutoRefund;
+	}
+
 }

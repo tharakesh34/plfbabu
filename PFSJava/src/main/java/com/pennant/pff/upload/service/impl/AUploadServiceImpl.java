@@ -14,7 +14,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 
@@ -52,16 +54,22 @@ public abstract class AUploadServiceImpl implements UploadService {
 
 	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
-			Date toDate, String type) {
-		List<FileUploadHeader> headerList = uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type);
+			Date toDate, String type, String stage, String usrLogin) {
+		List<FileUploadHeader> headerList = uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type,
+				stage, usrLogin);
 
 		for (FileUploadHeader header : headerList) {
-			if (header.getSuccessRecords() == 0) {
+			if (header.getFailureRecords() > 0) {
 				header.setDataEngineLog(dataEngineConfig.getExceptions(header.getExecutionID()));
 			}
 		}
 
 		return headerList;
+	}
+
+	@Override
+	public DataEngineStatus getDEStatus(long executionID) {
+		return dataEngineConfig.getDataEngineStatus(executionID);
 	}
 
 	@Override
@@ -104,6 +112,56 @@ public abstract class AUploadServiceImpl implements UploadService {
 				header.setProgress(Status.REJECTED.getValue());
 			}
 		}
+	}
+
+	@Override
+	public ProcessRecord getProcessRecord() {
+		return null;
+	}
+
+	@Override
+	public void updateDownloadStatus(long headerID, int status) {
+		this.uploadDAO.updateDownloadStatus(headerID, status);
+	}
+
+	@Override
+	public void updateInProcessStatus(long headerID, int status) {
+		this.uploadDAO.updateProgress(headerID, status);
+	}
+
+	@Override
+	public void updateFailRecords(int sucessRecords, int faildrecords, long headerId) {
+		this.uploadDAO.updateFailRecords(sucessRecords, faildrecords, headerId);
+	}
+
+	protected String getErrorMessage(Exception e) {
+		String message = e.getMessage();
+
+		if (message != null && message.length() > 1999) {
+			message = message.substring(1999);
+		}
+		return message;
+	}
+
+	@Override
+	public String isValidateApprove(List<FileUploadHeader> selectedHeaders) {
+		StringBuilder builder = new StringBuilder();
+
+		for (FileUploadHeader header : selectedHeaders) {
+			if (!header.isDownloadReq()) {
+				continue;
+			}
+
+			if (!this.uploadDAO.isValidateApprove(header.getId(), Status.DOWNLOADED.getValue())) {
+				if (builder.length() > 0) {
+					builder.append(", ");
+				}
+
+				builder.append(header.getId());
+			}
+		}
+
+		return builder.toString();
 	}
 
 	@Autowired

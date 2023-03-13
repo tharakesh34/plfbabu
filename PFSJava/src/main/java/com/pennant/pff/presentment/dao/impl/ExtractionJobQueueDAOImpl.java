@@ -241,4 +241,22 @@ public class ExtractionJobQueueDAOImpl extends SequenceDao<BatchJobQueue> implem
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public void logQueue() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void logQueue(int progress) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

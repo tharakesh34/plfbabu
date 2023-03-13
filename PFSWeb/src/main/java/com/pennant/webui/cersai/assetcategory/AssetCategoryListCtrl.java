@@ -2,7 +2,6 @@ package com.pennant.webui.cersai.assetcategory;
 
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -31,7 +30,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class AssetCategoryListCtrl extends GFCBaseListCtrl<AssetCategory> {
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LogManager.getLogger(AssetCategoryListCtrl.class);
 
 	protected Window window_AssetCategoryList;
 	protected Borderlayout borderLayout_AssetCategoryList;

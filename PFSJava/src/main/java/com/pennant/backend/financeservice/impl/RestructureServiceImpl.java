@@ -518,7 +518,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		// ------------------------
 		FinODPenaltyRate odPenalRate = schdData.getFinODPenaltyRate();
 		if (odPenalRate == null) {
-			odPenalRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "_AView");
+			odPenalRate = finODPenaltyRateDAO.getEffectivePenaltyRate(finID, "_AView");
 		}
 
 		FeeType lppFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.ODC);

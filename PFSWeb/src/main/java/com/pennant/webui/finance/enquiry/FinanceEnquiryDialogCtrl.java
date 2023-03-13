@@ -47,6 +47,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
@@ -124,10 +125,13 @@ import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.settlement.model.FinSettlementHeader;
+import com.pennant.pff.settlement.service.SettlementService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul File
@@ -534,6 +538,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_Subvention;
 	protected Combobox subVentionFrom;
 	protected ExtendedCombobox manufacturerDealer;
+	protected Uppercasebox blockRefunds;
+	protected Textbox reasonForBlock;
 	Customer customer = null;
 	@Autowired
 	private JointAccountDetailService jointAccountDetailService;
@@ -555,6 +561,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 
 	private FinanceDetailService financeDetailService;
+	private SettlementService settlementService;
+
+	protected A settlementEnq;
+	protected Label label_LoanBasicDetailsDialog_Settlement;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1166,6 +1176,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.isWriteoffLoan()) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
 			}
+			if (aFinanceMain.getHoldStatus() != null && aFinanceMain.getHoldStatus().equals("H")) {
+				this.blockRefunds.setValue(aFinanceMain.getHoldStatus());
+				this.reasonForBlock.setValue(aFinanceMain.getReason());
+			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
 			this.frqDefferments.setDisabled(true);
@@ -1188,6 +1202,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 		}
+
+		this.settlementEnq.setVisible(true);
+		this.label_LoanBasicDetailsDialog_Settlement.setVisible(true);
+
 		if (StringUtils.isNotBlank(aFinanceMain.getLinkedFinRef())) {
 			this.row_LinkedFinRef.setVisible(true);
 			this.linkedFinRef.setValue(aFinanceMain.getLinkedFinRef());
@@ -1649,14 +1667,15 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		fillComboBox(this.oDChargeType, finODPenaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
 				"");
 
-		if (FinanceConstants.PENALTYTYPE_FLAT.equals(getComboboxValue(this.oDChargeType))
-				|| FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.format(finODPenaltyRate.getODChargeAmtOrPerc(),
+		if (ChargeType.FLAT.equals(getComboboxValue(this.oDChargeType))
+				|| ChargeType.FLAT_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
+			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(finODPenaltyRate.getODChargeAmtOrPerc(),
 					CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
-		} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
-				|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
-				|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.format(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
+		} else if (ChargeType.PERC_ONE_TIME.equals(getComboboxValue(this.oDChargeType))
+				|| ChargeType.PERC_ON_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
+				|| ChargeType.PERC_ON_EFF_DUE_DAYS.equals(getComboboxValue(this.oDChargeType))
+				|| ChargeType.PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
+			this.oDChargeAmtOrPerc.setValue(CurrencyUtil.parse(finODPenaltyRate.getODChargeAmtOrPerc(), 2));
 		}
 
 		this.oDAllowWaiver.setChecked(finODPenaltyRate.isODAllowWaiver());
@@ -2180,6 +2199,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		// BPI
 		this.alwBpiTreatment.setDisabled(true);
 		this.dftBpiTreatment.setDisabled(true);
+		this.blockRefunds.setReadonly(true);
+		this.reasonForBlock.setReadonly(true);
 	}
 
 	/** ========================================================= */
@@ -2467,6 +2488,30 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
+	public void onClick$settlementEnq(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		FinSettlementHeader settlement = settlementService.getSettlementByRef(this.finReference.getValue(), "_View");
+
+		if (settlement == null) {
+			MessageUtil.showError("There is no Settlement process. ");
+			return;
+		}
+
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("isEnqProcess", true);
+		arg.put("settlement", settlement);
+		arg.put("financeDetail", financeDetail);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Settlement/SettlementDialog.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	public FinScheduleData getFinScheduleData() {
 		return finScheduleData;
 	}
@@ -2545,5 +2590,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setSettlementService(SettlementService settlementService) {
+		this.settlementService = settlementService;
 	}
 }

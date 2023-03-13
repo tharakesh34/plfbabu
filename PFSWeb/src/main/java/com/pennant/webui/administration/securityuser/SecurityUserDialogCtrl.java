@@ -2779,7 +2779,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		branches.setModuleName("Branch");
 		branches.setValueColumn("BranchCode");
-		branches.setDescColumn("BranchDesc");
 		branches.setValidateColumns(new String[] { "BranchCode" });
 
 		String selectedEntity = entity.getSelectedItem().getValue();
@@ -2912,6 +2911,13 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		ExtendedCombobox clusters = (ExtendedCombobox) getComponent(row, 7);
 
 		if (clusterType != null && clusters != null) {
+			if (getComboboxValue(clusterType).equals(PennantConstants.List_Select)) {
+				clusters.setButtonDisabled(true);
+			} else {
+				clusters.setButtonDisabled(false);
+			}
+			clusters.setSelectedValues(new HashMap<>());
+			clusters.setValue("");
 			clusters.setFilters(new Filter[] { new Filter("clustertype", clusterType.getSelectedItem().getValue()) });
 		}
 	}
@@ -2960,6 +2966,14 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} else {
 			clusters.setValue("");
 		}
+
+		Combobox clusterType = (Combobox) getComponent(row, 5);
+		if (clusterType.getValue().equals("")) {
+			clusters.setButtonDisabled(true);
+		} else {
+			clusters.setButtonDisabled(false);
+			clusters.setFilters(new Filter[] { new Filter("clustertype", clusterType.getValue()) });
+		}
 	}
 
 	public void onChangeClusters(ForwardEvent event) {
@@ -2984,7 +2998,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if (value.length() > 0) {
 					value.append(",");
 				}
-				value.append(entity);
+
+				Cluster data = (Cluster) cluster.get(entity);
+
+				value.append(data.getCode());
 			}
 		}
 
@@ -3008,6 +3025,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		cluster.setParent(hbox);
 		cluster.setMandatoryStyle(true);
+		cluster.addForward("onFulfill", self, "onChangeParentCluster", row);
 		// cluster.setInputAllowed(false);
 
 		Cluster cl = new Cluster();
@@ -3015,6 +3033,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			cl.setId(division.getParentCluster());
 			cl.setCode(division.getParentClusterCode());
 			cl.setName(division.getParentClusterName());
+			cluster.getLabel().setValue("...");
+			cluster.getLabel().setTooltiptext(division.getParentClusterName());
 			cluster.setObject(cl);
 			onChangeParentCluster(row);
 		}
@@ -3043,6 +3063,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		branch.setMultySelection(true);
 		branch.setTooltiptext(value.toString());
+		branch.setModuleName("Branch");
+		branch.setValueColumn("BranchCode");
+		branch.setValidateColumns(new String[] { "BranchCode" });
+
 		branch.setInputAllowed(false);
 		branch.setSelectedValues(division.getBranches());
 		branch.setAttribute("data", division.getBranches());
@@ -3073,7 +3097,16 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			ocluster = (Cluster) object;
 			cluster.setValue(ocluster.getCode());
 			cluster.setDescription(ocluster.getName());
+			cluster.getLabel().setValue("...");
+			cluster.getLabel().setTooltiptext(ocluster.getName());
 			cluster.setObject(ocluster);
+		}
+
+		ExtendedCombobox branches = (ExtendedCombobox) getComponent(row, 7);
+
+		if (branches != null) {
+			branches.setValue("", "");
+			branches.setSelectedValues(new HashMap<>());
 		}
 
 		doSetBranchFilter(row);
@@ -3086,7 +3119,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		entities.setValueColumn("EntityCode");
 		entities.setDescColumn("EntityDesc");
 		entities.setValidateColumns(new String[] { "EntityCode" });
-		// entities.setWhereClause(" entitycode in (select entity from rmtBranches)");
 		entities.setWhereClause(" entitycode in (select s.entitycode from smtdivisiondetail s" + " where divisioncode ="
 				+ "'" + division.getUserDivision() + "'" + ") ");
 		logger.debug(Literal.LEAVING);

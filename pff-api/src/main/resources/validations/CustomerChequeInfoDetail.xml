@@ -28,14 +28,14 @@
 			</constraint>
 		</field>
 		<field name="chequeSeq">
-			<constraint annotation="javax.validation.constraints.Min">
+			<constraint annotation="jakarta.validation.constraints.Min">
 				<message>chequeSeq should be Positive</message>
 				<groups>
 					<value>com.pennant.validation.DeleteValidationGroup</value>
 				</groups>
 				<element name="value">1</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.DecimalMax">
+			<constraint annotation="jakarta.validation.constraints.DecimalMax">
 				<message>chequeSeq allow 19 digits only</message>
 				<groups>
 					<value>com.pennant.validation.DeleteValidationGroup</value>

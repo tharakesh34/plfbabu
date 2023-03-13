@@ -61,7 +61,6 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
@@ -1766,7 +1765,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		if (!isWIF) {
-			finODPenaltyRateDAO.delete(finID, tableType);
+			finODPenaltyRateDAO.delete(finID, scheduleData.getFinODPenaltyRate().getFinEffectDate(), tableType);
 		}
 
 		logger.debug("Leaving ");
@@ -1858,8 +1857,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			penaltyRate.setFinID(finID);
 			penaltyRate.setFinReference(finReference);
-
-			penaltyRate.setFinEffectDate(DateUtility.getSysDate());
+			if (FinServiceEvent.ORG.equals(fm.getModuleDefiner()) || StringUtils.isEmpty(fm.getModuleDefiner())) {
+				penaltyRate.setFinEffectDate(fm.getFinStartDate());
+			} else {
+				penaltyRate.setFinEffectDate(curBDay);
+			}
 
 			finODPenaltyRateDAO.save(penaltyRate, tableType);
 		}
@@ -2316,6 +2318,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
+	@Autowired
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}

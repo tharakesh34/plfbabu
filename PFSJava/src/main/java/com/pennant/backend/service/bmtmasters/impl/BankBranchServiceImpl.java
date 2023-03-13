@@ -332,7 +332,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		BankBranch bankBranch = new BankBranch();
 
 		if (StringUtils.isBlank(iFSC) && (StringUtils.isBlank(bankCode) || StringUtils.isBlank(branchCode))) {
-			bankBranch.setError(getError("90215", "IFSC", "Bank/Branch code"));
+			bankBranch.setError(getError("90313", ""));
 			return bankBranch;
 		}
 

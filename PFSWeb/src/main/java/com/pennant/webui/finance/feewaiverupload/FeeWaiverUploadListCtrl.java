@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
@@ -47,7 +45,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FeeWaiverUploadListCtrl extends GFCBaseListCtrl<FeeWaiverUploadHeader> {
 	private static final long serialVersionUID = 5327118548986437717L;
-	private static final Logger logger = LogManager.getLogger(FeeWaiverUploadListCtrl.class);
 
 	protected Window window_FeeWaiverUploadList;
 	protected Borderlayout borderLayout_FeeWaiverUploadList;

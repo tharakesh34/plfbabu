@@ -107,11 +107,6 @@ public class AccrualService extends ServiceHelper {
 
 		pfd = calProfitDetails(fm, schedules, pfd, custEODEvent.getEodValueDate());
 
-		// FIXME: PV 15MAY17: To confirm it is being updated in latePayMarkingService.processDPDBuketing OR
-		// latePayMarkingService.processCustomerStatus
-		// String worstSts = getCustomerStatusCodeDAO().getFinanceStatus(finReference, false);
-		// profitDetail.setFinWorstStatus(worstSts);
-
 		// post Accruals on Application Extended Month End OR Application Month End OR Daily
 		int amzPostingEvent = eventProperties.getAmzPostingEvent();
 		boolean isAmzPostToday = false;
