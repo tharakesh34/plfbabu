@@ -67,7 +67,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
-		if (presentmentRespUploadDAO.isProcessed(reference, detail.getClearingDate())) {
+		if (presentmentRespUploadDAO.isDuplicateKeyPresent(reference, detail.getClearingStatus(),
+				detail.getClearingDate())) {
 			setError(detail, PresentmentError.FC_601);
 			return;
 		}

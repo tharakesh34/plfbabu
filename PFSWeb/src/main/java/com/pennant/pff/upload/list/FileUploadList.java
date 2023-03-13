@@ -690,11 +690,6 @@ public class FileUploadList extends Window implements Serializable {
 		engine.setMedia(uploadHeader.getMedia());
 		engine.setValueDate(appDate);
 
-		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("HEADER_ID", uploadHeader.getId());
-
-		engine.setParameterMap(parameterMap);
-
 		if (processDTO.getService().getProcessRecord() != null) {
 			engine.setProcessRecord(processDTO.getService().getProcessRecord());
 		}
@@ -811,6 +806,10 @@ public class FileUploadList extends Window implements Serializable {
 			}
 		}
 
+		if (this.fromDate.getValue() != null) {
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
+					this.fromDate.getValue(), null, true));
+		}
 	}
 
 	private void doRemoveValidation() {
@@ -1520,6 +1519,10 @@ public class FileUploadList extends Window implements Serializable {
 
 			uploadHeader.setId(this.processDTO.getService().saveHeader(uploadHeader, TableType.MAIN_TAB));
 			uploadHeader.setAppDate(appDate == null ? SysParamUtil.getAppDate() : appDate);
+
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("HEADER_ID", uploadHeader.getId());
+			engine.setParameterMap(parameterMap);
 
 			DataEngineStatus status = uploadHeader.getDeStatus();
 

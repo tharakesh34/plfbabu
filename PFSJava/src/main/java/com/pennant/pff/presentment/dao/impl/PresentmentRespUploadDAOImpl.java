@@ -284,4 +284,17 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 
 		return null;
 	}
+
+	@Override
+	public boolean isDuplicateKeyPresent(String hostReference, String clearingStatus, Date dueDate) {
+
+		Object[] obj = new Object[] { hostReference, clearingStatus, JdbcUtil.getDate(dueDate) };
+
+		String sql = "select count(*) from PRESENTMENT_RESP_DTLS where FinReference = ? and clearing_status = ? and clearing_Date = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
+
+	}
 }
