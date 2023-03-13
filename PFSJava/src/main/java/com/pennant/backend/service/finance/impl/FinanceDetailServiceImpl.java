@@ -128,6 +128,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
@@ -155,6 +156,8 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -11423,11 +11426,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		ReceiptDTO receiptDTO = new ReceiptDTO();
 
+		FinReceiptData rd = prepareReceiptData(fd);
+		feeCalculator.calculateFees(rd);
+
 		receiptDTO.setFinanceMain(fm);
 		receiptDTO.setSchedules(schdData.getFinanceScheduleDetails());
 		receiptDTO.setOdDetails(schdData.getFinODDetails());
 		receiptDTO.setManualAdvises(manualAdviseDAO.getReceivableAdvises(fm.getFinID(), appDate, "_AView"));
-		receiptDTO.getFees().addAll(schdData.getFinFeeDetailList());
+		receiptDTO.setFees(rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
 
 		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
 		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
@@ -11435,5 +11441,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		receiptDTO.setValuedate(appDate);
 
 		return receiptDTO;
+	}
+
+	private FinReceiptData prepareReceiptData(FinanceDetail fd) {
+		FinReceiptData frd = new FinReceiptData();
+		FinReceiptHeader frh = new FinReceiptHeader();
+		List<CustomerAddres> ca = null;
+
+		ca = fd.getCustomerDetails().getAddressList();
+		if (ca == null) {
+			ca = new ArrayList<>();
+			fd.getCustomerDetails().setAddressList(ca);
+		}
+		FinScheduleData fsd = fd.getFinScheduleData();
+		fsd.setFeeEvent(AccountingEvent.EARLYSTL);
+		fd.setFinTypeFeesList(
+				finTypeFeesDAO.getFinTypeFeesForLMSEvent(fsd.getFinanceType().getFinType(), AccountingEvent.EARLYSTL));
+
+		frd.setFinanceDetail(fd);
+		frd.setTdPriBal(fsd.getFinPftDeatil().getTdSchdPriBal());
+		frd.setReceiptHeader(frh);
+
+		return frd;
 	}
 }

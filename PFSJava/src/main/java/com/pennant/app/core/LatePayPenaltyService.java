@@ -182,6 +182,14 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		setTotals(fod);
+
+		if (fod.getLppDueTillDate() != null && fod.getLppDueAmt().compareTo(fod.getTotPenaltyAmt()) > 0) {
+			fod.setPayableAmount(fod.getLppDueAmt().subtract(fod.getTotPenaltyAmt()));
+			fod.setTotPenaltyAmt(fod.getLppDueAmt());
+			if (fod.getTotPenaltyPaid().compareTo(fod.getTotPenaltyAmt()) != 0) {
+				fod.setTotPenaltyBal(fod.getLppDueAmt());
+			}
+		}
 	}
 
 	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {

@@ -111,7 +111,6 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
-import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -190,7 +189,6 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.document.DocumentService;
-import com.pennanttech.pff.foreclosure.service.ForeClosureService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.service.impl.RemarksWebServiceImpl;
@@ -200,7 +198,6 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
-import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
 
@@ -258,7 +255,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private ForeClosureService foreClosureService;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -2635,6 +2631,10 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
 
+			if (fpd != null) {
+				schdData.setFinPftDeatil(fpd);
+			}
+
 			if (!fm.isFinIsActive()) {
 				fm.setClosedDate(financeMainService.getFinClosedDate(finID));
 			}
@@ -4537,18 +4537,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		ch.setTotalAmount(totalChequeAmount);
 	}
 
-	private BigDecimal getClosureAmount(FinanceMain financeMain) {
-		FinStatementRequest statementReq = new FinStatementRequest();
-		statementReq.setFinReference(financeMain.getFinReference());
-		statementReq.setFinID(financeMain.getFinID());
-		statementReq.setDays(1);
-		Date appDate = SysParamUtil.getAppDate();
-		statementReq.setFromDate(appDate);
-
-		ForeClosureLetter forclosureDetails = foreClosureService.getForeClosureAmt(statementReq);
-		return forclosureDetails.getForeCloseAmount();
-	}
-
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -4813,11 +4801,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
-
-	@Autowired
-	public void setForeClosureService(ForeClosureService foreClosureService) {
-		this.foreClosureService = foreClosureService;
 	}
 
 }
