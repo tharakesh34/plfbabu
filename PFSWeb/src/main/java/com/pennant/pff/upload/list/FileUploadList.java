@@ -806,10 +806,6 @@ public class FileUploadList extends Window implements Serializable {
 			}
 		}
 
-		if (this.fromDate.getValue() != null) {
-			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
-					this.fromDate.getValue(), null, true));
-		}
 	}
 
 	private void doRemoveValidation() {
@@ -944,6 +940,16 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickSearch() {
+		if (this.fromDate.getValue() != null) {
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
+					this.fromDate.getValue(), null, true));
+			try {
+				this.toDate.getValue();
+			} catch (WrongValueException e) {
+				throw new WrongValueException(this.toDate, e.getMessage());
+			}
+		}
+
 		search(false);
 	}
 
