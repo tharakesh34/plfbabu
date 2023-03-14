@@ -195,4 +195,13 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 			ps.setLong(++index, detail.getId());
 		});
 	}
+
+	@Override
+	public boolean isRecordExist(long excessID, long finID) {
+		String sql = "Select Count(FinID) from FinExcessAmount where ExcessID = ? and finID = ? ";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, excessID, finID) > 0;
+	}
 }

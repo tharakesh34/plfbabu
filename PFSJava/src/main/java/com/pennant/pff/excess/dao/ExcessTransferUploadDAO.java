@@ -22,4 +22,7 @@ public interface ExcessTransferUploadDAO {
 	List<ExcessTransferUpload> getProcess(long headerID);
 
 	void updateFailure(ExcessTransferUpload detail);
+
+	boolean isRecordExist(long excessID, long finID);
+
 }
