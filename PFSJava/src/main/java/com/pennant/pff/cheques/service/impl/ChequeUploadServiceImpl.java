@@ -115,8 +115,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						upload.setReferenceID(finID);
 						String action = upload.getAction();
 
-						if (chequeDetailDAO.isDuplicateKeyPresent(upload.getChequeDetail().getAccountNo(),
-								upload.getChequeDetail().getChequeSerialNumber(), TableType.MAIN_TAB)) {
+						if (!"D".equals(action)
+								&& chequeDetailDAO.isDuplicateKeyPresent(upload.getChequeDetail().getAccountNo(),
+										upload.getChequeDetail().getChequeSerialNumber(), TableType.MAIN_TAB)) {
 
 							String[] parameters = new String[2];
 
@@ -143,7 +144,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 							if (isNotRelizedOrPresent(upload)) {
 								delcheques.add(upload.getChequeDetail());
 							} else {
-								ErrorDetail error = ErrorUtil.getError("90508", "Cheque Header ");
+								ErrorDetail error = ErrorUtil.getError("90509", "Cheque Header ");
 								setError(chequeUploads, error);
 								continue;
 							}
@@ -238,6 +239,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		String accNo = chequeDetail.getAccountNo();
 
 		String status = chequeDetailDAO.getChequeStatus(seq, accNo);
+		if (status == null) {
+			return false;
+		}
 
 		return !(RepayConstants.PAYTYPE_PRESENTMENT.equals(status)
 				|| DisbursementConstants.STATUS_REALIZED.equals(status) || Allocation.BOUNCE.equals(status));
