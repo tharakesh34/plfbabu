@@ -4564,6 +4564,14 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 
+			// DSA
+			if (StringUtils.isNotEmpty(financeMain.getDsaCode())) {
+				vehicleDealer = vehicleDealerDao.getVehicleDealerById(Long.valueOf((financeMain.getDsaCode())), "");
+				financeMain.setDsaCodeReference(vehicleDealer.getCode());
+				financeMain.setDsaName(vehicleDealer.getDealerName());
+				financeMain.setDsaCodeDesc(vehicleDealer.getCode());
+			}
+
 			List<InterfaceServiceDetails> serviceDetailsList = financeDetail.getInterfaceDetailList();
 			List<InterfaceServiceDetails> primaryDetailsList = new ArrayList<InterfaceServiceDetails>();
 			for (InterfaceServiceDetails detail : serviceDetailsList) {

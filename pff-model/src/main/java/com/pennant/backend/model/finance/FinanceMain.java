@@ -66,9 +66,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq",
 		"nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq",
 		"nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "finContractDate",
-		"finPurpose", "finLimitRef", "finCommitmentRef", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode",
-		"referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz",
-		"maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw",
+		"finPurpose", "finLimitRef", "finCommitmentRef", "dsaCode", "dsaName", "dsaCodeDesc", "accountsOfficer",
+		"salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz",
+		"reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw",
 		"planEMIHAlwInGrace", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz",
 		"firstDisbDate", "lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor",
 		"fixedTenorRate", "eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor",
@@ -144,7 +144,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String dsaCode;
 	@XmlElement(name = "dsaCode")
 	private String dsaCodeReference;
+	@XmlElement
 	private String dsaName;
+	@XmlElement
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
 	private String lovDescSourceCity;
