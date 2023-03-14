@@ -111,6 +111,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setPresentmentReference(pd.getPresentmentRef());
 		detail.setBounceCode(detail.getBounceCode());
 		detail.setBounceRemarks(detail.getBounceRemarks());
+		detail.setAccountNumber(pd.getAccountNo());
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");
