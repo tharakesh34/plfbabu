@@ -30,6 +30,7 @@ public interface InterfaceConstants {
 	String CONFIG_UCIC_RESP_COMPLETE = "UCIC_RESP_COMPLETE";
 	String CONFIG_UCIC_ACK = "UCIC_ACK";
 	String CONFIG_UCIC_ACK_CONF = "UCIC_ACK_CONF";
+	String CONFIG_UCIC_PLF_SERVER = "UCIC_PLF_SERVER";
 
 	String CONFIG_UCIC_WEEKLY_FILE = "UCIC_WEEKLY";
 
@@ -94,6 +95,7 @@ public interface InterfaceConstants {
 	String F804 = "F804";
 	String F702 = "F702";
 	String F703 = "F703";
+	String F704 = "F704";
 	String F903 = "F903";
 	String F600 = "F600";
 	String F601 = "F601";

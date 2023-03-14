@@ -214,18 +214,15 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			long id = extPresentmentData.getId();
 
 			try {
-
 				// begin the transaction
 				txStatus = transactionManager.getTransaction(txDef);
-
 				// Get extPresentment object from record data
 				ExtPresentmentFile extPresentmentFile = prepareAndValidate(extConfig, extPresentment,
 						extPresentmentData);
-
 				// validation extPresentment record if any error exists
 				String errorCode = extPresentmentFile.getErrorCode();
 				if (extPresentmentFile != null && !"".equals(errorCode)) {
-
+					logger.debug("F704:Exception in presentment.");
 					String errorMessage = extPresentmentFile.getErrorMessage();
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED, errorCode,
 							errorMessage);
@@ -235,7 +232,9 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 				}
 
 				Presentment data = getRequiredData(extPresentmentFile, extPresentment);
+
 				if (data == null) {
+					logger.debug("F703:No data available for presentment.");
 					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
 							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F703);
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED,
@@ -290,34 +289,40 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			ExtPresentmentData extPresentmentData) {
 		logger.debug(Literal.ENTERING);
 		ExtPresentmentFile extPresentmentFile = null;
+		try {
+			String fileName = StringUtils.stripToEmpty(extPresentment.getFileName());
 
-		String fileName = extPresentment.getFileName();
+			if (CONFIG_SI_RESP.equals(extConfig.getInterfaceName())) {
+				extPresentmentFile = siService.prepareResponseObject(extConfig, extPresentmentData,
+						extPresentment.getFileName());
+			}
 
-		if (CONFIG_SI_RESP.equals(extConfig.getInterfaceName())) {
-			extPresentmentFile = siService.prepareResponseObject(extConfig, extPresentmentData,
-					extPresentment.getFileName());
+			if (CONFIG_IPDC_RESP.equals(extConfig.getInterfaceName())) {
+				extPresentmentFile = siInternalService.prepareResponseObject(extConfig, extPresentmentData, fileName);
+			}
+
+			if (CONFIG_NACH_RESP.equals(extPresentment.getModule())) {
+				extPresentmentFile = achService.prepareResponseObject(extConfig, extPresentmentData.getRecord());
+			}
+
+			if (extPresentmentFile == null) {
+				extPresentmentFile = new ExtPresentmentFile();
+				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+						ExtErrorCodes.getInstance().getInterfaceErrorsList(), F704);
+				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
+				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
+			}
+
+			// Validate Presentment.ID and BounceCode
+			if (extPresentmentFile != null) {
+				businessValidation(extPresentmentFile, extPresentment);
+			}
+
+		} catch (Exception e) {
+			logger.debug("EXTFILEPROCESS: Exception while processing record data.");
+			logger.debug(Literal.EXCEPTION, e);
 		}
 
-		if (CONFIG_IPDC_RESP.equals(extConfig.getInterfaceName())) {
-			extPresentmentFile = siInternalService.prepareResponseObject(extConfig, extPresentmentData, fileName);
-		}
-
-		if (CONFIG_NACH_RESP.equals(extPresentment.getModule())) {
-			extPresentmentFile = achService.prepareResponseObject(extConfig, extPresentmentData.getRecord());
-		}
-
-		if (extPresentmentFile == null) {
-			extPresentmentFile = new ExtPresentmentFile();
-			InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-					ExtErrorCodes.getInstance().getInterfaceErrorsList(), F703);
-			extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
-			extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
-		}
-
-		// Validate Presentment.ID and BounceCode
-		if (extPresentmentFile != null) {
-			businessValidation(extPresentmentFile, extPresentment);
-		}
 		logger.debug(Literal.LEAVING);
 		return extPresentmentFile;
 	}
@@ -366,6 +371,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		if (CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
 			return externalPresentmentDAO.getPresenementPDCRecord(extPresentmentFile.getTxnReference());
 		}
+
 		return null;
 	}
 

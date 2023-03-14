@@ -121,6 +121,19 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 		ExtPresentmentFile extPresentmentFile;
 
 		while ((extPresentmentFile = cursorItemReader.read()) != null) {
+
+			String chqNo = StringUtils.stripToEmpty(extPresentmentFile.getChequeSerialNo());
+			Date chqDate = extPresentmentFile.getChequeDate();
+			long loanReff = extPresentmentFile.getAgreementId();
+
+			if ("".equals(chqNo) || chqDate == null || loanReff <= 0) {
+
+				logger.debug(
+						"CMS_ERROR:Invalid cheque no or cheque date or loan number received. Unable to process data from stage table.");
+				continue;
+
+			}
+
 			if (!isHeaderImported) {
 				isHeaderImported = true;
 				prh = prepareHeader();

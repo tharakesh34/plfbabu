@@ -86,7 +86,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<ExtPresentment> cursorItemReader = new JdbcCursorItemReader<ExtPresentment>();
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setFetchSize(10);
+		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<ExtPresentment>() {
 			@Override
@@ -116,121 +116,132 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
 		ExtPresentment extPresentment;
+		try {
+			while ((extPresentment = cursorItemReader.read()) != null) {
+				TransactionStatus txStatus = null;
 
-		while ((extPresentment = cursorItemReader.read()) != null) {
-			TransactionStatus txStatus = null;
+				Scanner sc = null;
+				try {
 
-			Scanner sc = null;
-			try {
+					// update the extract state as processing
+					externalPresentmentDAO.updateFileExtractionStatus(extPresentment.getId(), INPROCESS);
 
-				// update the extract state as processing
-				externalPresentmentDAO.updateFileExtractionStatus(extPresentment.getId(), INPROCESS);
+					String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
+							+ extPresentment.getFileName();
 
-				// begin the transaction
-				txStatus = transactionManager.getTransaction(txDef);
-
-				String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
-						+ extPresentment.getFileName();
-
-				// Validation on reject file 501
-				if (CONFIG_SI_RESP.equals(extPresentment.getModule())
-						|| CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
-					ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
-					String fileName = extPresentment.getFileName();
-					String filePrepend = config.getFilePrepend();
-					String fileExtension = config.getFileExtension();
-					if (fileName.startsWith(filePrepend.concat(config.getFailIndicator()))
-							&& fileName.endsWith(fileExtension)) {
-						if (!validateRejectFile(fileData)) {
-							// update the file extraction status as unprocessed because of invalid record count
-							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
-
-							externalPresentmentDAO.updateFileExtractionStatusWithError(extPresentment.getId(), FAILED,
-									interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
-							continue;
-						}
-					}
-				}
-
-				File file = new File(fileData);
-				// Fetch list of record data from the file
-				List<ExtPresentmentData> extPresentmentDataList = new ArrayList<ExtPresentmentData>();
-				sc = new Scanner(file);
-				// Read file line by line
-				while (sc.hasNextLine()) {
-					String lineData = sc.nextLine();
-
-					// ACH header line validation (We don't consider header line as record)
-					if (CONFIG_NACH_RESP.equals(extPresentment.getModule())) {
-						if (lineData.trim().startsWith(ACHService.ACH_HEADER_LINE_CODE)) {
-							continue;
-						}
-					}
-
-					// SI or SI Internal(IPDC) EOF line validation (We don't consider EOF line as record)
+					// Validation on reject file 501
 					if (CONFIG_SI_RESP.equals(extPresentment.getModule())
 							|| CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
-						if (lineData.trim().startsWith(SIService.SI_END_LINE)) {
-							continue;
-						}
-						if (lineData.trim().startsWith(SIService.SI_LINE_CASA)) {
-							continue;
-						}
-						if (lineData.trim().startsWith(SIService.SI_LINE_ACCOUNT)) {
-							continue;
+
+						ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
+
+						String fileName = extPresentment.getFileName();
+						String filePrepend = config.getFilePrepend();
+						String fileExtension = config.getFileExtension();
+						if (fileName.startsWith(filePrepend.concat(config.getFailIndicator()))
+								&& fileName.endsWith(fileExtension)) {
+							if (!validateRejectFile(fileData)) {
+								// update the file extraction status as unprocessed because of invalid record count
+								InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+										ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
+
+								externalPresentmentDAO.updateFileExtractionStatusWithError(extPresentment.getId(),
+										FAILED, interfaceErrorCode.getErrorCode(),
+										interfaceErrorCode.getErrorMessage());
+								continue;
+							}
 						}
 					}
 
-					// Check if record is already inserted before. Then skip the record
-					boolean isRecordExist = externalPresentmentDAO.isRecordAlreadyInserted(lineData,
-							extPresentment.getId());
+					File file = new File(fileData);
+					// Fetch list of record data from the file
+					List<ExtPresentmentData> extPresentmentDataList = new ArrayList<ExtPresentmentData>();
+					sc = new Scanner(file);
 
-					if (isRecordExist) {
-						continue;
+					boolean isTrue = true;
+
+					// Read file line by line
+					while (sc.hasNextLine()) {
+
+						if (isTrue) {
+							// begin the transaction
+							txStatus = transactionManager.getTransaction(txDef);
+							isTrue = false;
+						}
+
+						String lineData = sc.nextLine();
+
+						// ACH header line validation (We don't consider header line as record)
+						if (CONFIG_NACH_RESP.equals(extPresentment.getModule())) {
+							if (lineData.trim().startsWith(ACHService.ACH_HEADER_LINE_CODE)) {
+								continue;
+							}
+						}
+
+						// SI or SI Internal(IPDC) EOF line validation (We don't consider EOF line as record)
+						if (CONFIG_SI_RESP.equals(extPresentment.getModule())
+								|| CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
+							if (lineData.trim().startsWith(SIService.SI_END_LINE)) {
+								continue;
+							}
+							if (lineData.trim().startsWith(SIService.SI_LINE_CASA)) {
+								continue;
+							}
+							if (lineData.trim().startsWith(SIService.SI_LINE_ACCOUNT)) {
+								continue;
+							}
+						}
+
+						// Prepare ExtPresentmentData bean for saving record into table
+						ExtPresentmentData extPresentmentData = new ExtPresentmentData();
+						extPresentmentData.setHeaderId(extPresentment.getId());
+						extPresentmentData.setRecord(lineData);
+						extPresentmentData.setStatus(UNPROCESSED);
+						extPresentmentDataList.add(extPresentmentData);
+
+						if (extPresentmentDataList.size() == BULK_RECORD_COUNT) {
+							// save bulk records at a time..
+							externalPresentmentDAO.saveExternalPresentmentRecordsData(extPresentmentDataList);
+							extPresentmentDataList.clear();
+							// commit the transaction
+							transactionManager.commit(txStatus);
+							isTrue = true;
+						}
+
 					}
+					sc.close();
 
-					// Prepare ExtPresentmentData bean for saving record into table
-					ExtPresentmentData extPresentmentData = new ExtPresentmentData();
-					extPresentmentData.setHeaderId(extPresentment.getId());
-					extPresentmentData.setRecord(lineData);
-					extPresentmentData.setStatus(UNPROCESSED);
-					extPresentmentDataList.add(extPresentmentData);
-
-					if (extPresentmentDataList.size() == BULK_RECORD_COUNT) {
-						// save bulk records at a time..
+					if (extPresentmentDataList.size() > 0) {
+						// save records remaining after bulk insert
 						externalPresentmentDAO.saveExternalPresentmentRecordsData(extPresentmentDataList);
 						extPresentmentDataList.clear();
 					}
 
-				}
-				sc.close();
+					// update the file extraction as completed
+					externalPresentmentDAO.updateFileExtractionStatus(extPresentment.getId(), COMPLETED);
 
-				if (extPresentmentDataList.size() > 0) {
-					// save records remaining after bulk insert
-					externalPresentmentDAO.saveExternalPresentmentRecordsData(extPresentmentDataList);
-					extPresentmentDataList.clear();
-				}
-
-				// update the file extraction as completed
-				externalPresentmentDAO.updateFileExtractionStatus(extPresentment.getId(), COMPLETED);
-
-				// commit the transaction
-				transactionManager.commit(txStatus);
-
-			} catch (Exception e) {
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
-				}
-				// update the file extraction status as unprocessed
-				externalPresentmentDAO.updateFileExtractionStatus(extPresentment.getId(), UNPROCESSED);
-			} finally {
-				if (sc != null) {
-					sc.close();
+				} catch (Exception e) {
+					if (txStatus != null) {
+						transactionManager.rollback(txStatus);
+					}
+					// update the file extraction status as unprocessed
+					externalPresentmentDAO.updateFileExtractionStatus(extPresentment.getId(), UNPROCESSED);
+				} finally {
+					if (sc != null) {
+						sc.close();
+					}
 				}
 			}
+
+			cursorItemReader.close();
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		} finally {
+			if (cursorItemReader != null) {
+				cursorItemReader.close();
+			}
 		}
-		cursorItemReader.close();
 
 		logger.debug(Literal.LEAVING);
 	}
