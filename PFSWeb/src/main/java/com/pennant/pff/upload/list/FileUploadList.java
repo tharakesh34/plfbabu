@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -1082,6 +1083,8 @@ public class FileUploadList extends Window implements Serializable {
 			headers.add(header);
 		}
 
+		headers = headers.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId()))
+				.collect(Collectors.toList());
 		uploadService.doApprove(headers);
 
 		search(true);
