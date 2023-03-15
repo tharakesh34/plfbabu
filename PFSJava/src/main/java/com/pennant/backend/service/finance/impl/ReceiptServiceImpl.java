@@ -7138,8 +7138,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 			rd = receiptCalculator.initiateReceipt(rd, false);
 
-			rd.setActualReceiptAmount(rch.getReceiptAmount().subtract(rd.getExcessAvailable()));
 			rd.setExcessAvailable(receiptCalculator.getExcessAmount(rd));
+			rd.setActualReceiptAmount(rch.getReceiptAmount().subtract(rd.getExcessAvailable()));
 
 			if (rd.isForeClosure()) {
 				rch.setReceiptAmount(BigDecimal.ZERO);
