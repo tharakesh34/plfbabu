@@ -1171,11 +1171,16 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					if (CollectionUtils.isNotEmpty(manualAdvise)) {
 						for (ManualAdvise md : manualAdvise) {
 							Date valueDate = md.getValueDate();
-
-							if (DateUtil.compare(valueDate, appDate) > 0) {
-								md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
-								md.setAdviseID(md.getAdviseID());
-								updateList.add(md);
+							
+							BigDecimal amount = md.getAdviseAmount()
+									.subtract(md.getPaidAmount().add(md.getWaivedAmount()));
+							
+							if (amount.compareTo(BigDecimal.ZERO) > 0) {
+								if (DateUtil.compare(valueDate, appDate) > 0) {
+									md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+									md.setAdviseID(md.getAdviseID());
+									updateList.add(md);
+								}
 							}
 						}
 
