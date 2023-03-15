@@ -451,7 +451,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			finreference[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
 		}
 
-		this.finReference.setFilters(finreference);
+		if (customer.getCustID() <= 0 || StringUtils.isBlank(customer.getCustCoreBank())) {
+			this.finReference.setFilters(null);
+
+		} else {
+			this.finReference.setFilters(finreference);
+
+		}
 
 		logger.debug("Leaving ");
 	}

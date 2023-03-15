@@ -290,9 +290,9 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.referenceId.setTextBoxWidth(155);
 			this.referenceId.setMandatoryStyle(true);
 			this.referenceId.setModuleName("Excess");
-			this.referenceId.setValueColumn("FinReference");
+			this.referenceId.setValueColumn("ExcessID");
 			this.referenceId.setDescColumn("FinType");
-			this.referenceId.setValidateColumns(new String[] { "FinReference" });
+			this.referenceId.setValidateColumns(new String[] { "ExcessID" });
 		}
 
 		this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
@@ -347,13 +347,20 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		if (CustomerExtension.CUST_CORE_BANK_ID) {
 			fromLoan[0] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
 			toLoan[0] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
+
 		} else {
 			fromLoan[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
 			toLoan[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
 		}
 
-		this.fromFinReference.setFilters(fromLoan);
-		this.toFinReference.setFilters(toLoan);
+		if (customer.getCustID() <= 0 || StringUtils.isBlank(customer.getCustCoreBank())) {
+			this.fromFinReference.setFilters(null);
+			this.toFinReference.setFilters(null);
+
+		} else {
+			this.fromFinReference.setFilters(fromLoan);
+			this.toFinReference.setFilters(toLoan);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -872,6 +879,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	}
 
 	public void onFulfill$fromFinReference(Event event) {
+
 		validateFinReference(event, false);
 
 		onChangeKnockOffFrom();
@@ -918,12 +926,15 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("FinReference", this.fromFinReference.getValue(), Filter.OP_NOT_EQUAL);
 
-		if (CustomerExtension.CUST_CORE_BANK_ID) {
-			filter[1] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
+		if (customer != null) {
 
-		} else {
-			filter[1] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				filter[1] = new Filter("CustCoreBank", customer.getCustCoreBank(), Filter.OP_EQUAL);
 
+			} else {
+				filter[1] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
+
+			}
 		}
 
 		this.toFinReference.setFilters(filter);
