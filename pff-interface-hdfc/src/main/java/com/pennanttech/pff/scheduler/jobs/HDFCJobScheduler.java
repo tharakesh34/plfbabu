@@ -12,9 +12,9 @@ import com.pennanttech.external.presentment.job.ExtPresentmentTableReaderJob;
 import com.pennanttech.external.silien.job.LienFileReadingJob;
 import com.pennanttech.external.silien.job.LienFileWritingJob;
 import com.pennanttech.external.silien.job.LienMarkProcessingJob;
-import com.pennanttech.extrenal.ucic.service.ExtUcicRequestJob;
-import com.pennanttech.extrenal.ucic.service.ExtUcicResponseJob;
-import com.pennanttech.extrenal.ucic.service.ExtUcicWeekFileJob;
+import com.pennanttech.external.ucic.service.ExtUcicRequestJob;
+import com.pennanttech.external.ucic.service.ExtUcicResponseJob;
+import com.pennanttech.external.ucic.service.ExtUcicWeekFileJob;
 import com.pennanttech.pennapps.core.job.scheduler.JobData;
 
 public class HDFCJobScheduler implements JobSchedulerExtension {

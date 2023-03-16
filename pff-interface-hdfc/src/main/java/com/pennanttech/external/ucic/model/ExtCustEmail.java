@@ -1,4 +1,4 @@
-package com.pennanttech.extrenal.ucic.model;
+package com.pennanttech.external.ucic.model;
 
 public class ExtCustEmail {
 	private String email = "";

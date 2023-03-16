@@ -86,7 +86,7 @@
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
 	
-	<bean id="extUcicRequestData" class="com.pennanttech.extrenal.ucic.service.ExtUcicRequestData">
+	<bean id="extUcicExtractData" class="com.pennanttech.extrenal.ucic.service.ExtUcicDataExtractor">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
 
@@ -95,16 +95,12 @@
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
 
-	<bean id="extUcicResponseFolderReader" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseFolderReader">
+	<bean id="extUcicResponseFolderReader" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseFileReader">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
 	
-	<bean id="extUcicResponseFileExtractor" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseFileExtractor">
-		<property name="extUcicDao" ref="extUcicDao" />
-	</bean>
-	
-	<bean id="extUcicResponseProcessor" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseProcessor">
+	<bean id="extUcicResponseProcessor" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
 	

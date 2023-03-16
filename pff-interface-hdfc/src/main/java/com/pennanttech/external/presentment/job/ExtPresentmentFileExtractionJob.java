@@ -209,7 +209,6 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 						}
 
 					}
-					sc.close();
 
 					if (extPresentmentDataList.size() > 0) {
 						// save records remaining after bulk insert
@@ -232,8 +231,6 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 					}
 				}
 			}
-
-			cursorItemReader.close();
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

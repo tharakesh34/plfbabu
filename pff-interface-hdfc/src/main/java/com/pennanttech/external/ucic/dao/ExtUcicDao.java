@@ -1,15 +1,15 @@
-package com.pennanttech.extrenal.ucic.dao;
+package com.pennanttech.external.ucic.dao;
 
 import java.util.Date;
 import java.util.List;
 
-import com.pennanttech.extrenal.ucic.model.ExtCustAddress;
-import com.pennanttech.extrenal.ucic.model.ExtCustDoc;
-import com.pennanttech.extrenal.ucic.model.ExtCustEmail;
-import com.pennanttech.extrenal.ucic.model.ExtCustPhones;
-import com.pennanttech.extrenal.ucic.model.ExtUcicCust;
-import com.pennanttech.extrenal.ucic.model.ExtUcicData;
-import com.pennanttech.extrenal.ucic.model.ExtUcicFinDetails;
+import com.pennanttech.external.ucic.model.ExtCustAddress;
+import com.pennanttech.external.ucic.model.ExtCustDoc;
+import com.pennanttech.external.ucic.model.ExtCustEmail;
+import com.pennanttech.external.ucic.model.ExtCustPhones;
+import com.pennanttech.external.ucic.model.ExtUcicCust;
+import com.pennanttech.external.ucic.model.ExtUcicData;
+import com.pennanttech.external.ucic.model.ExtUcicFinDetails;
 
 public interface ExtUcicDao {
 
@@ -79,4 +79,15 @@ public interface ExtUcicDao {
 
 	public List<ExtUcicFinDetails> getCustomerFinDetailsWithGuarantorCif(String custCif);
 
+	public String executeDataExtractionFromSP();
+
+	public String executeUcicRequestFileSP(String fileName);
+
+	public String executeUcicWeeklyRequestFileSP(String fileName);
+
+	public String executeUcicResponseFileSP(String fileName);
+
+	public String executeUcicAckFileSP(String fileName);
+
+	public int updateAckForFile(String fileName, int ackStatus);
 }

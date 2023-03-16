@@ -1,32 +1,41 @@
-package com.pennanttech.extrenal.ucic.service;
+package com.pennanttech.external.ucic.service;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.extrenal.ucic.dao.ExtUcicDao;
-import com.pennanttech.extrenal.ucic.model.ExtUcicData;
+import com.pennanttech.external.ucic.dao.ExtUcicDao;
+import com.pennanttech.external.ucic.model.ExtUcicData;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
+import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicResponseFolderReader implements InterfaceConstants {
+public class ExtUcicResponseFileReader implements InterfaceConstants {
 
-	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFolderReader.class);
+	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFileReader.class);
 
 	private ExtUcicDao extUcicDao;
 	private ExtInterfaceDao extInterfaceDao;
-	private ApplicationContext applicationContext;
 
 	private static final int UCIC_RESP_NEGLECT_LINES = 2;
 	private static final String UCIC_RESPONSE_END = "EOF";
@@ -52,7 +61,37 @@ public class ExtUcicResponseFolderReader implements InterfaceConstants {
 					"Ext_Warning: No configuration found for type UCIC response. So returning without reading the folder.");
 			return;
 		}
-		String folderPath = App.getResourcePath(ucicRespConfig.getFileLocation());
+
+		String folderPath = "";
+
+		// Check if file is in SFTP location, then get the file.
+		if ("Y".equals(StringUtils.stripToEmpty(ucicRespConfig.getIsSftp()))) {
+			FtpClient ftpClient = null;
+			String host = ucicRespConfig.getHostName();
+			int port = ucicRespConfig.getPort();
+			String accessKey = ucicRespConfig.getAccessKey();
+			String secretKey = ucicRespConfig.getSecretKey();
+			try {
+				ftpClient = new SftpClient(host, port, accessKey, secretKey);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.debug("Unable to connect to SFTP.");
+			}
+			String remoteFilePath = ucicRespConfig.getFileSftpLocation();
+
+			// Get list of files in SFTP.
+			List<String> fileNames = getFileNameList(remoteFilePath, host, port, accessKey, secretKey);
+
+			String localFilePath = ucicRespConfig.getFileLocation();
+
+			for (String fileName : fileNames) {
+				ftpClient.download(remoteFilePath, localFilePath, fileName);
+			}
+
+			folderPath = localFilePath;
+		} else {
+			folderPath = App.getResourcePath(ucicRespConfig.getFileLocation());
+		}
 
 		if (folderPath == null || "".equals(folderPath)) {
 			logger.debug("Invalid UCIC resp folder path, so returning.");
@@ -215,6 +254,43 @@ public class ExtUcicResponseFolderReader implements InterfaceConstants {
 		}
 		logger.debug(Literal.LEAVING);
 		return returnVal1 && returnVal2;
+	}
+
+	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
+			String secretKey) {
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
+		JSch jsch = new JSch();
+		try {
+			session = jsch.getSession(accessKey, hostName, port);
+			session.setPassword(secretKey);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+		} catch (JSchException e1) {
+			logger.info(Literal.EXCEPTION, e1);
+		}
+		channelSftp = (ChannelSftp) channel;
+		LsEntry entry = null;
+		List<String> fileName = new ArrayList<String>();
+		Vector filelist = null;
+		try {
+			filelist = ((ChannelSftp) channel).ls(pathname);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage());
+		}
+		for (int i = 0; i < filelist.size(); i++) {
+			entry = (LsEntry) filelist.get(i);
+			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
+					&& !entry.getFilename().startsWith(".")) {
+				fileName.add(entry.getFilename());
+			}
+		}
+		return fileName;
 	}
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {

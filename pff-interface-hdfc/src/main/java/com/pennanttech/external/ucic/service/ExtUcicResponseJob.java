@@ -1,4 +1,4 @@
-package com.pennanttech.extrenal.ucic.service;
+package com.pennanttech.external.ucic.service;
 
 import java.util.Date;
 
@@ -24,14 +24,11 @@ public class ExtUcicResponseJob extends AbstractJob {
 		try {
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 
-			ExtUcicResponseFolderReader extUcicResponseFolderReader = applicationContext
-					.getBean("extUcicResponseFolderReader", ExtUcicResponseFolderReader.class);
+			ExtUcicResponseFileReader extUcicResponseFolderReader = applicationContext
+					.getBean("extUcicResponseFolderReader", ExtUcicResponseFileReader.class);
 
-			ExtUcicResponseFileExtractor extUcicResponseFileExtractor = applicationContext
-					.getBean("extUcicResponseFileExtractor", ExtUcicResponseFileExtractor.class);
-
-			ExtUcicResponseProcessor ucicResponseProcessor = applicationContext.getBean("extUcicResponseProcessor",
-					ExtUcicResponseProcessor.class);
+			ExtUcicResponseFileProcessor extUcicResponseFileExtractor = applicationContext
+					.getBean("extUcicResponseFileExtractor", ExtUcicResponseFileProcessor.class);
 
 			ExtUcicResponseAckFileWriter responseAckFileWriter = applicationContext
 					.getBean("extUcicResponseAckFileWriter", ExtUcicResponseAckFileWriter.class);
@@ -42,10 +39,6 @@ public class ExtUcicResponseJob extends AbstractJob {
 
 			if (extUcicResponseFileExtractor != null) {
 				extUcicResponseFileExtractor.readFileAndExtracData();
-			}
-
-			if (ucicResponseProcessor != null) {
-				ucicResponseProcessor.processExtractedRecords();
 			}
 
 			if (responseAckFileWriter != null) {

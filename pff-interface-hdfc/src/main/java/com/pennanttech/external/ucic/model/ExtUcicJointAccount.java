@@ -1,4 +1,4 @@
-package com.pennanttech.extrenal.ucic.model;
+package com.pennanttech.external.ucic.model;
 
 import java.math.BigDecimal;
 import java.util.Date;

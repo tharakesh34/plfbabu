@@ -1,4 +1,4 @@
-package com.pennanttech.extrenal.ucic.service;
+package com.pennanttech.external.ucic.service;
 
 import java.util.Date;
 
@@ -13,8 +13,8 @@ import com.pennanttech.external.config.ApplicationContextProvider;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicWeekFileJob extends AbstractJob {
-	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileJob.class);
+public class ExtUcicRequestJob extends AbstractJob {
+	private static final Logger logger = LogManager.getLogger(ExtUcicRequestJob.class);
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -22,17 +22,31 @@ public class ExtUcicWeekFileJob extends AbstractJob {
 		logger.debug(Literal.ENTERING);
 
 		try {
+
 			applicationContext = ApplicationContextProvider.getApplicationContext();
-			ExtUcicWeekFileService extUcicWeekFileWriter = applicationContext.getBean("ucicWeeklyWritingService",
-					ExtUcicWeekFileService.class);
-			if (extUcicWeekFileWriter != null) {
-				Date appDate = SysParamUtil.getAppDate();
-				extUcicWeekFileWriter.processWeeklyFileRequest(appDate);
+
+			// Get the data extractor service
+			ExtUcicDataExtractor extUcicDataExtractor = applicationContext.getBean("extUcicExtractData",
+					ExtUcicDataExtractor.class);
+
+			// Get the request file writer service
+			ExtUcicRequestFile extUcicRequestFile = applicationContext.getBean("extUcicRequestFile",
+					ExtUcicRequestFile.class);
+
+			if (extUcicDataExtractor != null) {
+				extUcicDataExtractor.extractCustomerData();
 			}
+
+			Date appDate = SysParamUtil.getAppDate();
+			if (extUcicRequestFile != null) {
+				extUcicRequestFile.processUcicRequestFile(appDate);
+			}
+
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
+
 }
