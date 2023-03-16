@@ -764,7 +764,7 @@ public class RepaymentPostingsUtil {
 							odcAmt.setWaivedAmount(odcAmt.getWaivedAmount().add(waiveNow));
 							odcAmt.setBalanceAmt(odcAmt.getBalanceAmt().subtract(payNow.add(waiveNow)));
 							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-							movement.setMovementDate(valueDate);
+							movement.setMovementDate(appDate);
 							movement.setChargeId(odcAmt.getId());
 							movement.setMovementAmount(payNow.add(waiveNow));
 							movement.setPaidAmount(payNow);
@@ -798,7 +798,7 @@ public class RepaymentPostingsUtil {
 					if (odc != null) {
 						long referenceID = finODCAmountDAO.saveFinODCAmt(odc);
 						FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-						movement.setMovementDate(valueDate);
+						movement.setMovementDate(appDate);
 						movement.setChargeId(referenceID);
 						movement.setMovementAmount(odc.getPaidAmount().add(odc.getWaivedAmount()));
 						movement.setPaidAmount(odc.getPaidAmount());
@@ -895,7 +895,7 @@ public class RepaymentPostingsUtil {
 							odcAmt.setWaivedAmount(odcAmt.getWaivedAmount().add(waiveNow));
 							odcAmt.setBalanceAmt(odcAmt.getBalanceAmt().subtract(payNow.add(waiveNow)));
 							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-							movement.setMovementDate(valueDate);
+							movement.setMovementDate(appDate);
 							movement.setChargeId(odcAmt.getId());
 							movement.setMovementAmount(payNow.add(waiveNow));
 							movement.setPaidAmount(payNow);
@@ -923,7 +923,7 @@ public class RepaymentPostingsUtil {
 							RepayConstants.FEE_TYPE_LPI, finLPIAmtList);
 					long referenceID = finODCAmountDAO.saveFinODCAmt(lpi);
 					FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-					movement.setMovementDate(valueDate);
+					movement.setMovementDate(appDate);
 					movement.setChargeId(referenceID);
 					movement.setMovementAmount(lpi.getPaidAmount().add(lpi.getWaivedAmount()));
 					movement.setPaidAmount(lpi.getPaidAmount());

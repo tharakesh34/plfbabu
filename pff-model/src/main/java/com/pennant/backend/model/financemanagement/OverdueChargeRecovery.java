@@ -94,7 +94,6 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 
 	private BigDecimal priPaid = BigDecimal.ZERO;
 	private BigDecimal pftPaid = BigDecimal.ZERO;
-	private boolean dueCreation = true;
 
 	public OverdueChargeRecovery() {
 		super();
@@ -553,11 +552,4 @@ public class OverdueChargeRecovery extends AbstractWorkflowEntity {
 		this.pftPaid = pftPaid;
 	}
 
-	public boolean isDueCreation() {
-		return dueCreation;
-	}
-
-	public void setDueCreation(boolean dueCreation) {
-		this.dueCreation = dueCreation;
-	}
 }
