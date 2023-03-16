@@ -93,11 +93,11 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 
 		if (status.equals(detail.getClearingStatus())) {
 			if (RepayConstants.PEXC_BOUNCE.equals(status)) {
-				setError(detail, PresentmentError.FC_607);
+				setError(detail, PresentmentError.FC_608);
 			}
 
 			if (RepayConstants.PEXC_SUCCESS.equals(status)) {
-				setError(detail, PresentmentError.FC_608);
+				setError(detail, PresentmentError.FC_607);
 			}
 			return;
 		}
