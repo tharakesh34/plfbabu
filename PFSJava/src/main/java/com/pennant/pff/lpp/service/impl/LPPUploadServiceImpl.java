@@ -26,6 +26,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lpp.upload.LPPUpload;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
+import com.pennant.backend.service.finance.impl.LppUploadValidateRecord;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -42,6 +43,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMaintenanceService financeMaintenanceService;
+	private LppUploadValidateRecord lppUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -444,6 +446,16 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMaintenanceService(FinanceMaintenanceService financeMaintenanceService) {
 		this.financeMaintenanceService = financeMaintenanceService;
+	}
+
+	@Override
+	public LppUploadValidateRecord getValidateRecord() {
+		return lppUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setLppUploadValidateRecord(LppUploadValidateRecord lppUploadValidateRecord) {
+		this.lppUploadValidateRecord = lppUploadValidateRecord;
 	}
 
 }

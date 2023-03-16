@@ -13193,4 +13193,8 @@
 	<bean id="lppUploadDAO" class="com.pennant.pff.lpp.dao.impl.LPPUploadDAOImpl" parent="sequenceDao" />
 	
 	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
+	
+	<bean id ="holdRefundUploadValidateRecord" class = "com.pennant.backend.service.finance.impl.HoldRefundUploadValidateRecord"/>
+	
+	<bean id="lppUploadValidateRecord" class = "com.pennant.backend.service.finance.impl.LppUploadValidateRecord"/>
 </beans>

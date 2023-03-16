@@ -6,6 +6,7 @@ import java.util.List;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.TableType;
 
@@ -34,6 +35,8 @@ public interface UploadService {
 
 	ProcessRecord getProcessRecord();
 
+	ValidateRecord getValidateRecord();
+
 	DataEngineStatus getDEStatus(long executionID);
 
 	void updateDownloadStatus(long headerID, int status);
@@ -44,4 +47,5 @@ public interface UploadService {
 
 	void updateFailRecords(int sucessRecords, int faildrecords, long headerId);
 
+	boolean isInProgress(Long headerID, Object... args);
 }

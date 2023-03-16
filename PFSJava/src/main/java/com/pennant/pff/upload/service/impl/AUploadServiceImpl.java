@@ -15,6 +15,7 @@ import com.pennant.pff.upload.dao.UploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pff.core.TableType;
@@ -117,6 +118,16 @@ public abstract class AUploadServiceImpl implements UploadService {
 	@Override
 	public ProcessRecord getProcessRecord() {
 		return null;
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return null;
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return false;
 	}
 
 	@Override
