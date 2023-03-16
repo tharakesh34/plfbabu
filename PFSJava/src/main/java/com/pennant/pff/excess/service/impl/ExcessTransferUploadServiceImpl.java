@@ -108,20 +108,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		List<FinExcessAmount> existingExcess = finExcessAmountDAO.getExcessAmountsByRefAndType(detail.getReferenceID(),
-				detail.getTransferFromType());
-
-		List<FinExcessAmount> excessList = existingExcess.stream()
-				.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
-				.collect(Collectors.toList());
-
-		for (FinExcessAmount excess : excessList) {
-			if (excessTransferUploadDAO.isRecordExist(excess.getExcessID(), excess.getFinID())) {
-				setError(detail, ExcessTransferError.EXT_008);
-				return;
-			}
-		}
-
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");
 		detail.setErrorDesc("");

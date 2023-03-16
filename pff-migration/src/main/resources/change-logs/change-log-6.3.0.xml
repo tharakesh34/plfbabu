@@ -14321,4 +14321,8 @@
 		</sql>
 	</changeSet>
 	
+		<changeSet id="PSD#220570_pre" author="Sravani.S">
+		<dropIndex tableName="FinExcessAmount" indexName="idx_fnxcsam_fid_amty_vldt_reid"/>
+	</changeSet>
+	
 </databaseChangeLog> 

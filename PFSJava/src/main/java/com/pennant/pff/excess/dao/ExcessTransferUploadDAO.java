@@ -23,6 +23,4 @@ public interface ExcessTransferUploadDAO {
 
 	void updateFailure(ExcessTransferUpload detail);
 
-	boolean isRecordExist(long excessID, long finID);
-
 }

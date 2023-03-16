@@ -14,9 +14,7 @@ public enum ExcessTransferError {
 
 	EXT_006("Excess Transfer From and Excess Transfer To should be different."),
 
-	EXT_007("Invalid Excess Transfer From or Excess Transfer To, possible values are {E/A/T}."),
-
-	EXT_008("Fin is Already Exist in The Queue");
+	EXT_007("Invalid Excess Transfer From or Excess Transfer To, possible values are {E/A/T}.");
 
 	private String description;
 
