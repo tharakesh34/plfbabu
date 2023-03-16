@@ -47,7 +47,7 @@
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
-	<bean id="extUcicDao" class="com.pennanttech.extrenal.ucic.dao.impl.ExtUcicDaoImpl" parent="sequenceDao" />
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl" parent="sequenceDao" />
 
 
 	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
@@ -86,25 +86,25 @@
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
 	
-	<bean id="extUcicExtractData" class="com.pennanttech.extrenal.ucic.service.ExtUcicDataExtractor">
+	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
 
-	<bean id="extUcicRequestFile" class="com.pennanttech.extrenal.ucic.service.ExtUcicRequestFile">
+	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
 
-	<bean id="extUcicResponseFolderReader" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseFileReader">
+	<bean id="extUcicResponseFolderReader" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileReader">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
 	
-	<bean id="extUcicResponseProcessor" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseFileProcessor">
+	<bean id="extUcicResponseProcessor" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
 	
-	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.extrenal.ucic.service.ExtUcicResponseAckFileWriter">
+	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
@@ -117,7 +117,7 @@
 	<bean id="jobSchedulerExtension" class="com.pennanttech.pff.scheduler.jobs.HDFCJobScheduler" />
 	<bean id="extMandateExtension" class="com.pennanttech.external.mandate.ExtMandateHandler" />
 	
-	<bean id="ucicWeeklyWritingService" class ="com.pennanttech.extrenal.ucic.service.ExtUcicWeekFileService">
+	<bean id="ucicWeeklyWritingService" class ="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
