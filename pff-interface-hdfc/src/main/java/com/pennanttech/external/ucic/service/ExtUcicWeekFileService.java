@@ -57,7 +57,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP
-			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_UCIC_PLF_SERVER);
+			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 			FtpClient ftpClient = null;
 			String host = serverConfig.getHostName();
 			int port = serverConfig.getPort();

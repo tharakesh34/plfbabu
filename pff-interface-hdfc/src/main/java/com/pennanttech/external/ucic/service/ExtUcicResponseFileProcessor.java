@@ -47,7 +47,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 		// Get main configuration for External Interfaces
 		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
 		// Get Response file and complete file configuration
-		ExternalConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_UCIC_PLF_SERVER);
+		ExternalConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<ExtUcicFile> cursorItemReader = new JdbcCursorItemReader<ExtUcicFile>();
