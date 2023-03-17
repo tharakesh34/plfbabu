@@ -2226,7 +2226,7 @@ public class ReceiptCalculator {
 		String receiptPurpose = rch.getReceiptPurpose();
 		RequestSource requestSource = receiptData.getRequestSource();
 
-		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE.equals(receiptPurpose))) {
+		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE.code().equals(receiptPurpose))) {
 			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
 				receiptData = adjustAdvanceInt(receiptData);
 				for (XcessPayables xcess : rch.getXcessPayables()) {

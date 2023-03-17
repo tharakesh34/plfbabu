@@ -5717,6 +5717,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		repaymentProcessUtil.prepareDueData(rd);
 
+		if (peceiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			rd.setActualReceiptAmount(rch.getReceiptAmount().subtract(rd.getExcessAvailable()));
+			rd.setExcessAvailable(receiptCalculator.getExcessAmount(rd));
+		}
+
 		if (!AllocationType.MANUAL.equals(rch.getAllocationType())) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
 		}
@@ -5795,7 +5800,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				isDueAdjusted = false;
 			}
 
-			if (bal.compareTo(BigDecimal.ZERO) > 0 && RequestSource.EOD.equals(fsi.getRequestSource())
+			if (bal.compareTo(BigDecimal.ZERO) > 0 && fsi != null && RequestSource.EOD.equals(fsi.getRequestSource())
 					&& ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose())) {
 				isDueAdjusted = false;
 			}
