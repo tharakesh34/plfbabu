@@ -1094,8 +1094,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			// Payable Amount Reserve
-			if (StringUtils.equals(paymentType, ReceiptMode.PAYABLE)
-					&& !StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+			if (ReceiptMode.PAYABLE.equals(paymentType)
+					&& !RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(receiptSeqID,

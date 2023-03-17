@@ -1358,16 +1358,14 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	@Override
 	public ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount");
-		sql.append(", Status, ReceiptID, ReceiptSeqID, TaxHeaderId");
-
-		if (StringUtils.contains(type, "View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent");
-		}
-
-		sql.append(" From ManualAdviseMovements");
+		sql.append(" mam.MovementID, mam.AdviseID, mam.MovementDate, mam.MovementAmount, mam.PaidAmount, mam.WaivedAmount");
+		sql.append(", mam.Status, mam.ReceiptID, mam.ReceiptSeqID, mam.TaxHeaderId");
+		sql.append(", ft.FeeTypeCode, ft.FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
+		sql.append(" from ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where ReceiptID = ? and ReceiptSeqID = ? and AdviseID = ?");
+		sql.append(" mam Inner Join ManualAdvise ma on mam.AdviseID = ma.AdviseID");
+		sql.append(" Inner Join FeeTypes ft on ma.Feetypeid = ft.Feetypeid");
+		sql.append(" Where mam.ReceiptID = ? and ReceiptSeqID = ? and mam.AdviseID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -1385,13 +1383,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				mam.setReceiptID(rs.getLong("ReceiptID"));
 				mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
 				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
-
-				if (StringUtils.contains(type, "View")) {
-					mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
-					mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-					mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-					mam.setTaxComponent(rs.getString("TaxComponent"));
-				}
+            	mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				mam.setTaxComponent(rs.getString("TaxComponent"));
 
 				return mam;
 			}, receiptID, receiptSeqID, adviseId);
