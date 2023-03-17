@@ -8629,6 +8629,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			BigDecimal penaltyPaid = BigDecimal.ZERO;
 			BigDecimal penaltyWaived = BigDecimal.ZERO;
 			BigDecimal penaltyDue = BigDecimal.ZERO;
+			fod.setLppDueAmt(BigDecimal.ZERO);
 
 			for (FinOverDueCharges odcAmount : odcAmounts) {
 				if (fod.getFinODSchdDate().compareTo(odcAmount.getSchDate()) != 0) {
@@ -8651,6 +8652,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				odcr.setFinCurODAmt(odcAmount.getOdPri().add(odcAmount.getOdPft()));
 				odcr.setODDays(odcAmount.getDueDays());
 				odcr.setFinODFor(fod.getFinODFor());
+				fod.setLppDueAmt(odcAmount.getAmount().add(fod.getLppDueAmt()));
 
 				penaltyPaid = penaltyPaid.add(odcAmount.getPaidAmount());
 				penaltyDue = penaltyDue.add(odcAmount.getAmount());
