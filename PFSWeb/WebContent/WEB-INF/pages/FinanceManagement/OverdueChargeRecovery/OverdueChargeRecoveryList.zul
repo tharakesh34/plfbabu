@@ -39,7 +39,7 @@
 				</hbox>
 			</div>
 
-			<borderlayout id="borderLayout_OverdueChargeRecoveryList" vflex="min">
+			<borderlayout id="borderLayout_OverdueChargeRecoveryList">
 				<north border="none">
 					<textbox id="recoveryCode" value="N" visible="false" />
 				</north>
