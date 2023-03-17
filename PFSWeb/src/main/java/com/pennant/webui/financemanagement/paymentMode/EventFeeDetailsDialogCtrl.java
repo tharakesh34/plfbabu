@@ -30,6 +30,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.webui.financemanagement.receipts.CrossLoanKnockOffDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -61,6 +62,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 	private LoanClosureEnquiryDialogCtrl loanClosureEnquiryDialogCtrl;
 	private boolean isLoanClosure = false;
 	private ReceiptCalculator receiptCalculator;
+	private CrossLoanKnockOffDialogCtrl crossLoanKnockOffDialogCtrl;
 
 	public void onCreate$window_EventFeeDetails(Event event) {
 		logger.debug("Entering");
@@ -74,6 +76,10 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 			}
 			if (arguments.containsKey("receiptDialogCtrl")) {
 				this.receiptDialogCtrl = (ReceiptDialogCtrl) arguments.get("receiptDialogCtrl");
+			}
+			if (arguments.containsKey("crossLoanKnockOffDialogCtrl")) {
+				this.crossLoanKnockOffDialogCtrl = (CrossLoanKnockOffDialogCtrl) arguments
+						.get("crossLoanKnockOffDialogCtrl");
 			}
 			if (arguments.containsKey("loanClosureEnquiryDialogCtrl")) {
 				this.loanClosureEnquiryDialogCtrl = (LoanClosureEnquiryDialogCtrl) arguments
@@ -148,6 +154,9 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		if (!isLoanClosure) {
 			allocationPaid.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_excessAdjustTo"));
 		}
+		if (crossLoanKnockOffDialogCtrl != null) {
+			allocationPaid.setReadonly(false);
+		}
 		allocationPaid.setValue(feeDetail.getActPercentage().toString());
 		allocationPaid.addForward("onFulfill", this.window_EventFeeDetails, "onAllocatePaidChange", 1);
 		lc.appendChild(allocationPaid);
@@ -182,6 +191,9 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 		if (isLoanClosure) {
 			loanClosureEnquiryDialogCtrl.doFillAllocationDetail();
+		} else if (crossLoanKnockOffDialogCtrl != null) {
+			crossLoanKnockOffDialogCtrl.setReceiptData(receiptData);
+			crossLoanKnockOffDialogCtrl.doFillAllocationDetail();
 		} else {
 			receiptDialogCtrl.setReceiptData(receiptData);
 			receiptDialogCtrl.doFillAllocationDetail();
@@ -299,6 +311,10 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
+	}
+
+	public void setCrossLoanKnockOffDialogCtrl(CrossLoanKnockOffDialogCtrl crossLoanKnockOffDialogCtrl) {
+		this.crossLoanKnockOffDialogCtrl = crossLoanKnockOffDialogCtrl;
 	}
 
 }
