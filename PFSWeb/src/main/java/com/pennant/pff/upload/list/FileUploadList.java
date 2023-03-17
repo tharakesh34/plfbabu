@@ -1532,8 +1532,8 @@ public class FileUploadList extends Window implements Serializable {
 			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("HEADER_ID", uploadHeader.getId());
 			parameterMap.put("FILE_UPLOAD_HEADER", uploadHeader);
-			parameterMap.put("ERROR_CODE", "");
-			parameterMap.put("ERROR_DESC", "");
+			parameterMap.put("ERRORCODE", "");
+			parameterMap.put("ERRORDESC", "");
 			engine.setParameterMap(parameterMap);
 
 			DataEngineStatus status = uploadHeader.getDeStatus();

@@ -49,8 +49,8 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 		holdRefundUploadService.doValidate(header, detail);
 
 		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERROR_CODE", detail.getErrorCode());
-			record.addValue("ERROR_DESC", detail.getErrorDesc());
+			record.addValue("ERRORCODE", detail.getErrorCode());
+			record.addValue("ERRORDESC", detail.getErrorDesc());
 		}
 	}
 
