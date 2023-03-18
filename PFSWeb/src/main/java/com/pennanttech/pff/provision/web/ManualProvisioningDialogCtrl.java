@@ -99,8 +99,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.provision.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.provision.getId());
 	}
 
 	/**

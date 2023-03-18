@@ -207,7 +207,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		if ("PYMT".equals(module)) {
 			PaymentHeader paymentheader = paymentHeaderService.getPaymentHeader(paymentTransaction.getPaymentId());
 
-			StringBuffer whereCond = new StringBuffer();
+			StringBuilder whereCond = new StringBuilder();
 			whereCond.append("  AND  PaymentId = ");
 			whereCond.append(paymentTransaction.getPaymentId());
 			whereCond.append(" AND  version=");

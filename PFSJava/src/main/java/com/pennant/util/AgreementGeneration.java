@@ -215,6 +215,7 @@ import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.service.rmtmasters.FinTypeFeesService;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DeviationConstants;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -422,6 +423,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setApplicationNo(StringUtils.trimToEmpty(financeMain.getApplicationNo()));
 		agreement.setAccountsOfficer(StringUtils.trimToEmpty(financeMain.getLovDescAccountsOfficer()));
 		agreement.setFinCcy(financeMain.getFinCcy());
+		agreement.setSourcingBranch(StringUtils.trimToEmpty(financeMain.getSourcingBranch()));
+		agreement.setLovDescSourcingBranch(StringUtils.trimToEmpty(financeMain.getLovDescSourcingBranch()));
+		agreement.setSanctionedDate(DateUtil.formatToLongDate(financeMain.getSanctionedDate()));
 
 		if (financeMain.isPlanEMIHAlw()) {
 			agreement.setPlanEMIHAlw("PLANNED EMI");
@@ -516,6 +520,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							PennantStaticListUtil.getEntityTypeList()));
 					agreement.setCustSubCategory(PennantStaticListUtil.getlabelDesc(customer.getSubCategory(),
 							PennantStaticListUtil.getSubCategoriesList()));
+
+					agreement.setCustNatureOfBusiness(PennantStaticListUtil.getlabelDesc(customer.getNatureOfBusiness(),
+							PennantStaticListUtil.getNatureofBusinessList()));
 
 					// Customer Employment Details
 					if (detail.getCustomerDetails().getCustEmployeeDetail() != null) {
@@ -955,7 +962,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						externalLiabilityDetail.setOutStandingAmt(
 								CurrencyUtil.format(extLiability.getOutstandingBalance(), formatter));
 						externalLiabilityDetail.setLoanDate(DateUtil.formatToLongDate(extLiability.getFinDate()));
-						externalLiabilityDetail.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
+						if ("A".equals(extLiability.getFinStatus())) {
+							externalLiabilityDetail.setStatus("Active");
+						} else if ("I".equals(extLiability.getFinStatus())) {
+							externalLiabilityDetail.setStatus("Inactive");
+						} else {
+							externalLiabilityDetail
+									.setStatus(StringUtils.trimToEmpty(extLiability.getCustStatusDesc()));
+						}
 
 						externalLiabilityDetail.setSeqNo(String.valueOf(extLiability.getSeqNo()));
 						externalLiabilityDetail.setFinType(extLiability.getFinType());
@@ -995,7 +1009,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						externalLiabilityDetail.setRepayBank(extLiability.getRepayBank());
 						externalLiabilityDetail.setRepayBankName(extLiability.getRepayBankName());
 						externalLiabilityDetail.setOtherFinInstitute(extLiability.getOtherFinInstitute());
-
+						externalLiabilityDetail.setRemarks(extLiability.getRemarks());
 						agreement.getExternalLiabilityDetails().add(externalLiabilityDetail);
 					}
 				}
@@ -1280,7 +1294,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				if (null != detail.getFinScheduleData()
 						&& CollectionUtils.isNotEmpty(detail.getFinScheduleData().getFinFeeDetailList())) {
-					setFeeChargeDetails(agreement, formatter, detail.getFinScheduleData().getFinFeeDetailList());
+					totalDeduction = setFeeChargeDetails(agreement, formatter,
+							detail.getFinScheduleData().getFinFeeDetailList());
 				}
 			}
 			if (CollectionUtils.isEmpty(agreement.getCusCharges())) {
@@ -1933,6 +1948,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 									}
 								}
 								collExtMapList.add(collMap);
+								agreement.getOtherMap().putAll(collMap);
 							}
 						}
 					}
@@ -2015,6 +2031,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 						}
 					}
 					vasExtMapList.add(vasMap);
+					agreement.getOtherMap().putAll(vasMap);
 				}
 			}
 			agreement.getVasExtMap().addAll(vasExtMapList);
@@ -2607,7 +2624,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					if (StringUtils.isNotEmpty(extendedFieldDetail.getAgrField())) {
 						extendedDetail.setAgrField(StringUtils.trimToEmpty(extendedFieldDetail.getAgrField()));
 						extendedDetail.setFieldDataType(StringUtils.trimToEmpty(extendedFieldDetail.getFieldType()));
+					} else {
+						extendedDetail.setAgrField(StringUtils.trimToEmpty(key));
 					}
+				} else {
+					extendedDetail.setAgrField(StringUtils.trimToEmpty(key));
 				}
 			}
 			extendedDetail.setKey(StringUtils.trimToEmpty(key));
@@ -2783,6 +2804,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								.concat(StringUtils.trimToEmpty(legalVerification.getAgentName())));
 						verificationData
 								.setVerifiedDate(DateUtil.formatToLongDate(legalVerification.getVerificationDate()));
+						verificationData
+								.setCollateralReference(StringUtils.trimToEmpty(legalVerification.getReferenceFor()));
+
 					}
 					agreement.getLegalVerification().add(verificationData);
 					break;
@@ -2843,6 +2867,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 								}
 								rcuVerificationData.setVerificationType(StringUtils.trimToEmpty(rcuDocVerficationType));
 								rcuVerificationData.setDocumentName(StringUtils.trimToEmpty(rcuDocument.getDocName()));
+								rcuVerificationData
+										.setDocumentNameDesc(StringUtils.trimToEmpty(rcuDocument.getDescription()));
 								rcuVerificationData.setDocumentStatus(StringUtils.trimToEmpty(rcuDocStatus));
 								if (null != rcuDocument.getReinitid() && rcuDocument.getReinitid() > 0) {
 									rcuVerificationData.setFinalDecision("Re-initiate");
@@ -3394,6 +3420,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			covenant.setRemarks(StringUtils.trimToEmpty(covenantType.getAdditionalField1()));
 			covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
 			covenant.setStatus(StringUtils.trimToEmpty(covenantType.getRecordStatus()));
+			covenant.setPdd(covenantType.isPdd());
+			covenant.setAllowWaiver(covenantType.isAllowWaiver());
+			covenant.setOtc(covenantType.isOtc());
 
 			if (covenant.isPdd()) {
 				covenant.setTargetDate(DateUtil.formatToLongDate(covenantType.getReceivableDate()));
@@ -3467,6 +3496,17 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 					disbursement.setDisbursementAcct(StringUtils.trimToEmpty(value));
 				} else {
 					disbursement.setDisbursementAcct(StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo()));
+				}
+
+				if (StringUtils.isEmpty(agreement.getDisbursementDate())) {
+					agreement.setDisbursementDate(disbursement.getDisbursementDate());
+				}
+
+				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(advancePayment.getPaymentType())
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(advancePayment.getPaymentType())) {
+					disbursement.setAccountNumber(advancePayment.getLlReferenceNo());
+				} else {
+					disbursement.setAccountNumber(advancePayment.getBeneficiaryAccNo());
 				}
 
 				disbursement.setIfscCode(StringUtils.trimToEmpty(advancePayment.getiFSC()));
@@ -3576,10 +3616,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
+	private BigDecimal setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
 		BigDecimal vasPremium = BigDecimal.ZERO;
+		BigDecimal totalDeduction = BigDecimal.ZERO;
 		if (CollectionUtils.isEmpty(finFeeDetails)) {
-			return;
+			return BigDecimal.ZERO;
 		}
 
 		for (FinFeeDetail fee : finFeeDetails) {
@@ -3593,7 +3634,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 			charge.setChargeAmt(PennantApplicationUtil.amountFormate(fee.getActualAmount(), formatter));
 			String scheduleMethod = fee.getFeeScheduleMethod();
-			BigDecimal totalDeduction = BigDecimal.ZERO;
+
 			if (StringUtils.isNotBlank(scheduleMethod) && scheduleMethod.equals("DISB")) {
 				totalDeduction = totalDeduction.add(fee.getRemainingFee());
 			}
@@ -3633,6 +3674,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 		}
 		agreement.setVasPremium(amountFormate(vasPremium, formatter));
+		return totalDeduction;
 	}
 
 	private void setRepaymentDetails(AgreementDetail agreement, Mandate mandate) {
@@ -3911,7 +3953,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		agreement.setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
 
-		StringBuffer custAddress = new StringBuffer();
+		StringBuilder custAddress = new StringBuilder();
 		// careof
 		String custAddrLine3 = StringUtils.trimToEmpty(customerAddres.getCustAddrLine3());
 		if (StringUtils.isNotEmpty(custAddrLine3)) {
@@ -4020,6 +4062,8 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 				coapplicant.setCustSalutation(customer.getLovDescCustSalutationCodeName());
 				coapplicant.setCustFatherName(customer.getCustMotherMaiden());
+				coapplicant.setCustNatureOfBusiness(PennantStaticListUtil.getlabelDesc(customer.getNatureOfBusiness(),
+						PennantStaticListUtil.getNatureofBusinessList()));
 
 				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB) && null != customer
 						&& StringUtils.isNotBlank(customer.getCustCoreBank())) {
@@ -4278,6 +4322,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			}
 			collateralData.setColAddrCity(StringUtils.trimToEmpty(cs.getCollateralLoc()));
 			collateralData.setCollateralBankAmt(CurrencyUtil.format(cs.getBankValuation(), formatter));
+			collateralData.setRemarks(StringUtils.trimToEmpty(cs.getRemarks()));
 			agreement.getCollateralData().add(collateralData);
 
 			if (CollectionUtils.isEmpty(agreement.getExtendedDetails())) {

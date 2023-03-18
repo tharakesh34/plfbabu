@@ -213,7 +213,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =? ");
 
 		if (doCheckAuthority(covenanttype, whereCond.toString(), new Object[] { covenanttype.getId() })) {

@@ -312,7 +312,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public int getPendingOverDuePayment(long finID) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinCurODAmt > ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, BigDecimal.ZERO);
 	}
@@ -321,7 +321,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public int getFinODDays(long finID) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinCurODAmt <> ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, BigDecimal.ZERO);
 
@@ -375,7 +375,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public int getFinCurSchdODDays(long finID, Date finODSchdDate) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinODSchdDate = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, finODSchdDate);
 	}
@@ -946,7 +946,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custId);
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			FinODDetails od = new FinODDetails();
 
 			od.setFinID(rs.getLong("FinID"));

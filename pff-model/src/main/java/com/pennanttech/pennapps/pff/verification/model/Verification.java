@@ -128,9 +128,11 @@ public class Verification extends AbstractWorkflowEntity {
 	@XmlElement
 	private int verificationCategory;
 	private BigDecimal finalValAsPerPE = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal finalValAmt = BigDecimal.ZERO;
 	private String finalValDecision;
 	private String finalValRemarks;
+	@XmlElement
 	private BigDecimal valuationAmount = BigDecimal.ZERO;
 
 	// Value As Per Cost Of Property

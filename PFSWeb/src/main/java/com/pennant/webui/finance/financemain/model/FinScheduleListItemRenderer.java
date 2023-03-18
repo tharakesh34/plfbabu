@@ -702,8 +702,9 @@ public class FinScheduleListItemRenderer implements Serializable {
 							showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "", 0, null, false, false);
 				}
 
+				int advTerms = aFinanceMain.getAdvTerms();
 				if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0
-						&& AdvanceType.hasAdvEMI(aFinanceMain.getAdvType())) {
+						&& AdvanceType.hasAdvEMI(aFinanceMain.getAdvType()) && advTerms > 0) {
 					isEditable = false;
 					isRate = false;
 					showZeroEndBal = false;

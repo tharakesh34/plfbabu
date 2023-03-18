@@ -174,6 +174,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	public List<FinAdvancePayments> getFinAdvancePayments(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" LlDate, AmtToBeReleased, PaymentType, LlReferenceNo, TransactionRef, ValueDate, Lastmnton");
+		sql.append(", PaymentDetail ");
 		sql.append(" From FinAdvancePayments");
 		sql.append(" Where (Status not in (?,?) or Status is null) And FinReference = ?");
 
@@ -193,6 +194,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			fap.setTransactionRef(rs.getString("TransactionRef"));
 			fap.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 			fap.setLastMntOn(rs.getTimestamp("Lastmnton"));
+			fap.setPaymentDetail(rs.getString("PaymentDetail"));
 
 			return fap;
 		});

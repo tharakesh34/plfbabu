@@ -614,7 +614,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		String amtInWords = NumberToEnglishWords.getNumberToWords(this.maxLimit.getActualValue().toBigInteger());
 
 		String[] words = amtInWords.split(" ");
-		StringBuffer AmtInWord = new StringBuffer();
+		StringBuilder AmtInWord = new StringBuilder();
 
 		for (int i = 0; i < words.length; i++) {
 			if (!words[i].isEmpty()) {

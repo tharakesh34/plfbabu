@@ -1669,7 +1669,7 @@ public class FinanceDataValidation {
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(dsaCodeRef, "DSA", "");
 			if (vehicleDealer == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getDsaCode();
+				valueParm[0] = "dsaCode";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 			} else {
 				finMain.setDsaCode(String.valueOf(vehicleDealer.getDealerId()));
@@ -2136,7 +2136,8 @@ public class FinanceDataValidation {
 									return errorDetails;
 								}
 							}
-							AuditDetail auditDetail = collateralSetupService.doValidations(setupDetails, "create");
+							AuditDetail auditDetail = collateralSetupService.doValidations(setupDetails, "create",
+									false);
 
 							if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 								return auditDetail.getErrorDetails();

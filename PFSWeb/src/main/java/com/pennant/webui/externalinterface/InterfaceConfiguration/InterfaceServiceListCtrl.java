@@ -219,7 +219,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		Listitem selectedItem = this.listBoxExternalInterfaceDialog.getSelectedItem();
 		final InterfaceServiceLog interfaceDetail = (InterfaceServiceLog) selectedItem.getAttribute("id");
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  AND  Id = ");
 		whereCond.append(interfaceDetail.getReference());
 		doShowDialogPage(interfaceDetail);

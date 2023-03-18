@@ -187,7 +187,7 @@ public class AssignmentPartnerListCtrl extends GFCBaseListCtrl<AssignmentPartner
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id = ?");
 
 		if (doCheckAuthority(assignmentpartner, whereCond.toString(), new Object[] { assignmentpartner.getId() })) {

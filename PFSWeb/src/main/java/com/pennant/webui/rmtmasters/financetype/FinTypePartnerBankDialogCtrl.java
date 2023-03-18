@@ -113,8 +113,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.finTypePartnerBank.getID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.finTypePartnerBank.getID());
 	}
 
 	/**

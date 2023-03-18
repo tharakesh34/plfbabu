@@ -1186,7 +1186,9 @@ public class NotificationService extends GenericService<Notification> {
 			if (StringUtils.isNotEmpty(roleCode)) {
 				fm.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(roleCode));
 				fm.setSecUsrFullName(PennantApplicationUtil.getUserDesc(fm.getLastMntBy()));
-				fm.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(fm.getWorkflowId()));
+				if (fm.getWorkflowId() > 0) {
+					fm.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(fm.getWorkflowId()));
+				}
 			}
 		}
 
@@ -1371,7 +1373,7 @@ public class NotificationService extends GenericService<Notification> {
 
 	private void setAttachements(MailTemplate template, String attachmentRule, Map<String, Object> fieldsAndValues,
 			List<DocumentDetails> documents) {
-		if (template.isEmailTemplate()) {
+		if (template.isEmailTemplate() && StringUtils.isNotEmpty(attachmentRule)) {
 			String[] documentCodes = getAttachmentCode(attachmentRule, fieldsAndValues);
 
 			for (String documnetCode : documentCodes) {

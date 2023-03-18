@@ -2539,7 +2539,7 @@ public class JavaScriptBuilder extends Groupbox {
 		Treeitem parentTreeItem = null;
 		Treeitem treeItem = null;
 
-		if (actualBlock == null) {
+		if (StringUtils.isEmpty(actualBlock)) {
 			return;
 		}
 

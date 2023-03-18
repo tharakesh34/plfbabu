@@ -15,6 +15,8 @@ public interface FinServiceInstrutionDAO {
 
 	List<FinServiceInstruction> getFinServiceInstructions(long finID, String type, String finEvent);
 
+	List<FinServiceInstruction> getFinServiceInstructions(long finID, String finEvent);
+
 	void save(FinServiceInstruction finServiceInstruction, String type);
 
 	List<FinServiceInstruction> getFinServInstByServiceReqNo(long finID, Date fromDate, String serviceReqNo,

@@ -87,8 +87,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(this.finChangeCustomer.getFinReference());
-		return referenceBuffer.toString();
+		return this.finChangeCustomer.getFinReference();
 	}
 
 	@SuppressWarnings("unchecked")

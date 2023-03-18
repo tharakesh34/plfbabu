@@ -562,7 +562,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				ManualAdviseReserve mar = new ManualAdviseReserve();
 
 				mar.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
@@ -638,7 +638,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, reserveAmt);
@@ -658,7 +658,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBigDecimal(index++, reserveAmt);
@@ -706,7 +706,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public void reverseUtilise(long adviseID, BigDecimal amount) {
 		String sql = "Update ManualAdvise Set PaidAmount = PaidAmount - ?, BalanceAmt = BalanceAmt + ?, HoldDue = ? Where AdviseID = ?";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;

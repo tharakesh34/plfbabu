@@ -639,6 +639,11 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 		return auditDetail;
 	}
 
+	@Override
+	public List<Customer> getCustIdByDocTitle(String custDocTitle) {
+		return customerDocumentDAO.getCustIdByDocTitle(custDocTitle);
+	}
+
 	/**
 	 * Fetch current version of the record.
 	 * 

@@ -163,6 +163,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -3488,6 +3489,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			closureReport.setFinAssetValue(PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter));
 			closureReport.setDisbursalDate(disDate);
 			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
+			closureReport.setFirstInstDate(DateUtil.formatToLongDate(fm.getNextRepayDate()));
 
 			// Fetch Collateral Details
 			// Collateral setup details and assignment details

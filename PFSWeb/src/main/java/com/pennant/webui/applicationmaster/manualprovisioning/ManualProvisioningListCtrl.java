@@ -216,7 +216,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 			}
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  AND  finreference = ");
 		whereCond.append(provision.getFinReference());
 		whereCond.append(" AND  version=");

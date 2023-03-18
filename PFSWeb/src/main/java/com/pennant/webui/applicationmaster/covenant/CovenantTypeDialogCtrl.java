@@ -600,7 +600,7 @@ public class CovenantTypeDialogCtrl extends GFCBaseCtrl<CovenantType> {
 							"The number of roles should not exceed more than 5.");
 				}
 
-				StringBuffer data = new StringBuffer();
+				StringBuilder data = new StringBuilder();
 				for (String role : roles.keySet()) {
 					if (data.length() > 0) {
 						data.append(",");

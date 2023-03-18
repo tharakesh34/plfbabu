@@ -481,7 +481,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				format = "###,###,###,###";
 			}
 
-			StringBuffer sb = new StringBuffer(format);
+			StringBuilder sb = new StringBuilder(format);
 			boolean negSign = false;
 
 			if (decPos > 0) {

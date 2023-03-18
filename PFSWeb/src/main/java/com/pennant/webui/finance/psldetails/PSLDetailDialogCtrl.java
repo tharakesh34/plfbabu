@@ -155,8 +155,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(this.pSLDetail.getFinReference());
-		return referenceBuffer.toString();
+		return this.pSLDetail.getFinReference();
 	}
 
 	public Map<String, Object> getRules() {

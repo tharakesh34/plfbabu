@@ -82,7 +82,7 @@ public class AppUtil {
 
 		DecimalFormat df = new DecimalFormat();
 
-		StringBuffer sb = new StringBuffer(AMOUNT_FORMAT);
+		StringBuilder sb = new StringBuilder(AMOUNT_FORMAT);
 		boolean negSign = false;
 
 		if (decPos > 0) {

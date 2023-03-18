@@ -113,8 +113,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.interfaceConfiguration.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.interfaceConfiguration.getId());
 	}
 
 	/**

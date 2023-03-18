@@ -115,7 +115,6 @@ public class TdsReceivableCancelDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 	private transient TdsReceivablesTxnService tdsReceivablesTxnService;
 	List<TdsReceivablesTxn> tdsReceivablesTxnsList = new ArrayList<TdsReceivablesTxn>();
 	private PagedListWrapper<TdsReceivablesTxn> tdsReceivablesTxnPagedListWrapper;
-	private int listRows;
 	private long id = 0;
 
 	/**
@@ -132,8 +131,7 @@ public class TdsReceivableCancelDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.tdsReceivable.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.tdsReceivable.getId());
 	}
 
 	/**
@@ -185,7 +183,6 @@ public class TdsReceivableCancelDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100 + 35;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
 			listbox_TdsReceivablesTxn.setHeight(listboxHeight + "px");
-			this.listRows = Math.round(listboxHeight / 24) - 1;
 
 			doShowDialog(this.tdsReceivable);
 		} catch (Exception e) {

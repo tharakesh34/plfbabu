@@ -39,7 +39,9 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCustomerDetails;
+import com.pennant.backend.model.finance.FinReqParams;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceData;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -57,6 +59,7 @@ import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
@@ -92,6 +95,7 @@ import com.pennanttech.ws.model.finance.FinanceStatusEnquiryDetail;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
+import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -121,6 +125,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	private FinanceDedupeDAO financeDedupeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ForeClosureService foreClosureService;
+	private CustomerDocumentService customerDocumentService;
 
 	/**
 	 * validate and create finance by receiving request object from interface
@@ -1852,6 +1857,62 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		return lsd;
 	}
 
+	@Override
+	public FinanceInquiry getFinanceDetailsByParams(FinReqParams reqParams) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		String reqType = reqParams.getReqType();
+		String reqParam = reqParams.getReqParam();
+
+		FinanceData financeData = null;
+
+		if (StringUtils.isNotEmpty(reqParams.getLoggedInUser()) && StringUtils.isNotEmpty(reqParams.getStageCodes())) {
+			financeData = new FinanceData();
+			financeData.setLoginId(reqParams.getLoggedInUser());
+			financeData.setStageCodes(reqParams.getStageCodes());
+		}
+
+		if (StringUtils.isBlank(reqType)) {
+			FinanceInquiry response = new FinanceInquiry();
+			response.setReturnStatus(getError("90502", "reqType"));
+			return response;
+		}
+
+		if (StringUtils.isBlank(reqParam)) {
+			FinanceInquiry response = new FinanceInquiry();
+			response.setReturnStatus(getError("90502", "reqParam"));
+			return response;
+		}
+
+		switch (reqParams.getReqType()) {
+		case "LAN":
+			return prepareResponseForLAN(reqParams);
+		case "CIF":
+			return prepareResponseForCIF(reqParams, financeData);
+		case PennantConstants.PHONETYPE_MOBILE:
+			return prepareResponseForMobile(reqParam, financeData);
+		case "PAN":
+			return prepareResponseForPAN(reqParam, financeData);
+		case "LOANTYPE":
+			return createFinanceController.getFinDetailsByFinType(reqParam);
+		default:
+			FinanceInquiry response = new FinanceInquiry();
+			response.setReturnStatus(getError("30550", "reqType Not Valid"));
+			return response;
+		}
+	}
+
+	@Override
+	public FinanceDetail getFinDetailsByFinReference(String finReference) {
+		logger.debug(Literal.ENTERING);
+		
+		if (StringUtils.isNotBlank(finReference)) {
+			APIErrorHandlerService.logReference(finReference);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return createFinanceController.getFinDetailsByFinReference(finReference);
+	}
+
 	private BigDecimal getWriteOffAmount(FinanceStatusEnquiry fse, FinanceWriteoff writeOff) {
 		BigDecimal writeOffAmount = BigDecimal.ZERO;
 
@@ -1861,6 +1922,73 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		writeOffAmount = writeOffAmount.add(fse.getPenaltyDue());
 
 		return writeOffAmount;
+	}
+
+	private FinanceInquiry prepareResponseForLAN(FinReqParams reqParams) {
+		FinanceInquiry response = new FinanceInquiry();
+
+		FinanceMain fm = financeMainDAO.getFinanceDetailsByFinRefence(reqParams.getReqParam());
+		if (fm == null) {
+			response.setReturnStatus(getError("30550", "LAN Details Not Found"));
+			return response;
+		}
+
+		Customer customer = customerDetailsService.getCustomer(fm.getCustID());
+
+		List<FinInquiryDetail> finInqList = new ArrayList<>();
+
+		finInqList.add(createFinanceController.getFinInquiryByFinance(fm, customer));
+
+		response.setFinance(finInqList);
+
+		return response;
+	}
+
+	private FinanceInquiry prepareResponseForCIF(FinReqParams reqParams, FinanceData financeData) {
+		Customer customer = customerDetailsService.getCustomerByCIF(reqParams.getReqParam());
+
+		if (customer == null) {
+			FinanceInquiry response = new FinanceInquiry();
+			response.setReturnStatus(getError("30550", "No LAN's found for given details"));
+			return response;
+		}
+
+		return createFinanceController.getFinanceDetailsByCIF(customer, financeData);
+	}
+
+	private FinanceInquiry prepareResponseForMobile(String reqParam, FinanceData financeData) {
+		FinanceInquiry response = new FinanceInquiry();
+		List<Customer> custList = customerDetailsService.getCustomersByPhoneNum(reqParam);
+
+		if (CollectionUtils.isEmpty(custList)) {
+			response.setReturnStatus(getError("30550", "No LAN's found for given details"));
+			return response;
+		}
+
+		response = createFinanceController.getFinanceDetailsByParams(custList, financeData);
+
+		if (response.getFinance() == null || response.getFinance().isEmpty()) {
+			response = new FinanceInquiry();
+			response.setReturnStatus(getError("30550", "No LAN's found for given details"));
+		}
+
+		return response;
+	}
+
+	private FinanceInquiry prepareResponseForPAN(String reqParam, FinanceData financeData) {
+		List<Customer> custList = customerDocumentService.getCustIdByDocTitle(reqParam);
+
+		if (CollectionUtils.isEmpty(custList)) {
+			FinanceInquiry response = new FinanceInquiry();
+			response.setReturnStatus(getError("30550", "No LAN's found for given details"));
+			return response;
+		}
+
+		return createFinanceController.getFinanceDetailsByParams(custList, financeData);
+	}
+
+	private static WSReturnStatus getError(String code, String... parms) {
+		return APIErrorHandlerService.getFailedStatus(code, parms);
 	}
 
 	@Autowired
@@ -1964,5 +2092,10 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setForeClosureService(ForeClosureService foreClosureService) {
 		this.foreClosureService = foreClosureService;
+	}
+
+	@Autowired
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
 	}
 }

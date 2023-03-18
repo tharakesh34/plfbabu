@@ -138,7 +138,7 @@ public class ManufacturerListCtrl extends GFCBaseListCtrl<Manufacturer> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =? ");
 
 		if (doCheckAuthority(manufacturer, whereCond.toString(), new Object[] { manufacturer.getManufacturerId() })) {

@@ -91,8 +91,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.finTypeKnockOff.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.finTypeKnockOff.getId());
 	}
 
 	public void onCreate$window_LoanTypeKnockOffDialog(Event event) {

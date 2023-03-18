@@ -144,7 +144,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		schdData.setFinServiceInstructions(getFinServiceInstructions(finID, procEdtEvent));
+		schdData.setFinServiceInstructions(finServiceInstructionDAO.getFinServiceInstructions(finID, procEdtEvent));
 
 		List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
 
@@ -1075,7 +1075,30 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinScheduleData finScheduleData = fd.getFinScheduleData();
 
 		if (CollectionUtils.isNotEmpty(finScheduleData.getFinServiceInstructions())) {
-			finServiceInstructionDAO.saveList(finScheduleData.getFinServiceInstructions(), "");
+			List<FinServiceInstruction> oldList = finServiceInstructionDAO.getFinServiceInstructions(finID, "",
+					FinServiceEvent.BASICMAINTAIN);
+
+			List<FinServiceInstruction> newList = new ArrayList<>();
+			if (CollectionUtils.isNotEmpty(oldList)) {
+				for (FinServiceInstruction newFr : finScheduleData.getFinServiceInstructions()) {
+					boolean isOld = false;
+					for (FinServiceInstruction oldFr : oldList) {
+						if (oldFr.getServiceSeqId() == newFr.getServiceSeqId()) {
+							isOld = true;
+							break;
+						}
+					}
+					if (!isOld) {
+						newList.add(newFr);
+					}
+				}
+			} else {
+				newList.addAll(finScheduleData.getFinServiceInstructions());
+			}
+			if (CollectionUtils.isNotEmpty(newList)) {
+				finServiceInstructionDAO.saveList(newList, "");
+			}
+
 		}
 
 		// Extended field Details

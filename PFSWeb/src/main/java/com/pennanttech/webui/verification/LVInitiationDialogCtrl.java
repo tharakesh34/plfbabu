@@ -395,16 +395,23 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 			return;
 		}
 
+		agency.setValue("");
+		agency.setObject(null);
+
 		for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
 			Map<String, Object> mapValues = fieldRender.getMapValues();
 			if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
-				collateralCities.add((String) mapValues.get(collateralAddrCol));
+				if (!StringUtils.isEmpty((String) mapValues.get(collateralAddrCol))) {
+					collateralCities.add((String) mapValues.get(collateralAddrCol));
+				}
 			}
 		}
 
 		Filter[] filter = new Filter[2];
 		filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
-		filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
+		if (CollectionUtils.isNotEmpty(collateralCities)) {
+			filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
+		}
 
 		agency.setFilters(filter);
 	}
@@ -1310,6 +1317,10 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Object dataObject = collateral.getObject();
+
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
+		agency.setFilters(filter);
 
 		if (dataObject instanceof String) {
 			collateral.setValue(dataObject.toString());

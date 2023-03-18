@@ -88,8 +88,7 @@ public class CostCenterDialogCtrl extends GFCBaseCtrl<CostCenter> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.costCenter.getCostCenterID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.costCenter.getCostCenterID());
 	}
 
 	/**

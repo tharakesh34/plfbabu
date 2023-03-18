@@ -334,8 +334,8 @@ public class AuditDetail implements java.io.Serializable {
 	 */
 	public static String[] getFieldDetails(Object detailObject, String excludeField) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {
@@ -376,8 +376,8 @@ public class AuditDetail implements java.io.Serializable {
 	 */
 	public static String[] getFieldDetails(Object detailObject) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {
@@ -426,8 +426,8 @@ public class AuditDetail implements java.io.Serializable {
 	 */
 	public static String[] getFieldDetails(Object detailObject, Set<String> excludeFields) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {

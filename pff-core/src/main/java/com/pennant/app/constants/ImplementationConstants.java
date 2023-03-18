@@ -298,6 +298,10 @@ public class ImplementationConstants {
 
 		AUTO_WAIVER_REQUIRED_FROMSCREEN = getValueAsBoolean("AUTO_WAIVER_REQUIRED_FROMSCREEN", false);
 
+		LOAN_PURPOSE_MANDATORY = getValueAsBoolean("LOAN_PURPOSE_MANDATORY", false);
+		GUARANTOR_EMAIL_MANDATORY = getValueAsBoolean("GUARANTOR_EMAIL_MANDATORY", true);
+		ALLOW_IMD_WITHOUT_REALIZED = getValueAsBoolean("ALLOW_IMD_WITHOUT_REALIZED", false);
+		
 		setVerificationConstants();
 	}
 
@@ -503,6 +507,9 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ZERO_STEP_AMOUNT_PERC;
 	public static boolean ALLOW_STEP_RECAL_PRORATA;
 	public static boolean CUSTOMER_PAN_VALIDATION_STOP;
+	public static boolean LOAN_PURPOSE_MANDATORY;
+	public static boolean GUARANTOR_EMAIL_MANDATORY;
+	public static boolean ALLOW_IMD_WITHOUT_REALIZED;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

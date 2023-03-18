@@ -393,10 +393,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 			@Override
 			public boolean test(FinReceiptHeader t) {
-				if (ReceiptMode.CHEQUE.equals(t.getReceiptMode()) || ReceiptMode.DD.equals(t.getReceiptMode())) {
-					return true;
-				}
-				return false;
+				return ReceiptMode.CHEQUE.equals(t.getReceiptMode()) || ReceiptMode.DD.equals(t.getReceiptMode());
 			}
 		}).collect(Collectors.toList());
 

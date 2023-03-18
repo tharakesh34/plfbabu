@@ -191,7 +191,7 @@ public interface FinanceMainDAO {
 
 	boolean isDeveloperFinance(long finID, String type, boolean wif);
 
-	FinanceMain getFinanceDetailsByFinRefence(long finID, String type);
+	FinanceMain getFinanceDetailsByFinRefence(String finReference);
 
 	String getFinanceType(String finReference, TableType tabelType);
 
@@ -420,4 +420,6 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMainForExcessTransfer(long finId);
 
 	List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank);
+
+	List<FinanceMain> getFinDetailsByFinType(String finType);
 }

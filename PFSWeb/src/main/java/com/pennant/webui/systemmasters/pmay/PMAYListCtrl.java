@@ -184,7 +184,7 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append(" finReference = ");
 		whereCond.append(pmay.getFinReference());
 		whereCond.append(" AND  version=");

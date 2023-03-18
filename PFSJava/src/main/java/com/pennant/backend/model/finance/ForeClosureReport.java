@@ -111,6 +111,7 @@ public class ForeClosureReport implements Serializable {
 	private String valueDate;
 	private BigDecimal oneDayInterest;
 	private String custMobile;
+	private String firstInstDate = "";
 
 	public ForeClosureReport() {
 		super();
@@ -786,6 +787,14 @@ public class ForeClosureReport implements Serializable {
 
 	public void setCustMobile(String custMobile) {
 		this.custMobile = custMobile;
+	}
+
+	public String getFirstInstDate() {
+		return firstInstDate;
+	}
+
+	public void setFirstInstDate(String firstInstDate) {
+		this.firstInstDate = firstInstDate;
 	}
 
 }

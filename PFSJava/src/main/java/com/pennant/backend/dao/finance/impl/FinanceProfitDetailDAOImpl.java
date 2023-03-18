@@ -602,7 +602,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setBoolean(index++, isActive);

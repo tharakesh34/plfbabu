@@ -38,9 +38,9 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 
 		String sql = getInsertQuery(type);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -65,7 +65,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql.toString(), ps -> {
+			jdbcOperations.update(sql, ps -> {
 				parameterizedSetter(ps, fsd);
 			});
 		} catch (Exception e) {
@@ -91,6 +91,42 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	public List<FinServiceInstruction> getFinServiceInstructions(long finID, String type, String finEvent) {
 		StringBuilder sql = sqlSelectQuery();
 		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and FinEvent = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinServiceInstructionRowMapper rowMapper = new FinServiceInstructionRowMapper();
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setString(index, finEvent);
+		}, rowMapper);
+	}
+
+	@Override
+	public List<FinServiceInstruction> getFinServiceInstructions(long finID, String finEvent) {
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append(" Select ");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
+		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
+		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
+		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
+		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
+		sql.append(" From FinServiceInstruction_Temp T1 ");
+		sql.append(" Union All ");
+		sql.append(" Select ");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
+		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
+		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
+		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
+		sql.append(", GrcPftRate, GraceBaseRate, GraceSpecialRate, GrcMargin");
+		sql.append(" From FinServiceInstruction T2");
+		sql.append(" WHERE NOT (EXISTS (SELECT 1 FROM FinServiceInstruction_Temp T3");
+		sql.append(" WHERE T3.Serviceseqid = T2.Serviceseqid))) T");
 		sql.append(" Where FinID = ? and FinEvent = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -203,7 +239,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finID, schdate);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, finID, schdate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return BigDecimal.ZERO;

@@ -1669,13 +1669,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public List<FinanceEnquiry> getCustomerFinanceDetailById(Customer customer) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
-		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue ");
+		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.FinIsActive");
 		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
-		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount, t6.NOinst, t6.NOPaidinst");
 		sql.append(" from FinanceMain fm");
 		sql.append(" inner join Customers c on c.CustID = fm.CustID");
 		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
-		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount");
+		sql.append(" left join (select FinReference, NOinst, NOPaidinst, (NSchdPri+NSchdPft) MaxInstAmount");
 		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
 		if (CustomerExtension.CUST_CORE_BANK_ID) {
 			sql.append(" where c.CustCoreBank = ?");
@@ -1697,11 +1697,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
 			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 			fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
 			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 			fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
 			fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
-
+			fm.setNOInst(rs.getInt("NOinst"));
+			fm.setNOPaidinst(rs.getInt("NOPaidinst"));
 			return fm;
 		}, CustomerExtension.CUST_CORE_BANK_ID ? customer.getCustCoreBank() : customer.getCustID());
 	}
@@ -1789,7 +1791,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public void updateCustSuspenseDetails(Customer aCustomer, String tableType) {
 
-		StringBuffer updateSql = new StringBuffer();
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("UPDATE Customers");
 		updateSql.append(tableType);
 		updateSql.append(
@@ -1810,7 +1812,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public void saveCustSuspMovements(Customer aCustomer) {
 
-		StringBuffer insertSql = new StringBuffer();
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("INSERT INTO CustSuspMovements ");
 		insertSql.append("(CustID, CustSuspEffDate, CustSuspAprDate, CustSuspMvtType, CustSuspRemarks) ");
 		insertSql.append(" VALUES(:CustID, :CustSuspEffDate, :CustSuspAprDate, :CustSuspMvtType, :CustSuspRemarks) ");
@@ -1828,7 +1830,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select T1.CustSuspRemarks FROM CustSuspMovements T1 INNER JOIN ");
 		selectSql.append(
 				" (Select CustID,MAX(CustSuspEffDate) MaxSuspEffDate FROM CustSuspMovements Group by CustID) T2 ");
@@ -1850,7 +1852,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustID, CustCIF, CustShrtName, CustDftBranch, CustSts, CustStsChgDate, custSuspSts,");
 		selectSql.append(" CasteId, ReligionId, SubCategory,");
 		selectSql.append(" custSuspDate, custSuspTrigger From Customers ");
@@ -1883,7 +1885,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		source.addValue("ColumnName", columnName);
 		source.addValue("Value", value);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");

@@ -601,7 +601,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), String.class, detail.getDownload_Referid());
+			return jdbcOperations.queryForObject(sql, String.class, detail.getDownload_Referid());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return "";

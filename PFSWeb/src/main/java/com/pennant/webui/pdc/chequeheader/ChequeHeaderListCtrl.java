@@ -209,7 +209,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  HeaderID =?");
 
 		if (doCheckAuthority(chequeheader, whereCond.toString(), new Object[] { chequeheader.getHeaderID() })) {

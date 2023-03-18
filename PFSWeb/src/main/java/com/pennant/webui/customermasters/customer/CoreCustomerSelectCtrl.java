@@ -60,6 +60,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -145,6 +146,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
+	private String primaryIdName = null;
 
 	/**
 	 * default constructor.<br>
@@ -397,7 +400,16 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				// Get the primary identity.
 				String primaryIdNumber = primaryID.getValue();
-				String primaryIdName = validatePAN(primaryIdNumber);
+				MasterDef masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
+				if (!StringUtils.isEmpty(primaryIdNumber) && masterDef != null) {
+					ErrorDetail error = validatePAN(primaryIdNumber, masterDef);
+					if (error != null) {
+						MessageUtil.showMessage(error.getCode() + " : " + error.getMessage());
+						if (masterDef.isProceedException()) {
+							// Made return statement if you want to hard stop
+						}
+					}
+				}
 
 				doRemoveValidation();
 
@@ -500,10 +512,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String validatePAN(String primaryIdNumber) {
-		String primaryIdName = null;
-		if (!(MasterDefUtil.isValidationReq(DocType.PAN) && StringUtils.isNotEmpty(primaryIdNumber))) {
-			return primaryIdName;
+	private ErrorDetail validatePAN(String primaryIdNumber, MasterDef masterDef) {
+		List<ErrorDetail> errorList = new ArrayList<>();
+		if (!(masterDef.isValidationReq() && StringUtils.isNotEmpty(primaryIdNumber))) {
+			return null;
 		}
 
 		DocVerificationHeader header = new DocVerificationHeader();
@@ -514,23 +526,22 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
-				MessageUtil.showMessage(err.getMessage());
+				errorList.add(err);
 			} else {
-				primaryIdName = header.getDocVerificationDetail().getFullName();
+				this.primaryIdName = header.getDocVerificationDetail().getFullName();
 				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
 			}
 
-			return primaryIdName;
+			return err;
 		}
 
 		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
-
 		MessageUtil.confirm(msg, evnt -> {
 			if (Messagebox.ON_YES.equals(evnt.getName())) {
 				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 				if (err != null) {
-					MessageUtil.showMessage(err.getMessage());
+					errorList.add(err);
 				} else {
 					String fullName = header.getDocVerificationDetail().getFullName();
 					MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
@@ -539,10 +550,14 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		});
 
 		if (header.getDocVerificationDetail() != null) {
-			primaryIdName = header.getDocVerificationDetail().getFullName();
+			this.primaryIdName = header.getDocVerificationDetail().getFullName();
 		}
 
-		return primaryIdName;
+		if (CollectionUtils.isEmpty(errorList)) {
+			return null;
+		}
+
+		return errorList.get(0);
 	}
 
 	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber) {

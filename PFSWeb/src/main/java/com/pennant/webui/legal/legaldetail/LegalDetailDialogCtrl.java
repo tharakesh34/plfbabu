@@ -279,8 +279,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.legalDetail.getLegalReference()));
-		return referenceBuffer.toString();
+		return this.legalDetail.getLegalReference();
 	}
 
 	/**

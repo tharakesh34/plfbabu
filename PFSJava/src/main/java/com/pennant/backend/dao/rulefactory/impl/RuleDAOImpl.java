@@ -133,6 +133,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 			fea.setWaiver(rs.getBoolean("Waiver"));
 			fea.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
 			fea.setSQLRule(rs.getString("SQLRule"));
+			fea.setSPLRule(rs.getString("SPLRule"));
 			fea.setActualBlock(rs.getString("ActualBlock"));
 			fea.setSeqOrder(rs.getInt("SeqOrder"));
 			fea.setReturnType(rs.getString("ReturnType"));
@@ -174,7 +175,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append(" RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
 		sql.append(", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule");
 		sql.append(", ActualBlock, SeqOrder, ReturnType, DeviationType, GroupId, Revolving");
-		sql.append(", FixedOrVariableLimit, Active,  Fields, FeeTypeID");
+		sql.append(", FixedOrVariableLimit, Active,  Fields, FeeTypeID, SPLRule");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescGroupName , FeeTypeCode, FeeTypeDesc");
@@ -216,6 +217,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 					rule.setActive(rs.getBoolean("Active"));
 					rule.setFields(rs.getString("Fields"));
 					rule.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
+					rule.setSPLRule(rs.getString("SPLRule"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						rule.setLovDescGroupName(rs.getString("LovDescGroupName"));
@@ -475,9 +477,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		String updateSql = "update Rules set Active= :Active  , RecordType = :RecordType, "
 				+ "  lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + "where RuleId= :RuleId";
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("updateSql: " + updateSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql, beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();

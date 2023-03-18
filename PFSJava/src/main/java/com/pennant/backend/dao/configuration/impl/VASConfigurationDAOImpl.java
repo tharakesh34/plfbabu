@@ -28,6 +28,7 @@ package com.pennant.backend.dao.configuration.impl;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -91,6 +92,91 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		vASConfiguration.setNewRecord(true);
 		logger.debug("Leaving");
 		return vASConfiguration;
+	}
+
+	@Override
+	public List<VASConfiguration> getVASConfigurations(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ProductCode, ProductDesc, RecAgainst, FeeAccrued, FeeAccounting, AccrualAccounting");
+		sql.append(", RecurringType, FreeLockPeriod, PreValidationReq, PostValidationReq, Active, Remarks");
+		sql.append(", ProductType, VasFee, BatchId, AllowFeeToModify, ManufacturerId, PreValidation");
+		sql.append(", PostValidation, FeeType, FlpCalculatedOn, ShortCode, ModeOfPayment, AllowFeeType");
+		sql.append(", MedicalApplicable, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", FeeAccountingName, AccrualAccountingName, FeeAccountingDesc");
+			sql.append(", AccrualAccountingDesc, ProductTypeDesc, ProductCategory");
+			sql.append(", ManufacturerName, FeeTypeCode, FeeTypeDesc, FileName");
+		}
+
+		sql.append(" from VasStructure");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new RowMapper<VASConfiguration>() {
+				@Override
+				public VASConfiguration mapRow(ResultSet rs, int rowNum) throws SQLException {
+					VASConfiguration vasStructure = new VASConfiguration();
+
+					vasStructure.setProductCode(rs.getString("ProductCode"));
+					vasStructure.setProductDesc(rs.getString("ProductDesc"));
+					vasStructure.setRecAgainst(rs.getString("RecAgainst"));
+					vasStructure.setFeeAccrued(rs.getBoolean("FeeAccrued"));
+					vasStructure.setFeeAccounting(rs.getLong("FeeAccounting"));
+					vasStructure.setAccrualAccounting(rs.getLong("AccrualAccounting"));
+					vasStructure.setRecurringType(rs.getBoolean("RecurringType"));
+					vasStructure.setFreeLockPeriod(rs.getInt("FreeLockPeriod"));
+					vasStructure.setPreValidationReq(rs.getBoolean("PreValidationReq"));
+					vasStructure.setPostValidationReq(rs.getBoolean("PostValidationReq"));
+					vasStructure.setActive(rs.getBoolean("Active"));
+					vasStructure.setRemarks(rs.getString("Remarks"));
+					vasStructure.setProductType(rs.getString("ProductType"));
+					vasStructure.setVasFee(rs.getBigDecimal("VasFee"));
+					vasStructure.setBatchId(rs.getLong("BatchId"));
+					vasStructure.setAllowFeeToModify(rs.getBoolean("AllowFeeToModify"));
+					vasStructure.setManufacturerId(rs.getLong("ManufacturerId"));
+					vasStructure.setPreValidation(rs.getString("PreValidation"));
+					vasStructure.setPostValidation(rs.getString("PostValidation"));
+					vasStructure.setFeeType(JdbcUtil.getLong(rs.getLong("FeeType")));
+					vasStructure.setFlpCalculatedOn(rs.getString("FlpCalculatedOn"));
+					vasStructure.setShortCode(rs.getString("ShortCode"));
+					vasStructure.setModeOfPayment(rs.getString("ModeOfPayment"));
+					vasStructure.setAllowFeeType(rs.getString("AllowFeeType"));
+					vasStructure.setMedicalApplicable(rs.getBoolean("MedicalApplicable"));
+					vasStructure.setVersion(rs.getInt("Version"));
+					vasStructure.setLastMntBy(rs.getLong("LastMntBy"));
+					vasStructure.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					vasStructure.setRecordStatus(rs.getString("RecordStatus"));
+					vasStructure.setRoleCode(rs.getString("RoleCode"));
+					vasStructure.setNextRoleCode(rs.getString("NextRoleCode"));
+					vasStructure.setTaskId(rs.getString("TaskId"));
+					vasStructure.setNextTaskId(rs.getString("NextTaskId"));
+					vasStructure.setRecordType(rs.getString("RecordType"));
+					vasStructure.setWorkflowId(rs.getLong("WorkflowId"));
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						vasStructure.setFeeAccountingName(rs.getString("FeeAccountingName"));
+						vasStructure.setAccrualAccountingName(rs.getString("AccrualAccountingName"));
+						vasStructure.setFeeAccountingDesc(rs.getString("FeeAccountingDesc"));
+						vasStructure.setAccrualAccountingDesc(rs.getString("AccrualAccountingDesc"));
+						vasStructure.setProductTypeDesc(rs.getString("ProductTypeDesc"));
+						vasStructure.setProductCategory(rs.getString("ProductCategory"));
+						vasStructure.setManufacturerName(rs.getString("ManufacturerName"));
+						vasStructure.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						vasStructure.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+						vasStructure.setFileName(rs.getString("FileName"));
+					}
+
+					return vasStructure;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return new ArrayList<>();
 	}
 
 	@Override

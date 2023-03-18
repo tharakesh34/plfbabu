@@ -181,7 +181,7 @@ public class QueryCategoryListCtrl extends GFCBaseListCtrl<QueryCategory> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(querycategory, whereCond.toString(), new Object[] { querycategory.getId() })) {

@@ -819,21 +819,21 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
+						}
 
-							if (VASConsatnts.VAS_PAYMENT_COLLECTION.equals(modeOfPayment)) {
+						if (VASConsatnts.VAS_PAYMENT_COLLECTION.equals(modeOfPayment)) {
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+							finFeeDetail.setPaidAmountOriginal(BigDecimal.ZERO);
+							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+							finFeeDetail.setPaidAmount(BigDecimal.ZERO);
+
+							finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
+							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+							finFeeDetail.setRemainingFee(aVASRecording.getFee());
+						} else if (VASConsatnts.VAS_PAYMENT_DEDUCTION.equals(modeOfPayment)) {
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+							if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
 								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-								finFeeDetail.setPaidAmountOriginal(BigDecimal.ZERO);
-								finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
-								finFeeDetail.setPaidAmount(BigDecimal.ZERO);
-
-								finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
-								finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-								finFeeDetail.setRemainingFee(aVASRecording.getFee());
-							} else if (VASConsatnts.VAS_PAYMENT_DEDUCTION.equals(modeOfPayment)) {
-								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
-								if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
-									finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-								}
 							}
 						}
 

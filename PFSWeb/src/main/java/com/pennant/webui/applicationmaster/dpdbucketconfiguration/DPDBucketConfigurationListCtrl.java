@@ -191,7 +191,7 @@ public class DPDBucketConfigurationListCtrl extends GFCBaseListCtrl<DPDBucketCon
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  ConfigID =? ");
 
 		if (doCheckAuthority(dpdbucketconfiguration, whereCond.toString(),

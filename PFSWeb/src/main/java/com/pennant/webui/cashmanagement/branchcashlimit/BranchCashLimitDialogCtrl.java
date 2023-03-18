@@ -113,8 +113,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(this.branchCode.getValue());
-		return referenceBuffer.toString();
+		return this.branchCode.getValue();
 	}
 
 	/**

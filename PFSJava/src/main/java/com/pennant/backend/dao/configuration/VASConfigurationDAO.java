@@ -34,6 +34,8 @@ public interface VASConfigurationDAO {
 
 	VASConfiguration getNewVASConfiguration();
 
+	List<VASConfiguration> getVASConfigurations(String type);
+
 	VASConfiguration getVASConfigurationByCode(String productCode, String type);
 
 	void update(VASConfiguration vasConfiguration, String type);

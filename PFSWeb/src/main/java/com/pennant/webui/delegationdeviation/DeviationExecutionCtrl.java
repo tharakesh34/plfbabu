@@ -723,6 +723,13 @@ public class DeviationExecutionCtrl {
 			if (object instanceof Boolean) {
 				Boolean exeVal = (Boolean) object;
 				return processBooleanValue(exeVal, deviationHeader.getDeviationDetails());
+			} else if (object instanceof Integer) {
+				int iValue = (Integer) object;
+				Boolean exeVal = false;
+				if (iValue == 1) {
+					exeVal = true;
+				}
+				return processBooleanValue(exeVal, deviationHeader.getDeviationDetails());
 			}
 			break;
 		case DeviationConstants.DT_DECIMAL:

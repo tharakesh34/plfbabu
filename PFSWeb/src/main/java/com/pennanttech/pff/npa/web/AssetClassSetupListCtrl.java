@@ -144,7 +144,7 @@ public class AssetClassSetupListCtrl extends GFCBaseListCtrl<AssetClassSetupHead
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  And  Id = ");
 		whereCond.append(assetClassSetupHeader.getId());
 		whereCond.append(" And  version = ");

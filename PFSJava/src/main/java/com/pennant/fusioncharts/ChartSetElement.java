@@ -62,7 +62,7 @@ public class ChartSetElement extends ChartUtil implements Serializable {
 	 * @return
 	 */
 	public String getSetElement() {
-		StringBuffer setElement = new StringBuffer("<set ");
+		StringBuilder setElement = new StringBuilder("<set ");
 		setElement = getIntElement("label", this.label, setElement);
 		setElement = getIntElement("value", this.value != null ? this.value.toString() : "0", setElement);
 		setElement = getIntElement("displayValue", this.displayValue, setElement);
@@ -74,6 +74,7 @@ public class ChartSetElement extends ChartUtil implements Serializable {
 		setElement = getIntElement("dashed", this.dashed, setElement);
 		setElement = getIntElement("alpha", this.alpha, setElement);
 		setElement.append(" /> ");
+
 		return setElement.toString();
 	}
 

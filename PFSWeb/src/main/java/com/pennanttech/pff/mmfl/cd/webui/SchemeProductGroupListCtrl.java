@@ -143,7 +143,7 @@ public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGro
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(schemeProductGroup, whereCond.toString(),

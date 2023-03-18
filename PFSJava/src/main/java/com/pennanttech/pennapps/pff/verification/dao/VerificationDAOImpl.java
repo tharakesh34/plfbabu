@@ -263,11 +263,15 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("verificationType", verificationType);
 		paramMap.addValue("requestType", RequestType.INITIATE.getKey());
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
+			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+			if (verificationId != null) {
+				return verificationId;
+			}
+		} catch (Exception e) {
 			return null;
 		}
+
+		return null;
 	}
 
 	@Override

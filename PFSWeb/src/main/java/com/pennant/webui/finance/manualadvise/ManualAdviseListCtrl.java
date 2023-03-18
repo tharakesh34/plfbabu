@@ -269,7 +269,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 
 		financeMain = manualAdviseService.getFinanceDetails(manualadvise.getFinID());
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append(" where  AdviseID =?");
 
 		if (doCheckAuthority(manualadvise, whereCond.toString(), new Object[] { manualadvise.getAdviseID() })) {

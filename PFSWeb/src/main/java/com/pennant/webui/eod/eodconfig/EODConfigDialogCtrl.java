@@ -157,8 +157,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.eODConfig.getEodConfigId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.eODConfig.getEodConfigId());
 	}
 
 	/**

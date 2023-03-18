@@ -362,7 +362,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 
 				}
 				if (getUserAction() == -1) {
-					StringBuffer massValues = new StringBuffer();
+					StringBuilder massValues = new StringBuilder();
 					for (Iterator<String> itr = dedup.getOverridenMap().values().iterator(); itr.hasNext();) {
 						massValues.append(",");
 						massValues.append(itr.next());

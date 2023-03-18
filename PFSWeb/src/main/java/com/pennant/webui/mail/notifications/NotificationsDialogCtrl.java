@@ -593,7 +593,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 				aNotifications.setRuleAttachmentFields(this.ruleAttachment.getFields());
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			// Making non mandatory for SMS and EMAIL
 		}
 
 		showErrorDetails(wve, tab_ruleAttachment);

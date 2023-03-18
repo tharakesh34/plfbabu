@@ -2496,11 +2496,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		String[] words = amtInWords.split(" ");
 		StringBuilder amount = new StringBuilder();
-
 		for (int i = 0; i < words.length; i++) {
 			if (!words[i].isEmpty()) {
 				amount.append(Character.toUpperCase(words[i].charAt(0))).append(words[i].substring(1)).append(" ");
-
 			}
 		}
 

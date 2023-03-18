@@ -71,7 +71,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0 ? true : false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, name) > 0 ? true : false;
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, srCode) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, srCode) > 0;
 	}
 
 	@Override

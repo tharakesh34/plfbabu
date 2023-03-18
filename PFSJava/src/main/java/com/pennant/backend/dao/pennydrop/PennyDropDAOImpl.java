@@ -39,7 +39,7 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 	@Override
 	public int getPennyDropCount(String accNumber, String ifsc) {
 		logger.debug(Literal.ENTERING);
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM PENNY_DROP_STATUS");
 		selectSql.append(" WHERE AcctNum = :AccNumber AND IFSC = :ifsc AND status= :status");
 		logger.debug(Literal.SQL + selectSql.toString());

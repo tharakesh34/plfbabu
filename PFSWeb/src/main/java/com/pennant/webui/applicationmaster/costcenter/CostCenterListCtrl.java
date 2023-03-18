@@ -181,7 +181,7 @@ public class CostCenterListCtrl extends GFCBaseListCtrl<CostCenter> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  CostCenterID =?");
 
 		if (doCheckAuthority(costcenter, whereCond.toString(), new Object[] { costcenter.getCostCenterID() })) {

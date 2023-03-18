@@ -211,8 +211,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.manualAdvise.getAdviseID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.manualAdvise.getAdviseID());
 	}
 
 	/**

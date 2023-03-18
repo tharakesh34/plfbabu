@@ -22,6 +22,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
@@ -44,7 +45,9 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
+import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -55,6 +58,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.masters.LocalityDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -68,6 +72,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -102,6 +107,7 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceData;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
@@ -125,6 +131,7 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
@@ -183,12 +190,15 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.verification.dao.TechnicalVerificationDAO;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.document.DocumentService;
+import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.service.impl.RemarksWebServiceImpl;
@@ -255,6 +265,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private TechnicalVerificationDAO technicalVerificationDAO;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private PinCodeDAO pinCodeDAO;
+	private LocalityDAO localityDAO;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -4466,6 +4480,272 @@ public class CreateFinanceController extends SummaryDetailService {
 		return response;
 	}
 
+	public FinInquiryDetail getFinInquiryByFinance(FinanceMain fm, Customer customer) {
+		FinInquiryDetail inquiry = new FinInquiryDetail();
+
+		inquiry.setCustName(customer.getCustShrtName());
+		inquiry.setFinReference(fm.getFinReference());
+		inquiry.setFinType(fm.getFinType());
+		inquiry.setFinAssetValue(fm.getFinAssetValue());
+		inquiry.setMobileNum(customerDetailsService.getCustomerPhoneNumberByCustId(customer.getCustID()));
+		inquiry.setFinAmount(fm.getFinAmount());
+
+		if (fm.getLoanCategory() != null) {
+			if (FinanceConstants.LOAN_CATEGORY_FP.equals(fm.getLoanCategory())) {
+				inquiry.setFinCategory(Labels.getLabel("label_FinanceMainDialog_Fresh/Purchase.value"));
+			} else {
+				inquiry.setFinCategory(fm.getLoanCategory());
+			}
+		}
+
+		String recordStatus = fm.getRecordStatus();
+		fm.setStage(getStage(recordStatus, fm.isFinIsActive()));
+
+		if (PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
+			inquiry.setApprovalRejectionDate(fm.getFinStartDate());
+			inquiry.setEncashed("Yes");
+		} else {
+			inquiry.setApprovalRejectionDate(fm.getLastMntOn());
+			inquiry.setEncashed("No");
+		}
+
+		inquiry.setJointAccountDetailList(null);
+		return inquiry;
+	}
+
+	public FinanceInquiry getFinanceDetailsByCIF(Customer customer, FinanceData financeData) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinanceMain> fmList = financeMainService.getFinanceByCustId(customer.getCustID(), "_View");
+
+		if (CollectionUtils.isEmpty(fmList)) {
+			logger.debug(Literal.LEAVING);
+			return null;
+		}
+
+		FinanceInquiry response = new FinanceInquiry();
+
+		List<FinInquiryDetail> finance = new ArrayList<>();
+		for (FinanceMain fm : fmList) {
+			finance.add(getFinInquiryByFinance(fm, customer));
+		}
+		response.setFinance(finance);
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public FinanceInquiry getFinanceDetailsByParams(List<Customer> custList, FinanceData financeData) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceInquiry response = new FinanceInquiry();
+
+		if (CollectionUtils.isNotEmpty(custList)) {
+			List<FinInquiryDetail> finInqList = new ArrayList<>();
+			for (Customer customer : custList) {
+				FinanceInquiry finInquiry = getFinanceDetailsByCIF(customer, financeData);
+				if (finInquiry != null) {
+					finInqList.addAll(finInquiry.getFinance());
+					response.setReturnStatus(finInquiry.getReturnStatus());
+				}
+			}
+			response.setFinance(finInqList);
+		}
+
+		if (response.getFinance() == null) {
+			response = new FinanceInquiry();
+			String[] valueParm = new String[1];
+			valueParm[0] = "No LAN's found for given details";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	public FinanceInquiry getFinDetailsByFinType(String reqParam) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceInquiry finInquiry = new FinanceInquiry();
+
+		List<FinanceMain> fmList = financeMainDAO.getFinDetailsByFinType(reqParam);
+
+		if (CollectionUtils.isEmpty(fmList)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "LAN Details Not Found";
+			finInquiry.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+
+			logger.debug(Literal.LEAVING);
+			return finInquiry;
+		}
+
+		List<FinInquiryDetail> finance = new ArrayList<>();
+
+		for (FinanceMain fm : fmList) {
+			finance.add(getFinInquiryByFinance(fm, customerDetailsService.getCustomer(fm.getCustID())));
+		}
+
+		finInquiry.setFinance(finance);
+
+		logger.debug(Literal.LEAVING);
+		return finInquiry;
+	}
+
+	public FinanceDetail getFinDetailsByFinReference(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail fd = null;
+		String moduleName = FinanceConstants.MODULE_NAME;
+
+		try {
+			FinanceMain fm = financeDetailService.getFinanceMain(finReference, TableType.VIEW);
+			if (fm == null) {
+				fd = new FinanceDetail();
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+				return fd;
+			} else {
+				fd = financeDetailService.getFinanceDetailById(fm.getFinID(), false, "", false, FinServiceEvent.ORG,
+						"");
+				fd.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+
+			fm = fd.getFinScheduleData().getFinanceMain();
+			fm.setStage(getStage(fm.getRecordStatus(), fm.isFinIsActive()));
+			fd.getFinScheduleData().setFinanceMain(fm);
+
+			// DSA
+			if (StringUtils.isNotEmpty(fm.getDsaCode())) {
+				vehicleDealer = vehicleDealerDao.getVehicleDealerById(Long.valueOf((fm.getDsaCode())), "");
+				fm.setDsaCodeReference(vehicleDealer.getCode());
+				fm.setDsaName(vehicleDealer.getDealerName());
+				fm.setDsaCodeDesc(vehicleDealer.getCode());
+			}
+
+			List<InterfaceServiceDetails> serviceDetailsList = fd.getInterfaceDetailList();
+			List<InterfaceServiceDetails> primaryDetailsList = new ArrayList<>();
+			for (InterfaceServiceDetails detail : serviceDetailsList) {
+				if (detail.getCibilType().equals("Primary")) {
+					primaryDetailsList.add(detail);
+				}
+			}
+
+			fd.setInterfaceDetailList(primaryDetailsList);
+
+			if (CollectionUtils.isEmpty(fd.getCollateralAssignmentList())) {
+				/* Collateral Details */
+				List<CollateralAssignment> assignmentListMain = null;
+				if (ImplementationConstants.COLLATERAL_INTERNAL) {
+					assignmentListMain = collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+							moduleName, "_TView");
+				}
+
+				/* Collateral setup details and assignment details */
+				List<CollateralSetup> collateralSetupList = null;
+				if (StringUtils.isNotBlank(fm.getParentRef())) {
+					collateralSetupList = collateralSetupService.getCollateralDetails(fm.getParentRef(), false);
+				} else {
+					collateralSetupList = collateralSetupService.getCollateralDetails(finReference, false);
+				}
+
+				List<CollateralAssignment> assignmentListTemp = null;
+				if (CollectionUtils.isNotEmpty(collateralSetupList)) {
+					if (ImplementationConstants.COLLATERAL_INTERNAL) {
+						assignmentListTemp = collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+								moduleName, "_CTView");
+					}
+				}
+
+				fd.setCollaterals(collateralSetupList);
+				setCollateralAssignments(fd, assignmentListMain, assignmentListTemp);
+			}
+			List<CollateralSetup> collateralSetupList = collateralSetupService
+					.getCollateralSetupList(fd.getCollateralAssignmentList(), "_View");
+
+			for (CollateralSetup setup : collateralSetupList) {
+				List<Verification> tvList = technicalVerificationDAO
+						.getTvListByCollRefAndFinRef(setup.getCollateralRef(), finReference);
+
+				setup.setVerificationList(tvList);
+
+				String areaLocalty = (String) setup.getExtendedFieldRenderList().get(0).getMapValues()
+						.get("AREALOCALTY");
+				String pinCode = (String) setup.getExtendedFieldRenderList().get(0).getMapValues().get("PINCODE");
+
+				if (areaLocalty != null) {
+					Locality locality = localityDAO.getLocality(Integer.valueOf(areaLocalty), "");
+					setup.setAreaLocalityName(locality.getName());
+				}
+				PinCode pincode = pinCodeDAO.getPinCode(pinCode, "_AView");
+				if (pincode != null) {
+					setup.setStateName(pincode.getLovDescPCProvinceName());
+					setup.setCityName(pincode.getpCCityName());
+				}
+			}
+
+			fd.setCollaterals(collateralSetupList);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			fd = new FinanceDetail();
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return fd;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return fd;
+	}
+
+	private String getStage(String recordStatus, boolean finIsActive) {
+		if (PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
+			return finIsActive ? Labels.getLabel("loanStatus_Active.value")
+					: Labels.getLabel("loanStatus_Matured.value");
+		}
+
+		if (PennantConstants.RCD_STATUS_CANCELLED.equals(recordStatus)
+				|| PennantConstants.RCD_STATUS_REJECTED.equals(recordStatus)) {
+			return "Rejected";
+		}
+
+		return recordStatus;
+	}
+
+	private void setCollateralAssignments(FinanceDetail fd, List<CollateralAssignment> caList,
+			List<CollateralAssignment> ca) {
+
+		if (CollectionUtils.isEmpty(caList) && CollectionUtils.isEmpty(ca)) {
+			return;
+		}
+
+		if (CollectionUtils.isEmpty(caList)) {
+			fd.getCollateralAssignmentList().addAll(ca);
+			return;
+		}
+
+		if (CollectionUtils.isEmpty(ca)) {
+			fd.getCollateralAssignmentList().addAll(caList);
+			return;
+		}
+
+		List<CollateralAssignment> resultantList = new ArrayList<>();
+		resultantList.addAll(caList);
+
+		for (CollateralAssignment assignmentTemp : ca) {
+			boolean equal = false;
+			for (CollateralAssignment assignmentMain : caList) {
+				if (assignmentTemp.getCollateralRef().equals(assignmentMain.getCollateralRef())) {
+					equal = true;
+					break;
+				}
+			}
+			if (!equal) {
+				resultantList.add(assignmentTemp);
+			}
+		}
+
+		fd.getCollateralAssignmentList().addAll(resultantList);
+	}
+
 	public AuditHeader getAuditHeader(String finreference) {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		AuditHeader auditHeader = new AuditHeader();
@@ -4801,6 +5081,25 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public void setTechnicalVerificationDAO(TechnicalVerificationDAO technicalVerificationDAO) {
+		this.technicalVerificationDAO = technicalVerificationDAO;
+	}
+
+	@Autowired
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	@Autowired
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	@Autowired
+	public void setLocalityDAO(LocalityDAO localityDAO) {
+		this.localityDAO = localityDAO;
 	}
 
 }

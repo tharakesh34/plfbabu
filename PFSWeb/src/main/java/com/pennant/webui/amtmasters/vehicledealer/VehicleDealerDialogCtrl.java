@@ -1129,7 +1129,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			}
 			Map<String, Object> branchValues = getSelectedValues(branch);
 			if (branchValues != null) {
-				StringBuffer data = new StringBuffer();
+				StringBuilder data = new StringBuilder();
 				for (String branches : branchValues.keySet()) {
 					if (data.length() > 0) {
 						data.append(",");

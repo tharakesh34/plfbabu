@@ -562,8 +562,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 					} else {
 						resultValue = "0";
 					}
-					eligibilityRule.setElgAmount(new BigDecimal(resultValue)); // FIXME only amount field is available,
-																				// logic to be verified.
+					eligibilityRule.setElgAmount(new BigDecimal(resultValue));
 					break;
 
 				case OBJECT:

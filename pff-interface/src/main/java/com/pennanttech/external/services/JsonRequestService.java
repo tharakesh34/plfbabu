@@ -28,6 +28,8 @@ public class JsonRequestService extends JsonService {
 			}
 		}
 
+		jsonServiceDetail.setCertificateFileName(request.getFileName());
+		jsonServiceDetail.setCertificatePassword(request.getPassword());
 		jsonServiceDetail.setHeaders(headers);
 		jsonServiceDetail.setExcludeNull(true);
 		jsonServiceDetail.setExcludeEmpty(true);
@@ -36,6 +38,8 @@ public class JsonRequestService extends JsonService {
 		// default
 		jsonServiceDetail.setServiceName(request.getServiceName());
 		jsonServiceDetail.setReference(request.getReference());
+
+		doSetProperties(READ_TIMEOUT, CONNECTION_TIMEOUT);
 
 		jsonServiceDetail.setRequestString(request.getRequestedString());
 		JsonServiceDetail detail = processMessage(jsonServiceDetail);

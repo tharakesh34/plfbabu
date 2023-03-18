@@ -995,8 +995,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		creditReviewDetail = this.creditApplicationReviewService.getCreditReviewDetailsByLoanType(creditReviewDetail);
-		return creditReviewDetail;
+		CreditReviewDetails newCreditReviewDetail = this.creditApplicationReviewService
+				.getCreditReviewDetailsByLoanType(creditReviewDetail);
+		if (newCreditReviewDetail == null && "DEFAULT".equals(financeMain.getLovEligibilityMethod())) {
+			creditReviewDetail.setEmploymentType(null);
+			newCreditReviewDetail = this.creditApplicationReviewService
+					.getCreditReviewDetailsByLoanType(creditReviewDetail);
+		}
+		return newCreditReviewDetail;
 	}
 
 	public String getModule() {

@@ -296,7 +296,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 	@Override
 	public int getVersion(String collateralRef, String tableType) {
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select Version From CollateralSetup");
 		sql.append(tableType);
 		sql.append(" Where CollateralRef = ? and Status is null");

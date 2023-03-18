@@ -52,7 +52,7 @@ public interface CollateralSetupService {
 
 	CollateralSetup getProcessEditorDetails(CollateralSetup collateralSetup, String role, String finevent);
 
-	AuditDetail doValidations(CollateralSetup collateralSetup, String method);
+	AuditDetail doValidations(CollateralSetup collateralSetup, String method, boolean isPendding);
 
 	int getVersion(String collateralRef);
 
@@ -93,4 +93,8 @@ public interface CollateralSetupService {
 	void updateCersaiDetails(String collateralRef, Long assetid, Long siid);
 
 	Date getRegistrationDate(String collateralRef);
+
+	List<CollateralSetup> getCollateralSetupList(List<CollateralAssignment> assignments, String type);
+
+	List<CollateralSetup> getPendingCollateralByCustId(long depositorId, String type);
 }

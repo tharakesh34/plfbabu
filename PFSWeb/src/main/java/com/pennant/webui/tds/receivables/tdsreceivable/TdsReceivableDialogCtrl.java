@@ -132,8 +132,7 @@ public class TdsReceivableDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.tdsReceivable.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.tdsReceivable.getId());
 	}
 
 	/**

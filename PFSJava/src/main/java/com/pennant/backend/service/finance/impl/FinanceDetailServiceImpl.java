@@ -131,10 +131,8 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
-import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerIncome;
-import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.eventproperties.EventProperties;
@@ -272,6 +270,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.fee.service.IMDFeeService;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
 import com.pennant.pff.holdrefund.model.FinanceHoldDetail;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
@@ -369,6 +368,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private CustomerService customerService;
 	@Autowired(required = false)
 	private CreditInformation creditInformation;
+	private CreditInformation customCreditInformation;
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
@@ -471,6 +471,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private ManualScheduleService manualScheduleService;
 	private VariableOverdraftSchdService variableOverdraftSchdService;
 	private OverdrafLoanService overdrafLoanService;
+
+	private IMDFeeService imdFeeService;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -1289,7 +1291,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		if (!isWIF) {
+		if (!isWIF && fm != null) {
 
 			// Finance Customer Details
 			if (fm.getCustID() != 0 && fm.getCustID() != Long.MIN_VALUE) {
@@ -1308,9 +1310,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Mandate Details
 			fd.setMandate(finMandateService.getMnadateByID(fm.getMandateID()));
-		}
 
-		if (!isWIF && fm != null) {
 			String finReference = fm.getFinReference();
 
 			// Finance Reference Details List
@@ -1363,6 +1363,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
 				}
 			}
+
 		}
 
 		// Finance Fee Details
@@ -1844,9 +1845,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 			}
 
-			// Checklist Details
-			checkListDetailService.fetchFinCheckListDetails(fd, checkListdetails);
-
 			// Finance Stage Accounting Posting Details
 			// =======================================
 			List<TransactionEntry> stageEntries = new ArrayList<>();
@@ -1855,6 +1853,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			fd.setStageTransactionEntries(stageEntries);
 		}
+
+		// Checklist Details
+		checkListDetailService.fetchFinCheckListDetails(fd, checkListdetails);
 
 		// Accounting Set Details
 		if (StringUtils.isBlank(eventCode)) {
@@ -2643,7 +2644,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processLimitSaveOrUpdate(aAuditHeader, false);
 		}
 
-		sendMailNotification(fd);
+		sendMailNotification(fd, "");
 
 		// Saving the reasons
 		saveReasonDetails(fd);
@@ -2919,69 +2920,39 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	}
 
-	protected void sendMailNotification(FinanceDetail financeDetail) {
+	protected void sendMailNotification(FinanceDetail fd, String moduleDefiner) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		String finReference = fm.getFinReference();
 
-		Notification notification = new Notification();
-		notification.setKeyReference(financeMain.getFinReference());
-		notification.setModule("LOAN");
-		notification.setSubModule(FinServiceEvent.ORG);
-		notification.setTemplateCode(NotificationConstants.CREATE_LOAN_API_MAIL_NOTIFICATION);
-
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-		if (customerDetails == null) {
+		CustomerDetails cd = fd.getCustomerDetails();
+		if (cd == null) {
 			return;
 		}
 
-		if (customerDetails.getCustomer() == null) {
+		if (cd.getCustomer() == null) {
 			return;
 		}
 		// For Customers marked as DND true are not allow to Trigger a Mail.
-		if (customerDetails.getCustomer().isDnd()) {
+		if (cd.getCustomer().isDnd()) {
 			return;
 		}
 
-		// Customer E-mails
-		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
-		if (CollectionUtils.isEmpty(emailList)) {
-			return;
-		}
-
-		String emailId = null;
-		for (CustomerEMail email : emailList) {
-			if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
-				emailId = email.getCustEMail();
-				break;
-			}
-		}
-
-		if (StringUtils.isEmpty(emailId)) {
-			return;
-		}
-
-		List<String> emails = new ArrayList<>();
-		emails.add(emailId);
-		notification.setEmails(emails);
-
-		// Customer Contact Number
-		String mobileNumber = null;
-		List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
-		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
-			if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
-					.getPhoneTypePriority()) {
-				mobileNumber = customerPhoneNumber.getPhoneNumber();
-				break;
-			}
-		}
-
-		List<String> mobileNumberList = new ArrayList<>();
-		mobileNumberList.add(mobileNumber);
-		notification.setMobileNumbers(mobileNumberList);
+		Notification notification = new Notification();
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
+		notification.setModule("LOAN_ORG");
+		String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner;
+		notification.setSubModule(finEvent);
+		notification.setKeyReference(finReference);
+		notification.setStage(fm.getRoleCode());
+		notification.setReceivedBy(fm.getLastMntBy());
 
 		if (notificationService != null) {
-			notificationService.sendNotification(notification, financeDetail);
+			notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -3909,8 +3880,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!isWIF) {
 			processLimitApprove(aAuditHeader, false);
 		}
-
-		long tempWorkflowId = fm.getWorkflowId();
 
 		List<FinFeeDetail> finFeeDetails = schdData.getFinFeeDetailList();
 		String auditTranType = auditHeader.getAuditTranType();
@@ -4888,22 +4857,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Mail Alert Notification for Customer/Dealer/Provider...etc
-			Notification notification = new Notification();
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
-			notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
-			notification.setModule("LOAN_ORG");
-			String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner;
-			notification.setSubModule(finEvent);
-			notification.setKeyReference(finReference);
-			notification.setStage(fm.getRoleCode());
-			notification.setReceivedBy(fm.getLastMntBy());
-			fm.setWorkflowId(tempWorkflowId);
-
-			if (notificationService != null) {
-				notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
-			}
+			sendMailNotification(fd, moduleDefiner);
 
 			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 				fm.setWorkflowId(0);
@@ -5261,7 +5215,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			afinanceMain.setSanctionedDate(null);
 			break;
 		case PennantConstants.WF_CIBIL:
-			creditInformation.getCreditEnquiryDetails(auditHeader, false);
+			getCreditInformation().getCreditEnquiryDetails(auditHeader, false);
 			break;
 
 		case PennantConstants.method_doDms:
@@ -5411,6 +5365,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				externalFinanceSystemService.createLoan(afinanceMain, operation);
 			}
 			break;
+		case PennantConstants.METHOD_IMDFEECHECK:
+			imdFeeService.validate(auditHeader);
 		default:
 			// Execute any other custom service tasks
 			if (StringUtils.isNotBlank(task.getOperation())) {
@@ -11464,4 +11420,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		return frd;
 	}
+
+	public CreditInformation getCreditInformation() {
+		return this.customCreditInformation == null ? this.creditInformation : this.customCreditInformation;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "customCreditInformation")
+	public void setCustomCreditInformation(CreditInformation customCreditInformation) {
+		this.customCreditInformation = customCreditInformation;
+	}
+
+	public IMDFeeService getImdFeeService() {
+		return imdFeeService;
+	}
+
+	public void setImdFeeService(IMDFeeService imdFeeService) {
+		this.imdFeeService = imdFeeService;
+	}
+
 }

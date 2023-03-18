@@ -266,6 +266,7 @@ public class AgreementDetail {
 
 	// Customer subcategory
 	private String custSubCategory = "";
+	private String custNatureOfBusiness = "";
 
 	private String ltvPerc = "";
 
@@ -352,6 +353,13 @@ public class AgreementDetail {
 	private String processingFeeWaivedAmt = "0.00";
 	private String processingFeeSchdMeth = "";
 
+	private String disbursementDate = "";
+
+	/**
+	 * Provides Total Eligibility Amount from CreditReview Sheet
+	 */
+	private String totalEligibilityAmount = "0.00";
+
 	/**
 	 * Provides Eligibility Method Description
 	 */
@@ -429,6 +437,14 @@ public class AgreementDetail {
 
 	public void setProcessingFeeSchdMeth(String processingFeeSchdMeth) {
 		this.processingFeeSchdMeth = processingFeeSchdMeth;
+	}
+
+	public String getDisbursementDate() {
+		return disbursementDate;
+	}
+
+	public void setDisbursementDate(String disbursementDate) {
+		this.disbursementDate = disbursementDate;
 	}
 
 	public String getActualProcessingFee() {
@@ -1084,7 +1100,10 @@ public class AgreementDetail {
 	 */
 	private String finCcy = ""; // Currency Code
 
+	private String sourcingBranch = "";
+	private String lovDescSourcingBranch = "";
 	private String pftDaysBasis = ""; // Profit Days Basis
+	private String sanctionedDate = "";
 
 	/**
 	 * Provides current loan Branch Code.
@@ -1917,6 +1936,7 @@ public class AgreementDetail {
 	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
 		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
 	}
+
 	private String priorityNumber;
 	private String priorityEmail;
 
@@ -2842,6 +2862,7 @@ public class AgreementDetail {
 		private String colDesc = "";
 		private String colAddrCity = "";
 		private String colLtv = "";
+		private String remarks = "";
 		private List<ExtendedDetailCollateral> extendedDetailsList = null;
 		private List<CoOwners> coOwnersList = new ArrayList<>();
 		private Map<String, Object> collMap = new HashMap<>();
@@ -2932,6 +2953,14 @@ public class AgreementDetail {
 
 		public void setCollMap(Map<String, Object> collMap) {
 			this.collMap = collMap;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
 		}
 
 		public class CoOwners {
@@ -3857,6 +3886,30 @@ public class AgreementDetail {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
+	public String getSanctionedDate() {
+		return sanctionedDate;
+	}
+
+	public void setSanctionedDate(String sanctionedDate) {
+		this.sanctionedDate = sanctionedDate;
 	}
 
 	public String getPftDaysBasis() {
@@ -5286,6 +5339,14 @@ public class AgreementDetail {
 		this.custSubCategory = custSubCategory;
 	}
 
+	public String getCustNatureOfBusiness() {
+		return custNatureOfBusiness;
+	}
+
+	public void setCustNatureOfBusiness(String custNatureOfBusiness) {
+		this.custNatureOfBusiness = custNatureOfBusiness;
+	}
+
 	public String getLtvPerc() {
 		return ltvPerc;
 	}
@@ -5334,6 +5395,7 @@ public class AgreementDetail {
 		private String custEmpName = "";
 		private String custType = "";
 		private String custSubCategory = "";
+		private String custNatureOfBusiness = "";
 
 		private Map<String, String> extMap = new HashMap<>();
 
@@ -5653,6 +5715,14 @@ public class AgreementDetail {
 			this.custSubCategory = custSubCategory;
 		}
 
+		public String getCustNatureOfBusiness() {
+			return custNatureOfBusiness;
+		}
+
+		public void setCustNatureOfBusiness(String custNatureOfBusiness) {
+			this.custNatureOfBusiness = custNatureOfBusiness;
+		}
+
 		public Map<String, String> getExtMap() {
 			return extMap;
 		}
@@ -5910,6 +5980,7 @@ public class AgreementDetail {
 		private String remainingAmount = "";
 		private String feeTreatment = "";
 		private String feeTreatmentDesc = "";
+		private String isDeductFromDisb = "";
 
 		public CusCharge() {
 		}
@@ -5969,6 +6040,15 @@ public class AgreementDetail {
 		public void setFeeTreatment(String feeTreatment) {
 			this.feeTreatment = feeTreatment;
 		}
+
+		public String getIsDeductFromDisb() {
+			return isDeductFromDisb;
+		}
+
+		public void setIsDeductFromDisb(String isDeductFromDisb) {
+			this.isDeductFromDisb = isDeductFromDisb;
+		}
+
 	}
 
 	// ------------- Disbursement Details ------------//
@@ -6035,6 +6115,7 @@ public class AgreementDetail {
 		private String fileNamePrefix = "";
 		private String channel = "";
 		private String entityCode = "";
+		private String accountNumber = "";
 
 		public Disbursement() {
 		}
@@ -6446,6 +6527,15 @@ public class AgreementDetail {
 		public void setEntityCode(String entityCode) {
 			this.entityCode = entityCode;
 		}
+
+		public String getAccountNumber() {
+			return accountNumber;
+		}
+
+		public void setAccountNumber(String accountNumber) {
+			this.accountNumber = accountNumber;
+		}
+
 	}
 
 	// ---------- Dcument details ---------//
@@ -7637,6 +7727,7 @@ public class AgreementDetail {
 		private String otherFinInstitute = "";
 		private String bounceInstalmentsInSixMonths = "";
 		private String bounceInstalmentsInTwelveMonths = "";
+		private String remarks = "";
 
 		public String getFinBranchName() {
 			return finBranchName;
@@ -7927,6 +8018,14 @@ public class AgreementDetail {
 
 		public void setBounceInstalmentsInTwelveMonths(String bounceInstalmentsInTwelveMonths) {
 			this.bounceInstalmentsInTwelveMonths = bounceInstalmentsInTwelveMonths;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
 		}
 
 	}
@@ -8973,6 +9072,7 @@ public class AgreementDetail {
 		private String collateralReference = "";
 		private String verificationType = "";
 		private String documentName = "";
+		private String documentNameDesc = "";
 		private String documentStatus = "";
 		private String recommanditionStatus = "";
 		private String finalDecision = "";
@@ -9071,6 +9171,14 @@ public class AgreementDetail {
 
 		public void setDocumentName(String documentName) {
 			this.documentName = documentName;
+		}
+
+		public String getDocumentNameDesc() {
+			return documentNameDesc;
+		}
+
+		public void setDocumentNameDesc(String documentNameDesc) {
+			this.documentNameDesc = documentNameDesc;
 		}
 
 		public String getDocumentStatus() {
@@ -11280,4 +11388,13 @@ public class AgreementDetail {
 	public void setFinProduct(String finProduct) {
 		this.finProduct = finProduct;
 	}
+
+	public String getTotalEligibilityAmount() {
+		return totalEligibilityAmount;
+	}
+
+	public void setTotalEligibilityAmount(String totalEligibilityAmount) {
+		this.totalEligibilityAmount = totalEligibilityAmount;
+	}
+
 }

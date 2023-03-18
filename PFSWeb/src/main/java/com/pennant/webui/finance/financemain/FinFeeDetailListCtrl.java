@@ -80,6 +80,7 @@ import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -208,7 +209,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
 
-	private Map<String, BigDecimal> taxPercentages;
 	private FeeDetailService feeDetailService;
 
 	/**
@@ -946,6 +946,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(schdData, true);
+
+		// For New Loan with New Customer
+		CustomerDetails custDetails = financeDetail.getCustomerDetails();
+		if (custDetails != null && custDetails.getCustomer().getCustID() <= 0) {
+			caluclateFeeGST(finFeeDetailList, schdData);
+		}
 
 		FinanceMain fm = schdData.getFinanceMain();
 		if (!fm.isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
@@ -3017,6 +3023,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				continue;
 			}
 
+			Decimalbox calbox = getDecimalbox(FEE_UNIQUEID_CALCULATEDAMOUNT, fee);
+			if (calbox != null) {
+				calbox.setErrorMessage("");
+			}
+
 			Decimalbox waivedbox = getDecimalbox(FEE_UNIQUEID_WAIVEDAMOUNT, fee);
 			if (waivedbox != null) {
 				waivedbox.setErrorMessage("");
@@ -3158,6 +3169,32 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				financeDetail.getFinanceTaxDetail());
 
 		return taxPercentages;
+	}
+
+	private void caluclateFeeGST(List<FinFeeDetail> fees, FinScheduleData fsd) {
+		FinanceMain finMain = fsd.getFinanceMain();
+		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		String finBranch = finMain.getFinBranch();
+		String finCCY = finMain.getFinCcy();
+
+		CustomerDetails custDetails = financeDetail.getCustomerDetails();
+
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+
+		for (FinFeeDetail finFeeDetail : fees) {
+
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, fsd, getDealerTaxPercentages());
+			} else {
+				if (custDetails == null) {
+					continue;
+				}
+				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custDetails, finCCY,
+						userBranch, finBranch, financeDetail.getFinanceTaxDetail());
+				this.finFeeDetailService.calculateFees(finFeeDetail, fsd, taxPercentages);
+			}
+		}
+
 	}
 
 	private Map<String, BigDecimal> getDealerTaxPercentages() {

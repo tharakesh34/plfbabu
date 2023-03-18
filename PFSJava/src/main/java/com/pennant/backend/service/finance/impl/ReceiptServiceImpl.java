@@ -4075,13 +4075,13 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		String panNumber = fsi.getPanNumber();
 
-		if (StringUtils.isEmpty(panNumber)) {
+		if (StringUtils.isEmpty(panNumber) && !"Inquiry".equals(fsi.getReqType())) {
 			if (recAmount.compareTo(cashLimit) > 0
 					&& DisbursementConstants.PAYMENT_TYPE_CASH.equals(fsi.getPaymentMode())) {
 				String valueParm = "PanNumber";
 				setError(schdData, "30561", valueParm);
 			}
-		} else {
+		} else if (!StringUtils.isEmpty(panNumber)) {
 			String panRegex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER);
 			if (!Pattern.compile(panRegex).matcher(panNumber).matches()) {
 				setError(schdData, "90251", panNumber);
@@ -4921,7 +4921,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			String rm = hdr.getReceiptMode();
 			String tr = hdr.getTransactionRef();
 
-			if (receiptPurpose.equals(rp) && receiptMode.equals(rm) && transactionRef.equals(tr)) {
+			if (receiptPurpose.equals(rp) && receiptMode.equals(rm) && transactionRef != null
+					&& transactionRef.equals(tr)) {
 				if (!cheqOrDD) {
 					return true;
 				}
@@ -5979,7 +5980,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setRecAppDate(rch.getValueDate());
 
 		if (fsi.isReceiptUpload()) {
-			if (StringUtils.equals(rcd.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+			String status = rcd.getStatus();
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(status)
+					|| RepayConstants.PAYSTATUS_APPROVED.equals(status)) {
 				rch.setRealizationDate(fsi.getRealizationDate());
 				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			} else if ((fsi.getBounceReason() != null || fsi.getCancelReason() != null)
@@ -6857,6 +6860,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				logger.info(Literal.LEAVING);
 				return;
+			}
+
+			rch = rd.getReceiptHeader();
+			if (requestSource == RequestSource.API && FinanceConstants.REALIZATION_APPROVER.equals(rch.getRoleCode())) {
+				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 			}
 
 			auditHeader = saveOrUpdate(auditHeader);

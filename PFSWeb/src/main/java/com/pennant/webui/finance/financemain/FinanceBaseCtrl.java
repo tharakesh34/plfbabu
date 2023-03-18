@@ -1785,9 +1785,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			extendedFieldCtrl.setAppendActivityLog(true);
 			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
-			extendedFieldCtrl
-					.setDataLoadReq((PennantConstants.RCD_STATUS_APPROVED.equals(aFinanceMain.getRecordStatus())
-							|| aFinanceMain.getRecordStatus() == null) ? true : false);
 
 			long instructionUID = Long.MIN_VALUE;
 			if (CollectionUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinServiceInstructions())) {

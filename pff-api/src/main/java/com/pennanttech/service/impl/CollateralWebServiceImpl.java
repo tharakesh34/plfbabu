@@ -1,5 +1,6 @@
 package com.pennanttech.service.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +22,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CollateralController;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CollateralRestService;
 import com.pennanttech.pffws.CollateralSoapService;
 import com.pennanttech.util.APIConstants;
@@ -75,7 +77,7 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		CollateralSetup response = null;
 		try {
 			// bussiness validations
-			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create");
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "create", false);
 
 			if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
@@ -128,7 +130,7 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		WSReturnStatus response = null;
 		try {
 			// bussiness validations
-			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update");
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update", false);
 
 			if (auditDetail.getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
@@ -168,7 +170,7 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		try {
 			// for logging purpose
 			APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
-			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete");
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "delete", false);
 
 			if (auditDetail.getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
@@ -206,9 +208,86 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		CollateralDetail collateralDetail = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
 		if (customer != null) {
+			// call getCollaterals service
+			collateralDetail = collateralController.getCollaterals(customer.getCustID(), "");
+
+			if (collateralDetail != null) {
+				collateralDetail.setCif(cif);
+				collateralDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			} else {
+				collateralDetail = new CollateralDetail();
+				String[] valueParm = new String[1];
+				valueParm[0] = cif;
+				collateralDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90908", valueParm));
+			}
+		} else {
+			collateralDetail = new CollateralDetail();
+			String[] valueParm = new String[1];
+			valueParm[0] = cif;
+			collateralDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return collateralDetail;
+	}
+
+	@Override
+	public WSReturnStatus pendingUpdateCollateral(CollateralSetup collateralSetup) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		String[] logFields = new String[2];
+		logFields[0] = collateralSetup.getDepositorCif();
+		logFields[1] = collateralSetup.getCollateralType();
+	
+		APIErrorHandlerService.logKeyFields(logFields);
+
+		validationUtility.validate(collateralSetup, UpdateValidationGroup.class);
+		
+		WSReturnStatus response = null;
+		try {
+			CollateralSetup collateral = collateralSetupService
+					.getCollateralSetupDetails(collateralSetup.getCollateralRef(), "_Temp");
+			AuditDetail auditDetail = collateralSetupService.doValidations(collateralSetup, "update", true);
+
+			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
+				ErrorDetail errorDetail = auditDetail.getErrorDetails().get(0);
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+			// call create collateral controller service
+			if (collateral != null) {
+				APIErrorHandlerService.logReference(collateralSetup.getCollateralRef());
+				response = collateralController.pendingUpdateCollateral(collateralSetup);
+			} else {
+				collateral = new CollateralSetup();
+				String[] valueParm = new String[1];
+				valueParm[0] = collateralSetup.getCollateralRef();
+				collateral.setReturnStatus(APIErrorHandlerService.getFailedStatus("90908", valueParm));
+			}
+
+		} catch (Exception e) {
+			logger.error(e);
+			response = APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public CollateralDetail getPendingCollaterals(String cif) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		// validate collateral cif
+		if (StringUtils.isBlank(cif)) {
+			validationUtility.fieldLevelException();
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(cif);
+		CollateralDetail collateralDetail = null;
+		Customer customer = customerDetailsService.getCustomerByCIF(cif);
+		if (customer != null) {
 
 			// call getCollaterals service
-			collateralDetail = collateralController.getCollaterals(customer.getCustID());
+			collateralDetail = collateralController.getCollaterals(customer.getCustID(), "_Temp");
 
 			if (collateralDetail != null) {
 				collateralDetail.setCif(cif);

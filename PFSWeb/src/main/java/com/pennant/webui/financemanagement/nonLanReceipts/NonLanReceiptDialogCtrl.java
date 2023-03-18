@@ -245,7 +245,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected String eventCode = "";
 	protected String menuItemRightName = null;
 	private int formatter = 0;
-	private String amountFormat = null;
 	private int receiptPurposeCtg = -1;
 
 	protected boolean recSave = false;
@@ -302,7 +301,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				finReceiptHeader = receiptData.getReceiptHeader();
 
 				formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				amountFormat = PennantApplicationUtil.getAmountFormate(formatter);
 
 				recordType = finReceiptHeader.getRecordType();
 
@@ -893,8 +891,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setReadonly(false);
 
 		} else if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)
-				&& (!StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(recMode, ReceiptMode.DD)
-						&& !StringUtils.equals(recMode, ReceiptMode.CASH))) {
+				&& !StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(recMode, ReceiptMode.DD)
+				&& !StringUtils.equals(recMode, ReceiptMode.CASH)) {
 			this.fundingAccount.setMandatoryStyle(true);
 		}
 
@@ -1996,7 +1994,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				finishedTasks += (method + ";");
-				FinReceiptData tRepayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 				serviceTasks = getServiceTasks(taskId, rch, finishedTasks);
 
 			}

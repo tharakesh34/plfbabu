@@ -196,6 +196,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			Executions.sendRedirect("/csrfLogout.zul");
 		} else if ((pwdExpDate != null && pwdExpDate.before(DateUtil.getSysDate()))) {
 			Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
+					new MenuItemOnCloseListener());
 		} else {
 			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
 					new MenuItemOnCloseListener());

@@ -38,7 +38,7 @@ public class CashManagementAccounting {
 			BigDecimal transactionAmount, long partnerBankId, long requestId, String finReference, long receiptId) {
 
 		// Reference
-		StringBuffer buffer = new StringBuffer("CM_");
+		StringBuilder buffer = new StringBuilder("CM_");
 		buffer.append(eventCode);
 		buffer.append(postingBranch);
 		buffer.append(StringUtils.leftPad(String.valueOf(requestId), 10, "0"));

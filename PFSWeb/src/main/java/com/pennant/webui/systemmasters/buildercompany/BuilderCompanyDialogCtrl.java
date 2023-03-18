@@ -180,8 +180,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.builderCompany.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.builderCompany.getId());
 	}
 
 	/**

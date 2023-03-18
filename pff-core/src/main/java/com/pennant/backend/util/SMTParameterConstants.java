@@ -447,4 +447,5 @@ public class SMTParameterConstants {
 	public static final String ALW_OTS_ON_EOD = "ALW_OTS_ON_EOD";
 	public static final String RECEIPTS_SHOW_ACCOUNTING_TAB = "RECEIPTS_SHOW_ACCOUNTING_TAB";
 	public static final String OTS_THREAD_COUNT = "OTS_THREAD_COUNT";
+	public static final String ALW_CREDIT_EDIT_DATA_STAGES = "ALW_CREDIT_EDIT_DATA_STAGES";
 }

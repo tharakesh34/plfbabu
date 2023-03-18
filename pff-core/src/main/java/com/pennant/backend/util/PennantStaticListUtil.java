@@ -536,6 +536,7 @@ public class PennantStaticListUtil {
 			regexType.add(getValueLabel("REGEX_SPECIAL_REGX", "label_REGEX_SPECIAL_REGX"));
 			regexType.add(getValueLabel("REGEX_TELEPHONE", "label_REGEX_TELEPHONE"));
 			regexType.add(new ValueLabel("REGEX_ADDRESS", Labels.getLabel("label_ADDRESS_REGEX")));
+			regexType.add(new ValueLabel("REGEX_MOBILE", Labels.getLabel("label_MOBILE_REGEX")));
 			if (ImplementationConstants.ALLOW_CERSAI) {
 				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPACE", Labels.getLabel("label_REGEX_ALPHANUM_SPACE")));
 				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL_CERSAI1",
@@ -1885,8 +1886,6 @@ public class PennantStaticListUtil {
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
 			// Labels.getLabel("label_ScheduleToNinstalments")));
-			// remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
-			// Labels.getLabel("label_RemFee_PaidByCustomer")));
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
 			// Labels.getLabel("label_RemFee_WaivedByBank")));

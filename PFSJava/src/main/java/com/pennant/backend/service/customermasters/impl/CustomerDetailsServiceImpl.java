@@ -8627,6 +8627,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
+	public String getCustomerPhoneNumberByCustId(long custID) {
+		return customerPhoneNumberDAO.getCustomerPhoneNumberByCustId(custID);
+	}
+
+	@Override
+	public List<Customer> getCustomersByPhoneNum(String phoneNum) {
+		return customerPhoneNumberDAO.getCustomersByPhoneNum(phoneNum);
+	}
+
+	@Override
 	public int getCustomerCountByCIF(String custCIF, String type) {
 		return customerDAO.getCustomerCountByCIF(custCIF, type);
 	}

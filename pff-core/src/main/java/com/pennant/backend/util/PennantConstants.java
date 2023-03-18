@@ -210,6 +210,7 @@ public class PennantConstants {
 	public static final String METHOD_DOCUMENTVERIFICATION = "doDocumentVerification";
 	public static final String METHOD_LOAN_DATA_SYNC = "executeLoanDataSync";
 	public static final String method_pushToEFS = "pushToEFS";
+	public static final String METHOD_IMDFEECHECK = "doIMDFeeCheck";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";

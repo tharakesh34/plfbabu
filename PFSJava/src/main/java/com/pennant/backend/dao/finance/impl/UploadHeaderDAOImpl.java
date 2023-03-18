@@ -264,7 +264,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 	@Override
 	public void updateFileDownload(long uploadId, boolean fileDownload, String type) {
-		StringBuffer sql = new StringBuffer("Update UploadHeader");
+		StringBuilder sql = new StringBuilder("Update UploadHeader");
 		sql.append(StringUtils.trim(type));
 		sql.append(" Set FileDownload = ?");
 		sql.append(" Where UploadId = ?");

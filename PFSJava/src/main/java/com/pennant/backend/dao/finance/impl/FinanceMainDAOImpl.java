@@ -1329,7 +1329,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	private void doReject(String sql, long finID) {
 		logger.debug(Literal.SQL + sql);
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, finID);
 		});
 	}
@@ -1645,9 +1645,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		String sql = "Select ModuleName FROM ScheduleEffectModule Where SchdCanModify = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForList(sql.toString(), String.class, schdChangeReq);
+		return this.jdbcOperations.queryForList(sql, String.class, schdChangeReq);
 	}
 
 	@Override
@@ -2429,7 +2429,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 
@@ -2453,7 +2453,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public boolean isFinTypeExistsInFinanceMain(String finType, String type) {
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(*) FROM FINANCEMAIN");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where FinType = ?");
@@ -2506,7 +2506,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finpurpose", loanPurposeCode);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(FinID) From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where Finpurpose = ?");
@@ -2533,7 +2533,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
 		StringBuilder sql = new StringBuilder("SELECT fm.FinID, FinReference, FM.CustID, CM.CustCIF CustCIF");
-		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber");
+		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber, FM.RoleCode");
 		sql.append(" From FinanceMain_Temp FM");
 		sql.append(" left JOIN Customers CM ON CM.CustID = FM.CUSTID");
 		sql.append(" left join customerdocuments CD ON CD.CustID = CM.CUSTID AND CUSTDOCCATEGORY='PPAN'");
@@ -2554,6 +2554,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			pd.setCustShrtName(rs.getString("CustShrtName"));
 			pd.setpANNumber(rs.getString("PANNumber"));
 			pd.setPhoneNumber(rs.getString("PhoneNumber"));
+			pd.setCurrentRole(rs.getString("RoleCode"));
 
 			return pd;
 		});
@@ -2750,19 +2751,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	// FIXME to custom RowMapper
 	@Override
-	public FinanceMain getFinanceDetailsByFinRefence(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select * From ");
-		sql.append("FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = :FinID");
+	public FinanceMain getFinanceDetailsByFinRefence(String finReference) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("Select ");
+		sql.append(" custId, FinReference, LastMntOn, FinStartDate,");
+		sql.append(" RecordStatus, FinAmount, FinAssetValue, finIsActive");
+		sql.append(" From FinanceMain_view");
+		sql.append(" Where FinReference = :FinReference");
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinID", finID);
+		source.addValue("FinReference", finReference);
 
 		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), typeRowMapper, source);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2897,9 +2900,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public void updateAssignmentId(long finID, long assignmentId) {
 		String sql = "Update FinanceMain Set AssignmentId = ? Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, assignmentId);
 			ps.setLong(2, finID);
 		});
@@ -3834,7 +3837,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 
 				fm.setFinType(rs.getString("FinType"));
@@ -5548,10 +5551,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(String finReference) {
 		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, true);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finReference, finReference);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5562,7 +5565,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(String finReference, TableType tableType) {
 		String sql = getBasicFieldsQuery(tableType, true);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = null;
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
@@ -5572,7 +5575,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5583,10 +5586,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(long finID) {
 		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, false);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finID, finID);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), finID, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5597,7 +5600,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(long finID, TableType tableType) {
 		String sql = getBasicFieldsQuery(tableType, false);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = null;
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
@@ -5607,7 +5610,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -6690,5 +6693,36 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}, (rs, rowNum) -> {
 			return rs.getLong("FinId");
 		});
+	}
+
+	@Override
+	public List<FinanceMain> getFinDetailsByFinType(String finType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, FinReference, LastMntOn, FinStartDate, RecordStatus");
+		sql.append(", FinAmount, FinAssetValue, FinType, FinIsActive");
+		sql.append(" From FinanceMain_Temp fm Where FinType = ?");
+		sql.append(" Union All");
+		sql.append(" CustID, FinReference, LastMntOn, FinStartDate, RecordStatus");
+		sql.append(", FinAmount, FinAssetValue, FinType, FinIsActive");
+		sql.append(" From FinanceMain fm Where FinType = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+
+			fm.setCustID(rs.getLong("CustID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fm.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
+			fm.setRecordStatus(rs.getString("RecordStatus"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+
+			return fm;
+		}, finType);
 	}
 }

@@ -23,6 +23,8 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +52,13 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.amtmasters.Authorization;
+import com.pennant.backend.model.finance.AgreementDetail;
+import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -61,6 +68,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
@@ -406,6 +414,9 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				String finReference = fm.getFinReference();
 				String aggName = StringUtils.trimToEmpty(data.getLovDescNamelov());
 				String reportName = "";
+				String totalEligibiltyAmount = "0.00";
+				String actualFoir = "0.00";
+				String ltv = "0.00";
 
 				if ("NOC".equals(data.getLovDescCodelov())) {
 					List<String> finReferences = linkedFinancesService.getFinReferences(fm.getFinReference());
@@ -428,6 +439,47 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 							return;
 						}
 					}
+				} else if ("CAM".equals(data.getLovDescCodelov())) {
+					if (getFinanceMainDialogCtrl() != null) {
+						@SuppressWarnings("unchecked")
+						CreditReviewData creditReviewData = (CreditReviewData) getFinanceMainDialogCtrl().getClass()
+								.getMethod("getUpdateCreditReviewMap").invoke(financeMainDialogCtrl);
+
+						if (creditReviewData != null) {
+							Map<String, Object> dataMap = convertStringToMap(creditReviewData.getTemplateData());
+
+							String cellCode = SysParamUtil.getValueAsString("CREDIT_ELIGIBILITY_TOTAL");
+							if (!StringUtils.isEmpty(cellCode)) {
+								Double obj = (Double) dataMap.get("FINAL_OFFER_" + cellCode);
+								if (obj != null) {
+									totalEligibiltyAmount = PennantApplicationUtil.formatAmount(new BigDecimal(obj), 2)
+											.toString();
+								}
+							}
+
+							String foirCells = SysParamUtil.getValueAsString("CREDIT_FINAL_FOIR");
+							if (!StringUtils.isEmpty(foirCells)) {
+								String[] args = foirCells.split(",");
+								if (args[0] != null) {
+									Double obj = (Double) dataMap.get("FINAL_OFFER_" + args[0]);
+									if (obj != null) {
+										BigDecimal val = new BigDecimal(obj);
+										actualFoir = val.setScale(2, RoundingMode.UP) + "%";
+									}
+								}
+
+								if (args[1] != null) {
+									Double obj = (Double) dataMap.get("FINAL_OFFER_" + args[1]);
+									if (obj != null) {
+										BigDecimal val = new BigDecimal(obj);
+										ltv = val.setScale(2, RoundingMode.UP) + "%";
+									}
+								}
+							}
+
+						}
+
+					}
 				}
 
 				/**
@@ -435,23 +487,27 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				 * with Raju. This functionality is moved to collateral and associated at customer side.
 				 * 
 				 */
-				String aggPath = "", templateName = "";
+				String templateName = "";
 				if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
 					String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-					// aggPath =
-					// main.getFinPurpose()+"/"+aggRptName.substring(0,aggRptName.lastIndexOf("/"));
 					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
 				} else {
-					// aggPath = main.getFinPurpose();
 					templateName = data.getLovDescAggReportName();
 				}
 
 				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
+				AgreementDetail aggDetail = getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(),
+						getUserWorkspace().getUserDetails());
 
-				engine.mergeFields(getAgreementGeneration().getAggrementData(detail, data.getLovDescAggImage(),
-						getUserWorkspace().getUserDetails()));
+				aggDetail.setTotalEligibilityAmount(totalEligibiltyAmount);
+				if (aggDetail.getOtherMap() != null) {
+					aggDetail.getOtherMap().put("actualFoir", actualFoir);
+					aggDetail.getOtherMap().put("finalLtv", ltv);
+				}
+
+				engine.mergeFields(aggDetail);
 
 				getAgreementGeneration().setExtendedMasterDescription(detail, engine);
 				getAgreementGeneration().setCustExtFieldDesc(detail.getCustomerDetails(), engine);
@@ -486,20 +542,18 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 
 			try {
 
-				String aggPath = "", templateName = "";
+				String templateName = "";
 				if (StringUtils.trimToEmpty(data.getLovDescAggReportName()).contains("/")) {
 					String aggRptName = StringUtils.trimToEmpty(data.getLovDescAggReportName());
-					aggPath = aggRptName.substring(0, aggRptName.lastIndexOf("/"));
 					templateName = aggRptName.substring(aggRptName.lastIndexOf("/") + 1, aggRptName.length());
 				} else {
-					aggPath = "";
 					templateName = data.getLovDescAggReportName();
 				}
 				AgreementEngine engine = new AgreementEngine();
 				engine.setTemplate(templateName);
 				engine.loadTemplate();
 
-				int format = SaveFormat.PDF;
+				int format;
 				if (StringUtils.equals(data.getAggType(), PennantConstants.DOC_TYPE_PDF)) {
 					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
 					format = SaveFormat.PDF;
@@ -579,6 +633,21 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 		} else {
 			getCollateralBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 		}
+	}
+
+	private Map<String, Object> convertStringToMap(String payload) {
+		Map<String, Object> map = new HashMap<>();
+
+		ObjectMapper obj = new ObjectMapper();
+
+		try {
+			return obj.readValue(payload, new TypeReference<HashMap<String, Object>>() {
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return map;
 	}
 
 	// ******************************************************//

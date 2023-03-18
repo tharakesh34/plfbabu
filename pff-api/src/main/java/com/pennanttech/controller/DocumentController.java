@@ -12,19 +12,26 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.ws.model.customer.DocumentList;
@@ -37,6 +44,7 @@ public class DocumentController extends ExtendedTestClass {
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentManagerDAO documentManagerDAO;
 	private CustomerDocumentService customerDocumentService;
+	private FinanceMainDAO financeMainDAO;
 
 	public AuditHeader processDocumentDetails(DocumentDetails detail) {
 		logger.debug(Literal.ENTERING);
@@ -77,6 +85,73 @@ public class DocumentController extends ExtendedTestClass {
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
+	}
+
+	public WSReturnStatus processFinDocumentDetails(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain finMain = null;
+		
+		if (StringUtils.isNotBlank(financeDetail.getFinReference())) {
+			finMain = financeMainDAO.getFinanceMainByRef(financeDetail.getFinReference(), "_View", false);
+
+			if (finMain == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = financeDetail.getFinReference();
+				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+		} else {
+			return APIErrorHandlerService.getFailedStatus("9999", "FinReference is Mandatory");
+		}
+		try {
+			financeDetail.getFinScheduleData().setFinanceMain(finMain);
+			List<DocumentDetails> oldDocList = documentDetailsDAO.getDocumentDetailsByRef(
+					financeDetail.getFinReference(), FinanceConstants.MODULE_NAME, "", "_View");
+			for (DocumentDetails documentDetail : financeDetail.getDocumentDetailsList()) {
+				for (DocumentDetails docdetail : oldDocList) {
+					if (docdetail.getDocCategory().equals(documentDetail.getDocCategory())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "docCategory : " + docdetail.getDocCategory() + " Is Already Exists";
+						return APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					}
+				}
+			}
+			
+			for (DocumentDetails documentDetail : financeDetail.getDocumentDetailsList()) {
+				AuditHeader auditHeader = new AuditHeader();
+				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+				documentDetail.setReferenceId(financeDetail.getFinReference());
+				documentDetail.setNewRecord(true);
+				documentDetail.setLastMntBy(userDetails.getUserId());
+				documentDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				documentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				documentDetail.setVersion(1);
+				documentDetail.setDocRefId(Long.MIN_VALUE);
+				documentDetail.setFinEvent(FinServiceEvent.ORG);
+				documentDetail.setDocModule(FinanceConstants.MODULE_NAME);
+				documentDetail.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
+				documentDetail.setRecordStatus(PennantConstants.RCD_ADD);
+				documentDetail.setWorkflowId(finMain.getWorkflowId());
+				documentDetail.setCustId(finMain.getCustID());
+
+				auditHeader = getAuditHeader(documentDetail, PennantConstants.TRAN_ADD);
+
+				documentService.saveOrUpdate(auditHeader);
+			}
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			return APIErrorHandlerService.getFailedStatus("9999", ex.getMessage());
+		} catch (AppException ex) {
+			logger.error("AppException", ex);
+			return APIErrorHandlerService.getFailedStatus("9999", ex.getMessage());
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	/**
@@ -210,4 +285,9 @@ public class DocumentController extends ExtendedTestClass {
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

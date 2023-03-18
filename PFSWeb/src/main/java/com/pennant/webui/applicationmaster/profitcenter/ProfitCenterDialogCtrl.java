@@ -88,8 +88,7 @@ public class ProfitCenterDialogCtrl extends GFCBaseCtrl<ProfitCenter> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.profitCenter.getProfitCenterID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.profitCenter.getProfitCenterID());
 	}
 
 	/**

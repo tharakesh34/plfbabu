@@ -2074,6 +2074,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			// fin Advance Payments List
 			if (finAdvancePaymentsList != null && !finAdvancePaymentsList.isEmpty()) {
 				for (FinAdvancePayments fap : finAdvancePaymentsList) {
+					if ("VAS".equals(fap.getPaymentDetail())) {
+						continue;
+					}
 					advancePayment = "Amount Paid Vide ";
 					String status = "";
 					if (StringUtils.equals(fap.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
@@ -2801,8 +2804,10 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								soaTranReport = new SOATransactionReport();
 								if (StringUtils.isNotBlank(feeTypeDesc)) {
 									finFeeDetailNotInDISBorPOSP = feeTypeDesc;
-								} else {
+								} else if (StringUtils.isNotBlank(vasProduct)) {
 									finFeeDetailNotInDISBorPOSP = vasProduct;
+								} else {
+									finFeeDetailNotInDISBorPOSP = finFeeDetail.getFinEvent();
 								}
 								soaTranReport.setEvent(finFeeDetailNotInDISBorPOSP + " Amount" + finRef);
 								if (StringUtils.isNotBlank(exclusive)) {
@@ -3025,11 +3030,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String advancePayment = "Amount Paid Vide ";
 		String finSchedulePayable = "Amount Financed - Payable ";// Add Disbursement 1
 		String finScheduleReceivable = "Amount Financed - Receivable ";// Add Disbursement 1
-		String dueForInstallment = "Due for Installment "; // 3
 		String partPrepayment = "Part Prepayment Amount "; // 5
 		String brokenPeriodEvent = "Broken Period Interest Receivable "; // 6
 		String foreclosureAmount = "Foreclosure Amount "; // 19
-		String closingStatus = finMain.getClosingStatus();
 
 		if (CollectionUtils.isNotEmpty(finSchdDetList)) {
 			for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
@@ -3571,7 +3574,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 
 	private String buildAllocationData(List<ReceiptAllocationDetail> radList, int formatter) {
-		StringBuffer data = new StringBuffer();
+		StringBuilder data = new StringBuilder();
 		Map<String, BigDecimal> allocMap = new LinkedHashMap<String, BigDecimal>();
 		if (CollectionUtils.isNotEmpty(radList)) {
 			for (ReceiptAllocationDetail rad : radList) {
@@ -3620,7 +3623,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	}
 
 	private String buildAllocationDataForRestructure(List<RestructureCharge> rstChrgs, int formatter) {
-		StringBuffer data = new StringBuffer();
+		StringBuilder data = new StringBuilder();
 
 		Map<String, BigDecimal> allocMap = new LinkedHashMap<>();
 

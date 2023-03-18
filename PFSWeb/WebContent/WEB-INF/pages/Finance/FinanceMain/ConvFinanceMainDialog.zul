@@ -180,6 +180,7 @@
 													<label id="label_FinanceMainDialog_BusinessVertical"
 														value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
 													<hbox>
+														<space spacing="2px" />
 														<textbox id="businessVertical" width="250px" readonly="true" />
 													</hbox>
 												</row>

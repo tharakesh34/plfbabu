@@ -106,8 +106,7 @@ public class AccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(this.accountMapping.getAccount());
-		return referenceBuffer.toString();
+		return this.accountMapping.getAccount();
 	}
 
 	/**

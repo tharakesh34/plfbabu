@@ -347,7 +347,7 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 		source.addValue("CustId", custID);
 		source.addValue("CustEmpId", custEmpId);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT Version FROM CustomerEmpDetails");
 		sql.append(" WHERE CustId = :CustId AND CustEmpId = :CustEmpId");
 

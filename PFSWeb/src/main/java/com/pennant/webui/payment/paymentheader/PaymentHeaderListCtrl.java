@@ -232,7 +232,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  PaymentId =? ");
 
 		if (doCheckAuthority(paymentheader, whereCond.toString(), new Object[] { paymentheader.getPaymentId() })) {

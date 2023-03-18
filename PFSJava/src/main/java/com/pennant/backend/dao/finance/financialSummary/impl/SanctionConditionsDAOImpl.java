@@ -222,9 +222,8 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 		source.addValue("id", id);
 		source.addValue("sanctionCondition", sanctionCondition);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM SANCTION_CONDITIONS");
-
 		selectSql.append(" WHERE id = :id AND finReference = :finReference");
 
 		logger.debug("insertSql: " + selectSql.toString());

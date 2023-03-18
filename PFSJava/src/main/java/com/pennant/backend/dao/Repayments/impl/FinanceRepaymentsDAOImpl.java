@@ -72,7 +72,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	public long getFinancePaySeq(FinanceRepayments rpd) {
 		String sql = "Select coalesce(max(FinPaySeq), 0) From FinRepayDetails Where FinID = ? and  FinSchdDate = ? and FinRpyFor = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] objects = new Object[] { rpd.getFinID(), rpd.getFinSchdDate(), rpd.getFinRpyFor() };
 
@@ -1004,7 +1004,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	private long getMaxLinkedTranID(long finID) {
 		String sql = "Select LinkedTranId From FinRepayDetails Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		List<Long> tarnIds = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			return rs.getLong(1);
@@ -1019,7 +1019,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	private Date getMaxPostDate(long finID) {
 		String sql = "Select FinPostDate From FinRepayDetails Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		List<Date> list = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			return rs.getDate(1);
