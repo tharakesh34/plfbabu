@@ -1,4 +1,4 @@
-package com.pennant.backend.service.finance.impl;
+package com.pennant.pff.lpp.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +11,9 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LppUploadValidateRecord implements ValidateRecord {
 	private static final Logger logger = LogManager.getLogger(LppUploadValidateRecord.class);
@@ -19,29 +21,33 @@ public class LppUploadValidateRecord implements ValidateRecord {
 	@Autowired
 	private UploadService lPPUploadService;
 
+	protected DataEngineStatus executionStatus;
+
+	public void setExecutionStatus(DataEngineStatus executionStatus) {
+		this.executionStatus = executionStatus;
+	}
+
 	@Override
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = (Long) attributes.getParameterMap().get("HEADER_ID");
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
 
 		if (headerID == null) {
 			return;
 		}
 
-		String finReference = String.valueOf(record.getValue("FINREFERENCE"));
-
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
 		LPPUpload details = new LPPUpload();
-		details.setReference(finReference);
 		details.setHeaderId(headerID);
-		details.setApplyOverDue((String) attributes.getParameterMap().get("APPLYOVERDUE"));
-		details.setPenaltyType((String) attributes.getParameterMap().get("PENALTYTYPE"));
-		details.setIncludeGraceDays((String) attributes.getParameterMap().get("INCLUDEGRACEDAYS"));
-		details.setHoldStatus((String) attributes.getParameterMap().get("HOLDSTATUS"));
-		details.setReason((String) attributes.getParameterMap().get("REASON"));
-		details.setRemarks((String) attributes.getParameterMap().get("REMARKS"));
+		details.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
+		details.setApplyOverDue(ObjectUtil.valueAsString(record.getValue("APPLYOVERDUE")));
+		details.setPenaltyType(ObjectUtil.valueAsString(record.getValue("PENALTYTYPE")));
+		details.setIncludeGraceDays(ObjectUtil.valueAsString(record.getValue("INCLUDEGRACEDAYS")));
+		details.setHoldStatus(ObjectUtil.valueAsString(record.getValue("HOLDSTATUS")));
+		details.setReason(ObjectUtil.valueAsString(record.getValue("REASON")));
+		details.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
 
 		lPPUploadService.doValidate(header, details);
 
@@ -50,6 +56,7 @@ public class LppUploadValidateRecord implements ValidateRecord {
 			record.addValue("ERRORDESC", details.getErrorDesc());
 		}
 
+		logger.debug(Literal.LEAVING);
 	}
 
 }

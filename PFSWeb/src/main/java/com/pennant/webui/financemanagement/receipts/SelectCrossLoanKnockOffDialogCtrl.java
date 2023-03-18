@@ -249,11 +249,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		String knockOff = getComboboxValue(knockOffFrom);
 		FinExcessAmount fea = null;
-		if (!ReceiptMode.PAYABLE.equals(knockOff)) {
-			fea = (FinExcessAmount) this.referenceId.getObject();
-		}
-
-		if (ReceiptMode.EXCESS.equals(knockOff)) {
+		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
 			fea = (FinExcessAmount) this.referenceId.getObject();
 		}
 

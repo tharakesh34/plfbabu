@@ -1,4 +1,4 @@
-package com.pennant.backend.service.finance.impl;
+package com.pennant.pff.holdrefund.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +13,7 @@ import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennapps.core.util.ObjectUtil;
 
 public class HoldRefundUploadValidateRecord implements ValidateRecord {
 	private static final Logger logger = LogManager.getLogger(HoldRefundUploadValidateRecord.class);
@@ -24,7 +25,7 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = (Long) attributes.getParameterMap().get("HEADER_ID");
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
 
 		if (headerID == null) {
 			return;
@@ -32,7 +33,7 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = String.valueOf(record.getValue("FINREFERENCE"));
+		String finReference = ObjectUtil.valueAsString(record.getValue("FINREFERENCE"));
 		boolean recordExist = holdRefundUploadService.isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -40,11 +41,11 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 		}
 
 		HoldRefundUploadDetail detail = new HoldRefundUploadDetail();
-		detail.setReference(finReference);
 		detail.setHeaderId(headerID);
-		detail.setHoldStatus((String) attributes.getParameterMap().get("HOLDSTATUS"));
-		detail.setReason((String) attributes.getParameterMap().get("REASON"));
-		detail.setRemarks((String) attributes.getParameterMap().get("REMARKS"));
+		detail.setReference(finReference);
+		detail.setHoldStatus(ObjectUtil.valueAsString(record.getValue("HOLDSTATUS")));
+		detail.setReason(ObjectUtil.valueAsString(record.getValue("REASON")));
+		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
 
 		holdRefundUploadService.doValidate(header, detail);
 
@@ -52,6 +53,8 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 			record.addValue("ERRORCODE", detail.getErrorCode());
 			record.addValue("ERRORDESC", detail.getErrorDesc());
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 }

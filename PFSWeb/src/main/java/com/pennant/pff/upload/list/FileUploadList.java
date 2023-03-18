@@ -943,7 +943,7 @@ public class FileUploadList extends Window implements Serializable {
 	private void onClickSearch() {
 		if (this.fromDate.getValue() != null) {
 			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
-					this.fromDate.getValue(), null, true));
+					DateUtil.addDays(this.fromDate.getValue(), -1), null, true));
 			try {
 				this.toDate.getValue();
 			} catch (WrongValueException e) {
@@ -1532,8 +1532,6 @@ public class FileUploadList extends Window implements Serializable {
 			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("HEADER_ID", uploadHeader.getId());
 			parameterMap.put("FILE_UPLOAD_HEADER", uploadHeader);
-			parameterMap.put("ERRORCODE", "");
-			parameterMap.put("ERRORDESC", "");
 			engine.setParameterMap(parameterMap);
 
 			DataEngineStatus status = uploadHeader.getDeStatus();
