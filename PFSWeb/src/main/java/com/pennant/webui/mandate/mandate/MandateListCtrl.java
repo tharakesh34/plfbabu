@@ -219,6 +219,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> {
 		registerField("inputDate", listheader_InputDate, SortOrder.NONE, inputDate, sortOperator_InputDate,
 				Operators.DATE);
 		registerField("status", listheader_Status, SortOrder.NONE, status, sortOperator_Status, Operators.STRING);
+		registerField("orgReference", loanReference, SortOrder.NONE, sortOperator_LoanReference, Operators.STRING);
 		registerField("securityMandate", listheader_SecurityMandate, SortOrder.NONE, securityMandate,
 				sortOperator_SecurityMandate, Operators.SIMPLE_NUMARIC);
 
