@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 		"totalOutStanding", "outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
 		"overDueInstlments", "overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus",
 		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt", "finCurODDays", "foreClosureAmount", "installmentNo",
-		"dueDate" })
+		"dueDate", "overDueEMI" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -52,7 +52,7 @@ public class FinanceSummary implements Serializable {
 	private long finID;
 	private String finReference;
 	private BigDecimal totalDisbursement = BigDecimal.ZERO;
-	@XmlElement
+	@XmlElement(name = "loanTotPrincipal")
 	private BigDecimal totalPriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
@@ -69,7 +69,7 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 
-	@XmlElement(name = "odDays")
+	@XmlElement(name = "DPD")
 	private int finCurODDays = 0;
 	private String assetCode;
 	private BigDecimal finODTotPenaltyAmt = BigDecimal.ZERO;
@@ -187,7 +187,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal nextRepayAmount;
 	@XmlElement
 	private BigDecimal firstEmiAmount;
-	@XmlElement
+	@XmlElement(name = "loanBalanceTenure")
 	private int futureInst;
 	@XmlElement
 	private int futureTenor;
@@ -216,18 +216,20 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalOutStandCharges = BigDecimal.ZERO;
 	private BigDecimal OutStandIncludeCharges = BigDecimal.ZERO;
 	private BigDecimal availableAmtExcludeCharges = BigDecimal.ZERO;
-	@XmlElement
+	@XmlElement(name = "loanInstallmentAmt")
 	private BigDecimal loanEMI = BigDecimal.ZERO;
-	@XmlElement
+	@XmlElement(name = "loanForeclosureAmount")
 	private BigDecimal foreClosureAmount = BigDecimal.ZERO;
 	@XmlElement(name = "loanInstallmentNo")
 	private int installmentNo;
-	@XmlElement
+	@XmlElement(name = "loanDueDate")
 	private Date dueDate;
 	@XmlElement
-	private BigDecimal loanPri = BigDecimal.ZERO;
+	private BigDecimal loanTotPrincipal = BigDecimal.ZERO;
 	@XmlElement
-	private BigDecimal loanPft = BigDecimal.ZERO;
+	private BigDecimal loanTotInterest = BigDecimal.ZERO;
+	@XmlElement
+	private BigDecimal overDueEMI;
 
 	public FinanceSummary() {
 		super();
@@ -1202,20 +1204,20 @@ public class FinanceSummary implements Serializable {
 		this.dueDate = dueDate;
 	}
 
-	public BigDecimal getLoanPri() {
-		return loanPri;
+	public BigDecimal getLoanTotPrincipal() {
+		return loanTotPrincipal;
 	}
 
-	public void setLoanPri(BigDecimal loanPri) {
-		this.loanPri = loanPri;
+	public void setLoanTotPrincipal(BigDecimal loanTotPrincipal) {
+		this.loanTotPrincipal = loanTotPrincipal;
 	}
 
-	public BigDecimal getLoanPft() {
-		return loanPft;
+	public BigDecimal getLoanTotInterest() {
+		return loanTotInterest;
 	}
 
-	public void setLoanPft(BigDecimal loanPft) {
-		this.loanPft = loanPft;
+	public void setLoanTotInterest(BigDecimal loanPft) {
+		this.loanTotInterest = loanPft;
 	}
 
 	public int getInstallmentNo() {
@@ -1224,6 +1226,14 @@ public class FinanceSummary implements Serializable {
 
 	public void setInstallmentNo(int installmentNo) {
 		this.installmentNo = installmentNo;
+	}
+
+	public BigDecimal getOverDueEMI() {
+		return overDueEMI;
+	}
+
+	public void setOverDueEMI(BigDecimal overDueEMI) {
+		this.overDueEMI = overDueEMI;
 	}
 
 }

@@ -43,8 +43,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>WIFFinanceScheduleDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "schDate", "profitCalc", "profitSchd", "schdPftPaid", "principalSchd", "schdPriPaid", "feeSchd",
-		"tDSAmount", "repayAmount", "closingBalance", "limitDrop", "dropLineLimit", "availableLimit" })
+@XmlType(propOrder = { "schDate", "instNumber", "noOfDays", "profitCalc", "profitSchd", "schdPftPaid", "principalSchd",
+		"schdPriPaid", "feeSchd", "tDSAmount", "repayAmount", "closingBalance", "limitDrop", "dropLineLimit",
+		"availableLimit", "loanEMIStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -56,6 +57,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private Date schDate;
 	private Date defSchdDate;
 	private long logKey;
+	@XmlElement(name = "loanEMINumber")
 	private int instNumber = 0;
 	private boolean pftOnSchDate = false;
 	private boolean cpzOnSchDate = false;
@@ -71,6 +73,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal mrgRate = BigDecimal.ZERO;
 	private BigDecimal actRate = BigDecimal.ZERO;
 	private BigDecimal calculatedRate = BigDecimal.ZERO;
+	@XmlElement(name = "loanIntDays")
 	private int noOfDays;
 	private BigDecimal dayFactor = BigDecimal.ZERO;
 	@XmlElement(name = "pftAmount")
@@ -152,6 +155,8 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal oDLimit = BigDecimal.ZERO;
 	@XmlElement(name = "availableLimit")
 	private BigDecimal availableLimit = BigDecimal.ZERO;
+	@XmlElement
+	private String loanEMIStatus;
 
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {
 		super();
@@ -858,6 +863,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setSchdPftWaiver(BigDecimal schdPftWaiver) {
 		this.schdPftWaiver = schdPftWaiver;
+	}
+
+	public String getLoanEMIStatus() {
+		return loanEMIStatus;
+	}
+
+	public void setLoanEMIStatus(String loanEMIStatus) {
+		this.loanEMIStatus = loanEMIStatus;
 	}
 
 }
