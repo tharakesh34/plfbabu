@@ -1445,7 +1445,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinanceType",
 				new ModuleMapping("FinanceType", FinanceType.class,
 						new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF,
-						new String[] { "FinType", "FinCategory", "FinTypeDesc" },
+						new String[] { "FinType", "FinCategory", "FinTypeDesc", "FinDivision" },
 						new Object[][] { { "FinIsActive", "0", 1 }, { "Product", "0", "" } }, 600));
 
 		ModuleUtil.register("CMTFinanceType",

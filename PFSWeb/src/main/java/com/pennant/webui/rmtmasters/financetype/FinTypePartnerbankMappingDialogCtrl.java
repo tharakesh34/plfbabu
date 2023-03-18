@@ -29,6 +29,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -71,9 +72,6 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 	protected Row row_Cluster;
 	protected Label label_Cluster;
 	protected ExtendedCombobox cluster;
-
-	private String userRole = "";
-	private Label label_finTypeDesc;
 	private String finDivision = null;
 
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
@@ -336,6 +334,22 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		}
 
 		logger.debug("Leaving");
+	}
+
+	public void onFulfill$finType(Event event) {
+		String finType = this.finType.getValue();
+
+		if (finType == null) {
+			return;
+		}
+
+		FinanceType ft = (FinanceType) this.finType.getObject();
+
+		if (ft != null) {
+			finDivision = ft.getFinDivision();
+		}
+
+		setPartnerBankProperties();
 	}
 
 	/**
