@@ -2714,6 +2714,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			mam.setPaidAmount(payable.getTotPaidNow());
 			mam.setFeeTypeCode(payable.getFeeTypeCode());
 
+			mam.setPaidCGST(payable.getPaidCGST());
+			mam.setPaidSGST(payable.getPaidSGST());
+			mam.setPaidIGST(payable.getPaidIGST());
+			mam.setPaidCESS(payable.getPaidCESS());
+
 			// GST Calculations
 			if (StringUtils.isNotBlank(payable.getTaxType())) {
 				if (taxPercMap == null) {
@@ -2736,6 +2741,35 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						payable.getPaidUGST()));
 				taxDetails.add(getTaxDetail(RuleConstants.CODE_CESS, taxPercMap.get(RuleConstants.CODE_CESS),
 						payable.getPaidCESS()));
+
+				for (Taxes taxes : taxDetails) {
+					switch (taxes.getTaxType()) {
+					case RuleConstants.CODE_CGST:
+						taxes.setPaidTax(payable.getPaidCGST());
+						taxes.setRemFeeTax(taxes.getActualTax().subtract(payable.getPaidCGST()));
+						break;
+					case RuleConstants.CODE_SGST:
+						taxes.setPaidTax(payable.getPaidSGST());
+						taxes.setRemFeeTax(taxes.getActualTax().subtract(payable.getPaidSGST()));
+						break;
+					case RuleConstants.CODE_IGST:
+						taxes.setPaidTax(payable.getPaidIGST());
+						taxes.setRemFeeTax(taxes.getActualTax().subtract(payable.getPaidIGST()));
+						break;
+					case RuleConstants.CODE_UGST:
+						taxes.setPaidTax(payable.getPaidUGST());
+						taxes.setRemFeeTax(taxes.getActualTax().subtract(payable.getPaidUGST()));
+						break;
+					case RuleConstants.CODE_CESS:
+						taxes.setPaidTax(payable.getPaidCESS());
+						taxes.setRemFeeTax(taxes.getActualTax().subtract(payable.getPaidCESS()));
+						break;
+					default:
+						break;
+					}
+
+				}
+				 
 
 				mam.setTaxHeader(taxHeader);
 			} else {

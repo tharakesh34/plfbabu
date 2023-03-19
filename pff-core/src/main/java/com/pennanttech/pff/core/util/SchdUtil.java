@@ -5,9 +5,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.schdule.RepaymentStatus;
 
 public class SchdUtil {
 
@@ -26,13 +28,11 @@ public class SchdUtil {
 	}
 
 	public static int getFutureInstalments(Date businessDate, List<FinanceScheduleDetail> schedules) {
-		int futureInstalments = 0;
-		for (FinanceScheduleDetail schd : schedules) {
-			if (businessDate.compareTo(schd.getSchDate()) <= 0 && schd.isRepayOnSchDate()) {
-				futureInstalments++;
-			}
-		}
-		return futureInstalments;
+
+		return schedules.stream()
+				.filter(schd -> businessDate.compareTo(schd.getSchDate()) <= 0 && schd.isRepayOnSchDate())
+				.collect(Collectors.toList()).size();
+
 	}
 
 	public static BigDecimal getNextEMI(Date businessDate, List<FinanceScheduleDetail> schedules) {
@@ -47,42 +47,56 @@ public class SchdUtil {
 
 	public static FinanceScheduleDetail getNextInstalment(Date businessDate, List<FinanceScheduleDetail> schedules) {
 
-		for (FinanceScheduleDetail schd : sort(schedules)) {
-			if (businessDate.compareTo(schd.getSchDate()) < 0 && schd.isRepayOnSchDate()) {
+		return sort(schedules).stream()
+				.filter(schdedule -> businessDate.compareTo(schdedule.getSchDate()) < 0 && schdedule.isRepayOnSchDate())
+				.findAny().orElse(null);
 
-				return schd;
-			}
-		}
-
-		return null;
 	}
 
 	public static BigDecimal getTotalPrincipalSchd(List<FinanceScheduleDetail> schedules) {
-		BigDecimal principalSchd = BigDecimal.ZERO;
 
-		for (FinanceScheduleDetail schd : schedules) {
-			if (schd.isRepayOnSchDate()) {
-				principalSchd = principalSchd.add(schd.getPrincipalSchd());
-			}
-		}
-		return principalSchd;
+		return schedules.stream().filter(schd -> schd.isRepayOnSchDate()).collect(Collectors.toList()).stream()
+				.map(FinanceScheduleDetail::getPrincipalSchd).reduce(BigDecimal.ZERO, BigDecimal::add);
+
 	}
 
 	public static BigDecimal getTotalRepayAmount(List<FinanceScheduleDetail> schedules) {
-		BigDecimal totalRepayAmount = BigDecimal.ZERO;
 
-		for (FinanceScheduleDetail schd : schedules) {
-			totalRepayAmount = totalRepayAmount.add(schd.getProfitSchd());
-			totalRepayAmount = totalRepayAmount.subtract(schd.getSchdPftPaid());
+		return schedules.stream()
+				.map(schd -> (schd.getProfitSchd().add(schd.getPrincipalSchd()).add(schd.getFeeSchd()))
+						.subtract(schd.getSchdPftPaid().add(schd.getSchdPriPaid()).add(schd.getSchdFeePaid())))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-			totalRepayAmount = totalRepayAmount.add(schd.getPrincipalSchd());
-			totalRepayAmount = totalRepayAmount.subtract(schd.getSchdPriPaid());
+	}
 
-			totalRepayAmount = totalRepayAmount.add(schd.getFeeSchd());
-			totalRepayAmount = totalRepayAmount.subtract(schd.getSchdFeePaid());
+	public static RepaymentStatus getRepaymentStatus(FinanceScheduleDetail schd) {
+		BigDecimal schdAmount = schd.getProfitSchd().add(schd.getPrincipalSchd()).add(schd.getFeeSchd());
+
+		BigDecimal paidAmount = schd.getSchdPftPaid().add(schd.getSchdPriPaid()).add(schd.getSchdFeePaid());
+
+		BigDecimal balanceAmount = schdAmount.subtract(paidAmount);
+
+		if (balanceAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			return RepaymentStatus.PAID;
 		}
 
-		return totalRepayAmount;
+		if (paidAmount.compareTo(BigDecimal.ZERO) == 0) {
+			return RepaymentStatus.UNPAID;
+		}
 
+		return RepaymentStatus.PARTIALLY_PAID;
+	}
+
+	public static BigDecimal getOverDueEMI(Date businessDate, List<FinanceScheduleDetail> schedules) {
+		List<FinanceScheduleDetail> list = schedules.stream()
+				.filter(schd -> businessDate.compareTo(schd.getSchDate()) >= 0 && schd.isRepayOnSchDate())
+				.collect(Collectors.toList());
+
+		BigDecimal overDueEMI = list.stream()
+				.map(schd -> (schd.getProfitSchd().add(schd.getPrincipalSchd())
+						.subtract((schd.getSchdPftPaid().add(schd.getSchdPriPaid())))))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		return overDueEMI.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : overDueEMI;
 	}
 }

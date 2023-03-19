@@ -82,6 +82,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.dms.service.DMSService;
+import com.pennanttech.pff.core.util.CustomerUtil;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerDirectorDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -956,6 +957,7 @@ public class CustomerController extends GenericService<Object> {
 				response.setCustDftBranch(response.getCustomer().getCustDftBranch());
 				response.setCustBaseCcy(response.getCustomer().getCustBaseCcy());
 				response.setPrimaryRelationOfficer(response.getCustomer().getCustRO1());
+				response.setFullAddress(CustomerUtil.getCustomerFullAddress(response.getAddressList()));
 				if (response.getCustomerDocumentsList() != null) {
 					for (CustomerDocument documents : response.getCustomerDocumentsList()) {
 						byte[] custDocImage = getDocumentImage(documents.getDocRefId());

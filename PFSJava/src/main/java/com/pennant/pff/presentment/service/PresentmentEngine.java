@@ -28,6 +28,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -362,7 +363,7 @@ public class PresentmentEngine {
 			dueDates = dueExtractionConfigDAO.getDueDates(appDate);
 		}
 
-		while (rs.next()) {
+		do {
 			PresentmentDetail pd = new PresentmentDetail();
 
 			pd.setId(rs.getLong("ID"));
@@ -406,7 +407,7 @@ public class PresentmentEngine {
 				presentmentDAO.updateHeader(list);
 				list.clear();
 			}
-		}
+		} while (rs.next());
 
 		if (!list.isEmpty()) {
 			presentmentDAO.updateHeader(list);

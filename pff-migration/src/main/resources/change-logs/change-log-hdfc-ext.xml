@@ -332,4 +332,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="011.02" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F704', 'Exception while processing record.', 1, current_timestamp, 'RECORD_PROCESS_EXCEPTION');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

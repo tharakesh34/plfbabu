@@ -1,8 +1,10 @@
 package com.pennant.cache.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -131,13 +133,21 @@ public class AccountingConfigCache {
 	}
 
 	public static List<TransactionEntry> getCacheTransactionEntry(long accountSetid) {
-		List<TransactionEntry> transactionEntries;
+		List<TransactionEntry> list = new ArrayList<>();
+		List<TransactionEntry> tempList;
 		try {
-			transactionEntries = transactionEntryCache.get(accountSetid);
+			tempList = transactionEntryCache.get(accountSetid);
 		} catch (Exception e) {
-			transactionEntries = transactionEntryDAO.getListTranEntryForBatch(accountSetid, "");
+			tempList = transactionEntryDAO.getListTranEntryForBatch(accountSetid, "");
 		}
-		return transactionEntries;
+
+		if (CollectionUtils.isEmpty(tempList)) {
+			return list;
+		}
+
+		tempList.forEach(item -> list.add(item.copyEntity()));
+
+		return list;
 	}
 
 	public static void clearTransactionEntryCache(long accountSetid) {

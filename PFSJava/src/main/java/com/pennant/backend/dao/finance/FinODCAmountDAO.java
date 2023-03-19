@@ -27,7 +27,4 @@ public interface FinODCAmountDAO {
 	void updateMovenantStatus(long receiptID, String receiptModeStatus);
 
 	List<FinOverDueCharges> getFinODCAmtByRef(long finID, String chargeType);
-
-	FinOverDueChargeMovement getFinODCAmtMovementsById(long chargeId);
-
 }

@@ -26,4 +26,6 @@ public interface PresentmentRespUploadDAO {
 	boolean isProcessed(String reference, Date dueDate);
 
 	PresentmentDetail getPresentmentDetail(String reference, Date dueDate);
+
+	boolean isDuplicateKeyPresent(String hostReference, String clearingStatus, Date dueDate);
 }

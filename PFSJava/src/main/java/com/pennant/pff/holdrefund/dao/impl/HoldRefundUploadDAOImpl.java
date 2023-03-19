@@ -28,6 +28,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pff.file.UploadContants.Status;
 import com.pennanttech.pff.file.UploadTypes;
 
 public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail> implements HoldRefundUploadDAO {
@@ -334,5 +335,19 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 			ps.setDate(++index, JdbcUtil.getDate(closureDate));
 		});
 
+	}
+
+	@Override
+	public boolean isInProgress(String finReference, long headerID) {
+		StringBuilder sql = new StringBuilder("Select Count(FinReference)");
+		sql.append(" From HOLD_REFUND_UPLOAD ru");
+		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = ru.HeaderID");
+		sql.append(" Where ru.FinReference = ? and uh.Id <> ? and uh.progress in (?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference, headerID,
+				Status.DOWNLOADED.getValue(), Status.IMPORT_IN_PROCESS.getValue(), Status.IMPORTED.getValue(),
+				Status.IN_PROCESS.getValue()) > 0;
 	}
 }

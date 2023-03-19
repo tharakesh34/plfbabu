@@ -25,6 +25,7 @@ import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennant.pff.presentment.service.ExtractionService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -36,6 +37,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ValidateRecord representmentUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -259,6 +261,11 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 		return representmentUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return representmentUploadValidateRecord;
+	}
+
 	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
@@ -288,6 +295,12 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setRepresentmentUploadValidateRecord(
+			RepresentmentUploadValidateRecord representmentUploadValidateRecord) {
+		this.representmentUploadValidateRecord = representmentUploadValidateRecord;
 	}
 
 }

@@ -3254,11 +3254,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// Fetch summary details
+		Date appDate = SysParamUtil.getAppDate();
+		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		FinanceSummary summary = getFinanceSummary(fd);
+
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
 		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
 		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
 		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+		summary.setOverDueEMI(SchdUtil.getOverDueEMI(appDate, schedules));
+
 		schdData.setFinanceSummary(summary);
 
 		// customer details

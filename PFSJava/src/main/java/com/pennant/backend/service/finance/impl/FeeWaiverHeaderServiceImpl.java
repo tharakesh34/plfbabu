@@ -1231,7 +1231,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		fm.setFinID(fwh.getFinID());
 		long finID = fwh.getFinID();
 		Date postDate = fwh.getPostingDate();
-		Date valueDate = fwh.getValueDate();
 
 		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
@@ -1351,7 +1350,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						finODCAmount.setBalanceAmt(balanceAmt);
 						pdPenality.setLppDueTillDate(lpiDueTillDate);
 						FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-						movement.setMovementDate(valueDate);
+						movement.setMovementDate(appDate);
 						movement.setChargeId(finODCAmount.getId());
 						movement.setMovementAmount(currWaivedAmt);
 						movement.setWaivedAmount(currWaivedAmt);
@@ -1365,7 +1364,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 									.subtract(prvMnthPenaltyAmt.add(waivedAmt));
 							finod.setFinID(pdPenality.getFinID());
 							finod.setSchDate(pdPenality.getFinODSchdDate());
-							finod.setPostDate(valueDate);
+							finod.setPostDate(appDate);
 							finod.setValueDate(postDate);
 							finod.setAmount(pdPenality.getTotPenaltyAmt().subtract(prvMnthPenaltyAmt));
 							finod.setPaidAmount(BigDecimal.ZERO);
@@ -1377,13 +1376,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							finod.setFinOdTillDate(postDate);
 							finod.setDueDays(DateUtility.getDaysBetween(pdPenality.getFinODSchdDate(), postDate));
 							finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
-							pdPenality.setLpiDueTillDate(valueDate);
+							pdPenality.setLpiDueTillDate(fwh.getValueDate());
 							pdPenality.setLpiDueAmt(
 									pdPenality.getLpiDueAmt().add(pdPenality.getLPIAmt().subtract(prvMnthPenaltyAmt)));
 
 							long referenceID = finODCAmountDAO.saveFinODCAmt(finod);
 							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-							movement.setMovementDate(valueDate);
+							movement.setMovementDate(appDate);
 							movement.setChargeId(referenceID);
 							movement.setMovementAmount(finod.getWaivedAmount());
 							movement.setPaidAmount(BigDecimal.ZERO);
@@ -1473,7 +1472,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private void saveLPIWaiver(FeeWaiverHeader fwh, Date appDate, long finID, Date postDate, FeeWaiverDetail fwd,
 			BigDecimal curwaivedAmt, FinODDetails oddetail) {
 		BigDecimal prvMnthLPIAmt = BigDecimal.ZERO;
-		Date valueDate = fwh.getValueDate();
 		List<FinOverDueCharges> lpiAmtList = finODCAmountDAO.getFinODCAmtByFinRef(finID, oddetail.getFinODSchdDate(),
 				RepayConstants.FEE_TYPE_LPI);
 
@@ -1505,7 +1503,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			finLPIAmt.setBalanceAmt(lpiBalanceAmt);
 			oddetail.setLpiDueTillDate(lpiDueTillDate);
 			FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-			movement.setMovementDate(valueDate);
+			movement.setMovementDate(appDate);
 			movement.setChargeId(finLPIAmt.getId());
 			movement.setMovementAmount(currWaivedAmt);
 			movement.setWaivedAmount(currWaivedAmt);
@@ -1518,7 +1516,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				BigDecimal lpiAmt = oddetail.getLPIAmt().subtract(prvMnthLPIAmt.add(curwaivedAmt));
 				finLPIAmt.setFinID(oddetail.getFinID());
 				finLPIAmt.setSchDate(oddetail.getFinODSchdDate());
-				finLPIAmt.setPostDate(valueDate);
+				finLPIAmt.setPostDate(appDate);
 				finLPIAmt.setValueDate(postDate);
 				finLPIAmt.setAmount(oddetail.getTotPenaltyAmt().subtract(prvMnthLPIAmt));
 				finLPIAmt.setPaidAmount(BigDecimal.ZERO);
@@ -1536,7 +1534,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 				long referenceID = finODCAmountDAO.saveFinODCAmt(finLPIAmt);
 				FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-				movement.setMovementDate(valueDate);
+				movement.setMovementDate(appDate);
 				movement.setChargeId(referenceID);
 				movement.setMovementAmount(finLPIAmt.getWaivedAmount());
 				movement.setPaidAmount(BigDecimal.ZERO);

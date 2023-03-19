@@ -253,7 +253,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append(", ISTBILL,  GRACEEND, DISBINS, FEEPAY, VASFEE, MANFEE, INSTDATE, PAYMTINS,  REAGING");
 		events.append(", JVPOST,  D2C,  CHQ2B,  ASSIGN, INSADJ, INSPAY, CANINS, LPPAMZ,  WAIVER,  INSPAY");
 		events.append(", ADVDUE,  WRITEBK,  OEMSBV,  MIGR,  PROVSN,  PROVCHG, PRVSN_MN,  FEREFUND,  PRSNT");
-		events.append(", PRSNTRSP,  PARTCAN,  MANSUB, RESTRUCT, NPACHNG, PROVSN, CRSLANFR, CRSLANTO");
+		events.append(", PRSNTRSP,  PARTCAN,  MANSUB, RESTRUCT, NPACHNG, PROVSN, CRSLANFR, CRSLANTO, EXTRF");
 		if (this.showAccrual.isChecked()) {
 			events.append(", AMZ, AMZSUSP, AMZ_REV, INDAS, EXPENSE");
 		}

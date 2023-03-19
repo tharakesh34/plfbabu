@@ -23,6 +23,7 @@ import com.pennant.pff.holdrefund.model.HoldRefundUploadDetail;
 import com.pennant.pff.paymentupload.exception.PaymentUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 
 public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
@@ -31,6 +32,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;
+	private ValidateRecord holdRefundUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -257,6 +259,21 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
 		detail.setErrorDesc(error.description());
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return holdRefundUploadDAO.isInProgress((String) args[0], headerID);
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return holdRefundUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setHoldRefundUploadValidateRecord(HoldRefundUploadValidateRecord holdRefundUploadValidateRecord) {
+		this.holdRefundUploadValidateRecord = holdRefundUploadValidateRecord;
 	}
 
 	@Autowired
