@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -24,6 +26,8 @@ public class RepresentmentUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
+		String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
+
 		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
 
 		if (headerID == null) {
@@ -36,6 +40,7 @@ public class RepresentmentUploadValidateRecord implements ValidateRecord {
 		detail.setHeaderId(headerID);
 		detail.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
 		detail.setDueDate(ObjectUtil.valueAsDate(record.getValue("DUEDATE")));
+		detail.setAcBounce(acBounce);
 
 		rePresentmentUploadService.doValidate(header, detail);
 
