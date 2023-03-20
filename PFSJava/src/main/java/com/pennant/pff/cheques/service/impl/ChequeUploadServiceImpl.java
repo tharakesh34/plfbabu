@@ -35,6 +35,7 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
@@ -50,6 +51,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
+	private ValidateRecord chequeUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -115,8 +117,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						upload.setReferenceID(finID);
 						String action = upload.getAction();
 
-						if (chequeDetailDAO.isDuplicateKeyPresent(upload.getChequeDetail().getAccountNo(),
-								upload.getChequeDetail().getChequeSerialNumber(), TableType.MAIN_TAB)) {
+						if (!"D".equals(action)
+								&& chequeDetailDAO.isDuplicateKeyPresent(upload.getChequeDetail().getAccountNo(),
+										upload.getChequeDetail().getChequeSerialNumber(), TableType.MAIN_TAB)) {
 
 							String[] parameters = new String[2];
 
@@ -143,7 +146,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 							if (isNotRelizedOrPresent(upload)) {
 								delcheques.add(upload.getChequeDetail());
 							} else {
-								ErrorDetail error = ErrorUtil.getError("90508", "Cheque Header ");
+								ErrorDetail error = ErrorUtil.getError("90509", "Cheque Header ");
 								setError(chequeUploads, error);
 								continue;
 							}
@@ -238,6 +241,9 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		String accNo = chequeDetail.getAccountNo();
 
 		String status = chequeDetailDAO.getChequeStatus(seq, accNo);
+		if (status == null) {
+			return false;
+		}
 
 		return !(RepayConstants.PAYTYPE_PRESENTMENT.equals(status)
 				|| DisbursementConstants.STATUS_REALIZED.equals(status) || Allocation.BOUNCE.equals(status));
@@ -319,6 +325,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public String getSqlQuery() {
 		return chequeUploadDAO.getSqlQuery();
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return chequeUploadValidateRecord;
 	}
 
 	private void process(ChequeHeader header, List<ChequeUpload> uploads) {
@@ -422,6 +433,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setChequeUploadValidateRecord(ChequeUploadValidateRecord chequeUploadValidateRecord) {
+		this.chequeUploadValidateRecord = chequeUploadValidateRecord;
 	}
 
 }

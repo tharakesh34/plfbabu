@@ -23,7 +23,6 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.service.PresentmentEngine;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -145,9 +144,6 @@ public class SuccessResponseTasklet implements Tasklet {
 		try {
 			presentmentEngine.processResponse(receiptDTO);
 			transactionManager.commit(transactionStatus);
-		} catch (AppException e) {
-			transactionManager.rollback(transactionStatus);
-			return false;
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);
 			throw e;

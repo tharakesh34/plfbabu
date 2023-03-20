@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -690,11 +691,6 @@ public class FileUploadList extends Window implements Serializable {
 		engine.setMedia(uploadHeader.getMedia());
 		engine.setValueDate(appDate);
 
-		Map<String, Object> parameterMap = new HashMap<>();
-		parameterMap.put("HEADER_ID", uploadHeader.getId());
-
-		engine.setParameterMap(parameterMap);
-
 		if (processDTO.getService().getProcessRecord() != null) {
 			engine.setProcessRecord(processDTO.getService().getProcessRecord());
 		}
@@ -945,6 +941,16 @@ public class FileUploadList extends Window implements Serializable {
 	}
 
 	private void onClickSearch() {
+		if (this.fromDate.getValue() != null) {
+			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
+					DateUtil.addDays(this.fromDate.getValue(), -1), null, true));
+			try {
+				this.toDate.getValue();
+			} catch (WrongValueException e) {
+				throw new WrongValueException(this.toDate, e.getMessage());
+			}
+		}
+
 		search(false);
 	}
 
@@ -1077,6 +1083,8 @@ public class FileUploadList extends Window implements Serializable {
 			headers.add(header);
 		}
 
+		headers = headers.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId()))
+				.collect(Collectors.toList());
 		uploadService.doApprove(headers);
 
 		search(true);
@@ -1521,7 +1529,16 @@ public class FileUploadList extends Window implements Serializable {
 			uploadHeader.setId(this.processDTO.getService().saveHeader(uploadHeader, TableType.MAIN_TAB));
 			uploadHeader.setAppDate(appDate == null ? SysParamUtil.getAppDate() : appDate);
 
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("HEADER_ID", uploadHeader.getId());
+			parameterMap.put("FILE_UPLOAD_HEADER", uploadHeader);
+			engine.setParameterMap(parameterMap);
+
 			DataEngineStatus status = uploadHeader.getDeStatus();
+
+			if (this.processDTO.getService().getValidateRecord() != null) {
+				engine.setValidateRecord(this.processDTO.getService().getValidateRecord());
+			}
 
 			try {
 				engine.importData(status.getName());

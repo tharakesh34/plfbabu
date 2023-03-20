@@ -22,4 +22,5 @@ public interface ExcessTransferUploadDAO {
 	List<ExcessTransferUpload> getProcess(long headerID);
 
 	void updateFailure(ExcessTransferUpload detail);
+
 }

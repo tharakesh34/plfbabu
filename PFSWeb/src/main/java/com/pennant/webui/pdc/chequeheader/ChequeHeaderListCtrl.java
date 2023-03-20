@@ -25,6 +25,7 @@
 
 package com.pennant.webui.pdc.chequeheader;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -49,11 +50,17 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.pdc.chequeheader.model.ChequeHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -275,6 +282,44 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 	 */
 	public void onCheck$fromApproved(Event event) {
 		search();
+	}
+
+	@Override
+	protected void doAddFilters() {
+		logger.debug(Literal.ENTERING);
+
+		this.searchObject.clearFilters();
+
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+			if (filter != null) {
+				String property = filter.getProperty();
+				if (property.equals("totalAmount")) {
+					filter.setValue(PennantApplicationUtil.unFormateAmount((BigDecimal) filter.getValue(),
+							PennantConstants.defaultCCYDecPos));
+				}
+				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
+						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
+					Filter[] filters = new Filter[2];
+					filters[0] = Filter.isNull(filter.getProperty());
+					filters[1] = filter;
+
+					this.searchObject.addFilterOr(filters);
+				} else {
+					this.searchObject.addFilter(filter);
+				}
+			}
+		}
+
+		if (applyDefaultFilter || isFilterApplied()) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+			}
+		}
+
+		applyDefaultFilter = true;
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

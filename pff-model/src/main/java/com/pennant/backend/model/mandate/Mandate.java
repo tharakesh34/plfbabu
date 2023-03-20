@@ -173,7 +173,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String entityDesc;
 	private boolean approveMandate;
 	@XmlElement
-	private long partnerBankId;
+	private Long partnerBankId;
 	@XmlElement
 	private String partnerBankCode;
 	private String partnerBankName;

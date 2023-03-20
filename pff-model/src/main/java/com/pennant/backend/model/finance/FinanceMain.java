@@ -852,6 +852,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String holdStatus;
 	private String reason;
 	private boolean underSettlement;
+	private boolean isEOD;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1096,6 +1097,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("wifLoan");
 		excludeFields.add("holdStatus");
 		excludeFields.add("reason");
+		excludeFields.add("isEOD");
 		return excludeFields;
 	}
 
@@ -5586,5 +5588,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setUnderSettlement(boolean underSettlement) {
 		this.underSettlement = underSettlement;
+	}
+
+	public boolean isEOD() {
+		return isEOD;
+	}
+
+	public void setEOD(boolean isEOD) {
+		this.isEOD = isEOD;
 	}
 }

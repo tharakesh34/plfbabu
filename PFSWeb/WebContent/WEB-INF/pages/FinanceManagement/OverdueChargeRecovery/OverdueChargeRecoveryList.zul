@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="window_OverdueChargeRecoveryList" apply="${overdueChargeRecoveryListCtrl}" border="none" width="100%">
+		<window id="window_OverdueChargeRecoveryList" apply="${overdueChargeRecoveryListCtrl}" border="none" width="100%" height="100%">
 
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">

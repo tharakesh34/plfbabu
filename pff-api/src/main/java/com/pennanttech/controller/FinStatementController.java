@@ -419,19 +419,30 @@ public class FinStatementController extends SummaryDetailService {
 			schdData.setFeeDues(null);
 		}
 
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+
+		schedules.forEach(schd -> schd.setLoanEMIStatus(SchdUtil.getRepaymentStatus(schd).repaymentStatus()));
+
+		schdData.setFinanceScheduleDetails(schedules);
+
 		FinanceSummary summary = getFinanceSummary(fd);
 		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
 		summary.setOutStandPrincipal(schdData.getOutstandingPri());
 		summary.setTotalPriSchd(SchdUtil.getTotalPrincipalSchd(schdData.getFinanceScheduleDetails()));
 
-		FinanceScheduleDetail curSchd = SchdUtil.getNextInstalment(appDate, schdData.getFinanceScheduleDetails());
+		Date businessDate = appDate;
+		if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
+			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
+		}
+
+		FinanceScheduleDetail curSchd = SchdUtil.getNextInstalment(businessDate, schedules);
 
 		if (curSchd != null) {
 			summary.setInstallmentNo(curSchd.getInstNumber());
 			summary.setLoanEMI(curSchd.getRepayAmount());
 			summary.setDueDate(curSchd.getSchDate());
-			summary.setLoanPri(curSchd.getPrincipalSchd());
-			summary.setLoanPft(curSchd.getProfitSchd());
+			summary.setLoanTotPrincipal(curSchd.getPrincipalSchd());
+			summary.setLoanTotInterest(curSchd.getProfitSchd());
 		}
 
 		schdData.setFinanceSummary(summary);
@@ -453,7 +464,7 @@ public class FinStatementController extends SummaryDetailService {
 		CustomerDetails cd = fd.getCustomerDetails();
 		Customer customer = cd.getCustomer();
 
-		customer.setFullName(CustomerUtil.getCustomerFullName(customer));
+		customer.setLoanName(CustomerUtil.getCustomerFullName(customer));
 
 		cd.setCustCIF(customer.getCustCIF());
 		cd.setCustCoreBank(customer.getCustCoreBank());
@@ -1517,17 +1528,9 @@ public class FinStatementController extends SummaryDetailService {
 		return financeScheduleDetail;
 	}
 
-	/**
-	 * Method for generating SOA report
-	 * 
-	 * @param statementRequest
-	 * @return stmtResponse
-	 */
 	public FinStatementResponse getReportSatatement(FinStatementRequest statementRequest) {
-		// TODO FIXME
 		logger.debug(Literal.ENTERING);
 
-		// Temporary FIX
 		FinStatementResponse stmtResponse;
 		try {
 			String finRefernce = statementRequest.getFinReference();

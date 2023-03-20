@@ -1412,6 +1412,13 @@ public class ReceiptCalculator {
 
 			xcessPayable.setPayableDesc(feeDesc);
 			xcessPayable.setGstAmount(taxSplit.gettGST());
+
+			xcessPayable.setPaidCGST(taxSplit.getcGST());
+			xcessPayable.setPaidSGST(taxSplit.getsGST());
+			xcessPayable.setPaidUGST(taxSplit.getuGST());
+			xcessPayable.setPaidIGST(taxSplit.getiGST());
+			xcessPayable.setPaidCESS(taxSplit.getCess());
+
 			xcessPayable.setTotPaidNow(xcessPayable.getReserved());
 			if (xcessPayable.isTdsApplicable() && !rd.getReceiptHeader().isExcldTdsCal()) {
 				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
@@ -2219,7 +2226,7 @@ public class ReceiptCalculator {
 		String receiptPurpose = rch.getReceiptPurpose();
 		RequestSource requestSource = receiptData.getRequestSource();
 
-		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE.equals(receiptPurpose))) {
+		if (!(RequestSource.EOD.equals(requestSource) && ReceiptPurpose.EARLYSETTLE.code().equals(receiptPurpose))) {
 			if (rch.getXcessPayables() != null && rch.getXcessPayables().size() > 0) {
 				receiptData = adjustAdvanceInt(receiptData);
 				for (XcessPayables xcess : rch.getXcessPayables()) {

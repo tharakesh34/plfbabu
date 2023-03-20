@@ -64,6 +64,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
@@ -787,13 +788,22 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 				allocAmount = dueAmount;
 			}
 
-			actualReceiptAmount = actualReceiptAmount.add(allocAmount);
 			rad.setPaidAmount(allocAmount);
-			excessAmount = excessAmount.subtract(allocAmount);
+
+			if (!(Allocation.PFT.equals(rad.getAllocationType()) || Allocation.PRI.equals(rad.getAllocationType()))) {
+				actualReceiptAmount = actualReceiptAmount.add(allocAmount);
+				excessAmount = excessAmount.subtract(allocAmount);
+			}
+
 			rad.setBalance(rad.getTotalDue().subtract(rad.getWaivedAmount().add(rad.getPaidAmount())));
 		}
 
 		for (ReceiptAllocationDetail rad : radList) {
+
+			if (Allocation.PFT.equals(rad.getAllocationType()) || Allocation.PRI.equals(rad.getAllocationType())) {
+				continue;
+			}
+
 			BigDecimal dueAmount = rad.getTotalDue().subtract(rad.getWaivedAmount().add(rad.getPaidAmount()));
 			if (dueAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;

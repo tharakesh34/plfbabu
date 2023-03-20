@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -24,7 +23,6 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinODCAmountDAOImpl extends SequenceDao<FinOverDueCharges> implements FinODCAmountDAO {
@@ -329,35 +327,5 @@ public class FinODCAmountDAOImpl extends SequenceDao<FinOverDueCharges> implemen
 
 			return fod;
 		}, finID, chargeType);
-	}
-
-	@Override
-	public FinOverDueChargeMovement getFinODCAmtMovementsById(long chargeId) {
-		StringBuilder sql = new StringBuilder("Select ReceiptId, WaiverId, MovementDate, MovementAmount");
-		sql.append(", PaidAmount, WaivedAmount, Status");
-		sql.append(" From Fin_OverDue_Charge_Movements");
-		sql.append(" Where ChargeId = ? And Status is null");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinOverDueChargeMovement fodm = new FinOverDueChargeMovement();
-
-				fodm.setReceiptID(rs.getLong("ReceiptId"));
-				fodm.setWaiverID(rs.getLong("WaiverId"));
-				fodm.setMovementDate(rs.getDate("MovementDate"));
-				fodm.setMovementAmount(rs.getBigDecimal("MovementAmount"));
-				fodm.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-				fodm.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-				fodm.setStatus(rs.getString("Status"));
-
-				return fodm;
-			}, chargeId);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
-
 	}
 }

@@ -66,7 +66,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryComparator;
 import com.pennant.webui.financemanagement.overduechargerecovery.model.OverdueChargeRecoveryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -136,8 +135,6 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	protected JdbcSearchObject<OverdueChargeRecovery> searchObj;
 	protected JdbcSearchObject<OverdueChargeRecovery> detailSearchObject;
 
-	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
-
 	private transient OverdueChargeRecoveryService overdueChargeRecoveryService;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private ReceiptService receiptService;
@@ -170,11 +167,6 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		int ccyFormatter = 0;
 		if (arguments.containsKey("ccyFormatter")) {
 			ccyFormatter = (Integer) arguments.get("ccyFormatter");
-		}
-
-		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
-			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
-					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
 		// DropDown ListBox
@@ -213,10 +205,11 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		doCheckRights();
 
 		// set the paging parameters
-		this.borderLayout_OverdueChargeRecoveryList.setHeight(getBorderLayoutHeight());
+		this.listBoxOverdueChargeRecovery.setHeight(getListBoxHeight(6));
+		this.borderLayout_OverdueChargeRecoveryList.setVflex("min");
+
 		if ("N".equals(this.recoveryCode.getValue())) {
-			this.listBoxOverdueChargeRecovery.setHeight(getListBoxHeight(searchGrid.getRows().getVisibleItemCount()));
-			this.pagingOverdueChargeRecoveryList.setPageSize(getListRows());
+			// this.pagingOverdueChargeRecoveryList.setPageSize(getListRows());
 			this.pagingOverdueChargeRecoveryList.setDetailed(true);
 
 			this.listheader_FinSchdDate.setSortAscending(new FieldComparator("finSchdDate", true));
@@ -239,19 +232,11 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			this.listheader_FinODCCPenalty.setSortDescending(new FieldComparator("finODCCPenalty", false));
 			this.listheader_FinODCRecoverySts.setSortAscending(new FieldComparator("finODCRecoverySts", true));
 			this.listheader_FinODCRecoverySts.setSortDescending(new FieldComparator("finODCRecoverySts", false));
-
-			// set the itemRenderer
-			this.listBoxOverdueChargeRecovery.setItemRenderer(new OverdueChargeRecoveryListModelItemRenderer());
-
-		} else {
-			this.listBoxOverdueChargeRecovery.setHeight(getListBoxHeight(4));
-
-			// set the itemRenderer
-			this.listBoxOverdueChargeRecovery.setItemRenderer(new OverdueChargeRecoveryListModelItemRenderer());
 		}
 
+		this.listBoxOverdueChargeRecovery.setItemRenderer(new OverdueChargeRecoveryListModelItemRenderer());
+
 		if ("Y".equals(this.recoveryCode.getValue())) {
-			// Set the ListModel for the articles.
 			findSearchObject();
 		} else {
 			doSearch();
@@ -263,15 +248,6 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		if ("Y".equals(this.recoveryCode.getValue())) {
 			this.div_OverdueChargeRecoveryList.setVisible(false);
-			if (tabPanel_dialogWindow != null) {
-				getBorderLayoutHeight();
-				int rowsHeight = this.financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount()
-						* 20;
-				listBoxOverdueChargeRecovery.setHeight(borderLayoutHeight - rowsHeight - 95 + "px");
-				this.window_OverdueChargeRecoveryList.setHeight(this.borderLayoutHeight - rowsHeight - 55 + "px");
-				tabPanel_dialogWindow.appendChild(this.window_OverdueChargeRecoveryList);
-			}
-
 		}
 
 		logger.debug("Leaving");

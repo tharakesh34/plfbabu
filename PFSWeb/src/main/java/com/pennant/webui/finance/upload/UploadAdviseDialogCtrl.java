@@ -1081,6 +1081,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			if (!this.uploadEntity.isReadonly()) {
 				this.uploadEntity.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_UploadAdviseDialog_Entity.value"), null, true, true));
+				this.uploadEntity.setValue(this.uploadEntity.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1090,27 +1091,35 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			if (!this.downloadEntity.isReadonly()) {
 				this.downloadEntity.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_DownloadAdviseDialog_Entity.value"), null, true, true));
+				this.downloadEntity.setValue(this.downloadEntity.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		/*
-		 * try { if (!this.fileName.isReadonly()) { this.fileName.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null, true, true)); } } catch
-		 * (WrongValueException we) { wve.add(we); }
-		 */
+		try {
+			if (!this.fileName.isReadonly()) {
+				this.fileName.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null, true, true));
+				this.fileName.setValue(this.fileName.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		try {
-			if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
-				throw new WrongValueException(this.btnBrowse, Labels.getLabel("empty_file"));
-			} else {
-				boolean fileExist = this.uploadHeaderService.isFileNameExist(this.txtFileName.getValue());
-				if (fileExist) {
-					throw new WrongValueException(this.txtFileName,
-							this.txtFileName.getValue() + Labels.getLabel("label_File_Exits"));
+			if (!this.uploadEntity.isReadonly()) {
+				if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
+					throw new WrongValueException(this.btnBrowse, Labels.getLabel("empty_file"));
+				} else {
+					boolean fileExist = this.uploadHeaderService.isFileNameExist(this.txtFileName.getValue());
+					if (fileExist) {
+						throw new WrongValueException(this.txtFileName,
+								this.txtFileName.getValue() + Labels.getLabel("label_File_Exits"));
+					}
 				}
 			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
