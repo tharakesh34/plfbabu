@@ -31,7 +31,7 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_013("Excess amount not available for the given From Loan Reference"),
 
-	CLKU_014("Excess Amount should be less than/equal to the Balance amount"),
+	CLKU_014("Excess Amount should be less than/equal to the Balance Excess amount"),
 
 	CLKU_015("Only Active and Write off loans are allowed for To Loan Reference"),
 
