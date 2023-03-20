@@ -38,6 +38,8 @@ public class FateCorrectionUploadValidateRecord implements ValidateRecord {
 		detail.setClearingDate(ObjectUtil.valueAsDate(record.getValue("CLEARING_DATE")));
 		detail.setClearingStatus(ObjectUtil.valueAsString(record.getValue("CLEARING_STATUS")));
 		detail.setFateCorrection(ObjectUtil.valueAsString(record.getValue("FATECORRECTION")));
+		detail.setFateCorrection(ObjectUtil.valueAsString(record.getValue("BOUNCE_CODE")));
+		detail.setFateCorrection(ObjectUtil.valueAsString(record.getValue("BOUNCE_REMARKS")));
 
 		fateCorrectionUploadService.doValidate(header, detail);
 
