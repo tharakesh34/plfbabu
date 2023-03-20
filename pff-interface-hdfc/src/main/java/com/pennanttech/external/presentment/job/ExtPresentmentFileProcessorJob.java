@@ -65,18 +65,15 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		logger.debug(Literal.ENTERING);
 		try {
 
-			{
-				// Get all the required DAO's
-				applicationContext = ApplicationContextProvider.getApplicationContext();
-				externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-				dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-				siService = applicationContext.getBean(SIService.class);
-				siInternalService = applicationContext.getBean(SIInternalService.class);
-				achService = applicationContext.getBean(ACHService.class);
-				extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
-				transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
-
-			}
+			// Get all the required DAO's
+			applicationContext = ApplicationContextProvider.getApplicationContext();
+			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
+			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+			siService = applicationContext.getBean(SIService.class);
+			siInternalService = applicationContext.getBean(SIInternalService.class);
+			achService = applicationContext.getBean(ACHService.class);
+			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
 			// Process starts here
 			readAndProcessFiles();
@@ -111,7 +108,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<ExtPresentment> cursorItemReader = new JdbcCursorItemReader<ExtPresentment>();
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setFetchSize(10);
+		cursorItemReader.setFetchSize(1);
 		cursorItemReader.setSql(FETCH_QUERY);
 		cursorItemReader.setRowMapper(new RowMapper<ExtPresentment>() {
 			@Override
@@ -141,29 +138,33 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		ExtPresentment extPresentment;
 
 		while ((extPresentment = cursorItemReader.read()) != null) {
+			try {
+				ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
 
-			ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
+				// update the processing state as processing
+				externalPresentmentDAO.updateFileStatus(extPresentment.getId(), INPROCESS);
 
-			// update the processing state as processing
-			externalPresentmentDAO.updateFileStatus(extPresentment.getId(), INPROCESS);
+				// Prepare Presentment Resp Header Object and set filename, event and progress.
+				ExtPrmntRespHeader prh = prepareHeader(extPresentment);
 
-			// Prepare Presentment Resp Header Object and set filename, event and progress.
-			ExtPrmntRespHeader prh = prepareHeader(extPresentment);
+				// GET new Header Id before inserting records into RESP_DTLS table
+				externalPresentmentDAO.save(prh);
 
-			// GET new Header Id before inserting records into RESP_DTLS table
-			externalPresentmentDAO.save(prh);
+				// get file records with the extPresentment
+				processFileRecords(extPresentment, config, prh);
 
-			// get file records with the extPresentment
-			processFileRecords(extPresentment, config, prh);
+				// update presentment resp header progress as done with remarks
+				prh.setProgress(PROGRESS_DONE);
 
-			// update presentment resp header progress as done with remarks
-			prh.setProgress(PROGRESS_DONE);
+				// Update Resp Header table with headerId mentioning the file is processed for receipt creation
+				externalPresentmentDAO.updateHeader(prh); // UNCOMMENT ME
 
-			// Update Resp Header table with headerId mentioning the file is processed for receipt creation
-			externalPresentmentDAO.updateHeader(prh); // UNCOMMENT ME
+				externalPresentmentDAO.updateFileStatus(extPresentment.getId(), COMPLETED);
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+				externalPresentmentDAO.updateFileStatus(extPresentment.getId(), UNPROCESSED);
 
-			externalPresentmentDAO.updateFileStatus(extPresentment.getId(), COMPLETED);
-
+			}
 		}
 		cursorItemReader.close();
 
@@ -222,7 +223,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 				// validation extPresentment record if any error exists
 				String errorCode = extPresentmentFile.getErrorCode();
 				if (extPresentmentFile != null && !"".equals(errorCode)) {
-					logger.debug("F704:Exception in presentment.");
+					logger.debug("Ext_PRMNT:F704 Exception in presentment.");
 					String errorMessage = extPresentmentFile.getErrorMessage();
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED, errorCode,
 							errorMessage);
@@ -234,7 +235,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 				Presentment data = getRequiredData(extPresentmentFile, extPresentment);
 
 				if (data == null) {
-					logger.debug("F703:No data available for presentment.");
+					logger.debug("Ext_PRMNT:F703 No data available for presentment.");
 					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
 							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F703);
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED,
@@ -319,7 +320,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			}
 
 		} catch (Exception e) {
-			logger.debug("EXTFILEPROCESS: Exception while processing record data.");
+			logger.debug("Ext_PRMNT:Exception while processing record data.");
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
@@ -364,6 +365,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	}
 
 	private Presentment getRequiredData(ExtPresentmentFile extPresentmentFile, ExtPresentment extPresentment) {
+		logger.debug(Literal.ENTERING);
 		if (CONFIG_SI_RESP.equals(extPresentment.getModule()) || CONFIG_NACH_RESP.equals(extPresentment.getModule())) {
 			return externalPresentmentDAO.getPresenementMandateRecord(extPresentmentFile.getTxnReference());
 		}
@@ -371,7 +373,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		if (CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
 			return externalPresentmentDAO.getPresenementPDCRecord(extPresentmentFile.getTxnReference());
 		}
-
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

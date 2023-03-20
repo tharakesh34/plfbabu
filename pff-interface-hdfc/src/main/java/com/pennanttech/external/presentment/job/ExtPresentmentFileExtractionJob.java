@@ -45,7 +45,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtPresentmentFileExtractionJob extends AbstractJob implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentFileExtractionJob.class);
-	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ?";
+	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ? AND STATUS = ?";
 
 	private DataSource dataSource;
 	private ExtInterfaceDao extInterfaceDao;
@@ -106,6 +106,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setLong(1, UNPROCESSED);
+				ps.setLong(2, UNPROCESSED);
 			}
 		});
 
@@ -244,6 +245,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 	}
 
 	private boolean validateRejectFile(String filePath) {
+		logger.debug(Literal.ENTERING);
 		try {
 			List<String> fileLines = Files.readAllLines(Paths.get(filePath));
 			if (fileLines != null && fileLines.size() > 0) {
@@ -264,9 +266,9 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		}
-
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 }
