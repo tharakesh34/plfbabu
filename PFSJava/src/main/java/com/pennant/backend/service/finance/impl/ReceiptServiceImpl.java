@@ -8677,7 +8677,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				odcr.setMovementDate(fod.getFinODTillDate());
 				odcr.setFinODFor(fod.getFinODFor());
 				odcr.setPenalty(fod.getTotPenaltyAmt().subtract(fod.getLppDueAmt()));
-				odcr.setPenaltyBal(fod.getTotPenaltyBal());
+				BigDecimal cummulativePenalty = fod.getLppDueAmt().subtract(penaltyPaid.add(penaltyWaived));
+				odcr.setPenaltyBal(fod.getTotPenaltyBal().subtract(cummulativePenalty));
 				odcr.setPenaltyPaid(fod.getTotPenaltyPaid().subtract(penaltyPaid));
 				odcr.setWaivedAmt(fod.getTotWaived().subtract(penaltyWaived));
 				odcr.setFinCurODPri(fod.getFinCurODPri());
