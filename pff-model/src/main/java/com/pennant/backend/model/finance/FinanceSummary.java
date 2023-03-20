@@ -52,7 +52,7 @@ public class FinanceSummary implements Serializable {
 	private long finID;
 	private String finReference;
 	private BigDecimal totalDisbursement = BigDecimal.ZERO;
-	@XmlElement(name = "loanTotPrincipal")
+	@XmlElement(name = "loanPrincipal")
 	private BigDecimal totalPriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
