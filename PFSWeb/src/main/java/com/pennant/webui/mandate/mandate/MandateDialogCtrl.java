@@ -1673,7 +1673,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.pennyDropResult.setValue("");
 		}
 
-		if (aMandate.getPartnerBankId() != 0 && aMandate.getPartnerBankId() != Long.MIN_VALUE) {
+		if (mandate.getPartnerBankId() != null && aMandate.getPartnerBankId() != 0
+				&& aMandate.getPartnerBankId() != Long.MIN_VALUE) {
 			this.partnerBank.setValue(aMandate.getPartnerBankCode());
 			this.partnerBank.setDescription(aMandate.getPartnerBankName());
 			this.partnerBank.setObject(new FinTypePartnerBank(aMandate.getPartnerBankId()));

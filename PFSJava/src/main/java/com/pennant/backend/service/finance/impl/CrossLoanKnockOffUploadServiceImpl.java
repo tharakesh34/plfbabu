@@ -47,7 +47,6 @@ import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -66,7 +65,6 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private CrossLoanKnockOffService crossLoanKnockOffService;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private ValidateRecord crossLoanKnockOffUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object detail) {
@@ -641,17 +639,6 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return crossLoanKnockOffUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setCrossLoanKnockOffUploadValidateRecord(
-			CrossLoanKnockOffUploadValidateRecord crossLoanKnockOffUploadValidateRecord) {
-		this.crossLoanKnockOffUploadValidateRecord = crossLoanKnockOffUploadValidateRecord;
 	}
 
 }

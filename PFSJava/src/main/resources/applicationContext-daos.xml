@@ -13202,15 +13202,11 @@
 	
 	<bean id ="excessTransferUploadValidateRecord" class = "com.pennant.pff.excess.service.impl.ExcessTransferUploadValidateRecord"/>
 	
-	<bean id = "crossLoanKnockOffUploadValidateRecord" class = "com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadValidateRecord"/>
-	
 	<bean id = "chequeUploadValidateRecord" class = "com.pennant.pff.cheques.service.impl.ChequeUploadValidateRecord"/>
 	
 	<bean id = "representmentUploadValidateRecord" class = "com.pennant.pff.presentment.service.impl.RepresentmentUploadValidateRecord"/>
 	
 	<bean id = "fateCorrectionUploadValidateRecord" class = "com.pennant.pff.presentment.service.impl.FateCorrectionUploadValidateRecord"/>
-	
-	<bean id = "manualKnockOffUploadValidateRecord" class = "com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadValidateRecord"/>
 	
 	<bean id = "paymentInstructionUploadValidateRecord" class = "com.pennant.backend.service.payment.impl.PaymentInstructionUploadValidateRecord"/>
 	
