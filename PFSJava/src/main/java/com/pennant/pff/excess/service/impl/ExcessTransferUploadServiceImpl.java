@@ -31,6 +31,7 @@ import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.excess.service.ExcessTransferService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -41,6 +42,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ExcessTransferService excessTransferService;
+	private ValidateRecord excessTransferUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -106,20 +108,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		if (balanceAmount.compareTo(detail.getTransferAmount()) < 0) {
 			setError(detail, ExcessTransferError.EXT_004);
 			return;
-		}
-
-		List<FinExcessAmount> existingExcess = finExcessAmountDAO.getExcessAmountsByRefAndType(detail.getReferenceID(),
-				detail.getTransferFromType());
-
-		List<FinExcessAmount> excessList = existingExcess.stream()
-				.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
-				.collect(Collectors.toList());
-
-		for (FinExcessAmount excess : excessList) {
-			if (excessTransferUploadDAO.isRecordExist(excess.getExcessID(), excess.getFinID())) {
-				setError(detail, ExcessTransferError.EXT_008);
-				return;
-			}
 		}
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
@@ -323,6 +311,11 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		return excessTransferUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return excessTransferUploadValidateRecord;
+	}
+
 	@Autowired
 	public void setExcessTransferUploadDAO(ExcessTransferUploadDAO excessTransferUploadDAO) {
 		this.excessTransferUploadDAO = excessTransferUploadDAO;
@@ -341,6 +334,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setExcessTransferService(ExcessTransferService excessTransferService) {
 		this.excessTransferService = excessTransferService;
+	}
+
+	@Autowired
+	public void setExcessTransferUploadValidateRecord(
+			ExcessTransferUploadValidateRecord excessTransferUploadValidateRecord) {
+		this.excessTransferUploadValidateRecord = excessTransferUploadValidateRecord;
 	}
 
 }

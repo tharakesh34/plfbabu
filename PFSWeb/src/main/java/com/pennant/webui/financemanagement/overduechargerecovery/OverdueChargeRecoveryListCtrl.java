@@ -206,6 +206,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		// set the paging parameters
 		this.listBoxOverdueChargeRecovery.setHeight(getListBoxHeight(6));
+		this.borderLayout_OverdueChargeRecoveryList.setVflex("min");
 
 		if ("N".equals(this.recoveryCode.getValue())) {
 			// this.pagingOverdueChargeRecoveryList.setPageSize(getListRows());

@@ -71,7 +71,7 @@ public class Customer extends AbstractWorkflowEntity {
 
 	@XmlElement(name = "type")
 	private String custTypeCode;
-	@XmlElement(name = "typeDesc")
+	@XmlElement(name = "constIdDesc")
 	private String lovDescCustTypeCodeName;
 
 	@XmlElement(name = "salutation")
@@ -360,7 +360,7 @@ public class Customer extends AbstractWorkflowEntity {
 	private String lovDescCustAddrProvince;
 	private boolean prospectAsCIF = false;
 	@XmlElement
-	private String fullName;
+	private String loanName;
 
 	public Customer() {
 		super();
@@ -442,7 +442,7 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustAddrCity");
 		excludeFields.add("lovDescCustAddrProvince");
 		excludeFields.add("prospectAsCIF");
-		excludeFields.add("fullName");
+		excludeFields.add("loanName");
 
 		return excludeFields;
 	}
@@ -2263,12 +2263,12 @@ public class Customer extends AbstractWorkflowEntity {
 		this.prospectAsCIF = prospectAsCIF;
 	}
 
-	public String getFullName() {
-		return fullName;
+	public String getLoanName() {
+		return loanName;
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setLoanName(String loanName) {
+		this.loanName = loanName;
 	}
 
 }

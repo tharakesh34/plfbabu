@@ -35,6 +35,7 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
@@ -50,6 +51,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
+	private ValidateRecord chequeUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -325,6 +327,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		return chequeUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return chequeUploadValidateRecord;
+	}
+
 	private void process(ChequeHeader header, List<ChequeUpload> uploads) {
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData data = new FinScheduleData();
@@ -426,6 +433,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setChequeUploadValidateRecord(ChequeUploadValidateRecord chequeUploadValidateRecord) {
+		this.chequeUploadValidateRecord = chequeUploadValidateRecord;
 	}
 
 }

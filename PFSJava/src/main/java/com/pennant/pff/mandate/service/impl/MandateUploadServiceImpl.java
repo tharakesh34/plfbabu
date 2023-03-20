@@ -21,6 +21,7 @@ import com.pennant.pff.excess.MandateUploadError;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -31,6 +32,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 
 	private MandateUploadDAO mandateUploadDAO;
 	private MandateService mandateService;
+	private ValidateRecord mandateUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -243,6 +245,11 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 		return mandateUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return mandateUploadValidateRecord;
+	}
+
 	@Autowired
 	public void setMandateUploadDAO(MandateUploadDAO mandateUploadDAO) {
 		this.mandateUploadDAO = mandateUploadDAO;
@@ -251,6 +258,11 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
+	}
+
+	@Autowired
+	public void setMandateUploadValidateRecord(MandateUploadValidateRecord mandateUploadValidateRecord) {
+		this.mandateUploadValidateRecord = mandateUploadValidateRecord;
 	}
 
 }

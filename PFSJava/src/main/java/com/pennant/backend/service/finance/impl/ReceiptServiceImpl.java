@@ -1094,8 +1094,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			// Payable Amount Reserve
-			if (StringUtils.equals(paymentType, ReceiptMode.PAYABLE)
-					&& !StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
+			if (ReceiptMode.PAYABLE.equals(paymentType)
+					&& !RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus())) {
 
 				// Payable Amount make utilization
 				ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(receiptSeqID,
@@ -5717,6 +5717,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		repaymentProcessUtil.prepareDueData(rd);
 
+		if (peceiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			rd.setActualReceiptAmount(rch.getReceiptAmount().subtract(rd.getExcessAvailable()));
+			rd.setExcessAvailable(receiptCalculator.getExcessAmount(rd));
+		}
+
 		if (!AllocationType.MANUAL.equals(rch.getAllocationType())) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
 		}
@@ -5795,7 +5800,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				isDueAdjusted = false;
 			}
 
-			if (bal.compareTo(BigDecimal.ZERO) > 0 && RequestSource.EOD.equals(fsi.getRequestSource())
+			if (bal.compareTo(BigDecimal.ZERO) > 0 && fsi != null && RequestSource.EOD.equals(fsi.getRequestSource())
 					&& ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose())) {
 				isDueAdjusted = false;
 			}
@@ -8629,6 +8634,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			BigDecimal penaltyPaid = BigDecimal.ZERO;
 			BigDecimal penaltyWaived = BigDecimal.ZERO;
 			BigDecimal penaltyDue = BigDecimal.ZERO;
+			fod.setLppDueAmt(BigDecimal.ZERO);
 
 			for (FinOverDueCharges odcAmount : odcAmounts) {
 				if (fod.getFinODSchdDate().compareTo(odcAmount.getSchDate()) != 0) {
@@ -8651,6 +8657,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				odcr.setFinCurODAmt(odcAmount.getOdPri().add(odcAmount.getOdPft()));
 				odcr.setODDays(odcAmount.getDueDays());
 				odcr.setFinODFor(fod.getFinODFor());
+				fod.setLppDueAmt(odcAmount.getAmount().add(fod.getLppDueAmt()));
 
 				penaltyPaid = penaltyPaid.add(odcAmount.getPaidAmount());
 				penaltyDue = penaltyDue.add(odcAmount.getAmount());

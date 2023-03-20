@@ -234,6 +234,8 @@ public class AutoKnockOffProcessService {
 		if (RepayConstants.PAYTYPE_PAYABLE.equals(rcd.getPaymentType())) {
 			ManualAdvise advise = manualAdviseDAO.getManualAdviseById(rcd.getPayAgainstID(), "_View");
 			xcessPayable.setFeeTypeCode(advise.getFeeTypeCode());
+			rch.setPayableAdvises(manualAdviseDAO.getManualAdviseForLMSEvent(receiptData.getFinID()));
+
 		}
 		rch.setReceiptAmount(receiptAmount);
 

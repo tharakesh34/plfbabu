@@ -20,7 +20,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.applicationmaster.ClusterDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -46,6 +45,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.paymentupload.exception.PaymentUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
@@ -63,8 +63,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private PaymentInstructionDAO paymentInstructionDAO;
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private ClusterDAO clusterDAO;
 	private RefundBeneficiary refundBeneficiary;
+	private ValidateRecord paymentInstructionUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -300,6 +300,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public String getSqlQuery() {
 		return paymentInstructionUploadDAO.getSqlQuery();
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return paymentInstructionUploadValidateRecord;
 	}
 
 	private void processRefund(long headerID) {
@@ -612,13 +617,14 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Autowired
-	public void setClusterDAO(ClusterDAO clusterDAO) {
-		this.clusterDAO = clusterDAO;
+	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
+		this.refundBeneficiary = refundBeneficiary;
 	}
 
 	@Autowired
-	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
-		this.refundBeneficiary = refundBeneficiary;
+	public void setPaymentInstructionUploadValidateRecord(
+			PaymentInstructionUploadValidateRecord paymentInstructionUploadValidateRecord) {
+		this.paymentInstructionUploadValidateRecord = paymentInstructionUploadValidateRecord;
 	}
 
 }
