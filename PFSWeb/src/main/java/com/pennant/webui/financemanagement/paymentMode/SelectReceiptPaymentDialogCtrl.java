@@ -75,6 +75,7 @@ import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -451,7 +452,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			finreference[0] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
 		}
 
-		this.finReference.setFilters(finreference);
+		if (customer.getCustID() <= 0 || StringUtils.isBlank(customer.getCustCoreBank())) {
+			this.finReference.setFilters(null);
+
+		} else {
+			this.finReference.setFilters(finreference);
+
+		}
 
 		logger.debug("Leaving ");
 	}
@@ -1126,7 +1133,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		String knockOff = getComboboxValue(knockOffFrom);
 		FinExcessAmount fea = null;
-		if (!ReceiptMode.PAYABLE.equals(knockOff)) {
+		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
 			fea = (FinExcessAmount) this.referenceId.getObject();
 		}
 
@@ -1293,6 +1300,17 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			wve.add(we);
 		}
 
+		try {
+			if (this.row_KnockOffFrom.isVisible()) {
+				if (StringUtils.isEmpty(this.knockOffFrom.getValue())) {
+					throw new WrongValueException(this.knockOffFrom, Labels.getLabel("FIELD_IS_MAND",
+							new String[] { Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value") }));
+				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		validateBasicReceiptDate();
 
 		doRemoveValidation();
@@ -1419,6 +1437,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_LoanClosurePayment_RefId.value"),
 							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
+
+		this.knockOffFrom
+				.setConstraint(new PTListValidator(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
+						PennantStaticListUtil.getKnockOffFromVlaues(), true));
 		// this.receiptAmount
 		// .setConstraint(new
 		// PTDecimalValidator(Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO"),
@@ -1436,6 +1458,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.receiptMode.setConstraint("");
 		this.receiptDate.setConstraint("");
 		this.receiptAmount.setConstraint("");
+		this.knockOffFrom.setConstraint("");
 		logger.debug("Leaving");
 	}
 

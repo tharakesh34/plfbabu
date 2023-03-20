@@ -42,6 +42,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMaintenanceService financeMaintenanceService;
+	private LppUploadValidateRecord lppUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -444,6 +445,16 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMaintenanceService(FinanceMaintenanceService financeMaintenanceService) {
 		this.financeMaintenanceService = financeMaintenanceService;
+	}
+
+	@Override
+	public LppUploadValidateRecord getValidateRecord() {
+		return lppUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setLppUploadValidateRecord(LppUploadValidateRecord lppUploadValidateRecord) {
+		this.lppUploadValidateRecord = lppUploadValidateRecord;
 	}
 
 }

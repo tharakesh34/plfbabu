@@ -195,4 +195,5 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 			ps.setLong(++index, detail.getId());
 		});
 	}
+
 }

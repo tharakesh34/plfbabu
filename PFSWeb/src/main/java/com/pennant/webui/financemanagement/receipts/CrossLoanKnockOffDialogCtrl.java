@@ -2677,7 +2677,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("data", receiptData);
 		map.put("buttonId", buttonId);
-		map.put("receiptDialogCtrl", this);
+		map.put("crossLoanKnockOffDialogCtrl", this);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/EventFeeDetailsDialog.zul", null,

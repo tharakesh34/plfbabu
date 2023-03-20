@@ -1699,6 +1699,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(", PD.TDSAMOUNT, PD.EXCLUDEREASON, PD.EMINO, PD.STATUS, PD.PRESENTMENTREF");
 		sql.append(", PD.ECSRETURN, PD.RECEIPTID, PD.ERRORCODE, PD.ERRORDESC, PD.MANUALADVISEID");
 		sql.append(", FM.FINISACTIVE, FM.FINTYPE, PRD.ACCOUNT_NUMBER, PRD.UTR_Number, PRD.FateCorrection");
+		sql.append(", PB.ACTYPE");
 		sql.append(" FROM PRESENTMENT_RESP_DTLS PRD");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
 		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID");
@@ -1748,6 +1749,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setAccountNo(rs.getString("ACCOUNT_NUMBER"));
 			pd.setUtrNumber(rs.getString("UTR_Number"));
 			pd.setFateCorrection(rs.getString("FateCorrection"));
+			pd.setAcType(rs.getString("ACTYPE"));
 
 			return pd;
 		}, responseID);
@@ -1774,7 +1776,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	@Override
 	public List<Long> getPresentmentIdListByRespBatch(long headerId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT DISTINCT PH.ID FROM PRESENTMENT_RESP_DTLS PRD");
+		sql.append("SELECT DISTINCT PD.ID FROM PRESENTMENT_RESP_DTLS PRD");
 		sql.append(" INNER JOIN PRESENTMENTDETAILS PD ON PD.PRESENTMENTREF = PRD.PRESENTMENT_REFERENCE");
 		sql.append(" INNER JOIN PRESENTMENTHEADER PH ON PH.ID = PD.PRESENTMENTID");
 		sql.append(" WHERE PRD.HEADER_ID = ?");
@@ -1786,7 +1788,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public List<String> getStatusByPresentmentHeader(Long id) {
-		String sql = "SELECT STATUS FROM PRESENTMENTDETAILS WHERE PRESENTMENTID = ? AND EXCLUDEREASON = ?";
+		String sql = "SELECT STATUS FROM PRESENTMENTDETAILS WHERE ID = ? AND EXCLUDEREASON = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

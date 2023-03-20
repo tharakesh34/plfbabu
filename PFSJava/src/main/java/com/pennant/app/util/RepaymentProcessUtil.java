@@ -1305,6 +1305,9 @@ public class RepaymentProcessUtil {
 			BigDecimal waivedAmt = movement.getWaivedAmount();
 			BigDecimal tdsPaid = movement.getTdsPaid();
 
+			BigDecimal totalPaidGST = CalculationUtil.getTotalPaidGST(movement);
+			BigDecimal totalWaivedGST = CalculationUtil.getTotalWaivedGST(movement);
+
 			String feeTypeCode = movement.getFeeTypeCode();
 			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
 
@@ -1317,8 +1320,14 @@ public class RepaymentProcessUtil {
 					continue;
 				}
 
-				addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
-				addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+					addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
+					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
+				} else {
+					addAmountToMap(movementMap, "bounceChargePaid", paidAmt.add(totalPaidGST));
+					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt.add(totalWaivedGST));
+				}
+
 				addAmountToMap(movementMap, "bounceCharge" + "_CGST_P", cgstPaid);
 				addAmountToMap(movementMap, "bounceCharge" + "_SGST_P", sgstPaid);
 				addAmountToMap(movementMap, "bounceCharge" + "_IGST_P", igstPaid);
@@ -1334,8 +1343,13 @@ public class RepaymentProcessUtil {
 				addAmountToMap(movementMap, "bounceCharge" + "_TDS_P", tdsPaid);
 
 			} else {
-				addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
-				addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
+					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
+				} else {
+					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt.add(totalPaidGST));
+					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt.add(totalWaivedGST));
+				}
 			}
 
 			addAmountToMap(movementMap, feeTypeCode + "_CGST_P", cgstPaid);

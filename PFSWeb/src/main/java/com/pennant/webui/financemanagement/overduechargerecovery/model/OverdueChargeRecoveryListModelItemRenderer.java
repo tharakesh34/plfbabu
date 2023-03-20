@@ -37,6 +37,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -46,7 +47,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 		implements ListitemRenderer<OverdueChargeRecovery>, Serializable {
 
 	private static final long serialVersionUID = 3995133144435008423L;
-	private BigDecimal cummulativePenalityAmt = BigDecimal.ZERO;
+	private BigDecimal cummulativePenalityAmt;
 
 	public OverdueChargeRecoveryListModelItemRenderer() {
 
@@ -56,9 +57,10 @@ public class OverdueChargeRecoveryListModelItemRenderer
 	public void render(Listitem item, OverdueChargeRecovery overdueChargeRecovery, int count) {
 
 		if (item instanceof Listgroup) {
-			item.appendChild(new Listcell(
-					"Overdue Term : " + DateUtility.formatToLongDate(overdueChargeRecovery.getFinODSchdDate()) + "-"
-							+ overdueChargeRecovery.getFinODFor()));
+			item.appendChild(
+					new Listcell("Overdue Term : " + DateUtil.formatToLongDate(overdueChargeRecovery.getFinODSchdDate())
+							+ "-" + overdueChargeRecovery.getFinODFor()));
+			cummulativePenalityAmt = BigDecimal.ZERO;
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(10);
@@ -86,9 +88,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			if (overdueChargeRecovery.isDueCreation()) {
-				cummulativePenalityAmt = cummulativePenalityAmt.add(overdueChargeRecovery.getPenalty());
-			}
+			cummulativePenalityAmt = cummulativePenalityAmt.add(overdueChargeRecovery.getPenalty());
 
 			lc = new Listcell(CurrencyUtil.format(cummulativePenalityAmt, format));
 			lc.setStyle("text-align:right;");

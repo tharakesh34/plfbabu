@@ -305,6 +305,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 				filter[0] = new Filter("Purpose", "R", Filter.OP_EQUAL);
 				this.partnerBank.setFilters(filter);
 
+				this.partnerBank.setWhereClause("(CLUSTERID is not null)");
+
 				this.branchOrCluster.setButtonDisabled(false);
 				this.branchOrCluster.setMandatoryStyle(true);
 

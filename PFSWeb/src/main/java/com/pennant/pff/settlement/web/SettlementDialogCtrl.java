@@ -52,7 +52,6 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
@@ -446,15 +445,13 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		allocate.setBalance(dueAmount.subtract(waivedAmount));
 		BigDecimal priWaived = BigDecimal.ZERO;
 		BigDecimal pftWaived = BigDecimal.ZERO;
-		if (Allocation.PRI.equals(allocate.getAllocationType())
-				|| Allocation.PFT.equals(allocate.getAllocationType())) {
-			for (SettlementAllocationDetail sad : settlement.getSettlementAllocationDetails()) {
-				if (Allocation.PRI.equals(sad.getAllocationType())) {
-					priWaived = sad.getWaivedAmount();
-				}
-				if (Allocation.PFT.equals(sad.getAllocationType())) {
-					pftWaived = sad.getWaivedAmount();
-				}
+
+		for (SettlementAllocationDetail sad : settlement.getSettlementAllocationDetails()) {
+			if (Allocation.PRI.equals(sad.getAllocationType())) {
+				priWaived = sad.getWaivedAmount();
+			}
+			if (Allocation.PFT.equals(sad.getAllocationType())) {
+				pftWaived = sad.getWaivedAmount();
 			}
 		}
 
@@ -1403,8 +1400,23 @@ public class SettlementDialogCtrl extends GFCBaseCtrl<FinSettlementHeader> {
 		SettlementSchedule settlementSchedule = (SettlementSchedule) setAmount.getAttribute("data");
 		settlementSchedule.setSettlementAmount(setAmount.getActualValue());
 
-		if (cellRecordType != null) {
-			cellRecordType.setLabel(PennantJavaUtil.getLabel(PennantConstants.RCD_EDT));
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onDetailsClick(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+
+		String buttonId = (String) event.getData();
+		final Map<String, Object> map = new HashMap<String, Object>();
+		map.put("details",
+				receiptData.getReceiptHeader().getAllocationsSummary().get(Integer.parseInt(buttonId)).getSubList());
+		map.put("buttonId", buttonId);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/BounceDetailsDialog.zul", null,
+					map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -34,4 +34,5 @@ public interface HoldRefundUploadDAO {
 
 	void releaseHoldOnLoans(Date closureDate);
 
+	boolean isInProgress(String finReference, long headerID);
 }

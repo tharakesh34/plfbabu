@@ -881,12 +881,15 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			} else {
 				appDate = DateUtil.addDays(appDate, closedNdays + 1);
 			}
+			BigDecimal amount = md.getAdviseAmount().subtract(md.getPaidAmount().add(md.getWaivedAmount()));
 
-			if (DateUtil.compare(valueDate, appDate) > 0) {
-				md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
-				md.setAdviseID(md.getAdviseID());
+			if (amount.compareTo(BigDecimal.ZERO) > 0) {
+				if (DateUtil.compare(valueDate, appDate) > 0) {
+					md.setStatus(PennantConstants.MANUALADVISE_CANCEL);
+					md.setAdviseID(md.getAdviseID());
 
-				updateList.add(md);
+					updateList.add(md);
+				}
 			}
 		}
 

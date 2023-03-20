@@ -21,6 +21,7 @@ import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.model.presentment.PresentmentRespUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
@@ -30,6 +31,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 
 	private PresentmentRespUploadDAO presentmentRespUploadDAO;
 	private FinanceMainDAO financeMainDAO;
+	private ValidateRecord fateCorrectionUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -67,7 +69,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
-		if (presentmentRespUploadDAO.isProcessed(reference, detail.getClearingDate())) {
+		if (presentmentRespUploadDAO.isDuplicateKeyPresent(reference, detail.getClearingStatus(),
+				detail.getClearingDate())) {
 			setError(detail, PresentmentError.FC_601);
 			return;
 		}
@@ -92,11 +95,11 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 
 		if (status.equals(detail.getClearingStatus())) {
 			if (RepayConstants.PEXC_BOUNCE.equals(status)) {
-				setError(detail, PresentmentError.FC_607);
+				setError(detail, PresentmentError.FC_608);
 			}
 
 			if (RepayConstants.PEXC_SUCCESS.equals(status)) {
-				setError(detail, PresentmentError.FC_608);
+				setError(detail, PresentmentError.FC_607);
 			}
 			return;
 		}
@@ -110,6 +113,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setPresentmentReference(pd.getPresentmentRef());
 		detail.setBounceCode(detail.getBounceCode());
 		detail.setBounceRemarks(detail.getBounceRemarks());
+		detail.setAccountNumber(pd.getAccountNo());
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");
@@ -231,6 +235,11 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		return presentmentRespUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return fateCorrectionUploadValidateRecord;
+	}
+
 	@Autowired
 	public void setPresentmentRespUploadDAO(PresentmentRespUploadDAO presentmentRespUploadDAO) {
 		this.presentmentRespUploadDAO = presentmentRespUploadDAO;
@@ -239,6 +248,12 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFateCorrectionUploadValidateRecord(
+			FateCorrectionUploadValidateRecord fateCorrectionUploadValidateRecord) {
+		this.fateCorrectionUploadValidateRecord = fateCorrectionUploadValidateRecord;
 	}
 
 }

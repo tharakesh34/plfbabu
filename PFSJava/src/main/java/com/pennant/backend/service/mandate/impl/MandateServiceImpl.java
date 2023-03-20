@@ -1461,10 +1461,6 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				return getError("90502", "employerID");
 			}
 
-			if (mandate.isSwapIsActive() && mandate.getSwapEffectiveDate() == null) {
-				return getError("90502", "swapEffectiveDate");
-			}
-
 			Mandate empMandate = mandateDAO.getEmployerDetails(mandate.getCustID());
 
 			if (empMandate == null || empMandate.getEmployerID().compareTo(mandate.getEmployerID()) != 0) {

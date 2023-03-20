@@ -192,6 +192,8 @@ public class CustomerDetails implements java.io.Serializable {
 
 	private boolean reInitiateCibil = true;
 	private String actualError;
+	@XmlElement
+	private String fullAddress;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -690,4 +692,13 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setGstDetailsList(List<GSTDetail> gstDetailsList) {
 		this.gstDetailsList = gstDetailsList;
 	}
+
+	public String getFullAddress() {
+		return fullAddress;
+	}
+
+	public void setFullAddress(String fullAddress) {
+		this.fullAddress = fullAddress;
+	}
+
 }
