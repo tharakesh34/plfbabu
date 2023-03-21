@@ -157,6 +157,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		}
 
 		manualKnockOffUploadDAO.saveAllocations(allocations);
+		mku.setAllocations(allocations);
 
 		manualKnockOffUploadServiceImpl.doValidate(header, mku);
 
