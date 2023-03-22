@@ -1178,4 +1178,18 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
 
+	@Override
+	public Date getMaturityDate(long finID, Date appDate) {
+		String sql = "select max(MaturityDate) From FinPFtDetails_SNAPSHOT Where FinID = ? and AppDate <= ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, Date.class, finID, appDate);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
 }

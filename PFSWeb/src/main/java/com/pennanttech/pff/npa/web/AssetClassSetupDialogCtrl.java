@@ -30,8 +30,6 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -54,8 +52,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	protected Window window_AssetClassSetupDialog;
 	protected ExtendedCombobox entityCode;
-	protected Space space_RpyHierarchy;
-	protected Uppercasebox rpyHierarchy;
 	protected Button btnNew_AssetClassSetupDialog;
 
 	protected Listbox listBoxAssetClassSetup;
@@ -143,8 +139,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		this.entityCode.setValueColumn("entityCode");
 		this.entityCode.setDescColumn("entityDesc");
 		this.entityCode.setValidateColumns(new String[] { "entityCode" });
-
-		this.rpyHierarchy.setMaxlength(20);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -298,7 +292,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		logger.debug(Literal.ENTERING);
 
 		this.entityCode.setValue(assetClassSetupHeader.getEntityCode());
-		this.rpyHierarchy.setValue(assetClassSetupHeader.getRepayHierarchy());
 		this.recordStatus.setValue(assetClassSetupHeader.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -317,12 +310,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			if (obj != null) {
 				assetClassSetupHeader.setEntityCode(((Entity) obj).getEntityCode());
 			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			assetClassSetupHeader.setRepayHierarchy(this.rpyHierarchy.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -388,12 +375,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		if (!this.entityCode.isReadonly()) {
 			this.entityCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetClassSetupDialog_Entity.value"), null, true));
-		}
-
-		if (!this.rpyHierarchy.isReadonly()) {
-			this.rpyHierarchy.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_RepayHierarchy.value"),
-							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -824,8 +805,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			readOnlyComponent(true, this.entityCode);
 		}
 
-		this.rpyHierarchy.setDisabled(isReadOnly("AssetClassSetupDialog_RepayHierarchy"));
-
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -850,8 +829,6 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.entityCode);
-		this.rpyHierarchy.setDisabled(true);
-		this.space_RpyHierarchy.setSclass("");
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -864,16 +841,11 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$rpyHierarchy(Event event) {
-		this.rpyHierarchy.setValue(this.rpyHierarchy.getValue().toUpperCase());
-	}
-
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
 		this.entityCode.setValue("");
-		this.rpyHierarchy.setValue("");
 	}
 
 	/**

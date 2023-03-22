@@ -671,7 +671,7 @@ public class LimitManagement {
 					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 				}
 
-				details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
+				details.setOsPriBal(details.getOsPriBal().add(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 			break;

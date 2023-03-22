@@ -5887,10 +5887,10 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#11.18.5" author="kavya.n" dbms="orcle">
+	<changeSet id="ST#11.18.5" author="kavya.n" dbms="oracle">
 		<sql>
 			<![CDATA[
-				CREATE INDEX IX_Document_Status_Temp_FR ON Document_Status_Temp (NLSSORT("FinReference",'nls_sort=''BINARY_CI'''));
+				CREATE INDEX IX_Document_Status_Temp_FR ON Document_Status_Temp (NLSSORT("FINREFERENCE",'nls_sort=''BINARY_CI'''));
 			]]>
 		</sql>
 	</changeSet>
@@ -5909,10 +5909,10 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#11.18.6" author="kavya.n" dbms="orcle">
+	<changeSet id="ST#11.18.6" author="kavya.n" dbms="oracle">
 		<sql>
 			<![CDATA[
-				CREATE INDEX IX_Document_Status_FR ON Document_Status (NLSSORT("FinReference",'nls_sort=''BINARY_CI'''));
+				CREATE INDEX IX_Document_Status_FR ON Document_Status (NLSSORT("FINREFERENCE",'nls_sort=''BINARY_CI'''));
 			]]>
 		</sql>
 	</changeSet>
@@ -8711,5 +8711,131 @@
 			<column name="NOCDate" type="datetime" />
 		</addColumn>
 	</changeSet>
+	
+		<changeSet id="PSD#211127.1.1" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('CHANNEL', 'Fin Labs', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="PSD#211127.1.2" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('Dealer_Category', 'Dealer_Category', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212279" author="Poojitha.M">
+		<sql>
+			<![CDATA[
+			
+               DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_PANNumber') AND GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CD_MERCHANT_MAKER');
+               DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_GSTINNumber') AND GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CD_MERCHANT_MAKER');
+               DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_MobileNumber') AND GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CD_MERCHANT_MAKER');
+               DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_EmailId') AND GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'CD_MERCHANT_MAKER');
+               
+               DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_PANNumber';
+               DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_GSTINNumber';
+               DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_MobileNumber';
+               DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'MerchantDialogue_EmailId';
+               
+               INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values ((select max(RightId)+1 from SECRIGHTS),3, 'MerchantDialogue_PANNumber','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+               INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values ((select max(RightId)+1 from SECRIGHTS),3, 'MerchantDialogue_GSTINNumber','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+               INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values ((select max(RightId)+1 from SECRIGHTS),3, 'MerchantDialogue_MobileNumber','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+               INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)Values ((select max(RightId)+1 from SECRIGHTS),3, 'MerchantDialogue_EmailId','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+               
+               INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values((Select max(GrpRightID) + 1 from SECGROUPRIGHTS), (Select GrpID from SECGROUPS where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SECRIGHTS where RightName = 'MerchantDialogue_PANNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+               INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values((Select max(GrpRightID) + 1 from SECGROUPRIGHTS), (Select GrpID from SECGROUPS where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SECRIGHTS where RightName = 'MerchantDialogue_GSTINNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+               INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values((Select max(GrpRightID) + 1 from SECGROUPRIGHTS), (Select GrpID from SECGROUPS where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SECRIGHTS where RightName = 'MerchantDialogue_MobileNumber'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+               INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) Values((Select max(GrpRightID) + 1 from SECGROUPRIGHTS), (Select GrpID from SECGROUPS where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SECRIGHTS where RightName = 'MerchantDialogue_EmailId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#2117930.01" author="Sandeepkumar.M">
+		<sql>
+			<![CDATA[
+                UPDATE REPORTLIST SET FIELDTYPE = 'Int,Int,String,Int,String,Int' WHERE CODE = 'TransactionMapping';	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212384" author="vasudevarao.S">
+		<sql>
+   			 <![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'CertificateEnquiry';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('CertificateEnquiry', 'CertificateEnquiry','listheader_TanNumber.label,listheader_TanHolderName.label,listheader_AssessmentYear.label,listheader_CertificateNumber.label,listheader_CertificateDate.label, listheader_CertificateAmount.label,listheader_UtilizedAmount.label,listheader_BalanceAmount.label','tanNumber,tanHolderName,assessmentYear,CertificateNumber,CertificateDate,CertificateAmount,UtilizedAmount,BalanceAmount','String,String,String,String,Date,BigDecimal,BigDecimal,BigDecimal', ' ', 'ReportList08', 'Certificate Enquiry',  'Loan management',1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+   			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#214128" author="Gireesh.G" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+			        drop index IDX_SDUE_TD_FR_SDATE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="PSD#214128" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+			        drop index IDX_SDUE_TD_FR_SDATE on scheduleduetaxdetails;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#207051" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+			      DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'EARLYPAY' and AMOUNTCODE = 'EX_AdvIntPayable';
+        		  DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'REPAY' and AMOUNTCODE = 'EX_AdvIntPayable';
+				  INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EARLYPAY', 0, 'EX_AdvIntPayable', 'Adv Interest Payble After Partial Payment', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+				  INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REPAY', 0, 'EX_AdvIntPayable', 'Adv Interest Payble After Partial Payment', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#207051.11" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+			      DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'INSTDATE' and AMOUNTCODE = 'ae_advInst';
+				  INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('INSTDATE', 0, 'ae_advInst', 'Adv Interest Payble After Partial Payment', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#207051.2" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+			      DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'AMZ' and AMOUNTCODE = 'ae_advInst';
+				  INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('AMZ', 0, 'ae_advInst', 'Adv Interest Payble After Partial Payment', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#207051.3" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+			     DELETE FROM BMTAMOUNTCODES Where ALLOWEDEVENT = 'INSTDATE' and AMOUNTCODE = 'ae_accrTillBd';
+				 INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('INSTDATE', 0, 'ae_accrTillBd', 'Adv Interest Payble After Partial Payment', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="080223" author="ramya.v">
+		<modifyDataType tableName="Presentment_FileImport" columnName="AgreementNo"
+			newDataType="VARCHAR(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#219863" author="ramya.v">
+		<addDefaultValue columnName="dociscustdoc" tableName="BMTDocumentTypes" defaultValue="0" />
+	</changeSet>
+	
+	
 </databaseChangeLog>

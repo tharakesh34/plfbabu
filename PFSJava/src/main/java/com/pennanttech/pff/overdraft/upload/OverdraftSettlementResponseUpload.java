@@ -117,8 +117,8 @@ public class OverdraftSettlementResponseUpload extends BasicDao<ODSettlementProc
 			oDSettlementMapdata.addValue("RequestBatchId", attributes.getStatus().getId());
 			oDSettlementMapdata.addValue("TerminalId", (String) record.getValue("TerminalId"));
 			oDSettlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
-			oDSettlementMapdata.addValue("CustomerId", (String) record.getValue("CustomerId"));
-			oDSettlementMapdata.addValue("TxnId", (String) record.getValue("TxnId"));
+			oDSettlementMapdata.addValue("CustomerId", Long.valueOf(String.valueOf(record.getValue("CustomerId"))));
+			oDSettlementMapdata.addValue("TxnId", Long.valueOf(String.valueOf(record.getValue("TxnId"))));
 			oDSettlementMapdata.addValue("TxnType", (String) record.getValue("TxnType"));
 			oDSettlementMapdata.addValue("Reference", (String) record.getValue("Reference"));
 			oDSettlementMapdata.addValue("Currency", (String) record.getValue("Currency"));
@@ -198,7 +198,7 @@ public class OverdraftSettlementResponseUpload extends BasicDao<ODSettlementProc
 		String serviceReqNo = (String) oDSettlementMapdata.getValue("ODSettlementRef");
 		BigDecimal txnAmount = (BigDecimal) oDSettlementMapdata.getValue("Amount");
 		String currency = (String) oDSettlementMapdata.getValue("Currency");
-		String customerCIF = (String) oDSettlementMapdata.getValue("CustomerId");
+		String customerCIF = oDSettlementMapdata.getValue("CustomerId").toString();
 
 		if (oDSettlementMapdata.getValue("Reference") == null || oDSettlementMapdata.getValue("Reference").equals("")) {
 			throw new AppException("Reference is mandatory");
@@ -253,7 +253,7 @@ public class OverdraftSettlementResponseUpload extends BasicDao<ODSettlementProc
 	public DataEngineStatus oDSettlementFileDownload(Object... params) throws Exception {
 		long userId = (Long) params[0];
 		String userName = (String) params[1];
-		String batchId = (String) params[2];
+		Long batchId = (Long) params[2];
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("REQUESTBATCHID", batchId);

@@ -33,17 +33,18 @@ import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.ClusterService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.extension.PartnerBankExtension;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -94,6 +95,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected Textbox phoneNumber;
 	protected Label recordType;
 	protected Textbox leiNumber;
+	protected Space leiNum;
 	protected Groupbox gb_statusDetails;
 	protected Groupbox gb_ChequeDetails;
 	protected Groupbox gb_NeftDetails;
@@ -360,6 +362,11 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		this.phoneNumber.setMaxlength(10);
 		this.phoneNumber.setWidth("180px");
+		if (this.paymentInstruction.getPaymentAmount().compareTo(FinanceConstants.LEI_NUM_LIMIT) > 0) {
+			this.leiNum.setClass("mandatory");
+		} else {
+			this.leiNum.setClass("");
+		}
 
 		if (StringUtils.isNotBlank(this.paymentInstruction.getBranchBankCode())) {
 			bankDetail = bankDetailService.getAccNoLengthByCode(this.paymentInstruction.getBranchBankCode());
@@ -678,10 +685,15 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			}
 		}
 
-		if (this.leiNumber.isVisible()) {
+		if (this.leiNumber.isVisible() && !this.leiNumber.getValue().isEmpty()) {
 			this.leiNumber
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_LEI.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+
+		if (paymentHeaderDialogCtrl.leiMandatory && this.leiNumber.getValue().isEmpty()) {
+			this.leiNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_LEI.value"), null, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -708,6 +720,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.valueDate.setConstraint("");
 		this.bankBranchID.setConstraint("");
 		this.phoneNumber.setConstraint("");
+		this.leiNumber.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}

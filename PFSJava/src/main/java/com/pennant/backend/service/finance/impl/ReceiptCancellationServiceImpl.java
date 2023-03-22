@@ -1327,7 +1327,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				odcAmount.setId(movement.getChargeId());
 				updatedODAmt.add(odcAmount);
 			}
-			
+
 			finODCAmountDAO.updateReversals(updatedODAmt);
 			finODCAmountDAO.updateMovenantStatus(rch.getReceiptID(), rch.getReceiptModeStatus());
 		}

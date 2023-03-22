@@ -2323,9 +2323,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
 		}
 
-		if (ImplementationConstants.ALLOW_NPA && (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()))
-				|| !fm.isFinIsActive()) {
-			assetClassificationService.doProcessEarlySettlement(fm.getFinID());
+		if (ImplementationConstants.ALLOW_NPA && !fm.isFinIsActive()) {
+			assetClassificationService.doCloseLoan(fm.getFinID());
 		}
 
 		finServiceInstructionDAO.deleteList(finID, rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
@@ -5985,8 +5984,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		if (fsi.isReceiptUpload()) {
 			String status = rcd.getStatus();
-			if (RepayConstants.PAYSTATUS_REALIZED.equals(status)
-					|| RepayConstants.PAYSTATUS_APPROVED.equals(status)) {
+			if (RepayConstants.PAYSTATUS_REALIZED.equals(status) || RepayConstants.PAYSTATUS_APPROVED.equals(status)) {
 				rch.setRealizationDate(fsi.getRealizationDate());
 				rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 			} else if ((fsi.getBounceReason() != null || fsi.getCancelReason() != null)
@@ -6331,6 +6329,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			setError(schdData, "90501", "earlySettlementReason");
 			logger.info(Literal.LEAVING);
 			return fd;
+		}
+
+		if (receiptPurpose == ReceiptPurpose.RESTRUCTURE) {
+			schdData.getFinanceMain().setOldSchedules(schdData.getFinanceScheduleDetails());
 		}
 
 		setFinanceMain(schdData, receiptPurpose);
@@ -6698,7 +6700,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			String allocationType = allocate.getAllocationType();
 			String feeTypeCode = allocate.getFeeTypeCode();
 
-			if (fm.istDSApplicable() && StringUtils.equalsIgnoreCase(confFeeCode, feeTypeCode)
+			if (fm.isTDSApplicable() && StringUtils.equalsIgnoreCase(confFeeCode, feeTypeCode)
 					&& (Allocation.ODC.equals(allocationType) || Allocation.FEE.equals(allocationType))) {
 				eventActualFee = allocate.getPaidAmount();
 				break;
@@ -7129,7 +7131,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		ReceiptPurpose receiptPurpose = ReceiptPurpose.purpose(rch.getReceiptPurpose());
 
-		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && DateUtil.compare(valueDate, fm.getMaturityDate()) < 0
+		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && DateUtil.compare(valueDate, fm.getMaturityDate()) <= 0
 				&& fm.isFinIsActive()) {
 			rch.setValueDate(null);
 
@@ -7143,7 +7145,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			rd.setBuildProcess("I");
 			BigDecimal unpaidTdsAmount = BigDecimal.ZERO;
-			if (AdvanceType.hasAdvInterest(fm) && fm.istDSApplicable()
+			if (AdvanceType.hasAdvInterest(fm) && fm.isTDSApplicable()
 					&& rd.getIntTdsUnpaid().compareTo(BigDecimal.ZERO) == 0) {
 				unpaidTdsAmount = financeScheduleDetailDAO.getUnpaidTdsAmount(fm.getFinReference());
 				rd.setIntTdsUnpaid(unpaidTdsAmount);

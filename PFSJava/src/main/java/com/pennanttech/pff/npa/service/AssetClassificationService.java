@@ -19,6 +19,8 @@ public interface AssetClassificationService {
 
 	long prepareQueue();
 
+	void handleFailures();
+
 	long getQueueCount();
 
 	int updateThreadID(long from, long to, int threadID);
@@ -45,6 +47,8 @@ public interface AssetClassificationService {
 
 	void doPostNpaChange(AssetClassification npaAc);
 
+	void doReversalNpaPostings(AssetClassification npaAc);
+
 	void updateClassification(AssetClassification ac);
 
 	AssetClassification getAssetClassification(long finID);
@@ -53,6 +57,16 @@ public interface AssetClassificationService {
 
 	String getNpaRepayHierarchy(long finID);
 
-	void doProcessEarlySettlement(long finID);
+	void doCloseLoan(long finID);
+
+	Long getNpaMovemntId(long finID);
+
+	void saveNpaMovement(AssetClassification npa);
+
+	void updateNpaMovement(long id, AssetClassification npa);
+
+	AssetClassification getNpaMovemnt(long finID);
+
+	void saveNpaTaggingMovement(AssetClassification npa);
 
 }

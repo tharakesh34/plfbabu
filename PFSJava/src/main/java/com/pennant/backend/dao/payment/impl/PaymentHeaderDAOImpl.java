@@ -43,9 +43,9 @@ import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.knockoff.KnockOffType;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -530,4 +530,36 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			return null;
 		}
 	}
+
+	@Override
+	public int getPaymenttId(long paymentId) {
+		String sql = "Select Count(PaymentInstructionId) From PAYMENTINSTRUCTIONS Where PaymentId = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), paymentId);
+	}
+
+	@Override
+	public void updateTransactionRef(long paymentId, String transactionRef) {
+		String sql = "Update PAYMENTINSTRUCTIONS Set TransactionRef = ? Where PaymentId = ? ";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, transactionRef);
+			ps.setLong(2, paymentId);
+		});
+	}
+
+	@Override
+	public int getPaymenttId(long paymentId, String finReference) {
+		String sql = "Select Count(paymentId) From PaymentHeader Where paymentId = ? and finReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), paymentId,
+				finReference);
+	}
+
 }

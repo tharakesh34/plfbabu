@@ -6168,4 +6168,9 @@
 	</bean>
 	
 	<bean id="crossLoanKnockOffUploadList" class="com.pennant.pff.crossloanknockoff.upload.list.CrossLoanKnockoffUploadListCtrl" parent="uploadList" />
+	
+	<bean id="unAuthorizedTransactionCtrl"
+		class="com.pennant.webui.unauthorizedtransactions.reports.UnAuthorizedTransactionCtrl" parent="basisCtrl"
+		scope="prototype" />
+	
 </beans>

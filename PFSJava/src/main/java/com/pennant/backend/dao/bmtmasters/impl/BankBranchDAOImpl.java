@@ -43,6 +43,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
@@ -707,5 +708,57 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 			return bb;
 		}
+	}
+
+	@Override
+	public BankBranch getBankBranchIDByIFSC(String ifsc) {
+		String sql = "Select BankBranchID, BankCode From BankBranches Where Ifsc = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bb = new BankBranch();
+
+				bb.setBankBranchID(rs.getLong("BankBranchID"));
+				bb.setBankCode(rs.getString("BankCode"));
+				return bb;
+			}, ifsc);
+		} catch (Exception e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public Long getBankBrachByCode(String ifscCode, String bankCode) {
+		String sql = "Select BankBranchId From BankBranches  Where BranchCode = ?  and BankCode = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { ifscCode, bankCode }, Long.class);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public BankBranch getBankBrachDetails(String ifscCode, String bankCode) {
+		String sql = "Select BankBranchId, BranchDesc From BankBranches  Where BranchCode = ?  and BankCode = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				BankBranch bankBranch = new BankBranch();
+				bankBranch.setBankBranchID(JdbcUtil.setLong(rs.getLong("BankBranchId")));
+				bankBranch.setBranchDesc(rs.getString("BranchDesc"));
+				return bankBranch;
+			}, ifscCode, bankCode);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
 	}
 }

@@ -1240,7 +1240,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 
 			// update late pay penalty waived amounts to the Finoddetails table.
-			if (Allocation.ODC.equals(fwd.getFeeTypeCode())) {
+			if (Allocation.ODC.equals(StringUtils.trimToEmpty(fwd.getFeeTypeCode()))) {
 
 				BigDecimal curwaivedAmt = fwd.getCurrWaiverAmount();
 				BigDecimal curActualwaivedAmt = fwd.getCurrActualWaiver();
@@ -1443,7 +1443,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			}
 
 			// update late pay profit waived amounts to the Finoddetails table.
-			if (fwd.getFeeTypeCode().equals(Allocation.LPFT)) {
+			if (Allocation.LPFT.equals(StringUtils.trimToEmpty(fwd.getFeeTypeCode()))) {
 				BigDecimal curwaivedAmt = fwd.getCurrWaiverAmount();
 				for (FinODDetails oddetail : finodPftdetails) {
 					if (oddetail.getLPIBal().compareTo(curwaivedAmt) >= 0) {
@@ -1563,7 +1563,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		for (FeeWaiverDetail fw : fwDetails) {
-			if (Allocation.PFT.equals(fw.getFeeTypeCode()) && fw.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+			if (Allocation.PFT.equals(StringUtils.trimToEmpty(fw.getFeeTypeCode()))
+					&& fw.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 				feeWaiverDetail = fw;
 				break;
 			}
@@ -1720,7 +1721,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		for (FeeWaiverDetail fwd : fwdList) {
-			if (Allocation.PFT.equals(fwd.getFeeTypeCode())
+			if (Allocation.PFT.equals(StringUtils.trimToEmpty(fwd.getFeeTypeCode()))
 					&& fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 				feeWaiverDetail = fwd;
 				break;
@@ -2042,7 +2043,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		List<ManualAdviseMovements> movements = new ArrayList<>();
 
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
-			String feeTypeCode = fwd.getFeeTypeCode();
+			String feeTypeCode = StringUtils.trimToEmpty(fwd.getFeeTypeCode());
 
 			if (!Allocation.ODC.equals(feeTypeCode) && !Allocation.LPFT.equals(feeTypeCode)
 					&& !Allocation.PFT.equals(feeTypeCode)

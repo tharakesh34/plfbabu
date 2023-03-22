@@ -164,6 +164,9 @@
 	
 	<bean id="ledgerDownloadTaskLet" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownload" />
 	
+	<bean id="ledgerSaveLogTaskLet" class="com.pennant.backend.ledger.eod.tasklet.LedgerSaveLog"/>
+	
+	
 	<bean id="loadCollateralRevaluationDataTaskLet"
 		class="com.pennanttech.pff.eod.collateral.reval.LoadCollateralRevaluationDataTasklet" parent="basicDao" />
 
@@ -224,4 +227,6 @@
 	<bean id="waiverCancellationTasklet" class="com.pennant.backend.endofday.tasklet.WaiverCancellationTasklet" />
 	
 	<bean id="oTsQueueTasklet" class="com.pennant.backend.endofday.tasklet.OTSQueue" />
+	
+	<bean id="presentmentPreparationTasklet" class="com.pennant.pff.presentment.tasklet.PreparationTasklet"/>
 </beans>

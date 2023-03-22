@@ -695,8 +695,9 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 					return hashMap;
 				}
 			}, id, 1);
+
 		} catch (EmptyResultDataAccessException e) {
-			//
+			logger.warn(Message.NO_RECORD_FOUND);
 		}
 
 		return hashMap;

@@ -11,7 +11,7 @@ import com.pennant.ws.exception.ServiceException;
 public interface RefundUploadRestService {
 
 	@POST
-	@Path("/refundService/createRefund")
+	@Path("/createRefund")
 	public RefundUpload createRefundUpload(RefundUpload refundUpload) throws ServiceException;
 
 }

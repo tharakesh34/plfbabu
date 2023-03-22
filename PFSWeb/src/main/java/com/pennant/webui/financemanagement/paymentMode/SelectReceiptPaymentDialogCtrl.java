@@ -485,7 +485,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		String receiptMode = this.receiptMode.getSelectedItem().getValue().toString();
 		int channelIdx = 0;
 
-		if (StringUtils.equals(receiptMode, DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
+		String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
+
+		if (DisbursementConstants.PAYMENT_TYPE_ONLINE.equals(receiptMode)) {
 			this.row_subReceiptMode.setVisible(true);
 			String exlcudeValues = SysParamUtil.getValueAsString("EXCLUDE_SUB_RECEIPT_MODE_VALUE");
 			if (exlcudeValues == null) {
@@ -496,6 +498,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			} else if (!FinanceConstants.PRODUCT_CD.equals(productCategory)) {
 				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",RTRNGDS,");
 			} else {
+				if (!FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
+					exlcudeValues = exlcudeValues.concat(",RTRNGDS,");
+				}
 				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), exlcudeValues);
 			}
 		} else {

@@ -669,11 +669,6 @@ public class TanDetailListCtrl extends GFCBaseCtrl<TanAssignment> {
 
 		TanDetail tanDetail = aTanAssignment.getTanDetail();
 
-		if ("Saved".equals(tanDetail.getRecordStatus())) {
-			MessageUtil.showError("Adjustment transaction is pending for this TanNumber at certificate adjustment");
-			return;
-		}
-
 		List<TdsReceivablesTxn> tdsreceivable = tdsReceivablesTxnService
 				.getTdsReceivablesTxnsByFinRef(aTanAssignment.getFinReference(), TableType.TEMP_TAB);
 

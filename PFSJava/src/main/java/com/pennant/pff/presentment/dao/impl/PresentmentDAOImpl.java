@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -30,6 +29,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;

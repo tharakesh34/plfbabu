@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#119.1" author="Alekhya.T">
+		<createTable tableName="UnAuthorized_Transactions">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustCIF" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(50)" />
+			<column name="MakerName" type="varchar(50)" />
+			<column name="FinType" type="varchar(8)" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Event" type="varchar(50)" />
+			<column name="BranchCode" type="varchar(50)" />
+			<column name="BranchName" type="varchar(50)" />
+			<column name="TransactionAmount" type="decimal(18,0)" />
+			<column name="NoOfDays" type="int" />
+			<column name="Stage" type="varchar(50)" />
+			<column name="CurrentRole" type="varchar(100)" />
+			<column name="PreviousRole" type="varchar(200)" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+			<column name="Entity" type="varchar(50)" />
+			<column name="Division" type="varchar(50)" />
+			<column name="Branch" type="varchar(50)" />
+			<column name="Product" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#119.2" author="Alekhya.T">
+		<addPrimaryKey tableName="UnAuthorized_Transactions" columnNames="ID" constraintName="PK_UnAuth_Trans" />
+	</changeSet>
+
+	<changeSet id="ST#119.3" author="Alekhya.T">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_APPROVER');
+				
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_APPROVER');
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_APPROVER';
+
+				DELETE FROM SECOPERATIONROLES WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE ROLECD IN ('UNAUTH_TRANSAC_REPORT_MAKER','UNAUTH_TRANSAC_REPORT_APPROVER'));
+								
+				DELETE FROM SECROLES WHERE ROLECD = 'UNAUTH_TRANSAC_REPORT_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'UNAUTH_TRANSAC_REPORT_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_UnAuthorized_Transaction_Report';	
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'UNAUTH_TRANSAC_REPORT_MAKER',   	'Role For UnAuthorization_Transaction Maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0) ;
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID) + 1 FROM SECROLES), 1, 'UNAUTH_TRANSAC_REPORT_APPROVER', 	'Role For UnAuthorization_Transaction Approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL,	NULL, NULL, NULL, NULL, 0) ;
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'UNAUTH_TRANSAC_REPORT_MAKER', 		'Group For UnAuthorization_Transaction Maker',  		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID) + 1 FROM SECGROUPS_VIEW), 'UNAUTH_TRANSAC_REPORT_APPROVER',  	'Group For UnAuthorization_Transaction Approver', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID) + 1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_UnAuthorized_Transaction_Report',					'MENU',						0,	1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'UNAUTH_TRANSAC_REPORT_MAKER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_UnAuthorized_Transaction_Report'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'UNAUTH_TRANSAC_REPORT_APPROVER'), (SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_UnAuthorized_Transaction_Report'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);																																																													
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_MAKER'), 		(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_APPROVER'), 	    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_MAKER'), 		(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'UNAUTH_TRANSAC_REPORT_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'UNAUTH_TRANSAC_REPORT_APPROVER'), 	    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'UNAUTH_TRANSAC_REPORT_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.1" author="ramya.v">
+		<createSequence sequenceName="SeqPay_Ins_Upload_Header" startValue="1" maxValue="999999999999999999"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#117.2" author="ramya.v">
+		<createTable tableName="Pay_Ins_Upload_Header">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FileName" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Total" type="decimal(18,0)" />
+			<column name="Success" type="decimal(18,0)" />
+			<column name="Failed" type="decimal(18,0)" />
+			<column name="Entitycode" type="varchar(8)" />
+			<column name="Uploadprogress" type="int" />
+			<column name="Version" type="int" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Lastmntby" type="bigint" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="varchar(50)" />
+			<column name="Rolecode" type="varchar(100)" />
+			<column name="Nextrolecode" type="varchar(200)" />
+			<column name="Taskid" type="varchar(50)" />
+			<column name="Nexttaskid" type="varchar(200)" />
+			<column name="Recordtype" type="varchar(50)" />
+			<column name="Workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#117.3" author="ramya.v">
+		<addPrimaryKey tableName="Pay_Ins_Upload_Header" columnNames="Id" constraintName="PK_BulkUpload_Id" />
+	</changeSet>
+
+	<changeSet id="ST#117.4" author="ramya.v">
+		<addUniqueConstraint tableName="Pay_Ins_Upload_Header" columnNames="FileName"
+			constraintName="UK_BulkUpload_FILENAME" />
+	</changeSet>
+
+	<changeSet id="ST#117.5" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Total" tableName="Pay_Ins_Upload_Header" defaultValue="0" />
+		<addDefaultValue columnName="Success" tableName="Pay_Ins_Upload_Header" defaultValue="0" />
+		<addDefaultValue columnName="Failed" tableName="Pay_Ins_Upload_Header" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#117.5" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PAY_INS_UPLOAD_HEADER ADD CONSTRAINT DF_UPLD_HDR_TOT DEFAULT 0 FOR TOTAL;
+				ALTER TABLE PAY_INS_UPLOAD_HEADER ADD CONSTRAINT DF_UPLD_HDR_SUC DEFAULT 0 FOR SUCCESS;
+				ALTER TABLE PAY_INS_UPLOAD_HEADER ADD CONSTRAINT DF_UPLD_HDR_FAI DEFAULT 0 FOR FAILED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.6" author="ramya.v">
+		<createTable tableName="Pay_Ins_Upload_Header_temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FileName" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Total" type="decimal(18,0)" />
+			<column name="Success" type="decimal(18,0)" />
+			<column name="Failed" type="decimal(18,0)" />
+			<column name="Entitycode" type="varchar(8)" />
+			<column name="Uploadprogress" type="int" />
+			<column name="Version" type="int" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Lastmntby" type="bigint" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="varchar(50)" />
+			<column name="Rolecode" type="varchar(100)" />
+			<column name="Nextrolecode" type="varchar(200)" />
+			<column name="Taskid" type="varchar(50)" />
+			<column name="Nexttaskid" type="varchar(200)" />
+			<column name="Recordtype" type="varchar(50)" />
+			<column name="Workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#117.7" author="ramya.v">
+		<addPrimaryKey tableName="Pay_Ins_Upload_Header_temp" columnNames="Id"
+			constraintName="PK_BulkUpload_Id_T" />
+	</changeSet>
+
+	<changeSet id="ST#117.8" author="ramya.v">
+		<addUniqueConstraint tableName="Pay_Ins_Upload_Header_temp" columnNames="FileName"
+			constraintName="UK_BulkUpload_FILENAME_T" />
+	</changeSet>
+
+	<changeSet id="ST#117.9" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Total" tableName="Pay_Ins_Upload_Header_temp" defaultValue="0" />
+		<addDefaultValue columnName="Success" tableName="Pay_Ins_Upload_Header_temp" defaultValue="0" />
+		<addDefaultValue columnName="Failed" tableName="Pay_Ins_Upload_Header_temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#117.9" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PAY_INS_UPLOAD_HEADER_TEMP ADD CONSTRAINT DF_UPLD_HDR_T_TOT DEFAULT 0 FOR TOTAL;
+				ALTER TABLE PAY_INS_UPLOAD_HEADER_TEMP ADD CONSTRAINT DF_UPLD_HDR_T_SUC DEFAULT 0 FOR SUCCESS;
+				ALTER TABLE PAY_INS_UPLOAD_HEADER_TEMP ADD CONSTRAINT DF_UPLD_HDR_T_FAI DEFAULT 0 FOR FAILED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.10" author="ramya.v">
+		<createSequence sequenceName="SeqPay_Ins_Upload_Details" startValue="1" maxValue="999999999999999999"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#117.11" author="ramya.v">
+		<createTable tableName="Pay_Ins_Upload_Details">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="Finid" type="bigint" />
+			<column name="Finreference" type="varchar(20)" />
+			<column name="Type" type="varchar(50)" />
+			<column name="Subtype" type="varchar(50)" />
+			<column name="PaymentAmount" type="decimal(18,0)" />
+			<column name="PaymentDate" type="datetime" />
+			<column name="PaymentType" type="varchar(20)" />
+			<column name="PartnerBank" type="varchar(200)" />
+			<column name="Remarks" type="varchar(2000)" />
+			<column name="Ifsc" type="varchar(20)" />
+			<column name="AccountNumber" type="varchar(100)" />
+			<column name="AccountHolderName" type="varchar(100)" />
+			<column name="PhoneNo" type="varchar(10)" />
+			<column name="IssuingBank" type="varchar(100)" />
+			<column name="FavoringName" type="varchar(100)" />
+			<column name="PayableLocation" type="varchar(100)" />
+			<column name="PrintingLocation" type="varchar(100)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="Transcationref" type="varchar(50)" />
+			<column name="LEI" type="varchar(100)" />
+			<column name="Processingstatus" type="int" />
+			<column name="Reason" type="varchar(1000)" />
+			<column name="Version" type="int" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Lastmntby" type="bigint" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="varchar(50)" />
+			<column name="Rolecode" type="varchar(100)" />
+			<column name="Nextrolecode" type="varchar(200)" />
+			<column name="Taskid" type="varchar(50)" />
+			<column name="Nexttaskid" type="varchar(200)" />
+			<column name="Recordtype" type="varchar(50)" />
+			<column name="Workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#117.12" author="ramya.v">
+		<addPrimaryKey tableName="Pay_Ins_Upload_Details" columnNames="Id"
+			constraintName="PK_BlkUpldFldDetails_ID" />
+	</changeSet>
+
+	<changeSet id="ST#117.14" author="ramya.v">
+		<createSequence sequenceName="SeqPay_Ins_Upload_LOG" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="ST#117.15" author="ramya.v">
+		<createTable tableName="Pay_Ins_Upload_LOG">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="AttemptNo" type="int" />
+			<column name="ProcessedRecords" type="int" />
+			<column name="SuccessCount" type="int" />
+			<column name="FailedCount" type="int" />
+			<column name="AttemptStatus" type="int" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#117.16" author="ramya.v">
+		<addPrimaryKey tableName="Pay_Ins_Upload_LOG" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#117.17" author="ramya.v">
+		<addUniqueConstraint tableName="Pay_Ins_Upload_LOG" columnNames="headerId,attemptno"
+			constraintName="UK_RUAPPRLL_HDRIDAT_T" />
+	</changeSet>
+
+	<changeSet id="ST#117.18" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ProcessedRecords" tableName="Pay_Ins_Upload_LOG" defaultValue="0" />
+		<addDefaultValue columnName="SuccessCount" tableName="Pay_Ins_Upload_LOG" defaultValue="0" />
+		<addDefaultValue columnName="FailedCount" tableName="Pay_Ins_Upload_LOG" defaultValue="0" />
+		<addDefaultValue columnName="AttemptStatus" tableName="Pay_Ins_Upload_LOG" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#117.18" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PAY_INS_UPLOAD_LOG ADD CONSTRAINT DF_PAY_UPLD_LOG_PRC DEFAULT 0 FOR PROCESSEDRECORDS;
+				ALTER TABLE PAY_INS_UPLOAD_LOG ADD CONSTRAINT DF_PAY_UPLD_LOG_SUC DEFAULT 0 FOR SUCCESSCOUNT;
+				ALTER TABLE PAY_INS_UPLOAD_LOG ADD CONSTRAINT DF_PAY_UPLD_LOG_FAI DEFAULT 0 FOR FAILEDCOUNT;
+				ALTER TABLE PAY_INS_UPLOAD_LOG ADD CONSTRAINT DF_PAY_UPLD_LOG_ATT DEFAULT 0 FOR ATTEMPTSTATUS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.19.2.1_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'pay_ins_upload_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.19.2.1" author="ramya.v">
+		<createView viewName="Pay_Ins_Upload_Header_View" replaceIfExists="true">
+		  <![CDATA[
+				SELECT
+					T1.ID, 
+					T1.FILENAME, 
+					T1.TOTAL, 
+					T1.SUCCESS, 
+					T1.FAILED,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					T1.VERSION , 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDON,
+					T1.APPROVEDBY
+				FROM PAY_INS_UPLOAD_HEADER_TEMP T1
+				UNION ALL 
+				SELECT
+					T1.ID, 
+					T1.FILENAME, 
+					T1.TOTAL, 
+					T1.SUCCESS, 
+					T1.FAILED,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					T1.VERSION , 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDON,
+					T1.APPROVEDBY
+				FROM PAY_INS_UPLOAD_HEADER T1
+				WHERE NOT EXISTS (SELECT 1 FROM PAY_INS_UPLOAD_HEADER_TEMP WHERE ID = T1.ID)
+			]]>
+    	</createView>
+	</changeSet>
+
+	<changeSet id="ST#117.19.2.1_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT DEPS_RESTORE_DEPENDENCIES ('PLF', 'pay_ins_upload_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.20.2.1_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT DEPS_SAVE_AND_DROP_DEPENDENCIES ('PLF', 'pay_ins_upload_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.20.2.1" author="ramya.v">
+		<createView viewName="Pay_Ins_Upload_Header_AView" replaceIfExists="true">
+			<![CDATA[
+				SELECT
+					T1.ID, 
+					T1.FILENAME, 
+					T1.TOTAL, 
+					T1.SUCCESS, 
+					T1.FAILED,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					T1.VERSION, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDON,
+					T1.APPROVEDBY
+					FROM PAY_INS_UPLOAD_HEADER T1
+				]]>
+    	</createView>
+	</changeSet>
+
+	<changeSet id="ST#117.20.2.1_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT DEPS_RESTORE_DEPENDENCIES ('PLF', 'pay_ins_upload_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.21.2.1_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT DEPS_SAVE_AND_DROP_DEPENDENCIES ('PLF', 'pay_ins_upload_header_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.21.2.1" author="ramya.v">
+		<createView viewName="Pay_Ins_Upload_Header_TView" replaceIfExists="true">
+			<![CDATA[
+				SELECT
+					T1.ID, 
+					T1.FILENAME, 
+					T1.TOTAL, 
+					T1.SUCCESS, 
+					T1.FAILED,
+					T1.ENTITYCODE,
+					T1.UPLOADPROGRESS,
+					 0 AS ATTEMPTSTATUS,
+	  				 0 AS ATTEMPTNO,
+	   				 0 AS PROCESSEDRECORDS,
+					T1.VERSION , 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON,
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID,
+					T1.CREATEDON,
+					T1.CREATEDBY,
+					T1.APPROVEDON,
+					T1.APPROVEDBY
+				FROM PAY_INS_UPLOAD_HEADER_TEMP T1
+				UNION ALL 
+				SELECT
+					T2.ID, 
+					T2.FILENAME, 
+					T2.TOTAL, 
+					T2.SUCCESS, 
+					T2.FAILED,
+					T2.ENTITYCODE,
+					T2.UPLOADPROGRESS,
+					T1.ATTEMPTSTATUS,
+	   				T1.ATTEMPTNO,
+	    			T1.PROCESSEDRECORDS,
+					T2.VERSION , 
+					T2.LASTMNTBY, 
+					T2.LASTMNTON,
+					'ATTEMPT' RECORDSTATUS, 
+					T2.ROLECODE, 
+					T2.NEXTROLECODE, 
+					T2.TASKID, 
+					T2.NEXTTASKID, 
+					T2.RECORDTYPE, 
+					T2.WORKFLOWID,
+					T2.CREATEDON,
+					T2.CREATEDBY,
+					T2.APPROVEDON,
+					T2.APPROVEDBY
+				FROM PAY_INS_UPLOAD_LOG T1
+				INNER JOIN PAY_INS_UPLOAD_HEADER_TEMP T2 ON T2.ID = T1.HEADERID
+			]]>
+    	</createView>
+	</changeSet>
+
+	<changeSet id="ST#117.21.2.1_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				SELECT DEPS_RESTORE_DEPENDENCIES ('PLF', 'pay_ins_upload_header_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.22" author="ramya.v">
+		<sql> 
+			<![CDATA[ 
+				Delete FROM SMTPARAMETERS WHERE SYSPARMCODE = 'PAY_INS_UPLOAD_HEADER_RECORD_DEFAULT_SIZE'; 
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('PAY_INS_UPLOAD_HEADER_RECORD_DEFAULT_SIZE', 'Number of records allowed in Payment Instructions Bulk Upload File', 'int', 1, '1000', 6, 0, null, null, 'Number of records allowed in Payment Instructions Bulk File', 1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#117.23" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_PayInsUploadMaker');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_PayInsUploadApproval');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'buttonPayInsUploadListNewPayInsUpload');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'buttonPayInsUploadListPayInsUploadSearchDialog');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_Pay_Ins_Upload_btnEdit');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID IN (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_Pay_Ins_Upload_btnNew');
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_PayInsUploadMaker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_PayInsUploadApproval';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'buttonPayInsUploadListNewPayInsUpload';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'buttonPayInsUploadListPayInsUploadSearchDialog';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_Pay_Ins_Upload_btnEdit';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'button_Pay_Ins_Upload_btnNew';
+				
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE IN ('PAY_INS_UPLOAD_MAKER', 'PAY_INS_UPLOAD_APPROVER'));
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'PAY_INS_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'PAY_INS_UPLOAD_APPROVER';
+				
+				DELETE FROM SECOPERATIONROLES WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE ROLECD IN ('PAY_INS_UPLOAD_MAKER', 'PAY_INS_UPLOAD_APPROVER'));
+				
+				DELETE FROM SECROLES WHERE ROLECD = 'PAY_INS_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'PAY_INS_UPLOAD_APPROVER';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_PayInsUploadApproval', 'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_PayInsUploadMaker',    'MENU', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SECRIGHTS_VIEW), 2, 'buttonPayInsUploadListNewPayInsUpload', 'PayInsUploadList', 0, 1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SECRIGHTS_VIEW), 2, 'buttonPayInsUploadListPayInsUploadSearchDialog', 'PayInsUploadList', 0, 1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_Pay_Ins_Upload_btnEdit', 'PayInsUpload', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RightID) + 1 FROM SECRIGHTS_VIEW), 2, 'button_Pay_Ins_Upload_btnNew', 'PayInsUpload', 0, 1000,	CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_View), 'PAY_INS_UPLOAD_MAKER', 'Group For PayInsUpload Calssification View', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_View), 'PAY_INS_UPLOAD_APPROVER', 'Group For PayInsUpload Calssification View', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES),1,'PAY_INS_UPLOAD_MAKER', 'Role For PayInsUpload_MAKER', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES),1,'PAY_INS_UPLOAD_APPROVER', 'Role For PayInsUpload_APPROVER', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_MAKER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_PayInsUploadMaker'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_MAKER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'buttonPayInsUploadListNewPayInsUpload'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_MAKER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'buttonPayInsUploadListPayInsUploadSearchDialog'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_APPROVER'), (SELECT RightID FROM SecRights WHERE RightName = 'menu_Item_PayInsUploadApproval'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_APPROVER'), (SELECT RightID FROM SecRights WHERE RightName = 'buttonPayInsUploadListPayInsUploadSearchDialog'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);																																																													
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_MAKER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'button_Pay_Ins_Upload_btnEdit'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES  ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS_VIEW), (SELECT GrpId FROM SecGroups WHERE GrpCode = 'PAY_INS_UPLOAD_MAKER'), 	(SELECT RightID FROM SecRights WHERE RightName = 'button_Pay_Ins_Upload_btnNew'),				1,	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'PAY_INS_UPLOAD_MAKER'), 		(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'PAY_INS_UPLOAD_APPROVER'), 	    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'PAY_INS_UPLOAD_MAKER'), 		(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'PAY_INS_UPLOAD_MAKER'),		0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGrpId) + 1 FROM SECROLEGROUPS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'PAY_INS_UPLOAD_APPROVER'), 	    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'PAY_INS_UPLOAD_APPROVER'),	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="ST#117.24.4" author="ramya.v">
+		<sql>
+   			 <![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'PAYINSUPLOADHEADER';
+				
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('PayInsUploadHeader', 'PayInsUploadHeader', 'listheader_PayInsUpload_ID.label,listheader_PayInsUpload_FileName.label,listheader_PayInsUpload_TotalCount.label,listheader_PayInsUpload_SuccessCount.label,listheader_PayInsUpload_FailedCount.label', 'id,fileName,total,success,failed', 'long,String,int,int,int', '', 'ReportList05',  '   Payment Instruction Upload', 'Bulk Processing', 1, 1000, NULL,'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);	
+   			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#117.002" author="ramya.v">
+		<modifyDataType tableName="Pay_Ins_Upload_Details" columnName="PhoneNo" newDataType="varchar(20)" />
+	</changeSet>
+	 
+	<changeSet id="ST#117.24.6" author="ramya.v">
+		<addColumn tableName="Pay_Ins_Upload_Details">
+			<column name="BankBranchID" type="BigInt"/>
+		</addColumn>
+	</changeSet>
+	
+</databaseChangeLog>

@@ -498,7 +498,8 @@ public class TdsReceivablesTxnDialogCtrl extends GFCBaseCtrl<TdsReceivablesTxn> 
 			this.certificateQuarter.setValue(aTdsReceivable.getCertificateQuarter());
 			this.assessmentYear.setValue(aTdsReceivable.getAssessmentYear());
 			this.dateOfReceipt.setValue(aTdsReceivable.getDateOfReceipt());
-			this.certificateAmount.setValue(aTdsReceivable.getCertificateAmount());
+			this.certificateAmount.setValue(PennantApplicationUtil.formateAmount(aTdsReceivable.getCertificateAmount(),
+					PennantConstants.defaultCCYDecPos));
 			this.balanceAmount.setValue(PennantApplicationUtil.formateAmount(aTdsReceivable.getBalanceAmount(),
 					PennantConstants.defaultCCYDecPos));
 			this.tanNumber.setValue(aTdsReceivable.getTanNumber());
@@ -554,8 +555,8 @@ public class TdsReceivablesTxnDialogCtrl extends GFCBaseCtrl<TdsReceivablesTxn> 
 		logger.debug(Literal.ENTERING);
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("tdsReceivable", this.tdsReceivable);
-		Executions.createComponents("/WEB-INF/pages/tds.receivables/TdsReceivableCancel/TdsReceivableCancelView.zul",
-				null, map);
+		Executions.createComponents("/WEB-INF/pages/Finance/TdsReceivableCancel/TdsReceivableCancelView.zul", null,
+				map);
 
 		logger.debug(Literal.LEAVING);
 	}

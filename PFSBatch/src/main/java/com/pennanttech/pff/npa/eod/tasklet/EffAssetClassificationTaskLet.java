@@ -58,7 +58,6 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
 
 		Date appDate = SysParamUtil.getAppDate();
-		Date monthEnd = DateUtil.getMonthEnd(appDate);
 
 		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
 
@@ -103,19 +102,23 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 					throw new AppException("Data is not found in NPA Loan Info for the FinID :" + finID);
 				}
 
+				boolean effNpaStage = npa.isEffNpaStage();
+
 				npa.setAssetClassSetup(header);
 
 				assetClassificationService.setEffClassification(npa);
 
 				boolean npaChange = false;
-				if (monthEnd.compareTo(appDate) == 0) {
-					if (npa.isEffNpaStage() && npa.getLinkedTranID() == null) {
-						npaChange = true;
-						npa.setFinID(finID);
-						npa.setFinReference(npa.getFinReference());
-						assetClassificationService.setLoanInfo(npa);
-					}
+				if (npa.isEffNpaStage() && npa.getLinkedTranID() == null) {
+					npaChange = true;
+					npa.setFinID(finID);
+					npa.setFinReference(npa.getFinReference());
+					assetClassificationService.setLoanInfo(npa);
 				}
+
+				AssetClassification napMovement = assetClassificationService.getNpaMovemnt(finID);
+
+				Long npaMovemntId = assetClassificationService.getNpaMovemntId(finID);
 
 				txStatus = transactionManager.getTransaction(txDef);
 
@@ -124,6 +127,24 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 				}
 
 				assetClassificationService.updateClassification(npa);
+
+				if (napMovement == null || isClassficationChange(napMovement, npa)) {
+					npa.setClassDate(appDate);
+					assetClassificationService.saveNpaMovement(npa);
+				}
+
+				if (npaMovemntId == null && npa.isEffNpaStage()) {
+					npa.setNpaTaggedDate(appDate);
+					assetClassificationService.saveNpaTaggingMovement(npa);
+				} else if (npaMovemntId != null && !npa.isEffNpaStage()) {
+					npa.setNpaUnTaggedDate(appDate);
+					assetClassificationService.updateNpaMovement(npaMovemntId, npa);
+				}
+
+				if (effNpaStage && !npa.isEffNpaStage()) {
+					assetClassificationService.setLoanInfo(npa);
+					assetClassificationService.doReversalNpaPostings(npa);
+				}
 
 				assetClassificationService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);
 
@@ -163,6 +184,10 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		logger.info(SUCCESS_MSG, sysDate, strAppDate, threadId);
 
 		return RepeatStatus.FINISHED;
+	}
+
+	private boolean isClassficationChange(AssetClassification a1, AssetClassification a2) {
+		return a1.getNpaClassID() != a2.getNpaClassID() || a1.getEffNpaClassID() != a2.getEffNpaClassID();
 	}
 
 	@Autowired

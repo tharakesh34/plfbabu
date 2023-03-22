@@ -318,7 +318,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox applyRpyPricing;
 	protected ExtendedCombobox rpyPricingMethod;
 	protected Space space_rpyHierarchy;
+	protected Space space_npaRpyHierarchy;
 	protected Uppercasebox rpyHierarchy;
+	protected Uppercasebox npaRpyHierarchy;
 	protected Row row_pftUnchanged;
 
 	protected Checkbox alwBpiTreatment;
@@ -1090,6 +1092,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		this.rpyHierarchy.setMaxlength(20);
+		this.npaRpyHierarchy.setMaxlength(20);
 
 		// Inst Based Schd
 		this.row_InstBasedSchd.setVisible(ImplementationConstants.SCHD_INST_CAL_ON_DISB_RELIZATION);
@@ -1713,6 +1716,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		String rpyHierarchy = aFinanceType.getRpyHierarchy();
 
 		this.rpyHierarchy.setValue(rpyHierarchy);
+
+		String nparpyHierarchy = aFinanceType.getNpaRpyHierarchy();
+
+		this.npaRpyHierarchy.setValue(nparpyHierarchy);
 
 		if (ImplementationConstants.ALLOW_BPI_TREATMENT) {
 			this.alwBpiTreatment.setChecked(aFinanceType.isAlwBPI());
@@ -3389,6 +3396,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
+			aFinanceType.setNpaRpyHierarchy(this.npaRpyHierarchy.getValue().toUpperCase());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			aFinanceType.setAlwBPI(this.alwBpiTreatment.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4752,6 +4765,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
 		}
 
+		if (!this.npaRpyHierarchy.isReadonly()) {
+			this.npaRpyHierarchy.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_NPARepayHierarchy.value"),
+							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -5137,6 +5156,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.applyRpyPricing.setDisabled(isTrue);
 		this.rpyPricingMethod.setReadonly(isTrue);
 		this.rpyHierarchy.setDisabled(isTrue);
+		this.npaRpyHierarchy.setDisabled(isTrue);
 		this.dftBpiTreatment.setDisabled(isTrue);
 		this.cbBpiPftDaysBasis.setDisabled(isTrue);
 		this.btnSearchRpyMethod.setDisabled(isTrue);
@@ -5263,6 +5283,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_cbFinScheduleOn.setSclass("");
 			this.space_alwEarlyPayMethods.setSclass("");
 			this.space_rpyHierarchy.setSclass("");
+			this.space_npaRpyHierarchy.setSclass("");
 			this.space_planEmiMethod.setSclass("");
 			this.space_roundingMode.setSclass("");
 			this.space_roundingTarget.setSclass("");
@@ -9147,6 +9168,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onChange$rpyHierarchy(Event event) {
 		this.rpyHierarchy.setValue(this.rpyHierarchy.getValue().toUpperCase());
+	}
+
+	public void onChange$npaRpyHierarchy(Event event) {
+		this.npaRpyHierarchy.setValue(this.npaRpyHierarchy.getValue().toUpperCase());
 	}
 
 	private void visibilityFieldsForStepApplied(String stepsAppliedFor, String calcOfStep, boolean alwManualStep) {

@@ -357,6 +357,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean allowAutoRefund;
 	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
 	private BigDecimal minAutoRefund = BigDecimal.ZERO;
+	private String npaRpyHierarchy;
 
 	public FinanceType() {
 		super();
@@ -644,6 +645,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setAllowAutoRefund(this.allowAutoRefund);
 		entity.setMaxAutoRefund(this.maxAutoRefund);
 		entity.setMinAutoRefund(this.minAutoRefund);
+		entity.setNpaRpyHierarchy(this.npaRpyHierarchy);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -2850,5 +2852,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setMinAutoRefund(BigDecimal minAutoRefund) {
 		this.minAutoRefund = minAutoRefund;
+	}
+
+	public String getNpaRpyHierarchy() {
+		return npaRpyHierarchy;
+	}
+
+	public void setNpaRpyHierarchy(String npaRpyHierarchy) {
+		this.npaRpyHierarchy = npaRpyHierarchy;
 	}
 }

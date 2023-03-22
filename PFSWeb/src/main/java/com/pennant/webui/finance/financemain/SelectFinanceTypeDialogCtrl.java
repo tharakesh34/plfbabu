@@ -2047,7 +2047,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customerDedup.setCustResdCountry(customer.getCustResdCountry());
 			customerDedup.setCustEMail(customer.getEmailID());
 
-			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP && customerDetails.getExtendedDetails() != null) {
 				for (ExtendedField details : customerDetails.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 						if (extFieldData.getFieldName().equalsIgnoreCase("UCIC")) {

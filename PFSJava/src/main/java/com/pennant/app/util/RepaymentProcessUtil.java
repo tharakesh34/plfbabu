@@ -52,6 +52,7 @@ import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinDueData;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -99,6 +100,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
+import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -150,6 +152,7 @@ public class RepaymentProcessUtil {
 
 	private ReceiptCalculator receiptCalculator;
 	private AssetClassificationService assetClassificationService;
+	private AdvancePaymentService advancePaymentService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -166,6 +169,10 @@ public class RepaymentProcessUtil {
 		FinReceiptHeader rch = receiptDTO.getFinReceiptHeader();
 		Date valuedate = receiptDTO.getValuedate();
 		Date postDate = receiptDTO.getPostDate();
+
+		if (receiptDTO.getPresentmentHeader() != null) {
+			rch.setPresentmentType(receiptDTO.getPresentmentHeader().getPresentmentType());
+		}
 
 		long finID = fm.getFinID();
 		String finType = fm.getFinType();
@@ -364,6 +371,7 @@ public class RepaymentProcessUtil {
 		PresentmentHeader ph = receiptDTO.getPresentmentHeader();
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 		FinReceiptHeader rch = receiptDTO.getFinReceiptHeader();
+		List<FinDueData> dueDataList = frd.getDueDataList();
 
 		if (ph == null || pd == null) {
 			return;
@@ -371,6 +379,8 @@ public class RepaymentProcessUtil {
 
 		if (!ph.isLppReq() && !ph.isBounceReq()) {
 			return;
+		} else {
+			frd.setRepresentment(true);
 		}
 
 		FinReceiptHeader finReceiptHeader = frd.getReceiptHeader();
@@ -390,13 +400,27 @@ public class RepaymentProcessUtil {
 
 		for (ReceiptAllocationDetail allocate : allocationDetails) {
 			if (Allocation.BOUNCE.equalsIgnoreCase(allocate.getAllocationType())) {
+				FinDueData dueData = new FinDueData();
 				allocate.setPaidAmount(allocate.getTotalDue());
 				allocate.setTotalPaid(allocate.getTotalDue());
 				bounceAmount = bounceAmount.add(allocate.getTotalDue());
+				dueData.setAllocType(RepayConstants.DUETYPE_BOUNCE);
+				dueData.setDueDate(pd.getSchDate());
+				dueData.setAdjust(true);
+				dueData.setDueAmount(allocate.getTotalDue());
+				dueData.setAdviseId(allocate.getAllocationTo());
+				dueDataList.add(dueData);
 			} else if (Allocation.ODC.equalsIgnoreCase(allocate.getAllocationType())) {
+				FinDueData dueData = new FinDueData();
 				allocate.setPaidAmount(allocate.getTotalDue());
 				allocate.setTotalPaid(allocate.getTotalDue());
 				lppAmount = lppAmount.add(allocate.getTotalDue());
+				dueData.setAllocType(RepayConstants.DUETYPE_ODC);
+				dueData.setDueDate(pd.getSchDate());
+				dueData.setAdjust(true);
+				dueData.setDueAmount(allocate.getTotalDue());
+				dueData.setAdviseId(allocate.getAllocationTo());
+				dueDataList.add(dueData);
 			}
 		}
 
@@ -424,6 +448,8 @@ public class RepaymentProcessUtil {
 
 			rch.getReceiptDetails().add(rcd);
 		}
+		frd.getReceiptHeader().getTotalPastDues().setDueAmount(receiptAmount);
+		frd.getReceiptHeader().getTotalPastDues().setTotalDue(receiptAmount);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -537,6 +563,8 @@ public class RepaymentProcessUtil {
 		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finID, financeDetail.getFinanceTaxDetail());
 		fm.setGstExecutionMap(gstExecutionMap);
 
+		amountCodes.setIntAdv(AdvanceType.hasAdvInterest(fm));
+
 		/**
 		 * Defaulting with ZERO
 		 */
@@ -550,6 +578,7 @@ public class RepaymentProcessUtil {
 		extMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
 		extMap.put("Restruct_Bpi", rch.getBpiAmount());
 		extMap.put("SETTLE_ReceiptAmount", BigDecimal.ZERO);
+		extMap.put("EX_AdvIntPayable", BigDecimal.ZERO);
 
 		List<ManualAdviseMovements> payableAdvMovements = new ArrayList<>();
 
@@ -598,6 +627,11 @@ public class RepaymentProcessUtil {
 			case RepayConstants.EXAMOUNTTYPE_SETTLEMENT:
 				extMap.put("SETTLE_ReceiptAmount", extMap.get("SETTLE_ReceiptAmount").add(totPaidNow));
 				break;
+			case RepayConstants.EXAMOUNTTYPE_PAYABLE:
+				if (amountCodes.isIntAdv() && RepayConstants.EXAMOUNTTYPE_ADVINT.equals(feeCode)) {
+					extMap.put("EX_AdvIntPayable", totPaidNow);
+				}
+				break;
 			default:
 				extMap.put((feeCode + "_P"), extMap.get(feeCode + "_P").add(totPaidNow));
 				extMap.put((feeCode + "_CGST_P"), extMap.get(feeCode + "_CGST_P").add(xcess.getPaidCGST()));
@@ -619,6 +653,16 @@ public class RepaymentProcessUtil {
 			}
 
 			totXcessAmount = totXcessAmount.add(totPaidNow);
+		}
+
+		if (amountCodes.isIntAdv() && FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())) {
+			FinScheduleData schdData = new FinScheduleData();
+			schdData.setFinanceMain(fm);
+			schdData.setFinanceScheduleDetails(schedules);
+			AdvancePaymentDetail advIntPayable = advancePaymentService.getAdvIntPayable(fm, schdData);
+			if (advIntPayable != null) {
+				extMap.put("EX_AdvIntPayable", advIntPayable.getAdvInt().negate());
+			}
 		}
 
 		movements.addAll(payableAdvMovements);
@@ -727,12 +771,10 @@ public class RepaymentProcessUtil {
 			toExcess = BigDecimal.ZERO;
 		}
 
-		amountCodes.setIntAdv(AdvanceType.hasAdvInterest(fm));
-
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		BigDecimal unAdjAdvIntTds = BigDecimal.ZERO;
-		if (fm.istDSApplicable() && amountCodes.isIntAdv()
+		if (fm.isTDSApplicable() && amountCodes.isIntAdv()
 				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			unAdjAdvIntTds = financeScheduleDetailDAO.getUnpaidTdsAmount(fm.getFinReference());
 		}
@@ -2276,6 +2318,9 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader, eventCode, rch.getValueDate(), postDate, rch);
 
 		} catch (InterfaceException e) {
+			logger.error("Exception: ", e);
+			throw e;
+		}catch (AppException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}

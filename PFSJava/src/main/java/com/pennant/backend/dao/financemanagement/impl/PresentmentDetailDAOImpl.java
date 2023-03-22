@@ -91,7 +91,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", Status, MandateType, LoanType, FinBranch, SchDate, DBStatusId, EntityCode");
 		sql.append(", ImportStatusId, TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, LppReq, BounceReq");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append(", PartnerBankCode, PartnerBankName, PartnerAcctNumber, PartnerAcctType");
 		}
@@ -133,6 +133,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ph.setNextTaskId(rs.getString("NextTaskId"));
 				ph.setRecordType(rs.getString("RecordType"));
 				ph.setWorkflowId(rs.getLong("WorkflowId"));
+				ph.setLppReq(rs.getBoolean("LppReq"));
+				ph.setBounceReq(rs.getBoolean("BounceReq"));
 
 				if (StringUtils.containsIgnoreCase(type, "View")) {
 					ph.setPartnerBankCode(rs.getString("PartnerBankCode"));
@@ -758,10 +760,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", Status, MandateType, EmandateSource, FinBranch, Schdate, LoanType, ImportStatusId");
 		sql.append(", TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
-		sql.append(", WorkflowId, dBStatusId, bankCode, EntityCode");
+		sql.append(", WorkflowId, dBStatusId, bankCode, EntityCode, LppReq, BounceReq");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		jdbcOperations.update(sql.toString(), ps -> {
@@ -798,6 +800,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setLong(index++, ph.getdBStatusId());
 			ps.setString(index++, ph.getBankCode());
 			ps.setString(index, ph.getEntityCode());
+			// Fix me
 		});
 
 		return ph.getId();

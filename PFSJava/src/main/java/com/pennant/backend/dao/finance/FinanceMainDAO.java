@@ -422,4 +422,6 @@ public interface FinanceMainDAO {
 	List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank);
 
 	List<FinanceMain> getFinDetailsByFinType(String finType);
+
+	int updateFinRepayMethod(long finID, String finRepayMethod);
 }

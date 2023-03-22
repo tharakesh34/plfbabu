@@ -1198,7 +1198,7 @@ public class ReceiptCalculator {
 		BigDecimal adviseDue = BigDecimal.ZERO;
 
 		for (ManualAdvise advise : adviseList) {
-			if (fm.isOverdraftTxnChrgReq() && DateUtil.compare(advise.getDueDate(), null) == 0) {
+			if (fm.isOverdraftTxnChrgReq() && rd.isPresentment() && DateUtil.compare(advise.getDueDate(), null) == 0) {
 				continue;
 			}
 			boolean isTdsApplicable = false;
@@ -1214,11 +1214,11 @@ public class ReceiptCalculator {
 					bounceFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
 				}
 
-				if (bounceFeeType != null && bounceFeeType.isTaxApplicable()
-						&& !rd.getReceiptHeader().isExcldTdsCal()) {
+				if (bounceFeeType != null && bounceFeeType.isTaxApplicable()) {
 					taxType = bounceFeeType.getTaxComponent();
+					isTdsApplicable = bounceFeeType.isTdsReq();
 				}
-				isTdsApplicable = bounceFeeType.isTdsReq();
+
 				type = Allocation.BOUNCE;
 				desc = "Bounce Charges";
 				advID = advise.getAdviseID();
@@ -1247,7 +1247,7 @@ public class ReceiptCalculator {
 			allocDetail.setValueDate(advise.getValueDate());
 
 			BigDecimal tdsAmount = BigDecimal.ZERO;
-			if (TDSCalculator.isTDSApplicable(fm, isTdsApplicable)) {
+			if (TDSCalculator.isTDSApplicable(fm, isTdsApplicable) && !rd.getReceiptHeader().isExcldTdsCal()) {
 				BigDecimal taxableAmount = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(taxType)) {
 					taxableAmount = allocDetail.getTotRecv().subtract(allocDetail.getDueGST());
@@ -1333,7 +1333,10 @@ public class ReceiptCalculator {
 			xcessPayable.setReserved(BigDecimal.ZERO);
 			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
 			xcessPayable.setReceiptID(excess.getReceiptID());
-			xcessPayableList.add(xcessPayable);
+			if (xcessPayable.getAvailableAmt().compareTo(BigDecimal.ZERO) > 0
+					|| excess.getReservedAmt().compareTo(BigDecimal.ZERO) > 0) {
+				xcessPayableList.add(xcessPayable);
+			}
 		}
 
 		receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
@@ -1346,7 +1349,7 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
 				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
-				&& fm.istDSApplicable()) {
+				&& fm.isTDSApplicable()) {
 			amount = rd.getIntTdsUnpaid();
 		}
 
@@ -1838,10 +1841,9 @@ public class ReceiptCalculator {
 			tempOdList.add(fod.copyEntity());
 		}
 
-		BigDecimal balAmount = BigDecimal.ZERO;
-		if (rd.isAdjSchedule()) {
-			balAmount = rch.getBalAmount();
-		} else {
+		BigDecimal balAmount = rch.getBalAmount();
+
+		if (!rd.isAdjSchedule()) {
 			balAmount = rch.getReceiptAmount();
 			rch.setBalAmount(balAmount);
 		}

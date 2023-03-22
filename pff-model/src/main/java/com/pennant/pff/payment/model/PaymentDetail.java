@@ -22,7 +22,7 @@
  * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-package com.pennant.backend.model.payment;
+package com.pennant.pff.payment.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -32,6 +32,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -51,8 +52,10 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 
 	private long paymentDetailId = Long.MIN_VALUE;
 	private long paymentId;
+	@XmlElement
 	private String amountType;
 	private String amountTypeName;
+	@XmlElement
 	private BigDecimal amount = BigDecimal.ZERO;
 	private BigDecimal availableAmount = BigDecimal.ZERO;
 	private long referenceId;
@@ -67,11 +70,9 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 	private String feeTypeDesc;
 	private boolean taxApplicable = false;
 	private String taxComponent;
-
 	private Long taxHeaderId;
 	private TaxHeader taxHeader;
-
-	private boolean apiRequest = false; // Refund Uploads
+	private boolean apiRequest = false;
 	private String finSource;
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal prvGST = BigDecimal.ZERO;
@@ -81,18 +82,22 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 	private boolean expand;
 	private boolean collapse;
 	private Long autoRefundID;
+	private String sourceId;
+	@XmlElement
+	private String paymentType;
 
 	public PaymentDetail() {
 		super();
 	}
 
 	public PaymentDetail(long id) {
+
 		super();
 		this.setId(id);
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("amountTypeName");
 		excludeFields.add("referenceIdName");
 		excludeFields.add("availableAmount");
@@ -113,8 +118,14 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 		excludeFields.add("expand");
 		excludeFields.add("collapse");
 		excludeFields.add("autoRefundID");
+		excludeFields.add("sourceId");
+		excludeFields.add("paymentType");
 
 		return excludeFields;
+	}
+
+	public boolean isNew() {
+		return isNewRecord();
 	}
 
 	public long getId() {
@@ -343,6 +354,22 @@ public class PaymentDetail extends AbstractWorkflowEntity {
 
 	public void setAutoRefundID(Long autoRefundID) {
 		this.autoRefundID = autoRefundID;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 
 }

@@ -806,6 +806,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 									detail.isFieldMandatory(), false));
 						}
 
+						if (currencyBox.getActualValue() != null) {
+							currencyBox.setConstraint(new PTDecimalValidator(detail.getFieldLabel(), getCcyFormat(),
+									detail.isFieldMandatory(), false, detail.getFieldMinValue(),
+									detail.getFieldMaxValue()));
+						}
+
 						values.put(detail.getFieldName(),
 								PennantApplicationUtil.unFormateAmount(currencyBox.getActualValue(), ccyFormat));
 					} catch (WrongValueException we) {

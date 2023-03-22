@@ -736,6 +736,13 @@ public class AccrualService extends ServiceHelper {
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
 
 		aeAmountCodes.setNpa(finEODEvent.isNpaStage());
+		BigDecimal advInst = finExcessAmountDAO.getBalAdvIntAmt(fm.getFinReference());
+		if (advInst.compareTo(aeAmountCodes.getdAmz()) > 0 && advInst.compareTo(BigDecimal.ZERO) > 0) {
+			aeAmountCodes.setAdvInst(aeAmountCodes.getdAmz());
+			aeAmountCodes.setIntAdv(true);
+		} else {
+			aeAmountCodes.setAdvInst(advInst.compareTo(BigDecimal.ZERO) > 0 ? advInst : BigDecimal.ZERO);
+		}
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);

@@ -150,6 +150,8 @@
 												<listheader label="${c:l('listheader_PresentmentDetail_AdvanceAmount.label')}" hflex="min" />
 												<listheader label="${c:l('listheader_PresentmentDetail_Amount.label')}" sort="auto(presentmentAmt)" hflex="min" />
 												<listheader label="${c:l('listheader_PresentmentDetail_Reference.label')}" hflex="min" />
+												<listheader id="listHeader_Include_BankName" label="${c:l('listheader_PresentmentDetail_BankName.label')}" hflex="min"  visible="false"/>
+	                                            <listheader id="listHeader_Include_PrvsBatchNumb" label="${c:l('listheader_PresentmentDetail_PreviousBatchNumber.label')}" hflex="min"  visible="false"/>
 												<listheader label="${c:l('listheader_PresentmentDetail_PaymentMode.label')}" hflex="min" />
 												<listheader label="${c:l('listheader_PresentmentDetail_ExcludeStatus.label')}" hflex="min" align="center" />
 												<listheader id="listheader_PresentmentDetail_Description" visible="false"

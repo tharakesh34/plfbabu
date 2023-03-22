@@ -301,7 +301,25 @@ public class ImplementationConstants {
 		LOAN_PURPOSE_MANDATORY = getValueAsBoolean("LOAN_PURPOSE_MANDATORY", false);
 		GUARANTOR_EMAIL_MANDATORY = getValueAsBoolean("GUARANTOR_EMAIL_MANDATORY", true);
 		ALLOW_IMD_WITHOUT_REALIZED = getValueAsBoolean("ALLOW_IMD_WITHOUT_REALIZED", false);
-		
+
+		SOA_INSTALlEMENT_BIFURCATION = getValueAsBoolean("SOA_INSTALlEMENT_BIFURCATION", false);
+		AUTO_KNOCK_OFF_ON_DUE_DATE = getValueAsBoolean("AUTO_KNOCK_OFF_ON_DUE_DATE", true);
+		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", true);
+		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", true);
+		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", false);
+		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
+		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
+		AUTO_DOWNLOAD = getValueAsBoolean("AUTO_DOWNLOAD", false);
+		AUTO_UPLOAD = getValueAsBoolean("AUTO_UPLOAD", false);
+		ALLOW_CO_APP = getValueAsBoolean("ALLOW_CO_APP", false);
+		PARTNER_BANK_WISE_EXTARCTION = getValueAsBoolean("PARTNER_BANK_WISE_EXTARCTION", false);
+		FRQ_DES_CHANGE_ON_EXTRACTION = getValueAsBoolean("FRQ_DES_CHANGE_ON_EXTRACTION", false);
+		PARTNER_BANK_REQ = getValueAsBoolean("PARTNER_BANK_REQ", false);
+		SWAP_EFFECTIVE_DATE_DEFAULT = getValueAsBoolean("SWAP_EFFECTIVE_DATE_DEFAULT", false);
+		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
+		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
+		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
+
 		setVerificationConstants();
 	}
 
@@ -631,6 +649,89 @@ public class ImplementationConstants {
 	public static boolean CUSTOMIZED_SOAREPORT;
 	public static boolean COLLECTION_DOWNLOAD_REQ;
 	public static boolean AUTO_WAIVER_REQUIRED_FROMSCREEN;
+	public static boolean AUTO_KNOCK_OFF_ON_DUE_DATE;
+	/*
+	 * In Transactions Details “Instalment Due” & “Receipt” Entries to be reflected with bifurcation “Principal” &
+	 * “Interest” :: true for AXIS
+	 */
+	public static boolean SOA_INSTALlEMENT_BIFURCATION;
+
+	/**
+	 * Feature extension to create the receipts on due date or response upload, default value is true.
+	 */
+	public static boolean DUE_DATE_RECEIPT_CREATION;
+
+	/**
+	 * Feature extension to enable or disable auto extraction.
+	 */
+	public static boolean AUTO_EXTRACTION;
+
+	/**
+	 * Feature extension to enable or disable auto approval.
+	 */
+	public static boolean AUTO_APPROVAL;
+
+	/**
+	 * Feature extension to allow the mandate approval even the loan in origination.
+	 */
+	public static boolean APPROVE_ON_LOAN_ORG;
+
+	/**
+	 * Feature extension whether the Entity-Code is mandatory or not for mandate response file upload. .
+	 */
+	public static boolean UPLOAD_ENITITY_CODE_MANDATORY;
+
+	/**
+	 * Feature extension for mandate registration request auto download
+	 */
+	public static boolean AUTO_DOWNLOAD;
+
+	/**
+	 * Feature extension for mandate registration response auto upload.
+	 */
+	public static boolean AUTO_UPLOAD;
+
+	/**
+	 * Feature extension to allow Co-Applicants for mandate creation in loan queue.
+	 */
+	public static boolean ALLOW_CO_APP;
+
+	/**
+	 * Feature extension to extract the registration file against to partner bank wise
+	 */
+	public static boolean PARTNER_BANK_WISE_EXTARCTION;
+
+	/**
+	 * Feature extension to change the frequency description in registration file
+	 */
+	public static boolean FRQ_DES_CHANGE_ON_EXTRACTION;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean PARTNER_BANK_REQ;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean SWAP_EFFECTIVE_DATE_DEFAULT;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean ACCOUNT_DETAILS_READONLY;
+
+	/**
+	 * Feature extension to for Consecutive Hold Reason
+	 */
+	public static String CONSECUTIVE_HOLD_REASON = "CONSECUTIVE BOUNCE";
+
+	public static boolean ALLOW_CONSECUTIVE_BOUNCE;
+
+	/**
+	 * Feature Extension to no mandate the expiry date
+	 */
+	public static boolean EXPIRY_DATE_MANDATORY;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

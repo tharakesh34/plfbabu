@@ -66,8 +66,6 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
@@ -86,6 +84,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -205,27 +205,31 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	@Override
 	public PaymentHeader getPaymentHeader(long paymentId) {
 		PaymentHeader ph = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
-		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentId, "_View");
 
-		ph.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(ph.getFinID()));
-		ph.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(ph.getFinID(), false));
+		if (ph != null) {
+			List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentId, "_View");
 
-		if (list != null) {
-			ph.setPaymentDetailList(list);
-			for (PaymentDetail pd : list) {
-				if (pd.getTaxHeaderId() != null) {
-					pd.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(pd.getTaxHeaderId(), "_View"));
-				}
-				if (pd.getTaxHeader() != null) {
-					pd.getTaxHeader().setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(pd.getTaxHeaderId(), "_View"));
+			ph.setOdAgainstLoan(finOverDueService.getDueAgnistLoan(ph.getFinID()));
+			ph.setOdAgainstCustomer(finOverDueService.getDueAgnistCustomer(ph.getFinID(), false));
+
+			if (list != null) {
+				ph.setPaymentDetailList(list);
+				for (PaymentDetail pd : list) {
+					if (pd.getTaxHeaderId() != null) {
+						pd.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(pd.getTaxHeaderId(), "_View"));
+					}
+					if (pd.getTaxHeader() != null) {
+						pd.getTaxHeader()
+								.setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(pd.getTaxHeaderId(), "_View"));
+					}
 				}
 			}
-		}
 
-		PaymentInstruction paymentInstruction = this.paymentInstructionService
-				.getPaymentInstructionDetails(ph.getPaymentId(), "_View");
-		if (paymentInstruction != null) {
-			ph.setPaymentInstruction(paymentInstruction);
+			PaymentInstruction paymentInstruction = this.paymentInstructionService
+					.getPaymentInstructionDetails(ph.getPaymentId(), "_View");
+			if (paymentInstruction != null) {
+				ph.setPaymentInstruction(paymentInstruction);
+			}
 		}
 		return ph;
 	}
@@ -301,7 +305,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				paymentHeader.setRecordType("");
-				paymentHeaderDAO.update(paymentHeader, TableType.MAIN_TAB);
+				if (PennantConstants.FINSOURCE_ID_API.equals(paymentHeader.getSourceId())) {
+					paymentHeaderDAO.updateTransactionRef(paymentHeader.getPaymentId(),
+							paymentHeader.getPaymentInstruction().getTransactionRef());
+				} else {
+					paymentHeaderDAO.update(paymentHeader, TableType.MAIN_TAB);
+				}
 			}
 
 			// PaymentDetails
@@ -334,7 +343,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentHeader.getFinSource())
 				&& !StringUtils.equals(FinanceConstants.FEE_REFUND_APPROVAL, paymentHeader.getFinSource())
 				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, paymentHeader.getFinSource())
-				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentHeader.getFinSource())) {
+				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, paymentHeader.getFinSource())
+				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API, paymentHeader.getSourceId())) {
 			auditHeader
 					.setAuditDetails(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
 			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentHeader(), paymentHeader.getExcludeFields());
@@ -566,12 +576,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		// PaymentDetails
-		if (ph.getPaymentDetailList() != null && !ph.getPaymentDetailList().isEmpty()) {
+		if (ph.getPaymentDetailList() != null && !ph.getPaymentDetailList().isEmpty()
+				&& (!StringUtils.equals(ph.getSourceId(), PennantConstants.FINSOURCE_ID_API))) {
 			auditDetails.addAll(this.paymentDetailService.delete(ph.getPaymentDetailList(), tableType, auditTranType,
 					ph.getPaymentId()));
 		}
 		// PaymentInstructions
-		if (ph.getPaymentInstruction() != null) {
+		if (ph.getPaymentInstruction() != null
+				&& !StringUtils.equals(ph.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 			auditDetails.addAll(this.paymentInstructionService.delete(ph.getPaymentInstruction(), tableType,
 					auditTranType, ph.getPaymentId()));
 		}

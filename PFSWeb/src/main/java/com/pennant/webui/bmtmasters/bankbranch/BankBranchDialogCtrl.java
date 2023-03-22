@@ -536,6 +536,15 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_BankBranchDialog_AddOfBranch.value"),
 							PennantRegularExpressions.REGEX_ADDRESS, false));
 		}
+
+		// MICR
+		Object dataObject = bankCode.getObject();
+		BankDetail details = (BankDetail) dataObject;
+
+		if (details.isAllowMultipleIFSC() == true) {
+			setMICRValidation(details.isAllowMultipleIFSC());
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -553,10 +562,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	private void doSetLOVValidation() {
 	}
-
 
 	private void doRemoveLOVValidation() {
 	}
@@ -895,8 +902,15 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 				filters[0] = new Filter("bankCode", details.getBankCode(), Filter.OP_EQUAL);
 				parentBranch.setFilters(filters);
 
-				this.bankBranch.setAllowMultipleIFSC(details.isAllowMultipleIFSC());
-				setMICRValidation(details.isAllowMultipleIFSC());
+				/*
+				 * this.bankBranch.setAllowMultipleIFSC(details.isAllowMultipleIFSC());
+				 * setMICRValidation(details.isAllowMultipleIFSC());
+				 * 
+				 */
+				if (details.isAllowMultipleIFSC()) {
+					this.space_MICR.setSclass("mandatory");
+				}
+
 				return;
 			}
 		}

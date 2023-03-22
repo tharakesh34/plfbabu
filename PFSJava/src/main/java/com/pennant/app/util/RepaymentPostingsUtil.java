@@ -1428,21 +1428,21 @@ public class RepaymentPostingsUtil {
 				amountCodes
 						.setUnAccruedPaid((fpd.getTotalPftSchd().add(fpd.getTdPftCpz())).subtract(fpd.getPrvMthAmz()));
 			}
+		}
 
-			if (ImplementationConstants.ALLOW_NPA) {
-				long finID = fm.getFinID();
+		if (ImplementationConstants.ALLOW_NPA) {
+			long finID = fm.getFinID();
 
-				amountCodes.setNpa(assetClassificationService.isEffNpaStage(finID));
+			amountCodes.setNpa(assetClassificationService.isEffNpaStage(finID));
 
-				if (amountCodes.isNpa()) {
-					amountCodes.setRpPftPr(amountCodes.getRpPft());
-					amountCodes.setRpTotPr(amountCodes.getRpTot());
-					amountCodes.setPriPr(amountCodes.getPri());
-					amountCodes.setPriSPr(amountCodes.getPriS());
-				} else {
-					amountCodes.setPriPr(BigDecimal.ZERO);
-					amountCodes.setPriSPr(BigDecimal.ZERO);
-				}
+			if (amountCodes.isNpa()) {
+				amountCodes.setRpPftPr(amountCodes.getRpPft());
+				amountCodes.setRpTotPr(amountCodes.getRpTot());
+				amountCodes.setPriPr(amountCodes.getPri());
+				amountCodes.setPriSPr(amountCodes.getPriS());
+			} else {
+				amountCodes.setPriPr(BigDecimal.ZERO);
+				amountCodes.setPriSPr(BigDecimal.ZERO);
 			}
 		}
 
@@ -1667,7 +1667,22 @@ public class RepaymentPostingsUtil {
 		String finReference = fm.getFinReference();
 
 		RestructureDetail rd = financeScheduleDetailDAO.getRestructureDetail(finReference);
-		Date resStartDate = fm.getRestructureDate();
+		Date resStartDate = rd.getRestructureDate();
+
+		Date resEndDate = null;
+		if (rd.getPriHldEndDate() != null) {
+			resEndDate = rd.getPriHldEndDate();
+		} else {
+			resEndDate = rd.getEmiHldEndDate();
+		}
+
+		if (resEndDate == null) {
+			resEndDate = fm.getAppDate();
+		}
+
+		if (DateUtil.compare(resEndDate, fm.getAppDate()) > 0) {
+			resEndDate = fm.getAppDate();
+		}
 
 		if (rd != null) {
 			resStartDate = rd.getRestructureDate();
@@ -1677,11 +1692,11 @@ public class RepaymentPostingsUtil {
 		Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<>();
 
 		for (FinanceScheduleDetail curSchd : oldSchedules) {
-			if (curSchd.getSchDate().compareTo(fm.getAppDate()) > 0) {
+			if (curSchd.getSchDate().compareTo(resEndDate) > 0) {
 				break;
 			}
 
-			if (DateUtil.compare(curSchd.getSchDate(), resStartDate) > 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), resStartDate) >= 0) {
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 					instDueDates.add(curSchd.getSchDate());
 					scheduleMap.put(curSchd.getSchDate(), curSchd);
@@ -1712,9 +1727,11 @@ public class RepaymentPostingsUtil {
 
 		monthStartDate = DateUtil.getMonthStart(fm.getAppDate());
 
-		if (!amzReversalDates.contains(monthStartDate)) {
-			processAmzReversal(fm, monthStartDate);
-			amzReversalDates.add(monthStartDate);
+		if (amzReversalDates.size() > 0) {
+			if (!amzReversalDates.contains(monthStartDate)) {
+				processAmzReversal(fm, monthStartDate);
+				amzReversalDates.add(monthStartDate);
+			}
 		}
 
 		List<Date> repostDatelist = new ArrayList<>();

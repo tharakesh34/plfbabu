@@ -23,8 +23,6 @@ public class AssetClassSetupListItemRenderer implements ListitemRenderer<AssetCl
 		Listcell lc;
 		lc = new Listcell(assetClassSetupHeader.getEntityCode());
 		lc.setParent(item);
-		lc = new Listcell(assetClassSetupHeader.getRepayHierarchy());
-		lc.setParent(item);
 		lc = new Listcell(assetClassSetupHeader.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(assetClassSetupHeader.getRecordType()));

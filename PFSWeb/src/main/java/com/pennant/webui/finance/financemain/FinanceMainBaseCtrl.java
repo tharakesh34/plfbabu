@@ -2123,7 +2123,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (StringUtils.isEmpty(moduleDefiner)) {
-			if (this.tDSApplicable.isChecked() || onLoad) {
+			if (this.tDSApplicable.isChecked() && isTabVisible(StageTabConstants.TANDetails)) {
 				appendTANDetailsTab(onLoad);
 				if (onLoad && !this.tDSApplicable.isChecked()) {
 					Tab tanTab = getTab(AssetConstants.UNIQUE_ID_TAN_DETAILS);
@@ -6735,6 +6735,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!this.extnsnODGraceDays.isReadonly()) {
 				this.extnsnODGraceDays.setConstraint(new PTNumberValidator(
 						Labels.getLabel("label_FinanceTypeDialog_ODGraceDays.value"), false, false));
+			}
+
+			if (this.oDTxnCharge.isVisible()) {
+				if (FinanceConstants.PERCENTAGE.equals(getComboboxValue(this.oDCalculatedCharge))) {
+					this.oDAmtOrPercentage.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_FinanceMainDialog_ODAmtOrPercentage.value"), 2, true, false, 100));
+				}
 			}
 		}
 
@@ -15115,7 +15122,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									new String[] { Labels.getLabel("FinanceMainDialog_ODAmtOrPercentage.value") }));
 						}
 						if (this.oDAmtOrPercentage.getValue().compareTo(BigDecimal.ZERO) < 0) {
-							throw new WrongValueException(this.oDChargeAmtOrPerc,
+							throw new WrongValueException(this.oDAmtOrPercentage,
 									Labels.getLabel("PERCENT_NOTNEGATIVE_LABEL", new String[] {
 											Labels.getLabel("FinanceMainDialog_ODAmtOrPercentage.value"), "0" }));
 						}
@@ -16838,7 +16845,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		 */
 
 		if (StringUtils.equals(financeType.getProductCategory(), FinanceConstants.PRODUCT_ODFACILITY)) {
-			// readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
+			this.finAssetValue.setReadonly(isReadOnly("FinanceMainDialog_finAssetValue"));
 		}
 
 		this.btnSearchCustCIF.setVisible(!isReadOnly("FinanceMainDialog_custID"));

@@ -169,7 +169,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>(1);
 	private Covenant covenant;
 	@XmlElement(name = "covenantDetails")
-	private List<Covenant> covenants;
+	private List<Covenant> covenants = new ArrayList<>();
 	@XmlElement(name = "customer")
 	private CustomerDetails customerDetails;
 	private StorageDetail storageDetail;

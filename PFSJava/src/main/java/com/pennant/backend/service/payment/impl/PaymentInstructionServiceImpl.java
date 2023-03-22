@@ -24,13 +24,16 @@
  */
 package com.pennant.backend.service.payment.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -39,13 +42,17 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
 import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -395,6 +402,64 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
+	}
+
+	@Override
+	public void getActualGST(PaymentDetail detail, TaxAmountSplit taxSplit) {
+		if (taxSplit == null) {
+			return;
+		}
+
+		if (detail.getAdviseAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
+		ManualAdvise ma = detail.getManualAdvise();
+
+		if (ma == null) {
+			return;
+		}
+
+		TaxAmountSplit adviseSplit = null;
+
+		Map<String, BigDecimal> taxPercMap = GSTCalculator.getTaxPercentages(ma.getFinID());
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
+			adviseSplit = GSTCalculator.getExclusiveGST(detail.getAdviseAmount(), taxPercMap);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(detail.getTaxComponent())) {
+			adviseSplit = GSTCalculator.getInclusiveGST(detail.getAdviseAmount(), taxPercMap);
+		}
+
+		BigDecimal diffGST = BigDecimal.ZERO;
+
+		BigDecimal payableGST = taxSplit.gettGST().add(detail.getPrvGST());
+
+		if (payableGST.compareTo(adviseSplit.gettGST()) > 0) {
+			diffGST = payableGST.subtract(adviseSplit.gettGST());
+			taxSplit.settGST(taxSplit.gettGST().subtract(diffGST));
+		}
+
+		if (diffGST.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+
+		BigDecimal prvCGst = ma.getPaidCGST().add(ma.getWaivedCGST());
+		BigDecimal prvSGst = ma.getPaidSGST().add(ma.getWaivedSGST());
+		BigDecimal prvIGst = ma.getPaidIGST().add(ma.getWaivedIGST());
+		BigDecimal prvUGst = ma.getPaidUGST().add(ma.getWaivedUGST());
+		BigDecimal prvCess = ma.getPaidCESS().add(ma.getWaivedCESS());
+
+		BigDecimal diffCGST = taxSplit.getcGST().add(prvCGst).subtract(adviseSplit.getcGST());
+		BigDecimal diffSGST = taxSplit.getsGST().add(prvSGst).subtract(adviseSplit.getsGST());
+		BigDecimal diffIGST = taxSplit.getiGST().add(prvIGst).subtract(adviseSplit.getiGST());
+		BigDecimal diffUGST = taxSplit.getuGST().add(prvUGst).subtract(adviseSplit.getuGST());
+		BigDecimal diffCESS = taxSplit.getCess().add(prvCess).subtract(adviseSplit.getCess());
+
+		taxSplit.setcGST(taxSplit.getcGST().subtract(diffCGST));
+		taxSplit.setsGST(taxSplit.getsGST().subtract(diffSGST));
+		taxSplit.setiGST(taxSplit.getiGST().subtract(diffIGST));
+		taxSplit.setuGST(taxSplit.getuGST().subtract(diffUGST));
+		taxSplit.setCess(taxSplit.getCess().subtract(diffCESS));
 	}
 
 	@Override

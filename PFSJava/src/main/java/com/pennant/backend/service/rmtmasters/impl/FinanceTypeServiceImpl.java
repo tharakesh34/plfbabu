@@ -232,8 +232,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		// FinTypePartnerBank
 		if (financeType.getFinTypePartnerBankList() != null && financeType.getFinTypePartnerBankList().size() > 0) {
 			List<AuditDetail> partnerBankDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
-			partnerBankDetails = this.finTypePartnerBankService.processDetails(partnerBankDetails,
-					tableType1);
+			partnerBankDetails = this.finTypePartnerBankService.processDetails(partnerBankDetails, tableType1);
 			auditDetails.addAll(partnerBankDetails);
 		}
 
@@ -345,8 +344,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	public FinanceType getOrgFinanceTypeById(String finType) {
 		FinanceType ft = financeTypeDAO.getOrgFinanceTypeByID(finType, "_ORGView");
 		if (ft.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
-			ft.setFinTypePartnerBankList(
-					finTypePartnerBankService.getPartnerBanks(ft.getFinType(), TableType.AVIEW));
+			ft.setFinTypePartnerBankList(finTypePartnerBankService.getPartnerBanks(ft.getFinType(), TableType.AVIEW));
 		}
 		return ft;
 	}
@@ -484,8 +482,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				List<AuditDetail> finTypePartnerBankDetails = financeType.getAuditDetailMap().get("FinTypePartnerBank");
 
 				if (finTypePartnerBankDetails != null && !finTypePartnerBankDetails.isEmpty()) {
-					finTypePartnerBankDetails = this.finTypePartnerBankService
-							.processDetails(finTypePartnerBankDetails, TableType.MAIN_TAB);
+					finTypePartnerBankDetails = this.finTypePartnerBankService.processDetails(finTypePartnerBankDetails,
+							TableType.MAIN_TAB);
 					auditDetails.addAll(finTypePartnerBankDetails);
 				}
 			}
@@ -811,7 +809,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		String restructFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_RESTRUCT_CPZ);
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(restructFeeCode);
 
-		if (feeTypeId != null) {
+		if (feeTypeId != null && !ProductUtil.isCD(financeType) && !ProductUtil.isOverDraft(financeType)) {
 			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
 				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
 				if (!exist) {
@@ -1180,8 +1178,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 				finTypePartnerBank.setNextTaskId(financeType.getNextTaskId());
 			}
 
-			auditDetailMap.put("FinTypePartnerBank", finTypePartnerBankService.setAuditData(
-					financeType.getFinTypePartnerBankList(), auditTranType, method));
+			auditDetailMap.put("FinTypePartnerBank", finTypePartnerBankService
+					.setAuditData(financeType.getFinTypePartnerBankList(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinTypePartnerBank"));
 		}
 

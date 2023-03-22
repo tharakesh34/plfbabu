@@ -183,9 +183,9 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		sql.append(", NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac");
 		sql.append(", ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DerivedTxnRef)");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DerivedTxnRef, TdsAdjReq)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -231,7 +231,8 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			ps.setString(index++, jve.getNextTaskId());
 			ps.setString(index++, jve.getRecordType());
 			ps.setLong(index++, jve.getWorkflowId());
-			ps.setLong(index, jve.getDerivedTxnRef());
+			ps.setLong(index++, jve.getDerivedTxnRef());
+			ps.setBoolean(index, jve.isTDSAdjReq());
 		});
 
 		return jve.getId();
@@ -247,7 +248,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		sql.append(", ExchRate_Ac = ?, TxnAmount_Batch = ?, TxnAmount_Ac = ?, ModifiedFlag = ?, DeletedFlag = ?");
 		sql.append(", ValidationStatus = ?, PostingStatus = ?, ExternalAccount = ?, LinkedTranId = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
-		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?, TdsAdjReq = ?");
 		sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -291,6 +292,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			ps.setString(index++, jve.getNextTaskId());
 			ps.setString(index++, jve.getRecordType());
 			ps.setLong(index++, jve.getWorkflowId());
+			ps.setBoolean(index++, jve.isTDSAdjReq());
 
 			ps.setLong(index++, jve.getBatchReference());
 			ps.setLong(index++, jve.getTxnReference());
@@ -648,7 +650,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		sql.append(" p.FileName, p.BatchReference, p.AcEntryRef, p.HostSeqNo, p.Account, p.AcType");
 		sql.append(", p.AccountName, p.TxnCCy, p.TxnEntry, p.AccCCy, p.TxnCode, p.PostingDate");
 		sql.append(", p.ValueDate, p.TxnAmount, p.TxnReference, p.NarrLine1, p.NarrLine2, p.NarrLine3");
-		sql.append(", p.NarrLine4, p.ExchRate_Batch, p.ExchRate_Ac, p.TxnAmount_Batch, p.TxnAmount_Ac");
+		sql.append(", p.NarrLine4, TdsAdjReq, p.ExchRate_Batch, p.ExchRate_Ac, p.TxnAmount_Batch, p.TxnAmount_Ac");
 		sql.append(", p.ModifiedFlag, p.DeletedFlag, p.ValidationStatus, p.PostingStatus, p.ExternalAccount");
 		sql.append(", p.LinkedTranId, p.LastMntBy, p.LastMntOn, p.RecordStatus, p.RoleCode, p.NextRoleCode");
 		sql.append(", p.TaskId, p.TDSAdjReq, p.NextTaskId, p.RecordType, p.WorkflowId, am.HostAccount GlCode");
@@ -694,6 +696,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 			jve.setNarrLine2(rs.getString("NarrLine2"));
 			jve.setNarrLine3(rs.getString("NarrLine3"));
 			jve.setNarrLine4(rs.getString("NarrLine4"));
+			jve.setTDSAdjReq(rs.getBoolean("TdsAdjReq"));
 			jve.setExchRate_Batch(rs.getBigDecimal("ExchRate_Batch"));
 			jve.setExchRate_Ac(rs.getBigDecimal("ExchRate_Ac"));
 			jve.setTxnAmount_Batch(rs.getBigDecimal("TxnAmount_Batch"));

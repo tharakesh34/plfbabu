@@ -628,4 +628,18 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, bankCode) > 0;
 	}
+
+	@Override
+	public long getpartnerbankid(String partnerbankCode, String entity) {
+		String sql = "Select PartnerBankId From PartnerBanks Where PartnerbankCode = ? and Entity = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, partnerbankCode, entity);
+		} catch (EmptyResultDataAccessException dae) {
+			//
+		}
+		return 0;
+	}
 }

@@ -412,13 +412,13 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
 			for (FinanceScheduleDetail fsd : finSchdDetails) {
-				if (fsd.getPresentmentId() > 0) {
+				if (fsd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| fsd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 || fsd.getPresentmentId() > 0) {
 					dates.add(fsd.getSchDate());
-
 				}
 
 				for (Date lastPaidDate : dates) {
-					if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) <= 0) {
+					if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) < 0) {
 						if (remarks.length() > 0) {
 							remarks.append(",");
 						}
@@ -439,12 +439,6 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			error = " RateChange To Date should be after ";
 			if (rcu.getToDate() != null) {
-				for (FinanceScheduleDetail fsd : schedules) {
-					if (fsd.getPresentmentId() > 0) {
-						dates.add(fsd.getSchDate());
-					}
-				}
-
 				for (Date lastPaidDate : dates) {
 					if (DateUtil.compare(rcu.getToDate(), lastPaidDate) <= 0) {
 						if (remarks.length() > 0) {

@@ -10,17 +10,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
@@ -40,6 +43,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private LovFieldDetailService lovFieldDetailService;
 	private BankDetailDAO bankDetailDAO;
 	private BankBranchDAO bankBranchDAO;
+	private BeneficiaryDAO beneficiaryDAO;
 
 	/**
 	 * getBankInfoByCustomerId fetch the details by using CustomerBankInfoDAO's getBankInfoByCustomer method . with
@@ -180,6 +184,16 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
 
+		if (customerBankInfo.isAddToBenficiary()) {
+			Beneficiary beneficiary = new Beneficiary();
+			beneficiary.setCustID(customerBankInfo.getCustID());
+			beneficiary.setBankBranchID(customerBankInfo.getBankBranchID());
+			beneficiary.setAccNumber(customerBankInfo.getAccountNumber());
+			beneficiary.setAccHolderName(customerBankInfo.getAccountHolderName());
+			beneficiary.setPhoneNumber(customerBankInfo.getPhoneNumber());
+			beneficiaryDAO.save(beneficiary, "");
+		}
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(customerBankInfo);
@@ -234,6 +248,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 					valueParm[0] = "bankBranchID";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
 				}
 				BankBranch bb = bankBranchDAO.getBankBrachByIFSC(customerBankInfo.getiFSC(), "_AView");
 				if ((customerBankInfo.getBankBranchID().equals(bb.getBankBranchID()))
@@ -439,8 +454,14 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		this.bankDetailDAO = bankDetailDAO;
 	}
 
+	@Autowired
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	@Autowired
+	public void setBeneficiaryDAO(BeneficiaryDAO beneficiaryDAO) {
+		this.beneficiaryDAO = beneficiaryDAO;
 	}
 
 }

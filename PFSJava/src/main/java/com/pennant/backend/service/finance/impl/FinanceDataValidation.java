@@ -1571,15 +1571,17 @@ public class FinanceDataValidation {
 			errorDetails.add(error);
 		}
 
-		String custCIF = finReceiptHeaderDAO.getCustCIF(financeReference);
+		if (StringUtils.isNotEmpty(financeReference)) {
+			String custCIF = finReceiptHeaderDAO.getCustCIF(financeReference);
 
-		if (custCIF != null && !custCIF.equals(finMain.getLovDescCustCIF())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Cif: " + finMain.getLovDescCustCIF() + " with External Reference: " + financeReference;
-			valueParm[1] = "Combination is Invalid";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
-			schdData.setErrorDetails(errorDetails);
-			return schdData;
+			if (custCIF != null && !custCIF.equals(finMain.getLovDescCustCIF())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Cif: " + finMain.getLovDescCustCIF() + " with External Reference: " + financeReference;
+				valueParm[1] = "Combination is Invalid";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+				schdData.setErrorDetails(errorDetails);
+				return schdData;
+			}
 		}
 
 		// Temp comment
@@ -3101,13 +3103,22 @@ public class FinanceDataValidation {
 							int accMinLength = bankdetail.getMinAccNoLength();
 
 							if (length < accMinLength || length > accNoLength) {
-								String[] valueParm = new String[3];
-								valueParm[0] = "accountNo ";
-								valueParm[1] = String.valueOf(accMinLength) + " characters";
-								valueParm[2] = String.valueOf(accNoLength) + " characters";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", valueParm)));
+								if (accMinLength == accNoLength) {
+									String[] valueParm = new String[2];
+									valueParm[0] = "accountNo ";
+									valueParm[1] = String.valueOf(accNoLength) + " characters";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
+									return errorDetails;
+								} else {
+									String[] valueParm = new String[3];
+									valueParm[0] = "accountNo ";
+									valueParm[1] = String.valueOf(accMinLength) + " characters";
+									valueParm[2] = String.valueOf(accNoLength) + " characters";
+									errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("BNK001", valueParm)));
 
-								return errorDetails;
+									return errorDetails;
+								}
+
 							}
 						}
 					}

@@ -28,6 +28,8 @@ public class EffAssetClassificationPartition implements Partitioner {
 
 		Map<String, ExecutionContext> partitionData = new HashMap<>();
 
+		assetClassificationService.handleFailures();
+
 		long queueCount = assetClassificationService.getQueueCount();
 
 		if (queueCount == 0) {

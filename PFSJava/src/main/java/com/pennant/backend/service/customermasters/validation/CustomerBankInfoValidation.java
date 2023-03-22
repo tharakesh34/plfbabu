@@ -132,6 +132,16 @@ public class CustomerBankInfoValidation {
 		if (count != 0) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 		}
+
+		if (customerBankInfo.getBankBranchID() == null) {
+			String[] valParm = new String[2];
+			valParm[0] = "IFSC Code";
+			valParm[1] = customerBankInfo.getiFSC();
+			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+		}
+
 		auditDetail.setErrorDetail(screenValidations(customerBankInfo));
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

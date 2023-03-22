@@ -207,6 +207,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				req.setAdditionalField1(str);
 			}
 
+			req.setPartnerBankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
 			req.setPaymentDetail1(DISB_FI_EMAIL);
 			req.setHeaderId(requestData.getHeaderId());
 			req.setRespBatchId(0L);

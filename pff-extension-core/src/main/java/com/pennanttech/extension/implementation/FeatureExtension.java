@@ -147,6 +147,14 @@ public class FeatureExtension implements IFeatureExtension {
 
 		defaultExtensions.put("COLLECTION_DOWNLOAD_REQ", false);
 
+		defaultExtensions.put("ALLOW_TDS_CERTIFICATE_ADJUSTMENT", true);
+
+		defaultExtensions.put("ALLOW_TDS_PERC_BASED_ON_YEAR", true);
+
+		defaultExtensions.put("PENALTY_CALC_ON_REPRESENTATION", true);
+
+		defaultExtensions.put("IMD_EXT_REFERENCE", true);
+
 		customerExtensions();
 
 		mandateExtensaions();

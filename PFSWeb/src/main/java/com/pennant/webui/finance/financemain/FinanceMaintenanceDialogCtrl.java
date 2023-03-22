@@ -737,7 +737,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Append Extended Field Details
 		appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
 
-		if (aFinanceMain.istDSApplicable() && FinServiceEvent.ORG.equals(moduleDefiner)) {
+		if (aFinanceMain.isTDSApplicable() && FinServiceEvent.BASICMAINTAIN.equals(moduleDefiner)) {
 			appendTanDetailTab();
 		}
 

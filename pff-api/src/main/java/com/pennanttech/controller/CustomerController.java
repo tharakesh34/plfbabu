@@ -17,6 +17,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.APIHeader;
@@ -26,6 +27,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
+import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.customermasters.DirectorDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
@@ -33,6 +35,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.CustCardSalesDetails;
@@ -48,6 +51,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.customermasters.CustomerGSTDetails;
+import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
@@ -65,6 +69,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
+import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -106,6 +111,8 @@ public class CustomerController extends GenericService<Object> {
 	private DMSService dMSService;
 	private CustomerIncomeDAO customerIncomeDAO;
 	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
+	private BankBranchService bankBranchService;
+	private CustomerGroupDAO customerGroupDAO;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -132,6 +139,29 @@ public class CustomerController extends GenericService<Object> {
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
+
+			List<CustomerBankInfo> custBankinfo = customerDetails.getCustomerBankInfoList();
+			if (CollectionUtils.isNotEmpty(custBankinfo)) {
+				for (CustomerBankInfo customerBankInfo : custBankinfo) {
+					String ifsc = customerBankInfo.getiFSC();
+					String bankName = customerBankInfo.getBankName();
+					BankBranch bankBranch = bankBranchService.getBankBrachDetails(ifsc, bankName);
+					if (bankBranch != null) {
+						customerBankInfo.setBankBranchID(bankBranch.getBankBranchID());
+						customerBankInfo.setBankBranch(bankBranch.getBranchDesc());
+					}
+				}
+			}
+			if (StringUtils.isNotEmpty(String.valueOf(customer.getCustGroupID())) && customer.getCustGroupID() != 0) {
+				CustomerGroup cg = customerGroupDAO.getCustomerGroupByCode(String.valueOf(customer.getCustGroupID()),
+						"");
+				if (cg != null) {
+					customer.setCustGroupID(cg.getCustGrpID());
+					customer.setLovDescCustGroupCode(cg.getCustGrpCode());
+					customer.setLovDescCustGroupStsName(cg.getCustGrpDesc());
+				}
+			}
+
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDetailsService.doApprove(auditHeader);
 			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
@@ -2268,4 +2298,13 @@ public class CustomerController extends GenericService<Object> {
 		this.approvalStatusEnquiryService = approvalStatusEnquiryService;
 	}
 
+	@Autowired
+	public void setBankBranchService(BankBranchService bankBranchService) {
+		this.bankBranchService = bankBranchService;
+	}
+	
+	@Autowired
+	public void setCustomerGroupDAO(CustomerGroupDAO customerGroupDAO) {
+		this.customerGroupDAO = customerGroupDAO;
+	}
 }

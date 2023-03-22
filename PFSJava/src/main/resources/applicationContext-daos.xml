@@ -5927,7 +5927,8 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="processLoanLimitOrgination*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="process*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -10355,7 +10356,7 @@
 	</bean>
 
 
-	<bean name="genericFinanceDetailService" class="com.pennant.backend.service.finance.GenericFinanceDetailService"
+	<bean id="genericFinanceDetailService" class="com.pennant.backend.service.finance.GenericFinanceDetailService"
 		abstract="true">
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
@@ -11066,7 +11067,9 @@
 	</bean>
 
 	<bean name="cashBackProcessServiceTarget"
-		class="com.pennant.backend.service.finance.impl.CashBackProcessServiceImpl" />
+		class="com.pennant.backend.service.finance.impl.CashBackProcessServiceImpl">
+		<property name="receiptService" ref="receiptService"/>
+	</bean>
 
 	<bean id="cashBackDetailDAO" class="com.pennant.backend.dao.finance.impl.CashBackDetailDAOImpl" parent="basicDao" />
 
@@ -12382,7 +12385,9 @@
 
 	<!-- CD Sellement Process -->
 	<bean id="cdSettlementDAOImpl" class="com.pennanttech.pff.cd.dao.impl.CDSettlementDAOImpl" parent="sequenceDao" />
-	<bean id="cdSettlementResponseUpload" class="com.pennanttech.pff.cd.upload.CDSettlementResponseUpload" />
+	<bean id="cdSettlementResponseUpload" class="com.pennanttech.pff.cd.upload.CDSettlementResponseUpload">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<!-- Overdraft -->
 	<bean id="overDraftSettlementDAO" class="com.pennanttech.pff.overdraft.dao.impl.OverdraftSettlementDAOImpl"

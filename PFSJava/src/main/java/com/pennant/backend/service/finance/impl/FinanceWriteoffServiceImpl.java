@@ -92,6 +92,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.rits.cloning.Cloner;
 
 public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService implements FinanceWriteoffService {
@@ -102,6 +103,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private ProvisionDAO provisionDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private AssetClassificationService assetClassificationService;
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -585,6 +587,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		tranType = PennantConstants.TRAN_UPD;
 		fm.setRecordType("");
 		fm.setFinIsActive(true);
+		fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
 		financeMainDAO.updateWriteOffStatus(finID, true);
 		profitDetailsDAO.updateClosingSts(finID, true);
 
@@ -674,6 +677,11 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		auditHeader.getAuditDetail().setModelData(header);
 
 		finStageAccountingLogDAO.update(finID, fd.getModuleDefiner(), false);
+
+		// updating NPA Loans
+		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
+			assetClassificationService.doCloseLoan(finID);
+		}
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;

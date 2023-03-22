@@ -131,8 +131,7 @@ public class FeeDetailService {
 				feeRuleCodes.add(fee.getRuleCode());
 			}
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
-				BigDecimal totalGST = GSTCalculator.getExclusiveGST(fee.getPaidAmount(), gstPercentages)
-						.gettGST();
+				BigDecimal totalGST = GSTCalculator.getExclusiveGST(fee.getPaidAmount(), gstPercentages).gettGST();
 				fee.setPaidAmountOriginal(fee.getPaidAmount());
 				fee.setPaidAmount(fee.getPaidAmountOriginal().add(totalGST));
 			}
@@ -184,15 +183,6 @@ public class FeeDetailService {
 						throw new AppException("", e);
 					}
 				}
-			}
-		}
-
-		// Calculating GST
-		for (FinFeeDetail finFeeDetail : feeList) {
-			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
-				this.finFeeDetailService.calculateFees(finFeeDetail, schdData, getDealerTaxPercentages(fd));
-			} else {
-				this.finFeeDetailService.calculateFees(finFeeDetail, fm, getGSTPercentages(fd));
 			}
 		}
 

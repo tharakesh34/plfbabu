@@ -13,7 +13,7 @@ public class LedgerDownload implements Serializable {
 	private String custShrtName;
 	private long finID;
 	private String attribute2;
-	private long attribute3;
+	private String attribute3;
 	private Long receiptId;
 	private String receiptMode;
 	private Date appDate;
@@ -58,8 +58,8 @@ public class LedgerDownload implements Serializable {
 	private String segment30;
 	private BigDecimal creditAmount;
 	private BigDecimal debitAmount;
-	private String convertedDebitAmount;
-	private String convertedCreditAmount;
+	private BigDecimal convertedDebitAmount;
+	private BigDecimal convertedCreditAmount;
 	private String reference1;
 	private String reference2;
 	private String reference3;
@@ -487,19 +487,19 @@ public class LedgerDownload implements Serializable {
 		this.debitAmount = debitAmount;
 	}
 
-	public String getConvertedDebitAmount() {
+	public BigDecimal getConvertedDebitAmount() {
 		return convertedDebitAmount;
 	}
 
-	public void setConvertedDebitAmount(String convertedDebitAmount) {
+	public void setConvertedDebitAmount(BigDecimal convertedDebitAmount) {
 		this.convertedDebitAmount = convertedDebitAmount;
 	}
 
-	public String getConvertedCreditAmount() {
+	public BigDecimal getConvertedCreditAmount() {
 		return convertedCreditAmount;
 	}
 
-	public void setConvertedCreditAmount(String convertedCreditAmount) {
+	public void setConvertedCreditAmount(BigDecimal convertedCreditAmount) {
 		this.convertedCreditAmount = convertedCreditAmount;
 	}
 
@@ -1023,11 +1023,11 @@ public class LedgerDownload implements Serializable {
 		this.attribute2 = attribute2;
 	}
 
-	public long getAttribute3() {
+	public String getAttribute3() {
 		return attribute3;
 	}
 
-	public void setAttribute3(long attribute3) {
+	public void setAttribute3(String attribute3) {
 		this.attribute3 = attribute3;
 	}
 

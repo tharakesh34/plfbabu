@@ -69,34 +69,6 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	private CashBackDetailDAO cashBackDetailDAO;
 	private CashBackProcessService cashBackProcessService;
 
-	public PromotionDAO getPromotionDAO() {
-		return promotionDAO;
-	}
-
-	public void setPromotionDAO(PromotionDAO promotionDAO) {
-		this.promotionDAO = promotionDAO;
-	}
-
-	public FinFeeDetailDAO getFinFeeDetailDAO() {
-		return finFeeDetailDAO;
-	}
-
-	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
-		this.finFeeDetailDAO = finFeeDetailDAO;
-	}
-
-	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
-		this.disbursementPostings = disbursementPostings;
-	}
-
-	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
-		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
-	}
-
-	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
-		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
 	public CDSettlementResponseUpload() {
 		super();
 	}
@@ -180,7 +152,7 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 			settlementMapdata.addValue("Serial", (String) record.getValue("Serial"));
 			settlementMapdata.addValue("Manufacturer", (String) record.getValue("Manufacturer"));
 			settlementMapdata.addValue("Acquirer", (String) record.getValue("Acquirer"));
-			settlementMapdata.addValue("ManufactureId", (String) record.getValue("ManufactureId"));
+			settlementMapdata.addValue("ManufactureId", Long.valueOf(String.valueOf(record.getValue("ManufactureId"))));
 			settlementMapdata.addValue("TerminalId", (String) record.getValue("TerminalId"));
 			settlementMapdata.addValue("SettlementBatch", (String) record.getValue("SettlementBatch"));
 			settlementMapdata.addValue("BankInvoice", (String) record.getValue("BankInvoice"));
@@ -371,7 +343,7 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 			if (extData != null) {
 				for (ExtendedField extendedField : extData) {
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
-						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						mapValues.put(extFieldData.getFieldName().toUpperCase(), extFieldData.getFieldValue());
 					}
 				}
 			}
@@ -382,7 +354,7 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 
 			String mid = (String) mapValues.get("MID");
 			if (!StringUtils.equals(mid, settlementMapdata.getValue("ManufactureId").toString())) {
-				throw new AppException("In valid MID");
+				throw new AppException("Invalid MID");
 			}
 
 			if (mapValues.get("TID") == null) {
@@ -391,7 +363,7 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 
 			String tid = (String) mapValues.get("TID");
 			if (!StringUtils.equals(tid, settlementMapdata.getValue("TerminalId").toString())) {
-				throw new AppException("In valid TID");
+				throw new AppException("Invalid TID");
 			}
 		}
 	}
@@ -399,7 +371,7 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	public DataEngineStatus settlementFileDownload(Object... params) throws Exception {
 		long userId = (Long) params[0];
 		String userName = (String) params[1];
-		String batchId = (String) params[2];
+		Long batchId = (Long) params[2];
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("REQUESTBATCHID", batchId);
@@ -436,18 +408,8 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	}
 
 	@Autowired
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public PlatformTransactionManager getTransactionManager() {
-		return transactionManager;
 	}
 
 	@Autowired
@@ -456,18 +418,8 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	}
 
 	@Autowired
-	public CashBackDetailDAO getCashBackDetailDAO() {
-		return cashBackDetailDAO;
-	}
-
-	@Autowired
 	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
 		this.cashBackDetailDAO = cashBackDetailDAO;
-	}
-
-	@Autowired
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
 	}
 
 	@Autowired
@@ -476,13 +428,27 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	}
 
 	@Autowired
-	public CashBackProcessService getCashBackProcessService() {
-		return cashBackProcessService;
-	}
-
-	@Autowired
 	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
 		this.cashBackProcessService = cashBackProcessService;
 	}
 
+	@Autowired
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	@Autowired
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	@Autowired
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	@Autowired
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
+	}
 }

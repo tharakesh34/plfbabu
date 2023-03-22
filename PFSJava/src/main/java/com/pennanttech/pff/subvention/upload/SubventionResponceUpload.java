@@ -141,8 +141,7 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 			subventionMapdata.addValue("Terminalid", record.getValue("TERMINALID"));
 			subventionMapdata.addValue("Transactiondatetime", SysParamUtil.getAppDate());
 			subventionMapdata.addValue("Settlementdatetime", SysParamUtil.getAppDate());
-			subventionMapdata.addValue("Transactionamount",
-					new BigDecimal((String) record.getValue("TRANSACTIONAMOUNT")));
+			subventionMapdata.addValue("Transactionamount", record.getValue("TRANSACTIONAMOUNT"));
 			subventionMapdata.addValue("Txnstatus", record.getValue("TXNSTATUS"));
 			subventionMapdata.addValue("Productcategory", record.getValue("PRODUCTCATEGORY"));
 			subventionMapdata.addValue("Subcat1", record.getValue("SUBCAT1"));
@@ -151,45 +150,43 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 			subventionMapdata.addValue("Productsrno", record.getValue("PRODUCTSRNO"));
 
 			try {
-				subventionMapdata.addValue("Emioffer", Integer.parseInt((String) record.getValue("EMIOFFER")));
+				subventionMapdata.addValue("Emioffer", record.getValue("EMIOFFER"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate EMIOFFER");
 			}
 			try {
-				subventionMapdata.addValue("Rrn", new BigDecimal((String) record.getValue("RRN")));
+				subventionMapdata.addValue("Rrn", record.getValue("RRN"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate BANKRRN");
 			}
 			try {
-				subventionMapdata.addValue("Bankapprovalcode",
-						new BigDecimal((String) record.getValue("BANKAPPROVALCODE")));
+				subventionMapdata.addValue("Bankapprovalcode", record.getValue("BANKAPPROVALCODE"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate BANKAPPROVALCODE");
 			}
 			try {
-				subventionMapdata.addValue("Cardhash", new BigDecimal((String) record.getValue("CARDHASH")));
+				subventionMapdata.addValue("Cardhash", record.getValue("CARDHASH"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate CARDHASH");
 			}
 			try {
-				subventionMapdata.addValue("Emimodel", new BigDecimal((String) record.getValue("EMIMODEL")));
+				subventionMapdata.addValue("Emimodel", record.getValue("EMIMODEL"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate EMIMODEL");
 			}
 			try {
-				subventionMapdata.addValue("Posid", new BigDecimal((String) record.getValue("POSID")));
+				subventionMapdata.addValue("Posid", record.getValue("POSID"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate POSID");
 			}
 			try {
-				subventionMapdata.addValue("Discountrate", new BigDecimal((String) record.getValue("DISCOUNTRATE")));
+				subventionMapdata.addValue("Discountrate", record.getValue("DISCOUNTRATE"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate DISCOUNTRATE");
 			}
 			try {
 				if (!StringUtils.isEmpty(record.getValue("DISCOUNTAMOUNT").toString())) {
-					subventionMapdata.addValue("Discountamount",
-							new BigDecimal((String) record.getValue("DISCOUNTAMOUNT")));
+					subventionMapdata.addValue("Discountamount", record.getValue("DISCOUNTAMOUNT"));
 				} else {
 					subventionMapdata.addValue("Discountamount", BigDecimal.ZERO);
 				}
@@ -197,14 +194,13 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 				throw new AppException("Invalid Number formate DISCOUNTAMOUNT");
 			}
 			try {
-				subventionMapdata.addValue("Cashbackrate", new BigDecimal((String) record.getValue("CASHBACKRATE")));
+				subventionMapdata.addValue("Cashbackrate", record.getValue("CASHBACKRATE"));
 			} catch (NumberFormatException e) {
 				throw new AppException("Invalid Number formate CASHBACKRATE");
 			}
 			try {
 				if (!StringUtils.isEmpty(record.getValue("CASHBACKAMOUNT").toString())) {
-					subventionMapdata.addValue("Cashbackamount",
-							new BigDecimal((String) record.getValue("CASHBACKAMOUNT")));
+					subventionMapdata.addValue("Cashbackamount", record.getValue("CASHBACKAMOUNT"));
 				} else {
 					subventionMapdata.addValue("Cashbackamount", BigDecimal.ZERO);
 				}
@@ -219,8 +215,7 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 
 			try {
 				if (!StringUtils.isEmpty(record.getValue("NBFCCASHBACKAMOUNT").toString())) {
-					subventionMapdata.addValue("Nbfccashbackamount",
-							new BigDecimal((String) record.getValue("NBFCCASHBACKAMOUNT")));
+					subventionMapdata.addValue("Nbfccashbackamount", record.getValue("NBFCCASHBACKAMOUNT"));
 				} else {
 					subventionMapdata.addValue("Nbfccashbackamount", BigDecimal.ZERO);
 				}
@@ -389,7 +384,7 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 			if (extData != null) {
 				for (ExtendedField extendedField : extData) {
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
-						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						mapValues.put(extFieldData.getFieldName().toUpperCase(), extFieldData.getFieldValue());
 					}
 				}
 			}
@@ -517,10 +512,7 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 		return aeEvent;
 	}
 
-	public SubventionProcessDAO getSubventionProcessDAO() {
-		return subventionProcessDAO;
-	}
-
+	@Autowired
 	public void setSubventionProcessDAO(SubventionProcessDAO subventionProcessDAO) {
 		this.subventionProcessDAO = subventionProcessDAO;
 	}

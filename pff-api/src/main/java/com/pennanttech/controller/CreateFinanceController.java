@@ -485,6 +485,14 @@ public class CreateFinanceController extends SummaryDetailService {
 					}
 				}
 
+				if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getCustID(),
+							fm.getFinCcy(), null, fm.getFinBranch());
+					for (FinFeeDetail finfee : schdData.getFinFeeDetailList()) {
+						finFeeDetailService.calculateFees(finfee, schdData, taxPercentages);
+					}
+				}
+
 				// fees calculation
 				if (!schdData.getFinFeeDetailList().isEmpty()) {
 					schdData = FeeScheduleCalculator.feeSchdBuild(schdData);

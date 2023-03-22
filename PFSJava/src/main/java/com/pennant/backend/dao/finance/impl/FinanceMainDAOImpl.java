@@ -6725,4 +6725,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return fm;
 		}, finType);
 	}
+
+	@Override
+	public int updateFinRepayMethod(long finID, String finRepayMethod) {
+		String sql = "Update FinanceMain Set FinRepayMethod = ?, MandateId = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, finRepayMethod);
+			ps.setInt(2, 0);
+			ps.setLong(3, finID);
+		});
+	}
 }

@@ -137,7 +137,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			fm.setSubVentionFrom(rs.getString("SubVentionFrom"));
 			fm.setManufacturerDealerId(JdbcUtil.getLong(rs.getObject("ManufacturerDealerId")));
 			fm.setManufacturerDealerCode(rs.getString("ManufacturerDealerCode"));
-			fm.settDSApplicable(rs.getBoolean("TdsApplicable"));
+			fm.setTDSApplicable(rs.getBoolean("TdsApplicable"));
 			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 			return fm;
 		});

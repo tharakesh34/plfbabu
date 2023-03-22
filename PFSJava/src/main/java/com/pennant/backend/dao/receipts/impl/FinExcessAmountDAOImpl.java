@@ -30,6 +30,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 /**
@@ -1154,6 +1155,18 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public BigDecimal getBalAdvIntAmt(String finReference) {
+		String sql = "Select BalanceAmt From FinExcessAmount Where FinReference = ? and AmountType = ?";
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finReference,
+					AdvanceRuleCode.ADVINT.name());
+		} catch (EmptyResultDataAccessException e) {
+			return BigDecimal.ZERO;
 		}
 	}
 }

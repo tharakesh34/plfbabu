@@ -134,6 +134,11 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	}
 
 	@Override
+	public void handleFailures() {
+		assetClassificationDAO.handleFailures();
+	}
+
+	@Override
 	public long getQueueCount() {
 		return assetClassificationDAO.getQueueCount();
 	}
@@ -173,7 +178,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		if (ac.getNpaPastDueDate() == null && pastDueDays > 0) {
 			ac.setNpaPastDueDays(pastDueDays);
 			ac.setNpaPastDueDate(pastDueDate);
-		} else if (ac.isNpaStage()) {
+		} else if (ac.isNpaStage() && pastDueDays > 0) {
 			ac.setNpaPastDueDays(npaPastDueDays + 1);
 		} else {
 			ac.setNpaPastDueDays(pastDueDays);
@@ -402,7 +407,58 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		amountCode.setdAmz((npaAc.getTotPftPaid().add(npaAc.getTotPftAccrued())));
 		amountCode.setTotPriSchd(npaAc.getTotPriBal());
 		amountCode.setTdSchdPri(npaAc.getTillDateSchdPri());
+		amountCode.setPftSB(npaAc.getOdProfit());
 
+		aeEvent.setDataMap(amountCode.getDeclaredFieldValues());
+		aeEvent.getAcSetIDList().add(accountingID);
+		aeEvent.setCustAppDate(npaAc.getEodDate());
+
+		aeEvent.setPostingUserBranch("EOD");
+		aeEvent.setEOD(true);
+
+		postingsPreparationUtil.postAccountingEOD(aeEvent);
+
+		postingsPreparationUtil.saveAccountingEOD(aeEvent.getReturnDataSet());
+
+		npaAc.setLinkedTranID(aeEvent.getLinkedTranId());
+	}
+
+	@Override
+	public void doReversalNpaPostings(AssetClassification npaAc) {
+		String eventCode = AccountingEvent.NPACHNG;
+		int moduleID = FinanceConstants.MODULEID_FINTYPE;
+
+		Long accountingID = AccountingConfigCache.getCacheAccountSetID(npaAc.getFinType(), eventCode, moduleID);
+
+		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+			logger.debug("Accounting Set not found with {} Event and {} Loan Type", eventCode, npaAc.getFinType());
+			return;
+		}
+
+		AEEvent aeEvent = new AEEvent();
+		AEAmountCodes amountCode = new AEAmountCodes();
+		aeEvent.setAeAmountCodes(amountCode);
+
+		aeEvent.setFinReference(npaAc.getFinReference());
+		aeEvent.setAccountingEvent(eventCode);
+		aeEvent.setPostDate(npaAc.getEodDate());
+		aeEvent.setValueDate(npaAc.getEodDate());
+
+		aeEvent.setBranch(npaAc.getFinBranch());
+		aeEvent.setCcy(npaAc.getFinCcy());
+		aeEvent.setFinType(npaAc.getFinType());
+		aeEvent.setCustID(npaAc.getCustID());
+
+		amountCode.setFinType(aeEvent.getFinType());
+
+		amountCode.setInsttot(npaAc.getOdPrincipal().add(npaAc.getOdProfit()));
+		amountCode.setdAmz((npaAc.getTotPftPaid().add(npaAc.getTotPftAccrued())));
+		amountCode.setTotPriSchd(npaAc.getTotPriBal());
+		amountCode.setTdSchdPri(npaAc.getTillDateSchdPri());
+		amountCode.setPftSB(npaAc.getOdProfit());
+
+		amountCode.setPriPr(npaAc.getTotPriBal());
+		amountCode.setPriSPr(npaAc.getTillDateSchdPri());
 		aeEvent.setDataMap(amountCode.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(npaAc.getEodDate());
@@ -438,7 +494,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	}
 
 	@Override
-	public void doProcessEarlySettlement(long finID) {
+	public void doCloseLoan(long finID) {
 		String entityCode = assetClassificationDAO.getEntityCodeFromStage(finID);
 
 		if (entityCode == null) {
@@ -476,6 +532,31 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		npa.setEffFinReference(npa.getFinReference());
 
 		updateClassification(npa);
+	}
+
+	@Override
+	public Long getNpaMovemntId(long finID) {
+		return assetClassificationDAO.getNpaMovemntId(finID);
+	}
+
+	@Override
+	public void saveNpaMovement(AssetClassification npa) {
+		assetClassificationDAO.saveNpaMovement(npa);
+	}
+
+	@Override
+	public void updateNpaMovement(long id, AssetClassification npa) {
+		assetClassificationDAO.updateNpaMovement(id, npa);
+	}
+
+	@Override
+	public AssetClassification getNpaMovemnt(long finID) {
+		return assetClassificationDAO.getNpaMovemnt(finID);
+	}
+
+	@Override
+	public void saveNpaTaggingMovement(AssetClassification npa) {
+		assetClassificationDAO.saveNpaTaggingMovement(npa);
 	}
 
 	private List<NpaProvisionStage> getLinkedAssetClassifications(final AssetClassification item,

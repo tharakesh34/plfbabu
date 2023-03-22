@@ -53,8 +53,6 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -72,6 +70,8 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -323,17 +323,17 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		CashBackDetail cbDetail = new CashBackDetail();
 		if (aExtendedFieldRender != null) {
 			if (type.equals("DBD")) {
-				String mId = aExtendedFieldRender.getMapValues().get("MID").toString();
+				long mId = Long.valueOf(aExtendedFieldRender.getMapValues().get("MID").toString());
 				String tId = aExtendedFieldRender.getMapValues().get("TID").toString();
 				TransactionMapping tm = transactionMappingDAO.getDealerDetails(mId, tId);
 				cbDetail.setFeeTypeId(100);
 				cbDetail.setManfMerchId(String.valueOf(tm.getDealerCode()));
 				cbDetail.setStoreName(tm.getDealerName());
 			} else if (type.equals("MBD")) {
-				String oEMID = aExtendedFieldRender.getMapValues().get("OEMID").toString();
+				long oEMID = Long.valueOf(aExtendedFieldRender.getMapValues().get("OEMID").toString());
 				Manufacturer manfDetails = manufacturerDAO.getDetails(oEMID);
 				cbDetail.setFeeTypeId(200);
-				cbDetail.setManfMerchId(oEMID);
+				cbDetail.setManfMerchId(String.valueOf(oEMID));
 				cbDetail.setStoreName(manfDetails.getName());
 			}
 		}

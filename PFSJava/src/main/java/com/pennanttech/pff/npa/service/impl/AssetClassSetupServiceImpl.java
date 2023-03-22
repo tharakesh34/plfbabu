@@ -22,7 +22,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.npa.dao.AssetClassSetupDAO;
-import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.npa.model.AssetClassSetupDetail;
 import com.pennanttech.pff.npa.model.AssetClassSetupHeader;
 import com.pennanttech.pff.npa.service.AssetClassSetupService;
@@ -33,7 +32,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AssetClassSetupDAO assetClassSetupDAO;
-	private AssetClassificationDAO assetClassificationDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -141,8 +139,7 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
 			tranType = PennantConstants.TRAN_DEL;
-			assetClassSetupDAO.deleteDetailBySetupID(assetClassSetupHeader.getId(), "");
-			assetClassSetupDAO.delete(assetClassSetupHeader, TableType.MAIN_TAB);
+			assetClassSetupDAO.softDelete(assetClassSetupHeader.getId(), TableType.MAIN_TAB);
 		} else {
 			assetClassSetupHeader.setRoleCode("");
 			assetClassSetupHeader.setNextRoleCode("");
@@ -260,13 +257,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 			}
 		}
 
-		if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-			long npaclassID = assetClassSetupHeader.getId();
-			if (assetClassificationDAO.checkDependency(npaclassID)) {
-				auditDetail.setErrorDetail(new ErrorDetail("90290", null));
-			}
-		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
@@ -348,10 +338,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 				assetClassSetupDAO.updateDetail(assetClassSetupDetail, type);
 			}
 
-			if (deleteRecord) {
-				assetClassSetupDAO.deleteDetail(assetClassSetupDetail, type);
-			}
-
 			if (approveRec) {
 				assetClassSetupDetail.setRecordType(rcdType);
 				assetClassSetupDetail.setRecordStatus(recordStatus);
@@ -367,7 +353,7 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 	private List<AuditDetail> setAuditDataForDetail(AssetClassSetupHeader acsh, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new AssetClassSetupDetail(),
 				new AssetClassSetupDetail().getExcludeFields());
 
@@ -520,11 +506,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 	public void setAssetClassSetupDAO(AssetClassSetupDAO assetClassSetupDAO) {
 		this.assetClassSetupDAO = assetClassSetupDAO;
-	}
-
-	@Autowired
-	public void setAssetClassificationDAO(AssetClassificationDAO assetClassificationDAO) {
-		this.assetClassificationDAO = assetClassificationDAO;
 	}
 
 }

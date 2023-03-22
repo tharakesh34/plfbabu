@@ -67,12 +67,6 @@
 											value="${c:l('label_AssetClassSetupDialog_Entity.value')}" />
 
 										<extendedcombobox id="entityCode" />
-										<label id="label_RepaymentHierarchy"
-											value="${c:l('label_AssetClassSetupDialog_RepaymentHierarchy.value')}" />
-										<hbox>
-											<space id="space_RpyHierarchy" spacing="2px" sclass="mandatory" />
-											<uppercasebox id="rpyHierarchy" width="200px" />
-										</hbox>
 									</row>
 								</rows>
 							</grid>

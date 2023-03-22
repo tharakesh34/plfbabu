@@ -562,7 +562,7 @@ public class FetchCustomerDedupDetails {
 		customerDedup.setDrivingLicenceNo(drivingLicenceNo);
 		customerDedup.setCustMotherMaiden(customer.getCustMotherMaiden());
 
-		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+		if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP && customerDetails.getExtendedFieldRender() != null) {
 			Map<String, Object> mapValues = customerDetails.getExtendedFieldRender().getMapValues();
 			if (mapValues != null && mapValues.get("UCIC") != null) {
 				customerDedup.setUcic(mapValues.get("UCIC").toString());

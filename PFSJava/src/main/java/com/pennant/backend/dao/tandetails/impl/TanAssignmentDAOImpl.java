@@ -156,7 +156,7 @@ public class TanAssignmentDAOImpl extends SequenceDao<TanAssignment> implements 
 			ps.setString(index++, tanAssignment.getRecordType());
 			ps.setLong(index++, tanAssignment.getWorkflowId());
 
-			ps.setLong(index, tanAssignment.getTanID());
+			ps.setLong(index, tanAssignment.getId());
 
 		});
 

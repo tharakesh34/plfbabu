@@ -1,7 +1,5 @@
 package com.pennant.backend.dao.transactionmapping.impl;
 
-import java.math.BigDecimal;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -185,7 +183,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 	public int getcountByMID(long mid, String tid) {
 		logger.debug("Entering");
 		TransactionMapping transactionMapping = new TransactionMapping();
-		transactionMapping.setMid(new BigDecimal(mid) == null ? BigDecimal.ZERO : new BigDecimal(mid));
+		transactionMapping.setMid(mid == Long.MIN_VALUE ? 0 : mid);
 		transactionMapping.setTid(tid);
 
 		StringBuilder selectSql = new StringBuilder();
@@ -242,7 +240,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 	}
 
 	@Override
-	public TransactionMapping getDealerDetails(String mId, String tId) {
+	public TransactionMapping getDealerDetails(long mId, String tId) {
 		String sql = "Select DealerCode, DealerName From TransactionMapping Where Mid = ? and Tid = ?";
 
 		logger.debug(Literal.SQL + sql);

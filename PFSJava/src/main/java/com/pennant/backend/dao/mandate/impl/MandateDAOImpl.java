@@ -1200,4 +1200,23 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			return null;
 		}
 	}
+
+	@Override
+	public String getMandateStatus(long mandateId) {
+		String sql = "SELECT STATUS FROM Mandates WHERE MandateId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, String.class, mandateId);
+	}
+
+	@Override
+	public int getMandateType(long mandateId, String mandatetype, String reference) {
+		String sql = "Select count(MandateId) From Mandates Where MandateId = ? and MandateType = ? and OrgReference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, mandateId, mandatetype, reference);
+	}
+
 }

@@ -200,7 +200,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			if (entries != null && !entries.isEmpty()) {
 				for (int i = 0; i < entries.size(); i++) {
 					if (entries.get(i).getDerivedTxnRef() == 0) {
-						debitAc = entries.get(i + 1).getAccount();
+						debitAc = entries.get(i).getAccount();
 						entries.get(i).setDebitAccount(debitAc);
 					}
 				}

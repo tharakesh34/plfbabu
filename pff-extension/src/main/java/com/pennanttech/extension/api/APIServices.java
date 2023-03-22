@@ -191,6 +191,11 @@ public class APIServices {
 		services.add("enableUser");
 		services.add("expireUser");
 		services.add("getCustomerEmployment");
+		services.add("updateMandateStatus");
+		services.add("changeRepaymentMethod");
+		services.add("createPaymentInstruction");
+		services.add("getPaymentInstruction");
+		services.add("updatePaymentInstruction");
 
 		return services;
 	}

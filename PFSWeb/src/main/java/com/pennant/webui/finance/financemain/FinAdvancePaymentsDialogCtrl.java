@@ -195,6 +195,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox branch;
 	protected Textbox city;
 	protected Space contactNumber;
+	protected Space leiNum;
 	// protected Textbox phoneCountryCode;
 	// protected Textbox phoneAreaCode;
 	protected Textbox phoneNumber;
@@ -304,6 +305,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private boolean populateBenfiryDetails = false;
 	private transient FinTypePartnerBankService finTypePartnerBankService;
 	private transient ClusterService clusterService;
+	private boolean leiMandatory = false;
 
 	/**
 	 * default constructor.<br>
@@ -1196,6 +1198,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			this.pennyDropResult.setValue("");
 		}
+
+		if (disbAmount.compareTo(FinanceConstants.LEI_NUM_LIMIT) > 0) {
+			this.leiNum.setSclass("mandatory");
+			leiMandatory = true;
+		}
+
 		setDisbDocument(aFinAdvnancePayments);
 
 		logger.debug("Leaving");
@@ -1856,10 +1864,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 
-		if (this.leiNumber.isVisible()) {
+		if (this.leiNumber.isVisible() && !this.leiNumber.getValue().isEmpty()) {
 			this.leiNumber
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LEI.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+
+		if (leiMandatory && this.leiNumber.getValue().isEmpty()) {
+			this.leiNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LEI.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -1876,6 +1889,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.beneficiaryAccNo.setConstraint("");
 		this.paymentType.setConstraint("");
 		this.beneficiaryName.setConstraint("");
+		this.leiNumber.setConstraint("");
 		this.description.setConstraint("");
 		this.llReferenceNo.setConstraint("");
 		this.llDate.setConstraint("");

@@ -670,7 +670,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 
 		// call controller to get fore-closure letter
 		try {
-			ForeClosureLetter letter = foreClosureService.getForeClosureAmt(statementRequest);
+			ForeClosureLetter letter = foreClosureService.getForeClosureAmt(statementRequest, response);
 
 			response.setFinReference(finReference);
 			response.setForeClosure(letter);

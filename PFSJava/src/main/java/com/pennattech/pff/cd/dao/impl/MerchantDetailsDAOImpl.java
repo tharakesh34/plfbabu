@@ -47,7 +47,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 
 				merch.setMerchantId(rs.getLong("MerchantId"));
 				merch.setMerchantName(rs.getString("MerchantName"));
-				merch.setStoreId(rs.getBigDecimal("StoreId"));
+				merch.setStoreId(rs.getLong("StoreId"));
 				merch.setStoreName(rs.getString("StoreName"));
 				merch.setStoreAddressLine1(rs.getString("StoreAddressLine1"));
 				merch.setStoreAddressLine2(rs.getString("StoreAddressLine2"));
@@ -118,7 +118,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 
 				ps.setLong(index++, merchantDetails.getMerchantId());
 				ps.setString(index++, merchantDetails.getMerchantName());
-				ps.setBigDecimal(index++, merchantDetails.getStoreId());
+				ps.setLong(index++, merchantDetails.getStoreId());
 				ps.setString(index++, merchantDetails.getStoreName());
 				ps.setString(index++, merchantDetails.getStoreAddressLine1());
 				ps.setString(index++, merchantDetails.getStoreAddressLine2());
@@ -181,7 +181,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 			int index = 1;
 
 			ps.setString(index++, merchantDetails.getMerchantName());
-			ps.setBigDecimal(index++, merchantDetails.getStoreId());
+			ps.setLong(index++, merchantDetails.getStoreId());
 			ps.setString(index++, merchantDetails.getStoreName());
 			ps.setString(index++, merchantDetails.getStoreAddressLine1());
 			ps.setString(index++, merchantDetails.getStoreAddressLine2());
@@ -309,7 +309,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		return jdbcOperations.queryForObject(sql, obj, Integer.class) > 0;
 	}
 
-	public Map<String, Object> getGSTDataMapForMerch(String mId) {
+	public Map<String, Object> getGSTDataMapForMerch(long mId) {
 		Map<String, Object> map = new HashMap<>();
 
 		String sql = "Select StoreCity, StoreState, StoreCountry From CD_Merchants Where storeId = ?";

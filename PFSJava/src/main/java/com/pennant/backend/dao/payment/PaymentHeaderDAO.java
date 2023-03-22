@@ -32,7 +32,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
@@ -67,4 +67,11 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 	Long getPaymetIDByReceiptID(long receiptId);
 
 	List<Long> getReceiptPurpose(long receiptId);
+
+	void updateTransactionRef(long paymentId, String transactionRef);
+
+	int getPaymenttId(long paymentId);
+
+	int getPaymenttId(long paymentId, String finReference);
+
 }

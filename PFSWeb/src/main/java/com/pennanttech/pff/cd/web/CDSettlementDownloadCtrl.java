@@ -71,7 +71,7 @@ public class CDSettlementDownloadCtrl extends GFCBaseListCtrl<CDSettlementProces
 
 	}
 
-	public void onCreate$window_SettlementProcessDownLoad(Event event) throws Exception {
+	public void onCreate$window_cdSettlementDownload(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

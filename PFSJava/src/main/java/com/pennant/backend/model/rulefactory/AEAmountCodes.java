@@ -233,6 +233,7 @@ public class AEAmountCodes implements Serializable {
 	// OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
 	private BigDecimal advInst = BigDecimal.ZERO;
+	private BigDecimal accrTillBd = BigDecimal.ZERO;
 	private BigDecimal prvMthAcr = BigDecimal.ZERO;
 	private BigDecimal ae_cbret = BigDecimal.ZERO;
 	private BigDecimal cbret_igst = BigDecimal.ZERO;
@@ -451,6 +452,7 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_pastCpzChg", this.pastCpzChg);
 		map.put("ae_oemSbvAmount", this.oemSbvAmount);
 		map.put("ae_advInst", this.advInst);
+		map.put("ae_accrTillBd", this.accrTillBd);
 		map.put("ae_prvMthAcr", this.prvMthAcr);
 		map.put("ae_isWriteOff", this.isWriteOff);
 		map.put("ae_prvMntAmz", this.prvMntAmz);
@@ -1895,6 +1897,14 @@ public class AEAmountCodes implements Serializable {
 
 	public void setAdvInst(BigDecimal advInst) {
 		this.advInst = advInst;
+	}
+
+	public BigDecimal getAccrTillBd() {
+		return accrTillBd;
+	}
+
+	public void setAccrTillBd(BigDecimal accrTillBd) {
+		this.accrTillBd = accrTillBd;
 	}
 
 	public BigDecimal getPrvMthAcr() {

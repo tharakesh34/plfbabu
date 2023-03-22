@@ -1100,6 +1100,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	}
 
 	private void doSetDueAccReq(boolean dueAccReq) {
+		this.dueAccReq.setVisible(dueCreationReq);
 		if (dueAccReq) {
 			this.dueAccSet.setReadonly(isReadOnly("FeeTypeDialog_AmortizationRequired"));
 		} else {

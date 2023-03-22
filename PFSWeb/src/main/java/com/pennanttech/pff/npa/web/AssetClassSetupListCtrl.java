@@ -29,21 +29,11 @@ public class AssetClassSetupListCtrl extends GFCBaseListCtrl<AssetClassSetupHead
 	protected Borderlayout borderLayout_AssetClassSetupList;
 	protected Paging pagingAssetClassSetupList;
 	protected Listbox listBoxAssetClassSetup;
-
-	// List headers
 	protected Listheader listheader_Entity;
-	protected Listheader listheader_RepaymentHierarchy;
-
-	// checkRights
 	protected Button button_AssetClassSetupList_Search;
 	protected Button button_AssetClassSetupList_New;
-
-	// Search Fields
 	protected Textbox entity;
-	protected Textbox rpyHierarchy;
-
 	protected Listbox sortOperator_Entity;
-	protected Listbox sortOperator_RepayHierarchy;
 
 	private transient AssetClassSetupService assetClassSetupService;
 
@@ -57,7 +47,6 @@ public class AssetClassSetupListCtrl extends GFCBaseListCtrl<AssetClassSetupHead
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "AssetClassSetupHeader";
-		// super.pageRightName = "AssetClassSetupList";
 		super.tableName = "ASSET_CLASS_SETUP_HEADER_AVIEW";
 		super.queueTableName = "ASSET_CLASS_SETUP_HEADER_VIEW";
 		super.enquiryTableName = "ASSET_CLASS_SETUP_HEADER_VIEW";
@@ -81,8 +70,6 @@ public class AssetClassSetupListCtrl extends GFCBaseListCtrl<AssetClassSetupHead
 
 		registerField("Id");
 		registerField("entityCode", listheader_Entity, SortOrder.NONE, entity, sortOperator_Entity, Operators.STRING);
-		registerField("repayHierarchy", listheader_RepaymentHierarchy, SortOrder.NONE, rpyHierarchy,
-				sortOperator_RepayHierarchy, Operators.STRING);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -179,6 +166,14 @@ public class AssetClassSetupListCtrl extends GFCBaseListCtrl<AssetClassSetupHead
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (!enqiryModule) {
+			this.searchObject.addFilterEqual("Active", 1);
+		}
 	}
 
 	/**

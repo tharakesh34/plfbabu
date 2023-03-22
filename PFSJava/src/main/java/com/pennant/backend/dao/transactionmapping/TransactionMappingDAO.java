@@ -16,5 +16,5 @@ public interface TransactionMappingDAO extends BasicCrudDao<TransactionMapping> 
 
 	int getCountByPhoneNumber(String mobileNumber);
 
-	TransactionMapping getDealerDetails(String mId, String tId);
+	TransactionMapping getDealerDetails(long mId, String tId);
 }

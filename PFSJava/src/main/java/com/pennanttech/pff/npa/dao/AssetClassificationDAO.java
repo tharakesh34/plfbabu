@@ -22,6 +22,8 @@ public interface AssetClassificationDAO {
 
 	long prepareQueue();
 
+	void handleFailures();
+
 	long getQueueCount();
 
 	int updateThreadID(long from, long to, int threadID);
@@ -68,4 +70,13 @@ public interface AssetClassificationDAO {
 
 	boolean checkDependency(long npaClassID);
 
+	Long getNpaMovemntId(long finID);
+
+	void saveNpaMovement(AssetClassification as);
+
+	void updateNpaMovement(long id, AssetClassification as);
+
+	void saveNpaTaggingMovement(AssetClassification as);
+
+	AssetClassification getNpaMovemnt(long finID);
 }

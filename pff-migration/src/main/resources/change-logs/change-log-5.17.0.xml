@@ -2835,6 +2835,395 @@
         	 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#562.1" author="Mounika.M">
+		<createTable tableName="NPA_LOAN_MOVEMENT_TAGGING">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="effFinReference" type="varchar(20)"/>
+			<column name="EffFinID" type="bigint" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="NPAClassCode" type="varchar(8)"/>
+			<column name="NPASubClassCode" type="varchar(8)"/>
+			<column name="EffNPAClassCode" type="varchar(8)" />
+			<column name="EffNPASubClassCode" type="varchar(8)" />
+			<column name="NPA" type="boolean"/>
+			<column name="ClassDate" type="datetime"/>
+			<column name="TaggedDate" type="datetime"/>
+			<column name="UnTaggedDate" type="datetime"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#562.2" author="Mounika.M">
+		<addPrimaryKey tableName="NPA_LOAN_MOVEMENT_TAGGING" columnNames="ID" constraintName="pk_npa_loan_mvTag" />
+	</changeSet>
+	
+	<changeSet id="ST#562.3" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_mvtg_cuid"
+			referencedTableName="Customers" baseColumnNames="CustID" baseTableName="NPA_LOAN_MOVEMENT_TAGGING" referencedColumnNames="CustID" />
+	</changeSet>
+	
+	<changeSet id="ST#562.4" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_mvtg_fm_fr"
+			referencedTableName="FinanceMain" baseColumnNames="FinReference" baseTableName="NPA_LOAN_MOVEMENT_TAGGING"
+			referencedColumnNames="FinReference" />
+	</changeSet>
+	
+	<changeSet id="ST#562.5" author="Mounika.M">
+		<createIndex tableName="NPA_LOAN_MOVEMENT_TAGGING" indexName="idx_npa_loan_mvtg_fn" >
+			<column name="FinReference" type="varchar(20)" />
+			<column name="NPA" type="boolean" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#562.6" author="Mounika.M">
+		<createTable tableName="NPA_LOAN_MOVEMENTS">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="effFinReference" type="varchar(20)"/>
+			<column name="EffFinID" type="bigint" />
+			<column name="NpaClassID" type="bigint" />
+			<column name="EffNpaClassID" type="bigint" />
+			<column name="NPAClassCode" type="varchar(8)"/>
+			<column name="NPASubClassCode" type="varchar(8)"/>
+			<column name="EffNPAClassCode" type="varchar(8)" />
+			<column name="EffNPASubClassCode" type="varchar(8)" />
+			<column name="ClassDate" type="datetime"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#562.7" author="Mounika.M">
+		<addPrimaryKey tableName="NPA_LOAN_MOVEMENTS" columnNames="ID" constraintName="pk_npa_loan_mv" />
+	</changeSet>
+	
+	<changeSet id="ST#562.8" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_mv_cuid"
+			referencedTableName="Customers" baseColumnNames="CustID" baseTableName="NPA_LOAN_MOVEMENTS" referencedColumnNames="CustID" />
+	</changeSet>
+	
+	<changeSet id="ST#562.9" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_npa_loan_mv_fm_fr"
+			referencedTableName="FinanceMain" baseColumnNames="FinReference" baseTableName="NPA_LOAN_MOVEMENTS"
+			referencedColumnNames="FinReference" />
+	</changeSet>
 
+	<changeSet id="DE#4625.1" author="nagavamsi.p">
+		<addColumn tableName="RmtFinanceTypes_Temp">
+			<column name="NPARpyHierarchy" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="DE#4625.2" author="nagavamsi.p">
+		<addColumn tableName="RmtFinanceTypes">
+			<column name="NPARpyHierarchy" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+
+	<changeSet id="DE#4625.4_pre" author="NagaVamsi.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#4625.4" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_SETUP_HEADER_VIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.EntityCode,
+					T2.ENTITYDESC,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+				    T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER_TEMP T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+				UNION ALL
+				SELECT T1.ID,
+					T1.EntityCode,
+					T2.ENTITYDESC,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+				    T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+        	 	WHERE NOT EXISTS (SELECT 1 FROM ASSET_CLASS_SETUP_HEADER_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#4625.4_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_setup_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#4625.5_pre" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#4625.5" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_SETUP_HEADER_AVIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.ENTITYCODE,
+					T2.ENTITYDESC,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#4625.5_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_setup_header_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#4625.6" author="NagaVamsi.P">
+		<dropColumn tableName="Asset_Class_Setup_Header_Temp" columnName="RepayHierarchy" />
+		<dropColumn tableName="Asset_Class_Setup_Header" columnName="RepayHierarchy" />
+	</changeSet>
+
+	<changeSet id="DE#4627" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'AssetClassSetupHeader';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('AssetClassSetupHeader', 'AssetClassSetupHeader', 'listheader_AssetClassSetupList_Entity.label', 'entitycode', 'String', null, 'ReportList01', 'AssetClassSetupHeader', 'System Masters', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+
+        	 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4624.1" author="nagavamsi.p">
+		<addColumn tableName="ASSET_CLASS_SETUP_HEADER_Temp">
+			<column name="Active" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4624.1.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				Update  ASSET_CLASS_SETUP_HEADER_Temp Set Active = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#4624.1.2" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ASSET_CLASS_SETUP_HEADER_Temp ADD CONSTRAINT DF_ACSD_Active_T DEFAULT 1 FOR Active;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#4624.1.2" author="nagavamsi.p" dbms="postgresql,oracle">
+		<addDefaultValue columnName="Active" tableName="ASSET_CLASS_SETUP_HEADER_Temp" defaultValue="1" />
+	</changeSet>
+
+	<changeSet id="ST#4624.2" author="nagavamsi.p">
+		<addColumn tableName="ASSET_CLASS_SETUP_HEADER">
+			<column name="Active" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="ST#4624.2.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				Update  ASSET_CLASS_SETUP_HEADER Set Active = 1;
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#4624.2.2" author="nagavamsi.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE Asset_Class_Setup_Header ADD CONSTRAINT DF_ACSD_Active DEFAULT 1 FOR Active;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#4624.2.2" author="nagavamsi.p" dbms="postgresql,oracle">
+		<addDefaultValue columnName="Active" tableName="Asset_Class_Setup_Header" defaultValue="1" />
+	</changeSet>
+
+	<changeSet id="DE#4625.2.3_pre" author="NagaVamsi.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#4625.2.3" author="nagavamsi.p">
+		<createView replaceIfExists="true" viewName="ASSET_CLASS_SETUP_HEADER_VIEW">
+			<![CDATA[
+                 SELECT T1.ID,
+					T1.EntityCode,
+					T2.ENTITYDESC,
+					T1.ACTIVE,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+				    T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER_TEMP T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+				UNION ALL
+				SELECT T1.ID,
+					T1.EntityCode,
+					T2.ENTITYDESC,
+					T1.ACTIVE,
+					T1.VERSION,
+				    T1.CREATEDBY,
+				    T1.CREATEDON,
+				    T1.APPROVEDBY,
+					T1.APPROVEDON, 
+					T1.LASTMNTBY, 
+					T1.LASTMNTON, 
+					T1.RECORDSTATUS, 
+					T1.ROLECODE, 
+					T1.NEXTROLECODE, 
+					T1.TASKID, 
+					T1.NEXTTASKID, 
+					T1.RECORDTYPE, 
+					T1.WORKFLOWID
+				FROM ASSET_CLASS_SETUP_HEADER T1
+				INNER JOIN ENTITY T2 ON T2.ENTITYCODE = T1.ENTITYCODE
+        	 	WHERE NOT EXISTS (SELECT 1 FROM ASSET_CLASS_SETUP_HEADER_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#4625.2.3_post" author="nagavamsi.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'asset_class_setup_header_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#4625.2.4.1" author="nagavamsi.p">
+		<dropIndex tableName="ASSET_CLASS_SETUP_HEADER" indexName="idx_acsh_entitycode" />
+	</changeSet>
+
+	<changeSet id="DE#4625.2.4.2" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASS_SETUP_HEADER" indexName="idx_acsh_entitycode_active" unique="true">
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="Active" type="smallint" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="DE#4625.2.4.2.1" author="nagavamsi.p">
+		<dropIndex tableName="ASSET_CLASS_SETUP_HEADER" indexName="idx_acsh_entitycode_active" />
+	</changeSet>
+
+	<changeSet id="DE#4625.2.4.2.2" author="nagavamsi.p">
+		<createIndex tableName="ASSET_CLASS_SETUP_HEADER" indexName="idx_acsh_entitycode_active">
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="Active" type="smallint" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#350.77.1" author="nagavamsi.p">
+		<addColumn tableName="ASSET_CLASSIFICATION_QUEUE">
+			<column name="CounterID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="PSD#210828.1" author="nagavamsi.p">
+		<sql>
+		   <![CDATA[
+		  	    DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'NPACHNG' AND AMOUNTCODE = 'ae_pftSB';
+		   		INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_pftSB', 'Till date Scheduled Profit Balance.', 1, 1, 1000, CURRENT_TIMESTAMP, 'APPROVED', NULL, NULL, NULL, NULL, NULL, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#210828.2" author="nagavamsi.p">
+		<sql>
+		   <![CDATA[
+		   		DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'NPACHNG' AND AMOUNTCODE = 'ae_priPr';
+		   		DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'NPACHNG' AND AMOUNTCODE = 'ae_priSPr';
+		   		INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_priPr', 'Total Principal Scheduled.', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('NPACHNG', 0, 'ae_priSPr', 'Till Date Principal Scheduled.', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		   ]]>
+		</sql>
+	</changeSet>
+	
+	
 	<!-- ST#3546 :: NPA & Provision Enhancements changes end -->
 </databaseChangeLog>

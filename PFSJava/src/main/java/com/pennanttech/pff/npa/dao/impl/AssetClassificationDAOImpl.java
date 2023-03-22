@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -21,6 +22,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.model.Queing;
 import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.npa.model.AssetClassification;
 import com.pennanttech.pff.provision.model.NpaProvisionStage;
@@ -179,6 +181,73 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		return 0;
 	}
 
+	private List<Queing> getQueingRecords() {
+		String sql = "Select row_number() over(order by id) resteID, ID from Asset_Classification_Queue";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+
+		}, (rs, Num) -> {
+			Queing queing = new Queing();
+			queing.setId(rs.getLong("ID"));
+			queing.setResetId(rs.getLong("resteID"));
+			return queing;
+		});
+
+	}
+
+	public void updateQueingRecords(List<Queing> queing) {
+		String sql = "Update Asset_Classification_Queue Set Id = ? Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					Queing queingdetails = queing.get(i);
+					int index = 1;
+
+					ps.setLong(index++, queingdetails.getResetId());
+					ps.setLong(index, queingdetails.getId());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return queing.size();
+				}
+			});
+		} catch (DataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	@Override
+	public void handleFailures() {
+		String sql = "Delete From Asset_Classification_Queue Where Progress = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
+		});
+
+		sql = "Update Asset_Classification_Queue Set Progress = ? Where Progress = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		int count = this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_WAIT);
+			ps.setInt(2, EodConstants.PROGRESS_FAILED);
+		});
+
+		if (count > 0) {
+			updateQueingRecords(getQueingRecords());
+		}
+	}
+
 	@Override
 	public void updateProgress(long finID, int progressInProcess) {
 		String sql = null;
@@ -211,7 +280,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			this.jdbcOperations.update(sql, ps -> {
 				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setInt(2, 0);
-				ps.setInt(3, EodConstants.PROGRESS_WAIT);
+				ps.setInt(3, EodConstants.PROGRESS_FAILED);
 				ps.setLong(4, finID);
 			});
 		}
@@ -504,7 +573,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getNpaDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinID, FinReference, EffFinID, EffFinReference, FinIsActive");
+		sql.append(" Id, CustID, FinID, FinReference, EffFinID, EffFinReference, FinIsActive");
 		sql.append(", PastDueDays, PastDueDate, EffPastDueDays, EffPastDueDate");
 		sql.append(", NpaPastDueDays, NpaPastDueDate, EffNpaPastDueDays, EffNpaPastDueDate");
 		sql.append(", NpaClassID, EffNpaClassID");
@@ -520,6 +589,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				AssetClassification ac = new AssetClassification();
 
 				ac.setId(rs.getLong("Id"));
+				ac.setCustID(rs.getLong("CustID"));
 				ac.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 				ac.setFinReference(rs.getString("FinReference"));
 				ac.setEffFinID(JdbcUtil.getLong(rs.getObject("EffFinID")));
@@ -734,10 +804,10 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 	@Override
 	public String getNpaRepayHierarchy(long finID) {
-		StringBuilder sql = new StringBuilder("Select npa.EffNpaStage, h.RepayHierarchy");
+		StringBuilder sql = new StringBuilder("Select npa.EffNpaStage, rm.NpaRpyHierarchy");
 		sql.append(" From Npa_Loan_Info npa");
-		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.id = npa.NpaclassId");
-		sql.append(" Inner Join Asset_Class_Setup_Header h on h.id = acsd.SetupID");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = npa.FinID");
+		sql.append(" Inner Join RmtFinanceTypes rm on rm.FinType = fm.FinType");
 		sql.append(" Where npa.FinID =  ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -746,9 +816,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				String repayHierarchy = "";
 				if (rs.getBoolean("EffNpaStage")) {
-					repayHierarchy = rs.getString("RepayHierarchy");
+					repayHierarchy = rs.getString("NpaRpyHierarchy");
 				}
-				return repayHierarchy;
+				return StringUtils.trimToEmpty(repayHierarchy);
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
@@ -792,6 +862,123 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), npaClassID) > 0;
+	}
+
+	@Override
+	public Long getNpaMovemntId(long finID) {
+		String sql = "Select ID From NPA_Loan_Movement_Tagging Where FinID = ? and NPA = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, 1);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void saveNpaMovement(AssetClassification as) {
+		StringBuilder sql = new StringBuilder("Insert Into NPA_Loan_Movements(");
+		sql.append(" CustID, FinID, FinReference, EffFinReference, EffFinID");
+		sql.append(", ClassDate, EffNpaClassID, NpaClassID");
+		sql.append(", NpaClassCode, NpaSubClassCode, EffNpaClassCode, EffNpaSubClassCode)");
+		sql.append(" Select  ?, ?, ?, ?, ?, ?, ?, ?, acc.Code, ascc.Code, eacc.Code, eascc.Code ");
+		sql.append(" From Asset_Class_Setup_Details acsd");
+		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.ID = acsd.SubClassID");
+		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = ?");
+		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassID");
+		sql.append(" Where acsd.ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, as.getCustID());
+			ps.setObject(index++, as.getFinID());
+			ps.setString(index++, as.getFinReference());
+			ps.setString(index++, as.getEffFinReference());
+			ps.setObject(index++, as.getEffFinID());
+			ps.setDate(index++, JdbcUtil.getDate(as.getClassDate()));
+			ps.setLong(index++, as.getNpaClassID());
+			ps.setLong(index++, as.getEffNpaClassID());
+
+			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setLong(index, as.getNpaClassID());
+		});
+	}
+
+	@Override
+	public void saveNpaTaggingMovement(AssetClassification as) {
+		StringBuilder sql = new StringBuilder("Insert Into NPA_Loan_Movement_Tagging(");
+		sql.append(" CustID, FinID, FinReference, EffFinReference, EffFinID,");
+		sql.append(" NpaClassID, EffNpaClassID, NPA, TaggedDate,");
+		sql.append(" NpaClassCode, NpaSubClassCode, EffNpaClassCode, EffNpaSubClassCode)");
+		sql.append(" Select  ?, ?, ?, ?, ?, ?, ?, ?, ?, acc.Code, ascc.Code, eacc.Code, eascc.Code ");
+		sql.append(" From Asset_Class_Setup_Details acsd");
+		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.ID = acsd.SubClassID");
+		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = ?");
+		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassID");
+		sql.append(" Where acsd.ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, as.getCustID());
+			ps.setObject(index++, as.getFinID());
+			ps.setString(index++, as.getFinReference());
+			ps.setString(index++, as.getEffFinReference());
+			ps.setObject(index++, as.getEffFinID());
+			ps.setLong(index++, as.getNpaClassID());
+			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setBoolean(index++, true);
+			ps.setDate(index++, JdbcUtil.getDate(as.getNpaTaggedDate()));
+
+			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setLong(index++, as.getNpaClassID());
+		});
+	}
+
+	@Override
+	public void updateNpaMovement(long id, AssetClassification ac) {
+		String sql = "Update NPA_Loan_Movement_Tagging Set NPA = ?, UnTaggedDate = ?, NpaClassID = ?, EffNpaClassID = ? Where Id = ?";
+		jdbcOperations.update(sql, false, ac.getNpaUnTaggedDate(), ac.getNpaClassID(), ac.getEffNpaClassID(), id);
+	}
+
+	@Override
+	public AssetClassification getNpaMovemnt(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" NpaClassID, EffNpaClassID, NpaClassCode, NpaSubClassCode, EffNpaClassCode, EffNpaSubClassCode");
+		sql.append(" From NPA_Loan_Movements npa");
+		sql.append(" Where ClassDate = (Select MAX(ClassDate)");
+		sql.append(" From Npa_Loan_Movements where FinID = npa.FinID)");
+		sql.append(" and FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				AssetClassification item = new AssetClassification();
+
+				item.setNpaClassID(rs.getLong("NpaClassID"));
+				item.setEffNpaClassID(rs.getLong("EffNpaClassID"));
+				item.setNpaClassCode(rs.getString("NpaClassCode"));
+				item.setNpaSubClassCode(rs.getString("NpaSubClassCode"));
+				item.setEffNpaClassCode(rs.getString("EffNpaClassCode"));
+				item.setEffNpaSubClassCode("EffNpaSubClassCode");
+
+				return item;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 }

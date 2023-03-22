@@ -183,7 +183,7 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 			tanID = 0;
 		}
 
-		return tanID + 1;
+		return tanID;
 	}
 
 	@Override

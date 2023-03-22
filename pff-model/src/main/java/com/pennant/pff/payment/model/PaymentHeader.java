@@ -22,7 +22,7 @@
  * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
-package com.pennant.backend.model.payment;
+package com.pennant.pff.payment.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -36,10 +36,12 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.PaymentInstruction;
@@ -52,14 +54,17 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "paymentId", "paymentType", "paymentAmount", "createdOn", "approvedOn", "status" })
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class PaymentHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long paymentId = Long.MIN_VALUE;
+	@XmlElement
 	private String paymentType;
 	private long finID;
+	@XmlElement
 	private String finReference;
+	@XmlElement
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
 	@XmlJavaTypeAdapter(DateFormatterAdapter.class)
 	private Date createdOn;
@@ -74,8 +79,10 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 	private PaymentHeader befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-
+	@XmlElement(name = "paymentDetails")
 	private List<PaymentDetail> paymentDetailList = new ArrayList<>();
+	private List<PaymentDetail> calPaymentDetailList = new ArrayList<>();
+	@XmlElement
 	private PaymentInstruction paymentInstruction;
 	private Beneficiary defaultBeneficiary;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -84,13 +91,22 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 	private BigDecimal odAgainstCustomer = BigDecimal.ZERO;
 	private long custID;
 	private String custCoreBank;
+	@XmlElement
+	private WSReturnStatus returnStatus;
+	private String sourceId;
+	private Date appDate;
 
 	public PaymentHeader() {
 		super();
 	}
 
+	public PaymentHeader(long id) {
+		super();
+		this.setId(id);
+	}
+
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("paymentDetail");
 		excludeFields.add("paymentInstruction");
 		excludeFields.add("paymentInstrType");
@@ -100,12 +116,12 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 		excludeFields.add("odAgainstCustomer");
 		excludeFields.add("custID");
 		excludeFields.add("custCoreBank");
-		return excludeFields;
-	}
+		excludeFields.add("returnStatus");
+		excludeFields.add("sourceId");
+		excludeFields.add("feeType");
+		excludeFields.add("appDate");
 
-	public PaymentHeader(long id) {
-		super();
-		this.setId(id);
+		return excludeFields;
 	}
 
 	public long getId() {
@@ -240,6 +256,14 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 		this.paymentDetailList = paymentDetailList;
 	}
 
+	public List<PaymentDetail> getCalPaymentDetailList() {
+		return calPaymentDetailList;
+	}
+
+	public void setCalPaymentDetailList(List<PaymentDetail> calPaymentDetailList) {
+		this.calPaymentDetailList = calPaymentDetailList;
+	}
+
 	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
@@ -296,4 +320,27 @@ public class PaymentHeader extends AbstractWorkflowEntity {
 		this.custCoreBank = custCoreBank;
 	}
 
+	public WSReturnStatus getReturnStatus() {
+		return returnStatus;
+	}
+
+	public void setReturnStatus(WSReturnStatus returnStatus) {
+		this.returnStatus = returnStatus;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
+	}
 }

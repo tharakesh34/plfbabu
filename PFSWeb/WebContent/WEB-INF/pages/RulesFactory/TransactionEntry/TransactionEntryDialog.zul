@@ -320,7 +320,7 @@
 									<row>
 										<tabbox id="tb_Fields">
 											<tabs>
-												<tab label="Amount Codes" />
+												<tab id="tab_amount" label="Amount Codes" />
 												<tab id="tab_Fee" label="Fee Codes" />
 												<tab id="tab_expense" label="Expense Type Codes" visible="false"/>
 												<tab id="tab_Vas" label="Vas Codes" />

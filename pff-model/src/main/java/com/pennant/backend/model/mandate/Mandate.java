@@ -50,7 +50,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"branchCode", "iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate",
 		"startDate", "expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber",
 		"status", "active", "totEMIAmount", "barCodeNumber", "amountInWords", "entityCode", "swapIsActive",
-		"partnerBankId", "partnerBankName", "returnStatus" })
+		"partnerBankId", "partnerBankName", "returnStatus", "mandateStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity {
@@ -204,6 +204,8 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String strSwapIsActive;
 
 	private ErrorDetail error;
+	@XmlElement
+	private Boolean mandateStatus;
 
 	public Mandate() {
 		super();
@@ -272,6 +274,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("strExternalMandate");
 		excludeFields.add("strOpenMandate");
 		excludeFields.add("strSwapIsActive");
+		excludeFields.add("mandateStatus");
 
 		return excludeFields;
 	}
@@ -1085,6 +1088,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setStrSwapIsActive(String strSwapIsActive) {
 		this.strSwapIsActive = strSwapIsActive;
+	}
+
+	public Boolean getMandateStatus() {
+		return mandateStatus;
+	}
+
+	public void setMandateStatus(Boolean mandateStatus) {
+		this.mandateStatus = mandateStatus;
 	}
 
 }

@@ -4424,7 +4424,8 @@ public class ScheduleCalculator {
 		if (fm.isEqualRepay() && fm.isCalculateRepay()
 				&& !StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
 				&& !StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
-				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
+				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())
+				&& !FinServiceEvent.PRINH.equals(finScheduleData.getModuleDefiner())) {
 
 			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
 					&& fm.getAdvTerms() > 0 && isFirstRun) {
@@ -6657,6 +6658,11 @@ public class ScheduleCalculator {
 
 		if (!fm.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
 			logger.debug("Leaving - Not Add to First Inst");
+			return finScheduleData;
+		}
+
+		if (StringUtils.equals(fm.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
+			logger.debug("Leaving - Early settlement");
 			return finScheduleData;
 		}
 

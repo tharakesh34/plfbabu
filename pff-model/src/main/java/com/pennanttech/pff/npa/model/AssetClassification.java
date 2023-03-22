@@ -30,6 +30,9 @@ public class AssetClassification extends NpaProvisionStage {
 	private Timestamp createdOn;
 	private boolean npaChange;
 	private boolean finIsActive;
+	private Date npaTaggedDate;
+	private Date npaUnTaggedDate;
+	private Date classDate;
 	private Map<String, AssetClassSetupHeader> assetClassSetup = new HashMap<>();
 
 	public AssetClassification() {
@@ -194,6 +197,30 @@ public class AssetClassification extends NpaProvisionStage {
 
 	public void setFinIsActive(boolean finIsActive) {
 		this.finIsActive = finIsActive;
+	}
+
+	public Date getNpaTaggedDate() {
+		return npaTaggedDate;
+	}
+
+	public void setNpaTaggedDate(Date npaTaggedDate) {
+		this.npaTaggedDate = npaTaggedDate;
+	}
+
+	public Date getNpaUnTaggedDate() {
+		return npaUnTaggedDate;
+	}
+
+	public void setNpaUnTaggedDate(Date npaUnTaggedDate) {
+		this.npaUnTaggedDate = npaUnTaggedDate;
+	}
+
+	public Date getClassDate() {
+		return classDate;
+	}
+
+	public void setClassDate(Date classDate) {
+		this.classDate = classDate;
 	}
 
 	public Map<String, AssetClassSetupHeader> getAssetClassSetup() {

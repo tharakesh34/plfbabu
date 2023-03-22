@@ -691,7 +691,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 
 		if (calcOfSteps.equals(PennantConstants.STEPPING_CALC_AMT)) {
 			this.stepsAppliedFor.setDisabled(false);
-			this.stepType.setDisabled(true);
 		}
 		financeMain.setCalcOfSteps(this.calcOfSteps.getSelectedItem().getValue().toString());
 	}

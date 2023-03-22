@@ -14,7 +14,7 @@ public interface MerchantDetailsDAO extends BasicCrudDao<MerchantDetails> {
 
 	boolean isDuplicatePOSIdKey(MerchantDetails merchantDetails, TableType tableType);
 
-	public Map<String, Object> getGSTDataMapForMerch(String mId);
+	public Map<String, Object> getGSTDataMapForMerch(long mId);
 
 	public MerchantDetails getDetails(String mId);
 

@@ -36,7 +36,7 @@ public class OverdraftSettlementUploadDialogCtrl extends GFCBaseCtrl<Configurati
 	private static final Logger logger = LogManager.getLogger(OverdraftSettlementUploadDialogCtrl.class);
 	private static final long serialVersionUID = 4438291446368678829L;
 
-	protected Window window_ODSettlementProcessUploadDialogCtrl;
+	protected Window window_overDraftSettlementUploadDialogCtrl;
 	protected Textbox fileName;
 	protected Button btnFileUpload;
 	protected Rows panelRows;
@@ -58,10 +58,10 @@ public class OverdraftSettlementUploadDialogCtrl extends GFCBaseCtrl<Configurati
 		super();
 	}
 
-	public void onCreate$window_ODSettlementProcessUploadDialogCtrl(Event event) throws Exception {
+	public void onCreate$window_overDraftSettlementUploadDialogCtrl(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		setPageComponents(window_ODSettlementProcessUploadDialogCtrl);
+		setPageComponents(window_overDraftSettlementUploadDialogCtrl);
 		this.userId = getUserWorkspace().getLoggedInUser().getUserId();
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 

@@ -88,8 +88,6 @@ import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -107,6 +105,8 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
@@ -194,6 +194,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private FeeTypeService feeTypeService;
 	private RefundBeneficiary refundBeneficiary;
 	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
+	protected boolean leiMandatory = false;
 
 	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
@@ -719,6 +720,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (this.totAmount != null) {
 			this.totAmount.setConstraint("");
 		}
+		this.disbursementInstructionsDialogCtrl.leiNumber.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1826,6 +1828,17 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		totAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		totAmount.setStyle("text-align:right;");
 		totAmount.setReadonly(true);
+
+		if (disbursementInstructionsDialogCtrl != null) {
+			if (totalPayAmt.compareTo(FinanceConstants.LEI_NUM_LIMIT) > 0) {
+				disbursementInstructionsDialogCtrl.leiNum.setSclass("mandatory");
+			} else {
+				disbursementInstructionsDialogCtrl.leiNum.setSclass("");
+				disbursementInstructionsDialogCtrl.leiNumber.setErrorMessage("");
+				Clients.clearWrongValue(disbursementInstructionsDialogCtrl.leiNumber);
+			}
+		}
+
 		totAmount.setValue(PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter));
 
 		lc.appendChild(totAmount);

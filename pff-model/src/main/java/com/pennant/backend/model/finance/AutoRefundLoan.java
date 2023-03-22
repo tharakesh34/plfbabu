@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.payment.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AutoRefundLoan implements Serializable {

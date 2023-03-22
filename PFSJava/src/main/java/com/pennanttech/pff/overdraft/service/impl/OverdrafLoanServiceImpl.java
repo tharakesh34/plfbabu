@@ -313,7 +313,7 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 		overDraft.setLastMntBy(fap.getLastMntBy());
 		overDraft.setAppDate(null);
 
-		if (!overDraft.isOverdraftTxnChrgReq()) {
+		if (overDraft.isOverdraftTxnChrgReq()) {
 			createTransactionCharge(overDraft, feeAmount);
 		}
 
@@ -452,7 +452,7 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 		}
 
 		OverdraftLimit limit = overdraftLimitDAO.getLimit(frh.getFinID());
-		limit.setActualLimit(limit.getActualLimitBal().add(principalAmt).add(txnCharges));
+		limit.setActualLimitBal(limit.getActualLimitBal().add(principalAmt).add(txnCharges));
 
 		OverdraftLimitTransation transaction = new OverdraftLimitTransation();
 		transaction.setLimitID(limit.getId());

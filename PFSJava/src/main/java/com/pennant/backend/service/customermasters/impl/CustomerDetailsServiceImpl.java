@@ -2745,11 +2745,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					return auditDetail1;
 				}
 			}
-		} else if ((!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) && !panMandatory) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "panDocument";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-			return auditDetail;
 		}
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
@@ -5416,7 +5411,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(customerBankInfo.getAccountNumber(), bankBranchID,
 				"_View");
-		if (count == 0) {
+		if (count == 0 || !beneficiaryDAO.checkCustID(cusID)) {
 			Beneficiary beneficiary = new Beneficiary();
 			beneficiary.setCustID(cusID);
 			beneficiary.setBankBranchID(bankBranchID);
@@ -6518,6 +6513,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			if (PennantConstants.RCD_ADD.equalsIgnoreCase(recordType)) {
 				gst.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				recordType = PennantConstants.RECORD_TYPE_NEW;
 				isRcdType = true;
 			} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(recordType)) {
 				gst.setRecordType(PennantConstants.RECORD_TYPE_UPD);

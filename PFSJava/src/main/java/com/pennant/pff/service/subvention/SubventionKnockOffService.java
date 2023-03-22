@@ -283,7 +283,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 		logger.info("Calculating Taxes for Fee....");
 		fee.setPaidAmount(fee.getPaidAmount().add(amount));
 
-		if (financeMain.istDSApplicable() && fee.isTdsReq()) {
+		if (financeMain.isTDSApplicable() && fee.isTdsReq()) {
 			fee.setPaidTDS(TDSCalculator.getTDSAmount(amount));
 		}
 

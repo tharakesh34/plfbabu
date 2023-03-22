@@ -1788,15 +1788,18 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				lc = new Listcell(CurrencyUtil.format(jvPostingEntry.getTxnAmount(),
 						CurrencyUtil.getFormat(jvPostingEntry.getAccCCy())));
 				lc.setParent(item);
+
+				lc = new Listcell(jvPostingEntry.getPostingStatus());
+				lc.setTooltiptext(jvPostingEntry.getPostingStatus());
+				lc.setParent(item);
+
 				lc = new Listcell(jvPostingEntry.getNarrLine1());
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getRecordType());
 				lc.setParent(item);
-				lc = new Listcell(jvPostingEntry.getPostingStatus());
-				lc.setTooltiptext(jvPostingEntry.getPostingStatus());
-				lc.setParent(item);
+
 				item.setAttribute("data", jvPostingEntry);
 				if (!jvPostingEntry.isDeletedFlag()) {
 					int formatter = CurrencyUtil.getFormat(getJVPosting().getCurrency());

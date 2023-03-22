@@ -822,10 +822,10 @@ public class GSTCalculator {
 
 		Map<String, Object> dataMap = null;
 		if (type.equals("DBD")) {
-			String mId = aExtendedFieldRender.getMapValues().get("MID").toString();
+			long mId = Long.valueOf(aExtendedFieldRender.getMapValues().get("MID").toString());
 			dataMap = merchantDetailsDAO.getGSTDataMapForMerch(mId);
 		} else if (type.equals("MBD")) {
-			String oEMID = aExtendedFieldRender.getMapValues().get("OEMID").toString();
+			long oEMID = Long.valueOf(aExtendedFieldRender.getMapValues().get("OEMID").toString());
 			dataMap = manufacturerDAO.getGSTDataMapForManufac(oEMID);
 		}
 
@@ -1070,8 +1070,10 @@ public class GSTCalculator {
 	public static TaxAmountSplit calculateGST(FinanceDetail fd, String taxType, BigDecimal paidAmount,
 			BigDecimal waivedAmount) {
 
+		TaxAmountSplit taxSplit = new TaxAmountSplit();
+		taxSplit.setNetAmount(paidAmount);
 		if (StringUtils.isBlank(taxType)) {
-			return new TaxAmountSplit();
+			return taxSplit;
 		}
 
 		Map<String, BigDecimal> gstPercentages = fd.getGstPercentages();

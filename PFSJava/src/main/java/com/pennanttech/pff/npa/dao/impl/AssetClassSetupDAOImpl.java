@@ -30,7 +30,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 	@Override
 	public AssetClassSetupHeader getAssetClassSetupHeader(long id, String type) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select Id, EntityCode, RepayHierarchy");
+		sql.append(" Select Id, EntityCode, Active");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From Asset_Class_Setup_Header");
@@ -45,7 +45,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 
 				acsh.setId(rs.getLong("Id"));
 				acsh.setEntityCode(rs.getString("EntityCode"));
-				acsh.setRepayHierarchy(rs.getString("RepayHierarchy"));
+				acsh.setActive(rs.getBoolean("Active"));
 				acsh.setVersion(rs.getInt("Version"));
 				acsh.setCreatedBy(rs.getLong("CreatedBy"));
 				acsh.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -99,10 +99,10 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 	public String save(AssetClassSetupHeader acsh, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Insert into Asset_Class_Setup_Header");
 		sql.append(tableType.getSuffix());
-		sql.append(" (Id, EntityCode, RepayHierarchy, Version");
+		sql.append(" (Id, EntityCode, Version");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		if (acsh.getId() == Long.MIN_VALUE) {
 			acsh.setId(getNextValue("SEQ_ASSET_CLASS_SETUP_HEADER"));
@@ -116,7 +116,6 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 
 				ps.setLong(index++, acsh.getId());
 				ps.setString(index++, acsh.getEntityCode());
-				ps.setString(index++, acsh.getRepayHierarchy());
 				ps.setInt(index++, acsh.getVersion());
 				ps.setLong(index++, acsh.getCreatedBy());
 				ps.setTimestamp(index++, acsh.getCreatedOn());
@@ -141,10 +140,24 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 	}
 
 	@Override
+	public void softDelete(long id, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update Asset_Class_Setup_Header");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set Active = ? where Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setBoolean(1, false);
+			ps.setLong(2, id);
+		});
+	}
+
+	@Override
 	public void update(AssetClassSetupHeader asch, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update Asset_Class_Setup_Header");
 		sql.append(tableType.getSuffix());
-		sql.append(" Set EntityCode = ?, RepayHierarchy = ? ");
+		sql.append(" Set EntityCode = ?, Active = ? ");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?,  RecordStatus  = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?");
@@ -156,7 +169,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 			int index = 1;
 
 			ps.setString(index++, asch.getEntityCode());
-			ps.setString(index++, asch.getRepayHierarchy());
+			ps.setBoolean(index++, asch.isActive());
 			ps.setInt(index++, asch.getVersion());
 			ps.setLong(index++, asch.getLastMntBy());
 			ps.setTimestamp(index++, asch.getLastMntOn());
@@ -181,10 +194,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-
-			ps.setLong(index, AssetClassSetupHeader.getId());
-
+			ps.setLong(1, AssetClassSetupHeader.getId());
 		});
 	}
 
@@ -193,11 +203,11 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Count(entityCode) From ASSET_CLASS_SETUP_HEADER");
 		sql.append(type.getSuffix());
-		sql.append(" Where EntityCode = ? ");
+		sql.append(" Where EntityCode = ? and Active = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), entityCode) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), entityCode, 1) > 0;
 	}
 
 	private List<AssetClassSetupDetail> getDetails(long setupID) {
@@ -441,7 +451,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 
 	@Override
 	public List<AssetClassSetupHeader> getAssetClassSetups() {
-		String sql = "Select Id, EntityCode, RepayHierarchy From Asset_Class_Setup_Header";
+		String sql = "Select Id, EntityCode From Asset_Class_Setup_Header Where Active = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -450,12 +460,11 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 
 			header.setId(rs.getLong("Id"));
 			header.setEntityCode(rs.getString("EntityCode"));
-			header.setRepayHierarchy(rs.getString("RepayHierarchy"));
 
 			header.setDetails(getDetails(header.getId()));
 
 			return header;
-		});
+		}, 1);
 	}
 
 }

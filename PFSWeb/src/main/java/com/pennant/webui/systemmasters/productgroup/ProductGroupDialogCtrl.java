@@ -264,7 +264,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		if (aProductGroup.getProductCategoryId() != null) {
+		if (aProductGroup.getProductCategoryId() != 0) {
 			LovFieldDetail lovFieldDetail = new LovFieldDetail();
 			lovFieldDetail.setFieldCodeId(Long.valueOf(aProductGroup.getProductCategoryId()));
 			this.productCategoryId.setObject(lovFieldDetail);
@@ -303,7 +303,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		// dealer category
 		try {
 			this.productCategoryId.getValidatedValue();
-			aProductGroup.setProductCategoryId(this.productCategoryId.getValue());
+			aProductGroup.setProductCategoryId(Integer.parseInt(this.productCategoryId.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

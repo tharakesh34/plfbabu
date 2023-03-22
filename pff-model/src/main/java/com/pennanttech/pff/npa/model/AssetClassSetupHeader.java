@@ -16,13 +16,13 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private String entityCode;
-	private String repayHierarchy;
 	private boolean newRecord = false;
 	private AssetClassSetupHeader befImage;
 	private long createdBy;
 	private Timestamp createdOn;
 	private Long approvedBy;
 	private Timestamp approvedOn;
+	private boolean active;
 
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private List<AssetClassSetupDetail> details = new ArrayList<>();
@@ -41,7 +41,6 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 		AssetClassSetupHeader entity = new AssetClassSetupHeader();
 		entity.setId(this.id);
 		entity.setEntityCode(this.entityCode);
-		entity.setRepayHierarchy(this.repayHierarchy);
 		entity.setNewRecord(this.newRecord);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 
@@ -63,6 +62,7 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 		entity.setApprovedOn(this.approvedOn);
 		entity.setDetails(this.getDetails());
 		entity.setAuditDetailMap(this.getAuditDetailMap());
+		entity.setActive(this.active);
 
 		return entity;
 	}
@@ -81,14 +81,6 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
-	}
-
-	public String getRepayHierarchy() {
-		return repayHierarchy;
-	}
-
-	public void setRepayHierarchy(String repayHierarchy) {
-		this.repayHierarchy = repayHierarchy;
 	}
 
 	public boolean isNewRecord() {
@@ -155,4 +147,11 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 		this.details = details;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }

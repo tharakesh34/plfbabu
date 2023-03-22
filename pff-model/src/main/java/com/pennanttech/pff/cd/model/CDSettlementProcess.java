@@ -10,7 +10,7 @@ public class CDSettlementProcess extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private Long id = Long.MIN_VALUE;
-	private String requestBatchId;
+	private Long requestBatchId;
 	private String settlementRef;
 	private String customerRef;
 	private String EMIOffer;
@@ -66,11 +66,11 @@ public class CDSettlementProcess extends AbstractWorkflowEntity {
 		this.id = id;
 	}
 
-	public String getRequestBatchId() {
+	public Long getRequestBatchId() {
 		return requestBatchId;
 	}
 
-	public void setRequestBatchId(String requestBatchId) {
+	public void setRequestBatchId(Long requestBatchId) {
 		this.requestBatchId = requestBatchId;
 	}
 

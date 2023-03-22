@@ -104,6 +104,14 @@
 													<combobox id="cbfinSchdMthd" width="275px" readonly="true" />
 												</hbox>
 											</row>
+											<row>
+												<label id="label_FinanceTypeDialog_NPARepayHierarchy"
+													value="${c:l('label_FinanceTypeDialog_NPARepayHierarchy.value')}" />
+												<hbox>
+													<space id="space_npaRpyHierarchy" spacing="2px" sclass="mandatory" />
+													<uppercasebox id="npaRpyHierarchy" width="200px" />
+												</hbox>
+											</row>
 											<row id="row_DroppingMethod">
 												<label id="label_FinanceTypeDialog_DroplineOD"
 													value="${c:l('label_OverDraftFinanceTypeDialog_DroplineOD.value')}" />

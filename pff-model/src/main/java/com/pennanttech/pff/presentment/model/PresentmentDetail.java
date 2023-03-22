@@ -163,7 +163,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private FinanceDetail financeDetail;
 	private FinExcessAmount excessAmount;
-	private List<FinExcessAmount> excessAmountReversal;
+	private List<FinExcessAmount> excessAmountReversal = new ArrayList<>();
 	private List<PresentmentDetail> presements = new ArrayList<>();
 	private FinExcessAmount emiInAdvance;
 	private List<PresentmentCharge> presentmentCharges = new ArrayList<>();

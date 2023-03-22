@@ -580,7 +580,7 @@ public class TdsReceivableDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 		if (!this.certificateNumber.isReadonly()) {
 			this.certificateNumber.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_TdsReceivableDialog_CertificateNumber.value"),
-							PennantRegularExpressions.REGEX_CERTIFICATE_NUMBER, true));
+							PennantRegularExpressions.REGEX_ALPHA, true));
 		}
 		if (!this.certificateDate.isReadonly()) {
 			this.certificateDate.setConstraint(

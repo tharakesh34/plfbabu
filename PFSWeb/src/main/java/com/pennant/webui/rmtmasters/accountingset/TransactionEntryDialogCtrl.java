@@ -185,6 +185,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Tab tab_Fee;
 	protected Tab tab_Vas;
 	protected Tab tab_expense;
+	protected Tab tab_amount;
 
 	protected Grid grid_Basicdetails;
 	protected Column column_CustomerData;
@@ -776,6 +777,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		tab_expense.setVisible(
 				ImplementationConstants.ALLOW_IND_AS && AccountingEvent.EXPENSE.equals(lovDescEventCodeName2)
 						|| AccountingEvent.INDAS.equals(lovDescEventCodeName2));
+
+		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(lovDescEventCodeName2)) {
+			this.tab_Vas.setVisible(false);
+			this.tab_expense.setVisible(false);
+		}
 
 		try {
 			// fill the components with the data
@@ -1910,6 +1916,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
 			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
 			feeMap.put("_AMZ_N", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ_N"));
+			feeMap.put("_AMZ_BAL", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ_BAL"));
 			return feeMap;
 		}
 

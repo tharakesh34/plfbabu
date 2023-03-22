@@ -749,7 +749,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 						finAdvpay.setStatus(DisbursementConstants.STATUS_CANCEL);
 					}
 				} else if (!DisbursementConstants.STATUS_REVERSED.equals(finAdvpay.getStatus())) {
-					finAdvpay.setStatus(DisbursementConstants.STATUS_APPROVED);
+					if (ImplementationConstants.DISB_PAID_CANCELLATION_REQ) {
+						finAdvpay.setStatus(DisbursementConstants.STATUS_AWAITCON);
+					} else {
+						finAdvpay.setStatus(DisbursementConstants.STATUS_APPROVED);
+					}
 				}
 				finAdvpay.setpOIssued(true);
 			}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="windowUnAuthTransac" border="normal" apply="${unAuthorizedTransactionCtrl}" width="100%" height="100%"
+		sizable="false">
+		<borderlayout id="borderlayoutCity">
+			<north>
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnSearch" label="${c:l('label_Filter')}"
+								autodisable="btnSearch,print,btnRefresh,help" tooltiptext="${c:l('button_UnAuthTransac_Search.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+							<button id="btnRefresh" label="${c:l('label_Refresh')}"
+								autodisable="btnSearch,print,btnRefresh,help" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_UnAuthorizedTransactions.title')}" sclass="label-heading" />
+						</toolbar>
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnClose" height="20" label="${c:l('btnClose.label')}"
+								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose"
+								visible="false" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+			<center border="none">
+				<div>
+					<grid id="dymanicFieldsGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+						style="padding-left:25px;border:none;">
+						<columns>
+							<column width="150px" />
+							<column />
+							<column width="150px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<label value="${c:l('label_UnAuthTransac_Entity')}" />
+								<extendedcombobox id="entity" />
+								<label value="${c:l('label_UnAuthTransac_Division')}" />
+								<hbox>
+									<extendedcombobox id="division" width="120px" />
+								</hbox>
+							</row>
+							<row>
+								<label value="${c:l('label_UnAuthTransac_Branch')}" />
+								<hbox>
+									<extendedcombobox id="branch" width="120px" />
+								</hbox>
+
+								<label value="${c:l('label_UnAuthTransac_Product')}" />
+								<hbox>
+									<extendedcombobox id="product" width="120px" />
+								</hbox>
+							</row>
+							<row>
+								<label value="${c:l('label_UnAuthTransac_LoanType')}" />
+								<hbox>
+									<extendedcombobox id="loanType" width="120px" />
+								</hbox>
+							</row>
+							<row id="row_RadioGroup">
+								<label id="label_ReportPromptFilterCtrl_ReportFormat"
+									value="${c:l('label_ReportPromptFilterCtrl_ReportFormat.value')}" />
+								<cell colspan="2">
+									<radiogroup>
+										<radio id="pdfFormat" selected="true" visible="false"
+											label="${c:l('label_ReportPromptFilterCtrl_PDFFormat.value')}">
+										</radio>
+										<radio id="excelFormat"
+											label="${c:l('label_ReportPromptFilterCtrl_ExcelFormat.value')}">
+										</radio>
+									</radiogroup>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px" splittable="false"></south>
+		</borderlayout>
+	</window>
+</zk>

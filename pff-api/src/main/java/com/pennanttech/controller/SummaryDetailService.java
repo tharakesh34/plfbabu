@@ -113,6 +113,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 		summary.setPrincipal(finPftDetail.getTdSchdPriBal());
 		summary.setFuturePrincipal(finPftDetail.getTotalPriBal().subtract(finPftDetail.getTdSchdPriBal()));
 		summary.setInterest(finPftDetail.getTdSchdPftBal());
+		summary.setFutureInterest(finPftDetail.getPftAccrued().subtract(finPftDetail.getTdSchdPftBal()));
 
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
 			summary.setSanctionAmt(fm.getFinAssetValue());

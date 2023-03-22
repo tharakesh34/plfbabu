@@ -428,8 +428,21 @@ public class ExtendedFieldDetailsValidation {
 									lovFields[0], (String) filters[0][0], fieldValue);
 						}
 					} else {
+						Object fieldValue1 = exdFieldData.getFieldValue();
+						if (fieldValue1 instanceof Long) {
+							fieldValue1 = Long.parseLong(fieldValue);
+						}
+
+						if (fieldValue1 instanceof Integer) {
+							fieldValue1 = Integer.parseInt(fieldValue);
+						}
+
+						if (fieldValue1 instanceof BigDecimal) {
+							fieldValue1 = new BigDecimal(fieldValue);
+						}
+
 						count = extendedFieldRenderDAO.validateMasterData(moduleMapping.getTableName(), lovFields[0],
-								null, fieldValue);
+								null, fieldValue1);
 					}
 				} else {
 					if (filters != null) {

@@ -611,7 +611,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					"");
 			this.stepsAppliedFor.setDisabled(true);
 			this.alwManualSteps.setChecked(finType.isAlwManualSteps());
-
+			onCheckAlwManualSteps(finType.isAlwManualSteps());
 			this.stepPolicy.setValue(finType.getDftStepPolicy());
 			this.stepPolicy.setDescription(finType.getLovDescDftStepPolicyName());
 			this.stepType.setValue(finType.getDftStepPolicyType());
@@ -628,7 +628,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					"");
 			this.stepsAppliedFor.setDisabled(true);
 			this.alwManualSteps.setChecked(finType.isAlwManualSteps());
-
+			onCheckAlwManualSteps(finType.isAlwManualSteps());
 			this.stepPolicy.setValue(finType.getDftStepPolicy());
 			this.stepPolicy.setDescription(finType.getLovDescDftStepPolicyName());
 			this.stepType.setValue(finType.getDftStepPolicyType());
@@ -679,7 +679,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.stepType.setDisabled(true);
 			this.btnNew_RestructureStep.setVisible(true);
 		} else if (calcOfSteps.equals(PennantConstants.STEPPING_CALC_PERC)) {
-			this.stepPolicy.setReadonly(false);
+			if (this.alwManualSteps.isChecked()) {
+				this.stepPolicy.setReadonly(true);
+			} else {
+				this.stepPolicy.setReadonly(false);
+			}
 			this.stepType.setDisabled(false);
 			if (StringUtils.isEmpty(this.stepPolicy.getValue())) {
 				this.stepPolicy.setProperties("StepPolicyHeader", "PolicyCode", "PolicyDesc", true, 8);
@@ -687,6 +691,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			this.btnNew_RestructureStep.setVisible(false);
 		}
+		this.finScheduleData.getFinanceMain().setCalcOfSteps(calcOfSteps);
+		this.finScheduleData.getFinanceType().setCalcOfSteps(calcOfSteps);
 	}
 
 	public void onFulfill$stepPolicy(Event event) {
@@ -846,7 +852,12 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.label_RestructureDialog_numberOfSteps.setVisible(false);
 			this.hbox_numberOfSteps.setVisible(false);
 			this.space_noOfSteps.setSclass("");
-			this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
+			if (getComboboxValue(this.calcOfSteps).equals(PennantConstants.STEPPING_CALC_AMT)) {
+				this.stepPolicy.setValue("", "");
+				this.stepPolicy.setReadonly(true);
+			} else {
+				this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
+			}
 			this.stepType.setReadonly(isReadOnly("FinanceMainDialog_stepType"));
 			this.space_stepType.setSclass("");
 			this.stepType.setDisabled(true);

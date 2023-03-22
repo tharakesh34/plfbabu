@@ -103,6 +103,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 				deStatus.setSuccessRecords(header.getSucessRecords());
 				deStatus.setFailedRecords(header.getFailureRecords());
 				deStatus.setRemarks(remarks.toString());
+
 				setExceptionLog(deStatus);
 			}
 

@@ -65,6 +65,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -253,7 +254,9 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			mandate.setStatus(MandateStatus.NEW);
 			mandate.setRecordType("");
 			mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-
+			if (mandate.getMandateStatus() != null && mandate.getMandateStatus() == true) {
+				mandate.setStatus(DisbursementConstants.STATUS_AWAITCON);
+			}
 			String mandateType = mandate.getMandateType();
 
 			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
@@ -277,7 +280,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 				mandate.setStatus(MandateStatus.APPROVED);
 			}
-
+			// PSD : 194021
+			mandate.setRoleCode("");
+			mandate.setNextRoleCode("");
+			mandate.setTaskId("");
+			mandate.setNextTaskId("");
+			mandate.setWorkflowId(0);
 			getDocument(mandate);
 
 			long mandateID = mandateDAO.save(mandate, tableType);

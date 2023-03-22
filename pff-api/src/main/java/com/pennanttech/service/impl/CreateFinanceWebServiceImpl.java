@@ -49,6 +49,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.ForeClosureLetter;
+import com.pennant.backend.model.finance.ForeClosureResponse;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
 import com.pennant.backend.model.finance.UserActions;
@@ -353,6 +354,17 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			status.setReturnText(alterMessage);
 			fd.setReturnStatus(status);
 			return fd;
+		}
+
+		if (fm.getOverdraftChrgAmtOrPerc().compareTo(BigDecimal.ZERO) < 0) {
+			doEmptyResponseObject(response);
+			response.setStp(fd.isStp());
+			String[] valueParm = new String[1];
+			valueParm[0] = "OverDraft Charge Amt or Percentage ";
+			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("STP008", valueParm);
+			status.setReturnText(valueParm[0] + fm.getOverdraftChrgAmtOrPerc() + " " + status.getReturnText());
+			response.setReturnStatus(status);
+			return response;
 		}
 
 		fm.setRecalType("");
@@ -1831,13 +1843,14 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 				}
 
 				FinStatementRequest statement = new FinStatementRequest();
+				ForeClosureResponse response = new ForeClosureResponse();
 
 				statement.setFinID(finID);
 				statement.setFinReference(detail.getFinReference());
 				statement.setDays(1);
 				statement.setFromDate(SysParamUtil.getAppDate());
 
-				ForeClosureLetter fcl = foreClosureService.getForeClosureAmt(statement);
+				ForeClosureLetter fcl = foreClosureService.getForeClosureAmt(statement, response);
 				fse.setForeclosureAmt(fcl.getForeCloseAmount());
 				fse.setExcessAmt(fcl.getExcessAmount());
 				fse.setWriteOffAmt(getWriteOffAmount(fse, financeScheduleDetailDAO.getWriteoffTotals(finID)));
@@ -1904,7 +1917,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail getFinDetailsByFinReference(String finReference) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isNotBlank(finReference)) {
 			APIErrorHandlerService.logReference(finReference);
 		}

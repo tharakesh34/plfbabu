@@ -195,8 +195,11 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.CreditInformation;
@@ -1428,9 +1431,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.salariedCustomer.setChecked(aCustomer.isSalariedCustomer());
 
 		if (!aCustomer.isNewRecord()) {
-			this.custGroupId.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustGroupCode()),
-					StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
 			this.custGroupId.setAttribute("CustGroupId", aCustomer.getCustGroupID());
+			if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(aCustomer.getLovDescCustGroupCode()))) {
+				this.custGroupId.setValue(StringUtils.trimToEmpty(aCustomer.getLovDescCustGroupCode()),
+						StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
+			} else {
+				onFulfillCustGroupId();
+			}
 			fillComboBox(this.residentialStatus, aCustomer.getResidentialStatus(),
 					PennantStaticListUtil.getResidentialStsList(), ",MN,PIO,");
 		} else {
@@ -5358,6 +5365,27 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 		logger.debug("Leaving");
+	}
+
+	public void onFulfillCustGroupId() {
+		if (StringUtils.isEmpty(this.custGroupId.getAttribute("CustGroupId").toString())) {
+			return;
+		}
+
+		CustomerGroup custGrp = (CustomerGroup) this.custGroupId.getObject();
+		if (custGrp == null) {
+			return;
+		}
+
+		Search search = new Search(CustomerGroup.class);
+		search.addFilterEqual("CustGrpCode", custGrp.getCustGrpCode());
+
+		SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
+		custGrp = (CustomerGroup) searchProcessor.getResults(search).get(0);
+
+		this.custGroupId.setValue(custGrp.getCustGrpCode());
+		this.custGroupId.setDescription(custGrp.getCustGrpDesc());
+
 	}
 
 	/**

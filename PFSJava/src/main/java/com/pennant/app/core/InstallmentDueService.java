@@ -91,11 +91,7 @@ public class InstallmentDueService extends ServiceHelper {
 		amountCodes.setInstcpz(schd.getCpzAmount());
 		amountCodes.setInsttot(amountCodes.getInstpft().add(amountCodes.getInstpri()));
 		amountCodes.setNpa(finEODEvent.isNpaStage());
-
-		if ("B".equals(schd.getBpiOrHoliday())) {
-			advancePaymentService.setIntAdvFlag(fm, amountCodes, true);
-		}
-
+		advancePaymentService.setIntAdvFlag(fm, amountCodes, true);
 		amountCodes.setPftS(fpd.getTdSchdPft());
 		amountCodes.setPftSP(fpd.getTdSchdPftPaid());
 		amountCodes.setPftSB(amountCodes.getPftS().subtract(amountCodes.getPftSP()));
@@ -111,6 +107,8 @@ public class InstallmentDueService extends ServiceHelper {
 		if (amountCodes.getPriSB().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setPriSB(BigDecimal.ZERO);
 		}
+
+		adjustAdvInt(finEODEvent, schd, amountCodes);
 
 		// Provision and Fin Od days Greater than zero
 		if (fpd.isProvision() && fpd.getCurODDays() > 0) {
@@ -410,6 +408,34 @@ public class InstallmentDueService extends ServiceHelper {
 		pfd.setAmzTillLBD(pfd.getAmzTillLBD().add(totPft));
 		logger.debug(Literal.LEAVING);
 		return datasets;
+	}
+
+	private void adjustAdvInt(FinEODEvent finEODEvent, FinanceScheduleDetail schd, AEAmountCodes amountCodes) {
+		BigDecimal advInst = advancePaymentService.getBalAdvIntAmt(finEODEvent.getFinanceMain(), schd.getSchDate());
+
+		FinanceProfitDetail fpd = finEODEvent.getFinProfitDetail();
+		BigDecimal acrTillLBD = fpd.getAcrTillLBD();
+		amountCodes.setAccrTillBd(acrTillLBD);
+
+		BigDecimal profitSchd = schd.getProfitSchd();
+		if (advInst.compareTo(BigDecimal.ZERO) > 0 && acrTillLBD.compareTo(BigDecimal.ZERO) == 0
+				&& profitSchd.compareTo(advInst) >= 0) {
+			amountCodes.setAdvInst(advInst);
+		} else if (advInst.compareTo(BigDecimal.ZERO) > 0 && acrTillLBD.compareTo(advInst) < 0
+				&& acrTillLBD.compareTo(BigDecimal.ZERO) > 0 && advInst.compareTo(acrTillLBD) > 0
+				&& advInst.compareTo(profitSchd) <= 0) {
+			amountCodes.setAdvInst(advInst.subtract(acrTillLBD));
+			amountCodes.setdAmz(advInst.compareTo(profitSchd) < 0 ? profitSchd : amountCodes.getdAmz());
+		} else if (amountCodes.getAccrue().compareTo(acrTillLBD) > 0 && profitSchd.compareTo(advInst) > 0) {
+			amountCodes.setdAmz(amountCodes.getAccrue().subtract(acrTillLBD));
+		} else if (profitSchd.compareTo(advInst) < 0) {
+			amountCodes.setAdvInst(profitSchd);
+		}
+		if (profitSchd.compareTo(acrTillLBD) > 0 && advInst.compareTo(BigDecimal.ZERO) > 0
+				&& advInst.compareTo(profitSchd) > 0) {
+			amountCodes.setAdvInst(profitSchd.subtract(acrTillLBD));
+			amountCodes.setdAmz(amountCodes.getAdvInst());
+		}
 	}
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {

@@ -164,12 +164,20 @@ public class TanAssignmentServiceImpl extends GenericService<TanAssignment> impl
 							tanDetailDAO.update(tanDetail, type);
 							tanAssignment.setTanID(tanDetail.getId());
 							tanAssignmentDAO.save(tanAssignment, type);
+
+							tanAssignmentDAO.delete(tanAssignment, TableType.TEMP_TAB);
+							tanDetailDAO.delete(tanDetail, TableType.TEMP_TAB);
 						}
 					}
 
 				} else {
 					tanAssignment.setTanID(tanDetailDAO.save(tanDetail, type));
 					tanAssignmentDAO.save(tanAssignment, type);
+
+					if (type.equals(TableType.MAIN_TAB)) {
+						tanAssignmentDAO.delete(tanAssignment, TableType.TEMP_TAB);
+						tanDetailDAO.delete(tanDetail, TableType.TEMP_TAB);
+					}
 				}
 			}
 

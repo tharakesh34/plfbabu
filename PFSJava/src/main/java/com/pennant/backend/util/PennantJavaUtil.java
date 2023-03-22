@@ -350,8 +350,6 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.others.external.reports.LoanReport;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -448,6 +446,8 @@ import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
@@ -3663,6 +3663,11 @@ public class PennantJavaUtil {
 						null, 600));
 
 		ModuleUtil.register("CertificateAdjustment", new ModuleMapping("TdsReceivable", TdsReceivable.class,
+				new String[] { "TDS_RECEIVABLES", "TDS_RECEIVABLES_AView" }, masterWF, new String[] {
+						"CertificateNumber", "TanNumber", "CertificateAmount", "AssessmentYear", "CertificateQuarter" },
+				null, 600));
+
+		ModuleUtil.register("CertificateEnquiry", new ModuleMapping("TdsReceivable", TdsReceivable.class,
 				new String[] { "TDS_RECEIVABLES", "TDS_RECEIVABLES_AView" }, masterWF, new String[] {
 						"CertificateNumber", "TanNumber", "CertificateAmount", "AssessmentYear", "CertificateQuarter" },
 				null, 600));

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.finance.AutoRefundLoan;
-import com.pennant.backend.model.payment.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentDetail;
 
 public interface AutoRefundDAO {
 	long logRefund(AutoRefundLoan alr);

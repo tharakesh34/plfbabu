@@ -75,7 +75,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"offerProduct", "offerAmount", "custSegmentation", "baseProduct", "processType", "bureauTimeSeries",
 		"campaignName", "existingLanRefNo", "leadSource", "poSource", "rsa", "verification", "sourChannelCategory",
 		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps", "calcOfSteps", "stepsAppliedFor",
-		"noOfGrcSteps" })
+		"noOfGrcSteps", "mandateID", "finIsActive" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -594,6 +594,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String productCategory;
 
 	/* Mandate */
+	@XmlElement
 	private Long mandateID;
 	private Long securityMandateID;
 
@@ -3548,14 +3549,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setFinIsAlwMD(boolean finIsAlwMD) {
 		this.finIsAlwMD = finIsAlwMD;
-	}
-
-	public boolean istDSApplicable() {
-		return tDSApplicable;
-	}
-
-	public void settDSApplicable(boolean tDSApplicable) {
-		this.tDSApplicable = tDSApplicable;
 	}
 
 	public int getPlanEMIHLockPeriod() {

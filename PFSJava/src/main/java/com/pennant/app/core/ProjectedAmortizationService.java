@@ -266,6 +266,11 @@ public class ProjectedAmortizationService {
 				nextSchd = schedules.get(i + 1);
 			}
 
+			if (!curSchd.isRepayOnSchDate()) {
+				i++;
+				continue;
+			}
+
 			prvSchdDate = prvSchd.getSchDate();
 			nextSchdDate = nextSchd.getSchDate();
 
@@ -886,6 +891,7 @@ public class ProjectedAmortizationService {
 			for (FeeType feeType : feeTypes) {
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ", BigDecimal.ZERO);
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ_N", BigDecimal.ZERO);
+				dataMap.put(feeType.getFeeTypeCode() + "_AMZ_BAL", BigDecimal.ZERO);
 			}
 
 			dataMap.put("MBD_AMZ", BigDecimal.ZERO);
@@ -899,8 +905,30 @@ public class ProjectedAmortizationService {
 			aeEvent.setFinReference(amz.getFinReference());
 			aeEvent.setEntityCode(amz.getEntityCode());
 			aeEvent.setFinType(amz.getFinType());
-			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());// Current Month Amortized Amount
-			dataMap.put(amz.getFeeTypeCode() + "_AMZ_N", amz.getAmortizedAmount());// Till Date Amortized Amount
+			if (!fm.isFinIsActive()) {
+				BigDecimal amzTillClosure = BigDecimal.ZERO;
+				Date monthStart = DateUtil.getMonthStart(finEODEvent.getEventFromDate());
+				Date maturityDate = profitDetailsDAO.getMaturityDate(fm.getFinID(), finEODEvent.getAppDate());
+
+				int daysTillClosure = DateUtil.getDaysBetween(monthStart, fm.getClosedDate());
+				int remDaysTillMaturity = DateUtil.getDaysBetween(monthStart, maturityDate);
+
+				if (daysTillClosure > 0) {
+					BigDecimal feePerDay = amz.getCurMonthAmz().divide(new BigDecimal(remDaysTillMaturity), 0,
+							RoundingMode.HALF_DOWN);
+					amzTillClosure = feePerDay.multiply(new BigDecimal(daysTillClosure));
+				}
+
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ", amzTillClosure);
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ_BAL", (amz.getCurMonthAmz().subtract(amzTillClosure)));
+
+			} else {
+				/* Current Month Amortized Amount */
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());
+				/* Till Date Amortized Amount */
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ_N", amz.getAmortizedAmount());
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ_BAL", BigDecimal.ZERO);
+			}
 
 			aeEvent.setDataMap(dataMap);
 

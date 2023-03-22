@@ -84,7 +84,7 @@ public class LimitHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean active;
 	private boolean rebuild = true;
-
+	@XmlElement
 	private boolean validateMaturityDate;
 
 	private String status = "";

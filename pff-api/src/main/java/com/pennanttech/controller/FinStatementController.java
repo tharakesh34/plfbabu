@@ -567,13 +567,14 @@ public class FinStatementController extends SummaryDetailService {
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		TaxAmountSplit taxSplit = null;
-		BigDecimal bounceGst = BigDecimal.ZERO;
-		BigDecimal receivableGst = BigDecimal.ZERO;
 		FeeType feeType = null;
 
 		if (CollectionUtils.isNotEmpty(manualAdviseFees)) {
 			for (ManualAdvise advisedFees : manualAdviseFees) {
 				FinFeeDetail feeDetail = new FinFeeDetail();
+				BigDecimal bounceGst = BigDecimal.ZERO;
+				BigDecimal receivableGst = BigDecimal.ZERO;
+
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
 					feeDetail.setFeeID(advisedFees.getAdviseID());
@@ -594,14 +595,14 @@ public class FinStatementController extends SummaryDetailService {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
 						taxSplit = GSTCalculator.getExclusiveGST(advisedFees.getAdviseAmount(), taxPercentages);
-						receivableGst = receivableGst.add(taxSplit.gettGST());
+						receivableGst = taxSplit.gettGST();
 					}
-					totReceivableAdFee = advisedFees.getAdviseAmount().add(receivableGst);
+					totReceivableAdFee = totReceivableAdFee.add(advisedFees.getAdviseAmount().add(receivableGst));
 				}
 				feeDetail.setFeeTypeCode(advisedFees.getFeeTypeCode());
-				feeDetail.setActualAmount(advisedFees.getAdviseAmount());
+				feeDetail.setActualAmount(advisedFees.getAdviseAmount().add(bounceGst).add(receivableGst));
 				feeDetail.setPaidAmount(advisedFees.getPaidAmount());
-				feeDetail.setRemainingFee(advisedFees.getBalanceAmt());
+				feeDetail.setRemainingFee(advisedFees.getBalanceAmt().add(bounceGst).add(receivableGst));
 				feeDues.add(feeDetail);
 			}
 

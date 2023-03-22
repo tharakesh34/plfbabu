@@ -1173,8 +1173,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append("AND FinReference IN (SELECT Reference From CollateralAssignment)");
 			whereClause.append(" AND ClosingStatus in ('W','E','C','M')");
 		} else if (moduleDefiner.equals(FinServiceEvent.PRINH)) {
-			whereClause
-					.append(" AND StepFinance = 0 and Schedulemethod = '" + CalculationConstants.SCHMTHD_EQUAL + "' ");
+			whereClause.append(" AND StepFinance = 0 and ManualSchedule = 0 and Schedulemethod = '"
+					+ CalculationConstants.SCHMTHD_EQUAL + "' ");
 		}
 
 		// Written Off Finance Reference Details Condition

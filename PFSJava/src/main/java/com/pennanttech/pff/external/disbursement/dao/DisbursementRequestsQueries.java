@@ -8,10 +8,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class DisbursementRequestsQueries {
 	private static Logger logger = LogManager.getLogger(DisbursementRequestsQueries.class);
 
-	private static String selectQuery = null;
-	private static String insertHeaderQuery = null;
 	private static String insertQuery = null;
-
 	private static String selectMovementListQuery = null;
 	private static String selectMovementQuery = null;
 	private static String insertMovement = null;

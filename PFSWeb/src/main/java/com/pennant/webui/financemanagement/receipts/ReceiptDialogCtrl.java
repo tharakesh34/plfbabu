@@ -2772,7 +2772,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 
 				}
-				 
 
 				mam.setTaxHeader(taxHeader);
 			} else {
@@ -3877,7 +3876,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							|| CalculationConstants.SCHMTHD_PRI_PFT.equals(finMain.getScheduleMethod()))) {
 				repyMethodList
 						.add(new ValueLabel(CalculationConstants.RPYCHG_STEPPOS, Labels.getLabel("label_POSStep")));
-			} else if (finMain.isStepFinance() && isRpyStp) {
+			} else if (finMain.isStepFinance() && isRpyStp
+					|| PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
 				if (finMain.getFinCurrAssetValue().compareTo(finMain.getFinAssetValue()) == 0) {
 					repyMethodList.add(new ValueLabel(CalculationConstants.RPYCHG_ADJTNR_STEP,
 							Labels.getLabel("label_Step_Adj_Tenor")));
@@ -7066,7 +7066,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return false;
 		}
 
-		if (receiptPurposeCtg == 2) {
+		if (receiptPurposeCtg == 2 && isForeClosure) {
 			if (balPending.compareTo(BigDecimal.ZERO) > 0
 					&& receiptData.getCalculatedClosureAmt().compareTo(BigDecimal.ZERO) > 0) {
 				balPending = balPending.subtract(receiptData.getReceiptHeader().getClosureThresholdLimit());
@@ -7159,7 +7159,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		 */
 
 		// No excess amount validation on partial Settlement
-		if (receiptPurposeCtg == 1 && !isOverDraft) {
+		if (receiptPurposeCtg == 1) {
 			if (receiptData.getRemBal().compareTo(BigDecimal.ZERO) <= 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
 				return false;
@@ -7219,6 +7219,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				} else {
 					if (isOverDraft) {
 						MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
+						return false;
+					}
+				}
+
+				if (receiptPurposeCtg == 1 && isOverDraft) {
+					if ((receiptData.getTotReceiptAmount().compareTo(closingBal)) > 0 && isOverDraft) {
+						MessageUtil.showError(Labels.getLabel("FIELD_IS_LESSER",
+								new String[] {
+										Labels.getLabel("label_ReceiptDialog_Valid_TotalPartialSettlementAmount"),
+										PennantApplicationUtil.amountFormate(receiptData.getRemBal(), formatter) }));
 						return false;
 					}
 				}
@@ -8248,7 +8258,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (FinServiceEvent.EARLYSETTLE.equals(receiptData.getReceiptHeader().getReceiptPurpose())
 				&& RepayConstants.EXAMOUNTTYPE_ADVINT.equals(xcessPayable.getPayableType())) {
 			FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-			if (financeMain.istDSApplicable()) {
+			if (financeMain.isTDSApplicable()) {
 				payableDesc = payableDesc + "(-TDS)";
 			}
 		}

@@ -1530,7 +1530,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		if (!recordAdded) {
 			aJVPostingEntry.setTxnEntry(AccountConstants.TRANTYPE_CREDIT);
-			aJVPostingEntry.setTDSAdjReq(false);
+			aJVPostingEntry.setTDSAdjReq(this.tdsAdjustmentReq.isChecked());
 			jvPostingEntryList.add(aJVPostingEntry);
 
 			JVPostingEntry debitEntry = new JVPostingEntry();

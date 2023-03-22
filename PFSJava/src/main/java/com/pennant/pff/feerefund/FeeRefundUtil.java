@@ -3,7 +3,7 @@ package com.pennant.pff.feerefund;
 import com.pennant.backend.model.feerefund.FeeRefundHeader;
 import com.pennant.backend.model.feerefund.FeeRefundInstruction;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.pff.payment.model.PaymentHeader;
 
 public class FeeRefundUtil {
 

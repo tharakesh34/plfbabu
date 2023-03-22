@@ -33,6 +33,8 @@
  */
 package com.pennant.backend.util;
 
+import java.math.BigDecimal;
+
 /**
  * This stores all constants required for running the application
  */
@@ -403,4 +405,5 @@ public class FinanceConstants {
 	public static final String CROSS_LOAN_KNOCKOFF_ENQUIRY = "CROSS_LOAN_KNOCKOFF_ENQUIRY";
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_MAKER = "CROSS_LOAN_KNOCKOFF_CANCEL_MAKER";
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER = "CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER";
+	public static final BigDecimal LEI_NUM_LIMIT = new BigDecimal("50000000000");
 }

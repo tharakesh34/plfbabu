@@ -544,7 +544,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String finReference = fm.getFinReference();
 		long custID = fm.getCustID();
-		boolean tdsApplicable = fm.istDSApplicable();
+		boolean tdsApplicable = fm.isTDSApplicable();
 		Long mandateID = fm.getMandateID();
 		String offerId = fm.getOfferId();
 		String moduleName = FinanceConstants.MODULE_NAME;
@@ -1691,7 +1691,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		}
 
-		if (fm.istDSApplicable()) {
+		if (fm.isTDSApplicable()) {
 			schdData.setLowerTaxDeductionDetails(lowerTaxDeductionDAO.getLowerTaxDeductionDetails(finID, ""));
 		}
 

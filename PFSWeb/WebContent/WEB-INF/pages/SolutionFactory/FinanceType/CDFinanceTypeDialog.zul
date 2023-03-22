@@ -345,6 +345,14 @@
 													<uppercasebox id="rpyHierarchy" width="275px" />
 												</hbox>
 											</row>
+											<row>
+											<label id="label_FinanceTypeDialog_NPARepayHierarchy"
+													value="${c:l('label_FinanceTypeDialog_NPARepayHierarchy.value')}" />
+												<hbox>
+													<space id="space_npaRpyHierarchy" spacing="2px" sclass="mandatory" />
+													<uppercasebox id="npaRpyHierarchy" width="200px" />
+												</hbox>
+											</row>
 											<row id="row_RoundingMode">
 												<label id="label_FinanceTypeDialog_RoundingMode"
 													value="${c:l('label_FinanceTypeDialog_RoundingMode.value')}" />

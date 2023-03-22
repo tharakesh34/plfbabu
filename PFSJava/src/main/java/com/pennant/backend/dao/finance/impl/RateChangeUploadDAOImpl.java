@@ -179,14 +179,13 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" Inner Join RmtFinanceTypes FT on FT.FinType = FM.FinType");
 		sql.append(" Inner Join SmtDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
 		sql.append(" Where FM.FinReference in (Select FinReference From Ratechange_Upload_Details Where BatchId = ?)");
+		sql.append(" and FM.fincategory != ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-
-			ps.setLong(index, batchId);
-
+			ps.setLong(1, batchId);
+			ps.setString(2, "CD");
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
