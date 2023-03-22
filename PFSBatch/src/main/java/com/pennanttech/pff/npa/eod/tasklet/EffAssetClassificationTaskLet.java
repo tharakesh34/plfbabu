@@ -105,7 +105,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 				boolean effNpaStage = npa.isEffNpaStage();
 
 				npa.setAssetClassSetup(header);
-
+				assetClassificationService.setLoanInfo(npa);
 				assetClassificationService.setEffClassification(npa);
 
 				boolean npaChange = false;
@@ -122,9 +122,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 
 				txStatus = transactionManager.getTransaction(txDef);
 
-				if (npaChange) {
-					assetClassificationService.doPostNpaChange(npa);
-				}
+				assetClassificationService.doPostNpaChange(npa, npaMovemntId);
 
 				assetClassificationService.updateClassification(npa);
 
@@ -139,11 +137,6 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 				} else if (npaMovemntId != null && !npa.isEffNpaStage()) {
 					npa.setNpaUnTaggedDate(appDate);
 					assetClassificationService.updateNpaMovement(npaMovemntId, npa);
-				}
-
-				if (effNpaStage && !npa.isEffNpaStage()) {
-					assetClassificationService.setLoanInfo(npa);
-					assetClassificationService.doReversalNpaPostings(npa);
 				}
 
 				assetClassificationService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);

@@ -46,9 +46,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", CustID, CustCategoryCode, FinType, Product, FinCcy, FinBranch, FinID, FinReference");
 		sql.append(", FinAssetValue, FinCurrAssetValue, OsPrincipal, OsProfit, FuturePrincipal, OdPrincipal, OdProfit");
 		sql.append(", TotPriBal, TotPriPaid, TotPftPaid, TotPftAccrued, AmzTillLBDate, TillDateSchdPri");
-		sql.append(", PastDueDays, PastDueDate, EffFinID, EffFinReference, LinkedLoan");
+		sql.append(", PastDueDays, PastDueDate, DerivedPastDueDate, EffFinID, EffFinReference, LinkedLoan");
 		sql.append(")");
-		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -85,6 +85,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setBigDecimal(index++, item.getTillDateSchdPri());
 				ps.setInt(index++, item.getPastDueDays());
 				ps.setDate(index++, JdbcUtil.getDate(item.getPastDueDate()));
+				ps.setDate(index++, JdbcUtil.getDate(item.getDerivedPastDueDate()));
 				ps.setObject(index++, item.getEffFinID());
 				ps.setString(index++, item.getEffFinReference());
 				ps.setBoolean(index, item.isLinkedLoan());
@@ -289,8 +290,12 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getClassification(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" npa.Id, nps.CustId, nps.FinID, nps.FinReference, nps.EODDate, nps.EntityCode ");
-		sql.append(", nps.PastDueDays, nps.PastDueDate, npa.NpaPastDueDays, npa.NpaPastDueDate, npa.NpaStage");
+		sql.append(" npa.Id, nps.CustId, nps.FinID, nps.FinReference");
+		sql.append(", npa.EffFinReference, nps.EODDate, nps.EntityCode");
+		sql.append(", nps.PastDueDays, nps.PastDueDate, nps.DerivedPastDueDate");
+		sql.append(", npa.NpaPastDueDays, npa.NpaPastDueDate, npa.NpaStage");
+		sql.append(", npa.FinisActive, nps.OdPrincipal, nps.OdProfit, nps.TotPftPaid, nps.TotPftAccrued");
+		sql.append(", nps.TotPriBal, TillDateSchdPri");
 		sql.append(" From Npa_Provision_Stage nps");
 		sql.append(" Left Join Npa_Loan_Info npa On npa.FinID = nps.FinID");
 		sql.append(" Where nps.FinID = ? and nps.LinkedLoan = ?");
@@ -305,13 +310,21 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				item.setCustID(rs.getLong("CustID"));
 				item.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 				item.setFinReference(rs.getString("FinReference"));
+				item.setEffFinReference(rs.getString("EffFinReference"));
 				item.setEodDate(rs.getDate("EODDate"));
 				item.setEntityCode(rs.getString("EntityCode"));
 				item.setPastDueDays(rs.getInt("PastDueDays"));
 				item.setPastDueDate(rs.getDate("PastDueDate"));
+				item.setDerivedPastDueDate(rs.getDate("DerivedPastDueDate"));
 				item.setNpaPastDueDays(rs.getInt("NpaPastDueDays"));
 				item.setNpaPastDueDate(rs.getDate("NpaPastDueDate"));
 				item.setNpaStage(rs.getBoolean("NpaStage"));
+				item.setOdPrincipal(rs.getBigDecimal("OdPrincipal"));
+				item.setOdProfit(rs.getBigDecimal("OdProfit"));
+				item.setTotPftPaid(rs.getBigDecimal("TotPftPaid"));
+				item.setTotPftAccrued(rs.getBigDecimal("TotPftAccrued"));
+				item.setTotPriBal(rs.getBigDecimal("TotPriBal"));
+				item.setTillDateSchdPri(rs.getBigDecimal("TillDateSchdPri"));
 
 				return item;
 			}, finID, 0);
@@ -478,10 +491,11 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append("CustID, FinID, FinReference, BusinessDate, PastDueDays, PastDueDate");
 		sql.append(", NpaClassID, NpaPastDueDays, NpaPastDueDate, NpaStage");
 		sql.append(", EffPastDueDays, EffNpaPastDueDays, EffNpaStage, FinIsActive");
+		sql.append(", EMIRe, InstIncome, FuturePri");
 		sql.append(", CreatedOn, LastMntOn");
 		sql.append(")");
 		sql.append(" Values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -503,7 +517,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setInt(index++, 0);
 				ps.setBoolean(index++, false);
 				ps.setBoolean(index++, true);
-
+				ps.setBigDecimal(index++, ac.getOdPrincipal().add(ac.getOdProfit()));
+				ps.setBigDecimal(index++, ac.getTotPftPaid().add(ac.getTotPftAccrued()));
+				ps.setBigDecimal(index++, ac.getTotPriBal().subtract(ac.getTillDateSchdPri()));
 				ps.setTimestamp(index++, ac.getCreatedOn());
 				ps.setTimestamp(index, ac.getLastMntOn());
 			});
@@ -518,6 +534,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		StringBuilder sql = new StringBuilder("Update Npa_Loan_Info");
 		sql.append(" Set BusinessDate = ?, PastDueDays = ?, PastDueDate = ?");
 		sql.append(", NpaPastDueDays = ?, NpaPastDueDate = ?, NpaStage = ?, NpaClassID = ?");
+		sql.append(", EMIRe = ?, InstIncome = ?, FuturePri = ?, SelfEffected = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -533,8 +550,36 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setDate(index++, JdbcUtil.getDate(ac.getNpaPastDueDate()));
 				ps.setBoolean(index++, ac.isNpaStage());
 				ps.setObject(index++, ac.getNpaClassID());
+				ps.setBigDecimal(index++, ac.getOdPrincipal().add(ac.getOdProfit()));
+				ps.setBigDecimal(index++, ac.getTotPftPaid().add(ac.getTotPftAccrued()));
+				ps.setBigDecimal(index++, ac.getTotPriBal().subtract(ac.getTillDateSchdPri()));
+				ps.setBoolean(index++, ac.isSelfEffected());
 
 				ps.setLong(index, ac.getId());
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+	}
+
+	@Override
+	public void updatePrvPastDuedays(AssetClassification ac) {
+		StringBuilder sql = new StringBuilder("Update Npa_Loan_Info");
+		sql.append(" Set PrvEmiRe = ?, PrvInstIncome = ?, PrvFuturePri = ?");
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setBigDecimal(index++, ac.getEmiRe());
+				ps.setBigDecimal(index++, ac.getInstIncome());
+				ps.setBigDecimal(index++, ac.getFuturePri());
+
+				ps.setLong(index++, ac.getId());
 			});
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -578,7 +623,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", NpaPastDueDays, NpaPastDueDate, EffNpaPastDueDays, EffNpaPastDueDate");
 		sql.append(", NpaClassID, EffNpaClassID");
 		sql.append(", NpaStage, EffNpaStage");
-		sql.append(", BusinessDate, LinkedTranID");
+		sql.append(", BusinessDate, LinkedTranID, EmiRe, InstIncome");
+		sql.append(", FuturePri, PrvEmiRe, PrvInstIncome, PrvFuturePri, SelfEffected");
 		sql.append(" From Npa_Loan_Info");
 		sql.append(" Where FinID = ?");
 
@@ -609,6 +655,13 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ac.setEffNpaStage(rs.getBoolean("EffNpaStage"));
 				ac.setEodDate(rs.getDate("BusinessDate"));
 				ac.setLinkedTranID(JdbcUtil.getLong(rs.getObject("LinkedTranID")));
+				ac.setEmiRe(rs.getBigDecimal("EmiRe"));
+				ac.setInstIncome(rs.getBigDecimal("InstIncome"));
+				ac.setFuturePri(rs.getBigDecimal("FuturePri"));
+				ac.setPrvEmiRe(rs.getBigDecimal("PrvEmiRe"));
+				ac.setPrvInstIncome(rs.getBigDecimal("PrvInstIncome"));
+				ac.setPrvFuturePri(rs.getBigDecimal("PrvFuturePri"));
+				ac.setSelfEffected(rs.getBoolean("SelfEffected"));
 
 				return ac;
 			}, finID);
@@ -854,6 +907,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		jdbcOperations.update(sql, 0, finID);
 	}
 
+	@Override
 	public boolean checkDependency(long npaClassID) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Count(NpaClassID) From Npa_Loan_Info");

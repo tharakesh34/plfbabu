@@ -31,6 +31,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.npa.dao.AssetClassSetupDAO;
 import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
@@ -82,6 +83,12 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 			Date pastDueDate = finDpdDate(odDetails);
 
+			Date derivedPastDueDate = null;
+
+			if (pastDueDate != null) {
+				derivedPastDueDate = findPastDueDate(pastDueDate, odDetails);
+			}
+
 			NpaProvisionStage item = new NpaProvisionStage();
 
 			item.setEntityCode(fm.getEntityCode());
@@ -108,7 +115,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 			item.setTotPftAccrued(pd.getPftAccrued());
 			item.setAmzTillLBDate(pd.getAmzTillLBD());
 			item.setTillDateSchdPri(pd.getTdSchdPriBal());
-
+			item.setDerivedPastDueDate(derivedPastDueDate);
 			item.setPastDueDays(pastDueDays);
 			item.setPastDueDate(pastDueDate);
 			item.setEffFinID(fm.getFinID());
@@ -170,14 +177,16 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 			throw new AppException(String.format(ERR_CODE_01, entityCode));
 		}
 
-		int pastDueDays = ac.getPastDueDays();
 		Date pastDueDate = ac.getPastDueDate();
+		Date derivedPastDueDate = ac.getDerivedPastDueDate();
+		int pastDueDays = ac.getPastDueDays();
+		int derivedPastDueDays = DateUtil.getDaysBetween(pastDueDate, derivedPastDueDate);
 
 		int npaPastDueDays = ac.getNpaPastDueDays();
 
 		if (ac.getNpaPastDueDate() == null && pastDueDays > 0) {
-			ac.setNpaPastDueDays(pastDueDays);
-			ac.setNpaPastDueDate(pastDueDate);
+			ac.setNpaPastDueDays(pastDueDays + derivedPastDueDays);
+			ac.setNpaPastDueDate(derivedPastDueDate);
 		} else if (ac.isNpaStage() && pastDueDays > 0) {
 			ac.setNpaPastDueDays(npaPastDueDays + 1);
 		} else {
@@ -193,6 +202,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 		ac.setNpaStage(acsd.isNpaStage());
 		ac.setNpaClassID(acsd.getId());
+		ac.setSelfEffected(ac.getFinReference().equals(ac.getEffFinReference()));
 	}
 
 	@Override
@@ -322,7 +332,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 			npa.setNpaPastDueDays(0);
 			npa.setNpaPastDueDate(null);
 			npa.setEffNpaStage(false);
-			npa.setLinkedTranID(null);
+			// npa.setLinkedTranID(null);
 			npa.setFinIsActive(true);
 
 			npa.setNpaClassID(getNpaClassId(npa, list));
@@ -376,7 +386,29 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	}
 
 	@Override
-	public void doPostNpaChange(AssetClassification npaAc) {
+	public void doPostNpaChange(AssetClassification npaAc, Long npaMovemntId) {
+		BigDecimal totAmount = BigDecimal.ZERO;
+		BigDecimal emiRe = BigDecimal.ZERO;
+		BigDecimal instIncome = BigDecimal.ZERO;
+		BigDecimal futurePri = BigDecimal.ZERO;
+
+		if (npaAc.isEffNpaStage() || npaAc.getLinkedTranID() != null) {
+			emiRe = npaAc.getEmiRe().subtract(npaAc.getPrvEmiRe());
+			instIncome = npaAc.getInstIncome().subtract(npaAc.getPrvInstIncome());
+			futurePri = npaAc.getFuturePri().subtract(npaAc.getPrvFuturePri());
+			totAmount = emiRe.add(futurePri);
+
+			if (!npaAc.isEffNpaStage() && npaAc.getLinkedTranID() != null
+					&& futurePri.compareTo(BigDecimal.ZERO) == 0) {
+				futurePri = npaAc.getFuturePri();
+				totAmount = emiRe.add(futurePri);
+			}
+		}
+
+		if (totAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			return;
+		}
+
 		String eventCode = AccountingEvent.NPACHNG;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
@@ -402,12 +434,19 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		aeEvent.setCustID(npaAc.getCustID());
 
 		amountCode.setFinType(aeEvent.getFinType());
+		if (npaMovemntId != null && !npaAc.isEffNpaStage() && !npaAc.isSelfEffected()
+				&& npaAc.getTillDateSchdPri().compareTo(BigDecimal.ZERO) > 0) {
+			amountCode.setPftRB(npaAc.getOdProfit());
+			amountCode.setInstRTot(npaAc.getEmiRe().compareTo(BigDecimal.ZERO) > 0 ? npaAc.getEmiRe() : emiRe.negate());
+		}
 
-		amountCode.setInsttot(npaAc.getOdPrincipal().add(npaAc.getOdProfit()));
-		amountCode.setdAmz((npaAc.getTotPftPaid().add(npaAc.getTotPftAccrued())));
-		amountCode.setTotPriSchd(npaAc.getTotPriBal());
-		amountCode.setTdSchdPri(npaAc.getTillDateSchdPri());
+		amountCode.setNpa(npaAc.isEffNpaStage());
+		amountCode.setInsttot(npaAc.getEmiRe());
+		amountCode.setdAmz(instIncome);
 		amountCode.setPftSB(npaAc.getOdProfit());
+		amountCode.setPriPr(npaAc.getTotPriBal());
+		amountCode.setPriSPr(npaAc.getTillDateSchdPri());
+		amountCode.setTotPriSchd(npaAc.getFuturePri());
 
 		aeEvent.setDataMap(amountCode.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);
@@ -419,6 +458,8 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		postingsPreparationUtil.postAccountingEOD(aeEvent);
 
 		postingsPreparationUtil.saveAccountingEOD(aeEvent.getReturnDataSet());
+
+		assetClassificationDAO.updatePrvPastDuedays(npaAc);
 
 		npaAc.setLinkedTranID(aeEvent.getLinkedTranId());
 	}
@@ -451,11 +492,11 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 		amountCode.setFinType(aeEvent.getFinType());
 
-		amountCode.setInsttot(npaAc.getOdPrincipal().add(npaAc.getOdProfit()));
+		amountCode.setInstRTot(npaAc.getOdPrincipal().add(npaAc.getOdProfit()));
 		amountCode.setdAmz((npaAc.getTotPftPaid().add(npaAc.getTotPftAccrued())));
-		amountCode.setTotPriSchd(npaAc.getTotPriBal());
+		// amountCode.setTotPriSchd(npaAc.getTotPriBal());
 		amountCode.setTdSchdPri(npaAc.getTillDateSchdPri());
-		amountCode.setPftSB(npaAc.getOdProfit());
+		amountCode.setPftRB(npaAc.getOdProfit());
 
 		amountCode.setPriPr(npaAc.getTotPriBal());
 		amountCode.setPriSPr(npaAc.getTillDateSchdPri());
@@ -670,6 +711,13 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 	private String getEntityCode(String finReference, List<AssetClassification> list) {
 		return list.stream().filter(ac -> ac.getFinReference().equals(finReference)).findFirst().get().getEntityCode();
+	}
+
+	private Date findPastDueDate(Date pastDueDate, List<FinODDetails> odDetails) {
+		List<FinODDetails> list = odDetails.stream().filter(od -> od.getFinODTillDate().compareTo(pastDueDate) >= 0)
+				.collect(Collectors.toList());
+
+		return list.stream().findFirst().get().getFinODSchdDate();
 	}
 
 	@Autowired

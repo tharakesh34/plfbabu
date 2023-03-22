@@ -79,4 +79,6 @@ public interface AssetClassificationDAO {
 	void saveNpaTaggingMovement(AssetClassification as);
 
 	AssetClassification getNpaMovemnt(long finID);
+
+	void updatePrvPastDuedays(AssetClassification ac);
 }

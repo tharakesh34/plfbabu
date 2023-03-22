@@ -45,7 +45,7 @@ public interface AssetClassificationService {
 
 	void setLoanInfo(AssetClassification ac);
 
-	void doPostNpaChange(AssetClassification npaAc);
+	void doPostNpaChange(AssetClassification npaAc, Long npaMovemntId);
 
 	void doReversalNpaPostings(AssetClassification npaAc);
 
