@@ -3396,6 +3396,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		this.extendedFieldExtensionService = extendedFieldExtensionService;
 	}
 
+	@Autowired
 	public void setTdsReceivablesTxnService(TdsReceivablesTxnService tdsReceivablesTxnService) {
 		this.tdsReceivablesTxnService = tdsReceivablesTxnService;
 	}

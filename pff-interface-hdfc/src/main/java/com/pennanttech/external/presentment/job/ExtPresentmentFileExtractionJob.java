@@ -1,8 +1,11 @@
 package com.pennanttech.external.presentment.job;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -159,15 +162,15 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 					List<ExtPresentmentData> extPresentmentDataList = new ArrayList<ExtPresentmentData>();
 					sc = new Scanner(file);
 
-					boolean isTrue = true;
+					boolean isTransactionStarted = false;
 
 					// Read file line by line
 					while (sc.hasNextLine()) {
 
-						if (isTrue) {
+						if (!isTransactionStarted) {
 							// begin the transaction
 							txStatus = transactionManager.getTransaction(txDef);
-							isTrue = false;
+							isTransactionStarted = true;
 						}
 
 						String lineData = sc.nextLine();
@@ -206,7 +209,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 							extPresentmentDataList.clear();
 							// commit the transaction
 							transactionManager.commit(txStatus);
-							isTrue = true;
+							isTransactionStarted = false;
 						}
 
 					}
@@ -214,6 +217,11 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 					if (extPresentmentDataList.size() > 0) {
 						// save records remaining after bulk insert
 						externalPresentmentDAO.saveExternalPresentmentRecordsData(extPresentmentDataList);
+						if (isTransactionStarted) {
+							// commit the transaction
+							transactionManager.commit(txStatus);
+							isTransactionStarted = false;
+						}
 						extPresentmentDataList.clear();
 					}
 
@@ -245,30 +253,65 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 	}
 
 	private boolean validateRejectFile(String filePath) {
-		logger.debug(Literal.ENTERING);
 		try {
-			List<String> fileLines = Files.readAllLines(Paths.get(filePath));
-			if (fileLines != null && fileLines.size() > 0) {
-				int size = fileLines.size();
-				String data = fileLines.get(size - 1);
-				int recSize = size - 2;
-				if (data != null && !"".equals(data)) {
-					if (data.startsWith("F") && data.length() > 1) {
-						int fileRecSize = 0;
-						try {
-							fileRecSize = Integer.parseInt(data.substring(1));
-							if (fileRecSize == recSize) {
-								return true;
-							}
-						} catch (Exception e) {
-						}
+
+			long fileLines = countLineInFile(filePath);
+			long recSize = fileLines - 2;
+
+			File file = new File(filePath);
+
+			String data = readLastLine(file);
+
+			if (data != null && !"".equals(data)) {
+				if (data.startsWith("F") && data.length() > 1) {
+					int fileRecSize = 0;
+					fileRecSize = Integer.parseInt(data.substring(1));
+					if (fileRecSize == recSize) {
+						return true;
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
 		return false;
+	}
+
+	private long countLineInFile(String fileName) {
+		long lines = 0;
+		try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(fileName))) {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean endsWithoutNewLine = false;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n')
+						++count;
+				}
+				endsWithoutNewLine = (c[readChars - 1] != '\n');
+			}
+			if (endsWithoutNewLine) {
+				++count;
+			}
+			lines = count;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return lines;
+	}
+
+	public String readLastLine(File file) throws Exception {
+		String last = null, line;
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+			while ((line = in.readLine()) != null) {
+				if (line != null) {
+					last = line;
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+		}
+		return last;
 	}
 }

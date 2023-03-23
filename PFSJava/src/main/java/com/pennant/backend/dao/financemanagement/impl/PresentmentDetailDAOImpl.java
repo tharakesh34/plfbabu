@@ -1116,10 +1116,12 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
 
 		if (CustomerExtension.CUST_CORE_BANK_ID) {
-			sql.append(" Where fm.CustId = ? and pd.SchDate = ? and pd.Status = ?");
+			sql.append(" Where cu.CustCoreBank = ?");
 		} else {
-			sql.append(" Where cu.CustCoreBank = ? and pd.SchDate = ? and pd.Status = ?");
+			sql.append(" Where fm.CustId = ?");
 		}
+
+		sql.append(" and pd.SchDate = ? and pd.Status = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 

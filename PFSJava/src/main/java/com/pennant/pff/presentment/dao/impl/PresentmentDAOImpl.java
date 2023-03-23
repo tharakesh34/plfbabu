@@ -1151,7 +1151,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 
 	@Override
 	public int approveExludes(long presentmentId) {
-		String sql = "Update PresentmentDetails Set Status = ? Where PresentmentId = ? and Excludereason in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "Update PresentmentDetails Set Status = ? Where Id = ? and Excludereason in (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -1793,6 +1793,15 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForList(sql, String.class, id, 0);
+	}
+
+	@Override
+	public long getPresentmentDetailPresenmentId(Long id) {
+		String sql = "SELECT PRESENTMENTID FROM PRESENTMENTDETAILS WHERE ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, long.class, id);
 	}
 
 	@Override
