@@ -103,6 +103,8 @@ public class ClosureService {
 		} else {
 			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
 			finEODEvent.setFinODDetails(new ArrayList<>());
+			finEODEvent.setFinanceScheduleDetails(schdData.getFinanceScheduleDetails());
+			finEODEvent.setFinProfitDetail(schdData.getFinPftDeatil());
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -301,6 +303,7 @@ public class ClosureService {
 
 		updateUtilizedExcess(finEOD.getFinExcessAmounts(), true);
 		processReceipt(finEOD, receiptAmount, receiptDTO);
+
 	}
 
 	@Autowired
