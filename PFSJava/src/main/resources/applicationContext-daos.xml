@@ -13187,11 +13187,6 @@
 	</bean>
 	
 	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
-	
- 	<bean name="provinceMappingServiceTarget" class="com.pennant.backend.service.cersai.impl.ProvinceMappingServiceImpl">
-       <property name="provinceMappingDAO" ref="provinceMappingDAO" />
-	   <property name="auditHeaderDAO" ref="auditHeaderDAO" />
-   </bean>
    
    <!-- Document Verification  -->
    <bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>

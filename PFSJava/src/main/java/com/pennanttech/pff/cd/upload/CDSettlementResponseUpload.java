@@ -37,7 +37,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CashBackProcessService;
-import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
@@ -61,7 +60,6 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	private FinanceMainDAO financeMainDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
-	private DisbursementPostings disbursementPostings;
 	private PlatformTransactionManager transactionManager;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private PromotionDAO promotionDAO;
@@ -235,19 +233,12 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 					finAdvancePayments.add(finAdvancePayment);
 					financeDetail.setAdvancePaymentsList(finAdvancePayments);
 
-					Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
-							financeDetail.getAdvancePaymentsList(), finMain, finMain.getFinBranch());
-
 					List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
 
 					// loop through the disbursements.
 					if (CollectionUtils.isNotEmpty(advPayList)) {
-						for (int i = 0; i < advPayList.size(); i++) {
-							FinAdvancePayments advPayment = advPayList.get(i);
-							if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
-								advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
-								finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
-							}
+						for (FinAdvancePayments advPayment : advPayList) {
+							finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
 						}
 					}
 				}
@@ -445,10 +436,5 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 	@Autowired
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
-	}
-
-	@Autowired
-	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
-		this.disbursementPostings = disbursementPostings;
 	}
 }

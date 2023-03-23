@@ -228,5 +228,4 @@
 	
 	<bean id="oTsQueueTasklet" class="com.pennant.backend.endofday.tasklet.OTSQueue" />
 	
-	<bean id="presentmentPreparationTasklet" class="com.pennant.pff.presentment.tasklet.PreparationTasklet"/>
 </beans>
