@@ -7003,6 +7003,15 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				return;
 			} else if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && !RequestSource.API.equals(requestSource)) {
 				waiveThresholdLimit(rd);
+				for (ReceiptAllocationDetail rad : rd.getReceiptHeader().getAllocations()) {
+					String allocationType = rad.getAllocationType();
+					if (Allocation.PRI.equals(allocationType) || Allocation.FUT_PRI.equals(allocationType)) {
+						if (rad.getPaidAmount().compareTo(rad.getDueAmount()) != 0) {
+							setError(schdData, "90330", receiptPurpose.code(), "");
+							return;
+						}
+					}
+				}
 				rd.setDueAdjusted(true);
 			}
 		}
