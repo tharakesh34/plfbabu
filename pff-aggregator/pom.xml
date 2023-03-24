@@ -8,7 +8,7 @@
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
-		<client.code>core</client.code>
+		<client.code>hdfc</client.code>
 		<pff.version>6.3.0</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>

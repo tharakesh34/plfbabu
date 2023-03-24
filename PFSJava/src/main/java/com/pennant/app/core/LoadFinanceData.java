@@ -67,6 +67,8 @@ public class LoadFinanceData extends ServiceHelper {
 			long finID = fm.getFinID();
 			Date matDate = fm.getMaturityDate();
 
+			fm.setEOD(true);
+
 			logger.info("Loading finance details for the FinID >> {} started...", finID);
 
 			FinEODEvent finEODEvent = new FinEODEvent();

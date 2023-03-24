@@ -55,8 +55,8 @@ public class UpdateResponseTasklet implements Tasklet {
 		int successRecords = 0;
 		int failedRecords = 0;
 
-		for (Long presentmentHeaderID : list) {
-			List<String> statusList = presentmentDAO.getStatusByPresentmentHeader(presentmentHeaderID);
+		for (Long presentmentDetailID : list) {
+			List<String> statusList = presentmentDAO.getStatusByPresentmentHeader(presentmentDetailID);
 			int successCount = 0;
 			int failedCount = 0;
 			int totalCount = statusList.size();
@@ -69,10 +69,13 @@ public class UpdateResponseTasklet implements Tasklet {
 				}
 			}
 
-			presentmentDAO.updateHeaderCounts(presentmentHeaderID, successCount, failedCount);
+			presentmentDAO.updateHeaderCounts(presentmentDetailID, successCount, failedCount);
+
+			long presentmentId = presentmentDAO.getPresentmentDetailPresenmentId(presentmentDetailID);
 
 			if (totalCount == (successCount + failedCount)) {
-				presentmentDAO.updateHeaderStatus(presentmentHeaderID, RepayConstants.PEXC_RECEIVED);
+
+				presentmentDAO.updateHeaderStatus(presentmentId, RepayConstants.PEXC_RECEIVED);
 			}
 
 			totalRecords = totalRecords + totalCount;

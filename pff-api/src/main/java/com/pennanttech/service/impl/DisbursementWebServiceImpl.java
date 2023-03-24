@@ -135,9 +135,9 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 			return APIErrorHandlerService.getFailedStatus("41002", valueParm);
 		}
 
-		long partnerBankID = partnerBankDAO.getPartnerBankID(partnerbankCode);
-		if (partnerBankID > 0 && finTypePartnerBankDAO.getPartnerBankCount(finType, finAdvancePayments.getPaymentType(),
-				finAdvancePayments.getChannel(), partnerBankID) <= 0) {
+		Long partnerBankID = partnerBankDAO.getPartnerBankID(partnerbankCode);
+		if (partnerBankID != null && partnerBankID > 0 && finTypePartnerBankDAO.getPartnerBankCount(finType,
+				finAdvancePayments.getPaymentType(), finAdvancePayments.getChannel(), partnerBankID) <= 0) {
 			return APIErrorHandlerService.getFailedStatus("90263");
 		}
 

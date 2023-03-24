@@ -176,16 +176,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						chequeHeader.setNoOfCheques(chequeSize);
 						chequeHeaderDAO.updatesize(chequeHeader);
 
-						for (ChequeUpload chequeUpload : chequeUploads) {
-							if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
-								failRecords++;
-							} else {
-								sucessRecords++;
-							}
-						}
-
-						chequeUploadDAO.update(chequeUploads);
-
 						transactionManager.commit(txStatus);
 					} catch (Exception e) {
 						logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -198,18 +188,20 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					}
 				}
 
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
+				for (String finReference : finReferences) {
+					List<ChequeUpload> chequeUploads = map.get(finReference);
+					for (ChequeUpload chequeUpload : chequeUploads) {
+						if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
+							failRecords++;
+						} else {
+							sucessRecords++;
+						}
+					}
 
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
+					chequeUploadDAO.update(chequeUploads);
+					header.setSuccessRecords(sucessRecords);
+					header.setFailureRecords(failRecords);
 				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
 
 				logger.info("Processed the File {}", header.getFileName());
 

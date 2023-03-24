@@ -16,6 +16,22 @@ public class ObjectUtil {
 		return (object != null) ? object.toString() : defaultValue;
 	}
 
+	public static int valueAsInt(Object object) {
+		return valueAsInt(object, 0);
+	}
+
+	public static int valueAsInt(Object object, int defaultValue) {
+		return (object != null) ? Integer.valueOf(object.toString()) : defaultValue;
+	}
+
+	public static Integer valueAsInteger(Object object) {
+		return valueAsInt(object, 0);
+	}
+
+	public static Integer valueAsInteger(Object object, Integer defaultValue) {
+		return (object != null) ? Integer.valueOf(object.toString()) : defaultValue;
+	}
+
 	public static long valueAslong(Object object) {
 		return valueAsLong(object, Long.MIN_VALUE);
 	}

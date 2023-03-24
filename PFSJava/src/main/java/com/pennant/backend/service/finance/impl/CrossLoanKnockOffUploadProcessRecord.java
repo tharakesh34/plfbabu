@@ -16,6 +16,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffUploadDAO;
 import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -27,6 +30,9 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 	private static final Logger logger = LogManager.getLogger(CrossLoanKnockOffUploadProcessRecord.class);
 
 	private CrossLoanKnockOffUploadDAO crossLoanKnockOffUploadDAO;
+
+	@Autowired
+	private UploadService crossLoanKnockOffUploadService;
 
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
 			throws Exception {
@@ -45,6 +51,8 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 		if (headerID == null) {
 			return;
 		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
 		clku.setHeaderId(headerID);
 
@@ -152,6 +160,18 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 		}
 
 		crossLoanKnockOffUploadDAO.saveAllocations(allocations);
+
+		crossLoanKnockOffUploadService.doValidate(header, clku);
+
+		if (clku.getProgress() == EodConstants.PROGRESS_FAILED) {
+			record.addValue("ERRORCODE", clku.getErrorCode());
+			record.addValue("ERRORDESC", clku.getErrorDesc());
+
+			List<CrossLoanKnockoffUpload> details = new ArrayList<>();
+			details.add(clku);
+
+			crossLoanKnockOffUploadDAO.update(details);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

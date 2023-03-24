@@ -726,4 +726,12 @@
 		</sql>
 	</changeSet>
 		
+	<changeSet id="002.3_post" author="SaiKrian.n">
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_COLUMN SET CONSTRAINTTYPE = 'O' WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID IN(SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANDATES_IMPORT')) AND NAME = 'REMARKS';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

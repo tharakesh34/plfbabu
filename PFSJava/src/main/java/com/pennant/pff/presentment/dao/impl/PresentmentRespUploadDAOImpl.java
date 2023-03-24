@@ -35,7 +35,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Bank_Name, Branch_Code, Branch_Name, Partner_Bank_Code, Partner_Bank_Name, Bank_Address");
 		sql.append(", Account_Number, Ifsc_Code, Umrn_No, Micr_Code, Cheque_Serial_No, Corporate_User_No");
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
-		sql.append(", FateCorrection, Error_Code, Error_Description, Progress, Status");
+		sql.append(", FateCorrection, ErrorCode, ErrorDesc, Progress, Status");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
 		sql.append(" Where Header_ID = ?");
 
@@ -79,8 +79,8 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 			fc.setThreadId(rs.getInt("Thread_Id"));
 			fc.setUtrNumber(rs.getString("Utr_Number"));
 			fc.setFateCorrection(rs.getString("FateCorrection"));
-			fc.setErrorCode(rs.getString("Error_Code"));
-			fc.setErrorDesc(rs.getString("Error_Description"));
+			fc.setErrorCode(rs.getString("ErrorCode"));
+			fc.setErrorDesc(rs.getString("ErrorDesc"));
 			fc.setProgress(rs.getInt("Progress"));
 			fc.setStatus(rs.getString("Status"));
 
@@ -93,7 +93,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	public void update(List<PresentmentRespUpload> detailsList) {
 		StringBuilder sql = new StringBuilder("Update PRESENTMENT_RESP_UPLOAD set");
 		sql.append(" FinID = ?, Presentment_Reference = ?, Progress = ?, Status = ?");
-		sql.append(", Error_Code = ?, Error_Description = ?, Clearing_Status = ?, Account_Number = ?");
+		sql.append(", ErrorCode = ?, ErrorDesc = ?, Clearing_Status = ?, Account_Number = ?");
 		sql.append(" Where ID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -178,7 +178,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Bank_Name, Branch_Code, Branch_Name, Partner_Bank_Code, Partner_Bank_Name, Bank_Address");
 		sql.append(", Account_Number, Ifsc_Code, Umrn_No, Micr_Code, Cheque_Serial_No, Corporate_User_No");
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
-		sql.append(", FateCorrection, Error_Code, Error_Description");
+		sql.append(", FateCorrection, ErrorCode, ErrorDesc");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
 		sql.append(" Where Header_ID = ? and Progress = ?");
 
@@ -198,7 +198,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 
 	@Override
 	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
-		String sql = "Update PRESENTMENT_RESP_UPLOAD set Progress = ?, Status = ?, Error_Code = ?, Error_Description = ? Where Header_ID = ?";
+		String sql = "Update PRESENTMENT_RESP_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where Header_ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -229,8 +229,8 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ru.FinReference, ru.Presentment_Reference, ru.Amount_Cleared, ru.Clearing_Date");
-		sql.append(", ru.Clearing_Status, ru.Umrn_No, ru.FateCorrection, ru.Status, ru.Error_Code");
-		sql.append(", ru.Error_Description, uh.CreatedBy, uh.ApprovedBy");
+		sql.append(", ru.Clearing_Status, ru.Umrn_No, ru.FateCorrection, ru.Status, ru.ErrorCode");
+		sql.append(", ru.ErrorDesc, uh.CreatedBy, uh.ApprovedBy");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD ru");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = ru.Header_ID");
 		sql.append(" Where uh.ID = :HEADER_ID");

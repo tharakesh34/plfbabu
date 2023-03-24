@@ -157,4 +157,6 @@ public interface PresentmentDAO {
 			Map<Long, Integer> headerMap, Integer batchSize, List<PresentmentDetail> list);
 
 	void updateHeaderByInclude(List<PresentmentDetail> list);
+
+	long getPresentmentDetailPresenmentId(Long id);
 }

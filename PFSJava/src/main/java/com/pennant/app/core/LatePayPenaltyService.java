@@ -896,11 +896,22 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 	private Date deriveValueDate(FinODDetails fod, Date valueDate, List<OverdueChargeRecovery> odcrList,
 			List<FinanceRepayments> repayments) {
-		boolean flag = false;
-		Date finValueDate = repayments.get(repayments.size() - 1).getFinValueDate();
-		Date movementDate = odcrList.get(0).getMovementDate();
-		if (DateUtil.compare(movementDate, finValueDate) != 0) {
-			flag = true;
+		boolean flag = true;
+
+		if (odcrList.isEmpty()) {
+			return valueDate;
+		}
+
+		Date finValueDate = odcrList.get(odcrList.size() - 1).getMovementDate();
+		Date movementDate = odcrList.get(odcrList.size() - 1).getMovementDate();
+
+		if (CollectionUtils.isNotEmpty(repayments)) {
+			finValueDate = repayments.get(repayments.size() - 1).getFinValueDate();
+			movementDate = odcrList.get(0).getMovementDate();
+		}
+
+		if (DateUtil.compare(movementDate, finValueDate) == 0) {
+			flag = false;
 		}
 
 		for (int iOdcr = 0; iOdcr < odcrList.size(); iOdcr++) {

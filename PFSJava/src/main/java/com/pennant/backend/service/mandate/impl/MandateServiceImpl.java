@@ -1165,7 +1165,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return null;
 		}
 
-		if (mandate.getPartnerBankId() <= 0) {
+		if (mandate.getPartnerBankId() == null || mandate.getPartnerBankId() <= 0) {
 			return ErrorUtil.getError("90502", "partnerBankId");
 		}
 
@@ -1477,9 +1477,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return error;
 		}
 
-		if (mandate.getPartnerBankId() <= 0 && StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
-			long partnerBankID = partnerBankDAO.getPartnerBankID(mandate.getPartnerBankCode());
-			if (partnerBankID <= 0) {
+		if (mandate.getPartnerBankId() != null && mandate.getPartnerBankId() <= 0
+				&& StringUtils.isNotBlank(mandate.getPartnerBankCode())) {
+			Long partnerBankID = partnerBankDAO.getPartnerBankID(mandate.getPartnerBankCode());
+			if (partnerBankID == null || partnerBankID <= 0) {
 				String pbLabel = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value");
 				return getError("90224", pbLabel, mandate.getPartnerBankCode());
 			} else {

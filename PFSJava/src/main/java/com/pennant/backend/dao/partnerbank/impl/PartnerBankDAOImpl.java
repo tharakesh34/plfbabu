@@ -607,7 +607,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 	}
 
 	@Override
-	public long getPartnerBankID(String code) {
+	public Long getPartnerBankID(String code) {
 		String sql = "Select PartnerBankId From PartnerBanks Where PartnerBankCode = ? and Active = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -616,7 +616,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 			return jdbcOperations.queryForObject(sql, Long.class, code, 1);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
-			return Long.MIN_VALUE;
+			return null;
 		}
 	}
 

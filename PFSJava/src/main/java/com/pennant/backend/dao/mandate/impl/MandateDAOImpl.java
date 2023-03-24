@@ -212,7 +212,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isSwapIsActive());
 			ps.setLong(index++, mdt.getPrimaryMandateId());
 			ps.setString(index++, mdt.getEntityCode());
-			ps.setLong(index++, mdt.getPartnerBankId());
+			ps.setObject(index++, mdt.getPartnerBankId());
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
@@ -291,7 +291,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setBoolean(index++, mdt.isSwapIsActive());
 			ps.setLong(index++, mdt.getPrimaryMandateId());
 			ps.setString(index++, mdt.getEntityCode());
-			ps.setLong(index++, mdt.getPartnerBankId());
+			ps.setObject(index++, mdt.getPartnerBankId());
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());
@@ -370,7 +370,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.getBarCodeNumber());
 			ps.setBoolean(index++, mdt.isSwapIsActive());
 			ps.setString(index++, mdt.getEntityCode());
-			ps.setLong(index++, mdt.getPartnerBankId());
+			ps.setObject(index++, mdt.getPartnerBankId());
 			ps.setBoolean(index++, mdt.isDefaultMandate());
 			ps.setString(index++, mdt.geteMandateSource());
 			ps.setString(index++, mdt.geteMandateReferenceNo());

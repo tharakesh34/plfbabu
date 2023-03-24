@@ -1298,8 +1298,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 
 					if (ma.getAdviseAmount() != null) {
-						bounceAdvAmount = bounceAdvAmount.add(ma.getAdviseAmount());
-
 						BigDecimal paidGst = CalculationUtil.getTotalPaidGST(ma);
 						BigDecimal waivedGst = CalculationUtil.getTotalWaivedGST(ma);
 						BigDecimal balAmt = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));

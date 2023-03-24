@@ -196,4 +196,9 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 		});
 	}
 
+	@Override
+	public long getNextValue() {
+		return getNextValue("SeqExcess_Transfer_Details");
+	}
+
 }
