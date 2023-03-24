@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        
+       <import resource="extensionContext.xml" />
+
+	<bean id="extractDataDAO" class="com.pennanttech.pff.external.piramal.ExtractDataDAOImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+
+	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.impl.ExtPresentmentDAOImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+
+	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+
+	<bean id="extStageDao" class="com.pennanttech.external.dao.impl.ExtStagingDaoImpl">
+		<property name="stagingDataSource" ref="stagingDataSource" />
+	</bean>
+
+
+	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">
+		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
+	</bean>
+
+	<bean id="achService" class="com.pennanttech.external.presentment.service.ACHService">
+		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
+	</bean>
+
+	<bean id="siInternalService" class="com.pennanttech.external.presentment.service.SIInternalService">
+		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
+	</bean>
+
+	<bean id="extPdcService" class="com.pennanttech.external.presentment.service.ExtPDCService">
+		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
+	</bean>
+
+
+	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.handler.PresentmentRequestHandler">
+		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
+		<property name="siService" ref="siService" />
+		<property name="achService" ref="achService" />
+		<property name="siInternalService" ref="siInternalService" />
+		<property name="extPdcService" ref="extPdcService" />
+		<property name="extInterfaceDao" ref="extInterfaceDao" />
+	</bean>
+	
+	<bean id="appDateChangeServiceHook" class="com.pennant.pff.eod.extension.AppDateChangeServiceHookImpl" />
+</beans>
