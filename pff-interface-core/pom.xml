@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.pennanttech.pennapps.pff</groupId>
 		<artifactId>pff-aggregator</artifactId>
-		<version>6.3.0</version>
+		<version>6.3.0-HDFC_R1.53</version>
 		<relativePath>../pff-aggregator/pom.xml</relativePath>
 	</parent>
 
@@ -17,6 +18,11 @@
 		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-interface</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pff.groupId}</groupId>
+			<artifactId>pff-extension</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

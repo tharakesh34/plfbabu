@@ -34,7 +34,7 @@ public class DataExtractProcessImpl implements DataExportProcess {
 	}
 
 	private void exportCustomerData() {
-		// current date starting from midnight
+		//current date starting from midnight
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -43,27 +43,26 @@ public class DataExtractProcessImpl implements DataExportProcess {
 		cal.set(Calendar.AM_PM, Calendar.AM);
 		Timestamp currentTime = new Timestamp(cal.getTimeInMillis());
 		if (ImplementationConstants.IS_DATA_SYNC_REQ_BY_APP_DATE) {
-			// getting last business date, since app date is updated to next business day(ex: EOD on 1-1-2020 then
-			// Appdate is updated as 2-1-2020)
+			//getting last business date, since app date is updated to next business day(ex: EOD on 1-1-2020 then Appdate is updated as 2-1-2020)
 			currentTime = getTimestamp(SysParamUtil.getLastBusinessdate());
 		}
 		logger.debug("START: Customer Data preparation : " + currentTime);
 		try {
 			boolean flag = false;
-			// extract customers table data to plfext.customers
+			//extract customers table data to plfext.customers
 			flag = extractDataDAO.extractDetails(currentTime, Customer.class, "customers");
 			if (flag) {
 				flag = false;
-				// extract customerPhonenumbers table data to plfext.customerPhonenumbers
+				//extract customerPhonenumbers table data to plfext.customerPhonenumbers
 				flag = extractDataDAO.extractDetails(currentTime, CustomerPhoneNumber.class, "customerPhonenumbers");
 			}
 			if (flag) {
 				flag = false;
-				// extract customerEmails table data to plfext.customerEmails
+				//extract customerEmails table data to plfext.customerEmails
 				flag = extractDataDAO.extractDetails(currentTime, CustomerEMail.class, "customerEmails");
 			}
 			if (flag) {
-				// extract customerAddresses table data to plfext.customerAddresses
+				//extract customerAddresses table data to plfext.customerAddresses
 				extractDataDAO.extractDetails(currentTime, CustomerAddres.class, "customerAddresses");
 			}
 		} catch (Exception e) {
@@ -73,7 +72,7 @@ public class DataExtractProcessImpl implements DataExportProcess {
 	}
 
 	private void exportMasterData() {
-		// current date starting from midnight
+		//current date starting from midnight
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -82,8 +81,7 @@ public class DataExtractProcessImpl implements DataExportProcess {
 		cal.set(Calendar.AM_PM, Calendar.AM);
 		Timestamp currentTime = new Timestamp(cal.getTimeInMillis());
 		if (ImplementationConstants.IS_DATA_SYNC_REQ_BY_APP_DATE) {
-			// getting last business date, since app date is updated to next business day(ex: EOD on 1-1-2020 then
-			// Appdate is updated as 2-1-2020)
+			//getting last business date, since app date is updated to next business day(ex: EOD on 1-1-2020 then Appdate is updated as 2-1-2020)
 			currentTime = getTimestamp(SysParamUtil.getLastBusinessdate());
 		}
 		logger.debug("START: Master Data preparation : " + currentTime);
@@ -91,20 +89,20 @@ public class DataExtractProcessImpl implements DataExportProcess {
 
 			logger.debug(Literal.ENTERING);
 			boolean flag = false;
-			// extract buildergroup table data to plfext.buildergroup
+			//extract buildergroup table data to plfext.buildergroup
 			flag = extractDataDAO.extractDetails(currentTime, BuilderGroup.class, "buildergroup");
 			if (flag) {
 				flag = false;
-				// extract buildercompany table data to plfext.buildercompany
+				//extract buildercompany table data to plfext.buildercompany
 				flag = extractDataDAO.extractDetails(currentTime, BuilderCompany.class, "buildercompany");
 			}
 			if (flag) {
 				flag = false;
-				// extract builderprojcet table data to plfext.builderprojcet
+				//extract builderprojcet table data to plfext.builderprojcet
 				flag = extractDataDAO.extractDetails(currentTime, BuilderProjcet.class, "builderprojcet");
 			}
 			if (flag) {
-				// extract projectunits table data to plfext.projectunits
+				//extract projectunits table data to plfext.projectunits
 				extractDataDAO.extractDetails(currentTime, ProjectUnits.class, "projectunits");
 			}
 			logger.debug(Literal.LEAVING);

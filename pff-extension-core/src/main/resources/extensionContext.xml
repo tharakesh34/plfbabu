@@ -12,11 +12,10 @@
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<!-- ZestPartCancellation service -->
-	<bean id="partCancellationSchd" class="com.pennanttech.pff.external.service.ZestPartCancellationSchd" />
 	
-	<bean id="spreadSheetService" class="com.pennanttech.pff.extension.spreadsheet.SpreadSheetServiceImpl" />
-	
-	<bean id="spreadSheetDataAccess" class="com.pennanttech.pff.extension.spreadsheet.SpreadSheetDataAccess" parent="basicDao"/>
-	
+	<bean id="stagingDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="jdbc/PFF_EXT_STAGE" />
+		<property name="lookupOnStartup" value="true" />
+	</bean>
 </beans>
