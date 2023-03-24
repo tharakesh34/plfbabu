@@ -73,7 +73,9 @@ public class UpdateResponseTasklet implements Tasklet {
 
 			long presentmentId = presentmentDAO.getPresentmentDetailPresenmentId(presentmentDetailID);
 
-			if (totalCount == (successCount + failedCount)) {
+			int presentmentSuccessRecords = presentmentDAO.getPresentmentSuccessRecords(presentmentId);
+
+			if (presentmentSuccessRecords == (successCount + failedCount)) {
 
 				presentmentDAO.updateHeaderStatus(presentmentId, RepayConstants.PEXC_RECEIVED);
 			}

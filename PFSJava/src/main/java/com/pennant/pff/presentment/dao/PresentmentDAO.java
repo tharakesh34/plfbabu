@@ -159,4 +159,6 @@ public interface PresentmentDAO {
 	void updateHeaderByInclude(List<PresentmentDetail> list);
 
 	long getPresentmentDetailPresenmentId(Long id);
+
+	int getPresentmentSuccessRecords(Long id);
 }
