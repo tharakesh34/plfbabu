@@ -8,7 +8,7 @@ import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 public class FeatureExtension implements IFeatureExtension {
-	static Map<String, Object> defaultExtensions = new HashMap<>();
+	static Map<String, Object> customConstants = new HashMap<>();
 	static Map<String, Object> customerExtensions = new HashMap<>();
 	static Map<String, Object> mandateExtensions = new HashMap<>();
 	static Map<String, Object> presentmentExtensions = new HashMap<>();
@@ -34,157 +34,134 @@ public class FeatureExtension implements IFeatureExtension {
 
 		/* Override the implementation constants here as specified in example. */
 
-		defaultExtensions.put("ALLOW_IND_AS", true);
+		customConstants.put("ALLOW_IND_AS", true);
 
-		defaultExtensions.put("ALLOW_ADV_INT", true);
+		customConstants.put("ALLOW_ADV_INT", true);
 
-		defaultExtensions.put("ALLOW_ADV_EMI", true);
+		customConstants.put("ALLOW_ADV_EMI", true);
 
-		defaultExtensions.put("ALLOW_DSF_CASHCLT", true);
+		customConstants.put("ALLOW_DSF_CASHCLT", true);
 
-		defaultExtensions.put("ALLOW_TDS_ON_FEE", true);
+		customConstants.put("ALLOW_TDS_ON_FEE", true);
 
-		defaultExtensions.put("ALLOW_OD_LOANS", false);
+		customConstants.put("ALLOW_OD_LOANS", false);
 
-		defaultExtensions.put("ALLOW_CD_LOANS", true);
+		customConstants.put("ALLOW_CD_LOANS", true);
 
-		defaultExtensions.put("ALLOW_SCHOOL_ORG", true);
+		customConstants.put("ALLOW_SCHOOL_ORG", true);
 
-		defaultExtensions.put("ALLOW_SAMPLING", true);
+		customConstants.put("ALLOW_SAMPLING", true);
 
-		defaultExtensions.put("ALLOW_AUTO_KNOCK_OFF", true);
+		customConstants.put("ALLOW_AUTO_KNOCK_OFF", true);
 
-		defaultExtensions.put("ALLOW_PMAY", true);
-		defaultExtensions.put("ALLOW_AUTO_GRACE_EXT", true);
+		customConstants.put("ALLOW_PMAY", true);
 
-		defaultExtensions.put("ALLOW_OCR", true);
+		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
 
-		defaultExtensions.put("IND_AS_ACCOUNTING_REQ", true);
+		customConstants.put("ALLOW_OCR", true);
 
-		defaultExtensions.put("DISB_PAID_CANCELLATION_ALLOW", true);
+		customConstants.put("IND_AS_ACCOUNTING_REQ", true);
 
-		defaultExtensions.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
+		customConstants.put("DISB_PAID_CANCELLATION_ALLOW", true);
 
-		defaultExtensions.put("INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
+		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
 
-		defaultExtensions.put("GROUP_BATCH_BY_PARTNERBANK", true);
+		customConstants.put("INSTRUMENTTYPE_REQ_FOR_PRESENTMENT_PROCESS", false);
 
-		defaultExtensions.put("PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
+		customConstants.put("PRESENTMENT_STAGE_ACCOUNTING_REQ", false);
 
-		defaultExtensions.put("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", true);
+		customConstants.put("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", true);
 
-		defaultExtensions.put("ALLOW_AUTO_GRACE_EXT", true);
+		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
 
-		defaultExtensions.put("ALLOW_LOAN_DOWNSIZING", true);
+		customConstants.put("ALLOW_LOAN_DOWNSIZING", true);
 
-		defaultExtensions.put("ALLOW_RESTRUCTURING", true);
+		customConstants.put("ALLOW_RESTRUCTURING", true);
 
-		defaultExtensions.put("ALLOW_LOAN_SPLIT", true);
+		customConstants.put("ALLOW_LOAN_SPLIT", true);
 
-		defaultExtensions.put("SCHD_INST_CAL_ON_DISB_RELIZATION", true);
+		customConstants.put("SCHD_INST_CAL_ON_DISB_RELIZATION", true);
 
-		defaultExtensions.put("ALLOW_SUBVENTION", true);
+		customConstants.put("ALLOW_SUBVENTION", true);
 
-		defaultExtensions.put("PRESENT_RECEIPTS_ON_RESP", false);
+		customConstants.put("PRESENT_RECEIPTS_ON_RESP", false);
 
-		defaultExtensions.put("PRESENT_RESP_BOUNCE_REMARKS_MAN", true);
+		customConstants.put("PRESENT_RESP_BOUNCE_REMARKS_MAN", true);
 
-		defaultExtensions.put("DISBURSEMENT_AUTO_DOWNLOAD", false);
+		customConstants.put("DISBURSEMENT_AUTO_DOWNLOAD", false);
 
-		defaultExtensions.put("DISBURSEMENT_ALLOW_CO_APP", true);
+		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);
 
-		defaultExtensions.put("CHEQUE_ALLOW_CO_APP", true);
+		customConstants.put("CHEQUE_ALLOW_CO_APP", true);
 
-		defaultExtensions.put("CUST_ADDR_AUTO_FILL", true);
+		customConstants.put("CUST_ADDR_AUTO_FILL", true);
 
-		defaultExtensions.put("HOLD_DISB_INST_POST", true);
+		customConstants.put("VAS_INST_ON_DISB", true);
 
-		defaultExtensions.put("VAS_INST_ON_DISB", true);
+		customConstants.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
 
-		defaultExtensions.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
+		customConstants.put("POPULATE_DFT_INCOME_DETAILS", true);
 
-		defaultExtensions.put("POPULATE_DFT_INCOME_DETAILS", true);
+		customConstants.put("RESTRUCTURE_DFT_APP_DATE", true);
 
-		defaultExtensions.put("ALLOW_SINGLE_FEE_CONFIG", true);
+		customConstants.put("RESTRUCTURE_DATE_ALW_EDIT", true);
 
-		defaultExtensions.put("RESTRUCTURE_DFT_APP_DATE", true);
+		customConstants.put("RESTRUCTURE_RATE_CHG_ALW", true);
 
-		defaultExtensions.put("RESTRUCTURE_DATE_ALW_EDIT", true);
+		customConstants.put("RESTRUCTURE_ALW_CHARGES", true);
 
-		defaultExtensions.put("RESTRUCTURE_RATE_CHG_ALW", true);
+		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
 
-		defaultExtensions.put("RESTRUCTURE_ALW_CHARGES", true);
+		customConstants.put("ALLOW_ESCROW_MODE", true);
 
-		defaultExtensions.put("DISB_REQ_RES_FILE_GEN_MODE", true);
+		customConstants.put("ALLOW_NPA", true);
 
-		defaultExtensions.put("ALLOW_ESCROW_MODE", true);
+		customConstants.put("ALLOW_PROVISION", false);
 
-		defaultExtensions.put("ALLOW_NPA", true);
+		customConstants.put("PROVISION_REVERSAL_REQ", false);
 
-		defaultExtensions.put("ALLOW_PROVISION", true);
+		customConstants.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
 
-		defaultExtensions.put("PROVISION_REVERSAL_REQ", true);
+		customConstants.put("NPA_SCOPE", NpaScope.LOAN);
 
-		defaultExtensions.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
+		customConstants.put("PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
 
-		defaultExtensions.put("NPA_SCOPE", NpaScope.CO_APPLICANT);
+		customConstants.put("ALLOW_MANUAL_SCHEDULE", true);
 
-		defaultExtensions.put("PROVISION_BOOKS", ProvisionBook.REGULATORY);
+		customConstants.put("RETAIL_CUST_PAN_MANDATORY", false);
 
-		defaultExtensions.put("ALLOW_MANUAL_SCHEDULE", true);
+		customConstants.put("ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS", true);
 
-		defaultExtensions.put("RETAIL_CUST_PAN_MANDATORY", false);
+		customConstants.put("ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS", true);
 
-		defaultExtensions.put("ALLOW_DFS_CASH_COLLATERAL_EXCESS_HEADS", true);
+		customConstants.put("ALLOW_ISRA_DETAILS", true);
 
-		defaultExtensions.put("ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS", true);
+		customConstants.put("RECEIPT_ALLOW_FULL_WAIVER", true);
 
-		defaultExtensions.put("ALLOW_ISRA_DETAILS", true);
+		customConstants.put("COLLECTION_DOWNLOAD_REQ", false);
 
-		defaultExtensions.put("RECEIPT_ALLOW_FULL_WAIVER", true);
-
-		defaultExtensions.put("MANDATE_SPLIT_COUNT", 0);
-
-		defaultExtensions.put("COLLECTION_DOWNLOAD_REQ", false);
-
-		defaultExtensions.put("ALLOW_TDS_CERTIFICATE_ADJUSTMENT", true);
-
-		defaultExtensions.put("ALLOW_TDS_PERC_BASED_ON_YEAR", true);
-
-		defaultExtensions.put("PENALTY_CALC_ON_REPRESENTATION", true);
-
-		defaultExtensions.put("IMD_EXT_REFERENCE", true);
+		customConstants.put("AUTO_EOD_REQUIRED", true);
 
 		customerExtensions();
 
 		mandateExtensaions();
 
-		getPresentmentExtensions();
+		presentmentExtensaions();
 
-		getAccountingExtensions();
+		accountingExtensions();
 
-		getFeeExtensions();
+		feeExtensions();
 
-		getDPDExtensions();
+		dpdExtensions();
 
-		getPartnerBankExtensions();
+		partnerBankExtensions();
 
-		getReceiptExtensions();
-
-	}
-
-	private void customerExtensions() {
-		customerExtensions.put("CUST_CORE_BANK_ID", true);
-	}
-
-	private void mandateExtensaions() {
-		mandateExtensions.put("MANDATE_PTNRBNK_IN_DWNLD", false);
-		mandateExtensions.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", false);
+		receiptExtensions();
 	}
 
 	@Override
 	public Map<String, Object> getCustomConstants() {
-		return defaultExtensions;
+		return customConstants;
 	}
 
 	@Override
@@ -220,16 +197,56 @@ public class FeatureExtension implements IFeatureExtension {
 
 	@Override
 	public Map<String, Object> getPartnerBankExtensions() {
-		partnerBankExtensions.put("BRANCH_WISE_MAPPING", true);
-		partnerBankExtensions.put("MAPPING", "B");
-
 		return partnerBankExtensions;
 	}
 
 	@Override
 	public Map<String, Object> getReceiptExtensions() {
-		receiptExtensions.put("STOP_BACK_DATED_EARLY_SETTLE", true);
 		return receiptExtensions;
 	}
 
+	private void customerExtensions() {
+		customerExtensions.put("CUST_CORE_BANK_ID", true);
+		customerExtensions.put("ALLOW_DUPLICATE_PAN", true);
+	}
+
+	private void mandateExtensaions() {
+		mandateExtensions.put("SWAP_EFFECTIVE_DATE_DEFAULT", true);
+		mandateExtensions.put("PARTNER_BANK_REQ", true);
+		mandateExtensions.put("ALLOW_CONSECUTIVE_BOUNCE", true);
+		mandateExtensions.put("EXPIRY_DATE_MANDATORY", false);
+		mandateExtensions.put("MANDATE_SPLIT_COUNT", 100);
+		mandateExtensions.put("PARTNER_BANK_WISE_EXTARCTION", true);
+		mandateExtensions.put("AUTO_UPLOAD", true);
+	}
+
+	private void presentmentExtensaions() {
+		presentmentExtensions.put("DUE_DATE_RECEIPT_CREATION", false);
+		presentmentExtensions.put("AUTO_EXTRACTION", true);
+		presentmentExtensions.put("AUTO_APPROVAL", true);
+	}
+
+	private void accountingExtensions() {
+		accountingExtensions.put("LOAN_TYPE_GL_MAPPING", false);
+		accountingExtensions.put("NORMAL_GL_MAPPING", true);
+	}
+
+	private void feeExtensions() {
+		feeExtensions.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
+		feeExtensions.put("ALLOW_SINGLE_FEE_CONFIG", true);
+	}
+
+	private void dpdExtensions() {
+		dpdExtensions.put("EXCLUDE_VD_PART_PAYMENT", true);
+	}
+
+	private void partnerBankExtensions() {
+		partnerBankExtensions.put("BRANCH_WISE_MAPPING", true);
+		partnerBankExtensions.put("BRANCH_OR_CLUSTER", "C");
+		partnerBankExtensions.put("CLUSTER_TYPE", "BO");
+	}
+
+	private void receiptExtensions() {
+		receiptExtensions.put("STOP_BACK_DATED_EARLY_SETTLE", false);
+	}
 }

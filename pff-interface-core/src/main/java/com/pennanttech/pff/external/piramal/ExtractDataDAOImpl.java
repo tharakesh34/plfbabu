@@ -31,7 +31,7 @@ public class ExtractDataDAOImpl implements ExtractDataDAO {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		try {
-			// delete the data first
+			//delete the data first
 			StringBuilder delete = new StringBuilder(DELETE_QUERY.replace("tableName", tableName));
 			this.extNamedJdbcTemplate.update(delete.toString(), source);
 		} catch (DataAccessException e) {
@@ -39,7 +39,7 @@ public class ExtractDataDAOImpl implements ExtractDataDAO {
 		}
 
 		try {
-			// get the data from the table
+			//get the data from the table
 			List<?> list = getDataByEODDate(date, beanType, tableName);
 			if (!CollectionUtils.isEmpty(list)) {
 				save(list, tableName);
@@ -64,7 +64,7 @@ public class ExtractDataDAOImpl implements ExtractDataDAO {
 		try {
 			int[] count = this.extNamedJdbcTemplate.batchUpdate(getQuery(module), params);
 			logger.debug(count.length + " records are  saved in table: " + module);
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + " while saving the data in ext table: " + module);
 		}
 		logger.debug(Literal.LEAVING);
@@ -127,7 +127,7 @@ public class ExtractDataDAOImpl implements ExtractDataDAO {
 		logger.debug(Literal.LEAVING);
 		try {
 			return this.mainNamedJdbcTemplate.query(selectSQL.toString(), paramMap, typeRowMapper);
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + "  while reading the data from " + tableName);
 		}
 		return null;
