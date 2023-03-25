@@ -1805,6 +1805,15 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public int getPresentmentSuccessRecords(Long id) {
+		String sql = "SELECT SUCCESSRECORDS FROM PRESENTMENTHEADER WHERE ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, id);
+	}
+
+	@Override
 	public void updateHeaderCounts(Long id, int successCount, int failedCount) {
 		String sql = "UPDATE PRESENTMENTHEADER SET Resp_Success = ?, Resp_Failed = ? WHERE ID = ?";
 
