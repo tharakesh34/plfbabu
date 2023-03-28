@@ -66,4 +66,6 @@ public interface ExtPresentmentDAO {
 
 	public Presentment getPDCStagingPresentmentDetails(long finId, String chequeNo, Date chequeDate);
 
+	long savePresentment(Presentment pres, long headerId, String clearingStatus);
+
 }

@@ -823,4 +823,61 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 	}
 
+	@Override
+	public long savePresentment(Presentment pres, long headerId, String clearingStatus) {
+
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO PRESENTMENT_RESP_DTLS ");
+		sql.append(" (HEADER_ID,PRESENTMENT_REFERENCE,FINREFERENCE,");
+		sql.append("INSTALMENT_NO,AMOUNT_CLEARED,CLEARING_DATE,");
+		sql.append("CLEARING_STATUS,BOUNCE_CODE,BOUNCE_REMARKS,REASON_CODE,");
+		sql.append("BANK_CODE,BANK_NAME,BRANCH_CODE,");
+		sql.append("PARTNER_BANK_CODE,PARTNER_BANK_NAME,BANK_ADDRESS,");
+		sql.append("ACCOUNT_NUMBER,IFSC_CODE,UMRN_NO,MICR_CODE,");
+		sql.append("CHEQUE_SERIAL_NO,UTR_NUMBER,FINID,FATECORRECTION)");
+		sql.append(" VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
+
+		logger.debug(Literal.SQL + sql);
+
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, headerId);
+			ps.setString(index++, pres.getBatchId());
+			ps.setString(index++, pres.getAgreementNo());
+
+			ps.setLong(index++, pres.getEmiNo());
+			ps.setBigDecimal(index++, pres.getChequeAmount());
+			ps.setTimestamp(index++, curTimeStamp);
+
+			ps.setString(index++, clearingStatus);
+			ps.setString(index++, pres.getUtilityCode());
+			ps.setString(index++, pres.getReturnReason());
+			ps.setString(index++, pres.getUtilityCode());
+
+			ps.setString(index++, pres.getBankCode());
+			ps.setString(index++, pres.getBankName());
+			ps.setString(index++, pres.getBrCode());
+
+			ps.setLong(index++, pres.getPartnerBankId());
+			ps.setString(index++, pres.getPartnerBankName());
+			ps.setString(index++, pres.getBankAddress());
+
+			ps.setString(index++, pres.getAccountNo());
+			ps.setString(index++, pres.getIFSC());
+			ps.setString(index++, pres.getUmrnNo());
+			ps.setString(index++, pres.getMicrCode());
+
+			ps.setString(index++, pres.getChequeSerialNo());
+			ps.setString(index++, pres.getUtrNumber());
+			ps.setLong(index++, pres.getCustomerId());
+			ps.setString(index, "N");
+
+		});
+
+		return pres.getTxnReference();
+	}
+
 }
