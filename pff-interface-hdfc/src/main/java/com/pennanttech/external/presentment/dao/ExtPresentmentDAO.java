@@ -34,7 +34,7 @@ public interface ExtPresentmentDAO {
 
 	public Presentment getPresenementPDCRecord(long p_id);
 
-	public long savePresentment(Presentment pres, long headerId, String clearingStatus);
+	public long savePresentment(List<Presentment> presList, long headerId);
 
 	public void updateFileStatus(long id, long status);
 
