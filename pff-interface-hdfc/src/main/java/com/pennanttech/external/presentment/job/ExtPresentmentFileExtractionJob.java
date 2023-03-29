@@ -253,26 +253,37 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 	}
 
 	private boolean validateRejectFile(String filePath) {
+		logger.debug(Literal.ENTERING);
 		try {
 
 			long fileLines = countLineInFile(filePath);
+			logger.debug("EXT_VR: fileLines:" + fileLines);
 			long recSize = fileLines - 2;
-
+			logger.debug("EXT_VR: recSize" + recSize);
 			File file = new File(filePath);
-
+			logger.debug("EXT_VR: file" + file.getName());
 			String data = readLastLine(file);
-
+			logger.debug("EXT_VR: Data" + data);
 			if (data != null && !"".equals(data)) {
+				logger.debug("EXT_VR: IF");
 				if (data.startsWith("F") && data.length() > 1) {
+					logger.debug("EXT_VR: IFF");
 					int fileRecSize = 0;
 					fileRecSize = Integer.parseInt(data.substring(1));
+					logger.debug("EXT_VR: IFF fileRecSize:" + fileRecSize);
 					if (fileRecSize == recSize) {
+						logger.debug("EXT_VR: IFF IF TRUE");
 						return true;
 					}
+				} else {
+					logger.debug("EXT_VR: IFE");
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
