@@ -1030,6 +1030,18 @@ public class PresentmentEngine {
 			emiInAdvance.add(pd.getEmiInAdvance());
 		}
 
+		if (CollectionUtils.isNotEmpty(pd.getExcessMovements())) {
+			for (FinExcessMovement fem : pd.getExcessMovements()) {
+				if ("R".equals(fem.getTranType())) {
+					FinExcessAmount fea = new FinExcessAmount();
+					fea.setExcessID(fem.getExcessID());
+					fea.setAmount(fem.getAmount());
+
+					emiInAdvance.add(fea);
+				}
+			}
+		}
+
 		if (FinanceConstants.PRODUCT_ODFACILITY.equals(pd.getProductCategory())) {
 			odPresentments.put(pd.getFinReference(), pd);
 		}

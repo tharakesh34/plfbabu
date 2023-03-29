@@ -3,6 +3,7 @@ package com.pennanttech.pff.autorefund;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.mandate.InstrumentType;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class RefundBeneficiary {
@@ -153,14 +155,20 @@ public class RefundBeneficiary {
 
 		List<FinTypePartnerBank> fintypePartnerbank = finTypePartnerBankDAO.getFinTypePartnerBanks(fpb);
 
-		if (fintypePartnerbank.size() == 1) {
+		if (CollectionUtils.isEmpty(fintypePartnerbank)) {
+			throw new AppException(
+					"Loan Type Partner Bank configuration not found with the following mapping " + fpb.getMapping());
+		}
+
+		if (fintypePartnerbank.size() >= 1) {
 			fpb = fintypePartnerbank.get(0);
 			pi.setPartnerBankId(fpb.getPartnerBankID());
 			pi.setPartnerBankCode(fpb.getPartnerBankCode());
 			pi.setPartnerBankName(fpb.getPartnerBankName());
 			pi.setIssuingBank(fpb.getIssuingBankCode());
 			pi.setIssuingBankName(fpb.getIssuingBankName());
-
+			pi.setPartnerBankAcType(fpb.getAccountType());
+			pi.setPartnerBankAc(fpb.getAccountNo());
 		}
 
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
