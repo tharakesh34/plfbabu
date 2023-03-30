@@ -1,11 +1,6 @@
 package com.pennanttech.external.presentment.job;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,9 +27,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -77,14 +69,6 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 
 	public void readAndExtractFiles() throws UnexpectedInputException, ParseException, TransactionException, Exception {
 		logger.debug(Literal.ENTERING);
-
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
-
-		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<ExtPresentment> cursorItemReader = new JdbcCursorItemReader<ExtPresentment>();
@@ -132,30 +116,6 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 
 					String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
 							+ extPresentment.getFileName();
-
-					// Validation on reject file 501
-					if (CONFIG_SI_RESP.equals(extPresentment.getModule())
-							|| CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
-
-						ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
-
-						String fileName = extPresentment.getFileName();
-						String filePrepend = config.getFilePrepend();
-						String fileExtension = config.getFileExtension();
-						if (fileName.startsWith(filePrepend.concat(config.getFailIndicator()))
-								&& fileName.endsWith(fileExtension)) {
-							if (!validateRejectFile(fileData)) {
-								// update the file extraction status as unprocessed because of invalid record count
-								InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-										ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
-
-								externalPresentmentDAO.updateFileExtractionStatusWithError(extPresentment.getId(),
-										FAILED, interfaceErrorCode.getErrorCode(),
-										interfaceErrorCode.getErrorMessage());
-								continue;
-							}
-						}
-					}
 
 					File file = new File(fileData);
 					// Fetch list of record data from the file
@@ -252,77 +212,4 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean validateRejectFile(String filePath) {
-		logger.debug(Literal.ENTERING);
-		try {
-
-			long fileLines = countLineInFile(filePath);
-			logger.debug("EXT_VR: fileLines:" + fileLines);
-			long recSize = fileLines - 2;
-			logger.debug("EXT_VR: recSize" + recSize);
-			File file = new File(filePath);
-			logger.debug("EXT_VR: file" + file.getName());
-			String data = readLastLine(file);
-			logger.debug("EXT_VR: Data" + data);
-			if (data != null && !"".equals(data)) {
-				logger.debug("EXT_VR: IF");
-				if (data.startsWith("F") && data.length() > 1) {
-					logger.debug("EXT_VR: IFF");
-					int fileRecSize = 0;
-					fileRecSize = Integer.parseInt(data.substring(1));
-					logger.debug("EXT_VR: IFF fileRecSize:" + fileRecSize);
-					if (fileRecSize == recSize) {
-						logger.debug("EXT_VR: IFF IF TRUE");
-						return true;
-					}
-				} else {
-					logger.debug("EXT_VR: IFE");
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.debug(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
-	}
-
-	private long countLineInFile(String fileName) {
-		long lines = 0;
-		try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(fileName))) {
-			byte[] c = new byte[1024];
-			int count = 0;
-			int readChars = 0;
-			boolean endsWithoutNewLine = false;
-			while ((readChars = is.read(c)) != -1) {
-				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == '\n')
-						++count;
-				}
-				endsWithoutNewLine = (c[readChars - 1] != '\n');
-			}
-			if (endsWithoutNewLine) {
-				++count;
-			}
-			lines = count;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return lines;
-	}
-
-	public String readLastLine(File file) throws Exception {
-		String last = null, line;
-		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-			while ((line = in.readLine()) != null) {
-				if (line != null) {
-					last = line;
-				}
-			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} finally {
-		}
-		return last;
-	}
 }

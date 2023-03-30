@@ -1,6 +1,11 @@
 package com.pennanttech.external.presentment.job;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +17,9 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
+import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -97,6 +104,13 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processResponseFiles(ExternalConfig respConfig, ExternalConfig reqConfig) {
 		logger.debug(Literal.ENTERING);
+
+		// get error codes handy
+		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+		}
+
 		// Get Interface/Module wise folder path
 		String folderPath = App.getResourcePath(respConfig.getFileLocation());
 
@@ -126,6 +140,15 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 		// Process each file individually
 		for (File file : filesList) {
+
+			// Check if the file is already saved in table for the particular interface/module
+			boolean isRecordExist = externalPresentmentDAO.isFileProcessed(file.getName(),
+					respConfig.getInterfaceName());
+
+			if (isRecordExist) {
+				logger.debug("EXT_FILE: File status already saved, so returning.");
+				continue;
+			}
 
 			String fileName = file.getName();
 			String filePrepend = respConfig.getFilePrepend();
@@ -176,7 +199,30 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 					String reqFileNameInRespFile = getReqFileNameFromRespFileName(fNameArray, fileExtension,
 							reqConfig.getInterfaceName(), fileType);
+
 					isValid = requestFileNames.contains(reqFileNameInRespFile);
+
+					// Added for reject file count validation
+					if ("R".equals(fileType)) {
+						String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
+								+ extPresentment.getFileName();
+
+						boolean isValidRejectFile = validateRejectFile(fileData);
+
+						if (!isValidRejectFile) {
+							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
+
+							extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
+							extPresentment.setExtraction(FAILED); // set file extract process unprocessed
+							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
+							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
+							externalPresentmentDAO.saveRejectResponseFile(extPresentment);
+							continue;
+						}
+
+					}
+
 				} else if (CONFIG_NACH_REQ.equals(reqConfig.getInterfaceName())) {
 					isValid = true;
 				}
@@ -186,16 +232,10 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					continue;
 				}
 
-				// Check if the file is already saved in table for the particular interface/module
-				boolean isRecordExist = externalPresentmentDAO.isFileProcessed(file.getName(),
-						respConfig.getInterfaceName());
-
-				if (!isRecordExist) {
-					// Add unprocessed files in to table
-					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
-					extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
-					externalPresentmentDAO.saveResponseFile(extPresentment);
-				}
+				// Add unprocessed files in to table
+				extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
+				extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
+				externalPresentmentDAO.saveResponseFile(extPresentment);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -248,5 +288,83 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			}
 		}
 		return requestFileNames;
+	}
+
+	private boolean validateRejectFile(String filePath) {
+		logger.debug(Literal.ENTERING);
+		try {
+
+			long fileLines = countLineInFile(filePath);
+			logger.debug("EXT_VR: fileLines:" + fileLines);
+			long recSize = fileLines - 2;
+			logger.debug("EXT_VR: recSize" + recSize);
+			File file = new File(filePath);
+			logger.debug("EXT_VR: file" + file.getName());
+			String data = readLastLine(file);
+			logger.debug("EXT_VR: Data" + data);
+			if (data != null && !"".equals(data)) {
+				logger.debug("EXT_VR: IF");
+				if (data.startsWith("F") && data.length() > 1) {
+					logger.debug("EXT_VR: IFF");
+					int fileRecSize = 0;
+					fileRecSize = Integer.parseInt(data.substring(1));
+					logger.debug("EXT_VR: IFF fileRecSize:" + fileRecSize);
+					if (fileRecSize == recSize) {
+						logger.debug("EXT_VR: IFF IF TRUE");
+						return true;
+					}
+				} else {
+					logger.debug("EXT_VR: IFE");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
+	private long countLineInFile(String fileName) {
+		logger.debug(Literal.ENTERING);
+		long lines = 0;
+		try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(fileName))) {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean endsWithoutNewLine = false;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n')
+						++count;
+				}
+				endsWithoutNewLine = (c[readChars - 1] != '\n');
+			}
+			if (endsWithoutNewLine) {
+				++count;
+			}
+			lines = count;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.debug(Literal.LEAVING);
+		return lines;
+	}
+
+	public String readLastLine(File file) throws Exception {
+		logger.debug(Literal.ENTERING);
+		String last = null, line;
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+			while ((line = in.readLine()) != null) {
+				if (line != null) {
+					last = line;
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+		}
+		logger.debug(Literal.LEAVING);
+		return last;
 	}
 }

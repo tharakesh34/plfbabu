@@ -68,4 +68,6 @@ public interface ExtPresentmentDAO {
 
 	long savePresentment(Presentment pres, long headerId, String clearingStatus);
 
+	void saveRejectResponseFile(ExtPresentment extPresentment);
+
 }
