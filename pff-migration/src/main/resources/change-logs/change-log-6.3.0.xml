@@ -14314,4 +14314,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="OTS#37" author="Poojitha.m">
+		<modifyDataType tableName="FeeWaiverHeader" columnName="AlwCondWaiver" newDataType="boolean" />
+	</changeSet>
+	
+	
+	<changeSet id="OTS#38" author="Poojitha.m">
+		<modifyDataType tableName="FeeWaiverHeader_Temp" columnName="AlwCondWaiver" newDataType="boolean" />
+	</changeSet>
+	
 </databaseChangeLog> 

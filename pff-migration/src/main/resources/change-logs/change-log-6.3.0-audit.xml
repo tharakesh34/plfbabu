@@ -1265,4 +1265,8 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="1001.3" author="Poojitha.m">
+		<modifyDataType tableName="AdtFeeWaiverHeader" columnName="AlwCondWaiver" newDataType="boolean" />
+	</changeSet>
+	
 </databaseChangeLog>
