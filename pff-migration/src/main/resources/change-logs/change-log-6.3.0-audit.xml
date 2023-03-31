@@ -1265,8 +1265,38 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="1001.3" author="Poojitha.m">
+	<changeSet id="1001.3_pre" author="Poojitha.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtfeewaiverheader');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1001.3" author="Poojitha.m" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table AdtFeeWaiverHeader add  AlwCondWaiver1 number(1,0);
+				update AdtFeeWaiverHeader set AlwCondWaiver1=AlwCondWaiver;
+				update AdtFeeWaiverHeader set AlwCondWaiver=null;
+				alter table AdtFeeWaiverHeader modify AlwCondWaiver number(1,0);
+				update AdtFeeWaiverHeader set AlwCondWaiver=AlwCondWaiver1;
+				alter table AdtFeeWaiverHeader drop column  AlwCondWaiver1;
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="1001.3" author="Poojitha.m" dbms="mssql,postgresql">
 		<modifyDataType tableName="AdtFeeWaiverHeader" columnName="AlwCondWaiver" newDataType="boolean" />
+	</changeSet>
+	
+	
+	<changeSet id="1001.3_post" author="Poojitha.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtfeewaiverheader');
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>
