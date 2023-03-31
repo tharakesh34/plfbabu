@@ -1,8 +1,11 @@
 package com.pennanttech.external.presentment.job;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -200,15 +203,13 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					isValid = requestFileNames.contains(reqFileNameInRespFile);
 
 					// Added for reject file count validation
-					if (isValid && "R".equals(fileType)) {
-						logger.debug("EXT_VRF: NEED TO VALIDATE REJECT FILE FOR VALIDATION FOR " + file.getName());
+					if ("R".equals(fileType)) {
 						String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
 								+ extPresentment.getFileName();
 
 						boolean isValidRejectFile = validateRejectFile(fileData);
-						logger.debug("EXT_VRF: FILE VALIDATION FOR" + file.getName() + "+ IS : " + isValidRejectFile);
+
 						if (!isValidRejectFile) {
-							logger.debug("EXT_VRF: FILE VALIDATION FAILED FOR " + file.getName());
 							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
 									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
 
@@ -217,7 +218,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
 							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 							externalPresentmentDAO.saveRejectResponseFile(extPresentment);
-							logger.debug("EXT_VRF: FILE VALIDATION EXCEPTION SAVING , CONTINUING");
 							continue;
 						}
 
@@ -227,14 +227,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					isValid = true;
 				}
 
-				logger.debug("EXT_VRF: PROCEEDING FURTHER FOR FILE: " + file.getName());
-
 				if (!isValid) {
 					logger.debug("Error Code F401, Request file name is invalid. So not processing the response file.");
 					continue;
 				}
 
-				logger.debug("EXT_VRF: SAVING FILE: " + file.getName());
 				// Add unprocessed files in to table
 				extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
 				extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
@@ -293,72 +290,81 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		return requestFileNames;
 	}
 
-	public boolean validateRejectFile(String filePath) {
+	private boolean validateRejectFile(String filePath) {
 		logger.debug(Literal.ENTERING);
 		try {
-			RejectFileData cntData = new RejectFileData();
-			File file = new File(filePath);
-			readLastLine(file, cntData);
-			long fileLines = cntData.getLinesCount();
-			String data = cntData.getLastLine();
-			logger.debug("EXT_VRF: fileLines:" + fileLines + ", lastLine: " + data);
+
+			long fileLines = countLineInFile(filePath);
+			logger.debug("EXT_VR: fileLines:" + fileLines);
 			long recSize = fileLines - 2;
+			logger.debug("EXT_VR: recSize" + recSize);
+			File file = new File(filePath);
+			logger.debug("EXT_VR: file" + file.getName());
+			String data = readLastLine(file);
+			logger.debug("EXT_VR: Data" + data);
 			if (data != null && !"".equals(data)) {
+				logger.debug("EXT_VR: IF");
 				if (data.startsWith("F") && data.length() > 1) {
+					logger.debug("EXT_VR: IFF");
 					int fileRecSize = 0;
 					fileRecSize = Integer.parseInt(data.substring(1));
+					logger.debug("EXT_VR: IFF fileRecSize:" + fileRecSize);
 					if (fileRecSize == recSize) {
-						logger.debug("EXT_VRF: SUCCESS COUNT");
+						logger.debug("EXT_VR: IFF IF TRUE");
 						return true;
 					}
+				} else {
+					logger.debug("EXT_VR: IFE");
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		logger.debug("EXT_VRF: FAILED COUNT");
 		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
-	public void readLastLine(File file, RejectFileData cntData) throws Exception {
+	private long countLineInFile(String fileName) {
+		logger.debug(Literal.ENTERING);
+		long lines = 0;
+		try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(fileName))) {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean endsWithoutNewLine = false;
+			while ((readChars = is.read(c)) != -1) {
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n')
+						++count;
+				}
+				endsWithoutNewLine = (c[readChars - 1] != '\n');
+			}
+			if (endsWithoutNewLine) {
+				++count;
+			}
+			lines = count;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.debug(Literal.LEAVING);
+		return lines;
+	}
+
+	public String readLastLine(File file) throws Exception {
 		logger.debug(Literal.ENTERING);
 		String last = null, line;
-		long cnt = 0;
 		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 			while ((line = in.readLine()) != null) {
-				cnt = cnt + 1;
 				if (line != null) {
 					last = line;
 				}
 			}
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
+		} finally {
 		}
-		cntData.setLastLine(last);
-		cntData.setLinesCount(cnt);
 		logger.debug(Literal.LEAVING);
-	}
-
-	class RejectFileData {
-		private long linesCount;
-		private String lastLine;
-
-		public long getLinesCount() {
-			return linesCount;
-		}
-
-		public void setLinesCount(long linesCount) {
-			this.linesCount = linesCount;
-		}
-
-		public String getLastLine() {
-			return lastLine;
-		}
-
-		public void setLastLine(String lastLine) {
-			this.lastLine = lastLine;
-		}
-
+		return last;
 	}
 }
