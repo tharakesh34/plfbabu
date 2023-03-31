@@ -1796,21 +1796,21 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
+	public List<String> getStatusByPresentmentDetail(Long id) {
+		String sql = "SELECT STATUS FROM PRESENTMENTDETAILS WHERE ID = ? AND EXCLUDEREASON = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForList(sql, String.class, id, 0);
+	}
+
+	@Override
 	public long getPresentmentDetailPresenmentId(Long id) {
 		String sql = "SELECT PRESENTMENTID FROM PRESENTMENTDETAILS WHERE ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, long.class, id);
-	}
-
-	@Override
-	public int getPresentmentSuccessRecords(Long id) {
-		String sql = "SELECT SUCCESSRECORDS FROM PRESENTMENTHEADER WHERE ID = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return jdbcOperations.queryForObject(sql, Integer.class, id);
 	}
 
 	@Override

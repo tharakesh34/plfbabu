@@ -433,7 +433,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	}
 
 	@Override
-	public long savePresentment(Presentment pres, long headerId, String clearingStatus) {
+	public long savePresentment(List<Presentment> presList, long headerId) {
 
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
 
@@ -450,43 +450,52 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 		logger.debug(Literal.SQL + sql);
 
-		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			int index = 1;
+		return mainNamedJdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(),
+				new BatchPreparedStatementSetter() {
 
-			ps.setLong(index++, headerId);
-			ps.setString(index++, pres.getBatchId());
-			ps.setString(index++, pres.getAgreementNo());
+					@Override
+					public void setValues(PreparedStatement ps, int index) throws SQLException {
+						Presentment pres = presList.get(index);
+						int indx = 1;
 
-			ps.setLong(index++, pres.getEmiNo());
-			ps.setBigDecimal(index++, pres.getChequeAmount());
-			ps.setTimestamp(index++, curTimeStamp);
+						ps.setLong(indx++, headerId);
+						ps.setString(indx++, pres.getBatchId());
+						ps.setString(indx++, pres.getAgreementNo());
 
-			ps.setString(index++, clearingStatus);
-			ps.setString(index++, pres.getUtilityCode());
-			ps.setString(index++, pres.getReturnReason());
-			ps.setString(index++, pres.getUtilityCode());
+						ps.setLong(indx++, pres.getEmiNo());
+						ps.setBigDecimal(indx++, pres.getChequeAmount());
+						ps.setTimestamp(indx++, curTimeStamp);
 
-			ps.setString(index++, pres.getBankCode());
-			ps.setString(index++, pres.getBankName());
-			ps.setString(index++, pres.getBrCode());
+						ps.setString(indx++, pres.getStatus());
+						ps.setString(indx++, pres.getUtilityCode());
+						ps.setString(indx++, pres.getReturnReason());
+						ps.setString(indx++, pres.getUtilityCode());
 
-			ps.setLong(index++, pres.getPartnerBankId());
-			ps.setString(index++, pres.getPartnerBankName());
-			ps.setString(index++, pres.getBankAddress());
+						ps.setString(indx++, pres.getBankCode());
+						ps.setString(indx++, pres.getBankName());
+						ps.setString(indx++, pres.getBrCode());
 
-			ps.setString(index++, pres.getAccountNo());
-			ps.setString(index++, pres.getIFSC());
-			ps.setString(index++, pres.getUmrnNo());
-			ps.setString(index++, pres.getMicrCode());
+						ps.setLong(indx++, pres.getPartnerBankId());
+						ps.setString(indx++, pres.getPartnerBankName());
+						ps.setString(indx++, pres.getBankAddress());
 
-			ps.setString(index++, pres.getChequeSerialNo());
-			ps.setString(index++, pres.getUtrNumber());
-			ps.setLong(index++, pres.getCustomerId());
-			ps.setString(index, "N");
+						ps.setString(indx++, pres.getAccountNo());
+						ps.setString(indx++, pres.getIFSC());
+						ps.setString(indx++, pres.getUmrnNo());
+						ps.setString(indx++, pres.getMicrCode());
 
-		});
+						ps.setString(indx++, pres.getChequeSerialNo());
+						ps.setString(indx++, pres.getUtrNumber());
+						ps.setLong(indx++, pres.getCustomerId());
+						ps.setString(indx, "N");
+					}
 
-		return pres.getTxnReference();
+					@Override
+					public int getBatchSize() {
+						return presList.size();
+					}
+				}).length;
+
 	}
 
 	@Override
@@ -814,4 +823,84 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 	}
 
+	@Override
+	public long savePresentment(Presentment pres, long headerId, String clearingStatus) {
+
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" INSERT INTO PRESENTMENT_RESP_DTLS ");
+		sql.append(" (HEADER_ID,PRESENTMENT_REFERENCE,FINREFERENCE,");
+		sql.append("INSTALMENT_NO,AMOUNT_CLEARED,CLEARING_DATE,");
+		sql.append("CLEARING_STATUS,BOUNCE_CODE,BOUNCE_REMARKS,REASON_CODE,");
+		sql.append("BANK_CODE,BANK_NAME,BRANCH_CODE,");
+		sql.append("PARTNER_BANK_CODE,PARTNER_BANK_NAME,BANK_ADDRESS,");
+		sql.append("ACCOUNT_NUMBER,IFSC_CODE,UMRN_NO,MICR_CODE,");
+		sql.append("CHEQUE_SERIAL_NO,UTR_NUMBER,FINID,FATECORRECTION)");
+		sql.append(" VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ");
+
+		logger.debug(Literal.SQL + sql);
+
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, headerId);
+			ps.setString(index++, pres.getBatchId());
+			ps.setString(index++, pres.getAgreementNo());
+
+			ps.setLong(index++, pres.getEmiNo());
+			ps.setBigDecimal(index++, pres.getChequeAmount());
+			ps.setTimestamp(index++, curTimeStamp);
+
+			ps.setString(index++, clearingStatus);
+			ps.setString(index++, pres.getUtilityCode());
+			ps.setString(index++, pres.getReturnReason());
+			ps.setString(index++, pres.getUtilityCode());
+
+			ps.setString(index++, pres.getBankCode());
+			ps.setString(index++, pres.getBankName());
+			ps.setString(index++, pres.getBrCode());
+
+			ps.setLong(index++, pres.getPartnerBankId());
+			ps.setString(index++, pres.getPartnerBankName());
+			ps.setString(index++, pres.getBankAddress());
+
+			ps.setString(index++, pres.getAccountNo());
+			ps.setString(index++, pres.getIFSC());
+			ps.setString(index++, pres.getUmrnNo());
+			ps.setString(index++, pres.getMicrCode());
+
+			ps.setString(index++, pres.getChequeSerialNo());
+			ps.setString(index++, pres.getUtrNumber());
+			ps.setLong(index++, pres.getCustomerId());
+			ps.setString(index, "N");
+
+		});
+
+		return pres.getTxnReference();
+	}
+
+	@Override
+	public void saveRejectResponseFile(ExtPresentment extPresentment) {
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+		StringBuilder sql = new StringBuilder("INSERT INTO PRMNT_HEADER");
+		sql.append(" (MODULE,FILE_NAME,FILE_LOCATION,STATUS, EXTRACTION,ERROR_CODE,ERROR_MESSAGE,CREATED_DATE)");
+		sql.append(" VALUES (");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, extPresentment.getModule());
+			ps.setString(index++, extPresentment.getFileName());
+			ps.setString(index++, extPresentment.getFileLocation());
+			ps.setInt(index++, extPresentment.getStatus());
+			ps.setInt(index++, extPresentment.getExtraction());
+			ps.setString(index++, extPresentment.getErrorCode());
+			ps.setString(index++, extPresentment.getErrorMessage());
+			ps.setTimestamp(index, curTimeStamp);
+		});
+
+	}
 }

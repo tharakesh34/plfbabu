@@ -85,8 +85,6 @@ public class ReceiptPaymentService {
 			pd = preparePD(receiptDTO, idxPresentment);
 			receiptDTO.setPresentmentDetail(pd);
 		} else {
-			receiptDTO.getEmiInAdvance().clear();
-
 			List<FinExcessMovement> excessMovements = pd.getExcessMovements();
 
 			for (FinExcessMovement fem : excessMovements) {
@@ -176,7 +174,6 @@ public class ReceiptPaymentService {
 			try {
 				repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
 			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
 				throw new AppException();
 			}
 
