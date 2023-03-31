@@ -174,7 +174,6 @@ public class ReceiptPaymentService {
 			try {
 				repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
 			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
 				throw new AppException();
 			}
 

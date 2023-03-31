@@ -1154,6 +1154,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			pd.setBounceID(rs.getLong("BounceID"));
 			pd.setAccountNo(rs.getString("AccountNo"));
 			pd.setAcType(rs.getString("AcType"));
+			pd.setPartnerBankId(rs.getLong("PartnerBankId"));
 
 			return pd;
 		});

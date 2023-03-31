@@ -14314,4 +14314,100 @@
 		</sql>
 	</changeSet>
 	
+	
+	
+	<changeSet id="OTS#37_pre" author="Poojitha.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feewaiverheader');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="OTS#37.1" author="Poojitha.m" dbms="mssql">
+    	<dropDefaultValue columnDataType="int" columnName="AlwCondWaiver" tableName="FeeWaiverHeader"/>
+	</changeSet>	
+	
+	<changeSet id="OTS#37" author="Poojitha.m" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table FeeWaiverHeader add  AlwCondWaiver1 number(1,0);
+				update FeeWaiverHeader set AlwCondWaiver1=AlwCondWaiver;
+				update FeeWaiverHeader set AlwCondWaiver=null;
+				alter table FeeWaiverHeader modify AlwCondWaiver number(1,0);
+				update FeeWaiverHeader set AlwCondWaiver=AlwCondWaiver1;
+				alter table FeeWaiverHeader drop column  AlwCondWaiver1;
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="OTS#37" author="Poojitha.m" dbms="mssql, postgresql">
+		<modifyDataType tableName="FeeWaiverHeader" columnName="AlwCondWaiver" newDataType="boolean" />
+	</changeSet>
+	
+	<changeSet id="OTS#37.2" author="Poojitha.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FEEWAIVERHEADER ADD CONSTRAINT DF_FEWAIVERHEADER_ALWC DEFAULT 0 FOR ALWCONDWAIVER;
+				]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="OTS#37_post" author="Poojitha.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feewaiverheader');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="OTS#38_pre" author="Poojitha.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'feewaiverheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="OTS#38.1" author="Poojitha.m" dbms="mssql">
+    	<dropDefaultValue columnDataType="int" columnName="AlwCondWaiver" tableName="FeeWaiverHeader_Temp"/>
+	</changeSet>
+	
+	<changeSet id="OTS#38" author="Poojitha.m" dbms="oracle">
+		<sql>
+			<![CDATA[
+				alter table FeeWaiverHeader_Temp add  AlwCondWaiver1 number(1,0);
+				update FeeWaiverHeader_Temp set AlwCondWaiver1=AlwCondWaiver;
+				update FeeWaiverHeader_Temp set AlwCondWaiver=null;
+				alter table FeeWaiverHeader_Temp modify AlwCondWaiver number(1,0);
+				update FeeWaiverHeader_Temp set AlwCondWaiver=AlwCondWaiver1;
+				alter table FeeWaiverHeader_Temp drop column  AlwCondWaiver1;
+				]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="OTS#38" author="Poojitha.m" dbms="mssql,postgresql">
+		<modifyDataType tableName="FeeWaiverHeader_Temp" columnName="AlwCondWaiver" newDataType="boolean" />
+	</changeSet>
+	
+	<changeSet id="OTS#38.2" author="Poojitha.m" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE FeeWaiverHeader_Temp ADD CONSTRAINT DF_FEWAIVERHEADER_T_ALWC DEFAULT 0 FOR ALWCONDWAIVER;
+				]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="OTS#38_post" author="Poojitha.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feewaiverheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

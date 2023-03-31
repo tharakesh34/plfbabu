@@ -2050,9 +2050,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			}
 
 			if (CustomerExtension.CUST_CORE_BANK_ID) {
-				ps.setLong(++index, custID);
-			} else {
 				ps.setString(++index, corBankID);
+			} else {
+				ps.setLong(++index, custID);
 			}
 		});
 	}
