@@ -76,20 +76,6 @@ public final class DateUtility extends DateUtil {
 	}
 
 	/**
-	 * Take String Date and return UTIL Date in DB Format
-	 * 
-	 * @param date (Date)
-	 * 
-	 * @return Date
-	 */
-	public static Date getDBDate(String date) {
-		if (date == null) {
-			return null;
-		}
-		return getSqlDate(parse(date, PennantConstants.DBDateFormat));
-	}
-
-	/**
 	 * This method compares two times by comparing hours ,minutes and seconds
 	 * 
 	 * @param firstTime

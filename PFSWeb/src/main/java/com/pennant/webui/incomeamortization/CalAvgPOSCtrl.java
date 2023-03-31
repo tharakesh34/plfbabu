@@ -37,6 +37,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -417,7 +418,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * @return
 	 */
 	private static Date getFormatDate(Date date) {
-		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
+		return DateUtil.getDatePart(date);
 	}
 
 	// getters / setters

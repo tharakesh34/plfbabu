@@ -55,6 +55,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
@@ -204,16 +205,14 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					this.finCustPrvYOE.setValue(employer[3]);
 				}
 				if (StringUtils.isNotBlank(custAgreementData.getCustDOB())) {
-					this.finCustFDOB.setValue(
-							DateUtility.formatToLongDate(DateUtility.getDBDate(custAgreementData.getCustDOB())));
-					this.finCustFAge.setValue(String.valueOf(DateUtility
-							.getYearsBetween(DateUtility.getDBDate(custAgreementData.getCustDOB()), appldate)));
+					Date dob = DateUtil.parseFullDate(custAgreementData.getCustDOB());
+					this.finCustFDOB.setValue(DateUtility.formatToLongDate(dob));
+					this.finCustFAge.setValue(String.valueOf(DateUtility.getYearsBetween(dob, appldate)));
 				}
 				if (jointCustAgreementData != null && StringUtils.isNotBlank(jointCustAgreementData.getCustDOB())) {
-					this.finCustSDOB.setValue(
-							DateUtility.formatToLongDate(DateUtility.getDBDate(jointCustAgreementData.getCustDOB())));
-					this.finCustSAge.setValue(String.valueOf(DateUtility
-							.getYearsBetween(DateUtility.getDBDate(jointCustAgreementData.getCustDOB()), appldate)));
+					Date dob = DateUtil.parseFullDate(jointCustAgreementData.getCustDOB());
+					this.finCustSDOB.setValue(DateUtility.formatToLongDate(dob));
+					this.finCustSAge.setValue(String.valueOf(DateUtil.getYearsBetween(dob, appldate)));
 				}
 				this.finCustSector.setValue("");// custAgreementData.getCustSector()
 				this.finCustSubSector.setValue("");// custAgreementData.getCustSubSector()

@@ -58,6 +58,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class SuspensePostingUtil implements Serializable {
@@ -332,8 +333,7 @@ public class SuspensePostingUtil implements Serializable {
 		suspDetails.setFinTrfMvt(trfMvt);
 		suspDetails.setFinSuspSeq(suspSeq);
 		suspDetails.setFinTrfAmt(suspAmt);
-		Date date = DateUtility.getDBDate(oDDate.toString());
-		suspDetails.setFinODDate(date);
+		suspDetails.setFinODDate(DateUtil.getDatePart(oDDate));
 		suspDetails.setFinTrfFromDate(suspFromDate);
 		suspDetails.setLinkedTranId(linkedTranId);
 		logger.debug("Leaving");

@@ -3293,9 +3293,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return errorDetail;
 		}
 		// EMIType invalidate validation
-		String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
-		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-				liability.getTenure());
+		Date date = DateUtil.getDatePart(liability.getFinDate());
+		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(date, liability.getTenure());
 		if (CollectionUtils.isNotEmpty(paymentDetails)) {
 			for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
 				int emiCount = 0;

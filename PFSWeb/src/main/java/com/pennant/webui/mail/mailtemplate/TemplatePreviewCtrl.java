@@ -249,8 +249,7 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 								} else {
 									method = data.getClass().getDeclaredMethod("set" + getFieldValue(db.getId()),
 											Date.class);
-									date = DateUtility.getDBDate(
-											DateUtility.format(db.getValue(), PennantConstants.DBDateFormat));
+									date = DateUtility.getDatePart(db.getValue());
 									method.invoke(data, date);
 								}
 

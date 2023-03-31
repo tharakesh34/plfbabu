@@ -755,7 +755,7 @@ public class FinanceDataDefaulting {
 				Date rvwDate = FrequencyUtil
 						.getNextDate(fm.getGrcPftRvwFrq(), 1, finStartDate, HolidayHandlerTypes.MOVE_NONE, false)
 						.getNextFrequencyDate();
-				rvwDate = DateUtility.getDBDate(DateUtility.format(rvwDate, PennantConstants.DBDateFormat));
+				rvwDate = DateUtil.getDatePart(rvwDate);
 
 				if (fm.getCalGrcEndDate() != null && rvwDate != null) {
 					if (fm.getCalGrcEndDate().compareTo(rvwDate) < 0) {

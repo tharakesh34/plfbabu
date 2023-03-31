@@ -10,15 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.FinEODEvent;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CalAvgPOSProcess extends Thread {
 	private static final Logger logger = LogManager.getLogger(CalAvgPOSProcess.class);
@@ -125,7 +124,7 @@ public class CalAvgPOSProcess extends Thread {
 	}
 
 	private static Date getFormatDate(Date date) {
-		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
+		return DateUtil.getDatePart(date);
 	}
 
 	public void setIncomeAmortizationService(IncomeAmortizationService incomeAmortizationService) {

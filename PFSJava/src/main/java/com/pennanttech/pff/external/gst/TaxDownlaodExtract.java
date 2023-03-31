@@ -31,6 +31,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.TaxDownloadProcess;
 import com.pennanttech.pff.model.external.gst.TaxDownload;
 
@@ -432,8 +433,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 		// Only changes after the loan approval should be shown in the Address
 		// Change Date
 		if (DateUtility.compare(lastMntOn, finApprovalDate) > 0) {
-			lastMntOn = DateUtility.getDBDate(DateUtility.format(lastMntOn, "yyyy-MM-dd"));
-			td.setAddressChangeDate(lastMntOn);
+			td.setAddressChangeDate(DateUtil.getDatePart(lastMntOn));
 		} else {
 			td.setAddressChangeDate(null);
 		}

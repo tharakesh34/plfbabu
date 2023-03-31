@@ -71,7 +71,6 @@ import org.zkoss.zul.Treerow;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.impl.LabelElement;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -98,6 +97,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -1306,7 +1306,7 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 					hbox.appendChild(decimalbox);
 				} else if (getFieldType().equalsIgnoreCase("smalldatetime")) {
 					Datebox datebox = getDateBox();
-					datebox.setValue(DateUtility.getDBDate(queryValues.get(0)));
+					datebox.setValue(DateUtil.parseFullDate(queryValues.get(0)));
 					hbox.appendChild(datebox);
 				}
 				queryValues.remove(0);

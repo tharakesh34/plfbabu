@@ -49,6 +49,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Validates the Frequency code and returns the FrequencyDetails object with any errors.
@@ -913,8 +914,7 @@ public class FrequencyUtil implements Serializable {
 			calendarList.add((Calendar) freqDate.clone());
 		}
 
-		frequencyDetails.setNextFrequencyDate(DateUtility
-				.getDBDate(DateUtility.format(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtil.getDatePart(calendarList.get(0).getTime()));
 		frequencyDetails.setScheduleList(calendarList);
 		return frequencyDetails;
 	}
@@ -976,8 +976,7 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility
-				.getDBDate(DateUtility.format(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtil.getDatePart(calendarList.get(0).getTime()));
 
 		return frequencyDetails;
 
@@ -1018,8 +1017,7 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility
-				.getDBDate(DateUtility.format(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtil.getDatePart(calendarList.get(0).getTime()));
 		return frequencyDetails;
 
 	}
@@ -1081,8 +1079,7 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility
-				.getDBDate(DateUtility.format(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtil.getDatePart(calendarList.get(0).getTime()));
 		return frequencyDetails;
 
 	}
@@ -1108,8 +1105,7 @@ public class FrequencyUtil implements Serializable {
 			calendarList.add((Calendar) baseDate.clone());
 		}
 		frequencyDetails.setScheduleList(calendarList);
-		frequencyDetails.setNextFrequencyDate(DateUtility
-				.getDBDate(DateUtility.format(calendarList.get(0).getTime(), PennantConstants.DBDateFormat)));
+		frequencyDetails.setNextFrequencyDate(DateUtil.getDatePart(calendarList.get(0).getTime()));
 		return frequencyDetails;
 
 	}

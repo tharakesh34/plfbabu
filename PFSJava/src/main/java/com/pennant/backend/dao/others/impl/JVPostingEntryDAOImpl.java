@@ -40,7 +40,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.others.JVPostingEntryDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.others.JVPostingEntry;
@@ -163,8 +162,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 	public long save(JVPostingEntry jve, String type) {
 		if (jve.getTxnReference() == 0) {
 			JVPostingEntry jvpe = getNewJVPostingEntry();
-			jvpe.setDaySeqDate(
-					DateUtility.getDBDate(DateUtil.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat)));
+			jvpe.setDaySeqDate(DateUtil.getDatePart(DateUtil.getSysDate()));
 			jvpe.setDaySeqNo(0);
 			jve.setTxnReference(getMaxSeqNumForCurrentDay(jvpe) + 1);
 

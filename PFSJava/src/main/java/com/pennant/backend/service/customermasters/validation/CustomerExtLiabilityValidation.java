@@ -435,9 +435,8 @@ public class CustomerExtLiabilityValidation {
 					}
 
 				}
-				String date = SysParamUtil.getAppDate(PennantConstants.DBDateFormat);
-				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-						liability.getTenure());
+				Date appDate = SysParamUtil.getAppDate();
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(appDate, liability.getTenure());
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
 					for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
 						int emiCount = 0;

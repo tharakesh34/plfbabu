@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
@@ -1328,56 +1327,19 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		return fsi;
 	}
 
-	private void setDefaultDateFormats(FinServiceInstruction finServInst) {
-		if (finServInst.getFromDate() != null) {
-			finServInst.setFromDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getFromDate(), PennantConstants.DBDateFormat)));
-		}
-
-		if (finServInst.getToDate() != null) {
-			finServInst.setToDate(
-					DateUtility.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getRecalFromDate() != null) {
-			finServInst.setRecalFromDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRecalFromDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getRecalToDate() != null) {
-			finServInst.setRecalToDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getGrcPeriodEndDate() != null) {
-			finServInst.setGrcPeriodEndDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getNextGrcRepayDate() != null) {
-			finServInst.setNextGrcRepayDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getNextRepayDate() != null) {
-			finServInst.setNextRepayDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getNextRepayDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getReceivedDate() != null) {
-			finServInst.setReceivedDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getReceivedDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getValueDate() != null) {
-			finServInst.setValueDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getValueDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getDepositDate() != null) {
-			finServInst.setDepositDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getDepositDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getRealizationDate() != null) {
-			finServInst.setRealizationDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRealizationDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getInstrumentDate() != null) {
-			finServInst.setInstrumentDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getInstrumentDate(), PennantConstants.DBDateFormat)));
-		}
+	private void setDefaultDateFormats(FinServiceInstruction fsi) {
+		fsi.setFromDate(DateUtil.getDatePart(fsi.getFromDate()));
+		fsi.setToDate(DateUtil.getDatePart(fsi.getToDate()));
+		fsi.setRecalFromDate(DateUtil.getDatePart(fsi.getRecalFromDate()));
+		fsi.setRecalToDate(DateUtil.getDatePart(fsi.getRecalToDate()));
+		fsi.setGrcPeriodEndDate(DateUtil.getDatePart(fsi.getGrcPeriodEndDate()));
+		fsi.setNextGrcRepayDate(DateUtil.getDatePart(fsi.getNextGrcRepayDate()));
+		fsi.setNextRepayDate(DateUtil.getDatePart(fsi.getNextRepayDate()));
+		fsi.setReceivedDate(DateUtil.getDatePart(fsi.getReceivedDate()));
+		fsi.setValueDate(DateUtil.getDatePart(fsi.getValueDate()));
+		fsi.setDepositDate(DateUtil.getDatePart(fsi.getDepositDate()));
+		fsi.setRealizationDate(DateUtil.getDatePart(fsi.getRealizationDate()));
+		fsi.setInstrumentDate(DateUtil.getDatePart(fsi.getInstrumentDate()));
 	}
 
 	@Override

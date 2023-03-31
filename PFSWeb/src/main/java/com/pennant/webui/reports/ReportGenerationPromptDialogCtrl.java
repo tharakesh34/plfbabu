@@ -1809,8 +1809,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (!(StringUtils.equals(reportMenuCode, "menu_Item_FeeReport")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_LoanDisbursementBasicListing")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_LoanClosureReport"))) {
-			befDate = DateUtility.addDays(DateUtility.getDBDate(fromDate), -1);
-			aftDate = DateUtility.addDays(DateUtility.getDBDate(toDate), 1);
+			befDate = DateUtility.addDays(DateUtility.parseFullDate(fromDate), -1);
+			aftDate = DateUtility.addDays(DateUtility.parseFullDate(toDate), 1);
 		}
 
 		if (fromDate != null) {
@@ -1819,7 +1819,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					|| StringUtils.equals(reportMenuCode, "menu_Item_LoanClosureReport")) {
 				argsMap.put("DateOne", fromDate.toString());
 			} else {
-				argsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
+				argsMap.put("fromDate", "'" + DateUtility.parseFullDate(fromDate).toString() + "'");
 			}
 		}
 
@@ -1833,7 +1833,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					|| StringUtils.equals(reportMenuCode, "menu_Item_LoanClosureReport")) {
 				argsMap.put("DateTwo", toDate.toString());
 			} else {
-				argsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
+				argsMap.put("toDate", "'" + DateUtility.parseFullDate(toDate).toString() + "'");
 			}
 		}
 
@@ -2559,7 +2559,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			// check if invoice number is existed or not
 			boolean invoiceNoExist = getReportConfigurationService().isGstInvoiceExist(custCif, finReference,
-					invoiceType, DateUtility.getDBDate(fromDate), DateUtility.getDBDate(toDate));
+					invoiceType, DateUtility.parseFullDate(fromDate), DateUtility.parseFullDate(toDate));
 
 			if (invoiceNoExist) {
 				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,

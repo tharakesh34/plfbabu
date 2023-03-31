@@ -67,7 +67,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>1.20.0</version>
+				<version>1.21.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>
@@ -77,7 +77,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>1.20.0</version>
+				<version>1.21.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -87,7 +87,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-schedular</artifactId>
-				<version>1.2.0</version>
+				<version>1.21.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>

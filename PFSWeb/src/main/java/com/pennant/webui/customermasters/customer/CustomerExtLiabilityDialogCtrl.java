@@ -1897,10 +1897,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? tenure
 						: this.noOfInstallmentMonths.getValue();
-				String date = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.DBDateFormat);
+				Date date = SysParamUtil.getAppDate();
 				int emiList = DateUtility.getMonthsBetween(finDate.getValue(), appDate);
-				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-						noOfmonths, emiList);
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(date, noOfmonths, emiList);
 
 				ExtLiabilityPaymentdetails installmentDetails = new ExtLiabilityPaymentdetails();
 				installmentDetails.setNewRecord(true);

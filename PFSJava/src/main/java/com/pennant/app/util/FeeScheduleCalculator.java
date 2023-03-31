@@ -57,6 +57,7 @@ import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FeeScheduleCalculator {
 	private static final Logger logger = LogManager.getLogger(FeeScheduleCalculator.class);
@@ -229,7 +230,7 @@ public class FeeScheduleCalculator {
 
 			// Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
-				feeSchdDate = DateUtility.getDBDate(DateUtility.format(feeSchdDate, PennantConstants.DBDateFormat));
+				feeSchdDate = DateUtil.getDatePart(feeSchdDate);
 				if (!avlSchdMap.containsKey(feeSchdDate)) {
 					recalFee = recalFee.add(feeSchdDetail.getSchAmount());
 					feeSchdDetails.remove(i);

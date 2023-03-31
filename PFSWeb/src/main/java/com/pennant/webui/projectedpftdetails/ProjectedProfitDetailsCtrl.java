@@ -40,6 +40,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -257,10 +258,10 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			reportArgumentsMap.put("whereCondition", whereCond);
 		}
 		if (fromDate != null) {
-			reportArgumentsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
+			reportArgumentsMap.put("fromDate", "'" + DateUtil.parseFullDate(fromDate).toString() + "'");
 		}
 		if (toDate != null) {
-			reportArgumentsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
+			reportArgumentsMap.put("toDate", "'" + DateUtil.parseFullDate(toDate).toString() + "'");
 		}
 
 		if (!reportConfiguration.isPromptRequired()) {

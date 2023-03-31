@@ -128,7 +128,7 @@ public class StatusMovementService extends ServiceHelper {
 
 		try {
 			statement = connection.prepareStatement(sql);
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
+			statement.setDate(1, JdbcUtil.getDate(DateUtil.getDatePart(valueDate)));
 			statement.setLong(2, custId);
 			resultSet = statement.executeQuery();
 

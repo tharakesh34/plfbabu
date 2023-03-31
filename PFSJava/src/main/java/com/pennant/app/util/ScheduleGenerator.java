@@ -847,7 +847,7 @@ public class ScheduleGenerator {
 				recalFrom = rpyStartDate;
 			}
 
-			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
+			recalFrom = DateUtil.getDatePart(recalFrom);
 
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayPftFrq(), recalFrom,
 					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_PFT, false, true);
@@ -873,7 +873,7 @@ public class ScheduleGenerator {
 					recalFrom = rpyStartDate;
 				}
 
-				recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
+				recalFrom = DateUtil.getDatePart(recalFrom);
 
 				finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayRvwFrq(), recalFrom,
 						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false, true);
@@ -901,7 +901,7 @@ public class ScheduleGenerator {
 				recalFrom = rpyStartDate;
 			}
 
-			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
+			recalFrom = DateUtil.getDatePart(recalFrom);
 
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayCpzFrq(), recalFrom,
 					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_CPZ, false, true);

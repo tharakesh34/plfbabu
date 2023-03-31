@@ -160,5 +160,5 @@ public interface PresentmentDAO {
 
 	long getPresentmentDetailPresenmentId(Long id);
 
-	int getPresentmentSuccessRecords(Long id);
+	List<String> getStatusByPresentmentDetail(Long id);
 }

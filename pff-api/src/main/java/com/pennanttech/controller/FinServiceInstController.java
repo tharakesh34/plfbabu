@@ -1053,7 +1053,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		int adjRepayTerms = 0;
 		int totRepayTerms = 0;
 		boolean isFromDateFound = false;
-		Date fromDate = DateUtility.getDBDate(DateUtil.format(fsi.getFromDate(), PennantConstants.DBDateFormat));
+		Date fromDate = DateUtil.getDatePart(fsi.getFromDate());
 
 		fsi.setFromDate(fromDate);
 

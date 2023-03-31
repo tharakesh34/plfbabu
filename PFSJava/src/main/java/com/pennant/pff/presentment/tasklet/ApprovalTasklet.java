@@ -180,7 +180,8 @@ public class ApprovalTasklet implements Tasklet {
 			pd.setAppDate(ph.getAppDate());
 			pd.setEventProperties(eventProperties);
 
-			presentmentEngine.approve(receiptDTO, bounceForPD);
+			receiptDTO.setBounceForPD(bounceForPD);
+			presentmentEngine.approve(receiptDTO);
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);

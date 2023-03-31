@@ -8566,8 +8566,7 @@ public class ScheduleCalculator {
 		for (int i = 0; i < odSchdDateList.size(); i++) {
 
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
-			curODSchd.setDroplineDate(
-					DateUtility.getDBDate(DateUtility.format(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
+			curODSchd.setDroplineDate(DateUtil.getDatePart(odSchdDateList.get(i)));
 			curODSchd.setActualRate(prvODSchd.getActualRate());
 			curODSchd.setBaseRate(prvODSchd.getBaseRate());
 			curODSchd.setSplRate(prvODSchd.getSplRate());
@@ -9613,8 +9612,7 @@ public class ScheduleCalculator {
 							Date lastFrqDate = null;
 							if (CollectionUtils.isNotEmpty(scheduleDatesList)) {
 								Calendar calendar = scheduleDatesList.get(scheduleDatesList.size() - 1);
-								lastFrqDate = DateUtility.getDBDate(
-										DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+								lastFrqDate = DateUtil.getDatePart(calendar.getTime());
 							}
 
 							Calendar calLastFrqDate = Calendar.getInstance();
@@ -9631,8 +9629,7 @@ public class ScheduleCalculator {
 										calLastFrqDate.get(Calendar.MONTH), day);
 							}
 
-							newMDT = DateUtility.getDBDate(
-									DateUtility.format(calLastFrqDate.getTime(), PennantConstants.DBDateFormat));
+							newMDT = DateUtil.getDatePart(calLastFrqDate.getTime());
 							schDetail.setSchDate(newMDT);
 
 							sortSchdDetails(fsData.getFinanceScheduleDetails());
@@ -9666,8 +9663,7 @@ public class ScheduleCalculator {
 						Date lastFrqDate = null;
 						if (CollectionUtils.isNotEmpty(scheduleDatesList)) {
 							Calendar calendar = scheduleDatesList.get(scheduleDatesList.size() - 1);
-							lastFrqDate = DateUtility
-									.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+							lastFrqDate = DateUtil.getDatePart(calendar.getTime());
 						}
 
 						Calendar calLastFrqDate = Calendar.getInstance();
@@ -9684,8 +9680,7 @@ public class ScheduleCalculator {
 									day);
 						}
 
-						Date derivedMaturityDate = DateUtility
-								.getDBDate(DateUtility.format(calLastFrqDate.getTime(), PennantConstants.DBDateFormat));
+						Date derivedMaturityDate = DateUtil.getDatePart(calLastFrqDate.getTime());
 						schDetail.setSchDate(derivedMaturityDate);
 
 						sortSchdDetails(fsData.getFinanceScheduleDetails());

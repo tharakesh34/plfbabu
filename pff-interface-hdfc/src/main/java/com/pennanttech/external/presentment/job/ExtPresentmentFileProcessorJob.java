@@ -3,6 +3,7 @@ package com.pennanttech.external.presentment.job;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.ParseException;
+import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -63,30 +66,25 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-		try {
 
-			// Get all the required DAO's
-			applicationContext = ApplicationContextProvider.getApplicationContext();
-			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-			siService = applicationContext.getBean(SIService.class);
-			siInternalService = applicationContext.getBean(SIInternalService.class);
-			achService = applicationContext.getBean(ACHService.class);
-			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
-			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
+		// Get all the required DAO's
+		applicationContext = ApplicationContextProvider.getApplicationContext();
+		externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
+		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
+		siService = applicationContext.getBean(SIService.class);
+		siInternalService = applicationContext.getBean(SIInternalService.class);
+		achService = applicationContext.getBean(ACHService.class);
+		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
-			// Process starts here
-			readAndProcessFiles();
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		// Process starts here
+		readAndProcessFiles();
 
 		logger.debug(Literal.LEAVING);
 
 	}
 
-	public void readAndProcessFiles() throws Exception {
+	public void readAndProcessFiles() {
 		logger.debug(Literal.ENTERING);
 
 		// get error codes handy
@@ -137,42 +135,48 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 		ExtPresentment extPresentment;
 
-		while ((extPresentment = cursorItemReader.read()) != null) {
-			try {
-				ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
+		try {
+			while ((extPresentment = cursorItemReader.read()) != null) {
+				try {
+					ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
 
-				// update the processing state as processing
-				externalPresentmentDAO.updateFileStatus(extPresentment.getId(), INPROCESS);
+					// update the processing state as processing
+					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), INPROCESS);
 
-				// Prepare Presentment Resp Header Object and set filename, event and progress.
-				ExtPrmntRespHeader prh = prepareHeader(extPresentment);
+					// Prepare Presentment Resp Header Object and set filename, event and progress.
+					ExtPrmntRespHeader prh = prepareHeader(extPresentment);
 
-				// GET new Header Id before inserting records into RESP_DTLS table
-				externalPresentmentDAO.save(prh);
+					// GET new Header Id before inserting records into RESP_DTLS table
+					externalPresentmentDAO.save(prh);
 
-				// get file records with the extPresentment
-				processFileRecords(extPresentment, config, prh);
+					// get file records with the extPresentment
+					processFileRecords(extPresentment, config, prh);
 
-				// update presentment resp header progress as done with remarks
-				prh.setProgress(PROGRESS_DONE);
+					// update presentment resp header progress as done with remarks
+					prh.setProgress(PROGRESS_DONE);
 
-				// Update Resp Header table with headerId mentioning the file is processed for receipt creation
-				externalPresentmentDAO.updateHeader(prh); // UNCOMMENT ME
+					// Update Resp Header table with headerId mentioning the file is processed for receipt creation
+					externalPresentmentDAO.updateHeader(prh); // UNCOMMENT ME
 
-				externalPresentmentDAO.updateFileStatus(extPresentment.getId(), COMPLETED);
-			} catch (Exception e) {
-				logger.debug(Literal.EXCEPTION, e);
-				externalPresentmentDAO.updateFileStatus(extPresentment.getId(), UNPROCESSED);
-
+					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), COMPLETED);
+				} catch (Exception e) {
+					logger.debug(Literal.EXCEPTION, e);
+					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), UNPROCESSED);
+				}
 			}
+		} catch (UnexpectedInputException e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} catch (ParseException e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 		}
 		cursorItemReader.close();
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processFileRecords(ExtPresentment extPresentment, ExternalConfig extConfig, ExtPrmntRespHeader prh)
-			throws Exception {
+	private void processFileRecords(ExtPresentment extPresentment, ExternalConfig extConfig, ExtPrmntRespHeader prh) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -209,26 +213,36 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		ExtPresentmentData extPresentmentData;
 		TransactionStatus txStatus = null;
 
-		while ((extPresentmentData = dataCursorReader.read()) != null) {
+		boolean isTransactionStarted = false;
 
-			prh.setTotalRecords(prh.getTotalRecords() + 1);
-			long id = extPresentmentData.getId();
+		try {
 
-			try {
-				// begin the transaction
-				txStatus = transactionManager.getTransaction(txDef);
+			List<Presentment> extPresentmentDataList = new ArrayList<Presentment>();
+
+			while ((extPresentmentData = dataCursorReader.read()) != null) {
+
+				if (!isTransactionStarted) {
+					// begin the transaction
+					txStatus = transactionManager.getTransaction(txDef);
+					isTransactionStarted = true;
+				}
+
+				prh.setTotalRecords(prh.getTotalRecords() + 1);
+
+				long id = extPresentmentData.getId();
+
 				// Get extPresentment object from record data
 				ExtPresentmentFile extPresentmentFile = prepareAndValidate(extConfig, extPresentment,
 						extPresentmentData);
+
 				// validation extPresentment record if any error exists
 				String errorCode = extPresentmentFile.getErrorCode();
+
 				if (extPresentmentFile != null && !"".equals(errorCode)) {
 					logger.debug("Ext_PRMNT:F704 Exception in presentment.");
 					String errorMessage = extPresentmentFile.getErrorMessage();
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED, errorCode,
 							errorMessage);
-					// commit the transaction
-					transactionManager.commit(txStatus);
 					continue;
 				}
 
@@ -240,16 +254,6 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F703);
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED,
 							interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
-					// commit the transaction
-					transactionManager.commit(txStatus);
-					continue;
-				}
-
-				// check if presentment.ID is already inserted into resp_dtls table
-				boolean isInserted = externalPresentmentDAO.isRecordInserted(data.getBatchId(), prh.getHeaderId());
-
-				if (isInserted) {
-					// already proceed
 					continue;
 				}
 
@@ -261,27 +265,45 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 				if (FAIL.equals(extPresentmentFile.getStatus())) {
 					clearingStatus = "B";
 				}
-				externalPresentmentDAO.savePresentment(data, prh.getHeaderId(), clearingStatus);
+
+				data.setStatus(clearingStatus);
+
+				extPresentmentDataList.add(data);
 
 				// update record status as completed
 				externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, COMPLETED, "", "");
 
-				// commit the transaction
-				transactionManager.commit(txStatus);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
+				if (extPresentmentDataList.size() == BULK_RECORD_COUNT) {
+					// save bulk records at a time..
+					externalPresentmentDAO.savePresentment(extPresentmentDataList, prh.getHeaderId());
+					extPresentmentDataList.clear();
+					// commit the transaction
+					transactionManager.commit(txStatus);
+					isTransactionStarted = false;
 				}
-				// update record status back to unprocessed.
-				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						ExtErrorCodes.getInstance().getInterfaceErrorsList(), F702);
-				externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED,
-						interfaceErrorCode.getErrorCode(), e.getMessage());
+			}
+
+			if (extPresentmentDataList.size() > 0) {
+				// save records remaining after bulk insert
+				externalPresentmentDAO.savePresentment(extPresentmentDataList, prh.getHeaderId());
+				if (isTransactionStarted) {
+					// commit the transaction
+					transactionManager.commit(txStatus);
+					isTransactionStarted = false;
+				}
+				extPresentmentDataList.clear();
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+		} finally {
+			if (dataCursorReader != null) {
+				dataCursorReader.close();
 			}
 		}
-
-		dataCursorReader.close();
 		logger.debug(Literal.LEAVING);
 
 	}
