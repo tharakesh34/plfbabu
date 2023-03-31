@@ -199,7 +199,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 			switch (configName) {
 			case "GST_TAXDOWNLOAD_DETAILS_TRANASCTION":
 				TaxDownlaodExtract trnPocess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
-						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
+						getUserWorkspace().getUserDetails().getUserId(), SysParamUtil.getAppValueDate(),
 						SysParamUtil.getAppDate(), DateUtility.getMonthStart(processDate),
 						DateUtility.getMonthEnd(processDate));
 				if (isDownloadProcess) {
@@ -212,7 +212,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 				break;
 			case "GST_TAXDOWNLOAD_DETAILS_SUMMARY":
 				TaxDownlaodExtract summProcess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
-						getUserWorkspace().getUserDetails().getUserId(), DateUtility.getAppValueDate(),
+						getUserWorkspace().getUserDetails().getUserId(), SysParamUtil.getAppValueDate(),
 						SysParamUtil.getAppDate(), DateUtility.getMonthStart(processDate),
 						DateUtility.getMonthEnd(processDate));
 				if (isDownloadProcess) {

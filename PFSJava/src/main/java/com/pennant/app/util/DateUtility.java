@@ -61,29 +61,6 @@ public final class DateUtility extends DateUtil {
 	private static final Logger logger = LogManager.getLogger(DateUtility.class);
 
 	/**
-	 * Returns a {@link java.util.Date} object that represents the value date.
-	 * 
-	 * @return A {@link java.util.Date} that represents the value date.
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 * 
-	 */
-	public static java.util.Date getAppValueDate() {
-		return SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode());
-	}
-
-	/**
-	 * 
-	 * @param dateFormat
-	 * @return
-	 * 
-	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
-	 */
-	public static String getAppValueDate(DateFormat dateFormat) {
-		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), dateFormat);
-	}
-
-	/**
 	 * Take String Date and return UTIL Date
 	 * 
 	 * @param date (Date)

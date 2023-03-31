@@ -59,7 +59,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -1457,8 +1456,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 			Map<String, Object> model = new HashMap<String, Object>();
 			FinanceMain fm = new FinanceMain();
-			fm.setMaturityDate(DateUtility.getAppValueDate());
-			fm.setFinStartDate(DateUtility.getAppValueDate());
+			fm.setMaturityDate(SysParamUtil.getAppValueDate());
+			fm.setFinStartDate(SysParamUtil.getAppValueDate());
 			model.put("vo", fm);
 
 			FreeMarkerTemplateUtils.processTemplateIntoString(template, model);

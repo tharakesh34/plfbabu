@@ -39,8 +39,8 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ProvisionCalculationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.ProvisionService;
@@ -229,7 +229,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	public void onClick$button_ProvisionsList_ProvisionProcess(Event event) throws InterruptedException {
 
 		logger.debug("Entering" + event.toString());
-		Date dateValueDate = DateUtility.getAppValueDate();
+		Date dateValueDate = SysParamUtil.getAppValueDate();
 
 		int count = this.listBoxProvisions.getSelectedCount();
 		int successCount = 0;

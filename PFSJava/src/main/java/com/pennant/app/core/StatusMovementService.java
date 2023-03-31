@@ -47,6 +47,8 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class StatusMovementService extends ServiceHelper {
@@ -87,7 +89,7 @@ public class StatusMovementService extends ServiceHelper {
 
 		try {
 			statement = connection.prepareStatement(sql);
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
+			statement.setDate(1, JdbcUtil.getDate(DateUtil.getDatePart(valueDate)));
 			resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {

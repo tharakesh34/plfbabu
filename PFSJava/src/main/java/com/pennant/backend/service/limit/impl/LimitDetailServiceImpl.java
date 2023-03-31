@@ -651,7 +651,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setThreadId(0);
-		customerQueuing.setEodDate(DateUtility.getAppValueDate());
+		customerQueuing.setEodDate(SysParamUtil.getAppValueDate());
 		customerQueuing.setLoanExist(loanExist);
 		customerQueuing.setLimitRebuild(true);
 		customerQueuing.setEodProcess(false);
@@ -673,7 +673,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing();
 		custGrpQueuing.setGroupId(groupId);
-		custGrpQueuing.setEodDate(DateUtility.getAppValueDate());
+		custGrpQueuing.setEodDate(SysParamUtil.getAppValueDate());
 		custGrpQueuing.setStartTime(DateUtility.getSysDate());
 		custGrpQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 		custGrpQueuing.setEodProcess(false);

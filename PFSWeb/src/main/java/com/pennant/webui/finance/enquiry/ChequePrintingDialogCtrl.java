@@ -35,6 +35,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.ReportsUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.ChequeDetails;
@@ -345,7 +346,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	private ChequeDetails prepareReportObject(FinScheduleData finScheduleData) {
 		ChequeDetails chequeDetails = new ChequeDetails();
 		chequeDetails.setFinBranchName(Labels.getLabel("label_ClientName"));// finScheduleData.getFinanceMain().getLovDescFinBranchName()
-		chequeDetails.setAppDate(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
+		chequeDetails.setAppDate(SysParamUtil.getAppValueDate(DateFormat.LONG_DATE));
 		chequeDetails.setCustName(finScheduleData.getFinanceMain().getLovDescCustFName() + " "
 				+ StringUtils.trimToEmpty(finScheduleData.getFinanceMain().getLovDescCustLName()));
 		chequeDetails.setFinReference(finScheduleData.getFinanceMain().getFinType() + "-"

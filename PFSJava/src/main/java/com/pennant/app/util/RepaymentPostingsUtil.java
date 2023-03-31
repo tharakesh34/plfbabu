@@ -2316,7 +2316,7 @@ public class RepaymentPostingsUtil {
 		logger.debug("Entering");
 
 		List<Object> actReturnList = new ArrayList<Object>();
-		Date dateValueDate = DateUtility.getAppValueDate();
+		Date dateValueDate = SysParamUtil.getAppValueDate();
 
 		Map<String, FinanceScheduleDetail> scheduleMap = new HashMap<String, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
