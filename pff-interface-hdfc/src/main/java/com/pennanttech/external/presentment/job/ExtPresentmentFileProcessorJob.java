@@ -15,8 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -149,6 +147,12 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 					// GET new Header Id before inserting records into RESP_DTLS table
 					externalPresentmentDAO.save(prh);
 
+					if (prh.getHeaderId() <= 0) {
+						// Concurrency exception may happen, process next file
+						externalPresentmentDAO.updateFileStatus(extPresentment.getId(), UNPROCESSED);
+						continue;
+					}
+
 					// get file records with the extPresentment
 					processFileRecords(extPresentment, config, prh);
 
@@ -159,19 +163,19 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 					externalPresentmentDAO.updateHeader(prh); // UNCOMMENT ME
 
 					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), COMPLETED);
+
 				} catch (Exception e) {
 					logger.debug(Literal.EXCEPTION, e);
 					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), UNPROCESSED);
 				}
 			}
-		} catch (UnexpectedInputException e) {
-			logger.debug(Literal.EXCEPTION, e);
-		} catch (ParseException e) {
-			logger.debug(Literal.EXCEPTION, e);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+			if (cursorItemReader != null) {
+				cursorItemReader.close();
+			}
 		}
-		cursorItemReader.close();
 
 		logger.debug(Literal.LEAVING);
 	}
