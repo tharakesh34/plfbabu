@@ -148,7 +148,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 					externalPresentmentDAO.save(prh);
 
 					if (prh.getHeaderId() <= 0) {
-						// Concurrency exception may happen, process next file
+						// Concurrency exception may happen, process next file. continuing
 						externalPresentmentDAO.updateFileStatus(extPresentment.getId(), UNPROCESSED);
 						continue;
 					}
