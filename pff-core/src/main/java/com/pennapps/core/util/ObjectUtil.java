@@ -24,6 +24,22 @@ public class ObjectUtil {
 		return (object != null) ? Long.valueOf(object.toString()) : defaultValue;
 	}
 
+	public static int valueAsint(Object object) {
+		return valueAsInt(object, 0);
+	}
+
+	public static int valueAsInt(Object object, int defaultValue) {
+		return (object != null) ? Integer.parseInt(object.toString()) : defaultValue;
+	}
+
+	public static Integer valueAsinteger(Object object) {
+		return valueAsInteger(object, null);
+	}
+
+	public static Integer valueAsInteger(Object object, Integer defaultValue) {
+		return (object != null) ? Integer.parseInt(object.toString()) : defaultValue;
+	}
+
 	public static Long valueAsLong(Object object) {
 		return valueAsLong(object, null);
 	}

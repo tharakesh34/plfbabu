@@ -13233,4 +13233,16 @@
 	
 	<bean id = "paymentInstructionUploadValidateRecord" class = "com.pennant.backend.service.payment.impl.PaymentInstructionUploadValidateRecord"/>
 	
+	<bean id = "kycDetailsUploadValidateRecord" class = "com.pennant.pff.customer.service.impl.KycDetailsUploadValidateRecord"/>
+	
+	<bean id="kycDetailsUploadService" class="com.pennant.pff.customer.service.impl.KycDetailsUploadServiceImpl"
+		parent="aUploadService" />
+		
+	<bean id="kycDetailsUploadDAO" class="com.pennant.backend.dao.customermasters.impl.KycDetailsUploadDAOImpl" parent="sequenceDao" />
+	
+	<bean id = "customerAddressUpload" class = "com.pennant.pff.customer.service.impl.CustomerAddressUpload" parent="kycDetailsUploadService"/>
+	
+	<bean id = "customerPhoneNumberUpload" class = "com.pennant.pff.customer.service.impl.CustomerPhoneNumberUpload" parent="kycDetailsUploadService"/>
+	
+	<bean id = "customerEmailUpload" class = "com.pennant.pff.customer.service.impl.CustomerEmailUpload" parent="kycDetailsUploadService"/>
 </beans>

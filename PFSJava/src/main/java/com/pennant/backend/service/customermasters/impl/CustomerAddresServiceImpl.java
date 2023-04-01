@@ -47,6 +47,7 @@ import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.validation.CustomerAddressValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Service implementation for methods that depends on <b>CustomerAddres</b>.<br>
@@ -233,7 +234,8 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 			}
 		}
 
-		if (!StringUtils.equals(customerAddres.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!(PennantConstants.FINSOURCE_ID_API.equals(customerAddres.getSourceId())
+				|| RequestSource.UPLOAD.name().equals(customerAddres.getSourceId()))) {
 			getCustomerAddresDAO().delete(customerAddres, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);

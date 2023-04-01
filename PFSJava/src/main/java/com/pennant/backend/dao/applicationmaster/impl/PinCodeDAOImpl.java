@@ -379,6 +379,67 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		}, new PinCodesRM());
 	}
 
+	@Override
+	public PinCode getPinCodeById(long pinCodeId) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PinCodeId, PinCode, City, AreaName");
+		sql.append(", Active, GroupId, Serviceable, rm.PCCountry, rm.PCProvince");
+		sql.append(", p.Version, p.LastMntOn, p.LastMntBy,p.RecordStatus, p.RoleCode");
+		sql.append(", p.NextRoleCode, p.TaskId, p.NextTaskId, p.RecordType, p.WorkflowId");
+		sql.append(" From PinCodes p");
+		sql.append(" Inner Join  rmtprovincevscity rm ON p.city = rm.pccity");
+		sql.append(" Where PinCodeId = :PinCodeId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		PinCode pinCode = new PinCode();
+		pinCode.setPinCodeId(pinCodeId);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
+		RowMapper<PinCode> rowMapper = BeanPropertyRowMapper.newInstance(PinCode.class);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public PinCode getPinCode(String code) {
+
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" pinCodeId, pinCode, city, areaName, active,groupId, serviceable,");
+		sql.append(" rm.pCCountry, rm.pCProvince, rm.pCCityName");
+		sql.append(", p.Version, p.LastMntOn, p.LastMntBy,p.RecordStatus, p.RoleCode");
+		sql.append(", p.NextRoleCode, p.TaskId, p.NextTaskId, p.RecordType, p.WorkflowId");
+		sql.append(" From PinCodes p");
+		sql.append(" Inner Join  rmtprovincevscity rm ON p.city = rm.pccity");
+		sql.append(" Where pinCode = :pinCode");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		PinCode pinCode = new PinCode();
+		pinCode.setPinCode(code);
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pinCode);
+		RowMapper<PinCode> rowMapper = BeanPropertyRowMapper.newInstance(PinCode.class);
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 	private class PinCodesRM implements RowMapper<PinCode> {
 
 		private PinCodesRM() {
@@ -408,4 +469,5 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 			return pc;
 		}
 	}
+
 }

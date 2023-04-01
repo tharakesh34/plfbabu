@@ -44,6 +44,7 @@ import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.validation.CustomerPhoneNumberValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Service implementation for methods that depends on <b>CustomerPhoneNumber</b>.<br>
@@ -248,7 +249,8 @@ public class CustomerPhoneNumberServiceImpl extends GenericService<CustomerPhone
 				getCustomerPhoneNumberDAO().update(customerPhoneNumber, "");
 			}
 		}
-		if (!StringUtils.equals(customerPhoneNumber.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!(StringUtils.equals(customerPhoneNumber.getSourceId(), PennantConstants.FINSOURCE_ID_API)
+				|| RequestSource.UPLOAD.name().equals(customerPhoneNumber.getSourceId()))) {
 			getCustomerPhoneNumberDAO().delete(customerPhoneNumber, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);

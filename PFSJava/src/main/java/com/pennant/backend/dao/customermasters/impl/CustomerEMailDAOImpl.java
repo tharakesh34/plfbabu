@@ -395,4 +395,46 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		return custEmailsByIDs;
 	}
 
+	@Override
+	public CustomerEMail getCustomerEMailById(final long id, long mailPriority) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustEMail, CustEMailPriority, CustEMailTypeCode");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" FROM  CustomerEMails");
+		sql.append(" Where CustID = ? and CustEMailPriority = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+
+				CustomerEMail custEmail = new CustomerEMail();
+
+				custEmail.setCustID(rs.getLong("CustID"));
+				custEmail.setCustEMail(rs.getString("CustEMail"));
+				custEmail.setCustEMailPriority((int) rs.getLong("CustEMailPriority"));
+				custEmail.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
+				custEmail.setVersion(rs.getInt("Version"));
+				custEmail.setLastMntBy(rs.getLong("LastMntBy"));
+				custEmail.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				custEmail.setRecordStatus(rs.getString("RecordStatus"));
+				custEmail.setRoleCode(rs.getString("RoleCode"));
+				custEmail.setNextRoleCode(rs.getString("NextRoleCode"));
+				custEmail.setTaskId(rs.getString("TaskId"));
+				custEmail.setNextTaskId(rs.getString("NextTaskId"));
+				custEmail.setRecordType(rs.getString("RecordType"));
+				custEmail.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return custEmail;
+
+			}, id, mailPriority);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
+	}
+
 }

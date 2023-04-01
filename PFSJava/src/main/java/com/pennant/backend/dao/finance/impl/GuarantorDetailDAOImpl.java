@@ -562,4 +562,14 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		});
 	}
 
+	@Override
+	public boolean isGuarantor(long finID, String custCIF) {
+
+		String sql = "Select Count(CustCIF) From FinGuarantorsDetails Where FinID = ? and CustCIF = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.queryForObject(sql, Integer.class, new Object[] { finID, custCIF }) > 0;
+
+	}
 }

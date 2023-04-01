@@ -44,6 +44,7 @@ import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.customermasters.validation.CustomerEMailValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Service implementation for methods that depends on <b>CustomerEMail</b>.<br>
@@ -228,7 +229,8 @@ public class CustomerEMailServiceImpl extends GenericService<CustomerEMail> impl
 			}
 		}
 
-		if (!StringUtils.equals(customerEMail.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (!(StringUtils.equals(customerEMail.getSourceId(), PennantConstants.FINSOURCE_ID_API)
+				|| RequestSource.UPLOAD.name().equals(customerEMail.getSourceId()))) {
 			getCustomerEMailDAO().delete(customerEMail, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);

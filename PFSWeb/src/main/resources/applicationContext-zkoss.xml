@@ -6168,4 +6168,7 @@
 	</bean>
 	
 	<bean id="crossLoanKnockOffUploadList" class="com.pennant.pff.crossloanknockoff.upload.list.CrossLoanKnockoffUploadListCtrl" parent="uploadList" />
+	
+	<bean id ="kycDetailsUploadList" class ="com.pennant.pff.customer.upload.list.KycDetailsUploadListCtrl" parent ="uploadList" />
+	
 </beans>

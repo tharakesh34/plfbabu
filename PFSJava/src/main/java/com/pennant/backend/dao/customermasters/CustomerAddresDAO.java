@@ -58,4 +58,6 @@ public interface CustomerAddresDAO {
 	String getCustHighPriorityAddr(long id);
 
 	boolean isExisiCustPincode(long id);
+
+	CustomerAddres getCustomerAddresById(long id, long priority);
 }
