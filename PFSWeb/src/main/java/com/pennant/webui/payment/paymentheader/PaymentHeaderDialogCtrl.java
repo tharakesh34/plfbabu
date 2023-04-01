@@ -1998,7 +1998,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal calGST = BigDecimal.ZERO;
 			BigDecimal availAmount = pd.getAvailableAmount();
 			BigDecimal paidAmount = pd.getAmount();
-			String desc = pd.getFeeTypeDesc();
+			 String desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
 
 			// GST Calculations
 			TaxHeader taxHeader = pd.getTaxHeader();
