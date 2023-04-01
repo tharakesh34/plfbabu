@@ -153,6 +153,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Listheader listHeader_ManualExclude_PrvsBatchNumb;
 	protected Listheader listHeader_AutoExclude_BankName;
 	protected Listheader listHeader_AutoExclude_PrvsBatchNumb;
+	protected Listheader listheaderPresentmentDetailAction;
 	protected Label label_PresentmentDetailList_Status;
 
 	private transient PresentmentDetailListCtrl presentmentDetailListCtrl;
@@ -511,13 +512,20 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 			Listcell lc;
 			lc = new Listcell();
+
+			if ("E".equalsIgnoreCase(moduleType)) {
+				listheaderPresentmentDetailAction.setVisible(false);
+				addCell(item, "");
+			}
+
 			final Checkbox cbActive = new Checkbox();
 			cbActive.setChecked(false);
 			cbActive.addForward("onClick", self, "onClick_listCellCheckBox");
 			cbActive.setAttribute("Data", presentmentDetail);
 
-			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
-					|| RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+			if (!"E".equalsIgnoreCase(moduleType)
+					&& (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
+							|| RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason())) {
 				lc.appendChild(cbActive);
 				lc.setParent(item);
 				if (includeList.contains(presentmentDetail.getId())
