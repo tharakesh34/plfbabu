@@ -202,6 +202,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String strExternalMandate;
 	private String strOpenMandate;
 	private String strSwapIsActive;
+	private String strSecurityMandate;
 
 	private ErrorDetail error;
 	@XmlElement
@@ -275,6 +276,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("strOpenMandate");
 		excludeFields.add("strSwapIsActive");
 		excludeFields.add("mandateStatus");
+		excludeFields.add("strSecurityMandate");
 
 		return excludeFields;
 	}
@@ -1096,6 +1098,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setMandateStatus(Boolean mandateStatus) {
 		this.mandateStatus = mandateStatus;
+	}
+
+	public String getStrSecurityMandate() {
+		return strSecurityMandate;
+	}
+
+	public void setStrSecurityMandate(String strSecurityMandate) {
+		this.strSecurityMandate = strSecurityMandate;
 	}
 
 }
