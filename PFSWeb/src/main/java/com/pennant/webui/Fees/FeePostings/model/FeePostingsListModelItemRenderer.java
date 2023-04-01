@@ -34,12 +34,12 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.accounting.AccountingUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -68,9 +68,9 @@ public class FeePostingsListModelItemRenderer implements ListitemRenderer<FeePos
 		lc = new Listcell(PennantApplicationUtil.amountFormate(feePostings.getPostingAmount(),
 				CurrencyUtil.getFormat(feePostings.getCurrency())));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(feePostings.getPostDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtil.format(feePostings.getPostDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(feePostings.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtil.format(feePostings.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(feePostings.getRecordStatus());
 		lc.setParent(item);

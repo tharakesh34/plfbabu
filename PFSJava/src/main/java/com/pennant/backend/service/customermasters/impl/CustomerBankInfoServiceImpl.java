@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
@@ -34,6 +33,7 @@ import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	private static Logger logger = LogManager.getLogger(CustomerBankInfoServiceImpl.class);
@@ -391,7 +391,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					} else {
-						if (DateUtility.compare(bankInfoSubDetail.getMonthYear(), bankInfoDetail.getMonthYear()) != 0) {
+						if (DateUtil.compare(bankInfoSubDetail.getMonthYear(), bankInfoDetail.getMonthYear()) != 0) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "bankInfoDetails:MonthYear";
 							valueParm[1] = "bankInfoSubDetails:MonthYear";

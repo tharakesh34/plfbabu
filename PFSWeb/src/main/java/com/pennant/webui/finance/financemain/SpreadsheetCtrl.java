@@ -38,7 +38,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -52,6 +51,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
@@ -514,7 +514,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				if (custExtLiability.getFinDate() == null) {
 					lc = new Listcell();
 				} else {
-					lc = new Listcell(DateUtility.formatToLongDate(custExtLiability.getFinDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(custExtLiability.getFinDate()));
 				}
 				lc.setParent(item);
 

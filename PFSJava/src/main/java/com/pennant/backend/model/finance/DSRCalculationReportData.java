@@ -14,7 +14,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -23,6 +22,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class DSRCalculationReportData implements Serializable {
@@ -635,8 +635,8 @@ public class DSRCalculationReportData implements Serializable {
 		// Finance Details
 		reportData.setFinType(financeMain.getLovDescFinTypeName());
 		reportData.setFinReference(financeMain.getFinReference());
-		reportData.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		reportData.setMaturityDate(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		reportData.setFinStartDate(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+		reportData.setMaturityDate(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 		reportData.setFinAmount(PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), format));
 		reportData.setDownPay(PennantApplicationUtil
 				.amountFormate(financeMain.getDownPayBank().add(financeMain.getDownPaySupl()), format));
@@ -674,13 +674,13 @@ public class DSRCalculationReportData implements Serializable {
 		reportData.setNumberOfTerms((financeMain.getNumberOfTerms() + financeMain.getGraceTerms()) + " Payments");
 
 		reportData.setAllowGrace(financeMain.isAllowGrcPeriod() ? "True" : "False");
-		reportData.setGrcPeriodEndDate(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
+		reportData.setGrcPeriodEndDate(DateUtil.formatToLongDate(financeMain.getGrcPeriodEndDate()));
 		reportData
 				.setGrcPftRate(PennantApplicationUtil.formatRate(financeMain.getGrcPftRate().doubleValue(), 2) + " %");
 		reportData.setGrcPeriod(FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftFrq()).getFrequencyDescription());
-		reportData.setNextGrcPftDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftDate()));
+		reportData.setNextGrcPftDate(DateUtil.formatToLongDate(financeMain.getNextGrcPftDate()));
 
-		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+		int months = DateUtil.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 		if (months > 0) {
 			reportData.setTenure((financeMain.getNumberOfTerms()) + " Payments");
 		}
@@ -693,7 +693,7 @@ public class DSRCalculationReportData implements Serializable {
 					.subtract(financeMain.getDownPayment());
 			BigDecimal totalPft = financeMain.getTotalProfit();
 			BigDecimal totalDays = new BigDecimal(
-					DateUtility.getDaysBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));
+					DateUtil.getDaysBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));
 
 			BigDecimal flatRate = ((totalPft.multiply(new BigDecimal(360))).divide(totalFinAmt.multiply(totalDays), 9,
 					RoundingMode.HALF_DOWN)).multiply(new BigDecimal(100));
@@ -704,7 +704,7 @@ public class DSRCalculationReportData implements Serializable {
 		}
 
 		reportData.setRepayFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayFrq()).getFrequencyDescription());
-		reportData.setNextrepayDate(DateUtility.formatToLongDate(financeMain.getNextRepayDate()));
+		reportData.setNextrepayDate(DateUtil.formatToLongDate(financeMain.getNextRepayDate()));
 
 		// Prepare Fee Details
 		List<FeeRule> feeRules = detail.getFinScheduleData().getFeeRules();

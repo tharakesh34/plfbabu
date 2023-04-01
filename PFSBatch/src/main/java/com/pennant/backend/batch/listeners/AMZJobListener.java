@@ -38,9 +38,9 @@ import java.util.Date;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.AmortizationConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AMZJobListener implements JobExecutionListener {
 
@@ -56,8 +56,8 @@ public class AMZJobListener implements JobExecutionListener {
 			// update amortization month
 			Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
 
-			Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
-			amzMonth = DateUtility.getMonthEnd(amzMonth);
+			Date amzMonth = DateUtil.addDays(prvAMZMonth, 1);
+			amzMonth = DateUtil.getMonthEnd(amzMonth);
 
 			arg0.getExecutionContext().put(AmortizationConstants.AMZ_MONTHEND, amzMonth);
 			arg0.getExecutionContext().put("AMZ_PRVMONTHEND", prvAMZMonth);

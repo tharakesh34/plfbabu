@@ -65,7 +65,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -1898,7 +1897,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? tenure
 						: this.noOfInstallmentMonths.getValue();
 				Date date = SysParamUtil.getAppDate();
-				int emiList = DateUtility.getMonthsBetween(finDate.getValue(), appDate);
+				int emiList = DateUtil.getMonthsBetween(finDate.getValue(), appDate);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(date, noOfmonths, emiList);
 
 				ExtLiabilityPaymentdetails installmentDetails = new ExtLiabilityPaymentdetails();
@@ -2003,7 +2002,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths, int emiList) {
 		Date dtStartDate = startDate;
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, -noOfMonths);
+		Date dtEndDate = DateUtil.addMonths(dtStartDate, -noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -2017,7 +2016,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) > 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);

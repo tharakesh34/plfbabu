@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -61,11 +61,11 @@ public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<R
 		lc.setParent(item);
 		lc = new Listcell(reinstateFinance.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(reinstateFinance.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(reinstateFinance.getFinStartDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(reinstateFinance.getGraceTerms() + reinstateFinance.getNumberOfTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(reinstateFinance.getMaturityDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(reinstateFinance.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(reinstateFinance.getFinCcy());
 		lc.setParent(item);

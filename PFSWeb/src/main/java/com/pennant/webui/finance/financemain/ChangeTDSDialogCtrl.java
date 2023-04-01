@@ -61,7 +61,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -434,7 +433,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			}
 
 			if (this.tdsStartDate.getValue() != null && previousLTDEndDate != null
-					&& DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
+					&& DateUtil.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
 				throw new WrongValueException(this.tdsStartDate, Labels.getLabel("FRQ_DATE_MISMATCH", new String[] {
 						"Previous LTD End Date", Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));
 			}
@@ -685,7 +684,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		this.finType.setValue(financeMain.getLovDescFinTypeName());
 		this.loanAmount.setValue(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
-		this.startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
+		this.startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
 		this.tDSApplicable.setChecked(isTDSChecked);
 
 		if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsPercentage() == null) {
@@ -743,9 +742,9 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			Listcell lc;
 			lc = new Listcell(String.valueOf(lowerTaxDeduction.getPercentage()));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(lowerTaxDeduction.getStartDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(lowerTaxDeduction.getStartDate()));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(lowerTaxDeduction.getEndDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(lowerTaxDeduction.getEndDate()));
 			lc.setParent(item);
 			lc = new Listcell(
 					PennantApplicationUtil.amountFormate(lowerTaxDeduction.getLimitAmt(), CurrencyUtil.getFormat("")));
@@ -806,7 +805,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ note.getRemarks() + " </font> <br>  ";
-				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
+				String date = DateUtil.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + alignSide + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
@@ -1017,8 +1016,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	}
 
 	private void getEndYearDate() {
-		int month = DateUtility.getMonth(this.tdsStartDate.getValue());
-		int year = DateUtility.getYear(this.tdsStartDate.getValue());
+		int month = DateUtil.getMonth(this.tdsStartDate.getValue());
+		int year = DateUtil.getYear(this.tdsStartDate.getValue());
 		this.row_TDS3.setVisible(true);
 
 		if (month > 3) {
@@ -1049,8 +1048,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
 		if (this.tdsStartDate.getValue() != null && this.tdsEndDate.getValue() != null) {
 
-			int startDatemonth = DateUtility.getMonth(this.tdsStartDate.getValue());
-			int startDateyear = DateUtility.getYear(this.tdsStartDate.getValue());
+			int startDatemonth = DateUtil.getMonth(this.tdsStartDate.getValue());
+			int startDateyear = DateUtil.getYear(this.tdsStartDate.getValue());
 			this.row_TDS3.setVisible(true);
 			Date tdsformateEndDate = null;
 			Date tdsEndDate = null;
@@ -1073,9 +1072,9 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			}
 			tdsEndDate = this.tdsEndDate.getValue();
 			tdsStartDate = this.tdsStartDate.getValue();
-			if (DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
-					|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
-					|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) {
+			if (DateUtil.compare(tdsformateEndDate, tdsEndDate) == -1
+					|| DateUtil.compare(tdsStartDate, tdsEndDate) == 0
+					|| DateUtil.compare(tdsEndDate, tdsStartDate) == -1) {
 				throw new WrongValueException(this.tdsEndDate,
 						"End Date must be after" + " " + DateUtil.format(this.tdsStartDate.getValue(), "dd/MM/yyyy")
 								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));

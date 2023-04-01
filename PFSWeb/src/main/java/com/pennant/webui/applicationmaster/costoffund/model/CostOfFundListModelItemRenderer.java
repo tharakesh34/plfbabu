@@ -32,10 +32,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.CostOfFund;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -55,7 +55,7 @@ public class CostOfFundListModelItemRenderer implements ListitemRenderer<CostOfF
 		lc.setParent(item);
 		lc = new Listcell(CostOfFund.getLovDescCofTypeName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(CostOfFund.getCofEffDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(CostOfFund.getCofEffDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(CurrencyUtil.format(CostOfFund.getCofRate(), PennantConstants.defaultCCYDecPos));
 		lc.setStyle("text-align:right;");

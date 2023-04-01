@@ -49,7 +49,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
@@ -89,6 +88,7 @@ import com.pennant.coreinterface.model.CustomerCollateral;
 import com.pennant.util.AgreementEngine;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -603,7 +603,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			}
 			agreement.setTotalTenor(String.valueOf(maturity));
 			if (finalMaturity != null) {
-				agreement.setFinalMaturityDate(DateUtility.formatToLongDate(finalMaturity));
+				agreement.setFinalMaturityDate(DateUtil.formatToLongDate(finalMaturity));
 			}
 			agreement.setTotFacilityAmt(CurrencyUtil.format(amountBD, 3));
 			agreement.setTotFacilityAmtinUSD(CurrencyUtil.format(amountUSD, 2));
@@ -622,20 +622,20 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			Facility detail) {
 
 		// == NONC
-		proposedFacility.setDate(DateUtility.formatToLongDate(detail.getStartDate()));
+		proposedFacility.setDate(DateUtil.formatToLongDate(detail.getStartDate()));
 		proposedFacility.setCafRef(detail.getCAFReference());
 		proposedFacility.setCustomerType(detail.getCustTypeDesc());
 		proposedFacility.setCustNumber(detail.getCustCIF());
 		proposedFacility.setCustName(detail.getCustShrtName());
 		if (detail.getCustDOB() != null) {
-			proposedFacility.setRelationshipSince(DateUtility.formatToLongDate(detail.getCustDOB()));
+			proposedFacility.setRelationshipSince(DateUtil.formatToLongDate(detail.getCustDOB()));
 		} else {
 			proposedFacility.setRelationshipSince("NEW");
 		}
 
 		proposedFacility.setNatureOfBusinessCode(detail.getNatureOfBusiness());
 		proposedFacility.setNatureOfBusiness(detail.getNatureOfBusinessName());
-		proposedFacility.setNextReviewDate(DateUtility.formatToLongDate(detail.getNextReviewDate()));
+		proposedFacility.setNextReviewDate(DateUtil.formatToLongDate(detail.getNextReviewDate()));
 		proposedFacility.setCountryOfRisk(detail.getCountryOfRiskName());
 		BigDecimal totScore = BigDecimal.ZERO;
 		try {
@@ -781,21 +781,21 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		try {
 			// Application Date
 			Date appldate = SysParamUtil.getAppDate();
-			String appDate = DateUtility.formatToLongDate(appldate);
+			String appDate = DateUtil.formatToLongDate(appldate);
 			agreement.setApplicationDate(appDate);
-			agreement.setDate(DateUtility.formatToLongDate(detail.getStartDate()));
+			agreement.setDate(DateUtil.formatToLongDate(detail.getStartDate()));
 			agreement.setCafRef(detail.getCAFReference());
 			agreement.setCountryOfDomicile(detail.getCountryOfDomicileName());
 			agreement.setCountryOfRisk(detail.getCountryOfRiskName());
 			agreement.setCustNumber(detail.getCustCIF());
 			agreement.setCustName(detail.getCustShrtName());
-			agreement.setEstablishedDate(DateUtility.formatToLongDate(detail.getEstablishedDate()));
+			agreement.setEstablishedDate(DateUtil.formatToLongDate(detail.getEstablishedDate()));
 			agreement.setNatureOfBusinessCode(detail.getNatureOfBusiness());
 			agreement.setNatureOfBusiness(detail.getNatureOfBusinessName());
 			agreement.setSicCode(detail.getSICCodeName());
 			agreement.setCustomerRiskType(detail.getCustomerRiskTypeName());
-			agreement.setDeadline(DateUtility.formatToLongDate(detail.getDeadLine()));
-			agreement.setNextReviewDate(DateUtility.formatToLongDate(detail.getNextReviewDate()));
+			agreement.setDeadline(DateUtil.formatToLongDate(detail.getDeadLine()));
+			agreement.setNextReviewDate(DateUtil.formatToLongDate(detail.getNextReviewDate()));
 			agreement.setRelationshipManager(detail.getRelationshipManager());
 			agreement.setCountryManager(detail.getCountryManagerName());
 			agreement.setLevelofApprovalRequired(PennantStaticListUtil.getlabelDesc(detail.getLevelOfApproval(),
@@ -818,7 +818,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 				agreement.setRelatedCustomer("No");
 			}
 			if (detail.getCustDOB() != null) {
-				agreement.setRelationshipSince(DateUtility.formatToLongDate(detail.getCustDOB()));
+				agreement.setRelationshipSince(DateUtil.formatToLongDate(detail.getCustDOB()));
 			} else {
 				agreement.setRelationshipSince("NEW");
 			}
@@ -831,7 +831,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			agreement.setGuaranteeDescription(detail.getGuaranteeDescription());
 			agreement.setFinancialSummary(detail.getFinancialSummary());
 			agreement.setMitigants(detail.getMitigants());
-			agreement.setInterim(DateUtility.formatToLongDate(detail.getInterim()));
+			agreement.setInterim(DateUtil.formatToLongDate(detail.getInterim()));
 			agreement.setAntiMoneyLaunderClear(detail.getAntiMoneyLaunderClear());
 			agreement.setPurpose(detail.getPurpose());
 			agreement.setAccountRelation(detail.getAccountRelation());
@@ -1015,7 +1015,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 						recommendation.setNoteType(noteType);
 						recommendation.setNoteDesc(notes.getRemarks());
 						recommendation.setCommentedDate(
-								DateUtility.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+								DateUtil.format(notes.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 						recommendation.setUserName(notes.getUsrLogin());
 						recommendation.setUserRole(notes.getRoleDesc());
 						groupRecommendation.getRecommendations().add(recommendation);
@@ -1091,7 +1091,7 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 			int noOfYears = 3;
 			Map<String, List<FinCreditReviewSummary>> detailedMap = this.creditApplicationReviewService
 					.getListCreditReviewSummaryByCustId2(custid, noOfYears,
-							DateUtility.getYear(DateUtility.getSysDate()), category, "");
+							DateUtil.getYear(DateUtil.getSysDate()), category, "");
 			if (detailedMap.size() > 0) {
 				agreement.setAdtYear1(null);
 				agreement.setAdtYear2(null);

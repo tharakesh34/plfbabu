@@ -46,11 +46,11 @@ import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class StartOfMonthDecider implements JobExecutionDecider {
 	private static final Logger logger = LogManager.getLogger(StartOfMonthDecider.class);
@@ -82,7 +82,7 @@ public class StartOfMonthDecider implements JobExecutionDecider {
 			boolean monthStart = false;
 			int amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-				if (valueDate.compareTo(DateUtility.getMonthStart(valueDate)) == 0) {
+				if (valueDate.compareTo(DateUtil.getMonthStart(valueDate)) == 0) {
 					monthStart = true;
 				}
 			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {

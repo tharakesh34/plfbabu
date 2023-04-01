@@ -73,7 +73,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
@@ -868,7 +867,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (!this.custDocExpDate.isReadonly() && !this.custDocExpDate.isDisabled()) {
 				this.custDocExpDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
-								expDateIsMand, DateUtility.addDays(appStartDate, 1), endDate, true));
+								expDateIsMand, DateUtil.addDays(appStartDate, 1), endDate, true));
 				this.custDocExpDate.getValue();// Call the validation
 			}
 		}
@@ -1487,7 +1486,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				&& (this.custDocType.getValue().equalsIgnoreCase(PennantConstants.FORM60))) {
 			if (this.custDocIssuedOn.getValue() != null && this.custDocExpDate.getValue() != null) {
 				Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
-				if (DateUtility.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
+				if (DateUtil.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
 					MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
 					return;
 				}

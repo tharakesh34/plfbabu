@@ -15,7 +15,6 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -1108,7 +1107,7 @@ public class FinanceDataDefaulting {
 
 		if (StringUtils.isNotBlank(frq)) {
 			if (!StringUtils.startsWith(frq, FrequencyCodeTypes.FRQ_DAILY)) {
-				String frqDay = String.valueOf(DateUtility.getDay(frqDate));
+				String frqDay = String.valueOf(DateUtil.getDay(frqDate));
 				frqDay = StringUtils.leftPad(frqDay, 2, "0");
 				frq = new StringBuilder(5).append(frq.substring(0, 3)).append(frqDay).toString();
 			}
@@ -1266,7 +1265,7 @@ public class FinanceDataDefaulting {
 			Mandate mandate = fd.getMandate();
 			mandate.setStartDate(mandate.getStartDate() == null ? fm.getFinStartDate() : mandate.getStartDate());
 			if (!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
-				mandate.setExpiryDate(DateUtility.addDays(fm.getMaturityDate(), 1));
+				mandate.setExpiryDate(DateUtil.addDays(fm.getMaturityDate(), 1));
 			}
 
 		}

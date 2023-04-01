@@ -61,7 +61,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
@@ -995,7 +994,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (this.oldVar_custLastName != this.custLastName.getValue()) {
 			return true;
 		}
-		if (!DateUtility.matches(this.oldVar_custDOB, this.custDOB.getValue())) {
+		if (!DateUtil.matches(this.oldVar_custDOB, this.custDOB.getValue())) {
 			return true;
 		}
 		if (this.oldVar_custGenderCode != this.custGenderCode.getSelectedItem().getValue().toString()) {
@@ -2338,11 +2337,11 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Current Finance Monthly Installment Calculation
 		BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
-		int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate(),
-				true);
+		int installmentMnts = DateUtil.getMonthsBetween(financeMain.getFinStartDate(),
+				financeMain.getMaturityDate());
 
 		BigDecimal curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
-		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+		int months = DateUtil.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 
 		// Get Customer Employee Designation
 		String custEmpDesg = "";

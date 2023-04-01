@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -62,6 +61,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
 
@@ -112,12 +112,12 @@ public class FinanceValidationService {
 
 			// Finance start date
 			Date appDate = SysParamUtil.getAppDate();
-			Date minReqFinStartDate = DateUtility.addDays(appDate,
+			Date minReqFinStartDate = DateUtil.addDays(appDate,
 					-SysParamUtil.getValueAsInt(SMTParameterConstants.LOAN_START_DATE_BACK_DAYS));
 			if (financeMain.getFinStartDate().compareTo(minReqFinStartDate) < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Loan Start Date";
-				valueParm[1] = DateUtility.format(minReqFinStartDate, PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtil.format(minReqFinStartDate, PennantConstants.XMLDateFormat);
 				return getErrorDetails("65030", valueParm);
 			}
 

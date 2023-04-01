@@ -99,8 +99,8 @@ public class ReferenceUtil implements Serializable {
 			}
 		}
 		// below condition will restart the collateral seq with 1 on daily basis(YYDAYOFYEAR+SEQNo
-		if (dateYYJDay != DateUtility.getDateYYJDay()) {
-			dateYYJDay = DateUtility.getDateYYJDay();
+		if (dateYYJDay != getDateYYJDay()) {
+			dateYYJDay = getDateYYJDay();
 			// preparing new seqno
 			String updatedSeq = "00002";
 			String seqString = String.valueOf(dateYYJDay).concat(updatedSeq);

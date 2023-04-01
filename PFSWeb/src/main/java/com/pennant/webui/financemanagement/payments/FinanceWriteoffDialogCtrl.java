@@ -74,7 +74,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -114,6 +113,7 @@ import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -746,7 +746,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}

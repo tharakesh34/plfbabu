@@ -35,9 +35,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -88,16 +88,16 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(wIFFinanceMain.getCalTerms() + wIFFinanceMain.getAdvTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(wIFFinanceMain.getFinStartDate()));
 		lc.setParent(item);
 		if (wIFFinanceMain.getGrcPeriodEndDate() != null) {
-			lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getGrcPeriodEndDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(wIFFinanceMain.getGrcPeriodEndDate()));
 		} else {
 			lc = new Listcell();
 		}
 		lc.setParent(item);
 		if (wIFFinanceMain.getMaturityDate() != null) {
-			lc = new Listcell(DateUtility.formatToLongDate(wIFFinanceMain.getMaturityDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(wIFFinanceMain.getMaturityDate()));
 		} else {
 			lc = new Listcell();
 		}

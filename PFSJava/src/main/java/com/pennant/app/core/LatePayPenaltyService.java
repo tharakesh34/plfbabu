@@ -49,7 +49,6 @@ import org.apache.commons.lang.StringUtils;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.LookupMethods;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -267,7 +266,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		finod.setOdPri(od.getFinCurODPri());
 		finod.setOdPft(od.getFinCurODPft());
 		finod.setFinOdTillDate(od.getFinODTillDate());
-		finod.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), monthEndDate));
+		finod.setDueDays(DateUtil.getDaysBetween(od.getFinODSchdDate(), monthEndDate));
 		finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
 
 		return finod;
@@ -375,7 +374,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			// Find if the latest ODCR record movement date matches with RPD value date
 			prvMvtDate = odcrList.get(odcrList.size() - 1).getMovementDate();
 
-			if (DateUtility.compare(prvMvtDate, rpd.getFinValueDate()) == 0) {
+			if (DateUtil.compare(prvMvtDate, rpd.getFinValueDate()) == 0) {
 				OverdueChargeRecovery odcr = odcrList.get(odcrList.size() - 1);
 				odcr.setPriPaid(odcr.getPriPaid().add(rpd.getFinSchdPriPaid()));
 				odcr.setPftPaid(odcr.getPftPaid().add(rpd.getFinSchdPftPaid()));

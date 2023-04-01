@@ -48,9 +48,9 @@ import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AMZBatchAdmin implements Serializable {
 
@@ -110,7 +110,7 @@ public class AMZBatchAdmin implements Serializable {
 		jobExecution = getJobExecution();
 		jobExecution.setStatus(BatchStatus.STOPPED);
 		jobExecution.setExitStatus(ExitStatus.STOPPED);
-		jobExecution.setEndTime(DateUtility.getSysDate());
+		jobExecution.setEndTime(DateUtil.getSysDate());
 		jobRepository.update(jobExecution);
 
 		logger.debug(Literal.LEAVING);

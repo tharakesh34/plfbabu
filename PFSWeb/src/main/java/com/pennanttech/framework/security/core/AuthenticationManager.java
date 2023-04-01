@@ -63,7 +63,6 @@ import org.springframework.security.saml.SAMLCredential;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -76,6 +75,7 @@ import com.pennanttech.pennapps.core.security.ldap.ActiveDirectoryLdapAuthentica
 import com.pennanttech.pennapps.core.security.user.AuthenticationError;
 import com.pennanttech.pennapps.core.security.user.ExternalAuthenticationProvider;
 import com.pennanttech.pennapps.core.security.user.UserAuthenticationException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 import eu.bitwalker.useragentutils.UserAgent;
 
@@ -292,7 +292,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		loggedInUser.setFailAttempts(user.getUsrInvldLoginTries());
 		loggedInUser.setIpAddress(getRemoteAddress());
 		loggedInUser.setBrowserType(getBrowser());
-		loggedInUser.setLogonTime(DateUtility.getTimestamp(new Date()));
+		loggedInUser.setLogonTime(DateUtil.getTimestamp(new Date()));
 		loggedInUser.setAuthType(user.getAuthType());
 		loggedInUser.setUserType(user.getUserType());
 		loggedInUser.setPasswordExpiredOn(user.getPwdExpDt());

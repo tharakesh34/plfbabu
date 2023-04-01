@@ -31,10 +31,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -54,7 +54,7 @@ public class BaseRateListModelItemRenderer implements ListitemRenderer<BaseRate>
 		lc.setParent(item);
 		lc = new Listcell(baseRate.getLovDescBRTypeName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(baseRate.getBREffDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(baseRate.getBREffDate()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formatRate(baseRate.getBRRate().doubleValue(), 9));
 		lc.setStyle("text-align:right;");

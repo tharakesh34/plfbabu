@@ -17,7 +17,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.eventproperties.EventProperties;
@@ -118,7 +117,7 @@ public class ProcessINDASForInActiveFinances implements Tasklet {
 		} else {
 			appDate = SysParamUtil.getAppDate();
 			amzMonth = DateUtil.getMonthEnd(appDate);
-			amzMonthStart = DateUtility.getMonthStart(amzMonth);
+			amzMonthStart = DateUtil.getMonthStart(amzMonth);
 		}
 
 		long finID = fm.getFinID();

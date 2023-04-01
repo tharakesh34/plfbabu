@@ -60,7 +60,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.NumberToEnglishWords;
@@ -427,7 +426,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 
-					if ((DateUtility.compare(finSchdDetail.getSchDate(), endDate) > 0)) {
+					if ((DateUtil.compare(finSchdDetail.getSchDate(), endDate) > 0)) {
 						break;
 					}
 
@@ -522,7 +521,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					PennantApplicationUtil.formateAmount(finMain.getFinCurrAssetValue(), ccyEditField));
 
 			if (ImplementationConstants.CUSTOMIZED_SOAREPORT
-					&& ((DateUtility.compare(finMain.getMaturityDate(), SysParamUtil.getAppDate()) < 0)
+					&& ((DateUtil.compare(finMain.getMaturityDate(), SysParamUtil.getAppDate()) < 0)
 							|| (!finMain.isFinIsActive() && StringUtils.equals(finMain.getClosingStatus(),
 									FinanceConstants.CLOSE_STATUS_CANCELLED)))) {
 				// Nothing To Do.
@@ -768,7 +767,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		} else { // endDate should be grater than app date then set to the Application date
 			if (ImplementationConstants.CUSTOMIZED_SOAREPORT) {
 				// nothing to do
-			} else if (DateUtility.compare(endDate, SysParamUtil.getAppDate()) > 0) {
+			} else if (DateUtil.compare(endDate, SysParamUtil.getAppDate()) > 0) {
 				endDate = SysParamUtil.getAppDate();
 			}
 		}
@@ -943,8 +942,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		// Transaction Details Filtering
 		for (SOATransactionReport soaTransactionReport : soaTransactionReportsList) {
-			if (DateUtility.compare(soaTransactionReport.getTransactionDate(), startDate) >= 0
-					&& DateUtility.compare(soaTransactionReport.getTransactionDate(), endDate) <= 0) {
+			if (DateUtil.compare(soaTransactionReport.getTransactionDate(), startDate) >= 0
+					&& DateUtil.compare(soaTransactionReport.getTransactionDate(), endDate) <= 0) {
 
 				soaTransactionReport.setFinReference(finReference);
 				soaTransactionReport.setCcyEditField(statementOfAccount.getCcyEditField());
@@ -1014,7 +1013,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			} else {
 				calrate = finMain.getRepayProfitRate();
 			}
-			int noOfMonths = DateUtility.getMonthsBetween(finMain.getFinStartDate(), fixedEndDate);
+			int noOfMonths = DateUtil.getMonthsBetween(finMain.getFinStartDate(), fixedEndDate);
 			statementOfAccount.setIntRateType("Fixed and Floating");
 			InterestRateDetail fixedDetail = new InterestRateDetail();
 			fixedDetail.setFormTenure(1);
@@ -1945,7 +1944,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							transactionAmount = finSchdDetail.getDisbAmount();
 						}
 
-						if (DateUtility.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
+						if (DateUtil.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
 							transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
 						}
 
@@ -1977,7 +1976,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				// fore closure Amount
 				BigDecimal partialPaidAmt = finSchdDetail.getPartialPaidAmt();
-				if (maxSchDate != null && DateUtility.compare(maxSchDate, finSchdDetail.getSchDate()) == 0) {
+				if (maxSchDate != null && DateUtil.compare(maxSchDate, finSchdDetail.getSchDate()) == 0) {
 					if (repayAmount.subtract(partialPaidAmt).compareTo(BigDecimal.ZERO) > 0) {
 						soaTranReport = new SOATransactionReport();
 						soaTranReport.setEvent(foreclosureAmount + finRef);
@@ -1990,7 +1989,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					}
 				}
 
-				if ((DateUtility.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
+				if ((DateUtil.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
 
 					// Partial Prepayment Amount
 					if (partialPaidAmt != null && partialPaidAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -2294,7 +2293,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 									for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 
-										if (DateUtility.compare(presentmentDetail.getSchDate(),
+										if (DateUtil.compare(presentmentDetail.getSchDate(),
 												finSchdDetail.getSchDate()) == 0) {
 											manualAdvPrentmentIn = presentmentDetail.getBounceReason() != null
 													? "Bounce Created for " + "'" + presentmentDetail.getBounceReason()
@@ -2978,7 +2977,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				for (FinODAmzTaxDetail finODAmzTaxDetail : finODAmzTaxDetailList) {
 					soaTranReport = new SOATransactionReport();
 					soaTranReport.setEvent(
-							penalityMnthEnd + DateUtility.format(finODAmzTaxDetail.getValueDate(), "dd/MM/yyyy"));
+							penalityMnthEnd + DateUtil.format(finODAmzTaxDetail.getValueDate(), "dd/MM/yyyy"));
 					soaTranReport.setTransactionDate(finODAmzTaxDetail.getValueDate());
 					soaTranReport.setValueDate(finODAmzTaxDetail.getValueDate());
 					if (StringUtils.equals(finODAmzTaxDetail.getTaxType(),
@@ -3065,7 +3064,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						transactionAmount = finSchdDetail.getDisbAmount();
 					}
 
-					if (DateUtility.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
+					if (DateUtil.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
 						transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
 					}
 
@@ -3115,7 +3114,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 				// fore closure Amount
 				BigDecimal partialPaidAmt = finSchdDetail.getPartialPaidAmt();
-				if (maxSchDate != null && DateUtility.compare(maxSchDate, finSchdDetail.getSchDate()) == 0) {
+				if (maxSchDate != null && DateUtil.compare(maxSchDate, finSchdDetail.getSchDate()) == 0) {
 					soaTranReport = new SOATransactionReport();
 					soaTranReport.setEvent(foreclosureAmount + finRef);
 					soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
@@ -3135,7 +3134,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTransactionReports.add(soaTranReport);
 				}
 
-				if ((DateUtility.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
+				if ((DateUtil.compare(finSchdDetail.getSchDate(), SysParamUtil.getAppDate()) <= 0)) {
 
 					// Partial Prepayment Amount
 					if (partialPaidAmt != null && partialPaidAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -3491,7 +3490,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 									for (FinanceScheduleDetail finSchdDetail : finSchdDetList) {
 
-										if (DateUtility.compare(presentmentDetail.getSchDate(),
+										if (DateUtil.compare(presentmentDetail.getSchDate(),
 												finSchdDetail.getSchDate()) == 0) {
 											manualAdvPrentmentIn = presentmentDetail.getBounceReason() != null
 													? "Bounce Created for " + "'" + presentmentDetail.getBounceReason()

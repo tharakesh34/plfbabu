@@ -59,7 +59,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.QueryBuilder;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Query;
@@ -73,6 +72,7 @@ import com.pennant.webui.finance.enquiry.model.SysNotificationDialogModelItemRen
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.DocType;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -546,7 +546,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 
 		if (aSysNotification.isNewRecord()) {
 			aSysNotification.setLastMntBy(getUserWorkspace().getUserDetails().getUserId());
-			aSysNotification.setLastMntOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
+			aSysNotification.setLastMntOn(DateUtil.getTimestamp(SysParamUtil.getAppDate()));
 			aSysNotification.setRecordStatus("Approved");
 			aSysNotification.setVersion(1);
 			aSysNotification.setRoleCode("");

@@ -44,7 +44,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -170,7 +169,7 @@ public class StatusMovementService extends ServiceHelper {
 		aeEvent.setAccountingEvent(event);
 		aeEvent.setBranch(resultSet.getString("FinBranch"));
 		aeEvent.setCcy(resultSet.getString("FinCcy"));
-		aeEvent.setPostDate(DateUtility.getSysDate());
+		aeEvent.setPostDate(DateUtil.getSysDate());
 		aeEvent.setPostDate(valueDate);
 		aeEvent.setSchdDate(resultSet.getDate("NextRpySchDate"));
 		aeEvent.setCustID(resultSet.getLong("CustID"));

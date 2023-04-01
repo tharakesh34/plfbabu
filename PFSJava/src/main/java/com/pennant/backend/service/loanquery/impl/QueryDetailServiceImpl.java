@@ -70,7 +70,6 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	private DocumentDetailsDAO documentDetailsDAO;
 	private PostExteranalServiceHook postExteranalServiceHook;
 
-
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -350,6 +349,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		return auditHeader;
 
 	}
+
 	@Override
 	public List<QueryDetail> getUnClosedQurysForGivenRole(String reference, String currentRole) {
 		logger.debug(Literal.ENTERING);
@@ -357,7 +357,6 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		logger.debug(Literal.LEAVING);
 		return list;
 	}
-
 
 	@Override
 	public List<QueryDetail> getQueryListByReference(String reference) {

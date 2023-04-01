@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -27,6 +26,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
@@ -243,9 +243,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "custDocExpDate: "
-								+ DateUtility.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+								+ DateUtil.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "custDocIssuedOn: "
-								+ DateUtility.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+								+ DateUtil.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 						return errorDetails;
 					}
@@ -375,9 +375,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 			if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "custDocExpDate: "
-						+ DateUtility.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+						+ DateUtil.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 				valueParm[1] = "custDocIssuedOn: "
-						+ DateUtility.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+						+ DateUtil.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 				return auditDetail;
 			}

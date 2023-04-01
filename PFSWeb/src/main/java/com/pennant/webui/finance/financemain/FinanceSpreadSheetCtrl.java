@@ -37,7 +37,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -1106,7 +1105,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		for (FinanceEnquiry financeEnquiry : list) {
 
-			int years = DateUtility.getYearsBetween(financeEnquiry.getFinStartDate(), date);
+			int years = DateUtil.getYearsBetween(financeEnquiry.getFinStartDate(), date);
 			if (years <= 2) {
 				lessThan2years = lessThan2years.add(financeEnquiry.getMaxInstAmount());
 			} else {

@@ -22,7 +22,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
@@ -145,7 +144,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 					long btachId = ds.getId();
 					DisbursementRequest req = prepareReqStatus(disbursementRequest, ds, disbursementRequests);
 
-					req.setCreatedOn(DateUtility.getSysDate());
+					req.setCreatedOn(DateUtil.getSysDate());
 					req.setStatus(DisbursementConstants.STATUS_PAID);
 
 					int count = disbursementRequestDAO.updateBatchStatus(req);
@@ -187,7 +186,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 						req.setTargetType("TABLE");
 					}
 
-					req.setCreatedOn(DateUtility.getSysDate());
+					req.setCreatedOn(DateUtil.getSysDate());
 					req.setStatus(DisbursementConstants.STATUS_AWAITCON);
 
 					int count = disbursementRequestDAO.updateBatchStatus(req);
@@ -512,7 +511,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 	private void updateMovementStatus(DisbursementRequest request) {
 		request.setProcessFlag(1);
-		request.setProcessedOn(DateUtility.getSysDate());
+		request.setProcessedOn(DateUtil.getSysDate());
 		disbursementRequestDAO.updateMovement(request, 1);
 		disbursementRequestDAO.logDisbursementMovement(request, true);
 		disbursementRequestDAO.deleteMovement(request.getId());

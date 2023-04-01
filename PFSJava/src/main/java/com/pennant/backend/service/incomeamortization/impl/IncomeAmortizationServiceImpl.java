@@ -44,7 +44,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
@@ -60,6 +59,7 @@ import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Service declaration for methods that depends on <b>IncomeAmortizationService</b>.<br>
@@ -82,7 +82,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 		FinEODEvent finEODEvent = null;
 		List<ProjectedAccrual> accruals = null;
 		List<ProjectedAmortization> incomeAMZList = null;
-		Date curMonthStart = DateUtility.getMonthStart(monthEndDate);
+		Date curMonthStart = DateUtil.getMonthStart(monthEndDate);
 
 		Date appDate = SysParamUtil.getAppDate();
 

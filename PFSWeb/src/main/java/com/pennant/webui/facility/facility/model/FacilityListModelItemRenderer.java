@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -56,9 +56,9 @@ public class FacilityListModelItemRenderer implements ListitemRenderer<Facility>
 		lc.setParent(item);
 		lc = new Listcell(facility.getCustCIF());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(facility.getStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(facility.getStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(facility.getNextReviewDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(facility.getNextReviewDate()));
 		lc.setParent(item);
 		lc = new Listcell(facility.getPresentingUnit());
 		lc.setParent(item);

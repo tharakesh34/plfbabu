@@ -232,7 +232,7 @@ public class RateReviewService extends ServiceHelper {
 			schdData.setOverdraftScheduleDetails(
 					overdraftScheduleDetailDAO.getOverdraftScheduleDetails(fm.getFinID(), "", false));
 		}
-		
+
 		schdData = ScheduleCalculator.refreshRates(schdData);
 
 		FinanceProfitDetail newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);

@@ -70,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -503,9 +502,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		this.lbl_Currency
 				.setValue(this.financeMain.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
 		this.lbl_startDate
-				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
-				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_ODAgainstLoan
 				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstLoan(), ccyFormatter));
 		this.lbl_ODAgainstCustomer

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -62,6 +61,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
@@ -1410,7 +1410,7 @@ public class ExtendedFieldDetailsService {
 		case ExtendedFieldConstants.FIELDTYPE_TIME:
 			Date dateValue = null;
 			try {
-				dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+				dateValue = DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
@@ -1426,7 +1426,7 @@ public class ExtendedFieldDetailsService {
 		case ExtendedFieldConstants.FIELDTYPE_DATETIME:
 			Date dateTimeVal = null;
 			try {
-				dateTimeVal = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+				dateTimeVal = DateUtil.parse(fieldValue, PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];
 				valueParm[0] = fieldName;
@@ -1435,7 +1435,7 @@ public class ExtendedFieldDetailsService {
 				return errors;
 			}
 			errors = dateValidation(deatils, dateTimeVal, errors);
-			exrFldData.setFieldValue(String.valueOf(DateUtility.getSqlDate(dateTimeVal)));
+			exrFldData.setFieldValue(String.valueOf(DateUtil.getSqlDate(dateTimeVal)));
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_AMOUNT:
 			try {
@@ -1795,38 +1795,38 @@ public class ExtendedFieldDetailsService {
 		switch (value[0]) {
 		case "RANGE":
 			if (value[1] != null && value[2] != null) {
-				if (dateValue.before(DateUtility.parse(value[1], PennantConstants.dateFormat))
-						|| dateValue.after(DateUtility.parse(value[2], PennantConstants.dateFormat))) {
+				if (dateValue.before(DateUtil.parse(value[1], PennantConstants.dateFormat))
+						|| dateValue.after(DateUtil.parse(value[2], PennantConstants.dateFormat))) {
 					String valueParm[] = new String[3];
 					valueParm[0] = exdConfigDetail.getFieldName();
-					valueParm[1] = String.valueOf(DateUtility.getDate(value[1]));
-					valueParm[2] = String.valueOf(DateUtility.getDate(value[2]));
+					valueParm[1] = String.valueOf(DateUtil.getDate(value[1]));
+					valueParm[2] = String.valueOf(DateUtil.getDate(value[2]));
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 				}
 			}
 			break;
 		case "FUTURE_DAYS":
-			if (DateUtility.compare(dateValue,
-					DateUtility.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1]))) > 0) {
+			if (DateUtil.compare(dateValue,
+					DateUtil.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1]))) > 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
 				valueParm[1] = String
-						.valueOf(DateUtility.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])));
+						.valueOf(DateUtil.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", "", valueParm)));
 			}
 			break;
 		case "PAST_DAYS":
-			if (DateUtility.compare(dateValue,
-					DateUtility.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1])))) < 0) {
+			if (DateUtil.compare(dateValue,
+					DateUtil.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1])))) < 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
 				valueParm[1] = String
-						.valueOf(DateUtility.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1]))));
+						.valueOf(DateUtil.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1]))));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
 			}
 			break;
 		case "FUTURE_TODAY":
-			if (DateUtility.compare(dateValue, SysParamUtil.getAppDate()) < 0) {
+			if (DateUtil.compare(dateValue, SysParamUtil.getAppDate()) < 0) {
 				String valueParm[] = new String[2];
 				valueParm[0] = exdConfigDetail.getFieldName() + ":" + dateValue;
 				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
@@ -1834,25 +1834,25 @@ public class ExtendedFieldDetailsService {
 			}
 			break;
 		case "PAST_TODAY":
-			if (DateUtility.compare(dateValue, SysParamUtil.getAppDate()) > 0) {
+			if (DateUtil.compare(dateValue, SysParamUtil.getAppDate()) > 0) {
 				String valueParm[] = new String[2];
-				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtility.formatToLongDate(dateValue);
+				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtil.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", "", valueParm)));
 			}
 			break;
 		case "FUTURE":
-			if (DateUtility.compare(SysParamUtil.getAppDate(), dateValue) >= 0) {
+			if (DateUtil.compare(SysParamUtil.getAppDate(), dateValue) >= 0) {
 				String valueParm[] = new String[2];
-				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtility.formatToLongDate(dateValue);
+				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtil.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
 			}
 			break;
 		case "PAST":
-			if (DateUtility.compare(SysParamUtil.getAppDate(), dateValue) <= 0) {
+			if (DateUtil.compare(SysParamUtil.getAppDate(), dateValue) <= 0) {
 				String valueParm[] = new String[2];
-				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtility.formatToLongDate(dateValue);
+				valueParm[0] = exdConfigDetail.getFieldName() + ":" + DateUtil.formatToLongDate(dateValue);
 				valueParm[1] = String.valueOf(SysParamUtil.getAppDate());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", "", valueParm)));
 			}

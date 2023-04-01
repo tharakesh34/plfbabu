@@ -33,8 +33,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,7 +58,7 @@ public class OverdueDetailListModelItemRenderer implements ListitemRenderer<FinO
 	public void render(Listitem item, FinODDetails finODDetail, int count) {
 
 		Listcell lc;
-		lc = new Listcell(DateUtility.formatToLongDate(finODDetail.getFinODSchdDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(finODDetail.getFinODSchdDate()));
 		lc.setParent(item);
 
 		lc = new Listcell(String.valueOf(finODDetail.getFinCurODDays()));

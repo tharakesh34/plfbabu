@@ -61,7 +61,6 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -1235,8 +1234,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				FinanceScheduleDetail curSchd = null;
 				boolean schdUpdated = false;
-				if (schdMap.containsKey(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
-					curSchd = schdMap.get(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
+				if (schdMap.containsKey(DateUtil.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
+					curSchd = schdMap.get(DateUtil.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
 
 					// Principal Payment
 					if (rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
@@ -1382,7 +1381,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		Date valueDate = appDate;
 		if (!ImplementationConstants.LPP_CALC_SOD) {
-			valueDate = DateUtility.addDays(valueDate, -1);
+			valueDate = DateUtil.addDays(valueDate, -1);
 		}
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(fm.getFinID());
@@ -1460,10 +1459,10 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			}
 
 			Date rcptDate = rch.getReceiptDate();
-			Date rcptMonthEndDate = DateUtility.getMonthEnd(rch.getReceiptDate());
+			Date rcptMonthEndDate = DateUtil.getMonthEnd(rch.getReceiptDate());
 			boolean accrualDiffPostReq = false;
-			if (DateUtility.compare(rcptDate, rcptMonthEndDate) <= 0
-					&& DateUtility.compare(appDate, rcptMonthEndDate) > 0) {
+			if (DateUtil.compare(rcptDate, rcptMonthEndDate) <= 0
+					&& DateUtil.compare(appDate, rcptMonthEndDate) > 0) {
 				accrualDiffPostReq = true;
 			}
 
@@ -1548,7 +1547,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			newTaxRcv.setFinReference(finReference);
 
 			if (accrualDiffPostReq) {
-				Date dateValueDate = DateUtility.addDays(DateUtility.getMonthStart(valueDate), -1);
+				Date dateValueDate = DateUtil.addDays(DateUtil.getMonthStart(valueDate), -1);
 				latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, dateValueDate,
 						schdData.getFinanceScheduleDetails(), repayments, true, true);
 
@@ -2286,7 +2285,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}

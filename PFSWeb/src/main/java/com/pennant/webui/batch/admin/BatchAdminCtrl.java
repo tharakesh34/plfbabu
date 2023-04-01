@@ -52,7 +52,6 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
 import com.pennant.backend.endofday.main.BatchMonitor;
@@ -266,7 +265,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (bps != null && bps.getEndTime() != null && "S".equals(bps.getStatus())) {
 				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 				if (days == 0) {
-					int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
+					int timeBetween = Integer.valueOf(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 
 					if (timeBetween > 20) {
 						this.btnStartJob.setDisabled(false);
@@ -455,12 +454,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 					if (days == 0) {
 						hours = hours + Integer
-								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+								.valueOf(DateUtil.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
 					} else {
 						hours = days * 24;
-						lastJobExecutionTime = DateUtility.addDays(lastJobExecutionTime, days);
+						lastJobExecutionTime = DateUtil.addDays(lastJobExecutionTime, days);
 						hours = hours + Integer
-								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+								.valueOf(DateUtil.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
 					}
 
 					if (hours < eODTimeInterval) {
@@ -818,7 +817,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (!listitem.hasFellow(threadId + EodConstants.STATUS))
 				listcell.setParent(listitem);
 
-			listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(), status.getStartTime()));
+			listcell = new Listcell(DateUtil.timeBetween(status.getEndTime(), status.getStartTime()));
 			listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 

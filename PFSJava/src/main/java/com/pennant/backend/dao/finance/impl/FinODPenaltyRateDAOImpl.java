@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -18,6 +17,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> implements FinODPenaltyRateDAO {
 	private static Logger logger = LogManager.getLogger(FinODPenaltyRateDAOImpl.class);
@@ -80,7 +80,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		Collections.sort(list, new Comparator<FinODPenaltyRate>() {
 			@Override
 			public int compare(FinODPenaltyRate obj1, FinODPenaltyRate obj2) {
-				return DateUtility.compare(obj1.getFinEffectDate(), obj2.getFinEffectDate());
+				return DateUtil.compare(obj1.getFinEffectDate(), obj2.getFinEffectDate());
 			}
 		});
 

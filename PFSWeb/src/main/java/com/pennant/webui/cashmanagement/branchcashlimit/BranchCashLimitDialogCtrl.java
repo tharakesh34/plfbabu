@@ -46,7 +46,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.cashmanagement.BranchCashDetail;
@@ -360,7 +360,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 			 * (DateUtility.compare(DateUtility.getMonthEndDate(maxReqLimitSetDate), maxReqLimitSetDate) == 0 &&
 			 * DateUtility.compare(DateUtility.getSysDate(), maxReqLimitSetDate) > 0) { maxReqLimitSetDate =
 			 * DateUtility.getSysDate(); } this.curLimitSetDate.setValue(maxReqLimitSetDate);
-			 */ this.curLimitSetDate.setValue(DateUtility.getDerivedAppDate());
+			 */ this.curLimitSetDate.setValue(SysParamUtil.getDerivedAppDate());
 		} else {
 			this.curLimitSetDate.setValue(aBranchCashLimit.getCurLimitSetDate());
 		}
@@ -524,7 +524,7 @@ public class BranchCashLimitDialogCtrl extends GFCBaseCtrl<BranchCashLimit> {
 			if (apporvedData != null) {
 				aBranchCashLimit.setPreviousDate(apporvedData.getCurLimitSetDate());
 				aBranchCashLimit.setPreviousAmount(apporvedData.getCashLimit());
-				aBranchCashLimit.setCurLimitSetDate(DateUtility.getDerivedAppDate());
+				aBranchCashLimit.setCurLimitSetDate(SysParamUtil.getDerivedAppDate());
 			} else {
 				aBranchCashLimit.setPreviousDate(aBranchCashLimit.getCurLimitSetDate());
 				aBranchCashLimit.setPreviousAmount(aBranchCashLimit.getCashLimit());

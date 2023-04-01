@@ -48,7 +48,6 @@ import org.zkoss.zul.Window;
 import com.pennant.FrequencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
@@ -350,7 +349,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			if (prvSchd != null && !isPrvShcdAdded) {
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 				comboitem.setValue(prvSchd.getSchDate());
 				comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
 				this.cbFrqFromDate.appendChild(comboitem);
@@ -358,7 +357,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			comboitem = new Comboitem();
-			comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+			comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 			comboitem.setValue(curSchd.getSchDate());
 			comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 			this.cbFrqFromDate.appendChild(comboitem);
@@ -421,7 +420,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							throw new WrongValueException(this.grcPeriodEndDate, Labels.getLabel("DATE_ALLOWED_MINDATE",
 									new String[] {
 											Labels.getLabel("label_ChangeFrequencyDialog_GrcPeriodEndDate.value"),
-											DateUtility.formatToLongDate(fromDate) }));
+											DateUtil.formatToLongDate(fromDate) }));
 						}
 					}
 				}
@@ -472,7 +471,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.nextRepayDate,
 							Labels.getLabel("DATE_ALLOWED_MINDATE",
 									new String[] { Labels.getLabel("label_ChangeFrequencyDialog_NextRepayDate.value"),
-											DateUtility.formatToShortDate(fromDate) }));
+											DateUtil.formatToShortDate(fromDate) }));
 				}
 			}
 		} catch (WrongValueException we) {

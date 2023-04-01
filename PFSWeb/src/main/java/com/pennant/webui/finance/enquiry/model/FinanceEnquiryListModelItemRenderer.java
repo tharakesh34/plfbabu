@@ -10,10 +10,10 @@ import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<FinanceEnquiry>, Serializable {
 
@@ -37,11 +37,11 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(enquiry.getFinStartDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(enquiry.getNOInst()));// PSD# 145740
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getMaturityDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(enquiry.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getFinCcy());
 		lc.setParent(item);

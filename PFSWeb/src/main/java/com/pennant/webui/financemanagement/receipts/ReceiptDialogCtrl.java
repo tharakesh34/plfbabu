@@ -106,7 +106,6 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.GSTCalculator;
@@ -1734,7 +1733,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		boolean isCalcCompleted = true;
 		Date valuDate = receiptData.getReceiptHeader().getValueDate();
-		if (finMain.isFinIsActive() && DateUtility.compare(valuDate, maturityDate) <= 0) {
+		if (finMain.isFinIsActive() && DateUtil.compare(valuDate, maturityDate) <= 0) {
 			if (receiptPurposeCtg > 0) {
 				isCalcCompleted = recalEarlyPaySchd(true);
 				if (isCalcCompleted) {
@@ -2421,7 +2420,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.finSchProfitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(),
 					PennantStaticListUtil.getProfitDaysBasis()));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
-			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
+			this.finSchGracePeriodEndDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 
 			// Fill Effective Schedule Details
@@ -3871,7 +3870,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			if (finMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())
 					&& finMain.isAllowGrcPeriod() && FinanceConstants.STEPTYPE_PRIBAL.equals(finMain.getStepType())
-					&& DateUtility.compare(receiptData.getValueDate(), finMain.getGrcPeriodEndDate()) <= 0
+					&& DateUtil.compare(receiptData.getValueDate(), finMain.getGrcPeriodEndDate()) <= 0
 					&& (CalculationConstants.SCHMTHD_PRI.equals(finMain.getScheduleMethod())
 							|| CalculationConstants.SCHMTHD_PRI_PFT.equals(finMain.getScheduleMethod()))) {
 				repyMethodList
@@ -5393,7 +5392,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 		Date appDate = SysParamUtil.getAppDate();
 		// Date receivedDate = this.receivedDate.getValue();
-		Date curMonthStartDate = DateUtility.getMonthStart(appDate);
+		Date curMonthStartDate = DateUtil.getMonthStart(appDate);
 		Date currentMonthScheduleDate = null;
 		// FIXME: PV: CODE REVIEW PENDING
 		// Get the current month schedule date
@@ -5401,8 +5400,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				.getFinanceScheduleDetails();
 		for (int i = 0; i < financeScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-			if ((DateUtility.getMonth(appDate) == DateUtility.getMonth(curSchd.getSchDate()))
-					&& (DateUtility.getYear(appDate) == DateUtility.getYear(curSchd.getSchDate()))
+			if ((DateUtil.getMonth(appDate) == DateUtil.getMonth(curSchd.getSchDate()))
+					&& (DateUtil.getYear(appDate) == DateUtil.getYear(curSchd.getSchDate()))
 					&& (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
 				currentMonthScheduleDate = curSchd.getSchDate();
 			}
@@ -5848,7 +5847,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 				}
 
-				Date curMonthStartDate = DateUtility.getMonthStart(lastSchd.getSchDate());
+				Date curMonthStartDate = DateUtil.getMonthStart(lastSchd.getSchDate());
 
 				// UnAccrual Calculation
 				BigDecimal unaccrue = BigDecimal.ZERO;
@@ -5872,7 +5871,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				// Accrual Calculation
-				if (DateUtility.compare(curMonthStartDate, finMain.getFinStartDate()) <= 0) {
+				if (DateUtil.compare(curMonthStartDate, finMain.getFinStartDate()) <= 0) {
 					amountCodes.setAccruedPaid(BigDecimal.ZERO);
 					amountCodes.setAccrueWaived(BigDecimal.ZERO);
 				} else {
@@ -6767,7 +6766,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), formatter));
@@ -6957,7 +6956,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -7080,7 +7079,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
-		receiptValueDate = DateUtility.addDays(receiptValueDate, -(defaultClearingDays));
+		receiptValueDate = DateUtil.addDays(receiptValueDate, -(defaultClearingDays));
 
 		// depositDate should be greater than valuedate
 		if (this.depositDate.getValue() != null && this.depositDate.getValue().compareTo(receiptValueDate) < 0) {
@@ -7174,7 +7173,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				boolean isValidPPDate = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0
 							&& StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())
 							&& !FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())
 							&& !FinanceConstants.FLAG_UNPLANNED.equals(curSchd.getBpiOrHoliday())
@@ -7185,11 +7184,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							&& !FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
 						isValidPPDate = false;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
@@ -7348,7 +7347,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Payment Amount", PennantApplicationUtil.formateAmount(curSchd.getRepayAmount(), format)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -7358,7 +7357,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Principal", PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -7369,7 +7368,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Interest", PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -7678,8 +7677,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 			}
 
-			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-					true);
+			int months = DateUtil.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate());
 
 			int advTerms = 0;
 			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
@@ -7727,7 +7725,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
 		receipt.setReceiptAmountInWords(NumberToEnglishWords
 				.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
-		receipt.setAppDate(DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
+		receipt.setAppDate(DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
 		if (isForeClosure && totalReceiptAmt.compareTo(BigDecimal.ZERO) == 0) {
 			receipt.setPaymentMode(ReceiptMode.ZERORECEIPT);
 		} else {

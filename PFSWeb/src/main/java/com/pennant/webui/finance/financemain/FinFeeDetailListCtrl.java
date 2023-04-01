@@ -72,7 +72,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -114,6 +113,7 @@ import com.pennant.pff.extension.FeeExtension;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -923,7 +923,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getPaymentAmount(), ccyFormat));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(detail.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(detail.getValueDate()));
 				lc.setParent(item);
 				item.setAttribute("data", detail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onPaymentDetailDoubleClicked");
@@ -2771,7 +2771,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			formatter = CurrencyUtil.getFormat(finCcy);
 
 			if (financeMain.getFinStartDate() != null) {
-				int finAge = DateUtility.getMonthsBetween(SysParamUtil.getAppDate(), financeMain.getFinStartDate());
+				int finAge = DateUtil.getMonthsBetween(SysParamUtil.getAppDate(), financeMain.getFinStartDate());
 				executionMap.put("finAgetilldate", finAge);
 			}
 
@@ -2907,16 +2907,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
 
 			for (FinanceScheduleDetail schd : schdList) {
-				if (DateUtility.compare(valueDate, schd.getSchDate()) == 0) {
+				if (DateUtil.compare(valueDate, schd.getSchDate()) == 0) {
 					calculatedAmt = schd.getClosingBalance();
 					if (calculatedAmt.compareTo(BigDecimal.ZERO) == 0) {
 						List<FinanceScheduleDetail> apdSchdList = getFinanceDetailService()
 								.getFinScheduleList(finScheduleData.getFinanceMain().getFinID());
 						for (FinanceScheduleDetail curSchd : apdSchdList) {
-							if (DateUtility.compare(valueDate, curSchd.getSchDate()) == 0) {
+							if (DateUtil.compare(valueDate, curSchd.getSchDate()) == 0) {
 								calculatedAmt = curSchd.getClosingBalance();
 							}
-							if (DateUtility.compare(valueDate, curSchd.getSchDate()) <= 0) {
+							if (DateUtil.compare(valueDate, curSchd.getSchDate()) <= 0) {
 								break;
 							}
 							calculatedAmt = curSchd.getClosingBalance();
@@ -2924,7 +2924,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						break;
 					}
 				}
-				if (DateUtility.compare(valueDate, schd.getSchDate()) <= 0) {
+				if (DateUtil.compare(valueDate, schd.getSchDate()) <= 0) {
 					break;
 				}
 				calculatedAmt = schd.getClosingBalance();

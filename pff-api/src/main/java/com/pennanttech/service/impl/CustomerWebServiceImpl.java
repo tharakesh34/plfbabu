@@ -99,7 +99,6 @@ import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.CustomerRESTService;
 import com.pennanttech.pffws.CustomerSOAPService;
 import com.pennanttech.util.APIConstants;

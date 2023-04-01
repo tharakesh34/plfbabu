@@ -7,12 +7,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinMainReportData implements Serializable {
 
@@ -984,8 +984,8 @@ public class FinMainReportData implements Serializable {
 		reportData.setCustCIF(financeMain.getLovDescCustCIF());
 		reportData.setCustShrtName(financeMain.getLovDescCustShrtName());
 		reportData.setFinBranch(financeMain.getFinBranch() + "-" + financeMain.getLovDescFinBranchName());
-		reportData.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		reportData.setFinContractDate(DateUtility.formatToLongDate(financeMain.getFinContractDate()));
+		reportData.setFinStartDate(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+		reportData.setFinContractDate(DateUtil.formatToLongDate(financeMain.getFinContractDate()));
 		reportData.setFinAmount(PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), ccyFormatter));
 		reportData.setFinRepaymentAmount(PennantApplicationUtil
 				.amountFormate(financeMain.getFinAmount().subtract(financeMain.getFinRepaymentAmount()), ccyFormatter));
@@ -1005,7 +1005,7 @@ public class FinMainReportData implements Serializable {
 		reportData.setOverdueDays(financeMain.getFinStatus() + "/" + financeSummary.getFinCurODDays());
 
 		if (finSchData.isFinPftSuspended()) {
-			reportData.setFinSuspense("True(" + DateUtility.formatToLongDate(finSchData.getFinSuspDate()) + ")");
+			reportData.setFinSuspense("True(" + DateUtil.formatToLongDate(finSchData.getFinSuspDate()) + ")");
 		} else {
 			reportData.setFinSuspense("False");
 		}
@@ -1014,7 +1014,7 @@ public class FinMainReportData implements Serializable {
 		reportData.setAllowGrace(financeMain.isAllowGrcPeriod() ? "TRUE" : "FALSE");
 		if (financeMain.isAllowGrcPeriod()) {
 			reportData.setGraceTerms(String.valueOf(financeMain.getGraceTerms()));
-			reportData.setGrcPeriodEndDate(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
+			reportData.setGrcPeriodEndDate(DateUtil.formatToLongDate(financeMain.getGrcPeriodEndDate()));
 			reportData.setGrcRateBasis(
 					"#".equals(StringUtils.trimToEmpty(financeMain.getGrcRateBasis())) ? financeMain.getGrcRateBasis()
 							: "");
@@ -1026,13 +1026,13 @@ public class FinMainReportData implements Serializable {
 			reportData.setGracePftFrq(
 					FrequencyUtil.getFrequencyDetail(FrequencyUtil.getFrequencyCode(financeMain.getGrcPftFrq()))
 							.getFrequencyDescription());
-			reportData.setNextGrcPftDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftDate()));
+			reportData.setNextGrcPftDate(DateUtil.formatToLongDate(financeMain.getNextGrcPftDate()));
 			reportData.setGrcPftRvwFrq(
 					FrequencyUtil.getFrequencyDetail(financeMain.getGrcPftRvwFrq()).getFrequencyDescription());
-			reportData.setNextGrcPftRvwDate(DateUtility.formatToLongDate(financeMain.getNextGrcPftRvwDate()));
+			reportData.setNextGrcPftRvwDate(DateUtil.formatToLongDate(financeMain.getNextGrcPftRvwDate()));
 			reportData.setGrcCpzFrq(
 					FrequencyUtil.getFrequencyDetail(financeMain.getGrcCpzFrq()).getFrequencyDescription());
-			reportData.setNextGrcCpzDate(DateUtility.formatToLongDate(financeMain.getNextGrcCpzDate()));
+			reportData.setNextGrcCpzDate(DateUtil.formatToLongDate(financeMain.getNextGrcCpzDate()));
 			reportData.setAllowGrcRepay(financeMain.isAllowGrcRepay() ? "True" : "False");
 			reportData.setGrcSchdMethod(
 					"#".equals(StringUtils.trimToEmpty(financeMain.getGrcSchdMthd())) ? financeMain.getGrcSchdMthd()
@@ -1062,16 +1062,16 @@ public class FinMainReportData implements Serializable {
 				: StringUtils.trimToEmpty(financeMain.getScheduleMethod()));
 		reportData.setRepayPftFrq(
 				FrequencyUtil.getFrequencyDetail(financeMain.getRepayPftFrq()).getFrequencyDescription());
-		reportData.setNextRepayPftDate(DateUtility.formatToLongDate(financeMain.getNextRepayPftDate()));
+		reportData.setNextRepayPftDate(DateUtil.formatToLongDate(financeMain.getNextRepayPftDate()));
 		reportData.setRepayRevFrq(
 				FrequencyUtil.getFrequencyDetail(financeMain.getRepayRvwFrq()).getFrequencyDescription());
-		reportData.setNextRepayRvwDate(DateUtility.formatToLongDate(financeMain.getNextRepayRvwDate()));
+		reportData.setNextRepayRvwDate(DateUtil.formatToLongDate(financeMain.getNextRepayRvwDate()));
 		reportData.setRepayCpzFrq(
 				FrequencyUtil.getFrequencyDetail(financeMain.getRepayCpzFrq()).getFrequencyDescription());
-		reportData.setNextRepayCpzDate(DateUtility.formatToLongDate(financeMain.getNextRepayCpzDate()));
+		reportData.setNextRepayCpzDate(DateUtil.formatToLongDate(financeMain.getNextRepayCpzDate()));
 		reportData.setRepayFrq(FrequencyUtil.getFrequencyDetail(financeMain.getRepayFrq()).getFrequencyDescription());
-		reportData.setNextRepayDate(DateUtility.formatToLongDate(financeMain.getNextRepayDate()));
-		reportData.setMaturityDate(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		reportData.setNextRepayDate(DateUtil.formatToLongDate(financeMain.getNextRepayDate()));
+		reportData.setMaturityDate(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 		reportData.setRepayPftOnPftFrq(financeMain.isFinRepayPftOnFrq() ? "True" : "False");
 
 		// OverDue Charges Details

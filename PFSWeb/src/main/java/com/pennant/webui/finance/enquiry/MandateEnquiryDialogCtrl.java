@@ -56,7 +56,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -70,6 +69,7 @@ import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.webui.mandate.mandate.MandateListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -536,7 +536,7 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (manFinanceExposureDetails != null) {
 			for (FinanceEnquiry finEnquiry : manFinanceExposureDetails) {
 				Listitem item = new Listitem();
-				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				Listcell lc = new Listcell(DateUtil.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getLovDescFinTypeName());
 				lc.setParent(item);

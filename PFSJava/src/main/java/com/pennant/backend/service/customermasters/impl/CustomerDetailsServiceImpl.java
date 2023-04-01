@@ -48,7 +48,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
@@ -2208,9 +2207,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[2];
 							valueParm[0] = "employment startDate:"
-									+ DateUtility.format(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+									+ DateUtil.format(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 							valueParm[1] = "employment endDate:"
-									+ DateUtility.format(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
+									+ DateUtil.format(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 						}
@@ -2727,7 +2726,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
 						&& PennantConstants.FORM60.equals(custDocument.getCustDocCategory())) {
-					Date addMonths = DateUtility.addMonths(custDocument.getCustDocIssuedOn(), 72);
+					Date addMonths = DateUtil.addMonths(custDocument.getCustDocIssuedOn(), 72);
 					if (!ImplementationConstants.RETAIL_CUST_PAN_MANDATORY
 							&& (DateUtil.compare(addMonths, custDocument.getCustDocExpDate()) < 0)) {
 						String[] valueParm = new String[1];
@@ -2889,9 +2888,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[3];
 					valueParm[0] = "FinDate";
-					valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+					valueParm[1] = DateUtil.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 							PennantConstants.XMLDateFormat);
-					valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -3317,8 +3316,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
-		Date dtStartDate = DateUtility.addMonths(startDate, 1);
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		Date dtStartDate = DateUtil.addMonths(startDate, 1);
+		Date dtEndDate = DateUtil.addMonths(dtStartDate, noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -3332,7 +3331,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) < 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);
@@ -3438,7 +3437,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					} else {
-						if (DateUtility.compare(subDetail.getMonthYear(), detail.getMonthYear()) != 0) {
+						if (DateUtil.compare(subDetail.getMonthYear(), detail.getMonthYear()) != 0) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "bankInfoDetails:MonthYear";
 							valueParm[1] = "bankInfoSubDetails:MonthYear";
@@ -3596,8 +3595,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (date.compareTo(SysParamUtil.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = label;
-				valueParm[1] = DateUtility.format(defaultAppDate, PennantConstants.XMLDateFormat);
-				valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtil.format(defaultAppDate, PennantConstants.XMLDateFormat);
+				valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			}
 		}
@@ -3929,9 +3928,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
-			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+			valueParm[1] = DateUtil.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			auditDetail.setErrorDetail(errorDetail);
 		}
@@ -8212,7 +8211,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						dmsQueue.setReference(perfiosHeader.getTransactionId());
 						dmsQueue.setDocName(perfiosHeader.getDocName());
 						dmsQueue.setCustCif(perfiosHeader.getCustomerCIF());
-						dmsQueue.setCreatedOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
+						dmsQueue.setCreatedOn(DateUtil.getTimestamp(SysParamUtil.getAppDate()));
 						dmsQueue.setOfferId(perfiosHeader.getOfferId());
 						dmsQueue.setApplicationNo(perfiosHeader.getApplicationNo());
 						if (SessionUserDetails.getLogiedInUser() != null) {

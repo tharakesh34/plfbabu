@@ -28,7 +28,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.FrequencyUtil;
@@ -1510,7 +1509,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			geDate = DateUtil.getDatePart(calendar.getTime());
 		}
 
-		if (geDate.before(DateUtility.addDays(appDate, 1))) {
+		if (geDate.before(DateUtil.addDays(appDate, 1))) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "CalGrcEndDate: " + geDate;
 			valueParm[1] = "AppDate";
@@ -1625,7 +1624,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 		Date appDate = SysParamUtil.getAppDate();
 		if (financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()
-				.before(DateUtility.addDays(appDate, 1))) {
+				.before(DateUtil.addDays(appDate, 1))) {
 			String[] valueParm = new String[2];
 			valueParm[0] = param + "EndDate: "
 					+ financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
@@ -1633,7 +1632,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90205", valueParm)));
 		}
 		if (financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()
-				.before(DateUtility.addDays(appDate, 1))) {
+				.before(DateUtil.addDays(appDate, 1))) {
 			String[] valueParm = new String[2];
 			valueParm[0] = param + "EndDate: "
 					+ financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
@@ -1907,7 +1906,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			Collections.sort(schedules, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2230,9 +2229,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			valueParm[0] = "receivedDate";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		} else {
-			if (DateUtility.compare(fsi.getReceiptDetail().getReceivedDate(), appDate) > 0) {
+			if (DateUtil.compare(fsi.getReceiptDetail().getReceivedDate(), appDate) > 0) {
 				valueParm = new String[1];
-				valueParm[0] = DateUtility.formatToLongDate(appDate);
+				valueParm[0] = DateUtil.formatToLongDate(appDate);
 				return APIErrorHandlerService.getFailedStatus("RU0006", valueParm);
 			}
 		}
@@ -2286,9 +2285,9 @@ public class FinServiceInstController extends SummaryDetailService {
 				valueParm[0] = "valueDate";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			} else {
-				if (DateUtility.compare(finReceiptDetail.getValueDate(), appDate) > 0) {
+				if (DateUtil.compare(finReceiptDetail.getValueDate(), appDate) > 0) {
 					valueParm = new String[1];
-					valueParm[0] = DateUtility.formatToLongDate(appDate);
+					valueParm[0] = DateUtil.formatToLongDate(appDate);
 					return APIErrorHandlerService.getFailedStatus("RU0007", valueParm);
 				}
 			}
@@ -2298,15 +2297,15 @@ public class FinServiceInstController extends SummaryDetailService {
 					valueParm[0] = "realizationDate";
 					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				} else {
-					if (DateUtility.compare(fsi.getRealizationDate(), finReceiptDetail.getValueDate()) < 0) {
+					if (DateUtil.compare(fsi.getRealizationDate(), finReceiptDetail.getValueDate()) < 0) {
 						valueParm = new String[1];
-						valueParm[0] = DateUtility.formatToLongDate(finReceiptDetail.getValueDate());
+						valueParm[0] = DateUtil.formatToLongDate(finReceiptDetail.getValueDate());
 						return APIErrorHandlerService.getFailedStatus("RU0019", valueParm);
 					}
-					if (DateUtility.compare(fsi.getRealizationDate(), appDate) > 0) {
+					if (DateUtil.compare(fsi.getRealizationDate(), appDate) > 0) {
 						valueParm = new String[2];
 						valueParm[0] = "realizationDate";
-						valueParm[1] = DateUtility.formatToLongDate(appDate);
+						valueParm[1] = DateUtil.formatToLongDate(appDate);
 						return APIErrorHandlerService.getFailedStatus("30568", valueParm);
 					}
 				}

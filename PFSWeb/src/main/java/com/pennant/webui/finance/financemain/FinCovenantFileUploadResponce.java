@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.media.Media;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
@@ -208,7 +207,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				covenantTypeData.setOtc(getBooleanValue(record, "AlwOtc"));
 				covenantTypeData.setDocumentReceived(getBooleanValue(record, "DocumentReceived"));
 				covenantTypeData.setReceivableDate(
-						DateUtility.getDate(getStringValue(record, "ReceivableDate"), "E MMM dd HH:mm:ss Z yyy"));
+						DateUtil.getDate(getStringValue(record, "ReceivableDate"), "E MMM dd HH:mm:ss Z yyy"));
 				covenantTypeData.setFrequency(getStringValue(record, "Frequency"));
 				covenantTypeData.setAlertsRequired(getBooleanValue(record, "AlertsRequired"));
 				covenantTypeData.setAlertType(getStringValue(record, "AlertType"));
@@ -225,7 +224,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 
 				covenantTypeData.setPdd(getBooleanValue(record, "Pdd"));
 				covenantTypeData.setExtendedDate(
-						DateUtility.getDate(getStringValue(record, "extendedDate"), "E MMM dd HH:mm:ss Z yyy"));
+						DateUtil.getDate(getStringValue(record, "extendedDate"), "E MMM dd HH:mm:ss Z yyy"));
 
 				CovenantType covenantType = covenantTypeDAO.getCovenantTypeId(covenantTypeData.getCode(),
 						covenantTypeData.getCategory(), "");
@@ -338,7 +337,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 
 				if (StringUtils.isNotBlank(covenantTypeData.getDocumentReceivedDate() + "")
 						&& covenantTypeData.isDocumentReceived()) {
-					if (DateUtility.compare(covenantTypeData.getDocumentReceivedDate(),
+					if (DateUtil.compare(covenantTypeData.getDocumentReceivedDate(),
 							SysParamUtil.getAppDate()) > 0) {
 						throw new AppException("Future Date is not allowed");
 					}
@@ -348,7 +347,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 
 				Date appDate = SysParamUtil.getAppDate();
 
-				if (DateUtility.compare(appDate, frequencyDate) < 0) {
+				if (DateUtil.compare(appDate, frequencyDate) < 0) {
 					frequencyDate = DateUtil.addMonths(frequencyDate, 1);
 				}
 
@@ -389,8 +388,8 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (covenantTypeData.isPdd()) {
 					if (covenantTypeData.getReceivableDate() == null) {
 						throw new AppException("Receivable date is mandatory.");
-					} else if (DateUtility.compare(covenantTypeData.getReceivableDate(), loanStartDt) < 0
-							|| DateUtility.compare(covenantTypeData.getReceivableDate(), maturityDate) > 0) {
+					} else if (DateUtil.compare(covenantTypeData.getReceivableDate(), loanStartDt) < 0
+							|| DateUtil.compare(covenantTypeData.getReceivableDate(), maturityDate) > 0) {
 						throw new AppException("Receivable date is after loan start date " + loanStartDt
 								+ " and before maturity date " + maturityDate);
 					}
@@ -398,7 +397,7 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 				if (covenantTypeData.isAllowPostPonement()) {
 					if (covenantTypeData.getExtendedDate() == null) {
 						throw new AppException("Extended date is mandatory.");
-					} else if (DateUtility.compare(covenantTypeData.getExtendedDate(), appDate) < 0) {
+					} else if (DateUtil.compare(covenantTypeData.getExtendedDate(), appDate) < 0) {
 						throw new AppException("Past Date is not allowed For Extended Date");
 					}
 				} else {
@@ -573,18 +572,18 @@ public class FinCovenantFileUploadResponce extends BasicDao<FinCovenantType> imp
 						}
 					}
 					Date receivableDate;
-					Date maxCovreceiveDate = DateUtility.addDays(SysParamUtil.getAppDate(),
+					Date maxCovreceiveDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 							+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
 					if (finCovenantTypeData.isAlwPostpone()) {
-						receivableDate = DateUtility.addDays(SysParamUtil.getAppDate(),
+						receivableDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 								finCovenantTypeData.getPostponeDays());
 						finCovenantTypeData.setReceivableDate(receivableDate);
 						if (finCovenantTypeData.isAlwPostpone() && finCovenantTypeData.getPostponeDays() <= 0) {
 							throw new AppException("Postpone Days should be greater than zero.");
 						} else {
-							if (DateUtility.compare(finCovenantTypeData.getReceivableDate(),
+							if (DateUtil.compare(finCovenantTypeData.getReceivableDate(),
 									SysParamUtil.getAppDate()) > 0
-									&& DateUtility.compare(finCovenantTypeData.getReceivableDate(),
+									&& DateUtil.compare(finCovenantTypeData.getReceivableDate(),
 											maxCovreceiveDate) < 0) {
 							} else {
 								throw new AppException("Receivable date :" + finCovenantTypeData.getReceivableDate()

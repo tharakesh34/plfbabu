@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -36,6 +35,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -126,7 +126,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		inst.setFinReference(fm.getFinReference());
 		inst.setMaker(auditHeader.getAuditUsrId());
 		inst.setMakerAppDate(SysParamUtil.getAppDate());
-		inst.setMakerSysDate(DateUtility.getSysDate());
+		inst.setMakerSysDate(DateUtil.getSysDate());
 		inst.setLinkedTranID(0);
 
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
@@ -270,7 +270,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			fsi = fsiList.get(0);
 			fsi.setChecker(auditHeader.getAuditUsrId());
 			fsi.setCheckerAppDate(appDate);
-			fsi.setCheckerSysDate(DateUtility.getSysDate());
+			fsi.setCheckerSysDate(DateUtil.getSysDate());
 		} else {
 			fsi = new FinServiceInstruction();
 			fsi.setFinID(fmi.getFinID());
@@ -279,10 +279,10 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			fsi.setFinEvent(FinServiceEvent.CHANGETDS);
 			fsi.setChecker(auditHeader.getAuditUsrId());
 			fsi.setCheckerAppDate(appDate);
-			fsi.setCheckerSysDate(DateUtility.getSysDate());
+			fsi.setCheckerSysDate(DateUtil.getSysDate());
 			fsi.setMaker(auditHeader.getAuditUsrId());
 			fsi.setMakerAppDate(appDate);
-			fsi.setMakerSysDate(DateUtility.getSysDate());
+			fsi.setMakerSysDate(DateUtil.getSysDate());
 			fsi.setLinkedTranID(0);
 		}
 

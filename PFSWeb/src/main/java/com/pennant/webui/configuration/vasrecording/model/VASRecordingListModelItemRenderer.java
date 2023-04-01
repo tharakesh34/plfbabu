@@ -34,12 +34,12 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -67,11 +67,11 @@ public class VASRecordingListModelItemRenderer implements ListitemRenderer<VASRe
 		lc = new Listcell(PennantApplicationUtil.getLabelDesc(vASRecording.getFeePaymentMode(),
 				PennantStaticListUtil.getFeeTypes()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(vASRecording.getValueDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(vASRecording.getValueDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(vASRecording.getAccrualTillDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(vASRecording.getAccrualTillDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(vASRecording.getRecurringDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(vASRecording.getRecurringDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(vASRecording.getDsaId());
 		lc.setParent(item);

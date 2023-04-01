@@ -47,7 +47,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -1150,7 +1149,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		String entity = this.downloadEntity.getValue();
 		String uploadDate = "";
 		if (this.dateOfUpload.getValue() != null) {
-			uploadDate = DateUtility.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
+			uploadDate = DateUtil.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
 		}
 		Filter[] filters = new Filter[1];
 

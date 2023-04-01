@@ -47,7 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -130,6 +129,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -879,7 +879,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// Disbursement Details updation
 			for (FinanceDisbursement cusrDisb : scheduleData.getDisbursementDetails()) {
-				if (DateUtility.compare(cusrDisb.getDisbDate(), fm.getFinStartDate()) == 0) {
+				if (DateUtil.compare(cusrDisb.getDisbDate(), fm.getFinStartDate()) == 0) {
 					cusrDisb.setFeeChargeAmt(cusrDisb.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
 					break;
 				}
@@ -887,7 +887,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 			// Schedule Details Updation
 			for (FinanceScheduleDetail curSchd : schdList) {
-				if (DateUtility.compare(curSchd.getSchDate(), fm.getFinStartDate()) == 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), fm.getFinStartDate()) == 0) {
 					curSchd.setFeeChargeAmt(curSchd.getFeeChargeAmt().subtract(vasFeeDetail.getRemainingFee()));
 					break;
 				}
@@ -917,7 +917,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 				// Schedule Details Updation
 				for (FinanceScheduleDetail curSchd : schdList) {
-					if (DateUtility.compare(curSchd.getSchDate(), feeSchd.getSchDate()) == 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), feeSchd.getSchDate()) == 0) {
 						curSchd.setFeeSchd(curSchd.getFeeSchd().subtract(feeSchd.getSchAmount()));
 						curSchd.setSchdFeeOS(curSchd.getSchdFeeOS().subtract(feeSchd.getSchAmount()));
 						break;
@@ -2032,9 +2032,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 						|| vasRecording.getValueDate().after(SysParamUtil.getAppDate())) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "Value Date";
-					valueParm[1] = DateUtility
+					valueParm[1] = DateUtil
 							.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE));
-					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
+					valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 					return auditDetail;
 				}
@@ -2051,8 +2051,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "AccrualTillDate";
-						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
-						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						valueParm[1] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
+						valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return auditDetail;
 					}
@@ -2081,8 +2081,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 							|| vasRecording.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "RecurringDate";
-						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
+						valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						valueParm[1] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return auditDetail;
 					}
@@ -2150,9 +2150,9 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 						if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 							String[] valueParm = new String[2];
-							valueParm[0] = DateUtility.format(detail.getCustDocIssuedOn(),
+							valueParm[0] = DateUtil.format(detail.getCustDocIssuedOn(),
 									PennantConstants.XMLDateFormat);
-							valueParm[1] = DateUtility.format(detail.getCustDocExpDate(),
+							valueParm[1] = DateUtil.format(detail.getCustDocExpDate(),
 									PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);

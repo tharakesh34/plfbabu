@@ -83,7 +83,7 @@ public class LoanPendingData extends AbstractWorkflowEntity implements java.io.S
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
+
 	public String getCurrentRole() {
 		return currentRole;
 	}

@@ -59,7 +59,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -126,6 +125,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -1034,7 +1034,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			 */}
 
 		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");
-		Date backValueDate = DateUtility.addDays(appDate, backValueDays);
+		Date backValueDate = DateUtil.addDays(appDate, backValueDays);
 
 		if (moduleDefiner.equals(FinServiceEvent.RATECHG)) {
 			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1 OR RateChgAnyDay = 1) ");
@@ -1117,7 +1117,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
 			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
-			backValueDate = DateUtility.addDays(appDate, backValueDays);
+			backValueDate = DateUtil.addDays(appDate, backValueDays);
 
 			// whereClause.append(" AND MigratedFinance = 0 ");
 			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");

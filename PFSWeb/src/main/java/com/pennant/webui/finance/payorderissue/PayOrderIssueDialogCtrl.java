@@ -62,7 +62,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
@@ -92,6 +91,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -402,8 +402,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 		this.payOrderIssue_finCcy
 				.setValue(payIHeader.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(payIHeader.getFinCcy()));
 
-		this.payOrderIssue_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.payOrderIssue_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		this.payOrderIssue_startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+		this.payOrderIssue_maturityDate.setValue(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 
 		this.finReference.setValue(financeMain.getFinReference());
 		this.payOrderIssue_quickDisb.setChecked(financeMain.isQuickDisb());

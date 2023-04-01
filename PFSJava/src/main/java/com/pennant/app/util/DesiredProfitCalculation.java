@@ -48,6 +48,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.rits.cloning.Cloner;
 
 public class DesiredProfitCalculation {
@@ -123,13 +124,13 @@ public class DesiredProfitCalculation {
 			return;
 		}
 
-		nextRepayPftDate = DateUtility.parse(DateUtility.format(nextRepayPftDate, PennantConstants.DBDateFormat),
+		nextRepayPftDate = DateUtil.parse(DateUtil.format(nextRepayPftDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		gpEndDate = DateUtility.parse(DateUtility.format(gpEndDate, PennantConstants.DBDateFormat),
+		gpEndDate = DateUtil.parse(DateUtil.format(gpEndDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		nextRepayDate = DateUtility.parse(DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
+		nextRepayDate = DateUtil.parse(DateUtil.format(nextRepayDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
 		// Calculation process based on Repay period rate type

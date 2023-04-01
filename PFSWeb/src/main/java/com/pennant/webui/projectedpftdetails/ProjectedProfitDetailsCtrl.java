@@ -28,7 +28,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.eod.accrual.AccrualProcess;
 import com.pennant.app.eod.service.AmortizationService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -91,7 +90,7 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering : " + event);
 
 		if ("".equals(AccrualProcess.ACC_RUNNING)) {
-			this.valueDate.setValue(DateUtility.getMonthEnd(SysParamUtil.getAppDate()));
+			this.valueDate.setValue(DateUtil.getMonthEnd(SysParamUtil.getAppDate()));
 			this.valueDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_ProjectedProfitDetails_valueDate.value"), true));
 		}
@@ -131,9 +130,9 @@ public class ProjectedProfitDetailsCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 			// To Check Last Day income Adding One Day to Value Date(Because Calculation will Follow End Of the Day
 			// process )
-			String valueDate = DateUtility.formatToShortDate(this.valueDate.getValue());
+			String valueDate = DateUtil.formatToShortDate(this.valueDate.getValue());
 
-			accrualProcess = AccrualProcess.getInstance(getAmortizationService(), DateUtility.getDate(valueDate),
+			accrualProcess = AccrualProcess.getInstance(getAmortizationService(), DateUtil.getDate(valueDate),
 					getUserWorkspace().getLoggedInUser().getBranchCode());
 			this.timer.start();
 			this.valueDate.setDisabled(true);

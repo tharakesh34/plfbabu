@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -86,6 +85,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pff.core.util.CustomerUtil;
 import com.pennanttech.util.APIConstants;
@@ -1682,8 +1682,8 @@ public class CustomerController extends GenericService<Object> {
 		custAgreementDetail.setCustCurrentAddres(new CustomerAddres());
 		custAgreementDetail.setCustomerEMail(new CustomerEMail());
 		custAgreementDetail.setAppDate(SysParamUtil.getAppDate());
-		custAgreementDetail.setStrAppDate(DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
-		custAgreementDetail.setDob(DateUtility.formatToLongDate(customerDetails.getCustomer().getCustDOB()));
+		custAgreementDetail.setStrAppDate(DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
+		custAgreementDetail.setDob(DateUtil.formatToLongDate(customerDetails.getCustomer().getCustDOB()));
 
 		setCustomerAddress(custAgreementDetail, addressList);
 

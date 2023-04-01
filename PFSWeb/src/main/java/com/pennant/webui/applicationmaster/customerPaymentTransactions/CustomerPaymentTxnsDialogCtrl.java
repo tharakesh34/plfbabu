@@ -54,7 +54,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -69,6 +68,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -264,8 +264,8 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		this.customerPaymentTxn_finCcy
 				.setValue(financeMain.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(financeMain.getFinCcy()));
 
-		this.customerPaymentTxn_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.customerPaymentTxn_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		this.customerPaymentTxn_startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+		this.customerPaymentTxn_maturityDate.setValue(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 
 		this.finReference.setValue(financeMain.getFinReference());
 		this.customerPaymentTxn_quickDisb.setChecked(financeMain.isQuickDisb());

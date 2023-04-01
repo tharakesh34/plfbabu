@@ -57,7 +57,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.VasMovement;
@@ -69,6 +68,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -341,9 +341,9 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		this.lbl_FinAmount
 				.setValue(CurrencyUtil.format(aVasMovement.getFinAmount(), PennantConstants.defaultCCYDecPos));
 		this.lbl_startDate
-				.setValue(DateUtility.format(aVasMovement.getFinStartdate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(aVasMovement.getFinStartdate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
-				.setValue(DateUtility.format(aVasMovement.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(aVasMovement.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
 		logger.debug("Leaving");
 	}

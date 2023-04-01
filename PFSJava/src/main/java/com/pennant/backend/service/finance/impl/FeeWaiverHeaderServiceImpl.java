@@ -46,7 +46,6 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -117,6 +116,7 @@ import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -1212,7 +1212,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			Collections.sort(dueTaxList, new Comparator<FinODAmzTaxDetail>() {
 				@Override
 				public int compare(FinODAmzTaxDetail detail1, FinODAmzTaxDetail detail2) {
-					return DateUtility.compare(detail1.getValueDate(), detail2.getValueDate());
+					return DateUtil.compare(detail1.getValueDate(), detail2.getValueDate());
 				}
 			});
 		}
@@ -1374,7 +1374,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							finod.setOdPri(pdPenality.getFinCurODPri());
 							finod.setOdPft(pdPenality.getFinCurODPft());
 							finod.setFinOdTillDate(postDate);
-							finod.setDueDays(DateUtility.getDaysBetween(pdPenality.getFinODSchdDate(), postDate));
+							finod.setDueDays(DateUtil.getDaysBetween(pdPenality.getFinODSchdDate(), postDate));
 							finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
 							pdPenality.setLpiDueTillDate(fwh.getValueDate());
 							pdPenality.setLpiDueAmt(
@@ -1526,7 +1526,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				finLPIAmt.setOdPri(oddetail.getFinCurODPri());
 				finLPIAmt.setOdPft(oddetail.getFinCurODPft());
 				finLPIAmt.setFinOdTillDate(postDate);
-				finLPIAmt.setDueDays(DateUtility.getDaysBetween(oddetail.getFinODSchdDate(), postDate));
+				finLPIAmt.setDueDays(DateUtil.getDaysBetween(oddetail.getFinODSchdDate(), postDate));
 				finLPIAmt.setChargeType(RepayConstants.FEE_TYPE_LPI);
 
 				oddetail.setLpiDueTillDate(fwh.getValueDate());
@@ -2022,7 +2022,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		rsd.setPrincipalSchdPayNow(schedule.getSchdPriPaid());
 		rsd.setTdsSchdPayNow(tdsSchdPayNow);
 
-		int daysLate = DateUtility.getDaysBetween(schedule.getSchDate(), SysParamUtil.getAppValueDate());
+		int daysLate = DateUtil.getDaysBetween(schedule.getSchDate(), SysParamUtil.getAppValueDate());
 		rsd.setDaysLate(daysLate);
 
 		rsd.setRepayBalance(schedule.getProfitSchd().add(schedule.getPrincipalSchd()));

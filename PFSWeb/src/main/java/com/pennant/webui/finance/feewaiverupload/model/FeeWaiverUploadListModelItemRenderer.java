@@ -8,10 +8,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.expenses.FeeWaiverUploadHeader;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.UploadConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class FeeWaiverUploadListModelItemRenderer implements ListitemRenderer<FeeWaiverUploadHeader>, Serializable {
@@ -36,7 +36,7 @@ public class FeeWaiverUploadListModelItemRenderer implements ListitemRenderer<Fe
 		lc.setParent(item);
 		lc = new Listcell(uploadHeader.getFileName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(uploadHeader.getTransactionDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtil.format(uploadHeader.getTransactionDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(uploadHeader.getUserName());
 		lc.setParent(item);

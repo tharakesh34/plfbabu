@@ -51,7 +51,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -67,6 +66,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
@@ -268,7 +268,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 
 		try {
-			if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
+			if (this.toDate != null && DateUtil.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
 				throw new WrongValueException(this.toDate,
 						Labels.getLabel("NUMBER_MINVALUE",
 								new String[] { Labels.getLabel("label_PresentmentDetailList_ToDate.value"),
@@ -287,7 +287,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		}
 		try {
 			int diffentDays = SysParamUtil.getValueAsInt("PRESENTMENT_DAYS_DEF");
-			if (DateUtility.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
+			if (DateUtil.getDaysBetween(this.fromdate.getValue(), this.toDate.getValue()) >= diffentDays) {
 				throw new WrongValueException(this.toDate,
 						Labels.getLabel("label_Difference_between_days") + " " + diffentDays);
 			}
@@ -297,7 +297,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		try {
 			int alwdDaysFromAppDate = SysParamUtil.getValueAsInt("PRESENTMENT_EXTRACT_ALW_DAYS_FROM_APP_DATE");
-			if (alwdDaysFromAppDate > 0 && DateUtility.getDaysBetween(this.toDate.getValue(),
+			if (alwdDaysFromAppDate > 0 && DateUtil.getDaysBetween(this.toDate.getValue(),
 					SysParamUtil.getAppDate()) >= alwdDaysFromAppDate) {
 				throw new WrongValueException(this.toDate,
 						Labels.getLabel("label_Diff_btwn_To_and_App_date") + " " + alwdDaysFromAppDate);

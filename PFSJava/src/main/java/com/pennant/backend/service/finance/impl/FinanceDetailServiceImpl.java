@@ -64,7 +64,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
@@ -4970,7 +4969,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		for (FinanceScheduleDetail currSchd : modfsd) {
 			Date schDate = currSchd.getSchDate();
 
-			if ((DateUtility.compare(schDate, SysParamUtil.getAppDate()) >= 0) && currSchd.getInstNumber() > 0) {
+			if ((DateUtil.compare(schDate, SysParamUtil.getAppDate()) >= 0) && currSchd.getInstNumber() > 0) {
 				if ((currSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_REPAY)
 						|| currSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_MATURITY)) && !rpyFound) {
 					if (currSchd.isCpzOnSchDate()) {
@@ -7949,7 +7948,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			BeanUtils.copyProperties(customer, eligibilityCheck);
 
 			if (customer.getCustDOB() != null) {
-				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
+				int dobMonths = DateUtil.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
 				BigDecimal age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
 				eligibilityCheck.setCustAge(age);
 				// Minor Age Calculation
@@ -7977,7 +7976,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			Date curBussDate = SysParamUtil.getAppDate();
 			eligibilityCheck
-					.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
+					.setBlackListExpPeriod(DateUtil.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
 
 			eligibilityCheck.setCustCtgCode(customer.getCustCtgCode());
 			eligibilityCheck.setReqProduct(productCode);
@@ -8118,7 +8117,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Eligibility object
 			org.apache.commons.beanutils.BeanUtils.copyProperties(eligibilityCheck, customer);
-			int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
+			int dobMonths = DateUtil.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
 			BigDecimal age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
 			eligibilityCheck.setCustAge(age);
 
@@ -8134,7 +8133,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			Date curBussDate = SysParamUtil.getAppDate();
 			eligibilityCheck
-					.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
+					.setBlackListExpPeriod(DateUtil.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
 
 			if (customer.getExistCustID() != 0) {
 
@@ -10065,8 +10064,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						? financeType.getFinDftIntFrq().substring(financeType.getFinDftIntFrq().length() - 2)
 						: financeType.getFinDftIntFrq();
 
-				int month = DateUtility.getMonth(financeMain.getFinStartDate());
-				int year = DateUtility.getYear(financeMain.getFinStartDate());
+				int month = DateUtil.getMonth(financeMain.getFinStartDate());
+				int year = DateUtil.getYear(financeMain.getFinStartDate());
 
 				YearMonth yearMonthObject = YearMonth.of(year, month);
 				int daysInMonth = yearMonthObject.lengthOfMonth();

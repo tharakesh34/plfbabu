@@ -39,10 +39,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Model class for the <b>LimitHeader table</b>.<br>
@@ -312,7 +312,7 @@ public class LimitHeader extends AbstractWorkflowEntity {
 
 	public void setCreatedDate(XMLGregorianCalendar xmlCalendar) {
 		if (xmlCalendar != null) {
-			createdOn = DateUtility.ConvertFromXMLTime(xmlCalendar);
+			createdOn = DateUtil.ConvertFromXMLTime(xmlCalendar);
 			createdDate = xmlCalendar;
 		}
 	}
@@ -322,7 +322,7 @@ public class LimitHeader extends AbstractWorkflowEntity {
 		if (createdOn == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(createdOn);
+		return DateUtil.getXMLDate(createdOn);
 	}
 
 	public String getLovValue() {

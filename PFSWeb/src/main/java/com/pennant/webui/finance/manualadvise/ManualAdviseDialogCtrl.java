@@ -71,7 +71,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
@@ -111,6 +110,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -763,9 +763,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.lbl_FinAmount.setValue(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
 		this.lbl_startDate
-				.setValue(DateUtility.format(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
-				.setValue(DateUtility.format(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
 		fillComboBox(this.adviseType, String.valueOf(aManualAdvise.getAdviseType()), listAdviseType, "");
 
@@ -898,7 +898,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				lc = new Listcell(DateUtility.format(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtil.format(movement.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 
 				lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(),

@@ -39,7 +39,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserAccessDAO;
@@ -60,6 +59,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 
@@ -274,7 +274,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 				}
 				retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId() + "-" + seqNo));
 				retDataSet.setPostingId(
-						retDataSet.getFinReference() + DateUtility.format(new Date(), "yyyyMMddHHmmss") + StringUtils
+						retDataSet.getFinReference() + DateUtil.format(new Date(), "yyyyMMddHHmmss") + StringUtils
 								.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
 				retDataSet.setShadowPosting(false);
 				retDataSet.setPostDate(dateAppDate);

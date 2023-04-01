@@ -57,7 +57,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDeal;
@@ -78,6 +77,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -870,7 +870,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 			for (AssignmentRate assignmentRate : assignmentRates) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(DateUtility.formatToLongDate(assignmentRate.getEffectiveDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(assignmentRate.getEffectiveDate()));
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.formatRate(assignmentRate.getMclrRate().doubleValue(), 9));
 				lc.setStyle("text-align:right;");

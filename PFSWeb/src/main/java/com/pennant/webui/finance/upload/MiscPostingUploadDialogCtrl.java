@@ -31,7 +31,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
@@ -45,6 +44,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
@@ -297,7 +297,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.formatToLongDate(miscPosting.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(miscPosting.getValueDate()));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
@@ -1112,7 +1112,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatToLongDate(miscPosting.getValueDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(miscPosting.getValueDate()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
@@ -1179,7 +1179,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatToLongDate(miscPosting.getValueDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(miscPosting.getValueDate()));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 

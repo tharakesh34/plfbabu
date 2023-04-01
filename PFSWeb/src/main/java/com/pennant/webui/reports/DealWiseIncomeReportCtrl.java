@@ -37,10 +37,10 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.DailyDownloadInterfaceService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -73,8 +73,8 @@ public class DealWiseIncomeReportCtrl extends GFCBaseCtrl<ReportConfiguration> {
 
 			dateValueDate = SysParamUtil.getAppDate();
 
-			Date prvMnthStartDate = DateUtility
-					.getMonthStart(DateUtility.addDays(DateUtility.getMonthStart(dateValueDate), -1));
+			Date prvMnthStartDate = DateUtil
+					.getMonthStart(DateUtil.addDays(DateUtil.getMonthStart(dateValueDate), -1));
 
 			// Saving new Income Account Transaction Details From Core System
 			getDailyDownloadInterfaceService().processIncomeAccTransactions(prvMnthStartDate);

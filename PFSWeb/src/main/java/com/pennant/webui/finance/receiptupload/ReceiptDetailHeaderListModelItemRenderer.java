@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 
 /**
@@ -94,7 +94,7 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 		lc = new Listcell(alocType);
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(rcptDtl.getReceivedDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(rcptDtl.getReceivedDate()));
 		lc.setParent(item);
 
 		lc = new Listcell(rcptDtl.getProcessingStatus() == 2 ? "SUCCESS" : "FAILED");

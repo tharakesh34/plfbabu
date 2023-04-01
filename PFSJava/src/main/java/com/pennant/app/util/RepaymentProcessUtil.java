@@ -1984,7 +1984,7 @@ public class RepaymentProcessUtil {
 				}
 				if (fee.getFinFeeScheduleDetailList() != null && !fee.getFinFeeScheduleDetailList().isEmpty()) {
 					for (FinFeeScheduleDetail feeSchd : fee.getFinFeeScheduleDetailList()) {
-						if (DateUtility.compare(feeSchd.getSchDate(), rpySchd.getSchDate()) == 0) {
+						if (DateUtil.compare(feeSchd.getSchDate(), rpySchd.getSchDate()) == 0) {
 							feeSchdUpdation(feeSchd, paidBal, waivedBal, allocationPaidMap, allocationWaivedMap);
 						}
 					}
@@ -2321,7 +2321,7 @@ public class RepaymentProcessUtil {
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
 			throw e;
-		}catch (AppException e) {
+		} catch (AppException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}
@@ -2521,7 +2521,7 @@ public class RepaymentProcessUtil {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2623,7 +2623,7 @@ public class RepaymentProcessUtil {
 			reqMaxODDate = rch.getValueDate();
 		}
 		if (!ImplementationConstants.LPP_CALC_SOD) {
-			reqMaxODDate = DateUtility.addDays(reqMaxODDate, -1);
+			reqMaxODDate = DateUtil.addDays(reqMaxODDate, -1);
 		}
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 		if (CollectionUtils.isNotEmpty(overdueList)) {

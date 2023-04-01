@@ -83,7 +83,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -128,6 +127,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1435,7 +1435,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1472,7 +1472,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), finFormatter));

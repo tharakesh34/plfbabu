@@ -26,7 +26,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -47,6 +46,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -410,7 +410,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 
 		try {
 			Date appDate = SysParamUtil.getAppDate();
-			if (DateUtility.compare(this.postDate.getValue(), appDate) < 0 && !postDate.isDisabled()) {
+			if (DateUtil.compare(this.postDate.getValue(), appDate) < 0 && !postDate.isDisabled()) {
 				throw new WrongValueException(this.postDate,
 						"Payment Date should be greater than or equal to :" + appDate);
 			}
@@ -610,7 +610,7 @@ public class FeeRefundInstructionDialogCtrl extends GFCBaseCtrl<FeeRefundInstruc
 			}
 			if (!this.valueDate.isReadonly()) {
 				Date appDate = SysParamUtil.getAppDate();
-				Date todate = DateUtility.addMonths(appDate, 6);
+				Date todate = DateUtil.addMonths(appDate, 6);
 				this.valueDate.setConstraint(new PTDateValidator(
 						Labels.getLabel("label_DisbInstructionsDialog_ValueDate.value"), true, appDate, todate, true));
 			}

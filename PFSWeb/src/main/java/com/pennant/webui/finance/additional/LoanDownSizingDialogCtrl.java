@@ -36,7 +36,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -69,6 +68,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -360,8 +360,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.currency.setValue(aFinanceMain.getFinCcy());
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
-		this.startDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
-		this.maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
+		this.startDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getFinStartDate()));
+		this.maturityDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getMaturityDate()));
 
 		// DownSizing Details
 		this.totSanctionedAmt.setValue(finAssetValue);

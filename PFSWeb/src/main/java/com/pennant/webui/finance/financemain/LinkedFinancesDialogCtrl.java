@@ -60,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -83,6 +82,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -511,7 +511,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			this.finType.setValue(fm.getFinType());
 			this.loanAmount.setValue(PennantApplicationUtil.amountFormate(fm.getFinAssetValue(),
 					CurrencyUtil.getFormat(fm.getFinCcy())));
-			this.startDate.setValue(DateUtility.formatToLongDate(fm.getFinStartDate()));
+			this.startDate.setValue(DateUtil.formatToLongDate(fm.getFinStartDate()));
 			if (fmi != null) {
 				if (fmi.getRecordStatus() == null || fmi.getRecordStatus().equalsIgnoreCase("Approved")) {
 					this.recordStatus.setValue("");

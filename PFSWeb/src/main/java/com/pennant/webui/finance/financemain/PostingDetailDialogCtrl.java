@@ -39,13 +39,13 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -204,8 +204,8 @@ public class PostingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setPostAmount(
 					CurrencyUtil.format(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			detail.setRevTranCode(dataSet.getRevTranCode());
-			detail.setPostDate(DateUtility.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
-			detail.setValueDate(DateUtility.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+			detail.setPostDate(DateUtil.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
+			detail.setValueDate(DateUtil.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 			accountingDetails.add(detail);
 		}
 

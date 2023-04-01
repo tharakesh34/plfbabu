@@ -20,7 +20,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.CashBackDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -47,6 +46,7 @@ import com.pennanttech.dataengine.model.Table;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
@@ -157,9 +157,9 @@ public class CDSettlementResponseUpload extends BasicDao<CDSettlementProcess> im
 			settlementMapdata.addValue("AuthCode", (String) record.getValue("AuthCode"));
 			settlementMapdata.addValue("HostReference", (String) record.getValue("HostReference"));
 			settlementMapdata.addValue("TransactionDateTime",
-					DateUtility.getDate((String) record.getValue("TransactionDateTime"), "MMM dd, yyyy  hh:mm:ss"));
+					DateUtil.getDate((String) record.getValue("TransactionDateTime"), "MMM dd, yyyy  hh:mm:ss"));
 			settlementMapdata.addValue("SettlementDateTime",
-					DateUtility.getDate((String) record.getValue("SettlementDateTime"), "MMM dd, yyyy  hh:mm:ss"));
+					DateUtil.getDate((String) record.getValue("SettlementDateTime"), "MMM dd, yyyy  hh:mm:ss"));
 			settlementMapdata.addValue("BillingInvoice", (String) record.getValue("BillingInvoice"));
 			settlementMapdata.addValue("TransactionStatus", (String) record.getValue("TransactionStatus"));
 			settlementMapdata.addValue("Reason", (String) record.getValue("Reason"));

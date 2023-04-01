@@ -44,7 +44,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.FrequencyBox;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -52,6 +51,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -198,12 +198,12 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		try {
-			Date newSchdDate = DateUtility
-					.getDate(DateUtility.format(this.firstDate.getValue(), PennantConstants.dateFormat));
+			Date newSchdDate = DateUtil
+					.getDate(DateUtil.format(this.firstDate.getValue(), PennantConstants.dateFormat));
 			if (newSchdDate.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) <= 0) {
 				throw new WrongValueException(this.firstDate, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] {
 						Labels.getLabel("label_SubScheduleDialog_firstDate.value"),
-						DateUtility.formatToShortDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+						DateUtil.formatToShortDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 			}
 
 		} catch (WrongValueException we) {
@@ -335,7 +335,7 @@ public class SubscheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
 						&& !curSchd.getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_MATURITY)) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+					comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 					if (getFinanceScheduleDetail() != null

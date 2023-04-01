@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -58,7 +58,7 @@ public class FeeWaiverListModelItemRenderer implements ListitemRenderer<FeeWaive
 		lc = new Listcell(feeWaiverHeader.getEvent());
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(feeWaiverHeader.getPostingDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(feeWaiverHeader.getPostingDate()));
 		lc.setParent(item);
 
 		// Record Status

@@ -59,7 +59,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -92,6 +91,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -287,7 +287,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		this.calProvisionedAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.provisionedAmt.setFormat(PennantApplicationUtil.getAmountFormate(format));
 
-		this.dueFromDate.setFormat(DateUtility.DateFormat.SHORT_DATE.getPattern());
+		this.dueFromDate.setFormat(DateUtil.DateFormat.SHORT_DATE.getPattern());
 
 		logger.debug("Leaving");
 	}

@@ -39,7 +39,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
@@ -76,6 +75,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.MandateProcesses;
 
 /**
@@ -469,8 +469,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			if (mandate.getStartDate() != null && fm.getNextRepayDate() != null
 					&& fm.getNextRepayDate().compareTo(mandate.getStartDate()) < 0) {
 				String[] errParmFrq = new String[2];
-				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
-				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
+				errParmFrq[0] = DateUtil.formatToShortDate(mandate.getStartDate());
+				errParmFrq[1] = DateUtil.formatToShortDate(firstRepayDate);
 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65020", errParmFrq)));
 

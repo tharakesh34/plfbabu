@@ -1080,7 +1080,7 @@ public class ReceiptCalculator {
 		Date reqMaxODDate = valueDate;
 		if (!ImplementationConstants.LPP_CALC_SOD) {
 			if (!isGoldLoan) {
-				reqMaxODDate = DateUtility.addDays(valueDate, -1);
+				reqMaxODDate = DateUtil.addDays(valueDate, -1);
 			}
 		}
 

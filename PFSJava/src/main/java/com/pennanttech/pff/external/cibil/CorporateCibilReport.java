@@ -25,7 +25,6 @@ import com.northconcepts.datapipeline.core.Record;
 import com.northconcepts.datapipeline.csv.CSVWriter;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
@@ -881,7 +880,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 							odStartDate = DateUtil.getDatePart(od.getFinODSchdDate());
 						}
 
-						if (DateUtility.compare(odStartDate, DateUtil.getDatePart(od.getFinODSchdDate())) > 0) {
+						if (DateUtil.compare(odStartDate, DateUtil.getDatePart(od.getFinODSchdDate())) > 0) {
 							odStartDate = DateUtil.getDatePart(odStartDate);
 						}
 					}

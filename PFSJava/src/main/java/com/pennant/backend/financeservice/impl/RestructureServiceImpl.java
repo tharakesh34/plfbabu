@@ -19,7 +19,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -1582,8 +1581,8 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		if (rstDate.compareTo(appDate) > 0 || rstDate.compareTo(fullyPaidDate) < 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Restructure Date";
-			valueParm[1] = DateUtility.formatToShortDate(fullyPaidDate);
-			valueParm[2] = DateUtility.formatToShortDate(appDate);
+			valueParm[1] = DateUtil.formatToShortDate(fullyPaidDate);
+			valueParm[2] = DateUtil.formatToShortDate(appDate);
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("12721", valueParm)));
 		}
 

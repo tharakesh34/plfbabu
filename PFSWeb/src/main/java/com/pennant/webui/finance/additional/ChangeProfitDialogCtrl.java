@@ -44,7 +44,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.financeservice.ChangeProfitService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -55,6 +54,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -303,7 +303,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
@@ -351,7 +351,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				if (getFinanceScheduleDetail() != null) {

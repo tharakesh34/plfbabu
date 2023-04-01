@@ -44,7 +44,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -206,12 +205,12 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 				}
 				if (StringUtils.isNotBlank(custAgreementData.getCustDOB())) {
 					Date dob = DateUtil.parseFullDate(custAgreementData.getCustDOB());
-					this.finCustFDOB.setValue(DateUtility.formatToLongDate(dob));
-					this.finCustFAge.setValue(String.valueOf(DateUtility.getYearsBetween(dob, appldate)));
+					this.finCustFDOB.setValue(DateUtil.formatToLongDate(dob));
+					this.finCustFAge.setValue(String.valueOf(DateUtil.getYearsBetween(dob, appldate)));
 				}
 				if (jointCustAgreementData != null && StringUtils.isNotBlank(jointCustAgreementData.getCustDOB())) {
 					Date dob = DateUtil.parseFullDate(jointCustAgreementData.getCustDOB());
-					this.finCustSDOB.setValue(DateUtility.formatToLongDate(dob));
+					this.finCustSDOB.setValue(DateUtil.formatToLongDate(dob));
 					this.finCustSAge.setValue(String.valueOf(DateUtil.getYearsBetween(dob, appldate)));
 				}
 				this.finCustSector.setValue("");// custAgreementData.getCustSector()
@@ -498,9 +497,9 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 			}
 		}
 		employer[1] = fromDate == null || toDate == null ? ""
-				: String.valueOf(DateUtility.getYearsBetween(fromDate, toDate));
+				: String.valueOf(DateUtil.getYearsBetween(fromDate, toDate));
 		employer[3] = fromDate == null || previousDate == null ? ""
-				: String.valueOf(DateUtility.getYearsBetween(fromDate, previousDate));
+				: String.valueOf(DateUtil.getYearsBetween(fromDate, previousDate));
 		return employer;
 	}
 
@@ -513,7 +512,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 	}
 
 	private String formatdDate(Date date) {
-		return DateUtility.formatToLongDate(date);
+		return DateUtil.formatToLongDate(date);
 	}
 
 	private String formatdAmount(BigDecimal amount) {

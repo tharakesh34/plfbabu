@@ -43,7 +43,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.util.PennantConstants;
@@ -51,6 +50,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
@@ -217,7 +217,7 @@ public class LegalDetailLoanListCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc = new Listcell(legalDetail.getBranchDesc());
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.format(legalDetail.getLegalDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(legalDetail.getLegalDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				if (legalDetail.isActive()) {

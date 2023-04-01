@@ -33,10 +33,10 @@ import java.util.Set;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Model class for the <b>LimitGroup table</b>.<br>
@@ -125,7 +125,7 @@ public class LimitGroup extends AbstractWorkflowEntity {
 		if (createdOn == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(createdOn);
+		return DateUtil.getXMLDate(createdOn);
 	}
 
 	public String getLovValue() {

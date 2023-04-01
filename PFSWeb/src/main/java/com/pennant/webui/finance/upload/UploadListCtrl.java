@@ -54,7 +54,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -75,6 +74,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -350,7 +350,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		uploadHeader.setNewRecord(true);
 		uploadHeader.setWorkflowId(getWorkFlowId());
 		uploadHeader.setModule(this.module);
-		uploadHeader.setTransactionDate(DateUtility.getSysDate());
+		uploadHeader.setTransactionDate(DateUtil.getSysDate());
 		uploadHeader.setMakerId(getUserWorkspace().getUserDetails().getUserId());
 
 		// Display the dialog page.

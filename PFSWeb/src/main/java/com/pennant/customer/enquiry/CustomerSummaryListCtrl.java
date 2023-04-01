@@ -49,7 +49,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
@@ -63,6 +62,7 @@ import com.pennant.coreinterface.model.CustomerLimit;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -348,7 +348,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				lc = new Listcell(commitment.getCmtAccount());
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.format(commitment.getCmtExpDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(commitment.getCmtExpDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAmount(), formatter));
 				lc.setParent(item);
@@ -356,7 +356,7 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(commitment.getCmtAvailable(), formatter));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.format(commitment.getCmtStartDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(commitment.getCmtStartDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				item.setAttribute("data", commitment);
 				if (!finance) {
@@ -461,9 +461,9 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				cell.setParent(item);
 
 				cell = new Listcell(
-						DateUtility.format((Date) customerCollateral.getCollExpDate(), PennantConstants.dateFormat));
+						DateUtil.format((Date) customerCollateral.getCollExpDate(), PennantConstants.dateFormat));
 				cell.setParent(item);
-				cell = new Listcell(DateUtility.format((Date) customerCollateral.getColllastRvwDate(),
+				cell = new Listcell(DateUtil.format((Date) customerCollateral.getColllastRvwDate(),
 						PennantConstants.dateFormat));
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollValue().toString());

@@ -36,7 +36,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -46,6 +45,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -272,7 +272,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(financeMain.getFinCcy());
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
 				if (financeMain.getFinBranch() == null || financeMain.getFinBranch().isEmpty()) {
@@ -346,10 +346,10 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(collateralSetup.getCollateralCcy());
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(collateralSetup.getExpiryDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(collateralSetup.getExpiryDate()));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(collateralSetup.getNextReviewDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(collateralSetup.getNextReviewDate()));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
 				lc = new Listcell(CurrencyUtil.format(collateralSetup.getCollateralValue(), ccyFormatter));

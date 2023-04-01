@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import com.pennant.app.core.ReceiptPaymentService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
@@ -56,6 +55,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.script.ScriptEngine;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -228,7 +228,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		} catch (Exception e) {
 			deStatus.setRemarks(e.getMessage());
 			deStatus.setStatus(ExecutionStatus.F.name());
-			deStatus.setEndTime(DateUtility.getSysDate());
+			deStatus.setEndTime(DateUtil.getSysDate());
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			presentmentDetailDAO.deleteByHeaderId(headerId);
@@ -351,7 +351,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 				deStatus.setRemarks(remarks);
 				deStatus.setStatus(status);
-				deStatus.setEndTime(DateUtility.getSysDate());
+				deStatus.setEndTime(DateUtil.getSysDate());
 
 				presentmentDetailDAO.logRespDetailsLog(headerId);
 

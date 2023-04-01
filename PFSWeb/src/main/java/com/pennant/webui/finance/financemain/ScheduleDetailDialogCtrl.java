@@ -68,7 +68,6 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -774,9 +773,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		this.schdl_finReference.setValue(financeMain.getFinReference());
 		this.schdl_noOfTerms.setValue(String.valueOf(financeMain.getCalTerms() + financeMain.getGraceTerms()));
-		this.schdl_grcEndDate.setValue(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
-		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.schdl_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		this.schdl_grcEndDate.setValue(DateUtil.formatToLongDate(financeMain.getGrcPeriodEndDate()));
+		this.schdl_startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+		this.schdl_maturityDate.setValue(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 		BigDecimal totalCost = BigDecimal.ZERO;
 		if (isOverdraft) {
 			this.schdl_purchasePrice.setValue(CurrencyUtil.parse(financeMain.getFinAssetValue(), ccyFormatter));
@@ -808,7 +807,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.schdl_odyearlyTenor.setValue(String.valueOf(financeMain.getNumberOfTerms() / 12));
 			this.schdl_odMnthTenor.setValue(String.valueOf(financeMain.getNumberOfTerms() % 12));
 			this.schdl_customer.setValue(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
-			this.schdl_odStartDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
+			this.schdl_odStartDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
 			if (StringUtils.isNotEmpty(financeMain.getDroplineFrq())) {
 				this.schdl_droplineFrequency.setValue(
 						FrequencyUtil.getFrequencyDetail(financeMain.getDroplineFrq()).getFrequencyDescription());
@@ -1424,7 +1423,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 		}
 
-		int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(), true);
+		int months = DateUtil.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate());
 
 		int advTerms = 0;
 		if (AdvanceType.hasAdvEMI(financeMain.getAdvType()) && AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
@@ -1456,7 +1455,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2517,7 +2516,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		Date firstInstalmentDate = ScheduleCalculator.getFirstInstalmentDate(schdData.getFinanceScheduleDetails());
 
-		Date dateAfterYear = DateUtility.addMonths(firstInstalmentDate, 12);
+		Date dateAfterYear = DateUtil.addMonths(firstInstalmentDate, 12);
 
 		Collections.sort(getPlanEMIHDateList());
 
@@ -2551,13 +2550,13 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				if (isValid) {
 
-					Date planEMIHStart = DateUtility.addMonths(firstInstalmentDate, fm.getPlanEMIHLockPeriod());
+					Date planEMIHStart = DateUtil.addMonths(firstInstalmentDate, fm.getPlanEMIHLockPeriod());
 
 					for (int i = 0; i < getPlanEMIHDateList().size(); i++) {
 						Date planEMIHDate = getPlanEMIHDateList().get(i);
 
 						// EMI Holiday Lock Period validation
-						if (DateUtility.compare(planEMIHDate, planEMIHStart) <= 0) {
+						if (DateUtil.compare(planEMIHDate, planEMIHStart) <= 0) {
 
 							MessageUtil.showError(Labels.getLabel("label_Finance_Invalid_PlanEMIHLockPeriod",
 									new String[] { DateUtil.format(planEMIHStart, DateFormat.LONG_DATE) }));
@@ -2568,7 +2567,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						// Reset marked holidays per year
 						if (planEMIHDate.compareTo(dateAfterYear) >= 0) {
 							markedEMIHMaxPerYear = 0;
-							dateAfterYear = DateUtility.addMonths(planEMIHDate, 12);
+							dateAfterYear = DateUtil.addMonths(planEMIHDate, 12);
 						}
 
 						// Yearly Validation as per Max Allowed
@@ -2602,7 +2601,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (planEMIHDate.isChecked()) {
 			boolean isDateFound = false;
 			for (Date planDate : planEMIHDateList) {
-				if (DateUtility.compare(schDate, planDate) == 0) {
+				if (DateUtil.compare(schDate, planDate) == 0) {
 					isDateFound = true;
 				}
 			}
@@ -2612,7 +2611,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 		} else {
 			for (int i = 0; i < planEMIHDateList.size(); i++) {
-				if (DateUtility.compare(schDate, planEMIHDateList.get(i)) == 0) {
+				if (DateUtil.compare(schDate, planEMIHDateList.get(i)) == 0) {
 					planEMIHDateList.remove(planEMIHDateList.get(i));
 					i--;
 				}

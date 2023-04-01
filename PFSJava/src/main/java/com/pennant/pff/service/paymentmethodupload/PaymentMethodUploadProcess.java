@@ -17,7 +17,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.PaymentMethodUploadDAO;
@@ -42,6 +41,7 @@ import com.pennanttech.pennapps.core.App.Type;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
@@ -274,7 +274,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 		BigDecimal repayAmt = BigDecimal.ZERO;
 
 		for (FinanceScheduleDetail curSchd : schedules) {
-			if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
+			if (DateUtil.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
 				repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
 				continue;
 			}

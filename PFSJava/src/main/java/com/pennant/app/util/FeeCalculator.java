@@ -43,6 +43,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
@@ -851,7 +852,7 @@ public class FeeCalculator {
 		}
 
 		if (fm.getFinStartDate() != null) {
-			int finAge = DateUtility.getMonthsBetween(valDate, fm.getFinStartDate());
+			int finAge = DateUtil.getMonthsBetween(valDate, fm.getFinStartDate());
 			dataMap.put("finAgetilldate", finAge);
 			dataMap.put("completedTenure", finAge);
 		}
@@ -925,7 +926,7 @@ public class FeeCalculator {
 
 		dataMap.put("partialPaymentAmount", partialPaymentAmount);
 
-		Date fixedTenorEndDate = DateUtility.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
+		Date fixedTenorEndDate = DateUtil.addMonths(fm.getGrcPeriodEndDate(), fm.getFixedRateTenor());
 
 		String financeFixedTenor = PennantConstants.NO;
 		if (fm.getFixedRateTenor() > 0 && fixedTenorEndDate.compareTo(SysParamUtil.getAppDate()) > 0) {

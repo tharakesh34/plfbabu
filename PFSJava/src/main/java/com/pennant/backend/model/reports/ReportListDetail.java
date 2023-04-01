@@ -5,9 +5,9 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ReportListDetail {
 
@@ -1095,7 +1095,7 @@ public class ReportListDetail {
 		this.fieldDate01 = fieldDate01;
 
 		if (fieldDate01 != null) {
-			this.fieldString01 = DateUtility.formatToLongDate(fieldDate01);
+			this.fieldString01 = DateUtil.formatToLongDate(fieldDate01);
 		}
 	}
 
@@ -1107,7 +1107,7 @@ public class ReportListDetail {
 		this.fieldDate02 = fieldDate02;
 
 		if (fieldDate02 != null) {
-			this.fieldString02 = DateUtility.formatToLongDate(fieldDate02);
+			this.fieldString02 = DateUtil.formatToLongDate(fieldDate02);
 		}
 	}
 
@@ -1119,7 +1119,7 @@ public class ReportListDetail {
 		this.fieldDate03 = fieldDate03;
 
 		if (fieldDate03 != null) {
-			this.fieldString03 = DateUtility.formatToLongDate(fieldDate03);
+			this.fieldString03 = DateUtil.formatToLongDate(fieldDate03);
 		}
 	}
 
@@ -1131,7 +1131,7 @@ public class ReportListDetail {
 		this.fieldDate04 = fieldDate04;
 
 		if (fieldDate04 != null) {
-			this.fieldString04 = DateUtility.formatToLongDate(fieldDate04);
+			this.fieldString04 = DateUtil.formatToLongDate(fieldDate04);
 		}
 	}
 
@@ -1143,7 +1143,7 @@ public class ReportListDetail {
 		this.fieldDate05 = fieldDate05;
 
 		if (fieldDate05 != null) {
-			this.fieldString05 = DateUtility.formatToLongDate(fieldDate05);
+			this.fieldString05 = DateUtil.formatToLongDate(fieldDate05);
 		}
 	}
 
@@ -1155,7 +1155,7 @@ public class ReportListDetail {
 		this.fieldDate06 = fieldDate06;
 
 		if (fieldDate06 != null) {
-			this.fieldString06 = DateUtility.formatToLongDate(fieldDate06);
+			this.fieldString06 = DateUtil.formatToLongDate(fieldDate06);
 		}
 	}
 
@@ -1167,7 +1167,7 @@ public class ReportListDetail {
 		this.fieldDate07 = fieldDate07;
 
 		if (fieldDate07 != null) {
-			this.fieldString07 = DateUtility.formatToLongDate(fieldDate07);
+			this.fieldString07 = DateUtil.formatToLongDate(fieldDate07);
 		}
 	}
 
@@ -1179,7 +1179,7 @@ public class ReportListDetail {
 		this.fieldDate08 = fieldDate08;
 
 		if (fieldDate08 != null) {
-			this.fieldString08 = DateUtility.formatToLongDate(fieldDate08);
+			this.fieldString08 = DateUtil.formatToLongDate(fieldDate08);
 		}
 	}
 
@@ -1191,7 +1191,7 @@ public class ReportListDetail {
 		this.fieldDate09 = fieldDate09;
 
 		if (fieldDate09 != null) {
-			this.fieldString09 = DateUtility.formatToLongDate(fieldDate09);
+			this.fieldString09 = DateUtil.formatToLongDate(fieldDate09);
 		}
 	}
 
@@ -1203,7 +1203,7 @@ public class ReportListDetail {
 		this.fieldDate10 = fieldDate10;
 
 		if (fieldDate10 != null) {
-			this.fieldString10 = DateUtility.formatToLongDate(fieldDate10);
+			this.fieldString10 = DateUtil.formatToLongDate(fieldDate10);
 		}
 	}
 
@@ -1215,7 +1215,7 @@ public class ReportListDetail {
 		this.fieldDate11 = fieldDate11;
 
 		if (fieldDate11 != null) {
-			this.fieldString11 = DateUtility.formatToLongDate(fieldDate11);
+			this.fieldString11 = DateUtil.formatToLongDate(fieldDate11);
 		}
 	}
 
@@ -1227,7 +1227,7 @@ public class ReportListDetail {
 		this.fieldDate12 = fieldDate12;
 
 		if (fieldDate12 != null) {
-			this.fieldString12 = DateUtility.formatToLongDate(fieldDate12);
+			this.fieldString12 = DateUtil.formatToLongDate(fieldDate12);
 		}
 	}
 
@@ -1239,7 +1239,7 @@ public class ReportListDetail {
 		this.fieldDate13 = fieldDate13;
 
 		if (fieldDate13 != null) {
-			this.fieldString13 = DateUtility.formatToLongDate(fieldDate13);
+			this.fieldString13 = DateUtil.formatToLongDate(fieldDate13);
 		}
 	}
 
@@ -1251,7 +1251,7 @@ public class ReportListDetail {
 		this.fieldDate14 = fieldDate14;
 
 		if (fieldDate14 != null) {
-			this.fieldString14 = DateUtility.formatToLongDate(fieldDate14);
+			this.fieldString14 = DateUtil.formatToLongDate(fieldDate14);
 		}
 	}
 
@@ -1263,7 +1263,7 @@ public class ReportListDetail {
 		this.fieldDate15 = fieldDate15;
 
 		if (fieldDate15 != null) {
-			this.fieldString15 = DateUtility.formatToLongDate(fieldDate15);
+			this.fieldString15 = DateUtil.formatToLongDate(fieldDate15);
 		}
 	}
 

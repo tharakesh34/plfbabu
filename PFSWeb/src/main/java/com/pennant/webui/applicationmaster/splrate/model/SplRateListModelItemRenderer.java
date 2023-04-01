@@ -32,10 +32,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -55,7 +55,7 @@ public class SplRateListModelItemRenderer implements ListitemRenderer<SplRate>, 
 		Listcell lc;
 		lc = new Listcell(splRate.getSRType() + "-" + splRate.getLovDescSRTypeName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(splRate.getSREffDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(splRate.getSREffDate()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formatRate(splRate.getSRRate().doubleValue(), 9));
 		lc.setStyle("text-align:right;");

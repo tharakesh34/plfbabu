@@ -67,7 +67,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
@@ -789,7 +788,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		lc = new Listcell("NA");
 		lc.setParent(item);
 		if (!StringUtils.equals(customerType, "Guarantor")) {
-			lc = new Listcell(String.valueOf(DateUtility.getYearsBetween(maturityDate, custDob)));
+			lc = new Listcell(String.valueOf(DateUtil.getYearsBetween(maturityDate, custDob)));
 			lc.setParent(item);
 		} else {
 			lc = new Listcell("NA");

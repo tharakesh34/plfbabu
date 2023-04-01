@@ -29,7 +29,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CDScheduleCalculator;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.GSTCalculator;
@@ -932,11 +931,11 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
 				details.setDocName(reportName.substring(15));
-				details.setDocReceivedDate(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
+				details.setDocReceivedDate(DateUtil.getTimestamp(SysParamUtil.getAppDate()));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
 				// details.setCategoryCode(agreementDefinition.getModuleName());
-				details.setLastMntOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
+				details.setLastMntOn(DateUtil.getTimestamp(SysParamUtil.getAppDate()));
 				details.setFinEvent(FinServiceEvent.ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setNewRecord(true);
@@ -2448,10 +2447,10 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		if (financeMain != null) {
-			financeMain.setNextRepayDate(DateUtility.getTimestamp(financeMain.getFinStartDate()));
-			financeMain.setNextRepayPftDate(DateUtility.getTimestamp(financeMain.getNextRepayPftDate()));
-			financeMain.setNextRepayCpzDate(DateUtility.getTimestamp(financeMain.getNextRepayCpzDate()));
-			financeMain.setNextRepayRvwDate(DateUtility.getTimestamp(financeMain.getNextRepayRvwDate()));
+			financeMain.setNextRepayDate(DateUtil.getTimestamp(financeMain.getFinStartDate()));
+			financeMain.setNextRepayPftDate(DateUtil.getTimestamp(financeMain.getNextRepayPftDate()));
+			financeMain.setNextRepayCpzDate(DateUtil.getTimestamp(financeMain.getNextRepayCpzDate()));
+			financeMain.setNextRepayRvwDate(DateUtil.getTimestamp(financeMain.getNextRepayRvwDate()));
 		}
 		FinanceDetail response = new FinanceDetail();
 		FinScheduleData finScheduleData = new FinScheduleData();
@@ -2842,8 +2841,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				finInquiryDetail.setFinAssetValue(fm.getFinAssetValue());
 				finInquiryDetail.setNumberOfTerms(fm.getNumberOfTerms());
 				finInquiryDetail.setFirstEmiAmount(fm.getFirstRepay());
-				finInquiryDetail
-						.setLoanTenor(DateUtility.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate(), true));
+				finInquiryDetail.setLoanTenor(DateUtil.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
 				finInquiryDetail.setMaturityDate(fm.getMaturityDate());
 				paidTotal = schdPriPaid.add(schdPftPaid).add(schdFeePaid);
 				finInquiryDetail.setPaidTotal(paidTotal);
@@ -4262,7 +4260,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						financeMain.getFinCcy(), RuleReturnType.INTEGER);
 
 				Date nextRepayDate = financeMain.getFinStartDate();
-				nextRepayDate = DateUtility.addMonths(nextRepayDate, 1);
+				nextRepayDate = DateUtil.addMonths(nextRepayDate, 1);
 				Date maturityDate = financeMain.getMaturityDate();
 
 				if (result != 0) {

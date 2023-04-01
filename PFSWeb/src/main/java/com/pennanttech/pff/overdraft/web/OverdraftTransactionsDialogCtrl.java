@@ -37,10 +37,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.overdraft.OverdraftConstants;
 import com.pennanttech.pff.overdraft.model.OverdraftLimitTransation;
@@ -146,23 +146,23 @@ public class OverdraftTransactionsDialogCtrl extends GFCBaseCtrl<OverdraftLimitT
 			BigDecimal actualLmtBal = BigDecimal.ZERO;
 
 			if (OverdraftConstants.TRANS_TYPE_ADD_DISB.equals(transactionType)) {
-				txnDate = DateUtility.formatToLongDate(trnsaction.getValueDate());
+				txnDate = DateUtil.formatToLongDate(trnsaction.getValueDate());
 				narration = trnsaction.getNarration();
 				transactionAmt = trnsaction.getTxnAmount();
 				txnChrg = trnsaction.getTxnCharge();
 				monthlyLmtBal = trnsaction.getMonthlyLimitBal();
 				actualLmtBal = trnsaction.getActualLimitBal();
 			} else if (OverdraftConstants.TRANS_TYPE_LOAN_ORG.equals(transactionType)) {
-				txnDate = DateUtility.formatToLongDate(trnsaction.getValueDate());
+				txnDate = DateUtil.formatToLongDate(trnsaction.getValueDate());
 				narration = trnsaction.getNarration();
 				actualLmtBal = trnsaction.getActualLimitBal();
 			} else if (OverdraftConstants.TRANS_TYPE_EOM.equals(transactionType)) {
-				txnDate = DateUtility.formatToLongDate(trnsaction.getValueDate());
+				txnDate = DateUtil.formatToLongDate(trnsaction.getValueDate());
 				narration = trnsaction.getNarration();
 				monthlyLmtBal = trnsaction.getMonthlyLimitBal();
 				actualLmtBal = trnsaction.getActualLimitBal();
 			} else {
-				txnDate = DateUtility.formatToLongDate(trnsaction.getValueDate());
+				txnDate = DateUtil.formatToLongDate(trnsaction.getValueDate());
 				narration = trnsaction.getNarration();
 				transactionAmt = trnsaction.getTxnAmount();
 				monthlyLmtBal = trnsaction.getMonthlyLimitBal();

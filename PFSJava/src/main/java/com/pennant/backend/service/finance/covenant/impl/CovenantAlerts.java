@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -81,7 +80,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 
 		Date lastAlertSentOn = covenant.getAlertsentOn();
 
-		if (lastAlertSentOn != null && DateUtility.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
+		if (lastAlertSentOn != null && DateUtil.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
 			return;
 		}
 

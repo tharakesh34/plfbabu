@@ -69,7 +69,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -416,7 +415,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		this.lbl_LoanType.setValue(this.fm.getFinType() + "-" + this.fm.getLovDescFinTypeName());
 		this.lbl_CustCIF.setValue(this.fm.getLovDescCustCIF() + "-" + this.fm.getLovDescCustShrtName());
 		this.lbl_Currency.setValue(this.fm.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.fm.getFinCcy()));
-		this.lbl_startDate.setValue(DateUtility.format(this.fm.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_startDate.setValue(DateUtil.format(this.fm.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate.setValue(DateUtil.format(this.fm.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_ODAgainstLoan.setValue(CurrencyUtil.format(frh.getOverDueAgainstLoan()));
 		this.lbl_ODAgainstCustomer.setValue(CurrencyUtil.format(frh.getOverDueAgainstCustomer()));

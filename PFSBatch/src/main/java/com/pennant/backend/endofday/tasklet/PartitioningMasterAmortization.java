@@ -43,12 +43,12 @@ import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PartitioningMasterAmortization implements Partitioner {
 	private Logger logger = LogManager.getLogger(Partitioner.class);
@@ -61,8 +61,8 @@ public class PartitioningMasterAmortization implements Partitioner {
 		logger.info("START: Amortization Thread Allocation On {}", valueDate);
 
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
-		Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
-		amzMonth = DateUtility.getMonthEnd(amzMonth);
+		Date amzMonth = DateUtil.addDays(prvAMZMonth, 1);
+		amzMonth = DateUtil.getMonthEnd(amzMonth);
 
 		boolean recordsLessThanThread = false;
 		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();

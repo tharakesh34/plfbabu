@@ -64,7 +64,6 @@ import org.zkoss.zul.Treerow;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.QBFieldDetail;
@@ -82,6 +81,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
@@ -1739,7 +1739,7 @@ public class QueryBuilder extends Groupbox {
 							listCell = new Listcell("-- NO VALUE --");
 							listCell.setParent(item);
 						} else {
-							listCell = new Listcell(DateUtility.formatToLongDate(DateUtility.parse(data, "yyMMdd")));
+							listCell = new Listcell(DateUtil.formatToLongDate(DateUtil.parse(data, "yyMMdd")));
 							listCell.setParent(item);
 						}
 					} else {

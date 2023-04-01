@@ -146,7 +146,6 @@ import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CDScheduleCalculator;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
@@ -1016,9 +1015,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean recommendEntered;
 
 	Date appDate = SysParamUtil.getAppDate();
-	Date minReqFinStartDate = DateUtility.addDays(appDate,
+	Date minReqFinStartDate = DateUtil.addDays(appDate,
 			-SysParamUtil.getValueAsInt(SMTParameterConstants.LOAN_START_DATE_BACK_DAYS));
-	Date maxReqFinStartDate = DateUtility.addDays(appDate,
+	Date maxReqFinStartDate = DateUtil.addDays(appDate,
 			+SysParamUtil.getValueAsInt(SMTParameterConstants.LOAN_START_DATE_FUTURE_DAYS));
 	Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 	Date appStartDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
@@ -4769,8 +4768,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void setTdsEndDate() {
-		int month = DateUtility.getMonth(this.tDSStartDate.getValue());
-		int year = DateUtility.getYear(this.tDSStartDate.getValue());
+		int month = DateUtil.getMonth(this.tDSStartDate.getValue());
+		int year = DateUtil.getYear(this.tDSStartDate.getValue());
 
 		if (month > 3) {
 			Date tdsformateEndDate = null;
@@ -5562,7 +5561,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			maturDate = this.maturityDate_two.getValue();
 		}
 
-		int months = DateUtility.getMonthsBetween(maturDate, this.finStartDate.getValue(), true);
+		int months = DateUtil.getMonthsBetween(maturDate, this.finStartDate.getValue());
 		if (months != this.oldVar_tenureInMonths) {
 			isFeeReExecute = true;
 		}
@@ -5679,7 +5678,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			maturDate = this.maturityDate_two.getValue();
 		}
 
-		int months = DateUtility.getMonthsBetween(maturDate, this.finStartDate.getValue(), true);
+		int months = DateUtil.getMonthsBetween(maturDate, this.finStartDate.getValue());
 		this.oldVar_tenureInMonths = months;
 
 		if (finFeeDetailListCtrl != null) {
@@ -5745,7 +5744,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.oldVar_profitDaysBasis != this.cbProfitDaysBasis.getSelectedIndex()) {
 			return true;
 		}
-		if (DateUtility.compare(this.oldVar_finStartDate, this.finStartDate.getValue()) != 0) {
+		if (DateUtil.compare(this.oldVar_finStartDate, this.finStartDate.getValue()) != 0) {
 			return true;
 		}
 		if (this.oldVar_tDSApplicable != this.tDSApplicable.isChecked()) {
@@ -5849,10 +5848,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (this.gracePeriodEndDate.getValue() != null) {
-			if (DateUtility.compare(this.oldVar_gracePeriodEndDate, this.gracePeriodEndDate.getValue()) != 0) {
+			if (DateUtil.compare(this.oldVar_gracePeriodEndDate, this.gracePeriodEndDate.getValue()) != 0) {
 				return true;
 			}
-		} else if (DateUtility.compare(this.oldVar_gracePeriodEndDate, this.gracePeriodEndDate_two.getValue()) != 0) {
+		} else if (DateUtil.compare(this.oldVar_gracePeriodEndDate, this.gracePeriodEndDate_two.getValue()) != 0) {
 			return true;
 		}
 
@@ -5902,20 +5901,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return true;
 			}
 			if (this.nextGrcPftDate.getValue() != null) {
-				if (DateUtility.compare(this.oldVar_nextGrcPftDate, this.nextGrcPftDate.getValue()) != 0) {
+				if (DateUtil.compare(this.oldVar_nextGrcPftDate, this.nextGrcPftDate.getValue()) != 0) {
 					return true;
 				}
-			} else if (DateUtility.compare(this.oldVar_nextGrcPftDate, this.nextGrcPftDate_two.getValue()) != 0) {
+			} else if (DateUtil.compare(this.oldVar_nextGrcPftDate, this.nextGrcPftDate_two.getValue()) != 0) {
 				return true;
 			}
 			if (!StringUtils.equals(this.oldVar_gracePftRvwFrq, this.gracePftRvwFrq.getValue())) {
 				return true;
 			}
 			if (this.nextGrcPftRvwDate.getValue() != null) {
-				if (DateUtility.compare(this.oldVar_nextGrcPftRvwDate, this.nextGrcPftRvwDate.getValue()) != 0) {
+				if (DateUtil.compare(this.oldVar_nextGrcPftRvwDate, this.nextGrcPftRvwDate.getValue()) != 0) {
 					return true;
 				}
-			} else if (DateUtility.compare(this.oldVar_nextGrcPftRvwDate, this.nextGrcPftRvwDate_two.getValue()) != 0) {
+			} else if (DateUtil.compare(this.oldVar_nextGrcPftRvwDate, this.nextGrcPftRvwDate_two.getValue()) != 0) {
 				return true;
 			}
 
@@ -5923,10 +5922,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return true;
 			}
 			if (this.nextGrcCpzDate.getValue() != null) {
-				if (DateUtility.compare(this.oldVar_nextGrcCpzDate, this.nextGrcCpzDate.getValue()) != 0) {
+				if (DateUtil.compare(this.oldVar_nextGrcCpzDate, this.nextGrcCpzDate.getValue()) != 0) {
 					return true;
 				}
-			} else if (DateUtility.compare(this.oldVar_nextGrcCpzDate, this.nextGrcCpzDate_two.getValue()) != 0) {
+			} else if (DateUtil.compare(this.oldVar_nextGrcCpzDate, this.nextGrcCpzDate_two.getValue()) != 0) {
 				return true;
 			}
 			if (this.oldVar_allowGrcRepay != this.allowGrcRepay.isChecked()) {
@@ -5964,19 +5963,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (rpyFrqRow.isVisible()) {
 			if (this.nextRepayDate.getValue() != null) {
-				if (DateUtility.compare(this.oldVar_nextRepayDate, this.nextRepayDate.getValue()) != 0) {
+				if (DateUtil.compare(this.oldVar_nextRepayDate, this.nextRepayDate.getValue()) != 0) {
 					return true;
 				}
-			} else if (DateUtility.compare(this.oldVar_nextRepayDate, this.nextRepayDate_two.getValue()) != 0) {
+			} else if (DateUtil.compare(this.oldVar_nextRepayDate, this.nextRepayDate_two.getValue()) != 0) {
 				return true;
 			}
 		}
 
 		if (this.maturityDate.getValue() != null && !this.manualSchedule.isChecked()) {
-			if (DateUtility.compare(this.oldVar_maturityDate, this.maturityDate.getValue()) != 0) {
+			if (DateUtil.compare(this.oldVar_maturityDate, this.maturityDate.getValue()) != 0) {
 				return true;
 			}
-		} else if (DateUtility.compare(this.oldVar_maturityDate, this.maturityDate_two.getValue()) != 0) {
+		} else if (DateUtil.compare(this.oldVar_maturityDate, this.maturityDate_two.getValue()) != 0) {
 			return true;
 		}
 
@@ -6047,30 +6046,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 		if (this.nextRepayPftDate.getValue() != null) {
-			if (DateUtility.compare(this.oldVar_nextRepayPftDate, this.nextRepayPftDate.getValue()) != 0) {
+			if (DateUtil.compare(this.oldVar_nextRepayPftDate, this.nextRepayPftDate.getValue()) != 0) {
 				return true;
 			}
-		} else if (DateUtility.compare(this.oldVar_nextRepayPftDate, this.nextRepayPftDate_two.getValue()) != 0) {
+		} else if (DateUtil.compare(this.oldVar_nextRepayPftDate, this.nextRepayPftDate_two.getValue()) != 0) {
 			return true;
 		}
 		if (!StringUtils.equals(this.oldVar_repayRvwFrq, this.repayRvwFrq.getValue())) {
 			return true;
 		}
 		if (this.nextRepayRvwDate.getValue() != null) {
-			if (DateUtility.compare(this.oldVar_nextRepayRvwDate, this.nextRepayRvwDate.getValue()) != 0) {
+			if (DateUtil.compare(this.oldVar_nextRepayRvwDate, this.nextRepayRvwDate.getValue()) != 0) {
 				return true;
 			}
-		} else if (DateUtility.compare(this.oldVar_nextRepayRvwDate, this.nextRepayRvwDate_two.getValue()) != 0) {
+		} else if (DateUtil.compare(this.oldVar_nextRepayRvwDate, this.nextRepayRvwDate_two.getValue()) != 0) {
 			return true;
 		}
 		if (!StringUtils.equals(this.oldVar_repayCpzFrq, this.repayCpzFrq.getValue())) {
 			return true;
 		}
 		if (this.nextRepayCpzDate.getValue() != null) {
-			if (DateUtility.compare(this.oldVar_nextRepayCpzDate, this.nextRepayCpzDate.getValue()) != 0) {
+			if (DateUtil.compare(this.oldVar_nextRepayCpzDate, this.nextRepayCpzDate.getValue()) != 0) {
 				return true;
 			}
-		} else if (DateUtility.compare(this.oldVar_nextRepayCpzDate, this.nextRepayCpzDate_two.getValue()) != 0) {
+		} else if (DateUtil.compare(this.oldVar_nextRepayCpzDate, this.nextRepayCpzDate_two.getValue()) != 0) {
 			return true;
 		}
 
@@ -6095,7 +6094,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			return true;
 		}
 
-		if ((DateUtility.compare(this.oldVar_firstDroplineDate, this.firstDroplineDate.getValue()) != 0)) {
+		if ((DateUtil.compare(this.oldVar_firstDroplineDate, this.firstDroplineDate.getValue()) != 0)) {
 			return true;
 		}
 
@@ -6150,11 +6149,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (DateUtility.compare(this.oldVal_tDSStartDate, this.tDSStartDate.getValue()) != 0) {
+		if (DateUtil.compare(this.oldVal_tDSStartDate, this.tDSStartDate.getValue()) != 0) {
 			return true;
 		}
 
-		if (DateUtility.compare(this.oldVal_tDSEndDate, this.tDSEndDate.getValue()) != 0) {
+		if (DateUtil.compare(this.oldVal_tDSEndDate, this.tDSEndDate.getValue()) != 0) {
 			return true;
 		}
 
@@ -6426,7 +6425,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						 * getNextGrcPftDate()) <= 0) { validFrom = curSchd.getSchDate(); continue; }
 						 */
 					}
-					validFrom = DateUtility.addDays(validFrom, 1);
+					validFrom = DateUtil.addDays(validFrom, 1);
 					this.gracePeriodEndDate.setConstraint(
 							new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_GracePeriodEndDate.value"),
 									true, validFrom, appEndDate, true));
@@ -9124,11 +9123,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
 			// validate finance start date and application date
 			int maxAwdFinDays = SysParamUtil.getValueAsInt("DAYS_BET_APP_START");
-			if (DateUtility.getDaysBetween(this.finStartDate.getValue(), appDate) > maxAwdFinDays) {
+			if (DateUtil.getDaysBetween(this.finStartDate.getValue(), appDate) > maxAwdFinDays) {
 				String msg = Labels.getLabel("label_StartDate_Validation",
 						new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
-								DateUtility.formatToShortDate(DateUtility.addDays(appDate, -maxAwdFinDays)),
-								DateUtility.formatToShortDate(DateUtility.addDays(appDate, maxAwdFinDays)) });
+								DateUtil.formatToShortDate(DateUtil.addDays(appDate, -maxAwdFinDays)),
+								DateUtil.formatToShortDate(DateUtil.addDays(appDate, maxAwdFinDays)) });
 				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
 					return false;
 				}
@@ -9136,9 +9135,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (!isReadOnly("FinanceMainDialog_validateFinProcessDays")) {
 				int maxDaystoProcessFin = SysParamUtil.getValueAsInt("MAX_ALLOWEDDAYS_TO_PROCESS_FINANCE");
-				if (DateUtility.getDaysBetween(
+				if (DateUtil.getDaysBetween(
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getInitiateDate(),
-						DateUtility.getSysDate()) > maxDaystoProcessFin) {
+						DateUtil.getSysDate()) > maxDaystoProcessFin) {
 					String msg = Labels.getLabel("label_MaxFinanceProcessDays_Validation",
 							new String[] { String.valueOf(maxDaystoProcessFin),
 									Labels.getLabel("label_FinanceMainDialog_FinStartDate.value") });
@@ -9175,7 +9174,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				details.setVersion(1);
 				details.setFinEvent(FinServiceEvent.ORG);
 				details.setNewRecord(true);
-				details.setLastMntOn(DateUtility.getTimestamp(appDate));
+				details.setLastMntOn(DateUtil.getTimestamp(appDate));
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
@@ -9884,13 +9883,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_BIMONTHLY.equals(frqCode)) {
-					mnth = FrequencyUtil.getMonthFrqValue(DateUtility
+					mnth = FrequencyUtil.getMonthFrqValue(DateUtil
 							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
 							frqCode);
 				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_2YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_3YEARLY.equals(frqCode)) {
-					mnth = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+					mnth = DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 							.split("-")[1];
 				}
 			}
@@ -9910,7 +9909,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						day = repayRvwFrq2.substring(3);
 					}
 				} else {
-					day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
+					day = DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
 				}
 			}
 
@@ -9965,7 +9964,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
 				Date emiDate = chequeDetail.getChequeDate();
 				for (FinanceScheduleDetail finSchdDetail : schdList) {
-					if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
+					if (DateUtil.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
 						if (getFinanceDetail().getFinScheduleData().getFinanceMain().isAlwBPI()) {
 							BigDecimal repayAmount = schdList.get(2).getRepayAmount();
 							if (finSchdDetail.isTDSApplicable()) {
@@ -9990,7 +9989,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
 				Date emiDate = chequeDetail.getChequeDate();
 				for (FinanceScheduleDetail finSchdDetail : schdList) {
-					if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
+					if (DateUtil.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
 						BigDecimal repayAmount = schdList.get(1).getRepayAmount();
 						chequeDetail.setAmount(repayAmount);
 						break;
@@ -10013,7 +10012,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Date finstartDate = financeMain.getFinStartDate();
-		if (DateUtility.compare(finstartDate, appDate) != 1) {
+		if (DateUtil.compare(finstartDate, appDate) != 1) {
 			for (FinAdvancePayments finAdvancePayments : aFinanceDetail.getAdvancePaymentsList()) {
 				finAdvancePayments.setLLDate(appDate);
 			}
@@ -10195,7 +10194,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private int getMtrTerms() {
-		return DateUtility.getMonthsBetween(this.maturityDate.getValue(), this.finStartDate.getValue(), true);
+		return DateUtil.getMonthsBetween(this.maturityDate.getValue(), this.finStartDate.getValue());
 	}
 
 	private String validateNumOfGrcTerms() {
@@ -10290,18 +10289,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_BIMONTHLY.equals(frqCode)) {
-					mnth = FrequencyUtil.getMonthFrqValue(DateUtility
+					mnth = FrequencyUtil.getMonthFrqValue(DateUtil
 							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
 							frqCode);
 				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_2YEARLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_3YEARLY.equals(frqCode)) {
-					mnth = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+					mnth = DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 							.split("-")[1];
 				}
 			}
 			mnth = frqCode.concat(mnth).concat("00");
-			String day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
+			String day = DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
 			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
 				day = "00";
 			} else if (FrequencyCodeTypes.FRQ_WEEKLY.equals(frqCode)) {
@@ -10622,8 +10621,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChange$tDSEndDate(Event event) {
 		logger.debug(Literal.ENTERING);
 		if (this.tDSStartDate.getValue() != null && this.tDSEndDate.getValue() != null) {
-			int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
-			int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
+			int startDatemonth = DateUtil.getMonth(this.tDSStartDate.getValue());
+			int startDateyear = DateUtil.getYear(this.tDSStartDate.getValue());
 			Date tdsformateEndDate = null;
 			Date tdsEndDate = null;
 			Date tdsStartDate = null;
@@ -10644,9 +10643,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			tdsEndDate = this.tDSEndDate.getValue();
 			tdsStartDate = this.tDSStartDate.getValue();
-			if (DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
-					|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
-					|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) {
+			if (DateUtil.compare(tdsformateEndDate, tdsEndDate) == -1
+					|| DateUtil.compare(tdsStartDate, tdsEndDate) == 0
+					|| DateUtil.compare(tdsEndDate, tdsStartDate) == -1) {
 				throw new WrongValueException(this.tDSEndDate,
 						"End Date must be after" + " " + DateUtil.format(this.tDSStartDate.getValue(), "dd/MM/yyyy")
 								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
@@ -12431,10 +12430,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (moduleDefiner.equals(FinServiceEvent.CHGGRCEND)) {
 					Date curBussDate = appDate;
-					if (this.gracePeriodEndDate_two.getValue().before(DateUtility.addDays(curBussDate, 1))) {
+					if (this.gracePeriodEndDate_two.getValue().before(DateUtil.addDays(curBussDate, 1))) {
 						errorList.add(new ErrorDetail("gracePeriodEndDate", "30569",
 								new String[] { Labels.getLabel("label_FinanceMainBaseCtrl_GracePeriodEndDate.value"),
-										PennantAppUtil.formateDate(DateUtility.addDays(curBussDate, 1), "") },
+										PennantAppUtil.formateDate(DateUtil.addDays(curBussDate, 1), "") },
 								new String[] {}));
 					}
 				}
@@ -12701,9 +12700,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							firstInstlDate = this.nextRepayPftDate_two.getValue();
 						}
 					}
-					diffDays = DateUtility.getDaysBetween(this.finStartDate.getValue(), firstInstlDate);
+					diffDays = DateUtil.getDaysBetween(this.finStartDate.getValue(), firstInstlDate);
 					if (this.allowGrace.isChecked()) {
-						diffDays = DateUtility.getDaysBetween(this.gracePeriodEndDate_two.getValue(), firstInstlDate);
+						diffDays = DateUtil.getDaysBetween(this.gracePeriodEndDate_two.getValue(), firstInstlDate);
 					}
 					if (diffDays > maxInstAlwDays) {
 						this.financeTypeDetailsTab.setSelected(true);
@@ -12820,12 +12819,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					frqDate = this.nextRepayPftDate_two.getValue();
 				}
 
-				Date bpiDate = DateUtility.getDate(DateUtility.format(
+				Date bpiDate = DateUtil.getDate(DateUtil.format(
 						FrequencyUtil.getNextDate(frqBPI, 1, this.finStartDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 						PennantConstants.dateFormat));
 
-				if (DateUtility.compare(bpiDate, frqDate) >= 0) {
+				if (DateUtil.compare(bpiDate, frqDate) >= 0) {
 					// #PSD 138522
 					this.alwBpiTreatment.setChecked(false);
 					this.oldVar_alwBpiTreatment = this.alwBpiTreatment.isChecked();
@@ -13560,7 +13559,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (this.gracePeriodEndDate_two.getValue() != null) {
-					aFinanceMain.setGrcPeriodEndDate(DateUtility.getDate(
+					aFinanceMain.setGrcPeriodEndDate(DateUtil.getDate(
 							DateUtil.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
@@ -13760,8 +13759,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					if (StringUtils.isNotEmpty(this.gracePftFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.gracePftFrq.getValue()) == null) {
-						aFinanceMain.setNextGrcPftDate(DateUtility.getDate(
-								DateUtility.format(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
+						aFinanceMain.setNextGrcPftDate(DateUtil.getDate(
+								DateUtil.format(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					// Validation Against the Repay Frequency and the next
 					// Frequency Date
@@ -13795,7 +13794,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					if (StringUtils.isNotEmpty(this.gracePftRvwFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
-						aFinanceMain.setNextGrcPftRvwDate(DateUtility.getDate(DateUtility
+						aFinanceMain.setNextGrcPftRvwDate(DateUtil.getDate(DateUtil
 								.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					// Validation Against the Repay Frequency and the next
@@ -13831,8 +13830,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (StringUtils.isNotEmpty(this.graceCpzFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.graceCpzFrq.getValue()) == null
 							&& this.nextGrcCpzDate_two.getValue() != null) {
-						aFinanceMain.setNextGrcCpzDate(DateUtility.getDate(
-								DateUtility.format(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
+						aFinanceMain.setNextGrcCpzDate(DateUtil.getDate(
+								DateUtil.format(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					// Validation Against the Repay Frequency and the next
 					// Frequency Date
@@ -13945,8 +13944,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.gracePeriodEndDate.setValue(this.finStartDate.getValue());
 				this.gracePeriodEndDate_two.setValue(this.finStartDate.getValue());
 			}
-			aFinanceMain.setGrcPeriodEndDate(DateUtility
-					.getDate(DateUtility.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+			aFinanceMain.setGrcPeriodEndDate(DateUtil
+					.getDate(DateUtil.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 			aFinanceMain.setGraceTerms(0);
 			aFinanceMain.setAllowGrcRepay(false);
 			aFinanceMain.setGraceBaseRate(null);
@@ -14133,8 +14132,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 					if (StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 							&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
-						aFinanceMain.setNextRepayPftDate(DateUtility.getDate(
-								DateUtility.format(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
+						aFinanceMain.setNextRepayPftDate(DateUtil.getDate(
+								DateUtil.format(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					// Validation Against the Repay Frequency and the next
 					// Frequency Date
@@ -14170,8 +14169,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (StringUtils.isNotEmpty(this.repayRvwFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayRvwFrq.getValue()) == null) {
-					aFinanceMain.setNextRepayRvwDate(DateUtility.getDate(
-							DateUtility.format(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
+					aFinanceMain.setNextRepayRvwDate(DateUtil.getDate(
+							DateUtil.format(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 
 				// Validation Against the Repay Frequency and the next Frequency
@@ -14204,8 +14203,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				if (StringUtils.isNotEmpty(this.repayCpzFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayCpzFrq.getValue()) == null) {
-					aFinanceMain.setNextRepayCpzDate(DateUtility.getDate(
-							DateUtility.format(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
+					aFinanceMain.setNextRepayCpzDate(DateUtil.getDate(
+							DateUtil.format(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				// Validation Against the Repay Frequency and the next Frequency
 				// Date
@@ -14240,8 +14239,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
-					aFinanceMain.setNextRepayDate(DateUtility.getDate(
-							DateUtility.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+					aFinanceMain.setNextRepayDate(DateUtil.getDate(
+							DateUtil.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				// Validation Against the Repay Frequency and the next Frequency
 				// Date
@@ -14256,8 +14255,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (SysParamUtil.isAllowed(SMTParameterConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE)) {
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
-					aFinanceMain.setNextRepayDate(DateUtility.getDate(
-							DateUtility.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+					aFinanceMain.setNextRepayDate(DateUtil.getDate(
+							DateUtil.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 			}
 
@@ -14460,8 +14459,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		try {
 			if (this.maturityDate_two.getValue() != null) {
-				aFinanceMain.setMaturityDate(DateUtility
-						.getDate(DateUtility.format(this.maturityDate_two.getValue(), PennantConstants.dateFormat)));
+				aFinanceMain.setMaturityDate(DateUtil
+						.getDate(DateUtil.format(this.maturityDate_two.getValue(), PennantConstants.dateFormat)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -14729,9 +14728,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						// should be greater than the current business date
 						int minNoofMonths;
 						if (!financeType.isDroplineOD()) {
-							minNoofMonths = DateUtility.getMonthsBetween(this.finStartDate.getValue(), appDate);
+							minNoofMonths = DateUtil.getMonthsBetween(this.finStartDate.getValue(), appDate);
 						} else {
-							minNoofMonths = DateUtility.getMonthsBetween(this.firstDroplineDate.getValue(), appDate);
+							minNoofMonths = DateUtil.getMonthsBetween(this.firstDroplineDate.getValue(), appDate);
 						}
 						if (tenor < minNoofMonths) {
 							throw new WrongValueException(this.odMnthlyTerms,
@@ -14767,7 +14766,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			try {
 				if (this.firstDroplineDate.getValue() != null) {
-					if (DateUtility.compare(this.firstDroplineDate.getValue(), this.finStartDate.getValue()) <= 0) {
+					if (DateUtil.compare(this.firstDroplineDate.getValue(), this.finStartDate.getValue()) <= 0) {
 						throw new WrongValueException(this.firstDroplineDate,
 								Labels.getLabel("DATE_ALLOWED_AFTER",
 										new String[] { Labels.getLabel("label_FinanceMainDialog_DroplineDate.value"),
@@ -14775,7 +14774,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					}
 
-					if (this.odMaturityDate.getValue() != null && DateUtility.compare(this.firstDroplineDate.getValue(),
+					if (this.odMaturityDate.getValue() != null && DateUtil.compare(this.firstDroplineDate.getValue(),
 							this.odMaturityDate.getValue()) >= 0) {
 						throw new WrongValueException(this.firstDroplineDate,
 								Labels.getLabel("DATE_ALLOWED_BEFORE",
@@ -15237,8 +15236,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// Maturity Calculation for Commercial
-			int months = DateUtility.getMonthsBetween(aFinanceMain.getFinStartDate(), aFinanceMain.getMaturityDate(),
-					true);
+			int months = DateUtil.getMonthsBetween(aFinanceMain.getFinStartDate(), aFinanceMain.getMaturityDate());
 			if (months > 0) {
 				aFinanceMain.setMaturity(new BigDecimal((months / 12) + "." + (months % 12)));
 			}
@@ -15269,7 +15267,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					} else {
 						if (PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus)) {
 							for (FinServiceInstruction finServiceInstruction : instructions) {
-								if (DateUtility.compare(finServiceInstruction.getFromDate(),
+								if (DateUtil.compare(finServiceInstruction.getFromDate(),
 										financeDisbursement.getDisbDate()) == 0) {
 									financeDisbursement.setQuickDisb(finServiceInstruction.isQuickDisb());
 								}
@@ -15315,7 +15313,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				try {
 					if (!this.tDSStartDate.isReadonly()
-							&& DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0
+							&& DateUtil.compare(this.appDate, this.tDSStartDate.getValue()) != 0
 							&& this.row_tDSEndDate.isVisible()) {
 						wve.add(new WrongValueException(this.tDSStartDate,
 								Labels.getLabel("FRQ_DATE_MISMATCH",
@@ -15333,8 +15331,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				try {
-					int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
-					int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
+					int startDatemonth = DateUtil.getMonth(this.tDSStartDate.getValue());
+					int startDateyear = DateUtil.getYear(this.tDSStartDate.getValue());
 					Date tdsformateEndDate = null;
 					Date tdsEndDate = null;
 					Date tdsStartDate = null;
@@ -15355,9 +15353,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					tdsEndDate = this.tDSEndDate.getValue();
 					tdsStartDate = this.tDSStartDate.getValue();
-					if ((DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
-							|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
-							|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1)
+					if ((DateUtil.compare(tdsformateEndDate, tdsEndDate) == -1
+							|| DateUtil.compare(tdsStartDate, tdsEndDate) == 0
+							|| DateUtil.compare(tdsEndDate, tdsStartDate) == -1)
 							&& this.row_tDSEndDate.isVisible()) {
 						wve.add(new WrongValueException(this.tDSEndDate,
 								"End Date must be after" + " "
@@ -15529,7 +15527,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -16436,7 +16434,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 					if (this.nextRepayDate.getValue() != null) {
 						int frqDay = Integer.parseInt(this.repayFrq.getValue().substring(3));
-						int day = DateUtility.getDay(this.nextRepayDate.getValue());
+						int day = DateUtil.getDay(this.nextRepayDate.getValue());
 						this.nextRepayDate_two
 								.setValue(
 										FrequencyUtil
@@ -16450,7 +16448,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					} else if (this.nextRepayPftDate.getValue() != null) {
 						int frqDay = Integer.parseInt(this.repayFrq.getValue().substring(3));
-						int day = DateUtility.getDay(this.nextRepayPftDate.getValue());
+						int day = DateUtil.getDay(this.nextRepayPftDate.getValue());
 						this.nextRepayDate_two.setValue(
 								FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayPftDate.getValue(),
 										HolidayHandlerTypes.MOVE_NONE, day == frqDay).getNextFrequencyDate());
@@ -16494,7 +16492,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null && !singleTermFinance) {
 			if (this.nextRepayDate.getValue() != null) {
 				int frqDay = Integer.parseInt(this.repayFrq.getValue().substring(3));
-				int day = DateUtility.getDay(this.nextRepayDate.getValue());
+				int day = DateUtil.getDay(this.nextRepayDate.getValue());
 				this.nextRepayDate_two
 						.setValue(FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, day == frqDay).getNextFrequencyDate());
@@ -16505,7 +16503,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			} else if (this.nextRepayPftDate.getValue() != null) {
 				int frqDay = Integer.parseInt(this.repayFrq.getValue().substring(3));
-				int day = DateUtility.getDay(this.nextRepayPftDate.getValue());
+				int day = DateUtil.getDay(this.nextRepayPftDate.getValue());
 				this.nextRepayDate_two.setValue(
 						FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayPftDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, day == frqDay).getNextFrequencyDate());
@@ -16574,7 +16572,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				if (this.maturityDate.getValue() == null) {
-					if (DateUtility.compare(calendar.getTime(), appEndDate) > 0) {
+					if (DateUtil.compare(calendar.getTime(), appEndDate) > 0) {
 						throw new WrongValueException(this.numberOfTerms,
 								Labels.getLabel("Cal_MaturityDate_Terms",
 										new String[] { Labels.getLabel("label_FinanceMainDialog_MaturityDate.value"),
@@ -16589,7 +16587,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (isOverdraft && financeType.isDroplineOD() && this.firstDroplineDate.getValue() == null) {
 			int tenor = ((this.odYearlyTerms.intValue() * 12) + this.odMnthlyTerms.intValue());
 			if (tenor > 0) {
-				Date nextSchdDate = DateUtility.getDate(DateUtility.format(
+				Date nextSchdDate = DateUtil.getDate(DateUtil.format(
 						FrequencyUtil.getNextDate(this.droplineFrq.getValue(), tenor, this.finStartDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
 						PennantConstants.dateFormat));
@@ -16640,7 +16638,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.setValue(
 								FrequencyUtil
 										.getNextDate(this.repayRvwFrq.getValue(), 1,
-												DateUtility.addMonths(this.gracePeriodEndDate_two.getValue(),
+												DateUtil.addMonths(this.gracePeriodEndDate_two.getValue(),
 														fixedTenor - 1),
 												HolidayHandlerTypes.MOVE_NONE, false,
 												this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
@@ -16718,8 +16716,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						? this.repayPftFrq.getValue().substring(this.repayPftFrq.getValue().length() - 2)
 						: this.repayPftFrq.getValue();
 
-				int month = DateUtility.getMonth(financeMain.getFinStartDate());
-				int year = DateUtility.getYear(financeMain.getFinStartDate());
+				int month = DateUtil.getMonth(financeMain.getFinStartDate());
+				int year = DateUtil.getYear(financeMain.getFinStartDate());
 
 				YearMonth yearMonthObject = YearMonth.of(year, month);
 				int daysInMonth = yearMonthObject.lengthOfMonth();
@@ -18145,7 +18143,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// data
 				if (commitment.getCmtExpDate().compareTo(finMain.getFinStartDate()) < 0) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_CommitExpiryDateCheck",
-							new String[] { DateUtility.formatToLongDate(commitment.getCmtExpDate()) }));
+							new String[] { DateUtil.formatToLongDate(commitment.getCmtExpDate()) }));
 					return false;
 				}
 
@@ -18577,7 +18575,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (main.isAllowGrcPeriod()) {
 					if (detail.getSchDate().compareTo(main.getGrcPeriodEndDate()) <= 0) {
 
-						if (DateUtility.compare(main.getFinStartDate(), main.getGrcPeriodEndDate()) == 0) {
+						if (DateUtil.compare(main.getFinStartDate(), main.getGrcPeriodEndDate()) == 0) {
 
 							this.nextGrcPftDate.setText("");
 							this.nextGrcCpzDate.setText("");
@@ -18708,12 +18706,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Current Finance Monthly Installment Calculation
 		BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
 		BigDecimal curFinRepayAmt = BigDecimal.ZERO;
-		int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate(),
-				false);
+		int installmentMnts = DateUtil.getMonthsBetweenInclusive(financeMain.getFinStartDate(),
+				financeMain.getMaturityDate());
 		if (installmentMnts > 0) {
 			curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
 		}
-		int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+		int months = DateUtil.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 
 		// Customer Data Fetching
 		if (customer == null) {
@@ -18740,7 +18738,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				custEmpAlocType = StringUtils.trimToEmpty(custEmp.getEmpAlocType());
 				custOtherIncome = StringUtils.trimToEmpty(custEmp.getOtherIncome());
 				custOtherIncomeAmt = custEmp.getAdditionalIncome();
-				int custMonthsofExp = DateUtility.getMonthsBetween(custEmp.getEmpFrom(), appDate);
+				int custMonthsofExp = DateUtil.getMonthsBetween(custEmp.getEmpFrom(), appDate);
 				custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 						RoundingMode.CEILING);
 			}
@@ -18778,7 +18776,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 					if (custEmpFromDate != null) {
-						int custMonthsofExp = DateUtility.getMonthsBetween(custEmpFromDate, appDate);
+						int custMonthsofExp = DateUtil.getMonthsBetween(custEmpFromDate, appDate);
 						custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 								RoundingMode.CEILING);
 					}
@@ -18819,7 +18817,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// detail.getCustomerEligibilityCheck().setFinProfitRate(financeMain.getEffectiveRateOfReturn());
 		if (financeMain.getFixedRateTenor() > 0 && financeMain.getGrcPeriodEndDate() != null) {
-			Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
+			Date fixedTenorEndDate = DateUtil.addMonths(financeMain.getGrcPeriodEndDate(),
 					financeMain.getFixedRateTenor());
 
 			if (fixedTenorEndDate.compareTo(appDate) > 0) {
@@ -18855,7 +18853,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		custElibCheck.setCustSector(custSector);
 		custElibCheck.setCustCtgCode(custCtgCode);
 		custElibCheck.setGraceTenure(
-				DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
+				DateUtil.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
 
 		custElibCheck.setReqFinCcy(financeMain.getFinCcy());
 		custElibCheck.setNoOfTerms(financeMain.getNumberOfTerms());
@@ -18985,7 +18983,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		int maturityAge = 0;
 		if (customer.getCustDOB() != null && maturityDate_two.getValue() != null) {
-			maturityAge = DateUtility.getYearsBetween(customer.getCustDOB(), maturityDate_two.getValue());
+			maturityAge = DateUtil.getYearsBetween(customer.getCustDOB(), maturityDate_two.getValue());
 		}
 
 		BigDecimal iIRVAlue = BigDecimal.ZERO;
@@ -19092,7 +19090,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				if (!isRcdFound) {
-					if (DateUtility.compare(curDisb.getDisbDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
+					if (DateUtil.compare(curDisb.getDisbDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
 						custElibCheck.setDisbOnGrace(true);
 					}
 				}
@@ -20334,7 +20332,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						financeMain.getFinCcy(), RuleReturnType.INTEGER);
 
 				Date nextRepayDate = financeMain.getFinStartDate();
-				nextRepayDate = DateUtility.addMonths(nextRepayDate, 1);
+				nextRepayDate = DateUtil.addMonths(nextRepayDate, 1);
 
 				Date maturityDate = financeMain.getMaturityDate();
 
@@ -20468,7 +20466,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<OverdraftScheduleDetail> odSchdList = finScheduleData.getOverdraftScheduleDetails();
 		for (int i = 0; i < odSchdList.size(); i++) {
 			OverdraftScheduleDetail curODSchd = odSchdList.get(i);
-			if (DateUtility.compare(curODSchd.getDroplineDate(),
+			if (DateUtil.compare(curODSchd.getDroplineDate(),
 					finScheduleData.getFinanceMain().getMaturityDate()) >= 0) {
 				if (curODSchd.getLimitIncreaseAmt().compareTo(BigDecimal.ZERO) > 0) {
 					finScheduleData.setErrorDetail(new ErrorDetail("30575", new String[] {}));
@@ -20754,7 +20752,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return null;
 			}
 
-			frq = "M00" + StringUtils.leftPad(String.valueOf(DateUtility.getDay(this.finStartDate.getValue())), 2, "0");
+			frq = "M00" + StringUtils.leftPad(String.valueOf(DateUtil.getDay(this.finStartDate.getValue())), 2, "0");
 			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(frq, tenorMonths, this.finStartDate.getValue(),
 					HolidayHandlerTypes.MOVE_NONE, false, 0).getScheduleList();
 
@@ -22424,11 +22422,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// details.setDocName(reportName);
 				details.setDocName(reportName.length() > 280 ? reportName.substring(0, 280)
 						: reportName.substring(0, reportName.length()));
-				details.setDocReceivedDate(DateUtility.getTimestamp(appDate));
+				details.setDocReceivedDate(DateUtil.getTimestamp(appDate));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
 				details.setCategoryCode(agreementDefinition.getModuleName());
-				details.setLastMntOn(DateUtility.getTimestamp(appDate));
+				details.setLastMntOn(DateUtil.getTimestamp(appDate));
 				details.setFinEvent(FinServiceEvent.ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setNewRecord(true);
@@ -22860,7 +22858,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				Row row3 = new Row();
 				rows.appendChild(row3);
 
-				Label label3 = new Label(DateUtility.formatToLongDate(details.getLastMntOn()));
+				Label label3 = new Label(DateUtil.formatToLongDate(details.getLastMntOn()));
 				row3.appendChild(label3);
 
 			}
@@ -23679,7 +23677,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Loan Start Date
-		if (DateUtility.compare(this.oldVar_finStartDate, this.finStartDate.getValue()) != 0) {
+		if (DateUtil.compare(this.oldVar_finStartDate, this.finStartDate.getValue()) != 0) {
 			return true;
 		}
 
@@ -23717,7 +23715,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		int years = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, dob);
+			int months = DateUtil.getMonthsBetween(appDate, dob);
 			years = months / 12;
 		}
 		return years;

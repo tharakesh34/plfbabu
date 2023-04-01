@@ -52,7 +52,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -73,6 +72,7 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -535,7 +535,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				// this.finSchdDate.getValue() , "finSchdDate");
 
 				searchObj.addFilter(new Filter("finSchdDate",
-						DateUtility.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
+						DateUtil.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
 						Filter.OP_EQUAL));
 			}
 			// Overdue Date
@@ -544,7 +544,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				// this.finODDate.getValue() , "finODDate");
 
 				searchObj.addFilter(new Filter("finODDate",
-						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+						DateUtil.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 			}
 			// Overdue Principle
 			if (this.finODPrinciple.getValue() != null) {

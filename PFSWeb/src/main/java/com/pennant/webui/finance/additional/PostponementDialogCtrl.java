@@ -48,7 +48,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.PostponementService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -61,6 +60,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -283,7 +283,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		Date graceEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 		if (financeDetail.getFinanceScheduleDetails() != null) {
 
-			Date unplanEMIHStart = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate(),
+			Date unplanEMIHStart = DateUtil.addMonths(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate(),
 					getFinScheduleData().getFinanceMain().getUnPlanEMIHLockPeriod());
 
 			List<FinanceScheduleDetail> financeScheduleDetails = financeDetail.getFinanceScheduleDetails();
@@ -297,7 +297,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				if (DateUtility.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
 					continue;
 				}
 
@@ -329,7 +329,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
-					if (DateUtility.compare(curSchd.getSchDate(), unplanEMIHStart) <= 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), unplanEMIHStart) <= 0) {
 						continue;
 					}
 				}
@@ -341,7 +341,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 				comboitem.setValue(curSchd.getSchDate());
 				if (fillAfter.compareTo(financeDetail.getFinanceMain().getFinStartDate()) == 0) {
 					dateCombobox.appendChild(comboitem);
@@ -392,7 +392,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// Dont allow Grace period Schedules
-				if (DateUtility.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
 					continue;
 				}
 
@@ -414,7 +414,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 				comboitem.setValue(curSchd.getSchDate());
 				if (fillAfter.compareTo(financeDetail.getFinanceMain().getFinStartDate()) == 0) {
 					dateCombobox.appendChild(comboitem);
@@ -485,7 +485,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbRecalFromDate,
 							Labels.getLabel("DATE_ALLOWED_AFTER",
 									new String[] { Labels.getLabel("label_PostponementDialog_RecalFromDate.value"),
-											DateUtility.formatToLongDate(fromDate) }));
+											DateUtil.formatToLongDate(fromDate) }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -508,7 +508,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbRecalToDate,
 							Labels.getLabel("DATE_ALLOWED_AFTER",
 									new String[] { Labels.getLabel("label_PostponementDialog_RecalToDate.value"),
-											DateUtility.formatToLongDate(recalFromDate) }));
+											DateUtil.formatToLongDate(recalFromDate) }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -552,8 +552,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
 			if (curSchd.isRepayOnSchDate()
 					|| curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-				if (DateUtility.compare(curSchd.getSchDate(), fromDate) >= 0
-						&& DateUtility.compare(curSchd.getSchDate(), toDate) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), fromDate) >= 0
+						&& DateUtil.compare(curSchd.getSchDate(), toDate) <= 0) {
 					adjTerms = adjTerms + 1;
 				}
 			}
@@ -563,8 +563,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			sdSize = schdData.getFinanceScheduleDetails().size();
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), fromDate) >= 0
-						&& DateUtility.compare(curSchd.getSchDate(), toDate) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), fromDate) >= 0
+						&& DateUtil.compare(curSchd.getSchDate(), toDate) <= 0) {
 					if (!checkPlannedDeferment(fromDate)) {
 						return;
 					}

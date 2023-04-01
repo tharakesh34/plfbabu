@@ -78,7 +78,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -1252,11 +1251,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				if (fillAfter.compareTo(curSchd.getSchDate()) < 0) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+					comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 
-					if (restructureDate != null && DateUtility.compare(restructureDate, curSchd.getSchDate()) == 0) {
+					if (restructureDate != null && DateUtil.compare(restructureDate, curSchd.getSchDate()) == 0) {
 						dateCombobox.setSelectedItem(comboitem);
 					}
 				}
@@ -1304,7 +1303,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Checking Manual Advise Last max Value Date before Application/Restructuring Date
 		FinanceMain fm = aFinSchData.getFinanceMain();
 		Date maxValueDate = restructureService.getMaxValueDateOfRcv(fm.getFinID());
-		if (maxValueDate != null && DateUtility.compare(maxValueDate, fullyPaidDate) > 0) {
+		if (maxValueDate != null && DateUtil.compare(maxValueDate, fullyPaidDate) > 0) {
 			fullyPaidDate = maxValueDate;
 		}
 		logger.debug(Literal.LEAVING);
@@ -1571,8 +1570,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.restructureDateIn,
 							Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
 									new String[] { Labels.getLabel("label_RestructureDialog_RestructureDate.value"),
-											DateUtility.formatToShortDate(fullyPaidDate),
-											DateUtility.formatToShortDate(appDate) }));
+											DateUtil.formatToShortDate(fullyPaidDate),
+											DateUtil.formatToShortDate(appDate) }));
 				}
 
 			} else {

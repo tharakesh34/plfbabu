@@ -86,7 +86,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -162,6 +161,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -3028,7 +3028,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private void formatCustomerData(Customer customer) {
 		Date dob = customer.getCustDOB();
 		if (dob != null) {
-			customer.setCustDOB(DateUtility.getDate(DateUtility.format(dob, DateFormat.SHORT_DATE.getPattern())));
+			customer.setCustDOB(DateUtil.getDate(DateUtil.format(dob, DateFormat.SHORT_DATE.getPattern())));
 			customer.setCustomerAge(new BigDecimal(getAge(dob)));
 		}
 	}
@@ -3046,7 +3046,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		int years = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, dob);
+			int months = DateUtil.getMonthsBetween(appDate, dob);
 			years = months / 12;
 		}
 		return years;
@@ -3180,7 +3180,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		List<CustomerAddres> customerAddres = details.getAddressList();
 		List<CustomerDocument> custDoc = details.getCustomerDocumentsList();
 
-		String date = DateUtility.format(customer.getCustDOB(), "dd-MMM-yyyy");
+		String date = DateUtil.format(customer.getCustDOB(), "dd-MMM-yyyy");
 
 		formData.put("Title", customer.getLovDescCustSalutationCodeName());
 		formData.put("FirstName", customer.getCustFName());

@@ -60,7 +60,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
@@ -3635,7 +3634,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setDate(1, JdbcUtil.getDate(DateUtility.getMonthStart(monthEndDate)));
+			ps.setDate(1, JdbcUtil.getDate(DateUtil.getMonthStart(monthEndDate)));
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 

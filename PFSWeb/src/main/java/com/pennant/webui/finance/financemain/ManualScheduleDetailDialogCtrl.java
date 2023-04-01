@@ -60,7 +60,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
@@ -80,6 +79,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -337,7 +337,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		int liSeq = Integer.parseInt(li.getId().substring(li.getId().indexOf("_") + 1));
 		if (li.getFellowIfAny("date_" + liSeq) != null) {
 			Datebox curDb = (Datebox) (li.getFellowIfAny("date_" + liSeq));
-			if (curDb.getValue() != null && DateUtility.compare(curDb.getValue(), curDate) != 0) {
+			if (curDb.getValue() != null && DateUtil.compare(curDb.getValue(), curDate) != 0) {
 				curDb.setValue(curDate);
 			}
 		}
@@ -655,7 +655,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)
 					|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFTCPZ)
 					|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT)) {
-				if (DateUtility.compare(prvDb.getValue(), finMain.getGrcPeriodEndDate()) > 0) {
+				if (DateUtil.compare(prvDb.getValue(), finMain.getGrcPeriodEndDate()) > 0) {
 					BigDecimal calPftdiff = adjustPrvItemPftBal(prvListItem);
 					calInt = calInt.add(calPftdiff);
 				}
@@ -823,7 +823,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				fsd.setSchDate(schdDate.getValue());
 				fsd.setDefSchdDate(schdDate.getValue());
 				if (prvSchdDate != null) {
-					fsd.setNoOfDays(DateUtility.getDaysBetween(prvSchdDate, schdDate.getValue()));
+					fsd.setNoOfDays(DateUtil.getDaysBetween(prvSchdDate, schdDate.getValue()));
 				} else {
 					fsd.setNoOfDays(0);
 				}
@@ -1026,9 +1026,9 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		this.schdl_contractPrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.schdl_finReference.setValue(financeMain.getFinReference());
 		this.schdl_noOfTerms.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
-		this.schdl_grcEndDate.setValue(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
-		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.schdl_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		this.schdl_grcEndDate.setValue(DateUtil.formatToLongDate(financeMain.getGrcPeriodEndDate()));
+		this.schdl_startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+		this.schdl_maturityDate.setValue(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 		this.schdl_purchasePrice.setValue(CurrencyUtil.parse(financeMain.getFinAmount(), ccyFormatter));
 		this.schdl_otherExp.setValue(CurrencyUtil.parse(financeMain.getFeeChargeAmt(), ccyFormatter));
 		this.schdl_totalPft.setValue(CurrencyUtil.parse(financeMain.getTotalProfit(), ccyFormatter));
@@ -1141,18 +1141,18 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				Datebox curDate = ((Datebox) actionListItem.getFellowIfAny("date_" + refChildItemSeq));
 
 				// To check grace is allowed in actionListItem or not
-				if (DateUtility.compare(curDate.getValue(), finMain.getGrcPeriodEndDate()) < 0) {
+				if (DateUtil.compare(curDate.getValue(), finMain.getGrcPeriodEndDate()) < 0) {
 					grcRenderProcess = true;
 				} else {
 					grcRenderProcess = false;
 				}
 
 			} else if (grcAllowed && !newRecord
-					&& DateUtility.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
+					&& DateUtil.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
 							finMain.getGrcPeriodEndDate()) <= 0) {
 
 				grcRenderProcess = true;
-				if (DateUtility.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
+				if (DateUtil.compare(finSchdData.getFinanceScheduleDetails().get(i).getSchDate(),
 						finMain.getGrcPeriodEndDate()) == 0) {
 					isGrcEndDate = true;
 				}
@@ -1543,25 +1543,25 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				if (curDb.getValue() == null) {
 					throw new WrongValueException(curDb,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { Labels.getLabel("label_CurDate") }));
-				} else if (maturityDate != null && DateUtility.compare(curDb.getValue(), maturityDate) >= 0
+				} else if (maturityDate != null && DateUtil.compare(curDb.getValue(), maturityDate) >= 0
 						&& !curDb.isDisabled()) {
 					throw new WrongValueException(curDb,
 							Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] { Labels.getLabel("label_CurDate"),
 									PennantAppUtil.formateDate(maturityDate, DateFormat.SHORT_DATE.getPattern()) }));
-				} else if (DateUtility.compare(curDb.getValue(), appEndDate) > 0) {
+				} else if (DateUtil.compare(curDb.getValue(), appEndDate) > 0) {
 					throw new WrongValueException(curDb, Labels.getLabel("DATE_NOT_AFTER",
 							new String[] { Labels.getLabel("label_CurDate"), appEndDate.toString() }));
 				}
 
 				if (prvListItem.getFellowIfAny("date_" + prvListItemSeq) != null) {
 					prvDb = (Datebox) (prvListItem.getFellowIfAny("date_" + prvListItemSeq));
-					if (DateUtility.compare(curDb.getValue(), prvDb.getValue()) <= 0) {
+					if (DateUtil.compare(curDb.getValue(), prvDb.getValue()) <= 0) {
 						if (!curDb.isDisabled()) {
 							throw new WrongValueException(curDb, Labels.getLabel("NUMBER_MINVALUE",
 									new String[] { Labels.getLabel("label_CurDate"), "Previous Schedule Date " }));
 						} else {
 							if (main.isAllowGrcPeriod() && grcEndDate != null
-									&& DateUtility.compare(curDb.getValue(), grcEndDate) >= 0) {
+									&& DateUtil.compare(curDb.getValue(), grcEndDate) >= 0) {
 								throw new WrongValueException(prvDb, Labels.getLabel("DATE_ALLOWED_BEFORE",
 										new String[] { Labels.getLabel("label_CurDate"), PennantAppUtil
 												.formateDate(grcEndDate, DateFormat.SHORT_DATE.getPattern()) }));
@@ -1572,7 +1572,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 
 			// Grace details Setting
-			if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0
+			if (main.isAllowGrcPeriod() && DateUtil.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0
 					&& (!StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())
 							|| !StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, main.getGrcSchdMthd()))) {
 				grcAlwdWithoutPftPay = true;
@@ -1586,7 +1586,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				grcAlwdWithoutPftPay = false;
 			}
 
-			if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0) {
+			if (main.isAllowGrcPeriod() && DateUtil.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0) {
 				graceTerms = graceTerms + 1;
 			} else {
 				finNumberofTerms = finNumberofTerms + 1;
@@ -1608,7 +1608,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				BigDecimal minRate = BigDecimal.ZERO;
 				BigDecimal maxRate = BigDecimal.ZERO;
-				if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0) {
+				if (main.isAllowGrcPeriod() && DateUtil.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0) {
 					minRate = main.getGrcMinRate();
 					maxRate = main.getGrcMaxRate();
 				} else {
@@ -1716,7 +1716,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						grcPftTillNow = grcPftTillNow.add(calInt);
 						if (grcPayEndSchddMthd) {
 							// Calculate all the interest amount and add for the Last Grace period
-							if (DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
+							if (DateUtil.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
 								Label pft = (Label) curListItem.getFellowIfAny("pft_" + curListItemSeq);
 								pft.setValue(CurrencyUtil.format(grcPftTillNow, formatter));
 								curPft = grcPftTillNow;
@@ -1727,7 +1727,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 						// Grace Period Profit Balance adjustment
 						Label pft = (Label) curListItem.getFellowIfAny("pft_" + curListItemSeq);
-						if (isGraceNoPay && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) > 0) {
+						if (isGraceNoPay && DateUtil.compare(curDb.getValue(), main.getGrcPeriodEndDate()) > 0) {
 							curPft = grcPftTillNow.add(calInt);
 							isGraceNoPay = false;
 						} else {
@@ -1737,7 +1737,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						// Repayment Period Details Profit capturing
 						if (isPriPayOnly) {
 							rpyPftTillNow = rpyPftTillNow.add(curPft);
-							if (DateUtility.compare(curDb.getValue(), main.getMaturityDate()) == 0) {
+							if (DateUtil.compare(curDb.getValue(), main.getMaturityDate()) == 0) {
 								pft.setValue(CurrencyUtil.format(rpyPftTillNow, formatter));
 							}
 						} else {
@@ -1765,7 +1765,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				// Allow Grace Repayment at Grace End Date for Grace Pay At End Date Method
 				if (grcPayEndSchddMthd) {
 					// Calculate all the interest amount and add for the Last Grace period
-					if (DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
+					if (DateUtil.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
 						alwGrcRepay = true;
 					}
 				}
@@ -1810,7 +1810,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				BigDecimal calEmi = BigDecimal.ZERO;
 				if (isPriPayOnly) {
-					if (DateUtility.compare(curDb.getValue(), main.getMaturityDate()) != 0) {
+					if (DateUtil.compare(curDb.getValue(), main.getMaturityDate()) != 0) {
 						calEmi = curPri;
 					} else {
 						calEmi = curPri.add(rpyPftTillNow);
@@ -1966,8 +1966,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 			if (isWIF) {
 				reportName = "WIFENQ_ScheduleDetail";
-				int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-						true);
+				int months = DateUtil.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate());
 
 				int advTerms = 0;
 				if (AdvanceType.hasAdvEMI(financeMain.getAdvType())

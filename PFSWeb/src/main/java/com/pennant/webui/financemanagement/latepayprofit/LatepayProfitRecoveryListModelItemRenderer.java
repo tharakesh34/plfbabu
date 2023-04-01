@@ -35,8 +35,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -56,7 +56,7 @@ public class LatepayProfitRecoveryListModelItemRenderer
 
 		if (item instanceof Listgroup) {
 			item.appendChild(new Listcell(
-					"Overdue Term : " + DateUtility.formatToLongDate(overdueChargeRecovery.getFinODSchdDate())));
+					"Overdue Term : " + DateUtil.formatToLongDate(overdueChargeRecovery.getFinODSchdDate())));
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(10);
@@ -66,7 +66,7 @@ public class LatepayProfitRecoveryListModelItemRenderer
 			int format = CurrencyUtil.getFormat(overdueChargeRecovery.getFinCcy());
 
 			Listcell lc;
-			lc = new Listcell(DateUtility.formatToLongDate(overdueChargeRecovery.getMovementDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(overdueChargeRecovery.getMovementDate()));
 			lc.setParent(item);
 
 			lc = new Listcell(String.valueOf(overdueChargeRecovery.getODDays()));

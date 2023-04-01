@@ -44,12 +44,12 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
@@ -249,7 +249,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_CustCIF.value"),
 				custDedup.getCustCIF(), Labels.getLabel("label_CustomerDedupDialog_DOB.value"),
-				DateUtility.formatToLongDate(custDedup.getCustDOB())));
+				DateUtil.formatToLongDate(custDedup.getCustDOB())));
 		if (StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
 			rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_CustomerDedupDialog_CustShrtName.value"),
 					StringUtils.isNotEmpty(custDedup.getCustShrtName()) ? custDedup.getCustShrtName()
@@ -567,7 +567,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 					Date curdateFieldValue = (Date) getCustomerDedup().getClass().getMethod(fieldMethod)
 							.invoke(getCustomerDedup());
-					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+					lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 
 					if (dateFieldValue != null && curdateFieldValue != null) {
 						for (int k = 0; k < ruleFields.length; k++) {

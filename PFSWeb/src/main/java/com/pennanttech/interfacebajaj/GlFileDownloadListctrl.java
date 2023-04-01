@@ -72,7 +72,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -334,7 +333,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 			}
 
 			try {
-				if (this.toDate != null && DateUtility.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
+				if (this.toDate != null && DateUtil.compare(this.toDate.getValue(), this.fromdate.getValue()) < 0) {
 					throw new WrongValueException(this.toDate, "To Date should be greater than From Date");
 				}
 			} catch (WrongValueException we) {
@@ -343,7 +342,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 
 			try {
 				if (this.toDate != null
-						&& DateUtility.compare(this.toDate.getValue(), SysParamUtil.getLastBusinessdate()) > 0) {
+						&& DateUtil.compare(this.toDate.getValue(), SysParamUtil.getLastBusinessdate()) > 0) {
 					throw new WrongValueException(this.toDate, "To Date should be less than Last Business Date");
 				}
 			} catch (WrongValueException we) {
@@ -369,7 +368,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 
 					finYearEnd.set(Calendar.DATE, finYearEnd.getActualMaximum(Calendar.DATE));
 
-					if (DateUtility.compare(this.toDate.getValue(), finYearEnd.getTime()) > 0) {
+					if (DateUtil.compare(this.toDate.getValue(), finYearEnd.getTime()) > 0) {
 						throw new WrongValueException(this.toDate,
 								"From Date and To Date should be with in financial year");
 					}
@@ -601,7 +600,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 
 			if (item instanceof Listgroup) {
 				item.appendChild(new Listcell(
-						(DateUtility.format(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern()))));
+						(DateUtil.format(fileDownlaod.getValueDate(), DateFormat.LONG_MONTH.getPattern()))));
 			} else if (item instanceof Listgroupfoot) {
 				Listcell cell = new Listcell("");
 				cell.setSpan(4);
@@ -615,7 +614,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 				lc = new Listcell(fileDownlaod.getFileName());
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.format(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
@@ -663,16 +662,16 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 	public static List<ValueLabel> getMonthEndList(Date startDate, Date endDate, SortOrder sortOrder) {
 
 		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
-		startDate = DateUtility.getMonthEnd(startDate);
+		startDate = DateUtil.getMonthEnd(startDate);
 
 		// Prepare Month End list between two dates, by Default Ascending
-		while (DateUtility.getMonthEnd(endDate).compareTo(startDate) > 0) {
+		while (DateUtil.getMonthEnd(endDate).compareTo(startDate) > 0) {
 
-			monthEndList.add(new ValueLabel(DateUtility.format(startDate, PennantConstants.DBDateFormat),
-					DateUtility.format(startDate, DateFormat.LONG_MONTH.getPattern())));
+			monthEndList.add(new ValueLabel(DateUtil.format(startDate, PennantConstants.DBDateFormat),
+					DateUtil.format(startDate, DateFormat.LONG_MONTH.getPattern())));
 
-			startDate = DateUtility.addDays(startDate, 1);
-			startDate = DateUtility.getMonthEnd(startDate);
+			startDate = DateUtil.addDays(startDate, 1);
+			startDate = DateUtil.getMonthEnd(startDate);
 		}
 
 		// Month End List in Descending order
@@ -700,13 +699,13 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 			lc = new Listcell(getSecurityUser(fileDownlaod.getUserId()));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.format(fileDownlaod.getStartDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtil.format(fileDownlaod.getStartDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.format(fileDownlaod.getEndDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtil.format(fileDownlaod.getEndDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.format(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtil.format(fileDownlaod.getValueDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());

@@ -37,12 +37,12 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
@@ -334,13 +334,13 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		lc.setParent(item);
 		lc = new Listcell(aFinanceEnq.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getFinStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getGrcPeriodEndDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getGrcPeriodEndDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(aFinanceEnq.getNumberOfTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getMaturityDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(
 				CurrencyUtil.format(aFinanceEnq.getFinAmount(), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
@@ -350,7 +350,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 				.subtract(aFinanceEnq.getFinRepaymentAmount()), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getNextDueDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getNextDueDate()));
 		lc.setParent(item);
 		lc = new Listcell(
 				CurrencyUtil.format(aFinanceEnq.getNextDueAmount(), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));

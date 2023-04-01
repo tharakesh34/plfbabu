@@ -7,8 +7,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 
 /**
@@ -35,7 +35,7 @@ public class PersonalDiscussionListModelItemRenderer implements ListitemRenderer
 		lc.setParent(item);
 		lc = new Listcell(pd.getAgencyName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(pd.getCreatedOn()));
+		lc = new Listcell(DateUtil.formatToLongDate(pd.getCreatedOn()));
 		lc.setParent(item);
 		lc = new Listcell(pd.getRecordStatus());
 		lc.setParent(item);

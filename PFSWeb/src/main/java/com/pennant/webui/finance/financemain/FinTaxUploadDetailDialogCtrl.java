@@ -43,7 +43,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -62,6 +61,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -317,7 +317,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 	private void doFillHeaderData(String fileName, Date curBDay, long total, String Status) {
 		this.fileName.setValue(fileName);
-		this.batchCreationDate.setValue(DateUtility.format(curBDay, DateFormat.LONG_DATE.getPattern()));
+		this.batchCreationDate.setValue(DateUtil.format(curBDay, DateFormat.LONG_DATE.getPattern()));
 		this.totalNoofRecords.setValue(total + "");
 		this.status.setValue(Status + "");
 

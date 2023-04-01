@@ -20,7 +20,6 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
 
 import com.pennant.UserWorkspace;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.Property;
@@ -32,6 +31,7 @@ import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class DeviationRenderer {
 
@@ -172,7 +172,7 @@ public class DeviationRenderer {
 					PennantStaticListUtil.getlabelDesc(deviationDetail.getDelegationRole(), secRolesList));
 			listitem.appendChild(listcell);
 
-			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()),
+			listcell = getNewListCell(DateUtil.formatToShortDate(deviationDetail.getDeviationDate()),
 					deviationNotallowed);
 			listitem.appendChild(listcell);
 
@@ -306,7 +306,7 @@ public class DeviationRenderer {
 			listitem.appendChild(listcell);
 
 			// Raised On
-			listcell = getNewListCell(DateUtility.formatToShortDate(deviation.getDeviationDate()), devNotallowed);
+			listcell = getNewListCell(DateUtil.formatToShortDate(deviation.getDeviationDate()), devNotallowed);
 			listitem.appendChild(listcell);
 
 			// Approval Authority

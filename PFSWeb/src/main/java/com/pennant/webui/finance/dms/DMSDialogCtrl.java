@@ -29,7 +29,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -52,6 +51,7 @@ import com.pennanttech.external.dms.model.ExternalDocument;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -574,7 +574,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					}
 					docDetail.setRemarks(extDoc.getRemarks1());
 					docDetail.setDocReceivedDate(
-							DateUtility.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat));
+							DateUtil.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat));
 					docDetail.setVersion(1);
 					docDetail.setReferenceId(finReference);
 
@@ -708,8 +708,8 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							docDetail.setCustDocType(extDoc.getDocExtn().toUpperCase());
 						}
 						docDetail.setRemarks(extDoc.getRemarks1());
-						docDetail.setCustDocRcvdOn(DateUtility.getTimestamp(
-								DateUtility.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat)));
+						docDetail.setCustDocRcvdOn(DateUtil.getTimestamp(
+								DateUtil.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat)));
 						docDetail.setCustDocIssuedCountry(PennantApplicationUtil.getDefaultCounty().getCountryCode());
 						String applicationNo = ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo();
 						docDetail.setApplicationNo(applicationNo);
@@ -925,7 +925,7 @@ public class DMSDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							}
 							docDetail.setRemarks(extDoc.getRemarks1());
 							docDetail.setDocReceivedDate(
-									DateUtility.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat));
+									DateUtil.getDate(extDoc.getRevisedDate(), PennantConstants.DBDateTimeFormat));
 							docDetail.setVersion(1);
 							docDetail.setReferenceId(collateralRef);
 							docDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));

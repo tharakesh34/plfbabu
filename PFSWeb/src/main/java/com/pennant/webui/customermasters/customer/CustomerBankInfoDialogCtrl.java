@@ -84,7 +84,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.AccountType;
@@ -2255,7 +2254,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		try {
 
-			if (DateUtility.compare(this.accountOpeningDate.getValue(), SysParamUtil.getAppDate()) > 0) {
+			if (DateUtil.compare(this.accountOpeningDate.getValue(), SysParamUtil.getAppDate()) > 0) {
 				throw new WrongValueException(this.accountOpeningDate, Labels.getLabel("const_NO_FUTURE",
 						new String[] { Labels.getLabel("label_CustomerBankInfoDialog_AccountOpeningDate.value") }));
 			}
@@ -2589,14 +2588,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		AuditHeader auditHeader = new AuditHeader();
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
-		valueParm[0] = String.valueOf(DateUtility.format(detail.getMonthYear(), PennantConstants.monthYearFormat));
+		valueParm[0] = String.valueOf(DateUtil.format(detail.getMonthYear(), PennantConstants.monthYearFormat));
 		errParm[0] = "Monthyear" + ":" + valueParm[0];
 
 		bankInfoDetails = new ArrayList<>();
 
 		if (CollectionUtils.isNotEmpty(infoList)) {
 			for (int i = 0; i < infoList.size(); i++) {
-				if (DateUtility.compare(detail.getMonthYear(), infoList.get(i).getMonthYear()) == 0) {
+				if (DateUtil.compare(detail.getMonthYear(), infoList.get(i).getMonthYear()) == 0) {
 					if (detail.isNewRecord() && StringUtils.isEmpty(detail.getRecordType())) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
@@ -2663,7 +2662,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 								Labels.getLabel("FIELD_IS_MAND", new String[] { "Month Year" }));
 					} else {
 						monthYearValue.setDate(1);
-						if (DateUtility.compare(monthYearValue, SysParamUtil.getAppDate()) == 1) {
+						if (DateUtil.compare(monthYearValue, SysParamUtil.getAppDate()) == 1) {
 							throw new WrongValueException(monthYear,
 									Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month Year" }));
 						}
@@ -4173,12 +4172,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 				lc = new Listcell();
 				lc.setIconSclass("FromDate".concat(String.valueOf(i)));
-				lc.setLabel(DateUtility.formatToLongDate(externalDocument.getFromDate()));
+				lc.setLabel(DateUtil.formatToLongDate(externalDocument.getFromDate()));
 				lc.setParent(item);
 
 				lc = new Listcell();
 				lc.setIconSclass("ToDate".concat(String.valueOf(i)));
-				lc.setLabel(DateUtility.formatToLongDate(externalDocument.getToDate()));
+				lc.setLabel(DateUtil.formatToLongDate(externalDocument.getToDate()));
 				lc.setParent(item);
 
 				if (!externalDocument.isNewRecord()) {

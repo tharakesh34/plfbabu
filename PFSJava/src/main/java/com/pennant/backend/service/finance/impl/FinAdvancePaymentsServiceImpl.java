@@ -44,7 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASConfigurationDAO;
@@ -88,6 +87,7 @@ import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -558,7 +558,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			List<FinanceDisbursement> finDisbursementDetails = schdData.getDisbursementDetails();
 			for (FinanceDisbursement finDisbursmentDetail : finDisbursementDetails) {
 				if (finAdvancePay.getDisbSeq() == finDisbursmentDetail.getDisbSeq() && finAdvancePay.getLlDate() != null
-						&& DateUtility.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
+						&& DateUtil.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm), usrLanguage));
 				}
@@ -940,7 +940,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		if (singletDisbursment.compareTo(totalGroupAmt) != 0 && "#".equals(fm.getAdvType())
 				&& "#".equals(fm.getGrcAdvType())) {
-			String errorDesc = DateUtility.formatToLongDate(disbDate);
+			String errorDesc = DateUtil.formatToLongDate(disbDate);
 			ErrorDetail error = new ErrorDetail("60404", new String[] { errorDesc });
 			errorList.add(error);
 			logger.debug(Literal.LEAVING);

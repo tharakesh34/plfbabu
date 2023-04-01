@@ -60,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -82,6 +81,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -783,7 +783,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate"), true));
-			if (DateUtility.compare(this.docReceivedDt.getValue(), SysParamUtil.getAppDate()) == 1) {
+			if (DateUtil.compare(this.docReceivedDt.getValue(), SysParamUtil.getAppDate()) == 1) {
 				throw new WrongValueException(this.docReceivedDt, Labels.getLabel("DATE_NO_FUTURE",
 						new String[] { Labels.getLabel("label_FinDocumentDetailDialog_DocumentRecievedDate") }));
 			}

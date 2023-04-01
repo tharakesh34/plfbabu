@@ -43,7 +43,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -751,7 +750,7 @@ public class VariableOverdraftScheduleDialogCtrl extends GFCBaseCtrl<VariableOve
 
 	private void saveUploadHeader() {
 		this.variableOverdraftSchdHeader.setFileName(this.txtFileName.getValue());
-		this.variableOverdraftSchdHeader.setTransactionDate(DateUtility.getSysDate());
+		this.variableOverdraftSchdHeader.setTransactionDate(DateUtil.getSysDate());
 		this.variableOverdraftSchdHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.variableOverdraftSchdHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 	}

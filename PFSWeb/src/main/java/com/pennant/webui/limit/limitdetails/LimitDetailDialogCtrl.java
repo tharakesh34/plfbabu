@@ -69,7 +69,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -96,6 +95,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -917,7 +917,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		if (!this.reviewDate.isReadonly() && active.isChecked()) {
 
 			Date appDate = SysParamUtil.getAppDate();
-			Date nextYear = DateUtility.addYears(appDate, 1);
+			Date nextYear = DateUtil.addYears(appDate, 1);
 			this.reviewDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_LimitHeaderDialog_ReviewDate.value"), false, true, nextYear, true));
 		}
@@ -1550,7 +1550,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 				wve.add(new WrongValueException(this.expiryDate,
 						Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
 								new String[] { Labels.getLabel("label_LimitHeaderDialog_ExpiryDate.value"),
-										DateUtility.formatToShortDate(lineMaxExpDate) })));
+										DateUtil.formatToShortDate(lineMaxExpDate) })));
 			}
 		}
 

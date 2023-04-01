@@ -46,7 +46,6 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.model.blacklist.FinBlacklistCustomer;
 import com.pennant.backend.service.PagedListService;
@@ -57,6 +56,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
@@ -248,7 +248,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_CustCIF.value"),
 				blCustomers.getCustCIF(), Labels.getLabel("label_BlackListCheckDialog_DOB.value"),
-				DateUtility.formatToLongDate(blCustomers.getCustDOB())));
+				DateUtil.formatToLongDate(blCustomers.getCustDOB())));
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_BlackListCheckDialog_CustFName.value"),
 				StringUtils.isNotEmpty(blCustomers.getCustFName()) ? blCustomers.getCustFName()
 						: blCustomers.getCustShrtName(),
@@ -472,7 +472,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 					Date curdateFieldValue = (Date) getCurCustomer().getClass().getMethod(fieldMethod)
 							.invoke(getCurCustomer());
-					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+					lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 
 					if (dateFieldValue != null && curdateFieldValue != null) {
 						for (int k = 0; k < ruleFields.length; k++) {

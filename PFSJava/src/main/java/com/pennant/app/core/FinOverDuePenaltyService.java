@@ -8,11 +8,11 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODCAmountDAO;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinOverDuePenaltyService {
 
@@ -85,7 +85,7 @@ public class FinOverDuePenaltyService {
 		odc.setOdPri(od.getFinCurODPri());
 		odc.setOdPft(od.getFinCurODPft());
 		odc.setFinOdTillDate(od.getFinODTillDate());
-		odc.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
+		odc.setDueDays(DateUtil.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
 		odc.setChargeType(chargeType);
 
 		return odc;

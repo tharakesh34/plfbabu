@@ -92,7 +92,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReceiptCalculator;
@@ -1400,7 +1399,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			this.finSchProfitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(),
 					PennantStaticListUtil.getProfitDaysBasis()));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
-			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
+			this.finSchGracePeriodEndDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 
 			// Fill Effective Schedule Details
@@ -2454,7 +2453,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		} else {
 			if (finMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())
 					&& finMain.isAllowGrcPeriod() && FinanceConstants.STEPTYPE_PRIBAL.equals(finMain.getStepType())
-					&& DateUtility.compare(receiptData.getValueDate(), finMain.getGrcPeriodEndDate()) <= 0
+					&& DateUtil.compare(receiptData.getValueDate(), finMain.getGrcPeriodEndDate()) <= 0
 					&& (CalculationConstants.SCHMTHD_PRI.equals(finMain.getScheduleMethod())
 							|| CalculationConstants.SCHMTHD_PRI_PFT.equals(finMain.getScheduleMethod()))) {
 				repyMethodList
@@ -3215,8 +3214,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		Date fromDate = rch.getValueDate();
 
 		Date toDate = SysParamUtil.getAppDate(); // DateUtility.getAppDate()
-		if (DateUtility.compare(fromDate, toDate) > 0) {
-			toDate = DateUtility.getDerivedAppDate();
+		if (DateUtil.compare(fromDate, toDate) > 0) {
+			toDate = SysParamUtil.getDerivedAppDate();
 		}
 
 		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
@@ -3496,7 +3495,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		try {
 			Date curBusDate = SysParamUtil.getAppDate();
 			if (curBusDate.compareTo(header.getValueDate()) < 0) {
-				curBusDate = DateUtility.getDerivedAppDate();
+				curBusDate = SysParamUtil.getDerivedAppDate();
 			}
 
 		} catch (WrongValueException we) {
@@ -3911,7 +3910,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), formatter));
@@ -4119,7 +4118,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -4312,7 +4311,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				boolean isValidPPDate = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0
 							&& StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())
 							&& !FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())
 							&& !FinanceConstants.FLAG_UNPLANNED.equals(curSchd.getBpiOrHoliday())
@@ -4323,11 +4322,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 							&& !FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
 						isValidPPDate = false;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}

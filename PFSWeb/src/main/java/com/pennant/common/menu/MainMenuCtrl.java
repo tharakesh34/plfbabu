@@ -60,7 +60,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.extension.PartnerBankExtension;
@@ -350,7 +349,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		LoggedInUser user = userWorkspace.getLoggedInUser();
 
-		if (user.getLogonFromTime() != null && DateUtility.compareTime(new Date(System.currentTimeMillis()),
+		if (user.getLogonFromTime() != null && DateUtil.compareTime(new Date(System.currentTimeMillis()),
 				user.getLogonFromTime(), false) == -1) {
 			MessageUtil.showInfo("OPS_NOT_ALLOWED_BEFORE",
 					DateUtil.format(user.getLogonFromTime(), DateFormat.SHORT_TIME));
@@ -358,7 +357,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		}
 
 		if (user.getLogonToTime() != null
-				&& DateUtility.compareTime(new Date(System.currentTimeMillis()), user.getLogonToTime(), false) == 1) {
+				&& DateUtil.compareTime(new Date(System.currentTimeMillis()), user.getLogonToTime(), false) == 1) {
 			MessageUtil.showInfo("OPS_NOT_ALLOWED_AFTER",
 					DateUtil.format(user.getLogonToTime(), DateFormat.SHORT_TIME));
 			return;

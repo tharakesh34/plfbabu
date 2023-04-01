@@ -40,7 +40,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -949,7 +948,7 @@ public class ProjectedAmortizationService {
 		List<ProjectedAmortization> projIncomeAMZList = new ArrayList<ProjectedAmortization>(1);
 
 		List<ProjectedAmortization> finIncomeAMZList = finEODEvent.getIncomeAMZList();
-		Date curMonthEnd = DateUtility.getMonthEnd(finEODEvent.getEventFromDate());
+		Date curMonthEnd = DateUtil.getMonthEnd(finEODEvent.getEventFromDate());
 
 		for (ProjectedAmortization incomeAMZ : finIncomeAMZList) {
 			// TODO : Avoid Write Off loans from 2nd month onwards, Same is handled in Preparation

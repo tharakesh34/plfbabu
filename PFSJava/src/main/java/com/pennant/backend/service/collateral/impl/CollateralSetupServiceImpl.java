@@ -44,7 +44,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -2020,7 +2019,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		if (StringUtils.equals(method, "update")) {
 			// validate collateral reference
 			if (StringUtils.isNotBlank(collateralSetup.getCollateralRef())) {
-				int recordCount = collateralSetupDAO.getCollateralCountByref(collateralSetup.getCollateralRef(), isPendding ? "_Temp" : "");
+				int recordCount = collateralSetupDAO.getCollateralCountByref(collateralSetup.getCollateralRef(),
+						isPendding ? "_Temp" : "");
 				if (recordCount <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = collateralSetup.getCollateralRef();
@@ -2037,7 +2037,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (StringUtils.isNotBlank(collateralType)) {
 				collateralStructure = getCollateralStructure(collateralType);
 			} else if (StringUtils.isNotBlank(collateralSetup.getCollateralRef())) {
-				CollateralSetup setup = collateralSetupDAO.getCollateralSetupByRef(collateralSetup.getCollateralRef(), isPendding ? "_Temp" : "");
+				CollateralSetup setup = collateralSetupDAO.getCollateralSetupByRef(collateralSetup.getCollateralRef(),
+						isPendding ? "_Temp" : "");
 				if (setup != null) {
 					collateralStructure = getCollateralStructure(setup.getCollateralType());
 				}
@@ -2104,8 +2105,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						|| expiryDate.compareTo(SysParamUtil.getValueAsDate("APP_DFT_END_DATE")) >= 0) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "ExpiryDate";
-					valueParm[1] = DateUtility.formatToLongDate(currAppDate);
-					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					valueParm[1] = DateUtil.formatToLongDate(currAppDate);
+					valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 				}
 			}
@@ -2116,14 +2117,14 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						|| nextRvwDate.compareTo(SysParamUtil.getValueAsDate("APP_DFT_END_DATE")) >= 0) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "nextReviewDate";
-					valueParm[1] = DateUtility.formatToLongDate(currAppDate);
-					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					valueParm[1] = DateUtil.formatToLongDate(currAppDate);
+					valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 				}
 				if (StringUtils.isNotBlank(collateralSetup.getReviewFrequency())) {
 					if (!FrequencyUtil.isFrqDate(collateralSetup.getReviewFrequency(), nextRvwDate)) {
 						String[] valueParm = new String[1];
-						valueParm[0] = DateUtility.formatToLongDate(nextRvwDate);
+						valueParm[0] = DateUtil.formatToLongDate(nextRvwDate);
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91123", "", valueParm)));
 					}
 				}
@@ -3431,7 +3432,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 				collaterals.add(setup);
 			}
 		}
-		
+
 		return collaterals;
 	}
 

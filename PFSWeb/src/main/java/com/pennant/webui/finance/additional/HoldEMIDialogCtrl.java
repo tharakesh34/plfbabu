@@ -21,7 +21,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.HoldEMIService;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -33,6 +32,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -255,7 +255,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onSelect$holdEMIFrqToDate(Event event) {
 		if (!StringUtils.equals(getComboboxValue(this.holdEMIFrqToDate), PennantConstants.List_Select)) {
 			this.holdEMIFrqToDate
-					.setValue(DateUtility.formatToLongDate((Date) holdEMIFrqToDate.getSelectedItem().getValue()));
+					.setValue(DateUtil.formatToLongDate((Date) holdEMIFrqToDate.getSelectedItem().getValue()));
 		}
 	}
 
@@ -268,36 +268,36 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		holdEMIFrqToDate.getItems().clear();
 
-		Date hldEMIMaxAlwdDays = DateUtility.addDays((Date) this.holdEMIFromDate.getSelectedItem().getValue(),
+		Date hldEMIMaxAlwdDays = DateUtil.addDays((Date) this.holdEMIFromDate.getSelectedItem().getValue(),
 				SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS"));
 		if (StringUtils.isNotBlank(getFinScheduleData().getFinanceType().getFrequencyDays())) {
 			String[] frqAlwdDays = getFinScheduleData().getFinanceType().getFrequencyDays().split(",");
-			int hldEMIMaxAlwdMnth = DateUtility.getMonth(hldEMIMaxAlwdDays);
-			int hldEMIMaxAlwdYear = DateUtility.getYear(hldEMIMaxAlwdDays);
+			int hldEMIMaxAlwdMnth = DateUtil.getMonth(hldEMIMaxAlwdDays);
+			int hldEMIMaxAlwdYear = DateUtil.getYear(hldEMIMaxAlwdDays);
 			Date date = null;
 			List<Date> frqAlwdDate = new ArrayList<Date>();
 
 			for (int i = 0; i < frqAlwdDays.length; i++) {
 
 				int frqDay = Integer.parseInt(frqAlwdDays[i]);
-				int emiFromDay = DateUtility.getDay((Date) this.holdEMIFromDate.getSelectedItem().getValue());
+				int emiFromDay = DateUtil.getDay((Date) this.holdEMIFromDate.getSelectedItem().getValue());
 
 				if (frqDay > emiFromDay) {
-					int emiFromMnth = DateUtility.getMonth((Date) this.holdEMIFromDate.getSelectedItem().getValue());
-					date = DateUtility.getDate(hldEMIMaxAlwdYear, emiFromMnth - 1, frqDay);
-					if (DateUtility.getMonth(date) <= emiFromMnth && DateUtility.compare(date, hldEMIMaxAlwdDays) <= 0
-							&& DateUtility.compare(date,
+					int emiFromMnth = DateUtil.getMonth((Date) this.holdEMIFromDate.getSelectedItem().getValue());
+					date = DateUtil.getDate(hldEMIMaxAlwdYear, emiFromMnth - 1, frqDay);
+					if (DateUtil.getMonth(date) <= emiFromMnth && DateUtil.compare(date, hldEMIMaxAlwdDays) <= 0
+							&& DateUtil.compare(date,
 									(Date) this.holdEMIFromDate.getSelectedItem().getValue()) > 0) {
 						frqAlwdDate.add(date);
 					}
 				} else {
-					date = DateUtility.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth - 1, frqDay);
-					if (DateUtility.compare(date, hldEMIMaxAlwdDays) <= 0 && DateUtility.compare(date,
+					date = DateUtil.getDate(hldEMIMaxAlwdYear, hldEMIMaxAlwdMnth - 1, frqDay);
+					if (DateUtil.compare(date, hldEMIMaxAlwdDays) <= 0 && DateUtil.compare(date,
 							(Date) this.holdEMIFromDate.getSelectedItem().getValue()) > 0) {
 						frqAlwdDate.add(date);
 					}
 				}
-				DateUtility.formatToLongDate(date);
+				DateUtil.formatToLongDate(date);
 			}
 			Collections.sort(frqAlwdDate);
 			fillSchFrqToDates(holdEMIFrqToDate, frqAlwdDate);
@@ -454,7 +454,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 
 				dateCombobox.appendChild(comboitem);
@@ -481,7 +481,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (hldEmiAlwdDaysList != null) {
 			for (int i = 0; i < hldEmiAlwdDaysList.size(); i++) {
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(hldEmiAlwdDaysList.get(i)));
+				comboitem.setLabel(DateUtil.formatToLongDate(hldEmiAlwdDaysList.get(i)));
 				comboitem.setValue(hldEmiAlwdDaysList.get(i));
 				dateCombobox.appendChild(comboitem);
 

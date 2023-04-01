@@ -110,7 +110,7 @@ public class SuspensePostingUtil implements Serializable {
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(finID, valueDate);
-		suspFromDate = DateUtility.addDays(repayQueue.getRpyDate(), curOdDays);
+		suspFromDate = DateUtil.addDays(repayQueue.getRpyDate(), curOdDays);
 
 		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
@@ -217,7 +217,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		if (curOverDueDays > suspenceGraceDays) {
 
-			suspFromDate = DateUtility.addDays(valueDate, -suspenceGraceDays);
+			suspFromDate = DateUtil.addDays(valueDate, -suspenceGraceDays);
 
 			// Suspend Amount Calculation
 			if (suspFromDate.compareTo(valueDate) > 0 && !suspHead.isManualSusp()) {

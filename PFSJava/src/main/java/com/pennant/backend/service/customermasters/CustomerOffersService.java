@@ -12,13 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import com.pennant.app.util.CustomObjectMapper;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.crm.CrmLeadDetails;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerOffersService {
 
@@ -31,7 +31,7 @@ public class CustomerOffersService {
 		logger.debug(Literal.ENTERING);
 
 		CrmLeadDetails body = null;
-		double random = Math.random() * 49 + 1 + DateUtility.getTimestamp(SysParamUtil.getAppDate()).getTime();
+		double random = Math.random() * 49 + 1 + DateUtil.getTimestamp(SysParamUtil.getAppDate()).getTime();
 		HttpHeaders headers = new HttpHeaders();
 		RestTemplate restTemplate = PennantApplicationUtil.getTemplate();
 		String uri = customerOffersServiceUrl + custCif;

@@ -15,7 +15,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class ODDetailDownload implements Tasklet {
@@ -36,7 +36,7 @@ public class ODDetailDownload implements Tasklet {
 		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 		dateAppDate = EODUtil.getDate("APP_DATE", context);
 
-		logger.debug("START: Overdue Details for Report as Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("START: Overdue Details for Report as Value Date: " + DateUtil.addDays(dateValueDate, -1));
 
 		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
@@ -61,7 +61,7 @@ public class ODDetailDownload implements Tasklet {
 			}
 		}
 
-		logger.debug("COMPLETE: Overdue Details for Report as Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("COMPLETE: Overdue Details for Report as Value Date: " + DateUtil.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
 

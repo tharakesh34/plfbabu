@@ -56,7 +56,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
@@ -122,6 +121,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -459,7 +459,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if (StringUtils.isNotBlank(this.productCategory)) {
 			Date appDate = SysParamUtil.getAppDate();
-			Date wifAvailableDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
+			Date wifAvailableDate = DateUtil.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
 			filters[1] = new Filter("lovDescProductCodeName", this.productCategory, Filter.OP_EQUAL);
 			filters[2] = new Filter("LastMntOn", wifAvailableDate, Filter.OP_GREATER_OR_EQUAL);
 		}

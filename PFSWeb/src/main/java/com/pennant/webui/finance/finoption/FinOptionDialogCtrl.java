@@ -43,7 +43,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -1133,8 +1132,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				String receivableDateLabel = Labels.getLabel("label_FinOptionDialog_CurrentOptionDate.value");
 				if (selectedOptionDate == null) {
 					currentOption.setConstraint(new PTDateValidator(receivableDateLabel, true));
-				} else if (DateUtility.compare(selectedOptionDate, appDate) < 0
-						|| DateUtility.compare(selectedOptionDate, maturityDate) > 0) {
+				} else if (DateUtil.compare(selectedOptionDate, appDate) < 0
+						|| DateUtil.compare(selectedOptionDate, maturityDate) > 0) {
 
 					if (maturityDate == loanStartDt) {
 						currentOption

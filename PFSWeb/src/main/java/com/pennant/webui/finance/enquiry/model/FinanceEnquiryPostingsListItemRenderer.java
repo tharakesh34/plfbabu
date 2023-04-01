@@ -12,11 +12,11 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<ReturnDataSet>, Serializable {
 
@@ -34,9 +34,9 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 				item.appendChild(new Listcell(dataSet.getFinEvent() + " : " + dataSet.getLovDescEventCodeName()));
 				item.setStyle("text-align:left;");
 			} else if (StringUtils.equals(PennantConstants.POSTDATE, dataSet.getPostingGroupBy())) {
-				item.appendChild(new Listcell(DateUtility.formatToLongDate(dataSet.getPostDate())));
+				item.appendChild(new Listcell(DateUtil.formatToLongDate(dataSet.getPostDate())));
 			} else if (StringUtils.equals(PennantConstants.VALUEDATE, dataSet.getPostingGroupBy())) {
-				item.appendChild(new Listcell(DateUtility.formatToLongDate(dataSet.getValueDate())));
+				item.appendChild(new Listcell(DateUtil.formatToLongDate(dataSet.getValueDate())));
 			} else if (StringUtils.equals(PennantConstants.ACCNO, dataSet.getPostingGroupBy())) {
 				item.appendChild(new Listcell(String.valueOf(dataSet.getAccount())));
 			} else {
@@ -64,14 +64,14 @@ public class FinanceEnquiryPostingsListItemRenderer implements ListitemRenderer<
 				lc = new Listcell("");
 				lc.setParent(item);
 			} else {
-				lc = new Listcell(DateUtility.formatToLongDate(dataSet.getPostDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(dataSet.getPostDate()));
 				lc.setParent(item);
 			}
 			if (StringUtils.equals(PennantConstants.VALUEDATE, dataSet.getPostingGroupBy())) {
 				lc = new Listcell("");
 				lc.setParent(item);
 			} else {
-				lc = new Listcell(DateUtility.formatToLongDate(dataSet.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(dataSet.getValueDate()));
 				lc.setParent(item);
 			}
 

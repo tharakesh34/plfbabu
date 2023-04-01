@@ -59,7 +59,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -90,6 +89,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -454,7 +454,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 					indicativeTermDetail.setTenor(indicativeTermDetail.getTenorYear() + " Years "
 							+ indicativeTermDetail.getTenorMonth() + " Months ");
 					indicativeTermDetail.setFinCcy(main.getFinCcy());
-					indicativeTermDetail.setAppDate(DateUtility.formatToLongDate(date));
+					indicativeTermDetail.setAppDate(DateUtil.formatToLongDate(date));
 					int tempYear = Integer.parseInt(date.toString().substring(0, 4));
 
 					indicativeTermDetail.setAppLastYear(String.valueOf(tempYear - 1));
@@ -716,7 +716,7 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 
 		String[] descFields = new String[] { String.valueOf(main.getNumberOfTerms()), main.getScheduleMethod(),
 				FrequencyUtil.getFrequencyDetail(main.getRepayFrq()).getFrequencyDescription(),
-				DateUtility.formatToLongDate(main.getMaturityDate()) };
+				DateUtil.formatToLongDate(main.getMaturityDate()) };
 		this.repayments.setValue(Labels.getLabel("label_IndTermDetailDialog_Repayments", descFields));
 
 		if (detail.getFinScheduleData().getFinanceType().isFinIsAlwMD()) {

@@ -53,7 +53,6 @@ import org.zkoss.zul.Timebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -419,7 +418,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		Date cronToDate = cronToDate(aEODConfig.getReminderFrequency());
 
 		if (cronToDate != null) {
-			String[] remFrq = DateUtility.timeBetween(eodStartTime, cronToDate).split(":");
+			String[] remFrq = DateUtil.timeBetween(eodStartTime, cronToDate).split(":");
 			int remFrqhr = Integer.parseInt(remFrq[0]);
 			String remhr = "";
 			remFrqhr = (remFrqhr > 12 ? remFrqhr - 12 : remFrqhr);
@@ -440,7 +439,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		cronToDate = cronToDate(aEODConfig.getDelayFrequency());
 
 		if (cronToDate != null) {
-			String[] delayFrq = DateUtility.timeBetween(cronToDate, eodStartTime).split(":");
+			String[] delayFrq = DateUtil.timeBetween(cronToDate, eodStartTime).split(":");
 			int delayfrqhr = Integer.parseInt(delayFrq[0]);
 			String delayhr = "";
 			delayfrqhr = (delayfrqhr > 12 ? delayfrqhr - 12 : delayfrqhr);
@@ -757,7 +756,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 					Date eodFreq = this.eodStartJobFrequency.getValue();
 					Date reminderFreq = DateUtil.parse(hours + ":" + min, DateFormat.SHORT_TIME);
 
-					String setTimeToCron = DateUtility.timeBetween(eodFreq, reminderFreq, "ss mm HH");
+					String setTimeToCron = DateUtil.timeBetween(eodFreq, reminderFreq, "ss mm HH");
 
 					if (setTimeToCron == "") {
 						MessageUtil.showError("Please select valid time for Reminder Frequency");
@@ -882,15 +881,15 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 			if (appRovedeodConfig != null && appRovedeodConfig.isInExtMnth()) {
 				// greater than today and less than current month
 				this.mnthExtTo.setConstraint(new PTDateValidator(lable, true, SysParamUtil.getAppDate(),
-						DateUtility.getMonthEnd(SysParamUtil.getAppDate()), true));
+						DateUtil.getMonthEnd(SysParamUtil.getAppDate()), true));
 			} else {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(SysParamUtil.getAppDate());
 				calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
 				// greater than current month end and less than next month end;
 				this.mnthExtTo.setConstraint(
-						new PTDateValidator(lable, true, DateUtility.getMonthEnd(SysParamUtil.getAppDate()),
-								DateUtility.getMonthEnd(calendar.getTime()), false));
+						new PTDateValidator(lable, true, DateUtil.getMonthEnd(SysParamUtil.getAppDate()),
+								DateUtil.getMonthEnd(calendar.getTime()), false));
 			}
 
 		}
@@ -1504,7 +1503,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 		final CronSequenceGenerator generator = new CronSequenceGenerator(cronExp);
 
-		return generator.next(DateUtility.addDays(DateUtil.getSysDate(), -1));
+		return generator.next(DateUtil.addDays(DateUtil.getSysDate(), -1));
 	}
 
 }

@@ -32,10 +32,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,9 +58,9 @@ public class CollateralSetupListModelItemRenderer implements ListitemRenderer<Co
 		lc.setParent(item);
 		lc = new Listcell(collateralSetup.getCollateralType());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.format(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 		lc = new Listcell(collateralSetup.getRecordStatus());
 		lc.setParent(item);

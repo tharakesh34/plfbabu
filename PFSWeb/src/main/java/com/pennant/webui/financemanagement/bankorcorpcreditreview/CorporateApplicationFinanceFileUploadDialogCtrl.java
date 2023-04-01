@@ -74,7 +74,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -99,6 +98,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -175,7 +175,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
 	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
 	private WIFCustomer wifcustomer = new WIFCustomer();
-	int currentYear = DateUtility.getYear(SysParamUtil.getAppDate());
+	int currentYear = DateUtil.getYear(SysParamUtil.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
 	private NotificationService notificationService;

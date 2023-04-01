@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -85,6 +84,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -592,7 +592,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				if (!isDeleteRecord(finAdvancePay)) {
 					for (FinanceDisbursement finDisbursmentDetail : disbursements) {
 						if (finAdvancePay.getDisbSeq() == finDisbursmentDetail.getDisbSeq()
-								&& finAdvancePay.getLlDate() != null && DateUtility
+								&& finAdvancePay.getLlDate() != null && DateUtil
 										.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 									new ErrorDetail(PennantConstants.KEY_FIELD, "65032", errParm, valueParm),

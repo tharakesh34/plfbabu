@@ -51,11 +51,11 @@ import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.ComponentUtil;
 
@@ -116,7 +116,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		// Desktop Time Setting
 		label_currentDate.setValue(appDate);
 		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("HH:mm");
-		label_currentTime.setValue(dateFormat.format(DateUtility.getSysDate()));
+		label_currentTime.setValue(dateFormat.format(DateUtil.getSysDate()));
 
 		doShowLabel();
 
@@ -231,7 +231,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				builder.append(Labels.getLabel("label_last_logged"));
 				builder.append("</td>");
 				builder.append("<td nowrap>");
-				builder.append(DateUtility.format(loggedInUser.getPrevPassLogonTime(), DateFormat.LONG_DATE_TIME));
+				builder.append(DateUtil.format(loggedInUser.getPrevPassLogonTime(), DateFormat.LONG_DATE_TIME));
 				builder.append("</td>");
 				builder.append("</tr>");
 			}
@@ -242,7 +242,7 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				builder.append(Labels.getLabel("label_last_unsuccessfull_login"));
 				builder.append("</td>");
 				builder.append("<td nowrap>");
-				builder.append(DateUtility.format(loggedInUser.getPrevFailLogonTime(), DateFormat.LONG_DATE_TIME));
+				builder.append(DateUtil.format(loggedInUser.getPrevFailLogonTime(), DateFormat.LONG_DATE_TIME));
 				builder.append("</td>");
 				builder.append("</tr>");
 

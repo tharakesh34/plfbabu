@@ -20,7 +20,6 @@ import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
@@ -545,7 +544,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rsd.setProfitSchdPayNow(curSchd.getSchdPftPaid());
 		rsd.setPrincipalSchdPayNow(curSchd.getSchdPriPaid());
 
-		int daysLate = DateUtility.getDaysBetween(curSchd.getSchDate(), valueDate);
+		int daysLate = DateUtil.getDaysBetween(curSchd.getSchDate(), valueDate);
 		rsd.setDaysLate(daysLate);
 
 		rsd.setRepayBalance(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));

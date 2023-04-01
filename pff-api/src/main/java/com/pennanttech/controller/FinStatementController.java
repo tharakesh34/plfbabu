@@ -32,7 +32,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
@@ -295,7 +294,7 @@ public class FinStatementController extends SummaryDetailService {
 				for (int i = 0; i < days; i++) {
 					FinanceDetail afd = new FinanceDetail();
 					afd.setFinScheduleData(schdData.copyEntity());
-					fsi.setFromDate(DateUtility.addDays(SysParamUtil.getAppDate(), i));
+					fsi.setFromDate(DateUtil.addDays(SysParamUtil.getAppDate(), i));
 
 					doProcessPayments(afd, fsi);
 
@@ -534,7 +533,7 @@ public class FinStatementController extends SummaryDetailService {
 		// fore closure details
 		List<ForeClosure> foreClosureList = new ArrayList<>();
 		ForeClosure foreClosure = new ForeClosure();
-		foreClosure.setValueDate(DateUtility.getTimestamp(fsi.getFromDate()));
+		foreClosure.setValueDate(DateUtil.getTimestamp(fsi.getFromDate()));
 		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totFeePayNow)
 				.subtract(totTdsReturn);
 		BigDecimal totServFees = BigDecimal.ZERO;
@@ -935,7 +934,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				int defaultDays = 7;
-				int noOfdays = DateUtility.getDaysBetween(appDate, fm.getMaturityDate());
+				int noOfdays = DateUtil.getDaysBetween(appDate, fm.getMaturityDate());
 				if (defaultDays >= noOfdays) {
 					defaultDays = noOfdays;
 				}
@@ -1521,7 +1520,7 @@ public class FinStatementController extends SummaryDetailService {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1706,7 +1705,7 @@ public class FinStatementController extends SummaryDetailService {
 		int year = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (fromdate != null) {
-			year = DateUtility.getYear(fromdate);
+			year = DateUtil.getYear(fromdate);
 		} else {
 			year = DateUtil.getYear(appDate);
 		}

@@ -67,7 +67,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -103,6 +102,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1076,9 +1076,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listitem.appendChild(listcell);
 				listcell = new Listcell(primaryExposure.getFinReference());
 				listitem.appendChild(listcell);
-				listcell = new Listcell(DateUtility.formatToLongDate(primaryExposure.getFinStartDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(primaryExposure.getFinStartDate()));
 				listitem.appendChild(listcell);
-				listcell = new Listcell(DateUtility.formatToLongDate(primaryExposure.getMaturityDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(primaryExposure.getMaturityDate()));
 				listitem.appendChild(listcell);
 				listcell = new Listcell(primaryExposure.getFinCCY());
 				listitem.appendChild(listcell);
@@ -1187,10 +1187,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listcell = new Listcell(secondaryExposure.getFinReference());
 				listitem.appendChild(listcell);
 
-				listcell = new Listcell(DateUtility.formatToLongDate(secondaryExposure.getFinStartDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(secondaryExposure.getFinStartDate()));
 				listitem.appendChild(listcell);
 
-				listcell = new Listcell(DateUtility.formatToLongDate(secondaryExposure.getMaturityDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(secondaryExposure.getMaturityDate()));
 				listitem.appendChild(listcell);
 
 				listcell = new Listcell(secondaryExposure.getFinCCY());
@@ -1311,10 +1311,10 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				listcell = new Listcell(guarantorExposure.getFinReference());
 				listitem.appendChild(listcell);
 
-				listcell = new Listcell(DateUtility.formatToLongDate(guarantorExposure.getFinStartDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(guarantorExposure.getFinStartDate()));
 				listitem.appendChild(listcell);
 
-				listcell = new Listcell(DateUtility.formatToLongDate(guarantorExposure.getMaturityDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(guarantorExposure.getMaturityDate()));
 				listitem.appendChild(listcell);
 
 				listcell = new Listcell(guarantorExposure.getFinCCY());

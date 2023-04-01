@@ -60,6 +60,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -313,7 +314,7 @@ public class CDScheduleCalculator {
 		fsd.setSchdMethod(prvSchd.getSchdMethod());
 		fsd.setPftDaysBasis(prvSchd.getPftDaysBasis());
 		fsd.setClosingBalance(prvSchd.getClosingBalance());
-		fsd.setNoOfDays(DateUtility.getDaysBetween(newSchdDate, prvSchd.getSchDate()));
+		fsd.setNoOfDays(DateUtil.getDaysBetween(newSchdDate, prvSchd.getSchDate()));
 		fsd.setDayFactor(CalculationUtil.getInterestDays(prvSchd.getSchDate(), newSchdDate, fsd.getPftDaysBasis()));
 
 		schdData.getFinanceScheduleDetails().add(fsd);
@@ -349,11 +350,11 @@ public class CDScheduleCalculator {
 			curSchd = fsdList.get(iFsd);
 			schdDate = curSchd.getSchDate();
 
-			if (DateUtility.compare(schdDate, evtFromDate) > 0) {
+			if (DateUtil.compare(schdDate, evtFromDate) > 0) {
 				break;
 			}
 
-			if (DateUtility.compare(schdDate, evtFromDate) == 0) {
+			if (DateUtil.compare(schdDate, evtFromDate) == 0) {
 				curSchd.setPftOnSchDate(true);
 				curSchd.setRepayOnSchDate(true);
 				isRepaymentFoundInSD = true;
@@ -462,7 +463,7 @@ public class CDScheduleCalculator {
 		String finReference = fm.getFinReference();
 
 		// Find next date for instruction
-		if (DateUtility.compare(toDate, fm.getMaturityDate()) >= 0) {
+		if (DateUtil.compare(toDate, fm.getMaturityDate()) >= 0) {
 			nextRIDate = fm.getMaturityDate();
 		} else {
 			int fsdSize = fsdList.size();
@@ -496,13 +497,13 @@ public class CDScheduleCalculator {
 		for (int iRI = 0; iRI < riList.size(); iRI++) {
 			curRI = riList.get(iRI);
 
-			if ((DateUtility.compare(curRI.getRepayDate(), fromDate) >= 0
-					&& DateUtility.compare(curRI.getRepayDate(), toDate) <= 0)) {
+			if ((DateUtil.compare(curRI.getRepayDate(), fromDate) >= 0
+					&& DateUtil.compare(curRI.getRepayDate(), toDate) <= 0)) {
 				riList.remove(iRI);
 				iRI = iRI - 1;
 			}
 
-			if (DateUtility.compare(curRI.getRepayDate(), nextRIDate) == 0) {
+			if (DateUtil.compare(curRI.getRepayDate(), nextRIDate) == 0) {
 				isAddNewRI = false;
 			}
 		}
@@ -520,12 +521,12 @@ public class CDScheduleCalculator {
 		schdData.getRepayInstructions().add(newRI);
 
 		// Add (reset) repay instruction after todate
-		if (DateUtility.compare(toDate, fm.getMaturityDate()) >= 0 || !isAddNewRI) {
+		if (DateUtil.compare(toDate, fm.getMaturityDate()) >= 0 || !isAddNewRI) {
 			schdData.setRepayInstructions(sortRepayInstructions(schdData.getRepayInstructions()));
 			return schdData;
 		}
 
-		if (DateUtility.compare(nextRIDate, fromDate) > 0) {
+		if (DateUtil.compare(nextRIDate, fromDate) > 0) {
 			newRI = new RepayInstruction();
 			newRI.setFinID(finID);
 			newRI.setFinReference(finReference);
@@ -582,7 +583,7 @@ public class CDScheduleCalculator {
 			riAmount = curRI.getRepayAmount();
 		}
 
-		if (DateUtility.compare(toDate, fm.getMaturityDate()) <= 0) {
+		if (DateUtil.compare(toDate, fm.getMaturityDate()) <= 0) {
 			toDate = fm.getMaturityDate();
 			setRpyChanges(fsData, fromDate, toDate, riAmount, fromSchdMethod);
 		}
@@ -640,13 +641,13 @@ public class CDScheduleCalculator {
 
 			// Added for setting Schedule method in case of Different
 			// frequencies for PFT,CPZ & RVW
-			if (DateUtility.compare(curSchdDate, fromDate) < 0) {
+			if (DateUtil.compare(curSchdDate, fromDate) < 0) {
 				if (StringUtils.isEmpty(curSchd.getSchdMethod())) {
 					curSchd.setSchdMethod(fm.getScheduleMethod());
 				}
 			}
 
-			if (DateUtility.compare(curSchdDate, fromDate) >= 0) {
+			if (DateUtil.compare(curSchdDate, fromDate) >= 0) {
 				curSchd.setSchdMethod(schdMethod);
 				boolean isFreezeSchd = false;
 
@@ -666,7 +667,7 @@ public class CDScheduleCalculator {
 						curSchd.setPrincipalSchd(riAmount);
 					}
 				}
-			} else if (DateUtility.compare(curSchd.getSchDate(), toDate) >= 0) {
+			} else if (DateUtil.compare(curSchd.getSchDate(), toDate) >= 0) {
 				indexStart = iFsd;
 				break;
 			}
@@ -745,13 +746,13 @@ public class CDScheduleCalculator {
 				curSchd.setInstNumber(0);
 			}
 
-			if (DateUtility.compare(schdDate, fm.getGrcPeriodEndDate()) < 0) {
+			if (DateUtil.compare(schdDate, fm.getGrcPeriodEndDate()) < 0) {
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
-			} else if (DateUtility.compare(schdDate, fm.getGrcPeriodEndDate()) == 0) {
+			} else if (DateUtil.compare(schdDate, fm.getGrcPeriodEndDate()) == 0) {
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
-			} else if (DateUtility.compare(schdDate, fm.getMaturityDate()) < 0) {
+			} else if (DateUtil.compare(schdDate, fm.getMaturityDate()) < 0) {
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
-			} else if (DateUtility.compare(schdDate, fm.getMaturityDate()) == 0) {
+			} else if (DateUtil.compare(schdDate, fm.getMaturityDate()) == 0) {
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
 			}
 		}
@@ -1013,7 +1014,7 @@ public class CDScheduleCalculator {
 			Date prvSchDate = prvSchd.getSchDate();
 
 			curSchd.setBalanceForPftCal(prvClosingBalance);
-			curSchd.setNoOfDays(DateUtility.getDaysBetween(curSchDate, prvSchDate));
+			curSchd.setNoOfDays(DateUtil.getDaysBetween(curSchDate, prvSchDate));
 			curSchd.setDayFactor(CalculationUtil.getInterestDays(prvSchDate, curSchDate, curSchd.getPftDaysBasis()));
 
 			isRepayComplete = calculateInterest(fm, prvSchd, curSchd, roundAdjMth);
@@ -1028,7 +1029,7 @@ public class CDScheduleCalculator {
 			}
 
 			// LAST REPAYMENT DATE
-			if ((DateUtility.compare(curSchDate, derivedMDT) == 0)) {
+			if ((DateUtil.compare(curSchDate, derivedMDT) == 0)) {
 				fsData = procMDTRecord(fsData, iFsd, isRepayComplete);
 				isRepayComplete = true;
 			}
@@ -1051,7 +1052,7 @@ public class CDScheduleCalculator {
 		BigDecimal calIntFraction = BigDecimal.ZERO;
 		if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_NEXT_INST)
 				|| (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)
-						&& DateUtility.compare(curSchd.getSchDate(), fm.getMaturityDate()) == 0)) {
+						&& DateUtil.compare(curSchd.getSchDate(), fm.getMaturityDate()) == 0)) {
 			calIntFraction = prvSchd.getProfitFraction();
 		}
 
@@ -1167,8 +1168,8 @@ public class CDScheduleCalculator {
 
 		curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd));
 
-		if (DateUtility.compare(curSchd.getSchDate(), fm.getEventFromDate()) > 0
-				&& DateUtility.compare(curSchd.getSchDate(), fm.getEventToDate()) <= 0) {
+		if (DateUtil.compare(curSchd.getSchDate(), fm.getEventFromDate()) > 0
+				&& DateUtil.compare(curSchd.getSchDate(), fm.getEventToDate()) <= 0) {
 			fm.setPftForSelectedPeriod(fm.getPftForSelectedPeriod().add(curSchd.getProfitCalc()));
 		}
 
@@ -1373,7 +1374,7 @@ public class CDScheduleCalculator {
 			Collections.sort(fsdList, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1392,7 +1393,7 @@ public class CDScheduleCalculator {
 			Collections.sort(riList, new Comparator<RepayInstruction>() {
 				@Override
 				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
-					return DateUtility.compare(detail1.getRepayDate(), detail2.getRepayDate());
+					return DateUtil.compare(detail1.getRepayDate(), detail2.getRepayDate());
 				}
 			});
 		}
@@ -1598,7 +1599,7 @@ public class CDScheduleCalculator {
 		}
 
 		for (int i = 0; i < riSize; i++) {
-			if (DateUtility.compare(riList.get(i).getRepayDate(), fm.getRecalFromDate()) >= 0) {
+			if (DateUtil.compare(riList.get(i).getRepayDate(), fm.getRecalFromDate()) >= 0) {
 				iRpyInst = i;
 				approxEMI = riList.get(i).getRepayAmount();
 				break;
@@ -1607,8 +1608,8 @@ public class CDScheduleCalculator {
 
 		// Calculate terms to be adjusted
 		for (int i = 0; i < sdSize; i++) {
-			if (DateUtility.compare(fsdList.get(i).getSchDate(), fm.getRecalFromDate()) >= 0
-					&& DateUtility.compare(fsdList.get(i).getSchDate(), fm.getRecalToDate()) <= 0) {
+			if (DateUtil.compare(fsdList.get(i).getSchDate(), fm.getRecalFromDate()) >= 0
+					&& DateUtil.compare(fsdList.get(i).getSchDate(), fm.getRecalToDate()) <= 0) {
 				iTerms = iTerms + 1;
 			}
 		}
@@ -1793,7 +1794,7 @@ public class CDScheduleCalculator {
 		for (int i = 0; i < fsdList.size(); i++) {
 			FinanceScheduleDetail curSchd = fsdList.get(i);
 
-			if (DateUtility.compare(curSchd.getSchDate(), eventFromDate) == 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), eventFromDate) == 0) {
 				fsData.getFinanceMain().setIndexMisc(i);
 				openSchd = curSchd;
 
@@ -1817,8 +1818,8 @@ public class CDScheduleCalculator {
 					}
 				}
 
-			} else if (DateUtility.compare(curSchd.getSchDate(), eventFromDate) > 0) {
-				if (curSchd.getPresentmentId() != 0 || DateUtility.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
+			} else if (DateUtil.compare(curSchd.getSchDate(), eventFromDate) > 0) {
+				if (curSchd.getPresentmentId() != 0 || DateUtil.compare(curSchd.getSchDate(), graceEndDate) <= 0) {
 					continue;
 				}
 				recalFromDate = curSchd.getSchDate();
@@ -1935,7 +1936,7 @@ public class CDScheduleCalculator {
 		for (int iRI = 0; iRI < risize; iRI++) {
 			schdMethod = riList.get(iRI).getRepaySchdMethod();
 
-			if (DateUtility.compare(riList.get(iRI).getRepayDate(), schdMethodDate) >= 0) {
+			if (DateUtil.compare(riList.get(iRI).getRepayDate(), schdMethodDate) >= 0) {
 				break;
 			}
 		}

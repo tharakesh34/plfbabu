@@ -78,7 +78,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
@@ -139,6 +138,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1282,7 +1282,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 			comboitem = new Comboitem();
-			String label = DateUtility.formatToLongDate(disbursement.getDisbDate());
+			String label = DateUtil.formatToLongDate(disbursement.getDisbDate());
 			label = label.concat(" , ") + disbursement.getDisbSeq();
 			comboitem.setLabel(label);
 			comboitem.setValue(disbursement.getDisbDate());
@@ -1462,8 +1462,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							if (this.llDate.getValue().before(disbursement.getDisbDate())
 									|| this.llDate.getValue().after(financeMain.getMaturityDate())) {
 
-								String maturityDate = DateUtility.formatToLongDate(financeMain.getMaturityDate());
-								String disbDate = DateUtility.formatToLongDate(disbursement.getDisbDate());
+								String maturityDate = DateUtil.formatToLongDate(financeMain.getMaturityDate());
+								String disbDate = DateUtil.formatToLongDate(disbursement.getDisbDate());
 
 								throw new WrongValueException(this.llDate,
 										Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
@@ -1829,7 +1829,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			 * PennantRegularExpressions.REGEX_ADDRESS, false)); }
 			 */
 			if (!this.valueDate.isDisabled()) {
-				Date todate = DateUtility.addMonths(SysParamUtil.getAppDate(), 6);
+				Date todate = DateUtil.addMonths(SysParamUtil.getAppDate(), 6);
 				this.valueDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_ValueDate.value"), true,
 								SysParamUtil.getAppDate(), todate, true));

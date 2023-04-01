@@ -17,13 +17,13 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.http.WebManager;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUtil;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
 import com.pennant.backend.service.messages.MessagesService;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class EventManager implements ServletContextListener {
@@ -67,7 +67,7 @@ public class EventManager implements ServletContextListener {
 		messageText.append("From:\t");
 		messageText.append(from);
 		messageText.append("\nSent:\t");
-		messageText.append(DateUtility.getSysDate(DateFormat.LONG_DATE_TIME));
+		messageText.append(DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
 		messageText.append("\n\n");
 		messageText.append(message);
 		messageText.append("\n\n*******************   END   *******************\n");
@@ -128,7 +128,7 @@ public class EventManager implements ServletContextListener {
 				OfflineUsersMessagesBackup offlineMessage = new OfflineUsersMessagesBackup();
 				offlineMessage.setFromUsrID(from);
 				offlineMessage.setToUsrID(recipient);
-				offlineMessage.setSendTime(DateUtility.getSysDate());
+				offlineMessage.setSendTime(DateUtil.getSysDate());
 				offlineMessage.setMessage(messageText.toString());
 
 				offlineMessages.add(offlineMessage);

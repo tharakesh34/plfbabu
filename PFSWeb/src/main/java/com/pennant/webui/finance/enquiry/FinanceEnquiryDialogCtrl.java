@@ -78,7 +78,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
@@ -129,6 +128,7 @@ import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.service.SettlementService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
@@ -2300,7 +2300,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Payment", CurrencyUtil.parse(listScheduleDetail.get(i).getRepayAmount(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2311,7 +2311,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"PrincipalSchd", CurrencyUtil.parse(listScheduleDetail.get(i).getPrincipalSchd(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2321,7 +2321,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"ProfitSchd", CurrencyUtil.parse(listScheduleDetail.get(i).getProfitSchd(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2339,7 +2339,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				@Override
 				public int compare(FinanceDisbursement detail1, FinanceDisbursement detail2) {
 
-					int compareValue = DateUtility.compare(detail1.getDisbDate(), detail2.getDisbDate());
+					int compareValue = DateUtil.compare(detail1.getDisbDate(), detail2.getDisbDate());
 					if (compareValue > 1) {
 						return 1;
 					} else if (compareValue == 0) {

@@ -43,7 +43,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -58,6 +57,7 @@ import com.pennant.webui.legal.legaldetail.LegalDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -325,7 +325,7 @@ public class LegalApplicantDetailDialogCtrl extends GFCBaseCtrl<LegalApplicantDe
 		if (isNewRecord() && aLegalApplicantDetail.getCustomer() != null) {
 			Customer customer = aLegalApplicantDetail.getCustomer();
 			if (customer.getCustDOB() != null) {
-				String dob = DateUtility.format(customer.getCustDOB(), DateFormat.LONG_DATE.getPattern());
+				String dob = DateUtil.format(customer.getCustDOB(), DateFormat.LONG_DATE.getPattern());
 				this.label_dob.setValue(dob);
 			}
 		}

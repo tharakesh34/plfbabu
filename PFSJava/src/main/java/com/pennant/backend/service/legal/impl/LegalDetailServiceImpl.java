@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
@@ -94,6 +93,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -1270,7 +1270,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			for (LegalDocument legalDocument : documentList) {
 				if (legalDocument.getDocumentDate() != null) {
 					legalDocument.setDocumentDateStr(
-							DateUtility.format(legalDocument.getDocumentDate(), DateFormat.SHORT_DATE.getPattern()));
+							DateUtil.format(legalDocument.getDocumentDate(), DateFormat.SHORT_DATE.getPattern()));
 					legalDocument.setDocumentAcceptedName(PennantStaticListUtil.getlabelDesc(
 							legalDocument.getDocumentAccepted(), PennantStaticListUtil.getDocumentAcceptedList()));
 					legalDocument.setDocumentTypeApproveName(PennantStaticListUtil.getlabelDesc(
@@ -1286,12 +1286,12 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		if (CollectionUtils.isNotEmpty(ecDetailsList)) {
 			for (LegalECDetail legalECDetail : ecDetailsList) {
 				legalECDetail.setStrECDate(
-						DateUtility.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
+						DateUtil.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
 			}
 		}
 		if (legalDetail.getPropertyDetailECDate() != null) {
 			legalDetail.setStrPropertyDetailECDate(
-					DateUtility.format(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
+					DateUtil.format(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
 		}
 
 		StringBuilder sb = null;

@@ -26,7 +26,6 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.ScheduleCalculator;
@@ -734,7 +733,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setNextRepayDate(DateUtil.format(fm.getNextRepayDate(), DateFormat.LONG_DATE));
 		data.setPriority(fm.getPriority());
 
-		data.setValueDate(DateUtility.formatToLongDate(pd.getSchDate()));
+		data.setValueDate(DateUtil.formatToLongDate(pd.getSchDate()));
 		data.setAmount(PennantApplicationUtil.amountFormate(pd.getPresentmentAmt(), format));
 		data.setBounceReason(pd.getBounceCode());
 
@@ -964,7 +963,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setReceiptPurpose(fm.getReceiptPurpose());
 
 		data.setReceiptAmount(PennantApplicationUtil.amountFormate(rch.getReceiptAmount(), format));
-		data.setBounceDate(DateUtility.formatToLongDate(rch.getBounceDate()));
+		data.setBounceDate(DateUtil.formatToLongDate(rch.getBounceDate()));
 		Date bounceDateValue = rch.getBounceDate();
 		if (bounceDateValue != null) {
 			data.setBounceReason(rch.getManualAdvise().getBounceCodeDesc());
@@ -984,14 +983,14 @@ public class NotificationService extends GenericService<Notification> {
 				}
 			}
 		}
-		data.setValueDate(DateUtility.formatToLongDate(valueDate));
+		data.setValueDate(DateUtil.formatToLongDate(valueDate));
 		data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
 
 		if (CollectionUtils.isNotEmpty(servInstructions)
 				&& (data.getValueDate() == null || StringUtils.isEmpty(data.getAmount()))) {
 			FinServiceInstruction instruction = servInstructions.get(0);
 			if (!FinServiceEvent.ORG.equals(instruction.getFinEvent())) {
-				data.setValueDate(DateUtility.formatToLongDate(instruction.getFromDate()));
+				data.setValueDate(DateUtil.formatToLongDate(instruction.getFromDate()));
 				data.setAmount(PennantApplicationUtil.amountFormate(instruction.getAmount(), format));
 			}
 		}
@@ -1061,7 +1060,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setAuditors(finCreditReviewDetails.getAuditors());
 		data.setLocation(finCreditReviewDetails.getLocation());
 		data.setAuditType(finCreditReviewDetails.getAuditType());
-		data.setAuditedDate(DateUtility.formatToLongDate(finCreditReviewDetails.getAuditedDate()));
+		data.setAuditedDate(DateUtil.formatToLongDate(finCreditReviewDetails.getAuditedDate()));
 		data.setAuditYear(finCreditReviewDetails.getAuditYear());
 		data.setAuditPeriod(finCreditReviewDetails.getAuditPeriod());
 		// Role Code For Alert Notification
@@ -1102,7 +1101,7 @@ public class NotificationService extends GenericService<Notification> {
 		// data.setProfitDue(PennantApplicationUtil.amountFormate(provision.getProfitDue(), format));
 		// data.setTotalDue(PennantApplicationUtil.amountFormate(provision.getPrincipalDue().add(provision.getProfitDue()),
 		// format));
-		data.setDueFromDate(DateUtility.formatToLongDate(provision.getDueFromDate()));
+		data.setDueFromDate(DateUtil.formatToLongDate(provision.getDueFromDate()));
 		// data.setNonFormulaProv(PennantApplicationUtil.amountFormate(provision.getNonFormulaProv(), format));
 		data.setProvisionedAmt(PennantApplicationUtil.amountFormate(provision.getProvisionedAmt(), format));
 		// data.setProvisionedAmtCal(PennantApplicationUtil.amountFormate(provision.getProvisionAmtCal(), format));
@@ -1133,7 +1132,7 @@ public class NotificationService extends GenericService<Notification> {
 		data.setCustCIF(financeSuspHead.getLovDescCustCIFName());
 		data.setFinBranch(financeSuspHead.getFinBranch());
 		data.setManualSusp(financeSuspHead.isManualSusp() ? "Yes" : "No");
-		data.setFinSuspDate(DateUtility.formatToLongDate(financeSuspHead.getFinSuspDate()));
+		data.setFinSuspDate(DateUtil.formatToLongDate(financeSuspHead.getFinSuspDate()));
 		data.setFinSuspAmt(PennantApplicationUtil.amountFormate(financeSuspHead.getFinSuspAmt(),
 				CurrencyUtil.getFormat(financeSuspHead.getFinCcy())));
 		data.setFinCurSuspAmt(PennantApplicationUtil.amountFormate(financeSuspHead.getFinCurSuspAmt(),
@@ -1214,7 +1213,7 @@ public class NotificationService extends GenericService<Notification> {
 		dataMap.put("recordStatus", rch.getRecordStatus());
 		dataMap.put("rh_receiptPurpose", rch.getReceiptPurpose());
 		dataMap.put("rh_receiptAmount", PennantApplicationUtil.amountFormate(rch.getReceiptAmount(), format));
-		dataMap.put("rh_receiptDate", DateUtility.formatToLongDate(rch.getReceiptDate()));
+		dataMap.put("rh_receiptDate", DateUtil.formatToLongDate(rch.getReceiptDate()));
 		dataMap.put("rh_balAmount", PennantApplicationUtil.amountFormate(rch.getBalAmount(), format));
 		dataMap.put("rh_actualInterestRate", promotion.getActualInterestRate());
 		dataMap.put(prefix.concat("code"), finOption.getOptionType());

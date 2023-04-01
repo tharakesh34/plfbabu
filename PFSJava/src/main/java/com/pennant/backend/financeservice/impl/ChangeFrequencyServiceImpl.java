@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
@@ -230,7 +229,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			if (curDisbDate.compareTo(fm.getMaturityDate()) >= 0) {
 				disbMaturityCrossed = true;
 				String[] valueParm = new String[1];
-				valueParm[0] = DateUtility.formatToLongDate(curDisbDate);
+				valueParm[0] = DateUtil.formatToLongDate(curDisbDate);
 				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30575", "", valueParm), "EN"));
 				break;
 			}
@@ -326,7 +325,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 	private FinanceScheduleDetail prepareAddtionalBPISchd(FinScheduleData schdData, FinanceScheduleDetail curSchd,
 			int day) {
 		FinanceMain fm = schdData.getFinanceMain();
-		Date adtlBPIDate = DateUtility.addMonths(curSchd.getSchDate(), -1);
+		Date adtlBPIDate = DateUtil.addMonths(curSchd.getSchDate(), -1);
 
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 		sd.setFinID(fm.getFinID());
@@ -443,7 +442,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -497,10 +496,10 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 		// It shouldn't be past date when compare to appdate
 		Date appDate = SysParamUtil.getAppDate();
-		if (DateUtility.compare(fsi.getFromDate(), appDate) < 0) {
+		if (DateUtil.compare(fsi.getFromDate(), appDate) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
+			valueParm[1] = "application date:" + DateUtil.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -510,8 +509,8 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				|| fromDate.compareTo(financeMain.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "From date";
-			valueParm[1] = "finance start date:" + DateUtility.formatToShortDate(financeMain.getFinStartDate());
-			valueParm[2] = "maturity date:" + DateUtility.formatToShortDate(financeMain.getMaturityDate());
+			valueParm[1] = "finance start date:" + DateUtil.formatToShortDate(financeMain.getFinStartDate());
+			valueParm[2] = "maturity date:" + DateUtil.formatToShortDate(financeMain.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -520,7 +519,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 
 		for (FinanceScheduleDetail schDetail : schedules) {
-			if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+			if (DateUtil.compare(fromDate, schDetail.getSchDate()) == 0) {
 				isValidFromDate = true;
 				if (!FinanceConstants.FLAG_BPI.equals(schDetail.getBpiOrHoliday())
 						&& checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
@@ -531,7 +530,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 		if (!isValidFromDate) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
+			valueParm[0] = "FromDate:" + DateUtil.formatToShortDate(fsi.getFromDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 

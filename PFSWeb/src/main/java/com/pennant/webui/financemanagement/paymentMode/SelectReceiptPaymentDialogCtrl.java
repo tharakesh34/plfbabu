@@ -33,7 +33,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -261,7 +260,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		}
 
 		int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
-		this.valueDate.setValue(DateUtility.addDays(this.receiptDate.getValue(), defaultClearingDays));
+		this.valueDate.setValue(DateUtil.addDays(this.receiptDate.getValue(), defaultClearingDays));
 		this.valueDate.setVisible(true);
 		this.row_valueDate.setVisible(true);
 	}
@@ -719,7 +718,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinanceMain finMain = fsd.getFinanceMain();
 
 		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(), FinServiceEvent.EARLYSETTLE)
-				&& DateUtility.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
+				&& DateUtil.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
 			return;
 		}
@@ -1359,12 +1358,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 			if (!isMatured) {
 				daysBackValueAllowed = SysParamUtil.getValueAsInt("ALW_SP_BACK_DAYS");
-				daysBackValue = DateUtility.getDaysBetween(this.receiptDate.getValue(), appDate);
+				daysBackValue = DateUtil.getDaysBetween(this.receiptDate.getValue(), appDate);
 				if (daysBackValue >= daysBackValueAllowed) {
 					throw new WrongValueException(this.receiptDate,
 							Labels.getLabel("DATE_ALLOWED_ON_AFTER",
 									new String[] { Labels.getLabel("label_SchedulePayment_ReceiptDate.value"),
-											DateUtility.addDays(appDate, -daysBackValueAllowed).toString() }));
+											DateUtil.addDays(appDate, -daysBackValueAllowed).toString() }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -1477,7 +1476,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		if (!financeMain.isFinIsActive()
-				|| DateUtility.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
+				|| DateUtil.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
 			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
 					",EarlyPayment, EarlySettlement, FeePayment,");
 			receiptPurpose.setDisabled(true);

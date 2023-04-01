@@ -69,7 +69,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -96,6 +95,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -1298,7 +1298,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (getJVPosting().isNewRecord()
 				&& getJVPostingService().getJVPostingByFileName(this.batch.getValue()) != null) {
 			MessageUtil.showError(Labels.getLabel("BATCH_ALREADY_EXISTS",
-					new String[] { this.batch.getValue(), DateUtility.getSysDate().toString() }));
+					new String[] { this.batch.getValue(), DateUtil.getSysDate().toString() }));
 			return;
 		}
 
@@ -1773,9 +1773,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					}
 				}
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(jvPostingEntry.getPostingDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(jvPostingEntry.getPostingDate()));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(jvPostingEntry.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(jvPostingEntry.getValueDate()));
 				lc.setParent(item);
 				if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
 					lc = new Listcell(Labels.getLabel("common.Credit"));

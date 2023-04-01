@@ -23,7 +23,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
@@ -58,6 +57,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.cd.model.CDSettlementProcess;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -256,9 +256,9 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
 
 				Date appDate = SysParamUtil.getAppDate();
-				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
+				Date cbDate = DateUtil.addMonths(finMain.getFinStartDate(), promotion.getDlrCbToCust());
 
-				if (DateUtility.compare(appDate, cbDate) >= 0) {
+				if (DateUtil.compare(appDate, cbDate) >= 0) {
 
 					feeType = feeTypeDAO.getFeeTypeById(promotion.getDbdFeeTypId(), "");
 					CashBackDetail cashBackDetail = cashBackDetailDAO
@@ -291,9 +291,9 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 			if (promotion.isMbd() && !promotion.isMbdRtnd()) {
 
 				Date appDate = SysParamUtil.getAppDate();
-				Date cbDate = DateUtility.addMonths(finMain.getFinStartDate(), promotion.getMnfCbToCust());
+				Date cbDate = DateUtil.addMonths(finMain.getFinStartDate(), promotion.getMnfCbToCust());
 
-				if (DateUtility.compare(appDate, cbDate) >= 0) {
+				if (DateUtil.compare(appDate, cbDate) >= 0) {
 
 					CashBackDetail cashBackDetail = cashBackDetailDAO
 							.getManualAdviseIdByFinReference(finMain.getFinID(), "MBD");

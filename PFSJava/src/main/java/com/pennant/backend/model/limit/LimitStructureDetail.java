@@ -40,9 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Model class for the <b>LimitStructureDetail table</b>.<br>
@@ -243,7 +243,7 @@ public class LimitStructureDetail implements Serializable {
 		if (createdOn == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(createdOn);
+		return DateUtil.getXMLDate(createdOn);
 	}
 
 	@XmlTransient
@@ -270,7 +270,7 @@ public class LimitStructureDetail implements Serializable {
 
 	public void setLastMaintainedOn(XMLGregorianCalendar xmlCalendar) {
 		if (xmlCalendar != null) {
-			lastMntOn = DateUtility.ConvertFromXMLTime(xmlCalendar);
+			lastMntOn = DateUtil.ConvertFromXMLTime(xmlCalendar);
 			lastMaintainedOn = xmlCalendar;
 		}
 	}
@@ -280,7 +280,7 @@ public class LimitStructureDetail implements Serializable {
 		if (lastMntOn == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(lastMntOn);
+		return DateUtil.getXMLDate(lastMntOn);
 	}
 
 	public void setLastMntOn(Timestamp lastMntON) {

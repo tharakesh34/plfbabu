@@ -71,7 +71,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.UserWorkspace;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
@@ -83,6 +82,7 @@ import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennanttech.framework.web.AbstractDialogController;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class NotesCtrl extends GFCBaseCtrl<Notes> {
@@ -388,7 +388,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			Date date = SysParamUtil.getAppDate();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(System.currentTimeMillis());
-			calendar.set(DateUtility.getYear(date), DateUtility.getMonth(date) - 1, DateUtility.getDay(date));
+			calendar.set(DateUtil.getYear(date), DateUtil.getMonth(date) - 1, DateUtil.getDay(date));
 			aNotes.setInputDate(new Timestamp(calendar.getTimeInMillis()));
 		}
 		aNotes.setRoleCode(getNotes().getRoleCode());
@@ -591,7 +591,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				// Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ StringEscapeUtils.escapeHtml(note.getRemarks()) + " </font> <br>  ";
-				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
+				String date = DateUtil.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = "<div style='word-wrap: break-word; width: 400px'>" + content
 							+ "<font style='color:#FF0000;float:" + usrAlign + ";'>" + note.getUsrLogin().toLowerCase()
@@ -682,7 +682,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 				lc.setParent(item);
 				// 3
-				lc = new Listcell(DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat));
+				lc = new Listcell(DateUtil.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);
 

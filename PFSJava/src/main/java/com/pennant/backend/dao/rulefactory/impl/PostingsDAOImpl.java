@@ -56,7 +56,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -67,6 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -601,7 +601,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			Collections.sort(postings, new Comparator<ReturnDataSet>() {
 				@Override
 				public int compare(ReturnDataSet detail1, ReturnDataSet detail2) {
-					return DateUtility.compare(detail1.getValueDate(), detail2.getValueDate());
+					return DateUtil.compare(detail1.getValueDate(), detail2.getValueDate());
 				}
 			});
 		}

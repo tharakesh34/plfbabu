@@ -84,7 +84,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
@@ -152,6 +151,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -1010,7 +1010,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.finSchProfitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(),
 					PennantStaticListUtil.getProfitDaysBasis()));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
-			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
+			this.finSchGracePeriodEndDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 		}
 
@@ -1757,7 +1757,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(CurrencyUtil.format(repaySchd.getProfitSchdBal(), formatter));
@@ -1921,7 +1921,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2003,7 +2003,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Payment Amount", CurrencyUtil.parse(curSchd.getRepayAmount(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2013,7 +2013,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Principal", CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2024,7 +2024,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Interest", CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2224,7 +2224,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			receipt.setReceiptAmount(PennantApplicationUtil.amountFormate(totalReceiptAmt, finFormatter));
 			receipt.setReceiptAmountInWords(NumberToEnglishWords
 					.getAmountInText(PennantApplicationUtil.formateAmount(totalReceiptAmt, finFormatter), ""));
-			receipt.setAppDate(DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
+			receipt.setAppDate(DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
 
 			receipt.setReceiptNo(this.paymentRef.getValue());
 			receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel().toString());

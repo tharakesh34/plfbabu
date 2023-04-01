@@ -35,7 +35,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
@@ -704,7 +703,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 							continue;
 						}
 
-						if (DateUtility.compare(od.getFinODSchdDate(), odStartDate) < 0
+						if (DateUtil.compare(od.getFinODSchdDate(), odStartDate) < 0
 								&& od.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
 							odStartDate = od.getFinODSchdDate();
 						}

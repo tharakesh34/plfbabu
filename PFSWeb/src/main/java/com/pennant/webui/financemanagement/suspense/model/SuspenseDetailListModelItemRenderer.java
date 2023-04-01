@@ -32,8 +32,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceSuspDetails;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -54,7 +54,7 @@ public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<Fin
 	public void render(Listitem item, FinanceSuspDetails suspDetails, int count) {
 
 		Listcell lc;
-		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinTrfDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(suspDetails.getFinTrfDate()));
 		lc.setParent(item);
 		String movement = "Suspense";
 		if ("R".equals(suspDetails.getFinTrfMvt())) {
@@ -66,9 +66,9 @@ public class SuspenseDetailListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(CurrencyUtil.format(suspDetails.getFinTrfAmt(), formatter));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinODDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(suspDetails.getFinODDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(suspDetails.getFinTrfFromDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(suspDetails.getFinTrfFromDate()));
 		lc.setParent(item);
 
 	}

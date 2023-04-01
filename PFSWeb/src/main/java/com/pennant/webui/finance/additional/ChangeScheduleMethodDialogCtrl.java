@@ -41,7 +41,6 @@ import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.ChangeScheduleMethodService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -52,6 +51,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -302,7 +302,7 @@ public class ChangeScheduleMethodDialogCtrl extends GFCBaseCtrl<FinScheduleData>
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				this.cbFrqFromDate.appendChild(comboitem);

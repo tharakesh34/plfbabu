@@ -15,13 +15,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
@@ -95,7 +95,7 @@ public class LimitCustomerGroupsUpdate implements Tasklet {
 	public void updateFailed(long groupId) {
 		CustomerGroupQueuing customerGroupQueuing = new CustomerGroupQueuing();
 		customerGroupQueuing.setGroupId(groupId);
-		customerGroupQueuing.setEndTime(DateUtility.getSysDate());
+		customerGroupQueuing.setEndTime(DateUtil.getSysDate());
 		// reset to "wait", to re run only failed cases.
 		customerGroupQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		customerGroupQueuingDAO.updateFailed(customerGroupQueuing);

@@ -46,13 +46,13 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.financeservice.AddDatedScheduleService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -241,8 +241,8 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) >= 0) {
 				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_ALLOWED_RANGE", new String[] {
 						Labels.getLabel("label_AddDatedScheduleDialog_FromDate.value"),
-						DateUtility.formatToLongDate(validateFromDate),
-						DateUtility.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+						DateUtil.formatToLongDate(validateFromDate),
+						DateUtil.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
 			}
 			getFinScheduleData().getFinanceMain().setEventFromDate(this.fromDate.getValue());
 		} catch (WrongValueException we) {
@@ -272,7 +272,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbTillDate,
 							Labels.getLabel("DATE_ALLOWED_AFTER",
 									new String[] { Labels.getLabel("label_AddDatedScheduleDialog_TillDate.value"),
-											DateUtility.formatToLongDate((Date) this.fromDate.getValue()) }));
+											DateUtil.formatToLongDate((Date) this.fromDate.getValue()) }));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -460,7 +460,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				checkForLastValidDate = false;
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 			}

@@ -20,12 +20,12 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.dataengine.DatabaseDataEngine;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.ControlDumpProcess;
 import com.pennanttech.pff.model.external.controldump.ControlDump;
 
@@ -332,7 +332,7 @@ public class ControlDumpExtract extends DatabaseDataEngine implements ControlDum
 						cd.setMaturityDate(rs.getDate("MATURITYDATE"));
 
 						int monts;
-						monts = DateUtility.getMonthsBetweenInclusive(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"));
+						monts = DateUtil.getMonthsBetweenInclusive(cd.getMaturityDate(), rs.getDate("FINSTARTDATE"));
 						cd.setSanctionedTenure(monts);
 
 						cd.setSchemeId(rs.getInt("PROMOTIONID"));

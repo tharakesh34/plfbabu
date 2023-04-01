@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReceiptCalculator;
@@ -41,6 +40,7 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.util.APIConstants;
 
 public class SummaryDetailService extends ExtendedTestClass {
@@ -91,7 +91,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 		summary.setTotalProfit(finPftDetail.getTotalPftSchd());
 		summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
 		summary.setNumberOfTerms(finPftDetail.getNOInst());
-		summary.setLoanTenor(DateUtility.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
+		summary.setLoanTenor(DateUtil.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
 		summary.setMaturityDate(finPftDetail.getMaturityDate());
 		summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
 		summary.setNextSchDate(finPftDetail.getNSchdDate());
@@ -101,7 +101,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 		// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 		summary.setFutureInst(finPftDetail.getFutureInst());
 		summary.setFutureTenor(
-				DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
+				DateUtil.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
 		summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
 		summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
 		summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
@@ -238,20 +238,20 @@ public class SummaryDetailService extends ExtendedTestClass {
 					planEMIHDates.add(detail.getPlanEMIHDate());
 					List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 					for (FinanceScheduleDetail schDetail : schedules) {
-						Date planEMIHStart = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
+						Date planEMIHStart = DateUtil.addMonths(financeMain.getGrcPeriodEndDate(),
 								financeMain.getPlanEMIHLockPeriod());
 
-						if (DateUtility.compare(detail.getPlanEMIHDate(), schDetail.getSchDate()) == 0) {
-							if (!(DateUtility.compare(schDetail.getSchDate(), planEMIHStart) > 0)) {
+						if (DateUtil.compare(detail.getPlanEMIHDate(), schDetail.getSchDate()) == 0) {
+							if (!(DateUtil.compare(schDetail.getSchDate(), planEMIHStart) > 0)) {
 								alwEMIHoliday = false;
 								lockPeriodDate = detail.getPlanEMIHDate();
 								break;
 							}
 							isValidSchDate = true;
 							if (schDetail.getInstNumber() == 1
-									|| DateUtility.compare(financeMain.getMaturityDate(), schDetail.getSchDate()) == 0
-									|| DateUtility.compare(financeMain.getFinStartDate(), schDetail.getSchDate()) == 0
-									|| DateUtility.compare(financeMain.getGrcPeriodEndDate(),
+									|| DateUtil.compare(financeMain.getMaturityDate(), schDetail.getSchDate()) == 0
+									|| DateUtil.compare(financeMain.getFinStartDate(), schDetail.getSchDate()) == 0
+									|| DateUtil.compare(financeMain.getGrcPeriodEndDate(),
 											schDetail.getSchDate()) >= 0) {
 								String[] valueParm = new String[1];
 								valueParm[0] = "holidayDate";
@@ -263,7 +263,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 					}
 					int dateCount = 0;
 					for (Date date : planEMIHDates) {
-						if (DateUtility.getYear(detail.getPlanEMIHDate()) == DateUtility.getYear(date)) {
+						if (DateUtil.getYear(detail.getPlanEMIHDate()) == DateUtil.getYear(date)) {
 							dateCount++;
 						}
 					}
@@ -288,7 +288,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 		if (!alwEMIHoliday && StringUtils.equals(finScheduleData.getFinanceMain().getPlanEMIHMethod(),
 				FinanceConstants.PLANEMIHMETHOD_ADHOC) && financeMain.isPlanEMIHAlw()) {
 			String[] valueParm = new String[1];
-			valueParm[0] = DateUtility.format(lockPeriodDate, PennantConstants.XMLDateFormat);
+			valueParm[0] = DateUtil.format(lockPeriodDate, PennantConstants.XMLDateFormat);
 			finScheduleData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", valueParm)));
 			return;
 		}

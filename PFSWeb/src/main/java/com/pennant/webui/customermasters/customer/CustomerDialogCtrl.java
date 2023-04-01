@@ -97,7 +97,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
@@ -194,6 +193,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
@@ -5015,7 +5015,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						&& StringUtils.equals(PennantConstants.TRADELICENSE, custDocument.getCustDocCategory())) {
 					if (!this.custDOB.isDisabled() && this.custDOB.getValue() != null
 							&& custDocument.getCustDocIssuedOn() != null
-							&& DateUtility.compare(custDocument.getCustDocIssuedOn(), this.custDOB.getValue()) != 0) {
+							&& DateUtil.compare(custDocument.getCustDocIssuedOn(), this.custDOB.getValue()) != 0) {
 						doShowValidationMessage(custTab, 6, custDocument.getLovDescCustDocCategory());
 						return false;
 					}
@@ -6422,9 +6422,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc.setParent(item);
 					lc = new Listcell(customerDocument.getCustDocSysName());
 					lc.setParent(item);
-					lc = new Listcell(DateUtility.formatToLongDate(customerDocument.getCustDocIssuedOn()));
+					lc = new Listcell(DateUtil.formatToLongDate(customerDocument.getCustDocIssuedOn()));
 					lc.setParent(item);
-					lc = new Listcell(DateUtility.formatToLongDate(customerDocument.getCustDocExpDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(customerDocument.getCustDocExpDate()));
 					lc.setParent(item);
 					lc = new Listcell(customerDocument.getRecordStatus());
 					lc.setParent(item);
@@ -6901,7 +6901,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			for (CustomerChequeInfo custChequeInfo : customerChequeInfoDetails) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(DateUtility.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
+				lc = new Listcell(DateUtil.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
 				lc.setParent(item);
 				lc = new Listcell(
 						PennantApplicationUtil.amountFormate(custChequeInfo.getTotChequePayment(), ccyFormatter));
@@ -7008,7 +7008,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (custExtLiability.getFinDate() == null) {
 					lc = new Listcell();
 				} else {
-					lc = new Listcell(DateUtility.formatToLongDate(custExtLiability.getFinDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(custExtLiability.getFinDate()));
 				}
 				lc.setParent(item);
 				lc = new Listcell(custExtLiability.getFinTypeDesc());
@@ -7157,7 +7157,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				int format = CurrencyUtil.getFormat(finEnquiry.getFinCcy());
 				Listitem item = new Listitem();
-				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				Listcell lc = new Listcell(DateUtil.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getLovDescFinTypeName());
 				lc.setParent(item);
@@ -7716,7 +7716,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		int years = 0;
 		int month = 0;
 		if (fromDate.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, fromDate);
+			int months = DateUtil.getMonthsBetween(appDate, fromDate);
 			years = months / 12;
 			month = months % 12;
 			dateDiff = new BigDecimal(months % 12);

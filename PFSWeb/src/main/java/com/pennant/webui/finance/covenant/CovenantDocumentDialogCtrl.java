@@ -56,7 +56,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
@@ -220,7 +219,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) <= 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) <= 0) {
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_DATE);
 			list.add(new Property(tempStartDate, key));
 			tempStartDate = DateUtil.addMonths(tempStartDate, frequency);
@@ -519,7 +518,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			wve.add(we);
 		}
 		try {
-			if (DateUtility.compare(this.docReceivedDate.getValue(), SysParamUtil.getAppDate()) == 1) {
+			if (DateUtil.compare(this.docReceivedDate.getValue(), SysParamUtil.getAppDate()) == 1) {
 				throw new WrongValueException(this.docReceivedDate, Labels.getLabel("DATE_NO_FUTURE",
 						new String[] { Labels.getLabel("label_CovenantDocumentDialog_ReceivedDate.value") }));
 			}

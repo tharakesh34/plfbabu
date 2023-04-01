@@ -33,7 +33,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -61,6 +60,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
@@ -189,8 +189,8 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				.setValue(customer.getCustNationality() + "-" + customer.getLovDescCustNationalityName());
 
 		if (customer.getCustDOB() != null) {
-			this.finCustFDOB.setValue(DateUtility.formatToShortDate(customer.getCustDOB()));
-			this.finCustFAge.setValue(String.valueOf(DateUtility.getYearsBetween(customer.getCustDOB(), appldate)));
+			this.finCustFDOB.setValue(DateUtil.formatToShortDate(customer.getCustDOB()));
+			this.finCustFAge.setValue(String.valueOf(DateUtil.getYearsBetween(customer.getCustDOB(), appldate)));
 		}
 
 		// Customer Email
@@ -253,7 +253,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (custFinanceExposureDetails != null) {
 			for (FinanceEnquiry finEnquiry : custFinanceExposureDetails) {
 				Listitem item = new Listitem();
-				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				Listcell lc = new Listcell(DateUtil.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinType());
 				lc.setParent(item);

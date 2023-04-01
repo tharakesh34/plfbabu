@@ -27,7 +27,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
@@ -57,6 +56,7 @@ import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
@@ -371,8 +371,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.customer.setValue(provision.getCustCIF() + "-" + provision.getCustShrtName());
 		this.finType.setValue(provision.getFinType());
 		this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), format));
-		this.finStartDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
-		this.maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
+		this.finStartDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getFinStartDate()));
+		this.maturityDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getMaturityDate()));
 		this.pricipalOutstanding
 				.setValue(PennantApplicationUtil.formateAmount(finProfitDetail.getTotalPriBal(), format));
 		this.totalOverdue.setValue(PennantApplicationUtil.formateAmount(finProfitDetail.getODProfit()

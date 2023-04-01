@@ -68,7 +68,6 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
@@ -2806,7 +2805,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			advSch.setSchdMethod(schedule.getSchdMethod());
 			advSch.setPftDaysBasis(schedule.getPftDaysBasis());
 			advSch.setLastMntBy(fm.getLastMntBy());
-			advSch.setNoOfDays(DateUtility.getDaysBetween(schDate, advSchDate));
+			advSch.setNoOfDays(DateUtil.getDaysBetween(schDate, advSchDate));
 			advSch.setDayFactor(CalculationUtil.getInterestDays(advSchDate, schDate, advSch.getPftDaysBasis()));
 
 			if (i == fm.getAdvTerms() - 1) {
@@ -8411,7 +8410,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (!ImplementationConstants.LPP_CALC_SOD) {
-			reqMaxODDate = DateUtility.addDays(valueDate, -1);
+			reqMaxODDate = DateUtil.addDays(valueDate, -1);
 		}
 
 		overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());

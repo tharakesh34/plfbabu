@@ -7,9 +7,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.excess.model.FinExcessTransfer;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ExcessTransferListModelItemRenderer implements ListitemRenderer<FinExcessTransfer>, Serializable {
@@ -34,7 +34,7 @@ public class ExcessTransferListModelItemRenderer implements ListitemRenderer<Fin
 		lc = new Listcell(finExcessTransfer.getFinReference());
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.format(finExcessTransfer.getTransferDate(), DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtil.format(finExcessTransfer.getTransferDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 
 		lc = new Listcell(finExcessTransfer.getRecordStatus());

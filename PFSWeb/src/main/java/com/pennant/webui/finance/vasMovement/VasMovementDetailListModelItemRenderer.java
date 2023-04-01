@@ -35,10 +35,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.VasMovementDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -80,7 +80,7 @@ public class VasMovementDetailListModelItemRenderer implements ListitemRenderer<
 			lc.setParent(item);
 
 			lc = new Listcell(
-					DateUtility.format(vasMovementDetail.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
+					DateUtil.format(vasMovementDetail.getMovementDate(), DateFormat.LONG_DATE.getPattern()));
 			lc.setParent(item);
 
 			lc = new Listcell(

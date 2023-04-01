@@ -17,7 +17,6 @@ import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.zul.Timer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
@@ -79,7 +78,7 @@ public class EODServiceImpl implements EODService {
 				&& bps.getEndTime() != null) {
 			int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 			if (days == 0) {
-				int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
+				int timeBetween = Integer.valueOf(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 				if (timeBetween < 20) {
 					logger.debug("EOD is already processed for this System Date {$}.", sysDate);
 					return;
@@ -214,7 +213,7 @@ public class EODServiceImpl implements EODService {
 		String subject = "Reminder : EOD for value date %s will be start in %s hrs";
 
 		Date notifTime = cronToDate(eodConfig.getEODStartJobFrequency());
-		String format = DateUtility.timeBetween(notifTime, DateUtility.getSysDate());
+		String format = DateUtil.timeBetween(notifTime, DateUtil.getSysDate());
 		subject = String.format(subject, eodDate, format);
 
 		if (!eodConfig.isSendEmailRequired()) {
@@ -353,7 +352,7 @@ public class EODServiceImpl implements EODService {
 
 			eod.setStartTime(DateUtil.format(eodDate, DateFormat.LONG_TIME));
 			eod.setUserEstimatedTime(DateUtil.format(delayTime, DateFormat.LONG_TIME));
-			eod.setTimeTaken(DateUtility.timeBetween(delayTime, eodDate));
+			eod.setTimeTaken(DateUtil.timeBetween(delayTime, eodDate));
 
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -69,7 +68,7 @@ public class RefundUploadController extends ExtendedTestClass {
 			uploadHeader.setLastMntOn(refundUpload.getLastMntOn());
 			uploadHeader.setModule(UploadConstants.UPLOAD_MODULE_REFUND);
 			uploadHeader.setFinSource(UploadConstants.FINSOURCE_ID_API);
-			uploadHeader.setTransactionDate(DateUtility.getSysDate());
+			uploadHeader.setTransactionDate(DateUtil.getSysDate());
 			refundUploads.add(refundUpload);
 			uploadHeader.setRefundUploads(refundUploads);
 			// set the headerDetails to AuditHeader

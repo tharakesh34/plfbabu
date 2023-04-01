@@ -33,9 +33,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -60,9 +60,9 @@ public class CDSchemeListModelItemRenderer implements ListitemRenderer<Promotion
 		lc.setParent(item);
 		lc = new Listcell(promotion.getReferenceID() > 0 ? String.valueOf(promotion.getReferenceID()) : "");
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(promotion.getStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(promotion.getStartDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(promotion.getEndDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(promotion.getEndDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(promotion.getTenor()));
 		lc.setParent(item);

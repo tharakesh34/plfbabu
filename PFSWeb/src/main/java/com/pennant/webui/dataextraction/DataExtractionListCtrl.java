@@ -30,7 +30,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -39,6 +38,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.gst.TaxDownlaodExtract;
@@ -188,20 +188,20 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 
 		try {
 			int month = Integer.parseInt(processMonth);
-			Date processDate = DateUtility.getDate(month);
+			Date processDate = DateUtil.getSysDateByMonth(month);
 			Date appDate = SysParamUtil.getAppDate();
 			String msg = null;
 
-			if (DateUtility.compare(processDate, appDate) > 0) {
-				processDate = DateUtility.getPreviousYearDate(processDate);
+			if (DateUtil.compare(processDate, appDate) > 0) {
+				processDate = DateUtil.addYears(processDate, -1);
 			}
 
 			switch (configName) {
 			case "GST_TAXDOWNLOAD_DETAILS_TRANASCTION":
 				TaxDownlaodExtract trnPocess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
 						getUserWorkspace().getUserDetails().getUserId(), SysParamUtil.getAppValueDate(),
-						SysParamUtil.getAppDate(), DateUtility.getMonthStart(processDate),
-						DateUtility.getMonthEnd(processDate));
+						SysParamUtil.getAppDate(), DateUtil.getMonthStart(processDate),
+						DateUtil.getMonthEnd(processDate));
 				if (isDownloadProcess) {
 					msg = downloadGstTransactionData(configName, trnPocess);
 				} else {
@@ -213,8 +213,8 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 			case "GST_TAXDOWNLOAD_DETAILS_SUMMARY":
 				TaxDownlaodExtract summProcess = new TaxDownlaodExtract((DataSource) SpringUtil.getBean("dataSource"),
 						getUserWorkspace().getUserDetails().getUserId(), SysParamUtil.getAppValueDate(),
-						SysParamUtil.getAppDate(), DateUtility.getMonthStart(processDate),
-						DateUtility.getMonthEnd(processDate));
+						SysParamUtil.getAppDate(), DateUtil.getMonthStart(processDate),
+						DateUtil.getMonthEnd(processDate));
 				if (isDownloadProcess) {
 					msg = downloadGstSummaryData(configName, summProcess);
 				} else {

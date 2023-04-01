@@ -857,7 +857,7 @@ public class FrequencyUtil implements Serializable {
 		do {
 			frequencyDetails = getNextDate(frequency, terms, startDate, handlerType,
 					(count == 1 ? includeBaseDate : false));
-			days = DateUtility.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
+			days = DateUtil.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
 			startDate = frequencyDetails.getNextFrequencyDate();
 			count = count + 1;
 		} while (days <= requestedMinDays && requestedMinDays != 0);
@@ -895,7 +895,7 @@ public class FrequencyUtil implements Serializable {
 
 		for (int i = startTerm; i < terms; i++) {
 
-			while (DateUtility.compare(freqDate.getTime(), baseDate.getTime()) != 1) {
+			while (DateUtil.compare(freqDate.getTime(), baseDate.getTime()) != 1) {
 
 				int maxdays = firstDate.getActualMaximum(Calendar.DAY_OF_MONTH);
 
@@ -1268,13 +1268,13 @@ public class FrequencyUtil implements Serializable {
 			calDate.setTime(startDate);
 			scheduleList.add((Calendar) calDate.clone());
 			terms++;
-			cont = DateUtility.compare(tempDate, endDate);
+			cont = DateUtil.compare(tempDate, endDate);
 		}
 
 		while (cont == -1) {
 			tempDate = getNextDate(code, 1, tempDate, holidayHandlerTypes, false, 0).getNextFrequencyDate();
 			calDate.setTime(tempDate);
-			cont = DateUtility.compare(tempDate, endDate);
+			cont = DateUtil.compare(tempDate, endDate);
 			if (cont == 0) {
 				scheduleList.add((Calendar) calDate.clone());
 				terms++;

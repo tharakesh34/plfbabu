@@ -45,7 +45,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.bmtmasters.CheckList;
@@ -60,6 +59,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -209,7 +209,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 
 		if (this.deviationDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_deviationDate.getSelectedItem(),
-					DateUtility.format(this.deviationDate.getValue(), PennantConstants.DBDateFormat), "DeviationDate");
+					DateUtil.format(this.deviationDate.getValue(), PennantConstants.DBDateFormat), "DeviationDate");
 		}
 		if (StringUtils.isNotBlank(this.finreference.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finreference.getSelectedItem(),
@@ -264,7 +264,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 					PennantAppUtil.getSecRolesList(null)));
 			listGroup.appendChild(listcell);
 
-			listcell = getNewListCell(DateUtility.formatToShortDate(deviationDetail.getDeviationDate()));
+			listcell = getNewListCell(DateUtil.formatToShortDate(deviationDetail.getDeviationDate()));
 			listGroup.appendChild(listcell);
 
 			long devaitiondate = deviationDetail.getDeviationDate().getTime();
@@ -275,7 +275,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 			}
 			long expected = devaitiondate + (day * days);
 			Date expecteddate = new Date(expected);
-			listcell = getNewListCell(DateUtility.formatToShortDate(expecteddate));
+			listcell = getNewListCell(DateUtil.formatToShortDate(expecteddate));
 			listGroup.appendChild(listcell);
 
 			List<CheckListDetail> checkListDetails = getCheckListDetail(checkList.getCheckListId());

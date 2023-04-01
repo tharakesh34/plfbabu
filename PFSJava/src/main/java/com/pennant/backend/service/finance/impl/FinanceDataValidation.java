@@ -33,7 +33,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
@@ -1628,8 +1627,8 @@ public class FinanceDataValidation {
 		} else {
 			if (finMain.getFinContractDate().compareTo(finMain.getFinStartDate()) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.format(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
-				valueParm[1] = DateUtility.format(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
+				valueParm[0] = DateUtil.format(finMain.getFinContractDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtil.format(finMain.getFinStartDate(), PennantConstants.XMLDateFormat);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 			}
 		}
@@ -2569,9 +2568,9 @@ public class FinanceDataValidation {
 				if (dd.getCustDocIssuedOn().compareTo(dd.getCustDocExpDate()) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "custDocExpDate: "
-							+ DateUtility.format(dd.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+							+ DateUtil.format(dd.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 					valueParm[1] = "custDocIssuedOn: "
-							+ DateUtility.format(dd.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+							+ DateUtil.format(dd.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", valueParm)));
 					return errors;
 				}
@@ -2840,14 +2839,14 @@ public class FinanceDataValidation {
 					} else {
 						if (finCovenantType.getReceivableDate() != null) {
 							java.util.Date appDate = SysParamUtil.getAppDate();
-							Date allowedDate = DateUtility.addDays(appDate,
+							Date allowedDate = DateUtil.addDays(appDate,
 									+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
-							if (DateUtility.compare(finCovenantType.getReceivableDate(), appDate) == -1) {
+							if (DateUtil.compare(finCovenantType.getReceivableDate(), appDate) == -1) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "receivableDate";
 								valueParm[1] = String.valueOf(appDate);
 								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm)));
-							} else if (DateUtility.compare(finCovenantType.getReceivableDate(), allowedDate) == 1) {
+							} else if (DateUtil.compare(finCovenantType.getReceivableDate(), allowedDate) == 1) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "receivableDate";
 								valueParm[1] = String.valueOf(allowedDate);
@@ -2968,8 +2967,8 @@ public class FinanceDataValidation {
 							|| advPayment.getLlDate().after(financeMain.getCalMaturity())) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "disbursement Date";
-						valueParm[1] = DateUtility.formatToLongDate(financeMain.getFinStartDate());
-						valueParm[2] = DateUtility.formatToLongDate(financeMain.getCalMaturity());
+						valueParm[1] = DateUtil.formatToLongDate(financeMain.getFinStartDate());
+						valueParm[2] = DateUtil.formatToLongDate(financeMain.getCalMaturity());
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return errorDetails;
 					}
@@ -5401,8 +5400,8 @@ public class FinanceDataValidation {
 		// First Repayment Profit Review Date Vs Maturity Date
 		if (nextRepayRvwDate.compareTo(calMaturity) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(nextRepayRvwDate);
-			valueParm[1] = DateUtility.formatToShortDate(calMaturity);
+			valueParm[0] = DateUtil.formatToShortDate(nextRepayRvwDate);
+			valueParm[1] = DateUtil.formatToShortDate(calMaturity);
 
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90198", valueParm)));
 		}
@@ -6497,12 +6496,12 @@ public class FinanceDataValidation {
 			// Current Finance Monthly Installment Calculation
 			BigDecimal totalRepayAmount = financeMain.getTotalRepayAmt();
 			BigDecimal curFinRepayAmt = BigDecimal.ZERO;
-			int installmentMnts = DateUtility.getMonthsBetween(financeMain.getFinStartDate(),
-					financeMain.getMaturityDate(), false);
+			int installmentMnts = DateUtil.getMonthsBetweenInclusive(financeMain.getFinStartDate(),
+					financeMain.getMaturityDate());
 			if (installmentMnts > 0) {
 				curFinRepayAmt = totalRepayAmount.divide(new BigDecimal(installmentMnts), 0, RoundingMode.HALF_DOWN);
 			}
-			int months = DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
+			int months = DateUtil.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate());
 
 			// Get Customer Employee Designation
 			String custEmpDesg = "";
@@ -6527,7 +6526,7 @@ public class FinanceDataValidation {
 					custOtherIncome = StringUtils
 							.trimToEmpty(detail.getCustomerDetails().getCustEmployeeDetail().getOtherIncome());
 					custOtherIncomeAmt = detail.getCustomerDetails().getCustEmployeeDetail().getAdditionalIncome();
-					int custMonthsofExp = DateUtility.getMonthsBetween(
+					int custMonthsofExp = DateUtil.getMonthsBetween(
 							detail.getCustomerDetails().getCustEmployeeDetail().getEmpFrom(),
 							SysParamUtil.getAppDate());
 					custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
@@ -6569,7 +6568,7 @@ public class FinanceDataValidation {
 							}
 						}
 						if (custEmpFromDate != null) {
-							int custMonthsofExp = DateUtility.getMonthsBetween(custEmpFromDate,
+							int custMonthsofExp = DateUtil.getMonthsBetween(custEmpFromDate,
 									SysParamUtil.getAppDate());
 							custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 									RoundingMode.CEILING);
@@ -6613,7 +6612,7 @@ public class FinanceDataValidation {
 			detail.getCustomerEligibilityCheck().setCustSector(custSector);
 			detail.getCustomerEligibilityCheck().setCustCtgCode(custCtgCode);
 			detail.getCustomerEligibilityCheck().setGraceTenure(
-					DateUtility.getYearsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
+					DateUtil.getYearsBetween(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()));
 
 			detail.getCustomerEligibilityCheck().setReqFinCcy(financeMain.getFinCcy());
 			detail.getCustomerEligibilityCheck().setNoOfTerms(financeMain.getNumberOfTerms());
@@ -8161,7 +8160,7 @@ public class FinanceDataValidation {
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) <= 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) <= 0) {
 			// String key = DateUtil.format(tempStartDate, DateFormat.LONG_DATE);
 			list.add(tempStartDate);
 			tempStartDate = DateUtil.addMonths(tempStartDate, frequency);
@@ -8320,7 +8319,7 @@ public class FinanceDataValidation {
 		}
 		Date appDate = SysParamUtil.getAppDate();
 
-		if (DateUtility.compare(appDate, frequencyDate) < 0) {
+		if (DateUtil.compare(appDate, frequencyDate) < 0) {
 			frequencyDate = DateUtil.addMonths(frequencyDate, 1);
 		}
 

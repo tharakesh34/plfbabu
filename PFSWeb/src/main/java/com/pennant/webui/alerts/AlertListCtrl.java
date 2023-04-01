@@ -38,7 +38,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
@@ -125,7 +124,7 @@ public class AlertListCtrl extends GFCBaseListCtrl<Object> {
 			for (Covenant covenant : covenants) {
 				Date lastAlertSentOn = covenant.getAlertsentOn();
 				int alertDays = covenant.getAlertDays();
-				if (lastAlertSentOn != null && DateUtility.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
+				if (lastAlertSentOn != null && DateUtil.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
 					continue;
 				}
 
@@ -147,7 +146,7 @@ public class AlertListCtrl extends GFCBaseListCtrl<Object> {
 			for (FinOption finOption : finOptions) {
 				Date lastAlertSentOn = finOption.getAlertsentOn();
 				int alertDays = finOption.getAlertDays();
-				if (lastAlertSentOn != null && DateUtility.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
+				if (lastAlertSentOn != null && DateUtil.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
 					continue;
 				}
 

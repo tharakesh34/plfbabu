@@ -79,7 +79,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Property;
@@ -903,7 +902,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			/* Check whether usrCanSignonTo time is before usrCanSignonFrom or not */
 			if ((this.usrCanSignonTo.getValue() != null) && (this.usrCanSignonFrom.getValue() != null)) {
-				int timeDiff = DateUtility.compareTime(aSecurityUser.getUsrCanSignonFrom(),
+				int timeDiff = DateUtil.compareTime(aSecurityUser.getUsrCanSignonFrom(),
 						aSecurityUser.getUsrCanSignonTo(), false);
 				if (timeDiff == 1 || timeDiff == 0) {
 					throw new WrongValueException(this.usrCanSignonTo,
@@ -1551,7 +1550,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (StringUtils.isBlank(aSecurityUser.getRecordType())) {
 				aSecurityUser.setVersion(aSecurityUser.getVersion() + 1);
 				if (isNew) {
-					aSecurityUser.setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), -1));
+					aSecurityUser.setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), -1));
 					aSecurityUser.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
 					aSecurityUser.setRecordType(PennantConstants.RECORD_TYPE_UPD);

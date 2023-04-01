@@ -52,7 +52,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.WIFCustomer;
@@ -66,6 +65,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -107,7 +107,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	private CreditApplicationReviewService creditApplicationReviewService;
 	private FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private WIFCustomer wifcustomer = new WIFCustomer();
-	int currentYear = DateUtility.getYear(SysParamUtil.getAppDate());
+	int currentYear = DateUtil.getYear(SysParamUtil.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
 	protected JdbcSearchObject<Customer> newSearchObject;
@@ -380,8 +380,8 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		if (this.auditYear.intValue() != 0) {
 			Date appDate = SysParamUtil.getAppDate();
 			Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-			startDate = DateUtility.addDays(startDate, 1);
-			if (this.auditYear.intValue() > DateUtility.getYear(appDate)) {
+			startDate = DateUtil.addDays(startDate, 1);
+			if (this.auditYear.intValue() > DateUtil.getYear(appDate)) {
 				try {
 					throw new WrongValueException(this.auditYear,
 							Labels.getLabel("const_NO_FUTURE_YEAR",
@@ -391,7 +391,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 					wveList.add(wve);
 				}
 			}
-			if (this.auditYear.intValue() < DateUtility.getYear(startDate)) {
+			if (this.auditYear.intValue() < DateUtil.getYear(startDate)) {
 				try {
 					throw new WrongValueException(this.auditYear,
 							Labels.getLabel("label_CreditReviewNotValidYear",

@@ -26,7 +26,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitReferenceMapping;
@@ -37,6 +36,7 @@ import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
@@ -329,7 +329,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 			lc = new Listcell(CurrencyUtil.format(avialable, ccyFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatToShortDate(limitDetails.getExpiryDate()));
+			lc = new Listcell(DateUtil.formatToShortDate(limitDetails.getExpiryDate()));
 			lc.setParent(item);
 			limitDetails.setCurrency(getLimitHeader().getLimitCcy());
 			limitDetails.setCustomerGroup(getLimitHeader().getCustomerGroup());
@@ -440,7 +440,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 		this.custDftBranchName.setValue(aLimitHeader.getResponsibleBranchName());
 		this.label_currency.setValue(aLimitHeader.getLimitCcy());
 		if (aLimitHeader.getLimitExpiryDate() != null) {
-			this.label_date.setValue(DateUtility.formatToShortDate(aLimitHeader.getLimitExpiryDate()));
+			this.label_date.setValue(DateUtil.formatToShortDate(aLimitHeader.getLimitExpiryDate()));
 		}
 		if (aLimitHeader.getCcyDesc() != null) {
 			this.label_ccyDesc.setValue(aLimitHeader.getCcyDesc());

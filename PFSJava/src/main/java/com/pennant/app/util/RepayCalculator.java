@@ -65,6 +65,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
@@ -196,7 +197,7 @@ public class RepayCalculator implements Serializable {
 			Collections.sort(schedules, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -391,7 +392,7 @@ public class RepayCalculator implements Serializable {
 
 			// Overdue Principal and Profit
 			if (schdDate.compareTo(curBussniessDate) < 0
-					&& DateUtility.getDaysBetween(curBussniessDate, schdDate) >= 0) {
+					&& DateUtil.getDaysBetween(curBussniessDate, schdDate) >= 0) {
 				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
 				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal()
 						.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));
@@ -459,7 +460,7 @@ public class RepayCalculator implements Serializable {
 
 		RepayMain rm = rd.getRepayMain();
 		if (curBussniessDate.after(curSchd.getSchDate())) {
-			rsd.setDaysLate(DateUtility.getDaysBetween(curSchd.getSchDate(), curBussniessDate));
+			rsd.setDaysLate(DateUtil.getDaysBetween(curSchd.getSchDate(), curBussniessDate));
 			rsd.setDaysEarly(0);
 
 			try {
@@ -563,7 +564,7 @@ public class RepayCalculator implements Serializable {
 		} else {
 
 			rsd.setDaysLate(0);
-			rsd.setDaysEarly(DateUtility.getDaysBetween(curBussniessDate, curSchd.getSchDate()));
+			rsd.setDaysEarly(DateUtil.getDaysBetween(curBussniessDate, curSchd.getSchDate()));
 
 			if (setEarlyPayAmt && rm.getEarlyPayNextSchDate() == null) {
 				rm.setEarlyPayNextSchDate(curSchd.getSchDate());

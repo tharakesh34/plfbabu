@@ -27,7 +27,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -181,7 +180,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		}
 
 		int defaultClearingDays = SysParamUtil.getValueAsInt(SMTParameterConstants.EARLYSETTLE_CHQ_DFT_DAYS);
-		this.valueDate.setValue(DateUtility.addDays(this.receiptDate.getValue(), defaultClearingDays));
+		this.valueDate.setValue(DateUtil.addDays(this.receiptDate.getValue(), defaultClearingDays));
 		this.valueDate.setVisible(true);
 		this.rowValueDate.setVisible(true);
 	}
@@ -1050,12 +1049,12 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 
 			int daysBackValueAllowed = SysParamUtil.getValueAsInt("ALW_SP_BACK_DAYS");
-			int daysBackValue = DateUtility.getDaysBetween(this.receiptDate.getValue(), appDate);
+			int daysBackValue = DateUtil.getDaysBetween(this.receiptDate.getValue(), appDate);
 			if (daysBackValue >= daysBackValueAllowed) {
 				throw new WrongValueException(this.receiptDate,
 						Labels.getLabel("DATE_ALLOWED_ON_AFTER",
 								new String[] { Labels.getLabel("label_SchedulePayment_ReceiptDate.value"),
-										DateUtility.addDays(appDate, -daysBackValueAllowed).toString() }));
+										DateUtil.addDays(appDate, -daysBackValueAllowed).toString() }));
 			}
 
 		} catch (WrongValueException we) {

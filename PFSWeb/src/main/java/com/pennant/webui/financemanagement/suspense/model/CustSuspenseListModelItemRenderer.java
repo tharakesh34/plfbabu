@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -61,9 +61,9 @@ public class CustSuspenseListModelItemRenderer implements ListitemRenderer<Custo
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustSts() + "-" + customer.getLovDescCustStsName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(customer.getCustStsChgDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(customer.getCustStsChgDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(customer.getCustSuspDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(customer.getCustSuspDate()));
 		lc.setParent(item);
 		lc = new Listcell(customer.getRecordStatus());
 		lc.setParent(item);

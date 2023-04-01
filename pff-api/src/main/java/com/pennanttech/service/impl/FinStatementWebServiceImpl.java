@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -416,10 +415,10 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 				 */
 			}
 
-			if (DateUtility.compare(fromDate, toDate) > 0) {
+			if (DateUtil.compare(fromDate, toDate) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
-				valueParm[1] = "toDate:" + DateUtility.format(toDate, PennantConstants.XMLDateFormat);
+				valueParm[0] = "fromDate:" + DateUtil.format(fromDate, PennantConstants.XMLDateFormat);
+				valueParm[1] = "toDate:" + DateUtil.format(toDate, PennantConstants.XMLDateFormat);
 				stmtResp = new FinStatementResponse();
 				stmtResp.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 				return stmtResp;
@@ -431,21 +430,21 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			fromDate = stmtReq.getFromDate();
 			if (fromDate != null) {
 				if (fm != null && fm.getFinStartDate() != null) {
-					if (DateUtility.compare(fromDate, fm.getFinStartDate()) < 0) {
+					if (DateUtil.compare(fromDate, fm.getFinStartDate()) < 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
+						valueParm[0] = "fromDate:" + DateUtil.format(fromDate, PennantConstants.XMLDateFormat);
 						valueParm[1] = "Loan startDate:"
-								+ DateUtility.format(fm.getFinStartDate(), PennantConstants.XMLDateFormat);
+								+ DateUtil.format(fm.getFinStartDate(), PennantConstants.XMLDateFormat);
 						stmtResp = new FinStatementResponse();
 						stmtResp.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
 						return stmtResp;
 					}
 					if (fm != null && fm.getMaturityDate() != null) {
-						if (DateUtility.compare(fm.getMaturityDate(), fromDate) < 0) {
+						if (DateUtil.compare(fm.getMaturityDate(), fromDate) < 0) {
 							String[] valueParm = new String[2];
 							valueParm[1] = "MaturityDate:"
-									+ DateUtility.format(fm.getMaturityDate(), PennantConstants.XMLDateFormat);
-							valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
+									+ DateUtil.format(fm.getMaturityDate(), PennantConstants.XMLDateFormat);
+							valueParm[0] = "fromDate:" + DateUtil.format(fromDate, PennantConstants.XMLDateFormat);
 							stmtResp = new FinStatementResponse();
 							stmtResp.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 							return stmtResp;
@@ -593,10 +592,10 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			return finStatementResponse;
 		} else {
 			Date appDate = SysParamUtil.getAppDate();
-			if (DateUtility.compare(toDate, appDate) > 0) {
+			if (DateUtil.compare(toDate, appDate) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "toDate:" + DateUtility.format(toDate, PennantConstants.XMLDateFormat);
-				valueParm[1] = "ApplicationDate:" + DateUtility.format(appDate, PennantConstants.XMLDateFormat);
+				valueParm[0] = "toDate:" + DateUtil.format(toDate, PennantConstants.XMLDateFormat);
+				valueParm[1] = "ApplicationDate:" + DateUtil.format(appDate, PennantConstants.XMLDateFormat);
 				finStatementResponse = new FinStatementResponse();
 				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 				return finStatementResponse;
@@ -617,10 +616,10 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90337", valueParm));
 			return finStatementResponse;
 		}
-		if (DateUtility.compare(fromDate, toDate) > 0) {
+		if (DateUtil.compare(fromDate, toDate) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "fromDate:" + DateUtility.format(fromDate, PennantConstants.XMLDateFormat);
-			valueParm[1] = "toDate:" + DateUtility.format(toDate, PennantConstants.XMLDateFormat);
+			valueParm[0] = "fromDate:" + DateUtil.format(fromDate, PennantConstants.XMLDateFormat);
+			valueParm[1] = "toDate:" + DateUtil.format(toDate, PennantConstants.XMLDateFormat);
 			finStatementResponse = new FinStatementResponse();
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParm));
 			return finStatementResponse;
