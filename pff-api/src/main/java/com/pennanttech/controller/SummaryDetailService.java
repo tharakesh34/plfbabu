@@ -40,10 +40,11 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.util.APIConstants;
 
-public class SummaryDetailService extends ExtendedTestClass {
+public class SummaryDetailService extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(SummaryDetailService.class);
 
 	protected FinanceDisbursementDAO financeDisbursementDAO;

@@ -3009,4 +3009,18 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 
 	}
+
+	@Override
+	public Date getCustomerDOBByCustID(long custID) {
+		String sql = "Select CustDOB From Customers Where CustID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, custID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

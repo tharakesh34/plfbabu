@@ -258,6 +258,7 @@ public class Customer extends AbstractWorkflowEntity {
 	private String custAddlVar11;
 	private String contactPersonName;
 	private String emailID;
+	@XmlElement
 	private String phoneNumber;
 	private String phoneAreaCode;
 	private String phoneCountryCode;

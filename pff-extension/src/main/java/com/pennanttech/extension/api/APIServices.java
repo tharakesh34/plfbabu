@@ -191,6 +191,14 @@ public class APIServices {
 		services.add("enableUser");
 		services.add("expireUser");
 		services.add("getCustomerEmployment");
+		services.add("getFinanceByName");
+		services.add("getFinanceByPAN");
+		services.add("getFinanceByAccNumber");
+		services.add("getFinanceByMobileNumber");
+		services.add("getFinanceByNameAndMobileNumber");
+		services.add("getFinanceByNameAndDateOfBirth");
+		services.add("getFinanceByNameAndEMIAmount");
+		services.add("loanAuthentication");
 
 		return services;
 	}

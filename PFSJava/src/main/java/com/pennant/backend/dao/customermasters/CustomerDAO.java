@@ -211,4 +211,6 @@ public interface CustomerDAO {
 	CustomerCoreBank getCoreBankByFinID(long finID);
 
 	CustomerCoreBank getCoreBankByCustID(long custID);
+
+	Date getCustomerDOBByCustID(long custID);
 }
