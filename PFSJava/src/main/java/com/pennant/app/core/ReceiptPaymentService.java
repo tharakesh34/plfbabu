@@ -241,12 +241,20 @@ public class ReceiptPaymentService {
 
 		EventProperties ep = fm.getEventProperties();
 		Map<String, String> excludeMap = ep.getUpfrontBounceCodes();
+		Map<String, String> bounceForPD = receiptDTO.getBounceForPD();
 
-		if (MapUtils.isEmpty(excludeMap)) {
+		if (MapUtils.isEmpty(excludeMap) && MapUtils.isEmpty(bounceForPD)) {
 			return;
 		}
 
-		String returnCode = excludeMap.get(resonCode.concat("$").concat(instrumentType));
+		RequestSource requestSource = receiptDTO.getRequestSource();
+
+		String returnCode = "";
+		if (requestSource == RequestSource.EOD) {
+			returnCode = excludeMap.get(resonCode.concat("$").concat(instrumentType));
+		} else {
+			returnCode = bounceForPD.get(resonCode.concat("$").concat(instrumentType));
+		}
 
 		if (returnCode == null) {
 			return;

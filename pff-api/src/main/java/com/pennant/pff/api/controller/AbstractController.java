@@ -78,6 +78,15 @@ public class AbstractController {
 		}
 	}
 
+	protected void logKeyFields(Object... args) {
+		APILogDetail apiLog = getAPILog();
+		if (apiLog == null) {
+			return;
+		}
+
+		apiLog.setKeyFields(args.toString());
+	}
+
 	protected void logException(String exception) {
 		APILogDetail apiLog = getAPILog();
 
