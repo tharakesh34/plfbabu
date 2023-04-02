@@ -85,12 +85,14 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private String finEventDesc;
 	@XmlElement(name = "feeCode")
 	private String feeTypeCode;
+	@XmlElement
 	private String feeTypeDesc;
 	@XmlElement(name = "feeMethod")
 	private String feeScheduleMethod;
 	private String calculationType;
 	private String ruleCode;
 	private BigDecimal fixedAmount = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal percentage = BigDecimal.ZERO;
 	private BigDecimal actPercentage = BigDecimal.ZERO;
 	private String calculateOn;

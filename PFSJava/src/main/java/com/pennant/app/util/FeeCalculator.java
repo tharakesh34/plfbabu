@@ -845,6 +845,7 @@ public class FeeCalculator {
 	private void prepareExecutionMap(FinReceiptData rd, FinanceMain fm, Map<String, Object> dataMap) {
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 
 		Date valDate = rd.getValueDate();
 		if (valDate == null) {
@@ -858,7 +859,8 @@ public class FeeCalculator {
 		}
 
 		int instNO = 0;
-		for (FinanceScheduleDetail detail : schdData.getFinanceScheduleDetails()) {
+
+		for (FinanceScheduleDetail detail : schedules) {
 			if (detail.getSchDate().compareTo(valDate) <= 0) {
 				instNO = detail.getInstNumber();
 			} else {
@@ -873,6 +875,10 @@ public class FeeCalculator {
 		BigDecimal totReceiptAmount = rd.getTotReceiptAmount();
 
 		FinanceProfitDetail pft = profitDetailsDAO.getFinProfitDetailsById(finID);
+
+		if (pft == null) {
+			pft = new FinanceProfitDetail();
+		}
 
 		BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
 
