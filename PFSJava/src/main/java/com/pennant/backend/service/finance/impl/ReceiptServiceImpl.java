@@ -3002,14 +3002,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
-			boolean isPending = isReceiptsPending(rch.getFinID(), rch.getReceiptID());
-			if (isPending) {
-				valueParm[0] = "Not allowed to do Early Settlement due to previous Presentments/Receipts are in process";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("EXT001", valueParm)));
-			}
-		}
-
 		if (FinServiceEvent.EARLYRPY.equals(rch.getReceiptPurpose())
 				&& ReceiptMode.RTRNGDS.equals(rch.getSubReceiptMode())) {
 			FinanceProfitDetail fpt = rd.getFinanceDetail().getFinScheduleData().getFinPftDeatil();

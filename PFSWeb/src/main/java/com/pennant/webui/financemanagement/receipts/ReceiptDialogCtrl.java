@@ -219,6 +219,7 @@ import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1114,6 +1115,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
 		this.bounceDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.bounceCode
+				.setFilters(new Filter[] { new Filter("InstrumentType", InstrumentType.PDC.code(), Filter.OP_EQUAL) });
 
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setModuleName("FinTypePartner");
