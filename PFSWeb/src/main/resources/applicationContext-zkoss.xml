@@ -6172,5 +6172,7 @@
 	<bean id="unAuthorizedTransactionCtrl"
 		class="com.pennant.webui.unauthorizedtransactions.reports.UnAuthorizedTransactionCtrl" parent="basisCtrl"
 		scope="prototype" />
+
+	<bean id ="kycDetailsUploadList" class ="com.pennant.pff.customer.upload.list.KycDetailsUploadListCtrl" parent ="uploadList" />
 	
 </beans>

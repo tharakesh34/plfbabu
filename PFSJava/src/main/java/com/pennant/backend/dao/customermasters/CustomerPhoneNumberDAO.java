@@ -59,4 +59,6 @@ public interface CustomerPhoneNumberDAO {
 	String getCustomerPhoneNumberByCustId(long custID);
 
 	List<Customer> getCustomersByPhoneNum(String phoneNum);
+
+	CustomerPhoneNumber getCustomerPhoneNumberByID(long id, long phoneTypePriority);
 }

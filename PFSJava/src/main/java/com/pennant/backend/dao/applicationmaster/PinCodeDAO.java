@@ -61,4 +61,8 @@ public interface PinCodeDAO extends BasicCrudDao<PinCode> {
 	PinCode getPinCodeById(long pinCodeId, String type);
 
 	List<PinCode> getResult(ISearch search, List<String> roleCodes);
+
+	PinCode getPinCodeById(long pinCodeId);
+
+	PinCode getPinCode(String pinCode);
 }

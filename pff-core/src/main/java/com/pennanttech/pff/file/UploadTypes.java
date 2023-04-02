@@ -19,7 +19,9 @@ public enum UploadTypes {
 
 	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen"),
 
-	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen");
+	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen"),
+
+	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen");
 
 	private String description;
 

@@ -45,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>CustomerPhoneNumber model</b> class.<br>
@@ -458,4 +459,44 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 			return customer;
 		}, phoneNum);
 	}
+
+	@Override
+	public CustomerPhoneNumber getCustomerPhoneNumberByID(final long id, long phoneTypePriority) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PhoneCustID, PhoneTypeCode");
+		sql.append(", PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerPhoneNumbers");
+		sql.append(" Where PhoneCustID = ? and PhoneTypePriority = ?");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				CustomerPhoneNumber custphone = new CustomerPhoneNumber();
+
+				custphone.setPhoneCustID(rs.getLong("PhoneCustID"));
+				custphone.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+				custphone.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+				custphone.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+				custphone.setPhoneNumber(rs.getString("PhoneNumber"));
+				custphone.setPhoneTypePriority((int) rs.getLong("PhoneTypePriority"));
+				custphone.setVersion(rs.getInt("Version"));
+				custphone.setLastMntBy(rs.getLong("LastMntBy"));
+				custphone.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				custphone.setRecordStatus(rs.getString("RecordStatus"));
+				custphone.setRoleCode(rs.getString("RoleCode"));
+				custphone.setNextRoleCode(rs.getString("NextRoleCode"));
+				custphone.setTaskId(rs.getString("TaskId"));
+				custphone.setNextTaskId(rs.getString("NextTaskId"));
+				custphone.setRecordType(rs.getString("RecordType"));
+				custphone.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return custphone;
+			}, id, phoneTypePriority);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }
