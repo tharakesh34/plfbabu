@@ -26,8 +26,6 @@ public interface ExtPresentmentDAO {
 
 	int saveExternalRecords(List<Presentment> presentments, long headerId);
 
-	public void saveResponseFile(ExtPresentment extPresentment);
-
 	public boolean isFileProcessed(String fileName, String moduleName);
 
 	public Presentment getPresenementMandateRecord(long p_id);
@@ -68,6 +66,6 @@ public interface ExtPresentmentDAO {
 
 	long savePresentment(Presentment pres, long headerId, String clearingStatus);
 
-	void saveRejectResponseFile(ExtPresentment extPresentment);
+	void saveExtPresentment(ExtPresentment extPresentment);
 
 }

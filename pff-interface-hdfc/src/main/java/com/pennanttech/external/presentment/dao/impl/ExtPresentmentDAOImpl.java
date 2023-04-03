@@ -304,12 +304,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	}
 
 	@Override
-	public void saveResponseFile(ExtPresentment extPresentment) {
+	public void saveExtPresentment(ExtPresentment extPresentment) {
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
 		StringBuilder sql = new StringBuilder("INSERT INTO PRMNT_HEADER");
-		sql.append(" (MODULE,FILE_NAME,FILE_LOCATION,STATUS, EXTRACTION,CREATED_DATE)");
+		sql.append(" (MODULE,FILE_NAME,STATUS,FILE_LOCATION, CREATED_DATE,EXTRACTION,ERROR_CODE,ERROR_MESSAGE)");
 		sql.append(" VALUES (");
-		sql.append("?, ?, ?, ?, ?, ?)");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -317,10 +317,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 			int index = 1;
 			ps.setString(index++, extPresentment.getModule());
 			ps.setString(index++, extPresentment.getFileName());
-			ps.setString(index++, extPresentment.getFileLocation());
 			ps.setInt(index++, extPresentment.getStatus());
+			ps.setString(index++, extPresentment.getFileLocation());
+			ps.setTimestamp(index++, curTimeStamp);
 			ps.setInt(index++, extPresentment.getExtraction());
-			ps.setTimestamp(index, curTimeStamp);
+			ps.setString(index++, extPresentment.getErrorCode());
+			ps.setString(index, extPresentment.getErrorMessage());
 		});
 
 	}
@@ -880,27 +882,4 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 		return pres.getTxnReference();
 	}
 
-	@Override
-	public void saveRejectResponseFile(ExtPresentment extPresentment) {
-		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		StringBuilder sql = new StringBuilder("INSERT INTO PRMNT_HEADER");
-		sql.append(" (MODULE,FILE_NAME,FILE_LOCATION,STATUS, EXTRACTION,ERROR_CODE,ERROR_MESSAGE,CREATED_DATE)");
-		sql.append(" VALUES (");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?)");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setString(index++, extPresentment.getModule());
-			ps.setString(index++, extPresentment.getFileName());
-			ps.setString(index++, extPresentment.getFileLocation());
-			ps.setInt(index++, extPresentment.getStatus());
-			ps.setInt(index++, extPresentment.getExtraction());
-			ps.setString(index++, extPresentment.getErrorCode());
-			ps.setString(index++, extPresentment.getErrorMessage());
-			ps.setTimestamp(index, curTimeStamp);
-		});
-
-	}
 }
