@@ -20,6 +20,7 @@ import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.loanauthentication.LoanAuthentication;
+import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.activity.ActivityLogDetails;
@@ -172,5 +173,13 @@ public interface CreateFinanceRestService {
 	@Path("/finance/loanAuthentication")
 	LoanAuthentication getAuthenticationDetails(
 			@WebParam(name = "loanAuthentication") LoanAuthentication loanAuthentication);
+
+	@GET
+	@Path("/finance/getPDCEnquiry/{finReference}")
+	List<PaymentMode> getPDCEnquiry(@PathParam("finReference") String finReference);
+
+	@GET
+	@Path("/finance/getPDCDetails/{finReference}")
+	List<PaymentMode> getPDCDetails(@PathParam("finReference") String finReference);
 
 }

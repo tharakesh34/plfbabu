@@ -68,4 +68,5 @@ public interface ChequeDetailDAO {
 
 	boolean isDuplicateKeyPresent(String accountNo, String chequeSerial, TableType type);
 
+	List<ChequeDetail> getChequeDetailsByFinReference(String finReference, String type);
 }

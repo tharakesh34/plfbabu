@@ -37,6 +37,7 @@ import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ProspectCustomer;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.ws.model.customer.SRMCustRequest;
 
 public interface CustomerDAO {
@@ -213,4 +214,20 @@ public interface CustomerDAO {
 	CustomerCoreBank getCoreBankByCustID(long custID);
 
 	Date getCustomerDOBByCustID(long custID);
+
+	List<Long> getByCustShrtName(String CustShrtName, TableType tableType);
+
+	List<Long> getByCustCRCPR(String custCRCPR, TableType tableType);
+
+	List<Long> getByAccNumber(String accNumber, TableType tableType);
+
+	List<Long> getByAccNumber(String accNumber);
+
+	List<Long> getByPhoneNumber(String phoneNumber, TableType tableType);
+
+	List<Long> getByCustShrtNameAndPhoneNumber(String CustShrtName, String phoneNumber, TableType tableType);
+
+	List<Long> getByCustShrtNameAndDOB(String custShrtName, Date custDOB, TableType tableType);
+
+	List<Long> getByCustShrtNameAndEMIAmount(String custShrtName, BigDecimal repayAmount);
 }

@@ -1,11 +1,14 @@
 package com.pennanttech.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -85,7 +88,9 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennant.validation.DeleteValidationGroup;
 import com.pennant.validation.PersionalInfoGroup;
 import com.pennant.validation.ProspectCustDetailsGroup;
@@ -95,7 +100,6 @@ import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CustomerController;
 import com.pennanttech.controller.CustomerDetailsController;
-import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -127,7 +131,7 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CustomerWebServiceImpl extends ExtendedTestClass implements CustomerRESTService, CustomerSOAPService {
+public class CustomerWebServiceImpl extends AbstractController implements CustomerRESTService, CustomerSOAPService {
 	private static final Logger logger = LogManager.getLogger(CustomerWebServiceImpl.class);
 
 	private CustomerController customerController;
@@ -3989,6 +3993,10 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		response.setCustomerPhoneNumList(null);
 		response.setCustomerEMailList(null);
 		response.setCustomerIncomeList(null);
+		response.setCustomerGstList(null);
+		response.setPrimaryRelationOfficer(null);
+		response.setDedupReq(null);
+		response.setBlackListReq(null);
 	}
 
 	/**
@@ -4014,6 +4022,345 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		}
 		logger.debug(Literal.LEAVING);
 		return logFields;
+	}
+
+	@Override
+	public List<CustomerDetails> getByCustShrtName(String custShrtName) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateCustShrtName(custShrtName);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("Customer Short Name {}", custShrtName);
+
+		logReference(custShrtName);
+
+		List<Long> list = customerDAO.getByCustShrtName(custShrtName, TableType.MAIN_TAB);
+
+		if (CollectionUtils.isEmpty(list)) {
+			wsrs = getFailedStatus("90260", "Customer Short Name");
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public List<CustomerDetails> getByCustCRCPR(String panNumber) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validatePANNumner(panNumber);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("PAN Number {}", panNumber);
+
+		logReference(panNumber);
+
+		List<Long> list = customerDAO.getByCustCRCPR(panNumber, TableType.MAIN_TAB);
+
+		if (CollectionUtils.isEmpty(list)) {
+			response.add(getCustomerDetail(getFailedStatus("90260", "PAN Number")));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public List<CustomerDetails> getByAccNumber(String accNumber) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateBankAccountNumber(accNumber);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("Account Number {}", accNumber);
+
+		logReference(accNumber);
+
+		List<Long> list = customerDAO.getByAccNumber(accNumber);
+
+		if (CollectionUtils.isEmpty(list)) {
+			response.add(getCustomerDetail(getFailedStatus("90260", "Account Number")));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public List<CustomerDetails> getByPhoneNumber(String phoneNumber) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateMobileNumber(phoneNumber);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("Phone Number {}", phoneNumber);
+
+		logReference(phoneNumber);
+
+		List<Long> list = customerDAO.getByPhoneNumber(phoneNumber, TableType.MAIN_TAB);
+
+		if (CollectionUtils.isEmpty(list)) {
+			response.add(getCustomerDetail(getFailedStatus("90260", "Phone Number")));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public List<CustomerDetails> getByCustShrtNameAndPhoneNumber(Customer customer) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		String phoneNumber = customer.getPhoneNumber();
+		String custShrtName = customer.getCustShrtName();
+
+		WSReturnStatus wsrs = validateMobileNumber(phoneNumber);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		wsrs = validateCustShrtName(custShrtName);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("Phone Number {} and Customer Short Name {}", phoneNumber, custShrtName);
+
+		logKeyFields(phoneNumber, custShrtName);
+
+		List<Long> list = customerDAO.getByCustShrtNameAndPhoneNumber(custShrtName, phoneNumber, TableType.MAIN_TAB);
+
+		if (CollectionUtils.isEmpty(list)) {
+			response.add(getCustomerDetail(getFailedStatus("90260", "Customer Phone Number and Short Name")));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public List<CustomerDetails> getByCustShrtNameAndDOB(Customer customer) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		String custShrtName = customer.getCustShrtName();
+		Date custDOB = customer.getCustDOB();
+
+		WSReturnStatus wsrs = validateCustShrtName(custShrtName);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		wsrs = validateDob(custDOB, SysParamUtil.getAppDate());
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("Customer Short Name {} and Date of Birth {}", custShrtName, DateUtil.formatToLongDate(custDOB));
+
+		logKeyFields(custDOB, custShrtName);
+
+		List<Long> list = customerDAO.getByCustShrtNameAndDOB(custShrtName, custDOB, TableType.MAIN_TAB);
+
+		if (CollectionUtils.isEmpty(list)) {
+			response.add(getCustomerDetail(getFailedStatus("90260", "Customer Date of Birth and Short Name")));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
+	}
+
+	@Override
+	public List<CustomerDetails> getByCustShrtNameAndEMIAmount(Customer customer) {
+		logger.debug(Literal.ENTERING);
+
+		List<CustomerDetails> response = new ArrayList<>();
+
+		String custShrtName = customer.getCustShrtName();
+		BigDecimal repayAmount = customer.getLoanInstalmentAmount();
+
+		WSReturnStatus wsrs = validateCustShrtName(custShrtName);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		wsrs = validateRepayAmount(repayAmount);
+
+		if (wsrs != null) {
+			response.add(getCustomerDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logger.debug("Customer Short Name {} and Loan Instalment Amount {}", custShrtName, repayAmount);
+
+		logKeyFields(repayAmount, custShrtName);
+
+		List<Long> list = customerDAO.getByCustShrtNameAndEMIAmount(custShrtName, repayAmount);
+
+		if (CollectionUtils.isEmpty(list)) {
+			response.add(getCustomerDetail(getFailedStatus("90260", "Customer Short Name and Loan Instalment Amount")));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		for (Long custID : list.stream().collect(Collectors.toSet())) {
+			response.add(customerController.getCustomerDetails(custID));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	private WSReturnStatus validateRepayAmount(BigDecimal repayAmount) {
+		if (repayAmount == null) {
+			return getFailedStatus("90502", "Loan Instalment Amount");
+		}
+
+		if (repayAmount.compareTo(BigDecimal.ZERO) < 0) {
+			return getFailedStatus("RU0040", "Loan Instalment Amount");
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus validateDob(Date dob, Date businessDate) {
+		if (dob == null) {
+			return getFailedStatus("90502", "Date Of Birth");
+		}
+
+		dob = DateUtil.getDatePart(dob);
+
+		if (dob.compareTo(businessDate) >= 0) {
+			return getFailedStatus("90319", "Date Of Birth");
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus validateCustShrtName(String custShrtName) {
+		if (StringUtils.isEmpty(custShrtName)) {
+			return getFailedStatus("90502", "Customer Short Name");
+		}
+
+		if (custShrtName.length() < 4) {
+			return getFailedStatus("30569", "Customer Short Name", "4 characters");
+		}
+
+		return null;
+	}
+
+	private WSReturnStatus validateMobileNumber(String phoneNumber) {
+		if (StringUtils.isEmpty(phoneNumber)) {
+			return getFailedStatus("90502", "Phone Number");
+		}
+
+		String mobileRegex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_MOBILE);
+		if (!Pattern.compile(mobileRegex).matcher(phoneNumber).matches()) {
+			return getFailedStatus("90278");
+		}
+		return null;
+	}
+
+	private WSReturnStatus validateBankAccountNumber(String accNumber) {
+		return StringUtils.trimToNull(accNumber) == null ? getFailedStatus("90502", "Bank Account Number") : null;
+	}
+
+	private WSReturnStatus validatePANNumner(String custCRCPR) {
+		if (StringUtils.isEmpty(custCRCPR)) {
+			return getFailedStatus("90502", "PAN Number");
+		}
+
+		String panRegex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_PANNUMBER);
+		if (!Pattern.compile(panRegex).matcher(custCRCPR).matches()) {
+			return getFailedStatus("90251");
+		}
+		return null;
 	}
 
 	/**
@@ -4077,6 +4424,16 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				}
 			}
 		}
+	}
+
+	private CustomerDetails getCustomerDetail(WSReturnStatus wsrs) {
+		CustomerDetails cd = new CustomerDetails();
+
+		doEmptyResponseObject(cd);
+
+		cd.setReturnStatus(wsrs);
+
+		return cd;
 	}
 
 	@Autowired
