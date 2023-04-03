@@ -195,7 +195,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					}
 
 					String reqFileNameInRespFile = getReqFileNameFromRespFileName(fNameArray, fileExtension,
-							reqConfig.getInterfaceName(), fileType);
+							respConfig.getInterfaceName(), fileType);
 
 					isValid = requestFileNames.contains(reqFileNameInRespFile);
 
