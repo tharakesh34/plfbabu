@@ -199,6 +199,15 @@ public class APIServices {
 		services.add("getFinanceByNameAndDateOfBirth");
 		services.add("getFinanceByNameAndEMIAmount");
 		services.add("loanAuthentication");
+		services.add("getPDCEnquiry");
+		services.add("getPDCDetails");
+		services.add("getCustomerDetailsByName");
+		services.add("getCustomerDetailsByPAN");
+		services.add("getCustomerDetailsByAccNumber");
+		services.add("getCustomerDetailsByPhoneNumber");
+		services.add("getCustomerDetailsByNameAndPhoneNumber");
+		services.add("getCustomerDetailsByNameAndDOB");
+		services.add("getCustomerDetailsByNameAndEMIAmount");
 
 		return services;
 	}

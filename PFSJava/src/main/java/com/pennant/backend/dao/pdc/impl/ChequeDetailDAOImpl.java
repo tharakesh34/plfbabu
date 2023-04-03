@@ -550,4 +550,28 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
+	@Override
+	public List<ChequeDetail> getChequeDetailsByFinReference(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" cd.ChequeDetailsID, cd.HeaderID, cd.BankBranchID, cd.AccountNo, cd.ChequeSerialNo, cd.ChequeDate");
+		sql.append(
+				", cd.EMIRefNo, cd.Amount, cd.ChequeCcy, cd.Status, cd.Active, cd.DocumentName, cd.DocumentRef, cd.ChequeType");
+		sql.append(", cd.ChequeStatus, cd.AccountType, cd.AccHolderName, cd.Version, cd.LastMntOn, cd.LastMntBy");
+		sql.append(
+				", cd.RecordStatus, cd.RoleCode, cd.NextRoleCode, cd.TaskId, cd.NextTaskId, cd.RecordType, cd.WorkflowId");
+
+		if (type.equals("_View") || type.equals("_AView")) {
+			sql.append(", cd.BankCode, cd.BranchCode, cd.BranchDesc, cd.Micr, cd.Ifsc, cd.City, cd.BankName");
+		}
+
+		sql.append(" From ChequeDetail");
+		sql.append(type + " cd");
+		sql.append(" Inner Join ChequeHeader ch On ch.HeaderID = cd.HeaderID");
+		sql.append(" Where ch.FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finReference), new ChequeDetailRM(type));
+	}
+
 }
