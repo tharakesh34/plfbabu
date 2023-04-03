@@ -229,7 +229,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 				logger.debug("EXT_VRF: PROCEEDING FURTHER FOR FILE: " + file.getName());
 
-				logger.debug("EXT_VRF: SAVING FILE: " + file.getName());
+				logger.debug("EXT_VRF: SAVING FILE: " + extPresentment.getErrorCode());
 
 				// Add unprocessed files in to table
 				if (StringUtils.isNotBlank(extPresentment.getErrorCode())) {
