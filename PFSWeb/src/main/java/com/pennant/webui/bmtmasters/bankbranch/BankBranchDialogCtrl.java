@@ -541,7 +541,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		Object dataObject = bankCode.getObject();
 		BankDetail details = (BankDetail) dataObject;
 
-		if (details.isAllowMultipleIFSC() == true) {
+		if (details != null && details.isAllowMultipleIFSC() == true) {
 			setMICRValidation(details.isAllowMultipleIFSC());
 		}
 
