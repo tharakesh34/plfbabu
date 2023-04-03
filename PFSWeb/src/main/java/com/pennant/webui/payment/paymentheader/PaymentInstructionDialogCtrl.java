@@ -691,7 +691,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 
-		if (paymentHeaderDialogCtrl.leiMandatory && this.leiNumber.getValue().isEmpty()) {
+		if (paymentHeaderDialogCtrl!=null && paymentHeaderDialogCtrl.leiMandatory && this.leiNumber.getValue().isEmpty()) {
 			this.leiNumber.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_LEI.value"), null, true));
 		}
