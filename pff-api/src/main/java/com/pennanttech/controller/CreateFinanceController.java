@@ -47,6 +47,7 @@ import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -129,6 +130,7 @@ import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
+import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -268,6 +270,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private PinCodeDAO pinCodeDAO;
 	private LocalityDAO localityDAO;
+	private CustomerDAO customerDAO;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -381,36 +384,22 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeType.setFinTypePartnerBankList(
 						finTypePartnerBankService.getPartnerBanks(fm.getFinType(), TableType.AVIEW));
 				List<FinTypePartnerBank> finTypePartnerBankList = financeType.getFinTypePartnerBankList();
-				if (CollectionUtils.isNotEmpty(finTypePartnerBankList)) {
-					for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
-						if (StringUtils.equals(finTypePartnerBank.getPurpose(), AccountConstants.PARTNERSBANK_RECEIPTS)
-								&& finTypePartnerBank.isVanApplicable()) {
-							PartnerBank bank = partnerBankService
-									.getApprovedPartnerBankById(finTypePartnerBank.getPartnerBankID());
-							if (bank != null && StringUtils.isNotBlank(bank.getVanCode())) {
-								if (StringUtils.isNotBlank(fm.getFinReference())) {
-									fm.setVanCode((bank.getVanCode().concat(fm.getFinReference())));
-									break;
-								}
+				for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
+					if (StringUtils.equals(finTypePartnerBank.getPurpose(), AccountConstants.PARTNERSBANK_RECEIPTS)
+							&& finTypePartnerBank.isVanApplicable()) {
+						PartnerBank bank = partnerBankService
+								.getApprovedPartnerBankById(finTypePartnerBank.getPartnerBankID());
+						if (bank != null && StringUtils.isNotBlank(bank.getVanCode())) {
+							if (StringUtils.isNotBlank(fm.getFinReference())) {
+								fm.setVanCode((bank.getVanCode().concat(fm.getFinReference())));
+								break;
 							}
 						}
 					}
 				}
 			}
-			// finScheduleData.setFinanceMain(financeMain);
-
-			// set required mandatory values into finance details object
 
 			doSetRequiredDetails(fd, loanWithWIF, fm.getUserDetails(), stp, false, false);
-			// PSD #146217 Disbursal Instruction is not getting created.
-			// Disbursement Instruction is calculation fails if alwBpiTreatment
-			// is true so calling this after schedule calculation.
-
-			/* The below commented code is moved to after schedule calculation, ADVEMI is not calculating. */
-			/*
-			 * if (!fm.isAlwBPI()) { if (stp && !loanWithWIF) { schdData.getDisbursementDetails().clear(); }
-			 * setDisbursements(fd, loanWithWIF, false, false); }
-			 */
 
 			schdData = fd.getFinScheduleData();
 			fm = schdData.getFinanceMain();
@@ -467,11 +456,10 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 
 				if (schdData.getErrorDetails() != null) {
-					for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
+					for (ErrorDetail ed : schdData.getErrorDetails()) {
 						FinanceDetail response = new FinanceDetail();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 						return response;
 					}
 				}
@@ -566,7 +554,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 
-			// Finance detail object
 			fd.setUserAction("");
 			fd.setExtSource(false);
 			fd.setAccountingEventCode(PennantApplicationUtil.getEventCode(fm.getFinStartDate()));
@@ -660,13 +647,13 @@ public class CreateFinanceController extends SummaryDetailService {
 				return fd;
 			}
 		} catch (InterfaceException ex) {
-			logger.error("InterfaceException", ex);
+			logger.error(Literal.EXCEPTION, ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
 			return response;
 		} catch (AppException ex) {
-			logger.error("AppException", ex);
+			logger.error(Literal.EXCEPTION, ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
@@ -716,7 +703,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 			for (FinanceScheduleDetail fsd : schedules) {
-
 				if (DateUtil.compare(fsd.getSchDate(), cheque.getChequeDate()) != 0) {
 					date = false;
 					continue;
@@ -746,6 +732,27 @@ public class CreateFinanceController extends SummaryDetailService {
 			valueParm[1] = "ScheduleDates";
 			schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 			break;
+		}
+
+		String[] valueParm = new String[2];
+		valueParm[0] = Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value");
+
+		if (InstrumentType.isPDC(fm.getFinRepayMethod())) {
+			List<FinanceScheduleDetail> fsd = schdData.getFinanceScheduleDetails();
+
+			int noOfSchedules = fsd.size() - 1;
+			int noOfPDCCheques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_PDC_CHEQUES);
+
+			int number = noOfSchedules;
+			if (noOfSchedules >= noOfPDCCheques) {
+				number = noOfPDCCheques;
+			}
+
+			if (ch.getNoOfCheques() < number) {
+				valueParm[1] = String.valueOf(number);
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+				return;
+			}
 		}
 	}
 
@@ -2652,9 +2659,11 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
 
-			if (fpd != null) {
-				schdData.setFinPftDeatil(fpd);
+			if (fpd == null) {
+				fpd = new FinanceProfitDetail();
 			}
+
+			schdData.setFinPftDeatil(fpd);
 
 			if (!fm.isFinIsActive()) {
 				fm.setClosedDate(financeMainService.getFinClosedDate(finID));
@@ -3205,6 +3214,10 @@ public class CreateFinanceController extends SummaryDetailService {
 				fm.setFirstDisbDate(disbList.get(0).getDisbDate());
 				fm.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 			}
+		}
+
+		if (fm.isAllowGrcPeriod()) {
+			fm.setGrcStartDate(fm.getFinStartDate());
 		}
 
 		List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
@@ -4828,6 +4841,52 @@ public class CreateFinanceController extends SummaryDetailService {
 		ch.setTotalAmount(totalChequeAmount);
 	}
 
+	public LoanAuthentication getAuthenticationDetails(LoanAuthentication reqLa) {
+		logger.debug(Literal.ENTERING);
+
+		LoanAuthentication response = new LoanAuthentication();
+
+		String finReference = reqLa.getFinReference();
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.BOTH_TAB);
+
+		if (fm == null) {
+			response.setReturnStatus(getFailedStatus("90260", "FinReference"));
+			return response;
+		}
+
+		Date custDOb = customerDAO.getCustomerDOBByCustID(fm.getCustID());
+
+		if (DateUtil.compare(DateUtil.getDatePart(custDOb), DateUtil.getDatePart(reqLa.getDateOfBirth())) != 0) {
+			response.setValidFlag(PennantConstants.NO);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		Date businessDate = reqLa.getAppDate();
+		if (businessDate.compareTo(fm.getMaturityDate()) >= 0) {
+			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
+		}
+
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinSchedules(fm.getFinID(),
+				TableType.MAIN_TAB);
+
+		BigDecimal loanEMI = SchdUtil.getNextEMI(businessDate, schedules);
+
+		if (loanEMI.compareTo(reqLa.getLoanEMI()) != 0) {
+			response.setValidFlag(PennantConstants.NO);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		response.setMobileEmailId("");
+		response.setValidFlag(PennantConstants.YES);
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
+
+	}
+
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -5111,6 +5170,11 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setLocalityDAO(LocalityDAO localityDAO) {
 		this.localityDAO = localityDAO;
+	}
+
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 }

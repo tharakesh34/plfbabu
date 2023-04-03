@@ -724,4 +724,13 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 			return jad;
 		}
 	}
+
+	@Override
+	public boolean isCoApplicant(long finID, String custCIF) {
+		String sql = "Select Count(CustCIF) From FinJointAccountDetails Where FinID = ? and CustCIF = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, finID, custCIF) > 0;
+	}
 }

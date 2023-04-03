@@ -1737,7 +1737,7 @@ public class PresentmentEngine {
 		long finID = pd.getFinID();
 
 		try {
-			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null, false);
+			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}

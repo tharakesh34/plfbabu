@@ -62,6 +62,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b> class.<br>
@@ -413,6 +414,22 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return ScheduleCalculator.sortSchdDetails(schedules);
 	}
 
+	@Override
+	public List<FinanceScheduleDetail> getFinSchedules(long finID, TableType tableType) {
+		StringBuilder sql = getScheduleDetailQuery(tableType.getSuffix(), false);
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
+
+		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
+		}, rowMapper);
+
+		return ScheduleCalculator.sortSchdDetails(schedules);
+	}
+
 	private StringBuilder getScheduleDetailQuery(String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("Select");
 		appendSchdColumns(isWIF, sql);
@@ -685,8 +702,15 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	public BigDecimal getOutStandingBalFromFees(long finID) {
 		String sql = "Select sum(FeeSchd) -  sum(SchdFeePaid) From FinScheduleDetails Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql);
-		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		logger.debug(Literal.SQL.concat(sql));
+
+		BigDecimal balFee = this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+
+		if (balFee == null) {
+			balFee = BigDecimal.ZERO;
+		}
+
+		return balFee;
 	}
 
 	@Override
@@ -1365,5 +1389,4 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return null;
 		}
 	}
-
 }

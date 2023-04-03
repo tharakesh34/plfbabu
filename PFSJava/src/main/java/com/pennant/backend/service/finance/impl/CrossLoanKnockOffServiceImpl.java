@@ -218,6 +218,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			clt.setReserveAmount(BigDecimal.ZERO);
 			AuditHeader auditReceiptHeader = getAuditHeader(clk.getFinReceiptData(), PennantConstants.TRAN_WF);
 
+			executeAccounting(clk.getCrossLoanTransfer());
+
 			if (clk.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				clk.setRecordType("");
@@ -245,7 +247,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 					return auditReceiptHeader;
 				}
 
-				executeAccounting(clk.getCrossLoanTransfer());
 				clt.setReceiptId(clk.getKnockOffId());
 
 				crossLoanTransferDAO.save(clt, TableType.MAIN_TAB.getSuffix());
@@ -414,7 +415,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			amountCodes = new AEAmountCodes();
 		}
 
-		aeEvent.setBranch(crossLoan.getUserDetails().getBranchCode());
 		aeEvent.setCcy(main.getFinCcy());
 		amountCodes.setUserBranch(crossLoan.getUserDetails().getBranchCode());
 		amountCodes.setEntitycode(main.getEntityCode());
@@ -452,7 +452,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			amountCodes2 = new AEAmountCodes();
 		}
 
-		aeEvent1.setBranch(crossLoan.getUserDetails().getBranchCode());
 		aeEvent1.setCcy(fm.getFinCcy());
 		amountCodes2.setEntitycode(fm.getEntityCode());
 		amountCodes2.setUserBranch(crossLoan.getUserDetails().getBranchCode());

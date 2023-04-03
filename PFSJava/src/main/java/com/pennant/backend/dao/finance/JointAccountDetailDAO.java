@@ -75,4 +75,6 @@ public interface JointAccountDetailDAO {
 	List<FinanceEnquiry> getCoApplicantsFin(String custCif);
 
 	List<Long> getCustIdsByFinID(long finID);
+
+	boolean isCoApplicant(long finID, String custCIF);
 }

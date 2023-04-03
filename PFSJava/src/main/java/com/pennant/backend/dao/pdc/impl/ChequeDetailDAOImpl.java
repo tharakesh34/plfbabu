@@ -368,6 +368,7 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 			cheque.setNextTaskId(rs.getString("NextTaskId"));
 			cheque.setRecordType(rs.getString("RecordType"));
 			cheque.setWorkflowId(rs.getLong("WorkflowId"));
+			cheque.setChequeSerialNo(rs.getInt("ChequeSerialNo"));
 
 			if (type.equals("_View")) {
 				cheque.setBankCode(rs.getString("BankCode"));

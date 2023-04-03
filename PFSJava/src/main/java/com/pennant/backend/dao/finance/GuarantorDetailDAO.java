@@ -58,4 +58,6 @@ public interface GuarantorDetailDAO {
 	GuarantorDetail getGuarantorProof(GuarantorDetail guarantorDetail);
 
 	List<FinanceEnquiry> getGuarantorsFin(String custCIF, String type);
+
+	boolean isGuarantor(long finID, String custCIF);
 }

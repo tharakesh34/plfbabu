@@ -2100,7 +2100,7 @@ public class RepaymentProcessUtil {
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
 			List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc) {
 		return repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
-				receiptPurpose, isPresentProc);
+				receiptPurpose);
 	}
 
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,

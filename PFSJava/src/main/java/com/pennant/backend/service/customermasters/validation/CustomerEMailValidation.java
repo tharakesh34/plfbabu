@@ -75,58 +75,39 @@ public class CustomerEMailValidation {
 				+ valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustEMailTypeCode") + "-" + valueParm[1];
 
-		if (customerEMail.isNewRecord()) { // for New record or new record into work flow
-
-			if (!customerEMail.isWorkflow()) {// With out Work flow only new records
-				if (befCustomerEMail != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-				}
-			} else { // with work flow
-
-				if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerEMail != null || tempCustomerEMail != null) { // if records already exists in the
-																					// main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befCustomerEMail == null || tempCustomerEMail != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!customerEMail.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befCustomerEMail == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
-				} else {
-
-					if (oldCustomerEMail != null
-							&& !oldCustomerEMail.getLastMntOn().equals(befCustomerEMail.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
-						} else {
-							auditDetail.setErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
-						}
-					}
-				}
-			} else {
-
-				if (tempCustomerEMail == null) { // if records not exists in the Work flow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-
-				if (tempCustomerEMail != null && oldCustomerEMail != null
-						&& !oldCustomerEMail.getLastMntOn().equals(tempCustomerEMail.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-
-			}
-		}
+		/*
+		 * if (customerEMail.isNewRecord()) { // for New record or new record into work flow
+		 * 
+		 * if (!customerEMail.isWorkflow()) {// With out Work flow only new records if (befCustomerEMail != null) { //
+		 * Record Already Exists in the table then error auditDetail.setErrorDetail(new
+		 * ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null)); } } else { // with work flow
+		 * 
+		 * if (customerEMail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new if
+		 * (befCustomerEMail != null || tempCustomerEMail != null) { // if records already exists in the // main table
+		 * auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null)); } } else {
+		 * // if records not exists in the Main flow table if (befCustomerEMail == null || tempCustomerEMail != null) {
+		 * auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null)); } } } } else
+		 * { // for work flow process records or (Record to update or Delete with out work flow) if
+		 * (!customerEMail.isWorkflow()) { // With out Work flow for update and delete
+		 * 
+		 * if (befCustomerEMail == null) { // if records not exists in the main table auditDetail.setErrorDetail(new
+		 * ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null)); } else {
+		 * 
+		 * if (oldCustomerEMail != null && !oldCustomerEMail.getLastMntOn().equals(befCustomerEMail.getLastMntOn())) {
+		 * if (StringUtils.trimToEmpty(auditDetail.getAuditTranType()) .equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+		 * auditDetail.setErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null)); } else {
+		 * auditDetail.setErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null)); } } } }
+		 * else {
+		 * 
+		 * if (tempCustomerEMail == null) { // if records not exists in the Work flow table
+		 * auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null)); }
+		 * 
+		 * if (tempCustomerEMail != null && oldCustomerEMail != null &&
+		 * !oldCustomerEMail.getLastMntOn().equals(tempCustomerEMail.getLastMntOn())) { auditDetail.setErrorDetail(new
+		 * ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null)); }
+		 * 
+		 * } }
+		 */
 
 		auditDetail.setErrorDetail(screenValidations(customerEMail));
 

@@ -209,7 +209,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	@XmlElement
-	private boolean stp = true;
+	private Boolean stp = true;
 	@XmlElement
 	private String processStage;
 	@XmlElementWrapper(name = "collateralDetails")
@@ -248,7 +248,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private boolean pdDetailTab = false;
 	private Map<String, String> showTabDetailMap = new HashMap<>();
 	@XmlElement
-	private long receiptId;
+	private Long receiptId = Long.MIN_VALUE;
 	private boolean samplingInitiator;
 	private boolean samplingApprover;
 	private Sampling sampling;
@@ -287,7 +287,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private boolean spreadSheetloaded = false;
 	private List<CollateralAssignment> tempCollateralAssignmentList = new ArrayList<>();
 	@XmlElement
-	private boolean disbStp;
+	private Boolean disbStp = false;
 	private PricingDetail pricingDetail;
 	private List<FinFeeConfig> finFeeConfigList;
 
@@ -309,7 +309,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<CollateralSetup> dmsCollateralDocuments;
 	// Required only for the Covenants API
 	@XmlElement
-	private boolean isOrigination;
+	private Boolean isOrigination = false;
 	private List<LinkedFinances> linkedFinancesList;
 	private Map<String, BigDecimal> gstPercentages = new HashMap<>();
 	private ExtendedFieldExtension extendedFieldExtension = null;
@@ -967,11 +967,11 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		this.returnStatus = returnStatus;
 	}
 
-	public boolean isStp() {
+	public Boolean isStp() {
 		return stp;
 	}
 
-	public void setStp(boolean stp) {
+	public void setStp(Boolean stp) {
 		this.stp = stp;
 	}
 
@@ -1143,11 +1143,11 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		this.showTabDetailMap = showTabDetailMap;
 	}
 
-	public long getReceiptId() {
+	public Long getReceiptId() {
 		return receiptId;
 	}
 
-	public void setReceiptId(long receiptId) {
+	public void setReceiptId(Long receiptId) {
 		this.receiptId = receiptId;
 	}
 
@@ -1516,11 +1516,11 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		this.tempCollateralAssignmentList = tempCollateralAssignmentList;
 	}
 
-	public boolean isDisbStp() {
+	public Boolean isDisbStp() {
 		return disbStp;
 	}
 
-	public void setDisbStp(boolean disbStp) {
+	public void setDisbStp(Boolean disbStp) {
 		this.disbStp = disbStp;
 	}
 
@@ -1596,11 +1596,11 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		this.receiptProcessingAmt = receiptProcessingAmt;
 	}
 
-	public boolean isOrigination() {
+	public Boolean isOrigination() {
 		return isOrigination;
 	}
 
-	public void setOrigination(boolean isOrigination) {
+	public void setOrigination(Boolean isOrigination) {
 		this.isOrigination = isOrigination;
 	}
 

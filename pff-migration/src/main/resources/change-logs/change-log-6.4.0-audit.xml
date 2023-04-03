@@ -33,68 +33,11 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Sravani" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Gopal.p" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-	<changeSet id="TK#2658.1.0.2" author="Sravani">
-		<comment>New Audit Table for ExcessTransfer</comment>
-		<createTable tableName="ADTExcess_Transfer_Details">
-			<column name="AuditId" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="AuditDate" type="datetime">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="AuditSeq" type="int">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="AuditImage" type="char(2)">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="Id" type="bigint" >
-				<constraints nullable="false" />
-			</column>
-			<column name="FinId" type="bigint" >
-				<constraints nullable="false" />
-			</column>
-			<column name="FinReference" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="TransferDate" type="datetime" />
-			<column name="TransferToType" type="varchar(8)" />
-			<column name="TransferToId" type="bigint" />
-			<column name="TransferFromType" type="varchar(8)" />
-			<column name="TransferFromId" type="bigint" />
-			<column name="LinkedTranId" type="bigint" />
-			<column name="Status" type="varchar(50)" />
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="CreatedBy" type="bigint" />
-			<column name="CreatedOn" type="datetime" />
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="ApprovedBy" type="bigint" />
-			<column name="ApprovedOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-	
-	<changeSet id="TK#2658.1.0.1" author="Sravani">
-	<addColumn tableName="ADTExcess_Transfer_Details">
-		<column name="TransferAmount" type="decimal(18,0)" />
-	</addColumn>
-</changeSet>
 
+	
 </databaseChangeLog>

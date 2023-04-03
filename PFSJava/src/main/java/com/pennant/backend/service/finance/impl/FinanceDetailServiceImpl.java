@@ -1218,12 +1218,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return fd;
 	}
 
-	@Override
-	public FinanceDetail getFinanceDetailById(long finID, boolean isWIF, String eventCodeRef, boolean reqCustDetail,
+	private FinanceDetail getWIFFinanceDetail(long finID, String eventCodeRef, boolean reqCustDetail,
 			String procEdtEvent, String userRole) {
-		logger.debug(Literal.ENTERING);
 
-		FinanceDetail fd = getFinSchdDetailById(finID, "_View", isWIF);
+		FinanceDetail fd = getFinSchdDetailById(finID, "_View", true);
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
@@ -1231,8 +1229,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp", procEdtEvent));
 
 		FinanceType financeType = schdData.getFinanceType();
-		if (isWIF && reqCustDetail && fm != null) {
 
+		if (reqCustDetail && fm != null) {
 			if (FinanceConstants.FIN_DIVISION_RETAIL.equals(financeType.getFinDivision())) {
 
 				long custId = fm.getCustID();
@@ -1273,7 +1271,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						PennantConstants.PFF_CUSTCTG_INDIV, procEdtEvent);
 			}
 
-		} else if (isWIF && StringUtils.equals(financeType.getFinDivision(), FinanceConstants.FIN_DIVISION_RETAIL)) {
+		} else if (FinanceConstants.FIN_DIVISION_RETAIL.equals(financeType.getFinDivision())) {
 			ProspectCustomer propCustomer = customerDAO.getProspectCustomer(finID, "_View");
 			if (propCustomer != null) {
 				fm.setCustID(propCustomer.getCustId());
@@ -1290,83 +1288,87 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		if (!isWIF && fm != null) {
+		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, true, "_View"));
 
-			// Finance Customer Details
-			if (fm.getCustID() != 0 && fm.getCustID() != Long.MIN_VALUE) {
-				fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_View"));
-			}
+		logger.debug(Literal.LEAVING);
+		return fd;
+	}
 
-			// Deviation Details
-			if (ImplementationConstants.ALLOW_DEVIATIONS) {
-				if (StringUtils.equals(procEdtEvent, FinServiceEvent.ORG)) {
-					List<FinanceDeviations> finDeviations = deviationDetailsService.getFinanceDeviations(finID);
-					List<FinanceDeviations> apprFinDeviations = deviationDetailsService
-							.getApprovedFinanceDeviations(finID);
-					deviationHelper.setDeviationDetails(fd, finDeviations, apprFinDeviations);
-				}
-			}
+	@Override
+	public FinanceDetail getFinanceDetailById(long finID, boolean isWIF, String eventCodeRef, boolean reqCustDetail,
+			String procEdtEvent, String userRole) {
+		logger.debug(Literal.ENTERING);
 
-			// Mandate Details
-			fd.setMandate(finMandateService.getMnadateByID(fm.getMandateID()));
+		FinanceDetail fd = null;
 
-			String finReference = fm.getFinReference();
+		if (isWIF) {
+			fd = getWIFFinanceDetail(finID, eventCodeRef, reqCustDetail, procEdtEvent, userRole);
 
-			// Finance Reference Details List
-			fd = getFinanceReferenceDetails(fd, userRole, "DDE", eventCodeRef, procEdtEvent, true);
+			logger.debug(Literal.LEAVING);
 
-			// Finance Document Details
-			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(finReference,
-					FinanceConstants.MODULE_NAME, procEdtEvent, "_View");
-			if (fd.getDocumentDetailsList() != null && !fd.getDocumentDetailsList().isEmpty()) {
-				fd.getDocumentDetailsList().addAll(documentList);
-			} else {
-				fd.setDocumentDetailsList(documentList);
-			}
+			return fd;
+		}
 
-			if (StringUtils.equals(procEdtEvent, FinServiceEvent.ORG)
-					|| StringUtils.equals(procEdtEvent, FinServiceEvent.BASICMAINTAIN)) {
-				// Finance Guaranteer Details
-				fd.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finID, "_View"));
+		fd = getFinSchdDetailById(finID, "_View", false);
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-				// Finance Joint Account Details
-				fd.setJointAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finID, "_View"));
-			}
+		schdData.setFinServiceInstructions(
+				finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp", procEdtEvent));
 
+		if (fm.getCustID() != 0 && fm.getCustID() != Long.MIN_VALUE) {
+			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_View"));
+		}
+
+		if (ImplementationConstants.ALLOW_DEVIATIONS) {
 			if (StringUtils.equals(procEdtEvent, FinServiceEvent.ORG)) {
-				// Advance Payment Details
-				fd.setAdvancePaymentsList(finAdvancePaymentsService.getFinAdvancePaymentsById(finID, "_View"));
-
-				// Covenant Type Details
-				if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
-					fd.setCovenantTypeList(finCovenantTypeService.getFinCovenantTypeById(finReference, "_View", false));
-				}
-
-				if (ImplementationConstants.COVENANT_MODULE_NEW) {
-					fd.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
-				}
-
-				fd.setFinOptions(finOptionService.getFinOptions(finID, TableType.VIEW));
-
-				// FinAssetType
-				fd.setFinAssetTypesList(finAssetTypeDAO.getFinAssetTypesByFinRef(finReference, "_Temp"));
-
-				// Extended Field Details for Assets
-				fd.setExtendedFieldRenderList(getExtendedAssetDetails(finReference, fd.getFinAssetTypesList()));
-
-				// Collateral Details
-				if (ImplementationConstants.COLLATERAL_INTERNAL) {
-					fd.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
-							FinanceConstants.MODULE_NAME, "_View"));
-				} else {
-					fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
-				}
+				List<FinanceDeviations> finDeviations = deviationDetailsService.getFinanceDeviations(finID);
+				List<FinanceDeviations> apprFinDeviations = deviationDetailsService.getApprovedFinanceDeviations(finID);
+				deviationHelper.setDeviationDetails(fd, finDeviations, apprFinDeviations);
 			}
 
 		}
 
-		// Finance Fee Details
-		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, isWIF, "_View"));
+		fd.setMandate(finMandateService.getMnadateByID(fm.getMandateID()));
+
+		String finReference = fm.getFinReference();
+
+		fd = getFinanceReferenceDetails(fd, userRole, "DDE", eventCodeRef, procEdtEvent, true);
+
+		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(finReference,
+				FinanceConstants.MODULE_NAME, procEdtEvent, "_View");
+		if (fd.getDocumentDetailsList() != null && !fd.getDocumentDetailsList().isEmpty()) {
+			fd.getDocumentDetailsList().addAll(documentList);
+		} else {
+			fd.setDocumentDetailsList(documentList);
+		}
+
+		if (FinServiceEvent.ORG.equals(procEdtEvent) || FinServiceEvent.BASICMAINTAIN.equals(procEdtEvent)) {
+			fd.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finID, "_View"));
+			fd.setJointAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finID, "_View"));
+			fd.setAdvancePaymentsList(finAdvancePaymentsService.getFinAdvancePaymentsById(finID, "_View"));
+
+			if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
+				fd.setCovenantTypeList(finCovenantTypeService.getFinCovenantTypeById(finReference, "_View", false));
+			}
+
+			if (ImplementationConstants.COVENANT_MODULE_NEW) {
+				fd.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
+			}
+
+			fd.setFinOptions(finOptionService.getFinOptions(finID, TableType.VIEW));
+			fd.setFinAssetTypesList(finAssetTypeDAO.getFinAssetTypesByFinRef(finReference, "_Temp"));
+			fd.setExtendedFieldRenderList(getExtendedAssetDetails(finReference, fd.getFinAssetTypesList()));
+
+			if (ImplementationConstants.COLLATERAL_INTERNAL) {
+				fd.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+						FinanceConstants.MODULE_NAME, "_View"));
+			} else {
+				fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
+			}
+		}
+
+		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_View"));
 
 		logger.debug(Literal.LEAVING);
 
@@ -11408,10 +11410,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			ca = new ArrayList<>();
 			fd.getCustomerDetails().setAddressList(ca);
 		}
+
 		FinScheduleData fsd = fd.getFinScheduleData();
+
+		String finType = fsd.getFinanceType().getFinType();
+
 		fsd.setFeeEvent(AccountingEvent.EARLYSTL);
-		fd.setFinTypeFeesList(
-				finTypeFeesDAO.getFinTypeFeesForLMSEvent(fsd.getFinanceType().getFinType(), AccountingEvent.EARLYSTL));
+		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesForLMSEvent(finType, AccountingEvent.EARLYSTL));
 
 		frd.setFinanceDetail(fd);
 		frd.setTdPriBal(fsd.getFinPftDeatil().getTdSchdPriBal());

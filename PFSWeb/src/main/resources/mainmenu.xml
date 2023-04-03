@@ -1278,6 +1278,16 @@
 				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=A"
 				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Approver" />
 		</menu>
+		
+		<menu id ="menu_Item_Cust_kyc_Dtls_Upload">
+			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Maker"
+			zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=M"
+			rightName="menu_Item_Cust_kyc_Dtls_Upload_Maker" />
+			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Approver"
+			zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=A"
+			rightName="menu_Item_Cust_kyc_Dtls_Upload_Approver" />
+		</menu>
+		
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
@@ -1318,7 +1328,7 @@
 		<!-- <menuItem id="menu_Item_CalAvgPOS" zulNavigation="/WEB-INF/pages/Amortization/CalAvgPOS.zul" rightName="menuItem_CustProfitability_CalAvgPOS"/> -->
 		<!-- <menuItem id="menu_Item_IncomeAmortization" zulNavigation="/WEB-INF/pages/Amortization/IncomeAmortization.zul" rightName="menuItem_Amortization_IncomeAmortization"/> -->
 	</menu>
-
+	
 	<!-- Enquiry -->
 	<menu id="menu_Category_Enquiry">
 		<menu id="menu_Category_CustomerEnquiry">
