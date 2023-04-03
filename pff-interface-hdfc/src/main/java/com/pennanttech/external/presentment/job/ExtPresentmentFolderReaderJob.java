@@ -232,12 +232,12 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 				logger.debug("EXT_VRF: SAVING FILE: " + extPresentment.getErrorCode());
 
 				// Add unprocessed files in to table
-				if (StringUtils.isNotBlank(extPresentment.getErrorCode())) {
-					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
-					extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
-				} else {
+				if (extPresentment.getErrorCode() != null || !"".equals(extPresentment.getErrorCode())) {
 					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
 					extPresentment.setExtraction(FAILED); // set file extract process unprocessed
+				} else {
+					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
+					extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
 				}
 				externalPresentmentDAO.saveExtPresentment(extPresentment);
 			}
