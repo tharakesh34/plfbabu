@@ -207,29 +207,19 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 					// Added for reject file count validation
 					if ("R".equals(fileType)) {
-						logger.debug("EXT_VRF: NEED TO VALIDATE REJECT FILE FOR VALIDATION FOR " + file.getName());
-
 						boolean isValidRejectFile = validateRejectFile(file);
 
-						logger.debug("EXT_VRF: FILE VALIDATION FOR" + file.getName() + "+ IS : " + isValidRejectFile);
-
 						if (!isValidRejectFile) {
-							logger.debug("EXT_VRF: FILE VALIDATION FAILED FOR " + file.getName());
 							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
 									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
 
 							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
 							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
-							logger.debug("EXT_VRF: FILE VALIDATION EXCEPTION SAVING , CONTINUING");
 						}
 
 					}
 
 				}
-
-				logger.debug("EXT_VRF: PROCEEDING FURTHER FOR FILE: " + file.getName());
-
-				logger.debug("EXT_VRF: SAVING FILE: " + extPresentment.getErrorCode());
 
 				// Add unprocessed files in to table
 				if (extPresentment.getErrorCode() != null && !"".equals(extPresentment.getErrorCode())) {
@@ -301,14 +291,12 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			readLastLine(file, cntData);
 			long fileLines = cntData.getLinesCount();
 			String data = cntData.getLastLine();
-			logger.debug("EXT_VRF: fileLines:" + fileLines + ", lastLine: " + data);
 			long recSize = fileLines - 2;
 			if (data != null && !"".equals(data)) {
 				if (data.startsWith("F") && data.length() > 1) {
 					int fileRecSize = 0;
 					fileRecSize = Integer.parseInt(data.substring(1));
 					if (fileRecSize == recSize) {
-						logger.debug("EXT_VRF: SUCCESS COUNT");
 						return true;
 					}
 				}
@@ -316,7 +304,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		logger.debug("EXT_VRF: FAILED COUNT");
 		logger.debug(Literal.LEAVING);
 		return false;
 	}
