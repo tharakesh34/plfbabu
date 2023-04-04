@@ -290,12 +290,13 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			if (extPresentmentDataList.size() > 0) {
 				// save records remaining after bulk insert
 				externalPresentmentDAO.savePresentment(extPresentmentDataList, prh.getHeaderId());
-				if (isTransactionStarted) {
-					// commit the transaction
-					transactionManager.commit(txStatus);
-					isTransactionStarted = false;
-				}
 				extPresentmentDataList.clear();
+			}
+
+			if (isTransactionStarted) {
+				// commit the transaction
+				transactionManager.commit(txStatus);
+				isTransactionStarted = false;
 			}
 
 		} catch (Exception e) {
