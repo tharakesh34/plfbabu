@@ -44,27 +44,27 @@ public class KycDetailsUploadValidateRecord implements ValidateRecord {
 
 		CustomerKycDetail detail = new CustomerKycDetail();
 		detail.setHeaderId(headerID);
-		detail.setFinReference(valueOf(record, "FINREFERENCE"));
+		detail.setFinReference(getValue(record, "FINREFERENCE"));
 		detail.setReference(custCif);
-		detail.setCustAddrType(valueOf(record, "CUSTADDRTYPE"));
+		detail.setCustAddrType(getValue(record, "CUSTADDRTYPE"));
 		detail.setCustAddrPriority(ObjectUtil.valueAsInt(record.getValue("CUSTADDRPRIORITY")));
-		detail.setCustAddrLine3(valueOf(record, "CUSTADDRLINE3"));
-		detail.setCustAddrHNbr(valueOf(record, "CUSTADDRHNBR"));
-		detail.setCustFlatNbr(valueOf(record, "CUSTFLATNBR"));
-		detail.setCustAddrStreet(valueOf(record, "CUSTADDRSTREET"));
-		detail.setCustAddrLine1(valueOf(record, "CUSTADDRLINE1"));
-		detail.setCustAddrLine2(valueOf(record, "CUSTADDRLINE2"));
-		detail.setCustAddrCity(valueOf(record, "CUSTADDRCITY"));
-		detail.setCustAddrLine4(valueOf(record, "CUSTADDRLINE4"));
-		detail.setCustDistrict(valueOf(record, "CUSTDISTRICT"));
-		detail.setCustAddrProvince(valueOf(record, "CUSTADDRPROVINCE"));
-		detail.setCustAddrCountry(valueOf(record, "CUSTADDRCOUNTRY"));
-		detail.setCustAddrZIP(valueOf(record, "CUSTADDRZIP"));
-		detail.setPhoneTypeCode(valueOf(record, "PHONETYPECODE"));
-		detail.setPhoneNumber(valueOf(record, "PHONENUMBER"));
+		detail.setCustAddrLine3(getValue(record, "CUSTADDRLINE3"));
+		detail.setCustAddrHNbr(getValue(record, "CUSTADDRHNBR"));
+		detail.setCustFlatNbr(getValue(record, "CUSTFLATNBR"));
+		detail.setCustAddrStreet(getValue(record, "CUSTADDRSTREET"));
+		detail.setCustAddrLine1(getValue(record, "CUSTADDRLINE1"));
+		detail.setCustAddrLine2(getValue(record, "CUSTADDRLINE2"));
+		detail.setCustAddrCity(getValue(record, "CUSTADDRCITY"));
+		detail.setCustAddrLine4(getValue(record, "CUSTADDRLINE4"));
+		detail.setCustDistrict(getValue(record, "CUSTDISTRICT"));
+		detail.setCustAddrProvince(getValue(record, "CUSTADDRPROVINCE"));
+		detail.setCustAddrCountry(getValue(record, "CUSTADDRCOUNTRY"));
+		detail.setCustAddrZIP(getValue(record, "CUSTADDRZIP"));
+		detail.setPhoneTypeCode(getValue(record, "PHONETYPECODE"));
+		detail.setPhoneNumber(getValue(record, "PHONENUMBER"));
 		detail.setPhoneTypePriority(ObjectUtil.valueAsInt(record.getValue("PHONETYPEPRIORITY")));
-		detail.setCustEMailTypeCode(valueOf(record, "CUSTEMAILTYPECODE"));
-		detail.setCustEMail(valueOf(record, "CUSTEMAIL"));
+		detail.setCustEMailTypeCode(getValue(record, "CUSTEMAILTYPECODE"));
+		detail.setCustEMail(getValue(record, "CUSTEMAIL"));
 		detail.setCustEMailPriority(ObjectUtil.valueAsInt(record.getValue("CUSTEMAILPRIORITY")));
 
 		kycDetailsUploadService.doValidate(header, detail);
@@ -77,7 +77,7 @@ public class KycDetailsUploadValidateRecord implements ValidateRecord {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String valueOf(MapSqlParameterSource record, String value) {
+	private String getValue(MapSqlParameterSource record, String value) {
 		return ObjectUtil.valueAsString(record.getValue(value));
 	}
 

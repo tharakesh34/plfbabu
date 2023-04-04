@@ -7,11 +7,11 @@ public enum CustomerDetailsUploadError {
 
 	KYC_CUST_01("CustCif should not be empty."),
 
-	KYC_CUST_02("Invalid CIF"),
+	KYC_CUST_02("Invalid CIF."),
 
-	CUST_MNTS_01("Selected CIF is In maintenance :"),
+	CUST_MNTS_01("Selected CIF is In maintenance : "),
 
-	CUST_MNTS_02("Selected CIF is In Loan Queue :"),
+	CUST_MNTS_02("Selected CIF is In Loan Queue : "),
 
 	KYC_ADD_01("CustCif should not be empty."),
 
@@ -19,23 +19,25 @@ public enum CustomerDetailsUploadError {
 
 	KYC_ADD_03("FinReference is not in active."),
 
-	KYC_ADD_04("Customer Address Priority is Mandatory"),
+	KYC_ADD_04("Customer Address Priority is Mandatory."),
 
-	KYC_ADD_05("Customer House/Building No is Mandatory"),
+	KYC_ADD_05("Customer House/Building No is Mandatory."),
 
-	KYC_ADD_06("Customer Street is Mandatory"),
+	KYC_ADD_06("Customer Street is Mandatory."),
 
-	KYC_ADD_07("Customer Pin Code is Mandatory"),
+	KYC_ADD_07("Customer Pin Code is Mandatory."),
 
-	KYC_ADD_08("Address Type is Invalid"),
+	KYC_ADD_08("Address Type is Invalid."),
 
-	KYC_ADD_09("One Address with Very High priority is mandatory – Cannot Delete Existing Address"),
+	KYC_ADD_09("One Address with Very High priority is mandatory – Cannot Delete Existing Address."),
 
-	KYC_ADD_10("AddressType is mandatory to Give Address Details"),
+	KYC_ADD_10("AddressType is mandatory to Give Address Details."),
 
-	KYC_PHONE_01("Customer Phone Number is Mandatory"),
+	KYC_ADD_11("Max 50 letters allowed for the field: "),
 
-	KYC_PHONE_02("Customer Phone Priority is Mandatory"),
+	KYC_PHONE_01("Customer Phone Number is Mandatory."),
+
+	KYC_PHONE_02("Customer Phone Priority is Mandatory."),
 
 	KYC_PHONE_03("Customer Phone Type Code is Invalid"),
 

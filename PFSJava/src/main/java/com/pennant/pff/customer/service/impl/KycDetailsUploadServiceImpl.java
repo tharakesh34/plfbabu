@@ -265,6 +265,12 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		validateNonMandatory(detail);
+
+		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+			return;
+		}
+
 		if (StringUtils.isNotEmpty(detail.getCustAddrType())) {
 			customerAddressUpload.validate(detail);
 
@@ -353,6 +359,48 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 		}
 	}
 
+	private void validateNonMandatory(CustomerKycDetail detail) {
+		if (getLength(detail.getCustAddrLine3()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, " Care Of");
+			return;
+		}
+
+		if (getLength(detail.getCustAddrHNbr()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "House/Building No");
+			return;
+		}
+
+		if (getLength(detail.getCustFlatNbr()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "Flat No");
+			return;
+		}
+
+		if (getLength(detail.getCustAddrStreet()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "Street");
+			return;
+		}
+
+		if (getLength(detail.getCustAddrLine1()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "Landmark");
+			return;
+		}
+
+		if (getLength(detail.getCustAddrLine2()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "Locality");
+			return;
+		}
+
+		if (getLength(detail.getCustAddrLine4()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, " Sub District");
+			return;
+		}
+
+		if (getLength(detail.getCustDistrict()) > 50) {
+			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "District");
+			return;
+		}
+	}
+
 	@Override
 	public String getSqlQuery() {
 		return kycDetailsUploadDAO.getSqlQuery();
@@ -381,5 +429,9 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
 		detail.setErrorDesc(error.description().concat(arg));
+	}
+
+	private int getLength(String str) {
+		return str == null ? 0 : str.length();
 	}
 }
