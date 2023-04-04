@@ -65,6 +65,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processSIReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
 
@@ -77,6 +78,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processIPDCReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_IPDC_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_IPDC_REQ);
 
@@ -89,6 +91,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processNACHReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
 
