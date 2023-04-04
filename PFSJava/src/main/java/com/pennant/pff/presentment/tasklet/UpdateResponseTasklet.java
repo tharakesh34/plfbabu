@@ -89,7 +89,7 @@ public class UpdateResponseTasklet implements Tasklet {
 			List<String> headerStatusList = presentmentDAO.getStatusByPresentmentHeader(presentmentId);
 			int headerSuccessCount = 0;
 			int headerFailedCount = 0;
-			int headerTotalCount = statusList.size();
+			int headerTotalCount = headerStatusList.size();
 
 			for (String sts : headerStatusList) {
 				if (RepayConstants.PEXC_SUCCESS.equals(sts) || RepayConstants.PEXC_BOUNCE.equals(sts)) {
