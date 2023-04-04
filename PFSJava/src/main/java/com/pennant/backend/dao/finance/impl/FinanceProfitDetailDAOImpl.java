@@ -118,7 +118,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", pd.AMZMethod, pd.GapIntAmz, pd.GapIntAmzLbd, pd.SvAmount, pd.CbAmount, pd.NOPaidInst");
 		sql.append(", pd.NOAutoIncGrcEnd, pd.WriteoffLoan, pd.TotalPriSchd");
 		sql.append(", pd.MaturityDate, pd.ProductCategory, pd.PrvMthAmz, pd.PenaltyPaid, pd.PenaltyDue");
-		sql.append(", pd.PrvMthGapIntAmz, pd.FirstRepayDate, pd.PrvMthAcr");
+		sql.append(", pd.PrvMthGapIntAmz, pd.FirstRepayDate, pd.PrvMthAcr, pd.CurDPDString");
 		sql.append(" From FinPftDetails pd");
 		sql.append(" Inner Join Customers c on c.CustID = pd.CustID");
 		return sql;
@@ -629,7 +629,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", NSchdPriDue = ?, NSchdPftDue = ?, AccumulatedDepPri = ?, DepreciatePri = ?");
 		sql.append(", TotalPriPaidInAdv = ?");
 		sql.append(", FinStatus = ?, FinStsReason = ?, FinWorstStatus = ?, TotalPftPaidInAdv = ?");
-		sql.append(", LastMdfDate = ?, AMZMethod = ?, GapIntAmz = ?, NOAutoIncGrcEnd = ?");
+		sql.append(", LastMdfDate = ?, AMZMethod = ?, GapIntAmz = ?, NOAutoIncGrcEnd = ?, CurDPDString = ?");
 
 		if (posted) {
 			sql.append(", AmzTillLBD = ?, LpiTillLBD = ?, LppTillLBD = ?, GstLpiTillLBD = ?, GstLppTillLBD = ?");
@@ -718,6 +718,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			ps.setString(index++, fpd.getAMZMethod());
 			ps.setBigDecimal(index++, fpd.getGapIntAmz());
 			ps.setInt(index++, fpd.getNOAutoIncGrcEnd());
+			ps.setString(index++, fpd.getCurDPDString());
 
 			if (posted) {
 				ps.setBigDecimal(index++, fpd.getAmzTillLBD());
@@ -1152,6 +1153,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 			pftd.setPrvMthGapIntAmz(rs.getBigDecimal("PrvMthGapIntAmz"));
 			pftd.setFirstRepayDate(rs.getTimestamp("FirstRepayDate"));
 			pftd.setPrvMthAcr(rs.getBigDecimal("PrvMthAcr"));
+			pftd.setCurDPDString(rs.getString("CurDPDString"));
 
 			return pftd;
 		}

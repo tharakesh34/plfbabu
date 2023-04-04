@@ -38,7 +38,7 @@
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1471.2" author="Mounika.M">
 		<addColumn tableName="ADTFINPFTDETAILS">
 			<column name="CurDPDString" type="varchar(2400)"/>
@@ -56,6 +56,4 @@
 	<changeSet id="ST#1471.4" author="Mounika.M" dbms="postgresql, oracle">
 		<addDefaultValue tableName="ADTFINPFTDETAILS" columnName="CurDPDString" defaultValue="null" />
 	</changeSet>
-
-	
 </databaseChangeLog>

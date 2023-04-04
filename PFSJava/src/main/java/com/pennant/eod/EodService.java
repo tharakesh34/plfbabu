@@ -39,6 +39,7 @@ import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennant.pff.core.loan.util.DPDStringCalculator;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -183,7 +184,6 @@ public class EodService {
 
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
-		Date nextDate = eventProperties.getNextDate();
 		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF && !ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
 			processAutoKnockOff(custEODEvent, eventProperties);
 		}
@@ -204,11 +204,7 @@ public class EodService {
 	}
 
 	public void doProcess(CustEODEvent custEODEvent) throws Exception {
-		long custId = custEODEvent.getCustomer().getCustID();
-
 		EventProperties eventProperties = custEODEvent.getEventProperties();
-
-		Date appDate = eventProperties.getAppDate();
 
 		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF && ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
 			processAutoKnockOff(custEODEvent, eventProperties);
@@ -338,6 +334,16 @@ public class EodService {
 
 		if (ImplementationConstants.ALLOW_NPA) {
 			assetClassificationService.process(custEODEvent);
+		}
+
+		int dpdStringCal = eventProperties.getDpdStringCal();
+		if ((custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) && dpdStringCal == 0) {
+			DPDStringCalculator.process(custEODEvent, true);
+		}
+
+		if (dpdStringCal == 1) {
+			DPDStringCalculator.process(custEODEvent, false);
 		}
 	}
 
