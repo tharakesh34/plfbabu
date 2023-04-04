@@ -301,6 +301,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
