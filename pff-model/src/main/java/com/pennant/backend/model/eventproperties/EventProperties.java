@@ -72,6 +72,8 @@ public class EventProperties implements Serializable {
 	private boolean autoRefundOverdueCheck;
 	private boolean autoRefundByCheque;
 	private boolean allowOTSOnEOD;
+	private int dpdStringCal;
+	private int dpdStringLength;
 
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
@@ -582,6 +584,22 @@ public class EventProperties implements Serializable {
 
 	public void setAutoRefundOverdueCheck(boolean autoRefundOverdueCheck) {
 		this.autoRefundOverdueCheck = autoRefundOverdueCheck;
+	}
+
+	public int getDpdStringCal() {
+		return dpdStringCal;
+	}
+
+	public void setDpdStringCal(int dpdStringCal) {
+		this.dpdStringCal = dpdStringCal;
+	}
+
+	public int getDpdStringLength() {
+		return dpdStringLength;
+	}
+
+	public void setDpdStringLength(int dpdStringLength) {
+		this.dpdStringLength = dpdStringLength;
 	}
 
 	public boolean isAutoRefundByCheque() {

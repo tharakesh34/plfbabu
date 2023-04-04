@@ -42,6 +42,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 
@@ -305,8 +306,8 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 
 		PFSParameter oldPFSParameter = pFSParameter.getBefImage();
 
-		String[] valueParm = new String[1];
-		String[] errParm = new String[1];
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
 
 		valueParm[0] = pFSParameter.getSysParmCode();
 		errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmCode.value") + ":" + valueParm[0];
@@ -371,6 +372,28 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
+			}
+		}
+
+		if (pFSParameter.getSysParmCode().equals(SMTParameterConstants.DPD_STRING_LENGTH)) {
+			int newDPDLength = Integer.valueOf(pFSParameter.getSysParmValue());
+			int oldDPDLength = Integer.valueOf(befPFSParameter.getSysParmValue());
+			if (newDPDLength < oldDPDLength) {
+				valueParm[0] = pFSParameter.getSysParmValue();
+				valueParm[1] = befPFSParameter.getSysParmValue();
+				errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmValue.value") + ":"
+						+ valueParm[0];
+				errParm[1] = ":" + valueParm[1];
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30507", errParm, null));
+			}
+
+			if (newDPDLength > 2400) {
+				valueParm[0] = pFSParameter.getSysParmValue();
+				valueParm[1] = String.valueOf(2400);
+				errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmValue.value") + ":"
+						+ valueParm[0];
+				errParm[1] = ":" + valueParm[1];
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30558", errParm, null));
 			}
 		}
 
