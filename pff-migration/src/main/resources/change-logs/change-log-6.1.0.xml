@@ -1397,6 +1397,14 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="45.1" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE MASTER_DEF SET PROCEEDEXCEPTION = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="45_pre" author="rahul.r" dbms="mssql">
 		<sql>
 			<![CDATA[	
