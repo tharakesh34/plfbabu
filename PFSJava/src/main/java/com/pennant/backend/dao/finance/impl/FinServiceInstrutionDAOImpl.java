@@ -480,4 +480,19 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			return fsi;
 		}
 	}
+
+	@Override
+	public List<Date> getListDates(long finID, Date approvedDate) {
+		String sql = "Select ApprovedDate From FinServiceInstruction Where FinID = ? and ApprovedDate > ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(approvedDate));
+		}, (rs, rowNum) -> {
+			return rs.getDate("ApprovedDate");
+		});
+	}
+
 }

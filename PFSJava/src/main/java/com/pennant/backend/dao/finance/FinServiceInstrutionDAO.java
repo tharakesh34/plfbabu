@@ -44,4 +44,5 @@ public interface FinServiceInstrutionDAO {
 
 	FinServiceInstruction getFinServiceInstDetailsBySerReqNo(long finID, String serviceReqNo);
 
+	List<Date> getListDates(long finId, Date approvedDate);
 }
