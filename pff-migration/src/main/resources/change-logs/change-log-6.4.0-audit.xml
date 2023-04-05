@@ -60,11 +60,16 @@
 	<changeSet id="ST#1469.1" author="NagaVamsi.P">
 		<addColumn tableName="ADTASSET_CLASS_SETUP_HEADER">
 			<column name="Code" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1469.1.1" author="NagaVamsi.P">
+		<addColumn tableName="ADTASSET_CLASS_SETUP_HEADER">
 			<column name="Description" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.1.1" author="NagaVamsi.P">
+	<changeSet id="ST#1469.1.2" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[	
 				UPDATE ADTASSET_CLASS_SETUP_HEADER SET Code = 'DEFAULT'; 
@@ -73,7 +78,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.1.2" author="NagaVamsi.P">
+	<changeSet id="ST#1469.1.3" author="NagaVamsi.P">
 		<addNotNullConstraint tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="Code"
 			columnDataType="Varchar(10)" />
 		<addNotNullConstraint tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="Description"
@@ -92,7 +97,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#147.1" author="NagaVamsi.P" dbms="mssql, postgresql">
+	<changeSet id="ST#1467.1" author="NagaVamsi.P" dbms="mssql, postgresql">
 		<sql>
 			<![CDATA[
 				UPDATE AdtRMTFinanceTypes SET ASSETCLASSSETUP = 
@@ -103,7 +108,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#147.1" author="NagaVamsi.P" dbms="oracle">
+	<changeSet id="ST#1467.1" author="NagaVamsi.P" dbms="oracle">
 		<sql>
 			<![CDATA[
 				MERGE INTO AdtRMTFinanceTypes FT 

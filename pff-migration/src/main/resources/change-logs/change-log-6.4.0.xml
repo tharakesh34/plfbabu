@@ -35,7 +35,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="HeaderId" type="bigint" />
-			<column name="RecordSeq" type="int" />
+			<column name="RecordSeq" type="bigint" />
 			<column name="CustId" type="bigint" />
 			<column name="CustCIF" type="varchar(13)" />
 			<column name="FinId" type="bigint" />
@@ -432,11 +432,16 @@
 	<changeSet id="ST#1469.1" author="NagaVamsi.P">
 		<addColumn tableName="ASSET_CLASS_SETUP_HEADER_TEMP">
 			<column name="Code" type="varchar(10)" />
-			<column name="Description" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="ST#1469.1.1" author="NagaVamsi.P">
+		<addColumn tableName="ASSET_CLASS_SETUP_HEADER_TEMP">
+			<column name="Description" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1469.1.2" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[	
 				UPDATE ASSET_CLASS_SETUP_HEADER_TEMP SET Code = 'DEFAULT';
@@ -445,12 +450,12 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.1.2" author="NagaVamsi.P">
+	<changeSet id="ST#1469.1.3" author="NagaVamsi.P">
 		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="Code" />
 		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="Description" />
 	</changeSet>
 
-	<changeSet id="ST#1469.1.3" author="NagaVamsi.P">
+	<changeSet id="ST#1469.1.4" author="NagaVamsi.P">
 		<createIndex tableName="ASSET_CLASS_SETUP_HEADER_TEMP" indexName="IDX_ACSH_T_CODE_ENTITY">
 			<column name="Code" type="varchar(8)" />
 			<column name="EntityCode" type="varchar(10)" />
@@ -460,11 +465,16 @@
 	<changeSet id="ST#1469.2" author="NagaVamsi.P">
 		<addColumn tableName="ASSET_CLASS_SETUP_HEADER">
 			<column name="Code" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="ST#1469.2.1" author="NagaVamsi.P">
+		<addColumn tableName="ASSET_CLASS_SETUP_HEADER">
 			<column name="Description" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.2.1" author="NagaVamsi.P">
+	<changeSet id="ST#1469.2.2" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[	
 				UPDATE ASSET_CLASS_SETUP_HEADER SET Code = 'DEFAULT';
@@ -473,18 +483,17 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.2.2" author="NagaVamsi.P">
+	<changeSet id="ST#1469.2.3" author="NagaVamsi.P">
 		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER" columnName="Code" />
 		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER" columnName="Description" />
 	</changeSet>
 
-	<changeSet id="ST#1469.2.3" author="NagaVamsi.P">
+	<changeSet id="ST#1469.2.4" author="NagaVamsi.P">
 		<createIndex tableName="ASSET_CLASS_SETUP_HEADER" indexName="IDX_ACSH_CODE_ENTITY">
 			<column name="Code" type="varchar(10)" />
 			<column name="EntityCode" type="varchar(8)" />
 		</createIndex>
 	</changeSet>
-
 
 	<changeSet id="ST#1469.3_pre" author="nagavamsi.p" dbms="postgresql">
 		<sql>
@@ -600,13 +609,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147" author="NagaVamsi.P">
+	<changeSet id="ST#1469.5" author="NagaVamsi.P">
 		<addColumn tableName="RMTFINANCETYPES_TEMP">
 			<column name="ASSETCLASSSETUP" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#147.1" author="NagaVamsi.P" dbms="mssql, postgresql">
+	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="mssql, postgresql">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFINANCETYPES_TEMP SET ASSETCLASSSETUP = 
@@ -617,7 +626,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.1" author="NagaVamsi.P" dbms="oracle">
+	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="oracle">
 		<sql>
 			<![CDATA[
 				MERGE INTO RMTFINANCETYPES FT 
@@ -632,19 +641,19 @@
 	</changeSet>
 
 
-	<changeSet id="ST#147.2" author="NagaVamsi.P">
+	<changeSet id="ST#1469.7" author="NagaVamsi.P">
 		<createIndex tableName="RMTFINANCETYPES_TEMP" indexName="IDX_RMTF_T_ACSUP">
 			<column name="ASSETCLASSSETUP" type="bigint" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="ST#147.3" author="NagaVamsi.P">
+	<changeSet id="ST#1469.8" author="NagaVamsi.P">
 		<addColumn tableName="RMTFINANCETYPES">
 			<column name="ASSETCLASSSETUP" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#147.4" author="NagaVamsi.P" dbms="mssql, postgresql">
+	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="mssql, postgresql">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFINANCETYPES SET ASSETCLASSSETUP = 
@@ -655,7 +664,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.4" author="NagaVamsi.P" dbms="oracle">
+	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="oracle">
 		<sql>
 			<![CDATA[
 				MERGE INTO RMTFINANCETYPES FT 
@@ -669,13 +678,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.5" author="NagaVamsi.P">
+	<changeSet id="ST#1469.10" author="NagaVamsi.P">
 		<createIndex tableName="RMTFINANCETYPES" indexName="IDX_RMTF_ACSCODE">
 			<column name="ASSETCLASSSETUP" type="bigint" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="ST#1467.3_pre" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.11_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view'); 
@@ -683,7 +692,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.6" author="NagaVamsi.P">
+	<changeSet id="ST#1469.11" author="NagaVamsi.P">
 		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINTYPE,
@@ -1206,7 +1215,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#147.6_post" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.11_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
@@ -1214,7 +1223,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.7_pre" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.12_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview'); 	
@@ -1222,7 +1231,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.7" author="NagaVamsi.P">
+	<changeSet id="ST#1469.12" author="NagaVamsi.P">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINTYPE,
@@ -1460,7 +1469,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#147.7_post" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.12_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
@@ -1469,7 +1478,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#147.8_pre" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.13_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview'); 
@@ -1477,7 +1486,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.8" author="NagaVamsi.P">
+	<changeSet id="ST#1469.13" author="NagaVamsi.P">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINTYPE,
@@ -1741,7 +1750,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#147.8_post" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.13_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -1749,19 +1758,19 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#147.9" author="NagaVamsi.P">
+	<changeSet id="ST#1469.14" author="NagaVamsi.P">
 		<addColumn tableName="FINANCEMAIN">
-			<column name="underNpa" type="boolean" />
+			<column name="UnderNpa" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#148" author="NagaVamsi.P">
+	<changeSet id="ST#1469.15" author="NagaVamsi.P">
 		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="underNpa" type="boolean" />
+			<column name="UnderNpa" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#149" author="NagaVamsi.P">
+	<changeSet id="ST#1469.16" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
 				UPDATE FINANCEMAIN_TEMP SET UNDERNPA = (SELECT np.EFFNPASTAGE FROM NPA_LOAN_INFO np where FINANCEMAIN_TEMP.FinID = np.FinID) WHERE UNDERNPA IS NULL;
@@ -1770,12 +1779,12 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#150" author="NagaVamsi.P" dbms="postgresql, oracle">
-		<addDefaultValue columnName="underNpa" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="underNpa" tableName="FINANCEMAIN" defaultValue="0" />
+	<changeSet id="ST#1469.17" author="NagaVamsi.P" dbms="postgresql, oracle">
+		<addDefaultValue columnName="UnderNpa" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="UnderNpa" tableName="FINANCEMAIN" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#151" author="NagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.17" author="NagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_F_T_UNDERNPA DEFAULT 0 FOR UNDERNPA;
@@ -1784,7 +1793,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#152_pre" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.18_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
@@ -1792,7 +1801,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#152" author="NagaVamsi.P">
+	<changeSet id="ST#1469.18" author="NagaVamsi.P">
 		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
 			<![CDATA[
 		 		SELECT T1.FINID
@@ -1902,15 +1911,23 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#152_post" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.18_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_lview');	
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1469.19_pre" author="NagaVamsi.P" dbms="postgresql">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'financemain_aview'); 
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="ST#153" author="NagaVamsi.P">
+	<changeSet id="ST#1469.19" author="NagaVamsi.P">
 		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
 			 <![CDATA[ 
 				SELECT T1.FINID
@@ -2242,7 +2259,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#153_post" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.19_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_aview');	
@@ -2250,7 +2267,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#154_pre" author="" dbms="postgresql">
+	<changeSet id="ST#1469.20_pre" author="" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
 			select deps_save_and_drop_dependencies ('plf', 'financemain_view'); 
@@ -2258,7 +2275,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#154" author="NagaVamsi.P">
+	<changeSet id="ST#1469.20" author="NagaVamsi.P">
 		<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID
@@ -2909,7 +2926,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#154_post" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.20_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_view');	
@@ -2917,7 +2934,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#155_pre" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.21_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_tview');
@@ -2925,7 +2942,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#155" author="NagaVamsi.P">
+	<changeSet id="ST#1469.21" author="NagaVamsi.P">
 		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
 		    <![CDATA[
 				SELECT T1.FINID
@@ -3253,7 +3270,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#155_post" author="" dbms="postgresql">
+	<changeSet id="ST#1469.21_post" author="" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_tview');
