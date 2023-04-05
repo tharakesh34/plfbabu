@@ -105,8 +105,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
@@ -1623,13 +1623,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, eventCode));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
@@ -1659,13 +1654,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		aeEvent.getAcSetIDList().clear();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-					AccountingEvent.DISBINS, FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-					AccountingEvent.DISBINS, FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.DISBINS));
 
 		// loop through the disbursements.
 		if (advPayList != null && !advPayList.isEmpty()) {

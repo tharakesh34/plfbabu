@@ -62,7 +62,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -853,13 +853,16 @@ public class ProjectedAmortizationService {
 		this.projectedAmortizationDAO.saveBatchProjIncomeAMZ(calProjIncomeAMZList);
 
 		// Post Accounting
-		Long accountingSetId = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.INDAS,
+		Long accountingSetId = AccountingEngine.getAccountSetID(fm, AccountingEvent.INDAS,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.INDAS);
 
-		aeEvent.getAcSetIDList().add(accountingSetId);
+		if (accountingSetId != null && accountingSetId > 0) {
+			aeEvent.getAcSetIDList().add(accountingSetId);
+		}
+
 		Date appDate = SysParamUtil.getAppDate();
 		aeEvent.setValueDate(appDate);
 		aeEvent.setPostDate(appDate);

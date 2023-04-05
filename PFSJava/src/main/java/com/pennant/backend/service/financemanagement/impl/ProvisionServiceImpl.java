@@ -58,7 +58,6 @@ import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -439,7 +438,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(), AccountingEvent.PROVSN,
+		Long accountingID = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.PROVSN,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
@@ -462,7 +461,9 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
-		aeEvent.getAcSetIDList().add(accountingID);
+		if (accountingID != null && accountingID > 0) {
+			aeEvent.getAcSetIDList().add(accountingID);
+		}
 		postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug("Leaving");
 

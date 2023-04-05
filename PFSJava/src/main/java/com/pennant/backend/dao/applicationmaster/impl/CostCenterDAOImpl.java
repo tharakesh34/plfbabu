@@ -213,4 +213,18 @@ public class CostCenterDAOImpl extends SequenceDao<CostCenter> implements CostCe
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public Long getCostCenterIDByCode(String costCenterCode) {
+		String sql = "Select CostCenterID From CostCenters Where CostCenterCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, costCenterCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

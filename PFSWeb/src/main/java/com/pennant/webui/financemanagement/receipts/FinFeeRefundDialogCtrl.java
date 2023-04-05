@@ -103,7 +103,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -1237,9 +1237,10 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		finFeeRefundService.prepareFeeRulesMap(this.feeRefundHeader, dataMap, userBranch);
 
 		// Fetch Accounting Set ID
-		long accountingSetID = AccountingConfigCache.getAccountSetID(this.feeRefundHeader.getFinType(),
+		Long accountingSetID = AccountingEngine.getAccountSetID(this.feeRefundHeader.getFinType(),
 				AccountingEvent.FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
-		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
+
+		if (accountingSetID != null && accountingSetID > 0) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
 			aeEvent.setDataMap(dataMap);
 			engineExecution.getAccEngineExecResults(aeEvent);

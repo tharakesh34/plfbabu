@@ -183,7 +183,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
@@ -1201,8 +1200,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		 * FinanceConstants.MODULEID_PROMOTION)); }
 		 */
 
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-				FinanceConstants.MODULEID_FINTYPE));
+		aeEvent.getAcSetIDList()
+				.add(AccountingEngine.getAccountSetID(finMain, eventCode, FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
@@ -1262,12 +1261,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public List<ReturnDataSet> procesSubVenAccounting(AEEvent aeEvent, FinanceDetail fd, boolean doPostings) {
 		String event = AccountingEvent.MANSUB;
-		int moduleId = FinanceConstants.MODULEID_FINTYPE;
-		String finType = fd.getFinScheduleData().getFinanceMain().getFinType();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
 		aeEvent.setAccountingEvent(event);
 		aeEvent.getAcSetIDList().clear();
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finType, event, moduleId));
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, event, FinanceConstants.MODULEID_FINTYPE));
+
 		aeEvent.setLinkedTranId(0);
 
 		if (doPostings) {

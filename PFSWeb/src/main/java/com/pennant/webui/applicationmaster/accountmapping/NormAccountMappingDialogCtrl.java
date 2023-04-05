@@ -58,6 +58,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	protected Combobox status;
 	protected Combobox allowedManualEntry;
 	protected Space spaceClosedDate;
+	protected Textbox gLDescription;
 
 	private AccountMapping accountMapping;
 	private transient AccountMappingListCtrl accountMappingListCtrl;
@@ -164,6 +165,8 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		this.openedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.closedDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.gLDescription.setMaxlength(50);
 
 		setStatusDetails();
 
@@ -307,7 +310,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 
 		if (StringUtils.isEmpty(am.getAllowedManualEntry())) {
-			fillComboBox(this.allowedManualEntry, TransactionType.BOTH.code(), AccountingUtil.getManualEntries(), "");
+			fillComboBox(this.allowedManualEntry, TransactionType.NONE.code(), AccountingUtil.getManualEntries(), "");
 		} else {
 			fillComboBox(this.allowedManualEntry, am.getAllowedManualEntry(), AccountingUtil.getManualEntries(), "");
 		}
@@ -319,6 +322,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 
 		this.recordStatus.setValue(am.getRecordStatus());
+		this.gLDescription.setValue(am.getGLDescription());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -388,6 +392,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		accountMapping.setClosedDate(this.closedDate.getValue());
 		accountMapping.setAllowedManualEntry(this.allowedManualEntry.getSelectedItem().getValue());
 		accountMapping.setStatus(this.status.getSelectedItem().getValue());
+
+		try {
+			accountMapping.setGLDescription(this.gLDescription.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -484,6 +494,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 					Labels.getLabel("label_NormAccountMappingDialog_Status.value")));
 		}
 
+		if (!this.gLDescription.isReadonly()) {
+			this.gLDescription.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_NormAccountMappingDialog_GLDescription.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM));
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -535,6 +551,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.closedDate.setErrorMessage("");
 		this.allowedManualEntry.setErrorMessage("");
 		this.status.setErrorMessage("");
+		this.gLDescription.setErrorMessage("");
 
 		logger.debug("Leaving");
 	}
@@ -582,6 +599,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.finType.setReadonly(isReadOnly("AccountMappingDialog_FinType"));
 		this.openedDate.setDisabled(isReadOnly("AccountMappingDialog_OpenedDate"));
 		this.allowedManualEntry.setDisabled(isReadOnly("AccountMappingDialog_AllowedManualEntry"));
+		this.gLDescription.setReadonly(isReadOnly("AccountMappingDialog_GLDescription"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -615,6 +633,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.closedDate.setReadonly(true);
 		this.allowedManualEntry.setReadonly(true);
 		this.status.setReadonly(true);
+		this.gLDescription.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -646,6 +665,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.closedDate.setValue(null);
 		this.allowedManualEntry.setValue("");
 		this.status.setValue("");
+		this.gLDescription.setValue("");
 
 		logger.debug("Leaving");
 	}

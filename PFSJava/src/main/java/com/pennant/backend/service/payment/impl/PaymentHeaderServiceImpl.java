@@ -82,7 +82,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennant.pff.payment.model.PaymentHeader;
@@ -796,10 +796,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 		}
 
-		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.PAYMTINS,
+		Long accountsetId = AccountingEngine.getAccountSetID(fm, AccountingEvent.PAYMTINS,
 				FinanceConstants.MODULEID_FINTYPE);
 
-		aeEvent.getAcSetIDList().add(accountsetId);
+		if (accountsetId != null && accountsetId > 0) {
+			aeEvent.getAcSetIDList().add(accountsetId);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

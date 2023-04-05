@@ -92,8 +92,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -732,14 +732,7 @@ public class RepaymentProcessUtil {
 		amountCodes.setEntitycode(entityCode);
 		amountCodes.setManualTds(rch.getTdsAmount());
 
-		if (StringUtils.isNotBlank(fm.getPromotionCode())
-				&& (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
-					AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.REPAY,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, AccountingEvent.REPAY));
 
 		// Assignment Percentage
 		Set<String> excludeFees = null;

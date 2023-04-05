@@ -140,11 +140,11 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -1994,13 +1994,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY));
 
 				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
@@ -2368,13 +2363,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				pftChgExecuted = true;
 			}
 
-			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-						eventCode, FinanceConstants.MODULEID_PROMOTION));
-			} else {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE));
-			}
+			aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, eventCode));
 
 			aeEvent.setAccountingEvent(eventCode);
 
@@ -2396,13 +2385,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					|| amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
 
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.LATEPAY));
 
 				aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -2577,13 +2561,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				amountCodes.setPaymentType(paymentType);
 				amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY));
 
 				addZeroifNotContains(movementMap, "bounceChargePaid");
 				addZeroifNotContains(movementMap, "bounceCharge_CGST_P");
@@ -2698,14 +2676,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		Long accountSetId = Long.MIN_VALUE;
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		String finType = finMain.getFinType();
-		int moduleID = FinanceConstants.MODULEID_FINTYPE;
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			finType = finMain.getPromotionCode();
-			moduleID = FinanceConstants.MODULEID_PROMOTION;
-		}
 
-		accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL, moduleID);
+		accountSetId = AccountingEngine.getAccountSetID(finMain, AccountingEvent.EARLYSTL);
 
 		// Accounting Detail Tab
 		final Map<String, Object> map = new HashMap<String, Object>();

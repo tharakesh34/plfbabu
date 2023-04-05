@@ -46,7 +46,7 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -445,9 +445,12 @@ public class SubventionResponceUpload extends BasicDao<CDSettlementProcess> impl
 
 		eventMapping.put("ae_oemSbvAmount", mbdAmount);
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.OEMSBV,
+		Long accountsetId = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.OEMSBV,
 				FinanceConstants.MODULEID_FINTYPE);
-		aeEvent.getAcSetIDList().add(accountsetId);
+
+		if (accountsetId != null && accountsetId > 0) {
+			aeEvent.getAcSetIDList().add(accountsetId);
+		}
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent;

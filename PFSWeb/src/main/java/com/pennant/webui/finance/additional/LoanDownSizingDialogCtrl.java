@@ -57,8 +57,8 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -1210,14 +1210,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			eventCode = AccountingEvent.SCDCHG;
 			financeDetail.setAccountingEventCode(eventCode);
 
-			long acSetID = Long.MIN_VALUE;
-			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-				acSetID = AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
-						FinanceConstants.MODULEID_PROMOTION);
-			} else {
-				acSetID = AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE);
-			}
+			Long acSetID = AccountingEngine.getAccountSetID(finMain, eventCode);
 
 			final Map<String, Object> map = getDefaultArguments();
 

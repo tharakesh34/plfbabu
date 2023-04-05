@@ -83,7 +83,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -773,8 +772,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		aeEvent = AEAmounts.procAEAmounts(fm, schedules, pd, eventCode, curBDay, curBDay);
-		aeEvent.getAcSetIDList().add(
-				AccountingConfigCache.getAccountSetID(fm.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+
+		aeEvent.getAcSetIDList()
+				.add(AccountingEngine.getAccountSetID(fm, eventCode, FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(fm, schedules, newProfitDetail, curBDay);

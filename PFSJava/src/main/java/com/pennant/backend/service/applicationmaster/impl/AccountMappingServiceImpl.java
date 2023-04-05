@@ -50,6 +50,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -317,8 +318,9 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		AccountMapping accountMapping = new AccountMapping();
 		BeanUtils.copyProperties((AccountMapping) auditHeader.getAuditDetail().getModelData(), accountMapping);
 
-		getAccountMappingDAO().delete(accountMapping, TableType.TEMP_TAB);
-
+		if (!RequestSource.UPLOAD.equals(accountMapping.getRequestSource())) {
+			getAccountMappingDAO().delete(accountMapping, TableType.TEMP_TAB);
+		}
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(accountMapping.getRecordType())) {
 			auditHeader.getAuditDetail()
 					.setBefImage(accountMappingDAO.getAccountMapping(accountMapping.getAccount(), ""));
@@ -599,54 +601,58 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 
 		valueParm[0] = accountMapping.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_Account") + ":" + valueParm[0];
+		if (!RequestSource.UPLOAD.equals(accountMapping.getRequestSource())) {
+			if (accountMapping.isNewRecord()) { // for New record or new record into workFlow
 
-		if (accountMapping.isNewRecord()) { // for New record or new record into workFlow
-
-			if (!accountMapping.isWorkflow()) {// With out Work flow only new records
-				if (befAccountMapping != null) { // Record Already Exists in the table then error
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-				}
-			} else { // with work flow
-				if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-					if (befAccountMapping != null || tempAccountMapping != null) { // if records already exists in the
-																					// main
-																					// table
+				if (!accountMapping.isWorkflow()) {// With out Work flow only new records
+					if (befAccountMapping != null) { // Record Already Exists in the table then error
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
-				} else { // if records not exists in the Main flow table
-					if (befAccountMapping == null || tempAccountMapping != null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-					}
-				}
-			}
-
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!accountMapping.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befAccountMapping == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
-				} else {
-					if (oldAccountMapping != null
-							&& !oldAccountMapping.getLastMntOn().equals(befAccountMapping.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+				} else { // with work flow
+					if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						if (befAccountMapping != null || tempAccountMapping != null) { // if records already exists in
+																						// the
+																						// main
+																						// table
 							auditDetail.setErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
-						} else {
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
+						}
+					} else { // if records not exists in the Main flow table
+						if (befAccountMapping == null || tempAccountMapping != null) {
 							auditDetail.setErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 						}
 					}
 				}
+
 			} else {
-				if (tempAccountMapping == null) { // if records not exists in the WorkFlow table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-				if (tempAccountMapping != null && oldAccountMapping != null
-						&& !oldAccountMapping.getLastMntOn().equals(tempAccountMapping.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+				// for work flow process records or (Record to update or Delete with
+				// out work flow)
+				if (!accountMapping.isWorkflow()) { // With out Work flow for update and delete
+
+					if (befAccountMapping == null) { // if records not exists in the main table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
+					} else {
+						if (oldAccountMapping != null
+								&& !oldAccountMapping.getLastMntOn().equals(befAccountMapping.getLastMntOn())) {
+							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+									.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+								auditDetail.setErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
+							} else {
+								auditDetail.setErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
+							}
+						}
+					}
+				} else {
+					if (tempAccountMapping == null) { // if records not exists in the WorkFlow table
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					}
+					if (tempAccountMapping != null && oldAccountMapping != null
+							&& !oldAccountMapping.getLastMntOn().equals(tempAccountMapping.getLastMntOn())) {
+						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+					}
 				}
 			}
 		}

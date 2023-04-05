@@ -6175,4 +6175,6 @@
 
 	<bean id ="kycDetailsUploadList" class ="com.pennant.pff.customer.upload.list.KycDetailsUploadListCtrl" parent ="uploadList" />
 	
+	<bean id="hostGLMappingUploadListCtrl" class="com.pennant.pff.hostglmapping.upload.list.HostGLMappingUploadListCtrl"
+	parent="uploadList" />
 </beans>

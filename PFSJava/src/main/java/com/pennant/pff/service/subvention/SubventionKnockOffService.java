@@ -33,7 +33,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
 import com.pennant.pff.model.subvention.Subvention;
 import com.pennant.pff.model.subvention.SubventionHeader;
@@ -517,9 +517,12 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 		eventMapping.put("ae_oemProcAmount", procAmt);
 
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.OEMSBV,
+		Long accountsetId = AccountingEngine.getAccountSetID(fm, AccountingEvent.OEMSBV,
 				FinanceConstants.MODULEID_FINTYPE);
-		aeEvent.getAcSetIDList().add(accountsetId);
+
+		if (accountsetId != null && accountsetId > 0) {
+			aeEvent.getAcSetIDList().add(accountsetId);
+		}
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent;

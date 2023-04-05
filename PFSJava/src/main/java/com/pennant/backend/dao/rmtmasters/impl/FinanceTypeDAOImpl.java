@@ -1064,7 +1064,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MinPPPercentage = :MinPPPercentage, MaxPPCalType = :MaxPPCalType, MaxPPAmount = :MaxPPAmount");
 		sql.append(", MaxPPPercentage = :MaxPPPercentage, MaxPPCalOn = :MaxPPCalOn");
 		sql.append(", AllowAutoRefund = :AllowAutoRefund, MaxAutoRefund =:MaxAutoRefund");
-		sql.append(", MinAutoRefund = :MinAutoRefund, AssetClassSetup= :AssetClassSetup");
+		sql.append(", MinAutoRefund = :MinAutoRefund, NpaRpyHierarchy = :NpaRpyHierarchy");
+		sql.append(", AssetClassSetup= :AssetClassSetup");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {

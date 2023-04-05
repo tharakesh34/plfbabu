@@ -122,4 +122,11 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="001" author="saikrihna.b">
+		<modifyDataType tableName="ADTRMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="002" author="saikrihna.b">
+		<modifyDataType tableName="ADTFINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
+	</changeSet>
 </databaseChangeLog>

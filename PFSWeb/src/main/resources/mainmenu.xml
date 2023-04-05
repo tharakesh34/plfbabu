@@ -1278,7 +1278,6 @@
 				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=A"
 				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Approver" />
 		</menu>
-		
 		<menu id ="menu_Item_Cust_kyc_Dtls_Upload">
 			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Maker"
 			zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=M"
@@ -1286,6 +1285,13 @@
 			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Approver"
 			zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=A"
 			rightName="menu_Item_Cust_kyc_Dtls_Upload_Approver" />
+		<menu id="menu_Category_BulkHostGLUpload">
+			<menuItem id="menu_Item_BulkHostGLUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HostGLMappingUpload/HostGLMappingUploadList.zul?stage=M"
+				rightName="menu_Item_BulkHostGLUpload_Maker" />
+			<menuItem id="menu_Item_BulkHostGLUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HostGLMappingUpload/HostGLMappingUploadList.zul?stage=A"
+				rightName="menu_Item_BulkHostGLUpload_Approver" />
 		</menu>
 		
 	</menu>

@@ -33,7 +33,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -174,9 +174,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 		String eventCode = AccountingEvent.PROVSN;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(p.getFinType(), eventCode, moduleID);
+		Long accountingID = AccountingEngine.getAccountSetID(p.getFinType(), eventCode, moduleID);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			return;
 		}
 

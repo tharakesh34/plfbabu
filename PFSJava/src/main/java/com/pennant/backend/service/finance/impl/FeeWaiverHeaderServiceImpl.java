@@ -113,7 +113,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1956,8 +1956,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setCustID(fm.getCustID());
 		aeEvent.setPostRefId(feeWaiverHeader.getWaiverId());
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.WAIVER,
-				FinanceConstants.MODULEID_FINTYPE));
+		aeEvent.getAcSetIDList()
+				.add(AccountingEngine.getAccountSetID(fm, AccountingEvent.WAIVER, FinanceConstants.MODULEID_FINTYPE));
 
 		return aeEvent;
 	}

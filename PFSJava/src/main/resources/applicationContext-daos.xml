@@ -8,8 +8,8 @@
 		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<import resource="classpath:applicationContext-jdbc.xml" />
-	
-	<bean id="pennantJavaUtil" class="com.pennant.backend.util.PennantJavaUtil" init-method="init"/>
+
+	<bean id="pennantJavaUtil" class="com.pennant.backend.util.PennantJavaUtil" init-method="init" />
 
 	<!-- ====================================================== -->
 	<!-- Audit Details Configuration -->
@@ -6990,8 +6990,6 @@
 
 	<bean name="finTypeAccountingServiceTarget"
 		class="com.pennant.backend.service.rmtmasters.impl.FinTypeAccountingServiceImpl">
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean id="finTypePartnerBankService"
@@ -7769,10 +7767,10 @@
 			</props>
 		</property>
 	</bean>
-	
-	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl"/>
 
-	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl"/>
+	<bean name="paymentHeaderServiceTarget" class="com.pennant.backend.service.payment.impl.PaymentHeaderServiceImpl" />
+
+	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl" />
 
 	<bean name="paymentInstructionService"
 		class="com.pennant.backend.service.payment.impl.PaymentInstructionServiceImpl">
@@ -11068,7 +11066,7 @@
 
 	<bean name="cashBackProcessServiceTarget"
 		class="com.pennant.backend.service.finance.impl.CashBackProcessServiceImpl">
-		<property name="receiptService" ref="receiptService"/>
+		<property name="receiptService" ref="receiptService" />
 	</bean>
 
 	<bean id="cashBackDetailDAO" class="com.pennant.backend.dao.finance.impl.CashBackDetailDAOImpl" parent="basicDao" />
@@ -12930,7 +12928,7 @@
 		class="com.pennant.backend.dao.payment.impl.PaymentInstructionUploadDAOImpl" parent="sequenceDao" />
 
 	<bean id="paymentInstructionUploadService"
-	class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService" />
+		class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadServiceImpl" parent="aUploadService" />
 
 	<bean id="financeHoldReleaseProcess" class="com.pennanttech.pff.holdrelease.FinanceHoldReleaseProcess" />
 
@@ -13099,7 +13097,7 @@
 		</property>
 	</bean>
 
-	<bean name="settlementServiceTarget" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl" >
+	<bean name="settlementServiceTarget" class="com.pennant.pff.settlement.service.impl.SettlementServiceImpl">
 		<property name="receiptService" ref="receiptService" />
 	</bean>
 
@@ -13125,8 +13123,7 @@
 		class="com.pennant.backend.service.finance.impl.FeeWaiverCancelServiceImpl" />
 
 	<!--============ Excess Transfer ============== -->
-	<bean id="finExcessTransferDAO" class="com.pennant.pff.excess.dao.impl.FinExcessTransferDAOImpl"
-		parent="basicDao" />
+	<bean id="finExcessTransferDAO" class="com.pennant.pff.excess.dao.impl.FinExcessTransferDAOImpl" parent="basicDao" />
 
 	<bean id="excessTransferService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -13146,25 +13143,29 @@
 		</property>
 	</bean>
 
-	<bean name="excessTransferServiceTarget"
-		class="com.pennant.pff.excess.service.impl.ExcessTransferServiceImpl"/>
+	<bean name="excessTransferServiceTarget" class="com.pennant.pff.excess.service.impl.ExcessTransferServiceImpl" />
 
-	<bean id="excessTransferUploadService"
-		class="com.pennant.pff.excess.service.impl.ExcessTransferUploadServiceImpl" parent="aUploadService">
+	<bean id="excessTransferUploadService" class="com.pennant.pff.excess.service.impl.ExcessTransferUploadServiceImpl"
+		parent="aUploadService">
 	</bean>
 
-	<bean id="excessTransferUploadDAO"
-		class="com.pennant.pff.excess.dao.impl.ExcessTransferUploadDAOImpl" parent="sequenceDao" />
+	<bean id="excessTransferUploadDAO" class="com.pennant.pff.excess.dao.impl.ExcessTransferUploadDAOImpl"
+		parent="sequenceDao" />
 
-	<bean id="manualKnockOffUploadServiceImpl" class="com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadServiceImpl" parent="aUploadService" />
-	
-	<bean id="manualKnockOffUploadDAO" class="com.pennant.pff.manualknockoff.dao.impl.ManualKnockOffUploadDAOImpl" parent="sequenceDao" />
-	
-	<bean id="manualKnockOffUploadProcessRecord" class = "com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadProcessRecord"/>
-	
-	<bean id="crossLoanKnockOffDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffDAOImpl" parent="sequenceDao"/>
-	
-	<bean id="crossLoanKnockOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="manualKnockOffUploadServiceImpl"
+		class="com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="manualKnockOffUploadDAO" class="com.pennant.pff.manualknockoff.dao.impl.ManualKnockOffUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="manualKnockOffUploadProcessRecord"
+		class="com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadProcessRecord" />
+
+	<bean id="crossLoanKnockOffDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="crossLoanKnockOffService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>
@@ -13182,63 +13183,86 @@
 		</property>
 	</bean>
 
-	<bean name="crossLoanKnockOffServiceTarget" class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffServiceImpl">
-		<property name="receiptService" ref="receiptService"/>
+	<bean name="crossLoanKnockOffServiceTarget"
+		class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffServiceImpl">
+		<property name="receiptService" ref="receiptService" />
 	</bean>
-	
-	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
-   
-   <!-- Document Verification  -->
-   <bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao"/>
-   <bean id="jsonService" class="com.pennanttech.external.services.JsonService" abstract="true" />
-   <bean id="jsonRequestService" class="com.pennanttech.external.services.JsonRequestService" parent="jsonService" />
-   
-   <!-- IMD Fee Validation -->
-   <bean id="imdFeeService" class="com.pennant.pff.fee.service.IMDFeeService">
-   		<property name="ruleDAO" ref="ruleDAO" />
-   		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
-   </bean>
 
+	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl"
+		parent="sequenceDao" />
+
+	<!-- Document Verification -->
+	<bean id="docVerificationDAO" class="com.pennant.pff.document.dao.DocVerificationDAOImpl" parent="basicDao" />
+	<bean id="jsonService" class="com.pennanttech.external.services.JsonService" abstract="true" />
+	<bean id="jsonRequestService" class="com.pennanttech.external.services.JsonRequestService" parent="jsonService" />
+
+	<!-- IMD Fee Validation -->
+	<bean id="imdFeeService" class="com.pennant.pff.fee.service.IMDFeeService">
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
+	</bean>
 	<bean id="lPPUploadService" class="com.pennant.pff.lpp.service.impl.LPPUploadServiceImpl" parent="aUploadService" />
-	
-	<bean id="crossLoanKnockOffUploadService" class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadServiceImpl" parent="aUploadService" />
-	
-	<bean id="crossLoanKnockoffUploadDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffUploadDAOImpl" parent="sequenceDao"/>
-	
-	<bean id="crossLoanKnockOffUploadProcessRecord" class = "com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadProcessRecord"/>
-	
-	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService"/>
-	
+
+	<bean id="crossLoanKnockOffUploadService"
+		class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="crossLoanKnockoffUploadDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanKnockOffUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="crossLoanKnockOffUploadProcessRecord"
+		class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffUploadProcessRecord" />
+
+	<bean id="finOverDueService" class="com.pennant.app.core.FinOverDueService" />
+
 	<bean id="lppUploadDAO" class="com.pennant.pff.lpp.dao.impl.LPPUploadDAOImpl" parent="sequenceDao" />
-	
-	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
-	
-	<bean id ="holdRefundUploadValidateRecord" class = "com.pennant.pff.holdrefund.service.impl.HoldRefundUploadValidateRecord"/>
-	
-	<bean id="lppUploadValidateRecord" class = "com.pennant.pff.lpp.service.impl.LppUploadValidateRecord"/>
-	
-	<bean id="mandateUploadValidateRecord" class = "com.pennant.pff.mandate.service.impl.MandateUploadValidateRecord"/>
-	
-	<bean id ="excessTransferUploadValidateRecord" class = "com.pennant.pff.excess.service.impl.ExcessTransferUploadValidateRecord"/>
-	
-	<bean id = "chequeUploadValidateRecord" class = "com.pennant.pff.cheques.service.impl.ChequeUploadValidateRecord"/>
-	
-	<bean id = "representmentUploadValidateRecord" class = "com.pennant.pff.presentment.service.impl.RepresentmentUploadValidateRecord"/>
-	
-	<bean id = "fateCorrectionUploadValidateRecord" class = "com.pennant.pff.presentment.service.impl.FateCorrectionUploadValidateRecord"/>
-	
-	<bean id = "paymentInstructionUploadValidateRecord" class = "com.pennant.backend.service.payment.impl.PaymentInstructionUploadValidateRecord"/>
-	
-	<bean id = "kycDetailsUploadValidateRecord" class = "com.pennant.pff.customer.service.impl.KycDetailsUploadValidateRecord"/>
-	
+
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao" />
+
+	<bean id="holdRefundUploadValidateRecord"
+		class="com.pennant.pff.holdrefund.service.impl.HoldRefundUploadValidateRecord" />
+
+	<bean id="lppUploadValidateRecord" class="com.pennant.pff.lpp.service.impl.LppUploadValidateRecord" />
+
+	<bean id="mandateUploadValidateRecord" class="com.pennant.pff.mandate.service.impl.MandateUploadValidateRecord" />
+
+	<bean id="excessTransferUploadValidateRecord"
+		class="com.pennant.pff.excess.service.impl.ExcessTransferUploadValidateRecord" />
+
+	<bean id="chequeUploadValidateRecord" class="com.pennant.pff.cheques.service.impl.ChequeUploadValidateRecord" />
+
+	<bean id="representmentUploadValidateRecord"
+		class="com.pennant.pff.presentment.service.impl.RepresentmentUploadValidateRecord" />
+
+	<bean id="fateCorrectionUploadValidateRecord"
+		class="com.pennant.pff.presentment.service.impl.FateCorrectionUploadValidateRecord" />
+
+	<bean id="paymentInstructionUploadValidateRecord"
+		class="com.pennant.backend.service.payment.impl.PaymentInstructionUploadValidateRecord" />
+
+	<bean id="kycDetailsUploadValidateRecord"
+		class="com.pennant.pff.customer.service.impl.KycDetailsUploadValidateRecord" />
+
 	<bean id="kycDetailsUploadService" class="com.pennant.pff.customer.service.impl.KycDetailsUploadServiceImpl"
 		parent="aUploadService" />
-		
-	<bean id="kycDetailsUploadDAO" class="com.pennant.backend.dao.customermasters.impl.KycDetailsUploadDAOImpl" parent="sequenceDao" />
-	
-	<bean id = "customerAddressUpload" class = "com.pennant.pff.customer.service.impl.CustomerAddressUpload" parent="kycDetailsUploadService"/>
-	
-	<bean id = "customerPhoneNumberUpload" class = "com.pennant.pff.customer.service.impl.CustomerPhoneNumberUpload" parent="kycDetailsUploadService"/>
-	
-	<bean id = "customerEmailUpload" class = "com.pennant.pff.customer.service.impl.CustomerEmailUpload" parent="kycDetailsUploadService"/>
+
+	<bean id="kycDetailsUploadDAO" class="com.pennant.backend.dao.customermasters.impl.KycDetailsUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="customerAddressUpload" class="com.pennant.pff.customer.service.impl.CustomerAddressUpload"
+		parent="kycDetailsUploadService" />
+
+	<bean id="customerPhoneNumberUpload" class="com.pennant.pff.customer.service.impl.CustomerPhoneNumberUpload"
+		parent="kycDetailsUploadService" />
+
+	<bean id="customerEmailUpload" class="com.pennant.pff.customer.service.impl.CustomerEmailUpload"
+		parent="kycDetailsUploadService" />
+
+	<bean id="hostglmappingUploadService"
+		class="com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="hostglmappingUploadDAO" class="com.pennanttech.pff.hostglmapping.dao.impl.HostGLMappingUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="hostGLMappingUploadValidateRecord"
+		class="com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadValidateRecord" />
 </beans>

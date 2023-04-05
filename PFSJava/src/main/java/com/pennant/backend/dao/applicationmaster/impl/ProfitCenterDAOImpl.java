@@ -213,4 +213,17 @@ public class ProfitCenterDAOImpl extends SequenceDao<ProfitCenter> implements Pr
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public Long getPftCenterIDByCode(String profitCenterCode) {
+		String sql = "Select ProfitCenterID From ProfitCenters Where ProfitCenterCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, profitCenterCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

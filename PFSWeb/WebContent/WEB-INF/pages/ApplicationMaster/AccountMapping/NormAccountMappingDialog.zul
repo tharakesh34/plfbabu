@@ -99,6 +99,13 @@
 									<combobox id="allowedManualEntry" readonly="true" width="120px" />
 								</hbox>
 							</row>
+							<row>
+								<label id="label_NormAccountMappingDialog_GLDescription" value="${c:l('label_NormAccountMappingDialog_GLDescription.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="" />
+									<textbox id="gLDescription"  width="120px" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

@@ -2917,14 +2917,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				eventCode = PennantApplicationUtil.getEventCode(finMain.getFinStartDate());
 			}
 
-			long acSetID = Long.MIN_VALUE;
-			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-				acSetID = AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
-						FinanceConstants.MODULEID_PROMOTION);
-			} else {
-				acSetID = AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE);
-			}
+			Long acSetID = AccountingEngine.getAccountSetID(finMain, eventCode);
 			map.put("acSetID", acSetID);
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/AccountingDetailDialog.zul",
@@ -15805,15 +15798,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, appDate, appDate);
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			// aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-			// eventCode, FinanceConstants.MODULEID_PROMOTION));
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, eventCode));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, appDate);
@@ -19437,13 +19423,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (accountingDetailDialogCtrl != null) {
 
 				List<TransactionEntry> entryList = new ArrayList<>();
-				if (StringUtils.isNotBlank(financeMain.getPromotionCode())) {
-					entryList.addAll(AccountingConfigCache.getTransactionEntry(AccountingConfigCache.getAccountSetID(
-							financeMain.getPromotionCode(), eventCode, FinanceConstants.MODULEID_PROMOTION)));
-				} else {
-					entryList.addAll(AccountingConfigCache.getTransactionEntry(AccountingConfigCache
-							.getAccountSetID(financeMain.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE)));
-				}
+
+				entryList.addAll(AccountingConfigCache
+						.getTransactionEntry(AccountingEngine.getAccountSetID(financeMain, eventCode)));
 
 				accountingDetailDialogCtrl.doFillAccounting(entryList);
 				if (StringUtils.isNotBlank(this.commitmentRef.getValue())) {

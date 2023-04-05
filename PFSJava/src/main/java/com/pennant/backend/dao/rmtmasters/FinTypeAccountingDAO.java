@@ -27,6 +27,7 @@ package com.pennant.backend.dao.rmtmasters;
 
 import java.util.List;
 
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 
 /**
@@ -62,4 +63,6 @@ public interface FinTypeAccountingDAO {
 	int getAccountingSetIdCount(long accountSetId, String type);
 
 	FinTypeAccounting getFinTypeAccountingByRef(FinTypeAccounting finTypeAccounting, String type);
+
+	List<AccountEngineEvent> getAccountEngineEvents(String categoryCode);
 }

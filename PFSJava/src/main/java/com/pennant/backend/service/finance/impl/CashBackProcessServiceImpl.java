@@ -68,7 +68,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennant.pff.payment.model.PaymentHeader;
@@ -288,9 +288,12 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 			eventMapping.put("dbd_cbret_cess", finTax.getCess());
 		}
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.CBRET,
+		Long accountsetId = AccountingEngine.getAccountSetID(fm, AccountingEvent.CBRET,
 				FinanceConstants.MODULEID_FINTYPE);
-		aeEvent.getAcSetIDList().add(accountsetId);
+
+		if (accountsetId != null && accountsetId > 0) {
+			aeEvent.getAcSetIDList().add(accountsetId);
+		}
 
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 

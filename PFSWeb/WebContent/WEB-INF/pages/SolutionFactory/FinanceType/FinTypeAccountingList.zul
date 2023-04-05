@@ -22,13 +22,15 @@
 						width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 						<listhead sizable="true">
 							<listheader id="listheader_AccountingEvent" label="${c:l('listheader_AccountingEvent.label')}" sort="auto"
-								width="17%" />
+								width="12%" />
 							<listheader id="listheader_AccountingCode" label="${c:l('listheader_AccountingCode.label')}" sort="auto"
-								width="33%" />
-							<listheader id="listheader_AccountingEventSecond" label="${c:l('listheader_AccountingEvent.label')}"
-								sort="auto" width="17%" />
-							<listheader id="listheader_AccountingCodeSecond" label="${c:l('listheader_AccountingCode.label')}"
-								sort="auto" width="33%" />
+								width="22%" />
+							<listheader id="listheader_SettlementAccountingCode" label="${c:l('listheader_SettlementAccountingCode.label')}" sort="auto"
+								width="22%" />
+							<listheader id="listheader_NPAAccountingCode" label="${c:l('listheader_NPAAccountingCode.label')}"
+								sort="auto" width="22%" />
+							<listheader id="listheader_WriteOffAccountingCode" label="${c:l('listheader_WriteOffAccountingCode.label')}"
+								sort="auto" width="22%" />
 						</listhead>
 					</listbox>
 				</groupbox>

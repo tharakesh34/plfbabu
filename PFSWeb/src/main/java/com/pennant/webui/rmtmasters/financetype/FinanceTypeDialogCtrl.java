@@ -45,6 +45,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -108,6 +109,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.service.bmtmasters.ProductService;
 import com.pennant.backend.service.feetype.FeeTypeService;
+import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -553,6 +555,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private ProductService productService;
 	protected FinTypeExpenseListCtrl finTypeExpenseListCtrl;
 	protected FeeTypeService feeTypeService;
+	private FinTypeAccountingService finTypeAccountingService;
 
 	// Cost of funds
 	protected Row row_Custoffunds;
@@ -8780,7 +8783,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			categoryCode = AccountingEvent.EVENTCTG_CD;
 		}
 
-		return PennantAppUtil.getCategoryWiseEvents(categoryCode);
+		return finTypeAccountingService.getAccountEngineEvents(categoryCode);
 	}
 
 	/*
@@ -9326,6 +9329,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
+	}
+
+	@Autowired
+	public void setFinTypeAccountingService(FinTypeAccountingService finTypeAccountingService) {
+		this.finTypeAccountingService = finTypeAccountingService;
 	}
 
 }

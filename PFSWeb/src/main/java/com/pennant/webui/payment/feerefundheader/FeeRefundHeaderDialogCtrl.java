@@ -97,8 +97,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.util.ErrorControl;
@@ -521,7 +521,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		}
 		if (!onLoadProcess) {
-			long accountsetId = AccountingConfigCache.getAccountSetID(this.fm.getFinType(), AccountingEvent.PAYMTINS,
+			Long accountsetId = AccountingEngine.getAccountSetID(this.fm, AccountingEvent.PAYMTINS,
 					FinanceConstants.MODULEID_FINTYPE);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("feeRefundInstruction", fri);
