@@ -84,7 +84,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -478,18 +478,19 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 
 		// Fetch Accounting Set ID
-		long accountingSetID = 0;
+		Long accountingSetID = 0L;
 		Map<String, Object> map = null;
 
 		String recAgainst = rch.getRecAgainst();
 		if (RepayConstants.RECEIPTTO_FINANCE.equals(recAgainst) || (RepayConstants.RECEIPTTO_CUSTOMER.equals(recAgainst)
 				&& StringUtils.isNotBlank(rch.getExtReference()))) {
-			accountingSetID = AccountingConfigCache.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
+			accountingSetID = AccountingEngine.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
 					FinanceConstants.MODULEID_FINTYPE);
+
 			map = financeMainDAO.getGLSubHeadCodes(rch.getFinID());
 		}
 
-		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
+		if (accountingSetID == null || accountingSetID <= 0) {
 			auditHeader.setErrorDetails(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");

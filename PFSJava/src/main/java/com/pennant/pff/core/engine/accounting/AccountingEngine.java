@@ -3,6 +3,7 @@ package com.pennant.pff.core.engine.accounting;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -16,6 +17,8 @@ import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.event.PostingEvent;
 import com.pennanttech.pennapps.core.AppException;
@@ -166,6 +169,47 @@ public class AccountingEngine {
 			getReversalsByLinkedTranID(linkedTranId);
 			logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranId);
 		}
+	}
+
+	public static Long getAccountSetID(String finType, String eventCode, int moduleID) {
+		FinanceMain fm = new FinanceMain();
+		fm.setFinType(finType);
+
+		return getAccountSetID(fm, eventCode, moduleID);
+	}
+
+	public static Long getAccountSetID(FinanceMain fm, String eventCode) {
+		int moduleID = FinanceConstants.MODULEID_FINTYPE;
+
+		if (StringUtils.isNotBlank(fm.getPromotionCode())) {
+			moduleID = FinanceConstants.MODULEID_PROMOTION;
+		}
+
+		return getAccountSetID(fm, eventCode, moduleID);
+	}
+
+	public static Long getAccountSetID(FinanceMain fm, String eventCode, int moduleID) {
+		String derivedEventCode = null;
+
+		if (fm.isUnderSettlement()) {
+			derivedEventCode = eventCode + "_S";
+		} else if (fm.isUnderSettlement()) {
+			derivedEventCode = eventCode + "_N";
+		} else if (fm.isWifLoan()) {
+			derivedEventCode = eventCode + "_W";
+		}
+
+		Long accountSetID = null;
+
+		if (derivedEventCode != null) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), derivedEventCode, moduleID);
+		}
+
+		if (accountSetID == null || accountSetID <= 0) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode, moduleID);
+		}
+
+		return accountSetID;
 	}
 
 	private static PostingEvent getPostingEvent(String eventName) {

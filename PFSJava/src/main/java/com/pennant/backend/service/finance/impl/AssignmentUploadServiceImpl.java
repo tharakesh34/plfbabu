@@ -54,12 +54,11 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.AssignmentUploadService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -649,15 +648,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			aeEvent.setEntityCode(assignment.getEntityCode());
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.getAcSetIDList().clear();
-			long accountSetId = 0;
-			if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
-				accountSetId = AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
-						AccountingEvent.ASSIGNMENT, FinanceConstants.MODULEID_PROMOTION);
-			} else {
-				accountSetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-						AccountingEvent.ASSIGNMENT, FinanceConstants.MODULEID_FINTYPE);
+			Long accountSetId = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.ASSIGNMENT);
+
+			if (accountSetId != null && accountSetId > 0) {
+				aeEvent.getAcSetIDList().add(accountSetId);
 			}
-			aeEvent.getAcSetIDList().add(accountSetId);
+
 			aeEvent.setNewRecord(true);
 
 			Set<String> excludeFees = null;

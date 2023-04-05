@@ -6990,8 +6990,6 @@
 
 	<bean name="finTypeAccountingServiceTarget"
 		class="com.pennant.backend.service.rmtmasters.impl.FinTypeAccountingServiceImpl">
-		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<bean id="finTypePartnerBankService"

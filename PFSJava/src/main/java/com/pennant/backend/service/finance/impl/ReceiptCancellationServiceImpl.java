@@ -168,7 +168,6 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
@@ -1851,7 +1850,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		// Accrual Difference Postings
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(), AccountingEvent.AMZ,
+		Long accountingID = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.AMZ,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		EventProperties eventProperties = financeMain.getEventProperties();
@@ -1864,7 +1863,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			derivedAppDate = SysParamUtil.getAppDate();
 		}
 
-		if (accountingID != null && accountingID != Long.MIN_VALUE) {
+		if (accountingID != null && accountingID > 0) {
 
 			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
 

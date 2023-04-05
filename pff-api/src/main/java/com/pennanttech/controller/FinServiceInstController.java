@@ -150,7 +150,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.mandate.ChequeSatus;
@@ -3374,9 +3373,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		eventMapping.put("PB_ReceiptAmount", receiptAmount);
 		eventMapping.put("ae_receiptmode", receiptMode);
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), type,
-				FinanceConstants.MODULEID_FINTYPE);
-		aeEvent.getAcSetIDList().add(accountsetId);
+		Long accountsetId = AccountingEngine.getAccountSetID(fm, type, FinanceConstants.MODULEID_FINTYPE);
+
+		if (accountsetId != null && accountsetId > 0) {
+			aeEvent.getAcSetIDList().add(accountsetId);
+		}
 
 		logger.debug(Literal.LEAVING);
 

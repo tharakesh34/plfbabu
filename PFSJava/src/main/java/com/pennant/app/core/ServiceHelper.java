@@ -88,8 +88,8 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
 import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
@@ -148,8 +148,8 @@ public abstract class ServiceHelper {
 		 * }
 		 */
 
-		return AccountingConfigCache.getCacheAccountSetID(main.getFinType(), eventCode,
-				FinanceConstants.MODULEID_FINTYPE);
+		return AccountingEngine.getAccountSetID(main, eventCode, FinanceConstants.MODULEID_FINTYPE);
+
 	}
 
 	public final void postAccountingEOD(AEEvent aeEvent) {

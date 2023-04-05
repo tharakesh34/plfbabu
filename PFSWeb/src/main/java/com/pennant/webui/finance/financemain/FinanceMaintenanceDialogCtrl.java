@@ -105,9 +105,9 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
@@ -1322,8 +1322,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			List<ReturnDataSet> returnSetEntries = null;
 			Map<String, FeeRule> map = new HashMap<>();
 
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList()
+					.add(AccountingEngine.getAccountSetID(finMain, eventCode, FinanceConstants.MODULEID_FINTYPE));
 
 			dataMap.putAll(map);
 			aeEvent.setDataMap(dataMap);

@@ -31,7 +31,7 @@ import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -287,10 +287,10 @@ public class InstallmentDueService extends ServiceHelper {
 		 * FinanceConstants.MODULEID_FINTYPE); }
 		 */
 
-		accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.INSTDATE,
+		accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.INSTDATE,
 				FinanceConstants.MODULEID_FINTYPE);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			logger.debug(Literal.LEAVING);
 			return datasets;
 		}

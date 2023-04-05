@@ -37,6 +37,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -56,9 +57,9 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.service.rmtmasters.FinTypeAccountingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
@@ -99,6 +100,8 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected boolean consumerDurable = false;
 	private boolean isCompReadonly = false;
 	private boolean excludeAppFeeCodes = false;
+
+	private FinTypeAccountingService finTypeAccountingService;
 
 	/**
 	 * default constructor.<br>
@@ -238,7 +241,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 			categoryCode = AccountingEvent.EVENTCTG_GOLD;
 		}
 
-		return PennantAppUtil.getCategoryWiseEvents(categoryCode);
+		return finTypeAccountingService.getAccountEngineEvents(categoryCode);
 	}
 
 	private List<FinTypeFees> getFinTypeFeesByModule(List<FinTypeFees> finTypeFeesList, boolean isOriginationFees) {
@@ -578,4 +581,10 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	public void setMainController(Object mainController) {
 		this.mainController = mainController;
 	}
+
+	@Autowired
+	public void setFinTypeAccountingService(FinTypeAccountingService finTypeAccountingService) {
+		this.finTypeAccountingService = finTypeAccountingService;
+	}
+
 }

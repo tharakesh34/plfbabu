@@ -109,7 +109,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1447,14 +1447,8 @@ public class RepaymentPostingsUtil {
 		}
 
 		aeEvent.getAcSetIDList().clear();
-		if (StringUtils.isNotBlank(fm.getPromotionCode())
-				&& (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getCacheAccountSetID(fm.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, eventCode));
 
 		// Assignment Percentage
 		Set<String> excludeFees = null;
@@ -1837,10 +1831,9 @@ public class RepaymentPostingsUtil {
 			Date monthStartDate) {
 
 		String acceventAmz = AccountingEvent.AMZ;
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), acceventAmz,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountingID = AccountingEngine.getAccountSetID(fm, acceventAmz, FinanceConstants.MODULEID_FINTYPE);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			return;
 		}
 
@@ -1879,14 +1872,16 @@ public class RepaymentPostingsUtil {
 
 	private void postAMZPostings(FinanceMain fm, List<FinanceScheduleDetail> schedules, FinanceProfitDetail fpd,
 			Date amzDate) {
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.AMZ,
+		Long accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.AMZ,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent acrEvt = AEAmounts.procCalAEAmounts(fm, fpd, schedules, AccountingEvent.AMZ, amzDate, fm.getAppDate());
 
 		acrEvt.setDataMap(acrEvt.getAeAmountCodes().getDeclaredFieldValues());
 
-		acrEvt.getAcSetIDList().add(accountingID);
+		if (accountingID != null && accountingID > 0) {
+			acrEvt.getAcSetIDList().add(accountingID);
+		}
 
 		postingsPreparationUtil.postAccounting(acrEvt);
 
@@ -1907,11 +1902,13 @@ public class RepaymentPostingsUtil {
 
 		String instEvent = AccountingEvent.INSTDATE;
 
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), instEvent,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountingID = AccountingEngine.getAccountSetID(fm, instEvent, FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, fpd, schedules, instEvent, schDate, schDate);
-		aeEvent.getAcSetIDList().add(accountingID);
+
+		if (accountingID != null && accountingID > 0) {
+			aeEvent.getAcSetIDList().add(accountingID);
+		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();

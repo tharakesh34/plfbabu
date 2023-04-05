@@ -1664,6 +1664,15 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		List<AmountCode> amountCodesList = new ArrayList<AmountCode>();
 		JdbcSearchObject<AmountCode> searchObj = new JdbcSearchObject<AmountCode>(AmountCode.class);
 		searchObj.addTabelName("BMTAmountCodes");
+
+		if (allowedevent.endsWith("_S")) {
+			allowedevent = allowedevent.replace("_S", "");
+		} else if (allowedevent.endsWith("_N")) {
+			allowedevent = allowedevent.replace("_N", "");
+		} else if (allowedevent.endsWith("_W")) {
+			allowedevent = allowedevent.replace("_W", "");
+		}
+
 		if (allowedevent != null) {
 			searchObj.addFilter(new Filter("AllowedEvent", allowedevent, Filter.OP_EQUAL));
 			if (!this.accountingSetDialogCtrl.entryByInvestment.isChecked()) {

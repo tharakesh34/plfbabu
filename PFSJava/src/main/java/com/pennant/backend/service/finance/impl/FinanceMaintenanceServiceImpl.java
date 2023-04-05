@@ -99,7 +99,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.mandate.InstrumentType;
@@ -911,10 +910,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		long linkedTranId = 0;
-		long accountsetID = AccountingConfigCache.getAccountSetID(fm.getFinType(), accEventCode,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountsetID = AccountingEngine.getAccountSetID(fm, accEventCode, FinanceConstants.MODULEID_FINTYPE);
 
-		if (accountsetID > 0) {
+		if (accountsetID != null && accountsetID > 0) {
 			AEEvent aeEvent = AEAmounts.procAEAmounts(fm, schdData.getFinanceScheduleDetails(), profitDetail,
 					accEventCode, appDate, fm.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -926,8 +924,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setDataMap(dataMap);
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
-					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
+
+			aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, aeEvent.getAccountingEvent(),
+					FinanceConstants.MODULEID_FINTYPE));
+
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 			if (!aeEvent.isPostingSucess()) {

@@ -1852,65 +1852,6 @@ public class PennantAppUtil {
 		return accountEngineEventsList;
 	}
 
-	/**
-	 * Method for Fetching List of Accounting Event Codes based on Category Code
-	 * 
-	 * @param categoryCode
-	 * @return
-	 */
-	public static List<AccountEngineEvent> getCategoryWiseEvents(String categoryCode) {
-
-		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
-				AccountEngineEvent.class);
-
-		Filter[] filters = null;
-		List<String> excludedAccEvents = getExcludedAccEvents();
-
-		if (excludedAccEvents.isEmpty()) {
-			filters = new Filter[2];
-		} else {
-			filters = new Filter[3];
-		}
-
-		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-		filters[1] = new Filter("CategoryCode", categoryCode, Filter.OP_EQUAL);
-		if (!excludedAccEvents.isEmpty()) {
-			filters[2] = new Filter("AEEventCode", excludedAccEvents, Filter.OP_NOT_IN);
-		}
-
-		searchObject.addFilters(filters);
-		searchObject.addTabelName("CategoryWiseEvents_VIEW");
-		searchObject.addSort("SeqOrder", false);
-		return pagedListService.getBySearchObject(searchObject);
-
-	}
-
-	public static List<String> getExcludedAccEvents() {
-		List<String> excludeEvents = new ArrayList<String>();
-
-		if (!ImplementationConstants.ALLOW_ADDDBSF) {
-			excludeEvents.add(AccountingEvent.ADDDBSF);
-		}
-
-		if (!ImplementationConstants.ALLOW_IND_AS) {
-			excludeEvents.add(AccountingEvent.EXPENSE);
-			excludeEvents.add(AccountingEvent.INDAS);
-		}
-
-		if (!ImplementationConstants.ALLOW_NPA) {
-			excludeEvents.add(AccountingEvent.NPACHNG);
-		}
-
-		if (!ImplementationConstants.ALLOW_PROVISION) {
-			excludeEvents.add(AccountingEvent.PROVSN);
-			excludeEvents.add(AccountingEvent.PRVSN_MN);
-			excludeEvents.add(AccountingEvent.PROVCHG);
-		}
-
-		return excludeEvents;
-	}
-
 	public static List<AccountEngineEvent> fetchAccountingEvents() {
 
 		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();

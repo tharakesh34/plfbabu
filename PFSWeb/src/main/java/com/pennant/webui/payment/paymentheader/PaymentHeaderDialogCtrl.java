@@ -101,8 +101,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.pff.payment.model.PaymentDetail;
@@ -182,7 +182,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected String selectMethodName = "onSelectTab";
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private boolean isAccountingExecuted = false;
-	private long accountsetId;
+	private Long accountsetId;
 	// Add list Manualadvise
 	private Listheader listheader_PaymentHeaderDialog_button;
 	private Grid grid_basicDetails;
@@ -607,8 +607,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		}
 		if (!onLoadProcess) {
-			accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
-					AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+			accountsetId = AccountingEngine.getAccountSetID(this.financeMain, AccountingEvent.PAYMTINS,
+					FinanceConstants.MODULEID_FINTYPE);
+
 			final Map<String, Object> map = new HashMap<>();
 			map.put("paymentInstruction", paymentInstruction);
 			map.put("acSetID", accountsetId);

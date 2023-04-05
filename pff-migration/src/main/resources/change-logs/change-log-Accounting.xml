@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Gopal.p" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	 <changeSet id="ST#1470.1" author="saikrihna.b">
+		<dropIndex tableName="BMTAEEVENTS" indexName="IX_BMTAEEVT_AEEVTCD" />
+	</changeSet>
+
+	<changeSet id="ST#1470.2" author="saikrihna.b">
+		<modifyDataType tableName="BMTAEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="ST#1470.3" author="saikrihna.b">
+		<createIndex tableName="BMTAEEVENTS" indexName="IX_BMTAEEVT_AEEVTCD">
+			<column name="AEEVENTCODE" type="varchar(10)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1470.4" author="saikrihna.b">
+		<dropIndex tableName="BMTAEEVENTS_TEMP" indexName="IX_BMTAEEVT_T_AEEVTCD" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.5" author="saikrihna.b">
+		<modifyDataType tableName="BMTAEEVENTS_TEMP" columnName="AEEVENTCODE" newDataType="varchar(10)" />
+	</changeSet>
+
+	
+	<changeSet id="ST#1470.6" author="saikrihna.b">
+		<createIndex tableName="BMTAEEVENTS_TEMP" indexName="IX_BMTAEEVT_T_AEEVTCD">
+			<column name="AEEVENTCODE" type="varchar(10)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#1470.7" author="saikrihna.b">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('AMZ_S', 		'Accruals For Settlement', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('AMZ_N', 		'Accruals For NPA', 					1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('AMZ_W', 		'Accruals For Write-Off', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EARLYPAY_S', 	'Partial Payment For Settlement', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EARLYPAY_N', 	'Partial Payment For NPA', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EARLYPAY_W', 	'Partial Payment For Write-Off', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EARLYSTL_S', 	'Early settlement For Settlement', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EARLYSTL_N',	'Early settlement For NPA', 			1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EARLYSTL_W', 	'Early settlement For Write-Off', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EMIDAY_S', 	'EMI Holiday For Settlement', 			1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EMIDAY_N', 	'EMI Holiday For NPA', 					1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('EMIDAY_W', 	'EMI Holiday For Write-Off', 			1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('INSTDATE_S', 	'Installment Date For Settlement', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('INSTDATE_N', 	'Installment Date For NPA', 			1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('INSTDATE_W', 	'Installment Date For Write-Off', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('LATEPAY_S', 	'Overdue Payment For Settlement', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('LATEPAY_N', 	'Overdue Payment For NPA', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('LATEPAY_W', 	'Overdue Payment For Write-Off', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('REPAY_S', 		'Installment Repayment For Settlement', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('REPAY_N', 		'Installment Repayment For NPA', 		1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('REPAY_W', 		'Installment Repayment For Write-Off', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('WRITEOFF_S', 	'Write off For Settlement', 			1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('WRITEOFF_N', 	'Write off For NPA', 					1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+			
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('NPACHNG_S',  	'NPA For Settlement', 					1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="ST#1470.8" author="saikrihna.b">
+		<modifyDataType tableName="CATEGORYWISEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.9" author="saikrihna.b">
+		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.10" author="saikrihna.b">
+		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="EVENTCODE" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.11" author="saikrihna.b">
+		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.12" author="saikrihna.b">
+		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT_MDID" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.13" author="saikrihna.b">
+		<modifyDataType tableName="FINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.14" author="saikrihna.b">
+		<createIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT">
+			<column name="EVENT" type="varchar(10)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#1470.15" author="saikrihna.b">
+		<createIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT_MDID">
+			<column name="EVENT" type="varchar(10)" />
+			<column name="MODULEID" type="varchar(10)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#1470.16" author="saikrihna.b">
+		<dropIndex tableName="FINTYPEACCOUNTING_TEMP" indexName="IX_FINTYPACCG_T_TYP_EVT" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.17" author="saikrihna.b" dbms="mssql,oracle">
+		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING_TEMP" tableName="FINTYPEACCOUNTING_TEMP" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.18" author="saikrihna.b">
+		<modifyDataType tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.19" author="saikrihna.b">
+		<createIndex tableName="FINTYPEACCOUNTING_TEMP" indexName="IX_FINTYPACCG_T_TYP_EVT">
+			<column name="EVENT" type="varchar(10)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="ST#1470.20" author="saikrihna.b">
+		<addPrimaryKey tableName="FINTYPEACCOUNTING_TEMP" columnNames="FINTYPE, EVENT, MODULEID"
+			constraintName="PK_FINTYPEACCOUNTING_TEMP" />
+	</changeSet>
+	
+</databaseChangeLog> 

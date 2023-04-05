@@ -210,11 +210,11 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.pff.extension.PartnerBankExtension;
@@ -953,21 +953,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		Long acSetID = Long.MIN_VALUE;
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		String finType = finMain.getFinType();
-
-		int moduleID = FinanceConstants.MODULEID_FINTYPE;
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			finType = finMain.getPromotionCode();
-			moduleID = FinanceConstants.MODULEID_PROMOTION;
-		}
 
 		String purpose = getComboboxValue(receiptPurpose);
 		if (StringUtils.equals(purpose, FinServiceEvent.EARLYSETTLE)) {
-			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL, moduleID);
+			acSetID = AccountingEngine.getAccountSetID(finMain, AccountingEvent.EARLYSTL);
 		} else if (StringUtils.equals(purpose, FinServiceEvent.EARLYRPY)) {
-			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYPAY, moduleID);
+			acSetID = AccountingEngine.getAccountSetID(finMain, AccountingEvent.EARLYPAY);
 		} else {
-			acSetID = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.REPAY, moduleID);
+			acSetID = AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY);
 		}
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -5646,13 +5639,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY));
 
 				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
@@ -5961,13 +5948,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				pftChgExecuted = true;
 			}
 
-			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-						eventCode, FinanceConstants.MODULEID_PROMOTION));
-			} else {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE));
-			}
+			aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, eventCode));
 
 			aeEvent.setAccountingEvent(eventCode);
 
@@ -6054,13 +6035,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.LATEPAY));
 
 				aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -6236,13 +6212,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				amountCodes.setPaymentType(rcd.getPaymentType());
 				amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY));
 
 				// Paid GST Details
 				addZeroifNotContains(movementMap, "bounceChargePaid");
@@ -6370,19 +6341,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		Long accountSetId = Long.MIN_VALUE;
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		String finType = finMain.getFinType();
-		int moduleID = FinanceConstants.MODULEID_FINTYPE;
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			finType = finMain.getPromotionCode();
-			moduleID = FinanceConstants.MODULEID_PROMOTION;
-		}
 
 		if (receiptPurposeCtg == 2) {
-			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL, moduleID);
+			accountSetId = AccountingEngine.getAccountSetID(finMain, AccountingEvent.EARLYSTL);
 		} else if (receiptPurposeCtg == 1) {
-			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYPAY, moduleID);
+			accountSetId = AccountingEngine.getAccountSetID(finMain, AccountingEvent.EARLYPAY);
 		} else {
-			accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.REPAY, moduleID);
+			accountSetId = AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY);
 		}
 
 		// Accounting Detail Tab

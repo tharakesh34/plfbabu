@@ -29,7 +29,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -412,9 +412,9 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		String eventCode = AccountingEvent.NPACHNG;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(npaAc.getFinType(), eventCode, moduleID);
+		Long accountingID = AccountingEngine.getAccountSetID(npaAc.getFinType(), eventCode, moduleID);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			logger.debug("Accounting Set not found with {} Event and {} Loan Type", eventCode, npaAc.getFinType());
 			return;
 		}
@@ -469,9 +469,9 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		String eventCode = AccountingEvent.NPACHNG;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(npaAc.getFinType(), eventCode, moduleID);
+		Long accountingID = AccountingEngine.getAccountSetID(npaAc.getFinType(), eventCode, moduleID);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			logger.debug("Accounting Set not found with {} Event and {} Loan Type", eventCode, npaAc.getFinType());
 			return;
 		}
