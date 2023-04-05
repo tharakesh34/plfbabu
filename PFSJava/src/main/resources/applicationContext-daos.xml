@@ -13229,4 +13229,10 @@
 	
 	<bean id = "paymentInstructionUploadValidateRecord" class = "com.pennant.backend.service.payment.impl.PaymentInstructionUploadValidateRecord"/>
 	
+	<bean id="hostglmappingUploadService" class="com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="hostglmappingUploadDAO" class="com.pennanttech.pff.hostglmapping.dao.impl.HostGLMappingUploadDAOImpl" parent="sequenceDao" />
+	
+	<bean id = "hostGLMappingUploadValidateRecord" class = "com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadValidateRecord"/> 
+	
 </beans>

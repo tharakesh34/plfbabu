@@ -49,4 +49,5 @@ public interface ProfitCenterDAO extends BasicCrudDao<ProfitCenter> {
 	 */
 	boolean isDuplicateKey(long profitCenterID, String profitCenterCode, TableType tableType);
 
+	Long getPftCenterIDByCode(String profitCenterCode);
 }

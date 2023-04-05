@@ -279,4 +279,13 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 
 		return jdbcOperations.queryForObject(sql, Integer.class, groupId) > 0;
 	}
+
+	@Override
+	public boolean isExsistAccountType(String acctype) {
+		String sql = "Select Count(AcType) From RMTAccountTypes where AcType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, acctype) > 0;
+	}
 }

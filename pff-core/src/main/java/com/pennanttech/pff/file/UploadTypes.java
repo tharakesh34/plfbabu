@@ -19,7 +19,9 @@ public enum UploadTypes {
 
 	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen"),
 
-	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen");
+	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen"),
+
+	HOST_GL("Host GL Mapping Upload Details Screen");
 
 	private String description;
 

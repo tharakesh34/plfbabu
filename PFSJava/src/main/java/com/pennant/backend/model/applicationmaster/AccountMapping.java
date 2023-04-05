@@ -36,6 +36,7 @@ import java.util.Set;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Model class for the <b>AccountMapping table</b>.<br>
@@ -68,6 +69,8 @@ public class AccountMapping extends AbstractWorkflowEntity {
 	private Timestamp createdOn;
 	private Long approvedBy;
 	private Timestamp approvedOn;
+	private String gLDescription;
+	private RequestSource requestSource = RequestSource.UI;
 
 	private List<AccountMapping> accountMappingList = new ArrayList<AccountMapping>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -91,6 +94,8 @@ public class AccountMapping extends AbstractWorkflowEntity {
 		excludeFields.add("accountTypeDesc");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("tranType");
+		excludeFields.add("gLDescription");
+		excludeFields.add("requestSource");
 		return excludeFields;
 	}
 
@@ -312,6 +317,22 @@ public class AccountMapping extends AbstractWorkflowEntity {
 
 	public void setApprovedOn(Timestamp approvedOn) {
 		this.approvedOn = approvedOn;
+	}
+
+	public String getGLDescription() {
+		return gLDescription;
+	}
+
+	public void setGLDescription(String gLDescription) {
+		this.gLDescription = gLDescription;
+	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
 	}
 
 }

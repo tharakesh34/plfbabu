@@ -6173,4 +6173,6 @@
 		class="com.pennant.webui.unauthorizedtransactions.reports.UnAuthorizedTransactionCtrl" parent="basisCtrl"
 		scope="prototype" />
 	
+	<bean id="hostGLMappingUploadListCtrl" class="com.pennant.pff.hostglmapping.upload.list.HostGLMappingUploadListCtrl"
+	parent="uploadList" />
 </beans>

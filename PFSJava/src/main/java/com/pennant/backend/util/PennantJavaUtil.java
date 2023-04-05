@@ -3944,6 +3944,11 @@ public class PennantJavaUtil {
 						new String[] { "CROSS_LOAN_KNOCKOFF", "RECEIPTDETAILS_TVIEW" }, "RECEIPTS_WORKFLOW",
 						new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
 
+		ModuleUtil.register("HostGLMappingUploadHeader",
+				new ModuleMapping("HostGLMappingUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
 		registerCustomModules();
 	}
 

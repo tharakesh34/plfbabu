@@ -1278,6 +1278,16 @@
 				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=A"
 				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Approver" />
 		</menu>
+		
+		<menu id="menu_Category_BulkHostGLUpload">
+			<menuItem id="menu_Item_BulkHostGLUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HostGLMappingUpload/HostGLMappingUploadList.zul?stage=M"
+				rightName="menu_Item_BulkHostGLUpload_Maker" />
+			<menuItem id="menu_Item_BulkHostGLUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HostGLMappingUpload/HostGLMappingUploadList.zul?stage=A"
+				rightName="menu_Item_BulkHostGLUpload_Approver" />
+		</menu>
+		
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
