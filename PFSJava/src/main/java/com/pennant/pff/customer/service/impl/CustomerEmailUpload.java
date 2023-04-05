@@ -3,6 +3,7 @@ package com.pennant.pff.customer.service.impl;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,13 +47,13 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 				samPriority = true;
 			}
 		} else {
-			CustomerEMail custPri = customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority());
-			if (custPri != null) {
-				samPriority = true;
-				version = custPri.getVersion();
-				if (custPri.getCustEMailTypeCode().equals(email.getCustEMailTypeCode())) {
-					sameEMail = true;
-				}
+			List<CustomerEMail> list = customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority());
+			samPriority = CollectionUtils.isNotEmpty(list);
+			if (CollectionUtils.isNotEmpty(list)) {
+				version = list.get(list.size() - 1).getVersion();
+				sameEMail = list.stream()
+						.anyMatch(l1 -> l1.getCustEMailTypeCode().equals(email.getCustEMailTypeCode()));
+
 			}
 		}
 
@@ -125,7 +126,7 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 
 		if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == emailExis.getCustEMailPriority()
 				&& Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) != ce.getCustEMailPriority()) {
-			setError(detail, CustomerDetailsUploadError.KYC_ADD_09);
+			setError(detail, CustomerDetailsUploadError.KYC_MAIL_04);
 			return;
 		}
 
@@ -133,7 +134,7 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		updateAsLow(customerEMailDAO.getCustomerEMailById(custID, detail.getCustAddrPriority()));
+		customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority()).forEach(em -> updateAsLow(em));
 		deleteExisting(emailExis);
 		create(ce);
 	}
@@ -145,7 +146,7 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		updateAsLow(customerEMailDAO.getCustomerEMailById(custID, detail.getCustAddrPriority()));
+		customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority()).forEach(em -> updateAsLow(em));
 		create(email);
 	}
 
@@ -158,9 +159,6 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 	}
 
 	private void updateAsLow(CustomerEMail email) {
-		if (email == null) {
-			return;
-		}
 
 		email.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		email.setCustEMailPriority(Integer.valueOf(PennantConstants.KYC_PRIORITY_LOW));

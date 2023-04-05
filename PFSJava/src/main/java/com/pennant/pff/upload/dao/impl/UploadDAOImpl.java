@@ -394,7 +394,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	@Override
 	public void updateHeader(List<FileUploadHeader> headerList) {
 		StringBuilder sql = new StringBuilder("Update FILE_UPLOAD_HEADER");
-		sql.append(" Set SuccessRecords = ?, FailureRecords = FailureRecords + ?");
+		sql.append(" Set SuccessRecords = ?, FailureRecords = ?");
 		sql.append(", Progress = ?, Remarks = Remarks + ?");
 		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(", Version = Version + ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");

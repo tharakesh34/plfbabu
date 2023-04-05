@@ -51,6 +51,8 @@ public enum CustomerDetailsUploadError {
 
 	KYC_MAIL_03("Email Type is Mandatory to Give Email Details"),
 
+	KYC_MAIL_04("One Email with Very High priority is mandatory – Cannot Delete Existing Email Details"),
+
 	KYC_FIN_01("Invalid LAN or CIF");
 
 	private String description;

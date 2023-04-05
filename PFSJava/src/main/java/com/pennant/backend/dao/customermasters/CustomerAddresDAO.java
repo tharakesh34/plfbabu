@@ -59,5 +59,7 @@ public interface CustomerAddresDAO {
 
 	boolean isExisiCustPincode(long id);
 
-	CustomerAddres getCustomerAddresById(long id, long priority);
+	List<CustomerAddres> getCustomerAddresById(long id, long priority);
+
+	List<CustomerAddres> getCustomerAddresById(long id, String addType);
 }

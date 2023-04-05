@@ -60,5 +60,7 @@ public interface CustomerPhoneNumberDAO {
 
 	List<Customer> getCustomersByPhoneNum(String phoneNum);
 
-	CustomerPhoneNumber getCustomerPhoneNumberByID(long id, long phoneTypePriority);
+	List<CustomerPhoneNumber> getCustomerPhoneNumberByID(long id, long phoneTypePriority);
+
+	List<CustomerPhoneNumber> getCustomerPhoneNumberByID(long id, String typeCode);
 }

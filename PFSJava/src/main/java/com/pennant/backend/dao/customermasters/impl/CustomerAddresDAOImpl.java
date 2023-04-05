@@ -552,7 +552,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	}
 
 	@Override
-	public CustomerAddres getCustomerAddresById(final long id, long priority) {
+	public List<CustomerAddres> getCustomerAddresById(final long id, long priority) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
 		sql.append(", CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority");
@@ -565,47 +565,96 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				CustomerAddres ca = new CustomerAddres();
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerAddres ca = new CustomerAddres();
 
-				ca.setCustAddressId(rs.getLong("CustAddressId"));
-				ca.setCustID(rs.getLong("CustID"));
-				ca.setCustAddrType(rs.getString("CustAddrType"));
-				ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
-				ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
-				ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
-				ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
-				ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
-				ca.setCustPOBox(rs.getString("CustPOBox"));
-				ca.setCustAddrCity(rs.getString("CustAddrCity"));
-				ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
-				ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
-				ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
-				ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
-				ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
-				ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
-				ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
-				ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
-				ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
-				ca.setCustDistrict(rs.getString("CustDistrict"));
-				ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
-				ca.setVersion(rs.getInt("Version"));
-				ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				ca.setLastMntBy(rs.getLong("LastMntBy"));
-				ca.setRecordStatus(rs.getString("RecordStatus"));
-				ca.setRoleCode(rs.getString("RoleCode"));
-				ca.setNextRoleCode(rs.getString("NextRoleCode"));
-				ca.setTaskId(rs.getString("TaskId"));
-				ca.setNextTaskId(rs.getString("NextTaskId"));
-				ca.setRecordType(rs.getString("RecordType"));
-				ca.setWorkflowId(rs.getLong("WorkflowId"));
+			ca.setCustAddressId(rs.getLong("CustAddressId"));
+			ca.setCustID(rs.getLong("CustID"));
+			ca.setCustAddrType(rs.getString("CustAddrType"));
+			ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+			ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+			ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+			ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+			ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+			ca.setCustPOBox(rs.getString("CustPOBox"));
+			ca.setCustAddrCity(rs.getString("CustAddrCity"));
+			ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+			ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+			ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+			ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+			ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+			ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+			ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+			ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+			ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+			ca.setCustDistrict(rs.getString("CustDistrict"));
+			ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+			ca.setVersion(rs.getInt("Version"));
+			ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ca.setLastMntBy(rs.getLong("LastMntBy"));
+			ca.setRecordStatus(rs.getString("RecordStatus"));
+			ca.setRoleCode(rs.getString("RoleCode"));
+			ca.setNextRoleCode(rs.getString("NextRoleCode"));
+			ca.setTaskId(rs.getString("TaskId"));
+			ca.setNextTaskId(rs.getString("NextTaskId"));
+			ca.setRecordType(rs.getString("RecordType"));
+			ca.setWorkflowId(rs.getLong("WorkflowId"));
 
-				return ca;
-			}, id, priority);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return null;
-		}
+			return ca;
+		}, id, priority);
 	}
+
+	@Override
+	public List<CustomerAddres> getCustomerAddresById(final long id, String addType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustAddressId, CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
+		sql.append(", CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince, CustAddrPriority");
+		sql.append(", CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom, TypeOfResidence, CustAddrLine3");
+		sql.append(", CustAddrLine4, CustDistrict, PinCodeId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerAddresses");
+		sql.append(" Where CustID = ? and CustAddrType = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerAddres ca = new CustomerAddres();
+
+			ca.setCustAddressId(rs.getLong("CustAddressId"));
+			ca.setCustID(rs.getLong("CustID"));
+			ca.setCustAddrType(rs.getString("CustAddrType"));
+			ca.setCustAddrHNbr(rs.getString("CustAddrHNbr"));
+			ca.setCustFlatNbr(rs.getString("CustFlatNbr"));
+			ca.setCustAddrStreet(rs.getString("CustAddrStreet"));
+			ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
+			ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+			ca.setCustPOBox(rs.getString("CustPOBox"));
+			ca.setCustAddrCity(rs.getString("CustAddrCity"));
+			ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
+			ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
+			ca.setCustAddrCountry(rs.getString("CustAddrCountry"));
+			ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
+			ca.setCustAddrPhone(rs.getString("CustAddrPhone"));
+			ca.setCustAddrFrom(rs.getTimestamp("CustAddrFrom"));
+			ca.setTypeOfResidence(rs.getString("TypeOfResidence"));
+			ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
+			ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
+			ca.setCustDistrict(rs.getString("CustDistrict"));
+			ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+			ca.setVersion(rs.getInt("Version"));
+			ca.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ca.setLastMntBy(rs.getLong("LastMntBy"));
+			ca.setRecordStatus(rs.getString("RecordStatus"));
+			ca.setRoleCode(rs.getString("RoleCode"));
+			ca.setNextRoleCode(rs.getString("NextRoleCode"));
+			ca.setTaskId(rs.getString("TaskId"));
+			ca.setNextTaskId(rs.getString("NextTaskId"));
+			ca.setRecordType(rs.getString("RecordType"));
+			ca.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ca;
+		}, id, addType);
+	}
+
 }

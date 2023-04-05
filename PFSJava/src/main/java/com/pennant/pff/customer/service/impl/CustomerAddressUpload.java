@@ -1,5 +1,8 @@
 package com.pennant.pff.customer.service.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,13 +55,11 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 				samepriority = true;
 			}
 		} else {
-			CustomerAddres priAddress = customerAddresDAO.getCustomerAddresById(custID, curPriority);
-			if (priAddress != null) {
-				samepriority = true;
-				version = priAddress.getVersion();
-				if (priAddress.getCustAddrType().equals(address.getCustAddrType())) {
-					sameaddress = true;
-				}
+			List<CustomerAddres> list = customerAddresDAO.getCustomerAddresById(custID, curPriority);
+			samepriority = CollectionUtils.isNotEmpty(list);
+			if (CollectionUtils.isNotEmpty(list)) {
+				version = list.get(list.size() - 1).getVersion();
+				sameaddress = list.stream().anyMatch(l1 -> l1.getCustAddrType().equals(address.getCustAddrType()));
 			}
 		}
 
@@ -248,7 +249,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		updateAsLow(customerAddresDAO.getCustomerAddresById(custID, curPriority));
+		customerAddresDAO.getCustomerAddresById(custID, curPriority).forEach(ad -> updateAsLow(ad));
 		deleteExisting(addrExis);
 		create(ca);
 	}
@@ -258,7 +259,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		updateAsLow(customerAddresDAO.getCustomerAddresById(custID, curPriority));
+		customerAddresDAO.getCustomerAddresById(custID, curPriority).forEach(ad -> updateAsLow(ad));
 		create(address);
 	}
 
@@ -271,10 +272,6 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 	}
 
 	private void updateAsLow(CustomerAddres address) {
-		if (address == null) {
-			return;
-		}
-
 		address.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		address.setCustAddrPriority(Integer.valueOf(PennantConstants.KYC_PRIORITY_LOW));
 		address.setVersion(address.getVersion() + 1);

@@ -1,5 +1,8 @@
 package com.pennant.pff.customer.service.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
@@ -48,13 +51,11 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 				samePriority = true;
 			}
 		} else {
-			CustomerPhoneNumber phonePri = customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, curPriority);
-			if (phonePri != null) {
-				samePriority = true;
-				version = phonePri.getVersion();
-				if (phonePri.getPhoneTypeCode().equals(phone.getPhoneTypeCode())) {
-					samePhoneType = true;
-				}
+			List<CustomerPhoneNumber> list = customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, curPriority);
+			samePriority = CollectionUtils.isNotEmpty(list);
+			if (CollectionUtils.isNotEmpty(list)) {
+				version = list.get(list.size() - 1).getVersion();
+				samePhoneType = list.stream().anyMatch(l1 -> l1.getPhoneTypeCode().equals(phone.getPhoneTypeCode()));
 			}
 		}
 
@@ -141,7 +142,7 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		updateAsLow(customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, curPriority));
+		customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, curPriority).forEach(ph -> updateAsLow(ph));
 		deleteExisting(phoneExis);
 		create(phone);
 	}
@@ -152,8 +153,9 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 		}
 
 		Long custID = detail.getReferenceID();
+		int priority = detail.getPhoneTypePriority();
 
-		updateAsLow(customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, detail.getCustAddrPriority()));
+		customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, priority).forEach(ph -> updateAsLow(ph));
 		create(phone);
 	}
 
@@ -166,10 +168,6 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 	}
 
 	private void updateAsLow(CustomerPhoneNumber phone) {
-		if (phone == null) {
-			return;
-		}
-
 		phone.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		phone.setPhoneTypePriority(Integer.valueOf(PennantConstants.KYC_PRIORITY_LOW));
 		phone.setVersion(phone.getVersion() + 1);

@@ -106,7 +106,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 				header.setProgress(Status.APPROVED.getValue());
 			} else {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
-				header.setFailureRecords(header.getTotalRecords() - header.getFailureRecords());
+				header.setFailureRecords(header.getTotalRecords());
 				header.setSuccessRecords(0);
 				header.setApprovedBy(null);
 				header.setApprovedOn(null);

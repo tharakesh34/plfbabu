@@ -3261,4 +3261,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1472.7" author="Poojitha.M">
+		<sql>
+			<![CDATA[
+				UPDATE ERRORDETAILS SET MESSAGE = "Invalid Customer Phone Priority {0}." WHERE CODE = '90115';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
