@@ -21,6 +21,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.AppException;
@@ -37,6 +38,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private AssetClassificationService assetClassificationService;
+	private FinanceMainDAO financeMainDAO;
 
 	private static final String QUEUE_QUERY = "Select FinID From Asset_Classification_Queue Where ThreadID = ? and Progress = ?";
 
@@ -102,29 +104,23 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 					throw new AppException("Data is not found in NPA Loan Info for the FinID :" + finID);
 				}
 
-				boolean effNpaStage = npa.isEffNpaStage();
-
 				npa.setAssetClassSetup(header);
 				assetClassificationService.setLoanInfo(npa);
 				assetClassificationService.setEffClassification(npa);
 
-				boolean npaChange = false;
-				if (npa.isEffNpaStage() && npa.getLinkedTranID() == null) {
-					npaChange = true;
-					npa.setFinID(finID);
-					npa.setFinReference(npa.getFinReference());
-					assetClassificationService.setLoanInfo(npa);
-				}
-
 				AssetClassification napMovement = assetClassificationService.getNpaMovemnt(finID);
-
 				Long npaMovemntId = assetClassificationService.getNpaMovemntId(finID);
 
 				txStatus = transactionManager.getTransaction(txDef);
 
-				assetClassificationService.doPostNpaChange(npa, npaMovemntId);
+				boolean movedOutFromNpa = assetClassificationService.doPostNpaChange(npa, npaMovemntId);
+
+				if (movedOutFromNpa) {
+					npa.setLinkedTranID(null);
+				}
 
 				assetClassificationService.updateClassification(npa);
+				financeMainDAO.updateNPA(finID, npa.isEffNpaStage());
 
 				if (napMovement == null || isClassficationChange(napMovement, npa)) {
 					npa.setClassDate(appDate);
@@ -196,6 +192,11 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 	@Autowired
 	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
 		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

@@ -65,9 +65,22 @@
 									<row id="row0">
 										<label id="label_Entity"
 											value="${c:l('label_AssetClassSetupDialog_Entity.value')}" />
-
 										<extendedcombobox id="entityCode" />
 									</row>
+									<row>
+									<label value="${c:l('label_AssetClassSetupDialog_AssetClassSetupCode')}" />
+									<hbox>
+										<space id="space_AssetClassSetupCode" spacing="2px" sclass="mandatory" />
+										<uppercasebox id="code" maxlength="8" width="100px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_AssetClassSetupDialog_AssetClassSetupDescription')}" />
+									<hbox>
+										<space id="space_AssetClassSetupDescription" spacing="2px" sclass="mandatory" />
+										<textbox id="description" maxlength="100" width="450px" />
+									</hbox>
+								</row>
 								</rows>
 							</grid>
 						</groupbox>

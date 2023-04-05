@@ -23,6 +23,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -30,6 +31,7 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -52,6 +54,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	protected Window window_AssetClassSetupDialog;
 	protected ExtendedCombobox entityCode;
+	protected Textbox code;
+	protected Textbox description;
 	protected Button btnNew_AssetClassSetupDialog;
 
 	protected Listbox listBoxAssetClassSetup;
@@ -139,6 +143,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		this.entityCode.setValueColumn("entityCode");
 		this.entityCode.setDescColumn("entityDesc");
 		this.entityCode.setValidateColumns(new String[] { "entityCode" });
+		this.code.setMaxlength(8);
+		this.description.setMaxlength(50);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -291,6 +297,9 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	public void doWriteBeanToComponents(AssetClassSetupHeader assetClassSetupHeader) {
 		logger.debug(Literal.ENTERING);
 
+		this.code.setValue(assetClassSetupHeader.getCode());
+		this.description.setValue(assetClassSetupHeader.getDescription());
+
 		this.entityCode.setValue(assetClassSetupHeader.getEntityCode());
 		this.recordStatus.setValue(assetClassSetupHeader.getRecordStatus());
 
@@ -310,6 +319,18 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			if (obj != null) {
 				assetClassSetupHeader.setEntityCode(((Entity) obj).getEntityCode());
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			assetClassSetupHeader.setCode(this.code.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			assetClassSetupHeader.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -375,6 +396,17 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		if (!this.entityCode.isReadonly()) {
 			this.entityCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetClassSetupDialog_Entity.value"), null, true));
+		}
+
+		if (!this.code.isReadonly()) {
+			this.code.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Code.value"),
+							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+		}
+		if (!this.description.isReadonly()) {
+			this.description.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Description.value"),
+							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -730,6 +762,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	 */
 	private void doRemoveValidation() {
 		this.entityCode.setConstraint("");
+		this.code.setConstraint("");
+		this.description.setConstraint("");
 	}
 
 	/**
@@ -738,6 +772,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	@Override
 	protected void doClearMessage() {
 		this.entityCode.setErrorMessage("");
+		this.code.setErrorMessage("");
+		this.description.setErrorMessage("");
 	}
 
 	/**
@@ -800,9 +836,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		if (this.assetClassSetupHeader.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			readOnlyComponent(false, this.entityCode);
+			readOnlyComponent(false, this.code);
+			readOnlyComponent(false, this.description);
 		} else {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.entityCode);
+			readOnlyComponent(true, this.code);
+			readOnlyComponent(true, this.description);
 		}
 
 		if (isWorkFlowEnabled()) {
@@ -829,6 +869,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.entityCode);
+		readOnlyComponent(true, this.code);
+		readOnlyComponent(true, this.description);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -846,6 +888,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	 */
 	public void doClear() {
 		this.entityCode.setValue("");
+		this.code.setValue("");
+		this.description.setValue("");
 	}
 
 	/**

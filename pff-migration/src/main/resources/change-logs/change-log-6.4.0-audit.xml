@@ -56,6 +56,65 @@
 	<changeSet id="ST#1471.4" author="Mounika.M" dbms="postgresql, oracle">
 		<addDefaultValue tableName="ADTFINPFTDETAILS" columnName="CurDPDString" defaultValue="null" />
 	</changeSet>
-
 	
+	<changeSet id="ST#1469.1" author="NagaVamsi.P">
+		<addColumn tableName="ADTASSET_CLASS_SETUP_HEADER">
+			<column name="Code" type="varchar(10)" />
+			<column name="Description" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.1.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTASSET_CLASS_SETUP_HEADER SET Code = 'DEFAULT'; 
+				UPDATE ADTASSET_CLASS_SETUP_HEADER SET Description = 'DEFAULT'; 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.1.2" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="Code"
+			columnDataType="Varchar(10)" />
+		<addNotNullConstraint tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="Description"
+			columnDataType="Varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.2.1" author="NagaVamsi.P">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="ASSETCLASSSETUPCODE" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1467" author="NagaVamsi.P">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="UnderNpa" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#147.1" author="NagaVamsi.P" dbms="mssql, postgresql">
+		<sql>
+			<![CDATA[
+				UPDATE AdtRMTFinanceTypes SET ASSETCLASSSETUP = 
+				(Select ID From AdtASSET_CLASS_SETUP_HEADER Where Code = 'DEFAULT' and
+				 ENTITYCODE = sd.EntityCode From AdtSmtDivisionDetail sd
+				 Where AdtRMTFinanceTypes.FinDivision = sd.DivisionCode);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#147.1" author="NagaVamsi.P" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO AdtRMTFinanceTypes FT 
+				USING (
+				SELECT ID, DivisionCode From AdtASSET_CLASS_SETUP_HEADER HDR 
+				Inner Join AdtSmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT'
+				) H on H.DivisionCode = FT.FinDivision
+				WHEN MATCHED THEN UPDATE SET 
+				ASSETCLASSSETUP = H.ID;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

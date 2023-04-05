@@ -143,6 +143,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.npa.model.AssetClassSetupHeader;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.provision.ProvisionBook;
 
@@ -678,6 +679,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox instBasedSchd;
 	protected Row row_InstBasedSchd;
 	private boolean postEventReq = false;
+	protected ExtendedCombobox assetClassSetup;
 
 	/**
 	 * default constructor.<br>
@@ -964,6 +966,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.costOfFunds.setDescColumn("CofDesc");
 		this.costOfFunds.setValidateColumns(new String[] { "CofCode" });
 		this.costOfFunds.setMandatoryStyle(true);
+
+		this.assetClassSetup.setModuleName("AssetClassSetupHeader");
+		this.assetClassSetup.setValueColumn("Code");
+		this.assetClassSetup.setDescColumn("Description");
+		this.assetClassSetup.setValidateColumns(new String[] { "Code" });
+		this.assetClassSetup.setMandatoryStyle(true);
+
+		Filter[] assetClassSetupFilters = new Filter[1];
+		assetClassSetupFilters[0] = new Filter("EntityCode", 1, Filter.OP_EQUAL);
+		this.finDivision.setFilters(assetClassSetupFilters);
 
 		this.space_PftDueSchdOn.setSclass("");
 
@@ -2066,6 +2078,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doSetMinCalculationType();
 		doSetMaxCalculationType();
 
+		if (aFinanceType.getAssetClassSetup() != Long.MIN_VALUE && aFinanceType.getAssetClassSetup() != 0) {
+			this.assetClassSetup.setValue(aFinanceType.getAssetClassSetupCode());
+			assetClassSetup.setDescription(aFinanceType.getAssetClassSetupDesc());
+		} else {
+			this.assetClassSetup.setValue("");
+			assetClassSetup.setDescription("");
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2540,6 +2560,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		// Cost Of Fund
 		try {
 			aFinanceType.setCostOfFunds(this.costOfFunds.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			Object obj = this.assetClassSetup.getObject();
+			if (obj != null) {
+				aFinanceType.setAssetClassSetup(((AssetClassSetupHeader) obj).getId());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4772,6 +4801,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
 		}
 
+		if (!this.assetClassSetup.isReadonly()) {
+			this.assetClassSetup.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceTypeDialog_FinTypeAssetClassSetupCode.value"), null, true, true));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -4819,6 +4853,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.roundingMode.setConstraint("");
 		this.roundingTarget.setConstraint("");
 		this.costOfFunds.setConstraint("");
+		this.assetClassSetup.setConstraint("");
 		this.alwdIRRDetails.setConstraint("");
 		this.finLTVCheck.setConstraint("");
 		this.lPPRule.setConstraint("");
@@ -5009,6 +5044,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finDivision.setReadonly(true);
 
 		this.costOfFunds.setReadonly(isTrue);
+		this.assetClassSetup.setReadonly(isTrue);
 		if (ImplementationConstants.ALLOW_IRRCODES) {
 			// this.alwdIRRDetails.setReadonly(isTrue);
 			this.btnAlwIRRDetails.setDisabled(isTrue);

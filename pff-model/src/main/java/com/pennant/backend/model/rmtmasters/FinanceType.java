@@ -248,6 +248,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean schdOnPMTCal;
 	private Long regProvRule;
 	private Long intProvRule;
+	private long assetClassSetup;
+	private String assetClassSetupCode;
+	private String assetClassSetupDesc;
 
 	private boolean overdraftTxnChrgReq;
 	private long overdraftTxnChrgFeeType = Long.MIN_VALUE;
@@ -646,6 +649,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setMaxAutoRefund(this.maxAutoRefund);
 		entity.setMinAutoRefund(this.minAutoRefund);
 		entity.setNpaRpyHierarchy(this.npaRpyHierarchy);
+		entity.setAssetClassSetup(this.assetClassSetup);
+		entity.setAssetClassSetupCode(this.assetClassSetupCode);
+		entity.setAssetClassSetupDesc(this.assetClassSetupDesc);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -703,6 +709,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("alwVan");
 		excludeFields.add("vanAllocationMethod");
 		excludeFields.add("feetype");
+		excludeFields.add("assetClassSetupCode");
+		excludeFields.add("assetClassSetupDesc");
 		return excludeFields;
 	}
 
@@ -2860,5 +2868,29 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setNpaRpyHierarchy(String npaRpyHierarchy) {
 		this.npaRpyHierarchy = npaRpyHierarchy;
+	}
+
+	public long getAssetClassSetup() {
+		return assetClassSetup;
+	}
+
+	public void setAssetClassSetup(long assetClassSetup) {
+		this.assetClassSetup = assetClassSetup;
+	}
+
+	public String getAssetClassSetupCode() {
+		return assetClassSetupCode;
+	}
+
+	public void setAssetClassSetupCode(String assetClassSetupCode) {
+		this.assetClassSetupCode = assetClassSetupCode;
+	}
+
+	public String getAssetClassSetupDesc() {
+		return assetClassSetupDesc;
+	}
+
+	public void setAssetClassSetupDesc(String assetClassSetupDesc) {
+		this.assetClassSetupDesc = assetClassSetupDesc;
 	}
 }

@@ -22,6 +22,7 @@ import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -47,6 +48,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	private AssetClassificationDAO assetClassificationDAO;
 	private AssetClassSetupDAO assetClassSetupDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinanceMainDAO financeMainDAO;
 
 	private static final String ERR_CODE_01 = "Asset Classification Setup configuration is not exists for Entity Code : %s";
 
@@ -169,12 +171,12 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	public void setNpaClassification(AssetClassification ac) {
 		Map<String, AssetClassSetupHeader> assetClassSetup = ac.getAssetClassSetup();
 
-		String entityCode = ac.getEntityCode();
+		String finType = ac.getFinType();
 
-		AssetClassSetupHeader assetClassSetupHeader = assetClassSetup.get(entityCode);
+		AssetClassSetupHeader assetClassSetupHeader = assetClassSetup.get(finType);
 
 		if (assetClassSetupHeader == null) {
-			throw new AppException(String.format(ERR_CODE_01, entityCode));
+			throw new AppException(String.format(ERR_CODE_01, finType));
 		}
 
 		Date pastDueDate = ac.getPastDueDate();
@@ -278,7 +280,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	public Map<String, AssetClassSetupHeader> getAssetClassSetups() {
 		Map<String, AssetClassSetupHeader> map = new HashMap<>();
 
-		assetClassSetupDAO.getAssetClassSetups().forEach(acsh -> map.put(acsh.getEntityCode(), acsh));
+		assetClassSetupDAO.getAssetClassSetups().forEach(acsh -> map.put(acsh.getFinType(), acsh));
 
 		return map;
 	}
@@ -344,9 +346,9 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	}
 
 	private Long getNpaClassId(AssetClassification npa, List<AssetClassification> list) {
-		String entityCode = getEntityCode(npa.getFinReference(), list);
+		String finType = geFinType(npa.getFinReference(), list);
 
-		AssetClassSetupHeader acsh = npa.getAssetClassSetup().get(entityCode);
+		AssetClassSetupHeader acsh = npa.getAssetClassSetup().get(finType);
 
 		AssetClassSetupDetail acsd = getAssetClassSetup(npa.getNpaPastDueDays(), acsh);
 
@@ -386,29 +388,36 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	}
 
 	@Override
-	public void doPostNpaChange(AssetClassification npaAc, Long npaMovemntId) {
+	public boolean doPostNpaChange(AssetClassification npaAc, Long npaMovemntId) {
+		boolean movedOutFromNpa = false;
+
 		BigDecimal totAmount = BigDecimal.ZERO;
 		BigDecimal emiRe = BigDecimal.ZERO;
 		BigDecimal instIncome = BigDecimal.ZERO;
 		BigDecimal futurePri = BigDecimal.ZERO;
 
-		if (npaAc.isEffNpaStage() || npaAc.getLinkedTranID() != null) {
+		if (npaAc.isEffNpaStage() && npaAc.getLinkedTranID() == null) {
+			emiRe = npaAc.getEmiRe().subtract(npaAc.getPrvEmiRe());
+			instIncome = npaAc.getInstIncome().subtract(npaAc.getPrvInstIncome());
+			futurePri = npaAc.getFuturePri().subtract(npaAc.getPrvFuturePri());
+			totAmount = emiRe.add(futurePri);
+		} else if (!npaAc.isEffNpaStage() && npaAc.getLinkedTranID() != null) {
 			emiRe = npaAc.getEmiRe().subtract(npaAc.getPrvEmiRe());
 			instIncome = npaAc.getInstIncome().subtract(npaAc.getPrvInstIncome());
 			futurePri = npaAc.getFuturePri().subtract(npaAc.getPrvFuturePri());
 			totAmount = emiRe.add(futurePri);
 
-			if (!npaAc.isEffNpaStage() && npaAc.getLinkedTranID() != null
-					&& futurePri.compareTo(BigDecimal.ZERO) == 0) {
+			if (futurePri.compareTo(BigDecimal.ZERO) == 0) {
 				futurePri = npaAc.getFuturePri();
 				totAmount = emiRe.add(futurePri);
 			}
+
+			movedOutFromNpa = true;
 		}
 
-		if (totAmount.compareTo(BigDecimal.ZERO) <= 0) {
-			return;
+		if (totAmount.compareTo(BigDecimal.ZERO) == 0) {
+			return movedOutFromNpa;
 		}
-
 		String eventCode = AccountingEvent.NPACHNG;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
@@ -416,7 +425,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 		if (accountingID == null || accountingID == Long.MIN_VALUE) {
 			logger.debug("Accounting Set not found with {} Event and {} Loan Type", eventCode, npaAc.getFinType());
-			return;
+			return movedOutFromNpa;
 		}
 
 		AEEvent aeEvent = new AEEvent();
@@ -462,6 +471,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		assetClassificationDAO.updatePrvPastDuedays(npaAc);
 
 		npaAc.setLinkedTranID(aeEvent.getLinkedTranId());
+		return movedOutFromNpa;
 	}
 
 	@Override
@@ -573,6 +583,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		npa.setEffFinReference(npa.getFinReference());
 
 		updateClassification(npa);
+		financeMainDAO.updateNPA(finID, npa.isEffNpaStage());
 	}
 
 	@Override
@@ -709,8 +720,8 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		return guarantorLoans;
 	}
 
-	private String getEntityCode(String finReference, List<AssetClassification> list) {
-		return list.stream().filter(ac -> ac.getFinReference().equals(finReference)).findFirst().get().getEntityCode();
+	private String geFinType(String finReference, List<AssetClassification> list) {
+		return list.stream().filter(ac -> ac.getFinReference().equals(finReference)).findFirst().get().getFinType();
 	}
 
 	private Date findPastDueDate(Date pastDueDate, List<FinODDetails> odDetails) {
@@ -734,4 +745,10 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

@@ -16,6 +16,7 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private String entityCode;
+	private String finType;
 	private boolean newRecord = false;
 	private AssetClassSetupHeader befImage;
 	private long createdBy;
@@ -23,6 +24,8 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 	private Long approvedBy;
 	private Timestamp approvedOn;
 	private boolean active;
+	private String code;
+	private String description;
 
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private List<AssetClassSetupDetail> details = new ArrayList<>();
@@ -34,6 +37,7 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("details");
+		excludeFields.add("finType");
 		return excludeFields;
 	}
 
@@ -41,6 +45,7 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 		AssetClassSetupHeader entity = new AssetClassSetupHeader();
 		entity.setId(this.id);
 		entity.setEntityCode(this.entityCode);
+		entity.setFinType(this.finType);
 		entity.setNewRecord(this.newRecord);
 		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
 
@@ -63,6 +68,8 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 		entity.setDetails(this.getDetails());
 		entity.setAuditDetailMap(this.getAuditDetailMap());
 		entity.setActive(this.active);
+		entity.setCode(this.code);
+		entity.setDescription(this.description);
 
 		return entity;
 	}
@@ -81,6 +88,14 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 
 	public boolean isNewRecord() {
@@ -154,4 +169,21 @@ public class AssetClassSetupHeader extends AbstractWorkflowEntity {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }

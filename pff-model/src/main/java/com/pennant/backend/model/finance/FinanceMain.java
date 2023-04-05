@@ -858,6 +858,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean isEOD;
 	@XmlElement
 	private Date grcStartDate;
+	private boolean underNpa;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1601,6 +1602,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setSanBasedPft(this.sanBasedPft);
 		entity.setCpzPosIntact(this.cpzPosIntact);
 		entity.setModuleDefiner(this.moduleDefiner);
+		entity.setUnderNpa(this.underNpa);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5603,4 +5605,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setGrcStartDate(Date grcStartDate) {
 		this.grcStartDate = grcStartDate;
 	}
+
+	public boolean isUnderNpa() {
+		return underNpa;
+	}
+
+	public void setUnderNpa(boolean underNpa) {
+		this.underNpa = underNpa;
+	}
+
 }

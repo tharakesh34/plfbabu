@@ -295,7 +295,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", nps.PastDueDays, nps.PastDueDate, nps.DerivedPastDueDate");
 		sql.append(", npa.NpaPastDueDays, npa.NpaPastDueDate, npa.NpaStage");
 		sql.append(", npa.FinisActive, nps.OdPrincipal, nps.OdProfit, nps.TotPftPaid, nps.TotPftAccrued");
-		sql.append(", nps.TotPriBal, TillDateSchdPri");
+		sql.append(", nps.TotPriBal, TillDateSchdPri, nps.FinType");
 		sql.append(" From Npa_Provision_Stage nps");
 		sql.append(" Left Join Npa_Loan_Info npa On npa.FinID = nps.FinID");
 		sql.append(" Where nps.FinID = ? and nps.LinkedLoan = ?");
@@ -325,6 +325,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				item.setTotPftAccrued(rs.getBigDecimal("TotPftAccrued"));
 				item.setTotPriBal(rs.getBigDecimal("TotPriBal"));
 				item.setTillDateSchdPri(rs.getBigDecimal("TillDateSchdPri"));
+				item.setFinType(rs.getString("FinType"));
 
 				return item;
 			}, finID, 0);
@@ -590,7 +591,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public List<AssetClassification> getClassifications(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" nps.FinID, nps.EffFinID, npa.FinReference, nps.EffFinReference, nps.EntityCode, nps.LinkedLoan");
+		sql.append(" nps.FinID, nps.EffFinID, npa.FinReference, nps.EffFinReference, nps.FinType, nps.LinkedLoan");
 		sql.append(", npa.PastDueDays, npa.NpaPastDueDays");
 		sql.append(" From Npa_Provision_Stage nps");
 		sql.append(" Inner Join Npa_Loan_Info npa on npa.FinID = nps.EffFinID");
@@ -605,7 +606,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			item.setEffFinID(JdbcUtil.getLong(rs.getObject("EffFinID")));
 			item.setFinReference(rs.getString("FinReference"));
 			item.setEffFinReference(rs.getString("EffFinReference"));
-			item.setEntityCode(rs.getString("EntityCode"));
+			item.setFinType(rs.getString("FinType"));
 			item.setLinkedLoan(rs.getBoolean("LinkedLoan"));
 			item.setPastDueDays(rs.getInt("PastDueDays"));
 			item.setNpaPastDueDays(rs.getInt("NpaPastDueDays"));
@@ -618,15 +619,17 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getNpaDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, CustID, FinID, FinReference, EffFinID, EffFinReference, FinIsActive");
-		sql.append(", PastDueDays, PastDueDate, EffPastDueDays, EffPastDueDate");
-		sql.append(", NpaPastDueDays, NpaPastDueDate, EffNpaPastDueDays, EffNpaPastDueDate");
-		sql.append(", NpaClassID, EffNpaClassID");
-		sql.append(", NpaStage, EffNpaStage");
-		sql.append(", BusinessDate, LinkedTranID, EmiRe, InstIncome");
-		sql.append(", FuturePri, PrvEmiRe, PrvInstIncome, PrvFuturePri, SelfEffected");
-		sql.append(" From Npa_Loan_Info");
-		sql.append(" Where FinID = ?");
+		sql.append(" npa.Id, npa.CustID, npa.FinID, npa.FinReference, npa.EffFinID");
+		sql.append(", npa.EffFinReference, npa.FinIsActive");
+		sql.append(", npa.PastDueDays, npa.PastDueDate, npa.EffPastDueDays, npa.EffPastDueDate");
+		sql.append(", npa.NpaPastDueDays, npa.NpaPastDueDate, npa.EffNpaPastDueDays, npa.EffNpaPastDueDate");
+		sql.append(", npa.NpaClassID, npa.EffNpaClassID");
+		sql.append(", npa.NpaStage, npa.EffNpaStage");
+		sql.append(", npa.BusinessDate, npa.LinkedTranID, npa.EmiRe, npa.InstIncome");
+		sql.append(", npa.FuturePri, npa.PrvEmiRe, npa.PrvInstIncome, npa.PrvFuturePri, npa.SelfEffected, nps.FinType");
+		sql.append(" From Npa_Loan_Info npa");
+		sql.append(" Inner Join Npa_Provision_Stage nps on nps.FinID = npa.FinID");
+		sql.append(" Where npa.FinID = ? and nps.LinkedLoan = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -662,9 +665,10 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ac.setPrvInstIncome(rs.getBigDecimal("PrvInstIncome"));
 				ac.setPrvFuturePri(rs.getBigDecimal("PrvFuturePri"));
 				ac.setSelfEffected(rs.getBoolean("SelfEffected"));
+				ac.setFinType(rs.getString("FinType"));
 
 				return ac;
-			}, finID);
+			}, finID, 0);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

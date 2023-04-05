@@ -1185,6 +1185,18 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
+	public void updateNPA(long finID, boolean undernpa) {
+		String sql = "Update FinanceMain Set UnderNpa = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setBoolean(1, undernpa);
+			ps.setLong(2, finID);
+		});
+	}
+
+	@Override
 	public void updateFinBlackListStatus(long finID) {
 		String sql = "Update FinanceMain Set Blacklisted = ? Where FinID = ?";
 

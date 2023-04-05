@@ -431,238 +431,241 @@
 						</tabpanel>
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
 							<div id="graceDetailDiv">
-							<groupbox id="gb_GracePeriod" closable="false">
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="300px" />
-										<column />
-										<column width="300px" />
-										<column />
-									</columns>
-									<rows>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinGrcRateType"
-												value="${c:l('label_FinanceTypeDialog_FinGrcRateType.value')}" />
-											<hbox>
-												<space id="space_cbfinGrcRateType" spacing="2px" sclass="mandatory" />
-												<combobox id="cbfinGrcRateType" width="275px" readonly="true" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinGrcIntRate"
-												value="${c:l('label_FinanceTypeDialog_FinGrcIntRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="finGrcIntRate" width="125px" maxlength="15"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinGrcBaseRate"
-												value="${c:l('label_FinanceTypeDialog_FinGrcBaseRate.value')}" />
-											<ratebox id="financeGrcBaseRate" />
+								<groupbox id="gb_GracePeriod" closable="false">
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinGrcRateType"
+													value="${c:l('label_FinanceTypeDialog_FinGrcRateType.value')}" />
+												<hbox>
+													<space id="space_cbfinGrcRateType" spacing="2px" sclass="mandatory" />
+													<combobox id="cbfinGrcRateType" width="275px" readonly="true" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_FinGrcIntRate"
+													value="${c:l('label_FinanceTypeDialog_FinGrcIntRate.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="finGrcIntRate" width="125px" maxlength="15"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinGrcBaseRate"
+													value="${c:l('label_FinanceTypeDialog_FinGrcBaseRate.value')}" />
+												<ratebox id="financeGrcBaseRate" />
 
-										</row>
-										<row id="row_FinGrcRates" visible="false">
-											<label id="label_FinanceTypeDialog_FInGrcMinRate"
-												value="${c:l('label_FinanceTypeDialog_FInGrcMinRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="fInGrcMinRate" width="125px" maxlength="15"
-													style="text-align:right" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinGrcMaxRate"
-												value="${c:l('label_FinanceTypeDialog_FinGrcMaxRate.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<decimalbox id="finGrcMaxRate" width="125px" maxlength="15"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row id="row_ApplyGracePricingPolicy">
-											<label id="label_ApplyGrcPricing"
-												value="${c:l('label_FinanceTypeDialog_ApplyGrcPricing.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="applyGrcPricing" checked="false" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_GrcPricingMethod"
-												value="${c:l('label_FinanceTypeDialog_GrcPricingMethod.value')}" />
-											<extendedcombobox id="grcPricingMethod" />
+											</row>
+											<row id="row_FinGrcRates" visible="false">
+												<label id="label_FinanceTypeDialog_FInGrcMinRate"
+													value="${c:l('label_FinanceTypeDialog_FInGrcMinRate.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="fInGrcMinRate" width="125px" maxlength="15"
+														style="text-align:right" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_FinGrcMaxRate"
+													value="${c:l('label_FinanceTypeDialog_FinGrcMaxRate.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="finGrcMaxRate" width="125px" maxlength="15"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row id="row_ApplyGracePricingPolicy">
+												<label id="label_ApplyGrcPricing"
+													value="${c:l('label_FinanceTypeDialog_ApplyGrcPricing.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="applyGrcPricing" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_GrcPricingMethod"
+													value="${c:l('label_FinanceTypeDialog_GrcPricingMethod.value')}" />
+												<extendedcombobox id="grcPricingMethod" />
 
-										</row>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinGrcDftIntFrq"
-												value="${c:l('label_FinanceTypeDialog_FinGrcDftIntFrq.value')}" />
-											<frequencybox id="finGrcDftIntFrq" />
-										</row>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinIsAlwGrcRepay"
-												value="${c:l('label_FinanceTypeDialog_FinIsAlwGrcRepay.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="finIsAlwGrcRepay" checked="true" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinGrcSchdMthd"
-												value="${c:l('label_FinanceTypeDialog_FFinGrcSchdMthd.value')}" />
-											<hbox>
-												<space spacing="2px" id="space_finGrcSchdMthd" />
-												<combobox id="finGrcSchdMthd" width="275px" readonly="true" />
-											</hbox>
+											</row>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinGrcDftIntFrq"
+													value="${c:l('label_FinanceTypeDialog_FinGrcDftIntFrq.value')}" />
+												<frequencybox id="finGrcDftIntFrq" />
+											</row>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinIsAlwGrcRepay"
+													value="${c:l('label_FinanceTypeDialog_FinIsAlwGrcRepay.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="finIsAlwGrcRepay" checked="true" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_FinGrcSchdMthd"
+													value="${c:l('label_FinanceTypeDialog_FFinGrcSchdMthd.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_finGrcSchdMthd" />
+													<combobox id="finGrcSchdMthd" width="275px" readonly="true" />
+												</hbox>
 
-										</row>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinGrcIsIntCpz"
-												value="${c:l('label_FinanceTypeDialog_FinGrcIsIntCpz.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="finGrcIsIntCpz" checked="false" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinGrcCpzFrq"
-												value="${c:l('label_FinanceTypeDialog_FinGrcCpzFrq.value')}" />
-											<frequencybox id="finGrcCpzFrq" />
-										</row>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinGrcIsRvwAlw"
-												value="${c:l('label_FinanceTypeDialog_FinGrcIsRvwAlw.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="finGrcIsRvwAlw" checked="false" />
-											</hbox>
+											</row>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinGrcIsIntCpz"
+													value="${c:l('label_FinanceTypeDialog_FinGrcIsIntCpz.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="finGrcIsIntCpz" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_FinGrcCpzFrq"
+													value="${c:l('label_FinanceTypeDialog_FinGrcCpzFrq.value')}" />
+												<frequencybox id="finGrcCpzFrq" />
+											</row>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinGrcIsRvwAlw"
+													value="${c:l('label_FinanceTypeDialog_FinGrcIsRvwAlw.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="finGrcIsRvwAlw" checked="false" />
+												</hbox>
 
-											<label id="label_FinanceTypeDialog_FinGrcRvwFrq"
-												value="${c:l('label_FinanceTypeDialog_FinGrcRvwFrq.value')}" />
-											<frequencybox id="finGrcRvwFrq" />
-										</row>
-										<row id="row_FinGrcRvwRateApplFor" visible="false">
-											<label id="label_FinanceTypeDialog_FinGrcRvwRateApplFor"
-												value="${c:l('label_FinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />
-											<hbox>
-												<space id="space_FinGrcRvwRateApplFor" spacing="2px" />
-												<combobox id="cbfinGrcRvwRateApplFor" width="275px" readonly="true" />
-											</hbox>
-										</row>
-										<row visible="true">
-											<label id="label_FinanceTypeDialog_FinIsIntCpzAtGrcEnd"
-												value="${c:l('label_FinanceTypeDialog_FinIsIntCpzAtGrcEnd.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="finIsIntCpzAtGrcEnd" checked="false" />
-											</hbox>
-											<label id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd"
-												value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-							<groupbox id="gb_autoGraceInc_Details" visible="false">
-								<caption label="${c:l('label_FinanceTypeDialog_AutoGraceIncrement')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="300px" />
-										<column />
-										<column width="300px" />
-										<column />
-									</columns>
-									<rows>
-										<row>
-											<label id="label_GrcAdjReq"
-												value="${c:l('label_FinanceTypeDialog_GrcAdjReq.value')}" />
-											<hbox id="hlayout_GrcAdjReq" spacing="2px">
-												<space id="space_GrcAdjReq" spacing="2px" />
-												<checkbox id="grcAdjReq" />
-											</hbox>
-										</row>
-										<row>
-											<label id="label_GrcPeriodAftrFullDisb"
-												value="${c:l('label_FinanceTypeDialog_GrcPeriodAftrFullDisb.value')}" />
-											<hlayout id="hlayout_GrcPeriodAftrFullDisb" spacing="2px">
-												<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
-												<checkbox id="grcPeriodAftrFullDisb" />
-											</hlayout>
-											<label id="label_AutoIncrGrcEndDate"
-												value="${c:l('label_FinanceTypeDialog_AutoIncrGrcEndDate.value')}" />
-											<hlayout id="hlayout_AutoIncrGrcEndDate" spacing="2px">
-												<space id="space_AutoIncrGrcEndDate" spacing="2px" />
-												<checkbox id="autoIncrGrcEndDate" />
-											</hlayout>
-										</row>
-										<row>
-											<label id="label_GrcAutoIncrMonths"
-												value="${c:l('label_FinanceTypeDialog_GrcAutoIncrMonths.value')}" />
-											<hlayout id="hlayout_GrcAutoIncrMonths" spacing="2px">
-												<space id="space_GrcAutoIncrMonths" spacing="2px" />
-												<intbox id="grcAutoIncrMonths" />
-											</hlayout>
-											<label id="label_MaxAutoIncrAllowed"
-												value="${c:l('label_FinanceTypeDialog_MaxAutoIncrAllowed.value')}" />
-											<hlayout id="hlayout_MaxAutoIncrAllowed" spacing="2px">
-												<space id="space_MaxAutoIncrAllowed" spacing="2px" />
-												<intbox id="maxAutoIncrAllowed" />
-											</hlayout>
-										</row>
-										<row>
-											<label id="label_ThrldtoMaintainGrcPrd"
-												value="${c:l('label_FinanceTypeDialog_ThrldtoMaintainGrcPrd.value')}" />
-											<hlayout id="hlayoutThrldtoMaintainGrcPrd" spacing="2px">
-												<space id="spaceThrldtoMaintainGrcPrd" spacing="2px" />
-												<intbox id="thrldtoMaintainGrcPrd" />
-											</hlayout>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
-							<groupbox id="grcAdvIntAndEMIReq" visible="false">
-								<caption label="${c:l('label_FinanceTypeDialog_AdvanceInterest')}" />
-								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-									<columns>
-										<column width="300px" />
-										<column />
-										<column width="300px" />
-										<column />
-									</columns>
-									<rows>
-										<row>
-											<label
-												value="${c:l('label_FinanceTypeDialog_AdvanceIntersetRequired.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<checkbox id="grcAdvIntersetReq" checked="false" />
-											</hbox>
-											<label value="${c:l('label_FinanceTypeDialog_AdvanceType.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<combobox id="grcAdvType" />
-											</hbox>
-										</row>
+												<label id="label_FinanceTypeDialog_FinGrcRvwFrq"
+													value="${c:l('label_FinanceTypeDialog_FinGrcRvwFrq.value')}" />
+												<frequencybox id="finGrcRvwFrq" />
+											</row>
+											<row id="row_FinGrcRvwRateApplFor" visible="false">
+												<label id="label_FinanceTypeDialog_FinGrcRvwRateApplFor"
+													value="${c:l('label_FinanceTypeDialog_FinGrcRvwRateApplFor.value')}" />
+												<hbox>
+													<space id="space_FinGrcRvwRateApplFor" spacing="2px" />
+													<combobox id="cbfinGrcRvwRateApplFor" width="275px" readonly="true" />
+												</hbox>
+											</row>
+											<row visible="true">
+												<label id="label_FinanceTypeDialog_FinIsIntCpzAtGrcEnd"
+													value="${c:l('label_FinanceTypeDialog_FinIsIntCpzAtGrcEnd.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="finIsIntCpzAtGrcEnd" checked="false" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd"
+													value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gb_autoGraceInc_Details" visible="false">
+									<caption label="${c:l('label_FinanceTypeDialog_AutoGraceIncrement')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label id="label_GrcAdjReq"
+													value="${c:l('label_FinanceTypeDialog_GrcAdjReq.value')}" />
+												<hbox id="hlayout_GrcAdjReq" spacing="2px">
+													<space id="space_GrcAdjReq" spacing="2px" />
+													<checkbox id="grcAdjReq" />
+												</hbox>
+											</row>
+											<row>
+												<label id="label_GrcPeriodAftrFullDisb"
+													value="${c:l('label_FinanceTypeDialog_GrcPeriodAftrFullDisb.value')}" />
+												<hlayout id="hlayout_GrcPeriodAftrFullDisb" spacing="2px">
+													<space id="space_GrcPeriodAftrFullDisb" spacing="2px" />
+													<checkbox id="grcPeriodAftrFullDisb" />
+												</hlayout>
+												<label id="label_AutoIncrGrcEndDate"
+													value="${c:l('label_FinanceTypeDialog_AutoIncrGrcEndDate.value')}" />
+												<hlayout id="hlayout_AutoIncrGrcEndDate" spacing="2px">
+													<space id="space_AutoIncrGrcEndDate" spacing="2px" />
+													<checkbox id="autoIncrGrcEndDate" />
+												</hlayout>
+											</row>
+											<row>
+												<label id="label_GrcAutoIncrMonths"
+													value="${c:l('label_FinanceTypeDialog_GrcAutoIncrMonths.value')}" />
+												<hlayout id="hlayout_GrcAutoIncrMonths" spacing="2px">
+													<space id="space_GrcAutoIncrMonths" spacing="2px" />
+													<intbox id="grcAutoIncrMonths" />
+												</hlayout>
+												<label id="label_MaxAutoIncrAllowed"
+													value="${c:l('label_FinanceTypeDialog_MaxAutoIncrAllowed.value')}" />
+												<hlayout id="hlayout_MaxAutoIncrAllowed" spacing="2px">
+													<space id="space_MaxAutoIncrAllowed" spacing="2px" />
+													<intbox id="maxAutoIncrAllowed" />
+												</hlayout>
+											</row>
+											<row>
+												<label id="label_ThrldtoMaintainGrcPrd"
+													value="${c:l('label_FinanceTypeDialog_ThrldtoMaintainGrcPrd.value')}" />
+												<hlayout id="hlayoutThrldtoMaintainGrcPrd" spacing="2px">
+													<space id="spaceThrldtoMaintainGrcPrd" spacing="2px" />
+													<intbox id="thrldtoMaintainGrcPrd" />
+												</hlayout>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="grcAdvIntAndEMIReq" visible="false">
+									<caption label="${c:l('label_FinanceTypeDialog_AdvanceInterest')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_AdvanceIntersetRequired.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="grcAdvIntersetReq" checked="false" />
+												</hbox>
+												<label value="${c:l('label_FinanceTypeDialog_AdvanceType.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<combobox id="grcAdvType" />
+												</hbox>
+											</row>
 
-										<row>
-											<label value="${c:l('label_FinanceTypeDialog_MinimunAdvanceTerms.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox id="grcAdvMinTerms" width="45px" maxlength="3"
-													style="text-align:right" />
-											</hbox>
-											<label value="${c:l('label_FinanceTypeDialog_MaximumAdvanceTerms.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox id="grcAdvMaxTerms" width="45px" maxlength="3"
-													style="text-align:right" />
-											</hbox>
-										</row>
-										<row>
-											<label value="${c:l('label_FinanceTypeDialog_DefaultAdvanceTerms.value')}" />
-											<hbox>
-												<space spacing="2px" />
-												<intbox id="grcAdvDefaultTerms" width="45px" maxlength="3"
-													style="text-align:right" />
-											</hbox>
-										</row>
-									</rows>
-								</grid>
-							</groupbox>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_MinimunAdvanceTerms.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<intbox id="grcAdvMinTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+												<label
+													value="${c:l('label_FinanceTypeDialog_MaximumAdvanceTerms.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<intbox id="grcAdvMaxTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_DefaultAdvanceTerms.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<intbox id="grcAdvDefaultTerms" width="45px" maxlength="3"
+														style="text-align:right" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 							</div>
 						</tabpanel>
 						<tabpanel style="overflow:auto" ca:data-scrollable="true">
@@ -934,7 +937,7 @@
 												<label id="label_FinanceTypeDialog_FinScheduleOn"
 													value="${c:l('label_FinanceTypeDialog_FinScheduleOn.value')}" />
 												<hbox>
-													<space id="space_cbFinScheduleOn" spacing="2px"/>
+													<space id="space_cbFinScheduleOn" spacing="2px" />
 													<combobox id="cbFinScheduleOn" width="250px" readonly="true" />
 												</hbox>
 												<label id="label_FinanceTypeDialog_AlwEarlyPayMethods"
@@ -1256,8 +1259,8 @@
 														id="subventionReq" />
 												</hbox>
 											</row>
-											</rows>
-										</grid>
+										</rows>
+									</grid>
 								</groupbox>
 								<groupbox>
 									<caption
@@ -1842,7 +1845,7 @@
 													value="${c:l('label_FinanceTypeDialog_MaxPartPymtCal.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<combobox id="maxFPPCalType" readonly="true" width="200px"/>
+													<combobox id="maxFPPCalType" readonly="true" width="200px" />
 												</hbox>
 												<label 
 													value="${c:l('label_FinanceTypeDialog_MaxPartPymt.value')}" />
@@ -1876,14 +1879,14 @@
 										</columns>
 										<rows>
 											<row visible="true">
-												<label 
+												<label
 													value="${c:l('label_FinanceTypeDialog_PrepaymentLockPeriod.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<intbox id="ppLockinPeriod" width="45px" maxlength="3"
 														style="text-align:right" />
 												</hbox>
-												<label 
+												<label
 													value="${c:l('label_FinanceTypeDialog_foreClosureLockPeriod.value')}" />
 												<hbox>
 													<space spacing="2px" />
@@ -1895,7 +1898,7 @@
 												<label
 													value="${c:l('label_FinanceTypeDialog_MinPPCalculationType.value')}" />
 												<hbox>
-													<space spacing="1px"/>
+													<space spacing="1px" />
 													<combobox id="minPPCalType" readonly="true" width="200px" />
 												</hbox>
 												<label 
@@ -1911,7 +1914,7 @@
 												<label
 													value="${c:l('label_FinanceTypeDialog_MinPPCalculationOn.value')}" />
 												<hbox>
-													<space spacing="2px" sclass="mandatory"/>
+													<space spacing="2px" sclass="mandatory" />
 													<combobox id="minPPCalOn" readonly="true" width="200px" />
 												</hbox>
 											</row>
@@ -1936,11 +1939,31 @@
 												</hbox>
 											</row>
 											<row id="rowMaxPPCalculationOn" visible="false">
-												<label 
+												<label
 													value="${c:l('label_FinanceTypeDialog_MaxPPCalculationOn.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="maxPPCalOn" readonly="true" width="200px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox height="auto">
+									<caption label="${c:l('label_FinanceTypeDialog_AssetClassificationSetup')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_FinTypeAssetClassSetupCode.value')}" />
+												<hbox>
+													<extendedcombobox id="assetClassSetup" />
 												</hbox>
 											</row>
 										</rows>

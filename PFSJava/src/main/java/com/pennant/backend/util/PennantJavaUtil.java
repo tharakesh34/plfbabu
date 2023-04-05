@@ -3754,7 +3754,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("AssetClassSetupHeader",
 				new ModuleMapping("AssetClassSetupHeader", AssetClassSetupHeader.class,
 						new String[] { "Asset_Class_Setup_Header", "Asset_Class_Setup_Header_Aview" }, masterWF,
-						new String[] { "EntityCode", "RepayHierarchy" }, null, 600));
+						new String[] { "Id", "Code", "Description" }, null, 600));
 
 		ModuleUtil.register("Provision",
 				new ModuleMapping("Provision", Provision.class,
