@@ -182,6 +182,14 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 			setError(mu, MandateUploadError.MANUP_016);
 		}
 
+		if ("T".equals(swapMndt) && mandate.getSwapEffectiveDate() == null) {
+			setError(mu, MandateUploadError.MANUP_018);
+		}
+
+		if ("T".equals(swapMndt) && mandate.getSwapEffectiveDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
+			setError(mu, MandateUploadError.MANUP_019);
+		}
+
 		InstrumentType instrumentType = InstrumentType.getType(mandateType);
 
 		switch (instrumentType) {
@@ -201,8 +209,6 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 			break;
 
 		case SI:
-			break;
-
 		case DAS:
 			swapMandateRequired(mu, mandate, swapMndt);
 			break;

@@ -211,7 +211,6 @@ public class FeatureExtension implements IFeatureExtension {
 	}
 
 	private void mandateExtensaions() {
-		mandateExtensions.put("SWAP_EFFECTIVE_DATE_DEFAULT", true);
 		mandateExtensions.put("PARTNER_BANK_REQ", true);
 		mandateExtensions.put("ALLOW_CONSECUTIVE_BOUNCE", true);
 		mandateExtensions.put("EXPIRY_DATE_MANDATORY", false);

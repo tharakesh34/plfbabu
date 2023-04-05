@@ -19,7 +19,7 @@ public enum ExcessHead {
 
 	TEXCESS("T"),
 
-	SEXCESS("S");
+	SETTLEMENT("S");
 
 	private String code;
 
@@ -54,6 +54,7 @@ public enum ExcessHead {
 		case EXCESS:
 		case EMIINADV:
 		case TEXCESS:
+		case SETTLEMENT:
 			return true;
 		default:
 			return false;
