@@ -2265,7 +2265,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.20_pre" author="" dbms="postgresql">
+	<changeSet id="ST#1469.20_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
 			select deps_save_and_drop_dependencies ('plf', 'financemain_view'); 
@@ -3268,7 +3268,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#1469.21_post" author="" dbms="postgresql">
+	<changeSet id="ST#1469.21_post" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_tview');
