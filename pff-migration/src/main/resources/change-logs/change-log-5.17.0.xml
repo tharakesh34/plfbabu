@@ -3344,7 +3344,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#3546.33.3.2" author="nagavamsi.p">
+	<changeSet id="ST#3546.33.3.2" author="nagavamsi.p" dbms="oracle,postgresql">
 		<addDefaultValue columnName="EmiRe" tableName="NPA_LOAN_INFO" defaultValue="0" />
 		<addDefaultValue columnName="InstIncome" tableName="NPA_LOAN_INFO" defaultValue="0" />
 		<addDefaultValue columnName="FuturePri" tableName="NPA_LOAN_INFO" defaultValue="0" />

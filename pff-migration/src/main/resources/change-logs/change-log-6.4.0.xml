@@ -27,7 +27,7 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1472.1" author="saikiran.n">
 		<createTable tableName="Customer_KYC_Details_Upload">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -250,7 +250,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#707.4.1" author="HariTeja.B">
 		<sql>
 			<![CDATA[
@@ -399,7 +399,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1471.1" author="Mounika.M">
 		<sql>
 		    <![CDATA[
@@ -408,13 +408,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1471.2" author="Mounika.M">
 		<addColumn tableName="FINPFTDETAILS">
-			<column name="CurDPDString" type="varchar(2400)"/>
+			<column name="CurDPDString" type="varchar(2400)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1471.3" author="Mounika.M" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -426,7 +426,7 @@
 	<changeSet id="ST#1471.4" author="Mounika.M" dbms="postgresql, oracle">
 		<addDefaultValue tableName="FINPFTDETAILS" columnName="CurDPDString" defaultValue="null" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1469.1" author="NagaVamsi.P">
 		<addColumn tableName="ASSET_CLASS_SETUP_HEADER_TEMP">
 			<column name="Code" type="varchar(10)" />
@@ -438,7 +438,7 @@
 			<column name="Description" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1469.1.2" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[	
@@ -449,8 +449,10 @@
 	</changeSet>
 
 	<changeSet id="ST#1469.1.3" author="NagaVamsi.P">
-		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="Code" />
-		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="Description" />
+		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="Code"
+			columnDataType="varchar(10)" />
+		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="Description"
+			columnDataType="varchar(50)" />
 	</changeSet>
 
 	<changeSet id="ST#1469.1.4" author="NagaVamsi.P">
@@ -465,8 +467,8 @@
 			<column name="Code" type="varchar(10)" />
 		</addColumn>
 	</changeSet>
-	
-		<changeSet id="ST#1469.2.1" author="NagaVamsi.P">
+
+	<changeSet id="ST#1469.2.1" author="NagaVamsi.P">
 		<addColumn tableName="ASSET_CLASS_SETUP_HEADER">
 			<column name="Description" type="varchar(50)" />
 		</addColumn>
@@ -482,8 +484,10 @@
 	</changeSet>
 
 	<changeSet id="ST#1469.2.3" author="NagaVamsi.P">
-		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER" columnName="Code" />
-		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER" columnName="Description" />
+		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER" columnName="Code"
+			columnDataType="varchar(10)" />
+		<addNotNullConstraint tableName="ASSET_CLASS_SETUP_HEADER" columnName="Description"
+			columnDataType="varchar(50)" />
 	</changeSet>
 
 	<changeSet id="ST#1469.2.4" author="NagaVamsi.P">
@@ -613,13 +617,26 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="mssql, postgresql">
+	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				UPDATE RMTFINANCETYPES_TEMP SET ASSETCLASSSETUP = 
-				(Select ID From ASSET_CLASS_SETUP_HEADER Where Code = 'DEFAULT' and
-				 ENTITYCODE = sd.EntityCode From SmtDivisionDetail sd
-				 Where RMTFINANCETYPES_TEMP.FinDivision = sd.DivisionCode);
+					Update RMTFINANCETYPES_TEMP RFT SET ASSETCLASSSETUP =t2.ID from 
+					(Select t1.ID,t2.DivisionCode From ASSET_CLASS_SETUP_HEADER t1
+					inner join 	SmtDivisionDetail t2 on t1.ENTITYCODE = t2.EntityCode	
+					Where t1.Code = 'DEFAULT' ) t2
+					where RFT.FinDivision = t2.DivisionCode;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE RH set  RH.ASSETCLASSSETUP = t2.ID
+						From RMTFINANCETYPES_TEMP RH 
+					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode From ASSET_CLASS_SETUP_HEADER ACSH
+								inner join SmtDivisionDetail sdd on   sdd.EntityCode=ACSH.ENTITYCODE 
+								Where ACSH.Code = 'DEFAULT' ) t2 on  t2.DivisionCode=RH.FinDivision  ;
 			]]>
 		</sql>
 	</changeSet>
@@ -627,13 +644,13 @@
 	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="oracle">
 		<sql>
 			<![CDATA[
-				MERGE INTO RMTFINANCETYPES FT 
+				MERGE INTO RMTFINANCETYPES_TEMP FT 
 				USING (
 				SELECT ID, DivisionCode From ASSET_CLASS_SETUP_HEADER HDR 
 				Inner Join SmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT'
 				) H on (H.DivisionCode = FT.FinDivision)
 				 WHEN MATCHED THEN UPDATE SET 
-			 	ASSETCLASSSETUP = H.ID;
+			 	FT.ASSETCLASSSETUP = H.ID;
 			]]>
 		</sql>
 	</changeSet>
@@ -651,13 +668,26 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="mssql, postgresql">
+	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				UPDATE RMTFINANCETYPES SET ASSETCLASSSETUP = 
-				(Select ID From ASSET_CLASS_SETUP_HEADER Where Code = 'DEFAULT' and
-				 ENTITYCODE = sd.EntityCode From SmtDivisionDetail sd
-				 Where RMTFINANCETYPES.FinDivision = sd.DivisionCode);
+					Update RMTFINANCETYPES RFT SET ASSETCLASSSETUP =t2.ID from 
+					(Select t1.ID,t2.DivisionCode From ASSET_CLASS_SETUP_HEADER t1
+					inner join 	SmtDivisionDetail t2 on t1.ENTITYCODE = t2.EntityCode	
+					Where t1.Code = 'DEFAULT' ) t2
+					where RFT.FinDivision = t2.DivisionCode;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE RH set  RH.ASSETCLASSSETUP = t2.ID
+						From RMTFINANCETYPES RH 
+					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode From ASSET_CLASS_SETUP_HEADER ACSH
+								inner join SmtDivisionDetail sdd on   sdd.EntityCode=ACSH.ENTITYCODE 
+								Where ACSH.Code = 'DEFAULT' ) t2 on  t2.DivisionCode=RH.FinDivision  ;
 			]]>
 		</sql>
 	</changeSet>
@@ -671,13 +701,13 @@
 				Inner Join SmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT'
 				) H on (H.DivisionCode = FT.FinDivision)
 				WHEN MATCHED THEN UPDATE SET 
-				ASSETCLASSSETUP = H.ID;
+				FT.ASSETCLASSSETUP = H.ID;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1469.10" author="NagaVamsi.P">
-		<createIndex tableName="RMTFINANCETYPES" indexName="IDX_RMTF_ACSCODE">
+		<createIndex tableName="RMTFINANCETYPES" indexName="IDX_RMTF_ACSUP">
 			<column name="ASSETCLASSSETUP" type="bigint" />
 		</createIndex>
 	</changeSet>
@@ -938,7 +968,6 @@
 					T1.MAXAUTOREFUND, 
 					T1.MINAUTOREFUND,
 					T1.NPARPYHIERARCHY,
-					T1.ODMINAMOUNT,
 					T1.ASSETCLASSSETUP,
 					ASCH.CODE ASSETCLASSSETUPCODE,
 					ASCH.DESCRIPTION ASSETCLASSSETUPDESC					 
@@ -1196,7 +1225,6 @@
 					T1.MAXAUTOREFUND, 
 					T1.MINAUTOREFUND,
 					T1.NPARPYHIERARCHY,
-					T1.ODMINAMOUNT,
 					T1.ASSETCLASSSETUP,
 					ASCH.CODE ASSETCLASSSETUPCODE,
 					ASCH.DESCRIPTION ASSETCLASSSETUPDESC	
@@ -1451,7 +1479,6 @@
 					T1.MAXAUTOREFUND, 
 					T1.MINAUTOREFUND,
 					T1.NPARPYHIERARCHY,
-					T1.ODMINAMOUNT,
 					T1.ASSETCLASSSETUP,
 					ASCH.CODE ASSETCLASSSETUPCODE,
 					ASCH.DESCRIPTION ASSETCLASSSETUPDESC	
@@ -1732,7 +1759,6 @@
 					T1.MAXAUTOREFUND, 
 					T1.MINAUTOREFUND,
 					T1.NPARPYHIERARCHY,
-					T1.ODMINAMOUNT,
 					T1.ASSETCLASSSETUP,
 					ASCH.CODE ASSETCLASSSETUPCODE,
 					ASCH.DESCRIPTION ASSETCLASSSETUPDESC
@@ -1916,7 +1942,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1469.19_pre" author="NagaVamsi.P" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
@@ -3275,15 +3301,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1472.7" author="Poojitha.M">
 		<sql>
 			<![CDATA[
-				UPDATE ERRORDETAILS SET MESSAGE = "Invalid Customer Phone Priority {0}." WHERE CODE = '90115';
+				UPDATE ERRORDETAILS SET MESSAGE = 'Invalid Customer Phone Priority {0}.' WHERE CODE = '90115';
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id=" ST#1529.1" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -3292,36 +3318,130 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="ST#1470.1" author="saikrihna.b">
+
+	<changeSet id="ST#1470.2_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.1" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="BMTAEEVENTS" indexName="IX_BMTAEEVT_AEEVTCD" />
+	</changeSet>
+
+	<changeSet id="ST#1470.2.0" author="saikrihna.b">
+		<dropPrimaryKey constraintName="PK_BMTAEEvents" tableName="BMTAEEVENTS" />
 	</changeSet>
 
 	<changeSet id="ST#1470.2" author="saikrihna.b">
 		<modifyDataType tableName="BMTAEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrihna.b">
-		<createIndex tableName="BMTAEEVENTS" indexName="IX_BMTAEEVT_AEEVTCD">
-			<column name="AEEVENTCODE" type="varchar(10)" />
-		</createIndex>
+	<changeSet id="ST#1470.2.1" author="saikrihna.b" dbms="mssql,postgresql">
+		<addNotNullConstraint tableName="BMTAEEVENTS" columnName="AEEventCode"
+			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.4" author="saikrihna.b">
+	<changeSet id="ST#1470.2.2" author="saikrihna.b">
+		<addPrimaryKey tableName="BMTAEEVENTS" columnNames="AEEventCode" constraintName="PK_BMTAEEvents" />
+	</changeSet>
+
+	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create index IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(lower(aeeventcode));
+   			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(NLSSORT(aeeventcode,'nls_sort=''BINARY_CI'''));
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create nonclustered index  IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(aeeventcode);
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.2_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'feewaiverheader');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.5_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.4" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="BMTAEEVENTS_TEMP" indexName="IX_BMTAEEVT_T_AEEVTCD" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1470.5.0" author="saikrihna.b">
+		<dropPrimaryKey constraintName="PK_BMTAEEVENTS_TEMP" tableName="BMTAEEVENTS_TEMP" />
+	</changeSet>
+
 	<changeSet id="ST#1470.5" author="saikrihna.b">
 		<modifyDataType tableName="BMTAEEVENTS_TEMP" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	
-	<changeSet id="ST#1470.6" author="saikrihna.b">
-		<createIndex tableName="BMTAEEVENTS_TEMP" indexName="IX_BMTAEEVT_T_AEEVTCD">
-			<column name="AEEVENTCODE" type="varchar(10)" />
-		</createIndex>
+	<changeSet id="ST#1470.5.1" author="saikrihna.b" dbms="mssql,postgresql">
+		<addNotNullConstraint tableName="BMTAEEVENTS_TEMP" columnName="AEEventCode"
+			columnDataType="varchar(10)" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1470.5.2" author="saikrihna.b">
+		<addPrimaryKey tableName="BMTAEEVENTS_TEMP" columnNames="AEEventCode"
+			constraintName="PK_BMTAEEVENTS_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create index ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(lower(aeeventcode));
+   			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(NLSSORT(aeeventcode,'nls_sort=''BINARY_CI'''));
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create nonclustered index  ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(aeeventcode);
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.5_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'bmtaeevents_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="ST#1470.7" author="saikrihna.b">
 		<sql>
 			<![CDATA[
@@ -3359,68 +3479,215 @@
 				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('NPACHNG_S',  	'NPA For Settlement', 					1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
+	<changeSet id="ST#1470.8_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'categorywiseevents');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.8.0" author="saikrihna.b">
+		<dropPrimaryKey constraintName="PK_CATEGORYWISEEVENTS" tableName="CATEGORYWISEEVENTS" />
+	</changeSet>
+
 	<changeSet id="ST#1470.8" author="saikrihna.b">
 		<modifyDataType tableName="CATEGORYWISEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1470.8.1" author="saikrihna.b" dbms="mssql,postgresql">
+		<addNotNullConstraint tableName="CATEGORYWISEEVENTS" columnName="AEEventCode"
+			columnDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="ST#1470.8.2" author="saikrihna.b">
+		<addPrimaryKey tableName="CATEGORYWISEEVENTS" columnNames="AEEventCode,CategoryCode"
+			constraintName="PK_CATEGORYWISEEVENTS" />
+	</changeSet>
+
+	<changeSet id="ST#1470.8_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'categorywiseevents');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.9_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="ST#1470.9" author="saikrihna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1470.9_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.10_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="ST#1470.10" author="saikrihna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.11" author="saikrihna.b">
+
+	<changeSet id="ST#1470.10_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtaccountingset_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.13_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintypeaccounting');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.11" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.12" author="saikrihna.b">
 		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT_MDID" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1470.13.0" author="saikrihna.b">
+		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING" tableName="FINTYPEACCOUNTING" />
+	</changeSet>
+
 	<changeSet id="ST#1470.13" author="saikrihna.b">
 		<modifyDataType tableName="FINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.14" author="saikrihna.b">
-		<createIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT">
-			<column name="EVENT" type="varchar(10)" />
-		</createIndex>
+
+	<changeSet id="ST#1470.13.1" author="saikrihna.b" dbms="mssql,postgresql">
+		<addNotNullConstraint tableName="FINTYPEACCOUNTING" columnName="EVENT"
+			columnDataType="varchar(10)" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.15" author="saikrihna.b">
-		<createIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT_MDID">
-			<column name="EVENT" type="varchar(10)" />
-			<column name="MODULEID" type="varchar(10)" />
-		</createIndex>
+
+	<changeSet id="ST#1470.13.2" author="saikrihna.b">
+		<addPrimaryKey tableName="FINTYPEACCOUNTING" columnNames="FinType, Event, ModuleId"
+			constraintName="PK_FINTYPEACCOUNTING" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.16" author="saikrihna.b">
+
+	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create index IX_FINTYPACCG_TYP_EVT on FINTYPEACCOUNTING(lower(event));
+				create index ix_fintypaccg_typ_evt_mdid on FINTYPEACCOUNTING(lower(event),MODULEID);
+   			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_FINTYPACCG_TYP_EVT ON FINTYPEACCOUNTING  (NLSSORT(EVENT,'nls_sort=''BINARY_CI'''));
+				CREATE INDEX IX_FINTYPACCG_TYP_EVT_MDID ON FINTYPEACCOUNTING ( NLSSORT(EVENT,'nls_sort=''BINARY_CI'''), MODULEID) ;
+ 
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create nonclustered index  IX_FINTYPACCG_TYP_EVT on FINTYPEACCOUNTING(event);
+				create nonclustered index  ix_fintypaccg_typ_evt_mdid on FINTYPEACCOUNTING(event,MODULEID);
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.13_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintypeaccounting');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.18_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintypeaccounting_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.16" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="FINTYPEACCOUNTING_TEMP" indexName="IX_FINTYPACCG_T_TYP_EVT" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.17" author="saikrihna.b" dbms="mssql,oracle">
+
+	<changeSet id="ST#1470.17" author="saikrihna.b">
 		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING_TEMP" tableName="FINTYPEACCOUNTING_TEMP" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.18" author="saikrihna.b">
 		<modifyDataType tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.19" author="saikrihna.b">
-		<createIndex tableName="FINTYPEACCOUNTING_TEMP" indexName="IX_FINTYPACCG_T_TYP_EVT">
-			<column name="EVENT" type="varchar(10)" />
-		</createIndex>
+
+	<changeSet id="ST#1470.18.1" author="saikrihna.b" dbms="mssql,postgresql">
+		<addNotNullConstraint tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT"
+			columnDataType="varchar(10)" />
 	</changeSet>
-	
-	<changeSet id="ST#1470.20" author="saikrihna.b">
+
+	<changeSet id="ST#1470.19" author="saikrihna.b">
 		<addPrimaryKey tableName="FINTYPEACCOUNTING_TEMP" columnNames="FINTYPE, EVENT, MODULEID"
 			constraintName="PK_FINTYPEACCOUNTING_TEMP" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				create index ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(lower(event));
+   			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="oracle">
+		<sql>
+			<![CDATA[
+				create index ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(NLSSORT(event,'nls_sort=''BINARY_CI'''));
+		    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				create nonclustered index  ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(event);
+		    ]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#1470.18_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintypeaccounting_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="ST#840.1" author="sainaveen.y">
 		<createTable tableName="HOST_GL_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -3428,7 +3695,7 @@
 			</column>
 			<column name="HeaderID" type="bigint" />
 			<column name="RecordSeq" type="bigint" />
-			<column name="HostGLCode" type="varchar(20)"/>
+			<column name="HostGLCode" type="varchar(20)" />
 			<column name="AccountType" type="varchar(15)" />
 			<column name="LoanType" type="varchar(8)" />
 			<column name="CostCentreCode" type="varchar(20)" />
@@ -3440,13 +3707,13 @@
 			<column name="Status" type="char(1)" />
 			<column name="ErrorCode" type="varchar(20)" />
 			<column name="ErrorDesc" type="varchar(2000)" />
-			</createTable>
+		</createTable>
 	</changeSet>
 
 	<changeSet id="ST#840.2" author="sainaveen.y">
 		<addPrimaryKey constraintName="PK_HOST_GL_UPLOAD_ID" tableName="HOST_GL_UPLOAD" columnNames="id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#840.3" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -3474,9 +3741,9 @@
 			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOST_GL_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOST_GL_UPLOAD')),  'GLDESCRIPTION',         0, 'N', NULL, NULL, NULL, NULL, '7',  NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOST_GL_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOST_GL_UPLOAD')),  'STATUS',                0, 'N', NULL, 'S', NULL, NULL,  '8',  NULL, NULL, NULL, NULL, 'O');
 			]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.4" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -3504,9 +3771,9 @@
 			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOST_GL_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOST_GL_TEMPLATE')),  'GLDESCRIPTION',           0, 'N', NULL, NULL, NULL, NULL, '7',  NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOST_GL_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOST_GL_TEMPLATE')),  'STATUS',                  0, 'N', NULL, 'S', NULL, NULL,  '8',  NULL, NULL, NULL, NULL, 'O');
 			]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.5" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -3538,9 +3805,9 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOST_GL_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOST_GL_DOWNLOAD')),  'APPROVEDON',	            0, 'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL,  'dd-MMM-yyyy', 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'HOST_GL_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'HOST_GL_DOWNLOAD')),  'APPROVEDNAME',	        0, 'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL,  NULL, 'O');
 		 	]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.6" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -3584,20 +3851,20 @@
 				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'HOST_GL_UPLOAD_VIEW'), 	(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'HOST_GL_UPLOAD_VIEW'), 	0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#840.7" author="sainaveen.y">
 		<addColumn tableName="AccountMapping">
 			<column name="GLDescription" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.8" author="sainaveen.y">
 		<addColumn tableName="AccountMapping_Temp">
 			<column name="GLDescription" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.9_pre" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3605,7 +3872,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.9" author="sainaveen.y">
 		<createView replaceIfExists="true" viewName="ACCOUNTMAPPING_VIEW">
 			<![CDATA[
@@ -3686,7 +3953,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.9_post" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3694,7 +3961,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.10_pre" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3702,7 +3969,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.10" author="sainaveen.y">
 		<createView replaceIfExists="true" viewName="ACCOUNTMAPPING_AVIEW">
 			<![CDATA[
@@ -3745,7 +4012,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.10_post" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3753,7 +4020,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#840.11" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -3765,5 +4032,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog> 

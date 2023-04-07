@@ -8828,14 +8828,25 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="080223_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'presentment_fileimport');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="080223" author="ramya.v">
 		<modifyDataType tableName="Presentment_FileImport" columnName="AgreementNo"
 			newDataType="VARCHAR(20)" />
 	</changeSet>
 	
-	<changeSet id="PSD#219863" author="ramya.v">
-		<addDefaultValue columnName="dociscustdoc" tableName="BMTDocumentTypes" defaultValue="0" />
+	<changeSet id="080223_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'presentment_fileimport');
+			]]>
+		</sql>
 	</changeSet>
-	
-	
+		
 </databaseChangeLog>
