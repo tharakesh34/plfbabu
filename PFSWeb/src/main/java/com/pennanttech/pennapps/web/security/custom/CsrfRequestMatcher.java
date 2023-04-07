@@ -12,7 +12,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class CsrfRequestMatcher implements RequestMatcher {
 	private Pattern excludedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS)$");
 	private Pattern excludedUrls = Pattern
-			.compile("^(.*/zkau/web.*|.*/zkau/upload.*|.*/zkau/dropupload.*|.*/Charts.*|.*/saml.*)$");
+			.compile("^(.*/zkau/web.*|.*/zkau/upload.*|.*/zkau/dropupload.*|.*/Charts.*|.*/saml.*|.*/zkau.*)$");
 
 	public CsrfRequestMatcher() {
 		super();

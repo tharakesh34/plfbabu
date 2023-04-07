@@ -17,7 +17,7 @@
 		<spring.batch.version>4.3.8</spring.batch.version>
 		<spring.ws.version>3.1.5</spring.ws.version>
 		<spring.web.version>5.3.25</spring.web.version>
-		<zk.version>8.6.2</zk.version>
+		<zk.version>9.6.3</zk.version>
 		<atlantic.version>8.0.1</atlantic.version>
 		<jasperreports.version>6.20.0</jasperreports.version>
 		<jackson.version>2.14.2</jackson.version>
@@ -818,6 +818,22 @@
 			<groupId>org.zkoss.theme</groupId>
 			<artifactId>silvertail</artifactId>
 			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId> 
+			<artifactId>zkplus-legacy</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+   		<dependency>
+			<groupId>org.zkoss.common</groupId>
+			<artifactId>zweb-dsp</artifactId>
+			<version>${zk.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss</groupId>

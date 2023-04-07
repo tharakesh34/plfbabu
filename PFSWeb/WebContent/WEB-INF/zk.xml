@@ -169,6 +169,11 @@
 		<name>org.zkoss.zk.WCS.cache</name>
 		<value>true</value>
 	</library-property>
+	
+	<library-property>
+		<name>org.zkoss.zul.css.flex</name>
+		<value>false</value>
+	</library-property>
 
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
