@@ -214,17 +214,18 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 		Long finID = ca.getFinID();
 		long custID = ca.getCustID();
+		String custCoreBank = ca.getCustCoreBank();
 
 		switch (ImplementationConstants.NPA_SCOPE) {
 		case CUSTOMER:
-			list.addAll(getPrimaryLoans(finID, custID));
+			list.addAll(getPrimaryLoans(finID, custID, custCoreBank));
 			break;
 		case CO_APPLICANT:
-			list.addAll(getPrimaryLoans(finID, custID));
+			list.addAll(getPrimaryLoans(finID, custID, custCoreBank));
 			list.addAll(getCoApplicantLoans(finID));
 			break;
 		case GUARANTOR:
-			list.addAll(getPrimaryLoans(finID, custID));
+			list.addAll(getPrimaryLoans(finID, custID, custCoreBank));
 			list.addAll(getCoApplicantLoans(finID));
 			list.addAll(getGuarantorLoans(finID));
 			break;
@@ -681,9 +682,9 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		return null;
 	}
 
-	private List<FinanceMain> getPrimaryLoans(Long finID, long custID) {
+	private List<FinanceMain> getPrimaryLoans(Long finID, long custID, String custCoreBank) {
 		List<FinanceMain> primaryLoans = new ArrayList<>();
-		List<FinanceMain> list = assetClassificationDAO.getPrimaryLoans(custID);
+		List<FinanceMain> list = assetClassificationDAO.getPrimaryLoans(custID, custCoreBank);
 
 		list.forEach(fm -> {
 			if (fm.getFinID() != finID && !fm.isWriteoffLoan()) {

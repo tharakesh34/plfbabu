@@ -32,9 +32,7 @@ public interface AssetClassificationDAO {
 
 	AssetClassification getClassification(long finID);
 
-	long getCustId(long finID);
-
-	List<FinanceMain> getPrimaryLoans(long custID);
+	List<FinanceMain> getPrimaryLoans(long custID, String custCoreBank);
 
 	List<FinanceMain> getCoApplicantLoans(long finID);
 

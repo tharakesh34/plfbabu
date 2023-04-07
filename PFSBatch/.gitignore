@@ -2,3 +2,6 @@
 /target/
 /.settings/
 /.gitignore
+/.classpath
+/test-output/
+/.project

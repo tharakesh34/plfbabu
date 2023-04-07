@@ -12,6 +12,7 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 	private Date eodDate;
 	private String entityCode;
 	private long custID;
+	private String custCoreBank;
 	private String custCategoryCode;
 	private String finType;
 	private String product;
@@ -85,6 +86,14 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 
 	public void setCustID(long custID) {
 		this.custID = custID;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 
 	public String getCustCategoryCode() {
