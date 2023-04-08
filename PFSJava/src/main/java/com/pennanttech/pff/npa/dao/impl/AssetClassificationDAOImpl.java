@@ -64,8 +64,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setDate(index++, JdbcUtil.getDate(item.getEodDate()));
 				ps.setString(index++, item.getEntityCode());
 				ps.setLong(index++, item.getCustID());
-				ps.setString(index++, item.getCustCategoryCode());
 				ps.setString(index++, item.getCustCoreBank());
+				ps.setString(index++, item.getCustCategoryCode());
 				ps.setString(index++, item.getFinType());
 				ps.setString(index++, item.getProduct());
 				ps.setString(index++, item.getFinCcy());
@@ -342,7 +342,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public List<FinanceMain> getPrimaryLoans(long custID, String custCoreBank) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustID, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch");
+		sql.append(" fm.CustID, c.CustCoreBank, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch");
 		sql.append(", fm.FinCcy, fm.WriteoffLoan, c.CustCtgCode, ft.FinCategory, e.EntityCode");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
@@ -367,6 +367,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 			fm.setCustID(rs.getLong("CustID"));
 			fm.setFinID(rs.getLong("FinID"));
+			fm.setCustCoreBank(rs.getString("CustCoreBank"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setFinBranch(rs.getString("FinBranch"));
@@ -383,7 +384,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public List<FinanceMain> getCoApplicantLoans(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustID, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
+		sql.append(" fm.CustID, c.CustCoreBank, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
 		sql.append(", fm.WriteoffLoan, c.CustCtgCode, ft.FinCategory, e.EntityCode");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
@@ -418,6 +419,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 			fm.setCustID(rs.getLong("CustID"));
 			fm.setFinID(rs.getLong("FinID"));
+			fm.setCustCoreBank(rs.getString("CustCoreBank"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setFinBranch(rs.getString("FinBranch"));
@@ -434,7 +436,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public List<FinanceMain> getGuarantorLoans(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustID, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
+		sql.append(" fm.CustID, c.CustCoreBank, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
 		sql.append(", fm.WriteoffLoan, c.CustCtgCode, ft.FinCategory, e.EntityCode");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
@@ -466,6 +468,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			FinanceMain fm = new FinanceMain();
 
 			fm.setCustID(rs.getLong("CustID"));
+			fm.setCustCoreBank(rs.getString("CustCoreBank"));
 			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));

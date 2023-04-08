@@ -97,6 +97,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 			item.setEodDate(appDate);
 			item.setCustID(custID);
 			item.setCustCategoryCode(customer.getCustCtgCode());
+			item.setCustCoreBank(customer.getCustCoreBank());
 			item.setFinType(fm.getFinType());
 			item.setProduct(pd.getFinCategory());
 			item.setFinCcy(fm.getFinCcy());
@@ -619,6 +620,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		effLoans.forEach(fm -> {
 			NpaProvisionStage linkedAc = new NpaProvisionStage();
 			linkedAc.setCustID(item.getCustID());
+			linkedAc.setCustCoreBank(item.getCustCoreBank());
 			linkedAc.setFinID(item.getFinID());
 			linkedAc.setFinReference(item.getFinReference());
 			linkedAc.setEffFinID(fm.getFinID());
@@ -630,6 +632,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 
 			linkedAc = new NpaProvisionStage();
 			linkedAc.setCustID(fm.getCustID());
+			linkedAc.setCustCoreBank(item.getCustCoreBank());
 			linkedAc.setFinID(fm.getFinID());
 			linkedAc.setFinReference(fm.getFinReference());
 			linkedAc.setEffFinID(item.getFinID());

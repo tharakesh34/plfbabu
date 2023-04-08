@@ -2963,13 +2963,13 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.21" author="NagaVamsi.P">
+	<changeSet id="ST#1469.21.1" author="NagaVamsi.P">
 		<addColumn tableName="NPA_PROVISION_STAGE">
 			<column name="CustCoreBank" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.21.1" author="NagaVamsi.P">
+	<changeSet id="ST#1469.21.2" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[	
 				UPDATE NPA_PROVISION_STAGE SET CustCoreBank = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_PROVISION_STAGE.CUSTID = C.CUSTID); 
@@ -2977,7 +2977,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.21.2" author="NagaVamsi.P">
+	<changeSet id="ST#1469.21.3" author="NagaVamsi.P">
 		<addNotNullConstraint tableName="NPA_PROVISION_STAGE" columnName="CustCoreBank"
 			columnDataType="varchar(50)" />
 	</changeSet>
