@@ -5,7 +5,13 @@
 	<projects>
 		<project>notification-engine</project>
 		<project>pennapps-schedular</project>
+		<project>pff-core</project>
+		<project>pff-model</project>
+		<project>pff-extension</project>
+		<project>PFSJava</project>
+		<project>PFSBatch</project>
 		<project>pff-extension-hdfc</project>
+		<project>pff-interface</project>
 		<project>pff-interface-hdfc</project>
 	</projects>
 	<buildSpec>

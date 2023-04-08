@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
@@ -11,14 +13,14 @@
 		<client.code>hdfc</client.code>
 		<pff.version>6.4.0-HDFC_R1-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>11</jdk.version>
+		<jdk.version>17</jdk.version>
 		<spring.version>5.3.25</spring.version>
 		<spring.security.version>5.8.2</spring.security.version>
 		<spring.batch.version>4.3.8</spring.batch.version>
 		<spring.ws.version>3.1.5</spring.ws.version>
 		<spring.web.version>5.3.25</spring.web.version>
 		<zk.version>9.6.3</zk.version>
-		<atlantic.version>8.0.1</atlantic.version>
+		<atlantic.version>9.6.3</atlantic.version>
 		<jasperreports.version>6.20.0</jasperreports.version>
 		<jackson.version>2.14.2</jackson.version>
 		<cxf.version>3.5.5</cxf.version>
@@ -67,17 +69,17 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>1.21.03</version>
+				<version>1.22.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pennanttech.pennapps</groupId>
+				<artifactId>pennapps-web</artifactId>
+				<version>1.22.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>
 				<artifactId>account-updater</artifactId>
 				<version>4.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.pennanttech.pennapps</groupId>
-				<artifactId>pennapps-web</artifactId>
-				<version>1.21.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -588,9 +590,9 @@
 			<version>5.2.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>4.1.2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
@@ -820,11 +822,11 @@
 			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.zkoss.zk</groupId> 
+			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zkplus-legacy</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
-   		<dependency>
+		<dependency>
 			<groupId>org.zkoss.common</groupId>
 			<artifactId>zweb-dsp</artifactId>
 			<version>${zk.version}</version>
@@ -919,7 +921,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.pennant.jasper</groupId>
 			<artifactId>TrebuchetMS</artifactId>
@@ -1023,6 +1025,21 @@
 				<version>2.8.1</version>
 				<configuration>
 					<generateBackupPoms>false</generateBackupPoms>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<argLine>
+						--add-opens=java.base/java.lang=ALL-UNNAMED
+						--add-opens=java.base/java.io=ALL-UNNAMED
+						--add-opens=java.base/java.util=ALL-UNNAMED
+						--add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+						--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+						--add-opens=java.sql/java.sql=ALL-UNNAMED
+					</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
