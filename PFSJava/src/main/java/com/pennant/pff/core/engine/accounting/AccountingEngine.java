@@ -193,7 +193,7 @@ public class AccountingEngine {
 
 		if (fm.isUnderSettlement()) {
 			derivedEventCode = eventCode + "_S";
-		} else if (fm.isUnderSettlement()) {
+		} else if (fm.isUnderNpa()) {
 			derivedEventCode = eventCode + "_N";
 		} else if (fm.isWifLoan()) {
 			derivedEventCode = eventCode + "_W";

@@ -81,11 +81,11 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="001" author="saikrihna.b">
+	<changeSet id="ST#1470.1" author="saikrishna.b">
 		<modifyDataType tableName="ADTRMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="002" author="saikrihna.b">
+	<changeSet id="ST#1470.2" author="saikrishna.b">
 		<modifyDataType tableName="ADTFINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
 	

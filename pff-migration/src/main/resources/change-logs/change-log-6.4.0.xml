@@ -2249,7 +2249,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.2_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.2_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents');
@@ -2257,28 +2257,28 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.1" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.1" author="saikrishna.b" dbms="oracle">
 		<dropIndex tableName="BMTAEEVENTS" indexName="IX_BMTAEEVT_AEEVTCD" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2.0" author="saikrihna.b">
+	<changeSet id="ST#1470.2.0" author="saikrishna.b">
 		<dropPrimaryKey constraintName="PK_BMTAEEvents" tableName="BMTAEEVENTS" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2" author="saikrihna.b">
+	<changeSet id="ST#1470.2" author="saikrishna.b">
 		<modifyDataType tableName="BMTAEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2.1" author="saikrihna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.2.1" author="saikrishna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="BMTAEEVENTS" columnName="AEEventCode"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2.2" author="saikrihna.b">
+	<changeSet id="ST#1470.2.2" author="saikrishna.b">
 		<addPrimaryKey tableName="BMTAEEVENTS" columnNames="AEEventCode" constraintName="PK_BMTAEEvents" />
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.3" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(lower(aeeventcode));
@@ -2286,7 +2286,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.3" author="saikrishna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(NLSSORT(aeeventcode,'nls_sort=''BINARY_CI'''));
@@ -2294,7 +2294,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="mssql">
+	<changeSet id="ST#1470.3" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(aeeventcode);
@@ -2302,7 +2302,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.2_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.2_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feewaiverheader');
@@ -2310,7 +2310,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.5_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.5_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents_temp');
@@ -2318,29 +2318,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.4" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.4" author="saikrishna.b" dbms="oracle">
 		<dropIndex tableName="BMTAEEVENTS_TEMP" indexName="IX_BMTAEEVT_T_AEEVTCD" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5.0" author="saikrihna.b">
+	<changeSet id="ST#1470.5.0" author="saikrishna.b">
 		<dropPrimaryKey constraintName="PK_BMTAEEVENTS_TEMP" tableName="BMTAEEVENTS_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5" author="saikrihna.b">
+	<changeSet id="ST#1470.5" author="saikrishna.b">
 		<modifyDataType tableName="BMTAEEVENTS_TEMP" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5.1" author="saikrihna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.5.1" author="saikrishna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="BMTAEEVENTS_TEMP" columnName="AEEventCode"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5.2" author="saikrihna.b">
+	<changeSet id="ST#1470.5.2" author="saikrishna.b">
 		<addPrimaryKey tableName="BMTAEEVENTS_TEMP" columnNames="AEEventCode"
 			constraintName="PK_BMTAEEVENTS_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.6" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(lower(aeeventcode));
@@ -2348,7 +2348,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.6" author="saikrishna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(NLSSORT(aeeventcode,'nls_sort=''BINARY_CI'''));
@@ -2356,7 +2356,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="mssql">
+	<changeSet id="ST#1470.6" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(aeeventcode);
@@ -2364,7 +2364,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.5_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.5_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'bmtaeevents_temp');
@@ -2372,7 +2372,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.7" author="saikrihna.b">
+	<changeSet id="ST#1470.7" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('AMZ_S', 		'Accruals For Settlement', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
@@ -2411,7 +2411,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.8_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.8_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'categorywiseevents');
@@ -2419,25 +2419,25 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.8.0" author="saikrihna.b">
+	<changeSet id="ST#1470.8.0" author="saikrishna.b">
 		<dropPrimaryKey constraintName="PK_CATEGORYWISEEVENTS" tableName="CATEGORYWISEEVENTS" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8" author="saikrihna.b">
+	<changeSet id="ST#1470.8" author="saikrishna.b">
 		<modifyDataType tableName="CATEGORYWISEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8.1" author="saikrihna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.8.1" author="saikrishna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="CATEGORYWISEEVENTS" columnName="AEEventCode"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8.2" author="saikrihna.b">
+	<changeSet id="ST#1470.8.2" author="saikrishna.b">
 		<addPrimaryKey tableName="CATEGORYWISEEVENTS" columnNames="AEEventCode,CategoryCode"
 			constraintName="PK_CATEGORYWISEEVENTS" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.8_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'categorywiseevents');
@@ -2445,7 +2445,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.9_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.9_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset');
@@ -2453,11 +2453,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.9" author="saikrihna.b">
+	<changeSet id="ST#1470.9" author="saikrishna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.9_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.9_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtaccountingset');
@@ -2465,7 +2465,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.10_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.10_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_temp');
@@ -2473,11 +2473,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.10" author="saikrihna.b">
+	<changeSet id="ST#1470.10" author="saikrishna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.10_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.10_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtaccountingset_temp');
@@ -2485,7 +2485,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.13_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.13_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintypeaccounting');
@@ -2493,33 +2493,33 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.11" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.11" author="saikrishna.b" dbms="oracle">
 		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT" />
 	</changeSet>
 
-	<changeSet id="ST#1470.12" author="saikrihna.b">
+	<changeSet id="ST#1470.12" author="saikrishna.b">
 		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT_MDID" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13.0" author="saikrihna.b">
+	<changeSet id="ST#1470.13.0" author="saikrishna.b">
 		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING" tableName="FINTYPEACCOUNTING" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13" author="saikrihna.b">
+	<changeSet id="ST#1470.13" author="saikrishna.b">
 		<modifyDataType tableName="FINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13.1" author="saikrihna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.13.1" author="saikrishna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="FINTYPEACCOUNTING" columnName="EVENT"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13.2" author="saikrihna.b">
+	<changeSet id="ST#1470.13.2" author="saikrishna.b">
 		<addPrimaryKey tableName="FINTYPEACCOUNTING" columnNames="FinType, Event, ModuleId"
 			constraintName="PK_FINTYPEACCOUNTING" />
 	</changeSet>
 
-	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.14" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index IX_FINTYPACCG_TYP_EVT on FINTYPEACCOUNTING(lower(event));
@@ -2528,7 +2528,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.14" author="saikrishna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				CREATE INDEX IX_FINTYPACCG_TYP_EVT ON FINTYPEACCOUNTING  (NLSSORT(EVENT,'nls_sort=''BINARY_CI'''));
@@ -2538,7 +2538,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="mssql">
+	<changeSet id="ST#1470.14" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  IX_FINTYPACCG_TYP_EVT on FINTYPEACCOUNTING(event);
@@ -2547,7 +2547,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.13_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.13_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintypeaccounting');
@@ -2555,7 +2555,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.18_pre" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.18_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintypeaccounting_temp');
@@ -2563,29 +2563,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.16" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.16" author="saikrishna.b" dbms="oracle">
 		<dropIndex tableName="FINTYPEACCOUNTING_TEMP" indexName="IX_FINTYPACCG_T_TYP_EVT" />
 	</changeSet>
 
-	<changeSet id="ST#1470.17" author="saikrihna.b">
+	<changeSet id="ST#1470.17" author="saikrishna.b">
 		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING_TEMP" tableName="FINTYPEACCOUNTING_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.18" author="saikrihna.b">
+	<changeSet id="ST#1470.18" author="saikrishna.b">
 		<modifyDataType tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.18.1" author="saikrihna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.18.1" author="saikrishna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.19" author="saikrihna.b">
+	<changeSet id="ST#1470.19" author="saikrishna.b">
 		<addPrimaryKey tableName="FINTYPEACCOUNTING_TEMP" columnNames="FINTYPE, EVENT, MODULEID"
 			constraintName="PK_FINTYPEACCOUNTING_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.20" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(lower(event));
@@ -2593,7 +2593,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="oracle">
+	<changeSet id="ST#1470.20" author="saikrishna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(NLSSORT(event,'nls_sort=''BINARY_CI'''));
@@ -2601,7 +2601,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="mssql">
+	<changeSet id="ST#1470.20" author="saikrishna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(event);
@@ -2610,7 +2610,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#1470.18_post" author="saikrihna.b" dbms="postgresql">
+	<changeSet id="ST#1470.18_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintypeaccounting_temp');

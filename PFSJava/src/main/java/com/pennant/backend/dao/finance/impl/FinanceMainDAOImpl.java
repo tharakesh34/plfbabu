@@ -4158,6 +4158,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.WriteoffLoan, fm.SchdVersion, fm.NumberOfTerms, fm.ManualSchdType");
 		sql.append(", fm.OverdraftTxnChrgReq, fm.OverdraftCalcChrg, fm.OverdraftChrgAmtOrPerc, fm.OverdraftChrCalOn");
 		sql.append(", fm.StepFinance, fm.AlwManualSteps, fm.CalcOfSteps, fm.NoOfGrcSteps, sdd.EntityCode");
+		sql.append(", fm.UnderSettlement, fm.UnderNpa");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
@@ -4289,6 +4290,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
 			fm.setNoOfGrcSteps(rs.getInt("NoOfGrcSteps"));
 			fm.setEntityCode(rs.getString("EntityCode"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+			fm.setUnderNpa(rs.getBoolean("UnderNpa"));
 
 			return fm;
 
@@ -4404,7 +4407,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention, TdsType, NoOfGrcSteps");
 			sql.append(", CalcOfSteps, StepsAppliedFor");
 			sql.append(", ManualSchdType, Isra, SanctionedDate");
-			sql.append(", UnderSettlement");
+			sql.append(", UnderSettlement, UnderNpa");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -4715,6 +4718,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setIsra(rs.getBoolean("Isra"));
 				fm.setSanctionedDate(rs.getDate("SanctionedDate"));
 				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setUnderNpa(rs.getBoolean("UnderNpa"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -6006,7 +6010,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.RoleCode, fm.DownPaySupl, fm.RateChgAnyDay, fm.AvailedReAgeH, fm.NextRoleCode, fm.LimitValid");
 		sql.append(", fm.AvailedDefRpyChange, fm.DroppingMethod, fm.PftServicingODLimit");
 		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc");
-		sql.append(", fm.UnderSettlement");
+		sql.append(", fm.UnderSettlement, fm.UnderNpa");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
 		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
@@ -6226,6 +6230,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
 				fm.setLovDescFinBranchName(rs.getString("BranchDesc"));
 				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setUnderNpa(rs.getBoolean("UnderNpa"));
 
 				return fm;
 			}, finID);
