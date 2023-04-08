@@ -708,6 +708,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finOD.setLpCpz(false);
 		finOD.setLpCpzAmount(BigDecimal.ZERO);
 		finOD.setLpCurCpzBal(BigDecimal.ZERO);
+		finOD.setOdMinAmount(pr.getOdMinAmount());
 
 		return finOD;
 	}

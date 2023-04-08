@@ -361,6 +361,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
 	private BigDecimal minAutoRefund = BigDecimal.ZERO;
 	private String npaRpyHierarchy;
+	private BigDecimal odMinAmount = BigDecimal.ZERO;
 
 	public FinanceType() {
 		super();
@@ -663,6 +664,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+		entity.setOdMinAmount(this.odMinAmount);
+
 		return entity;
 	}
 
@@ -2892,5 +2895,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAssetClassSetupDesc(String assetClassSetupDesc) {
 		this.assetClassSetupDesc = assetClassSetupDesc;
+	}
+
+	public BigDecimal getOdMinAmount() {
+		return odMinAmount;
+	}
+
+	public void setOdMinAmount(BigDecimal odMinAmount) {
+		this.odMinAmount = odMinAmount;
 	}
 }

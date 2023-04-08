@@ -88,4 +88,31 @@
 	<changeSet id="002" author="saikrihna.b">
 		<modifyDataType tableName="ADTFINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="ST#1495" author="ramya.v">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1495.1" author="ramya.v">
+		<sql>
+			<![CDATA[	
+				UPDATE ADTRMTFINANCETYPES SET ODMINAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1495.4" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ODMinAmount" tableName="ADTRMTFINANCETYPES" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1495.4" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRMTFINANCETYPES ADD CONSTRAINT DF_AFINTYPEFINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

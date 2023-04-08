@@ -1204,6 +1204,12 @@
 													<space spacing="2px" id="space_extnsnODGraceDays" />
 													<intbox id="extnsnODGraceDays" width="45px" maxlength="3" />
 												</hbox>
+												<label value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="odMinAmount" width="120px" maxlength="15"
+														readonly="true" />
+												</hbox>
 											</row>
 											<row visible="true">
 												<label id="label_FinanceMainDialog_CollecChrgcode"

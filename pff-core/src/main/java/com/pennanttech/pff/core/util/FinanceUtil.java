@@ -5,6 +5,7 @@ import java.util.Date;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennanttech.pff.overdue.constants.ChargeType;
 
 public class FinanceUtil {
 
@@ -35,4 +36,7 @@ public class FinanceUtil {
 		return deriveClosedDate(fm);
 	}
 
+	public static boolean isMinimunODCChargeReq(String chargeType) {
+		return ChargeType.PERC_ONE_TIME.equals(chargeType) || ChargeType.PERC_ON_PD_MTH.equals(chargeType);
+	}
 }

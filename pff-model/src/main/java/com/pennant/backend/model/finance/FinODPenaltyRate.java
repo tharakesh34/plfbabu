@@ -55,6 +55,7 @@ public class FinODPenaltyRate implements Serializable {
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinODPenaltyRate validateFinODPenaltyRate = this;
+	private BigDecimal odMinAmount = BigDecimal.ZERO;
 
 	public FinODPenaltyRate() {
 		super();
@@ -86,6 +87,7 @@ public class FinODPenaltyRate implements Serializable {
 		entity.setOverDraftExtGraceDays(this.overDraftExtGraceDays);
 		entity.setOverDraftColChrgFeeType(this.overDraftColChrgFeeType);
 		entity.setOverDraftColAmt(this.overDraftColAmt);
+		entity.setOdMinAmount(this.odMinAmount);
 		return entity;
 	}
 
@@ -247,6 +249,14 @@ public class FinODPenaltyRate implements Serializable {
 
 	public void setRequestSource(RequestSource requestSource) {
 		this.requestSource = requestSource;
+	}
+
+	public BigDecimal getOdMinAmount() {
+		return odMinAmount;
+	}
+
+	public void setOdMinAmount(BigDecimal odMinAmount) {
+		this.odMinAmount = odMinAmount;
 	}
 
 }

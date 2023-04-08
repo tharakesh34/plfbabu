@@ -768,6 +768,11 @@
 														<space spacing="2px" />
 														<checkbox id="odTDSApplicable" checked="false" />
 													</hbox>
+													<label value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="odMinAmount" width="120px" readonly="true" />
+													</hbox>
 												</row>
 											</rows>
 										</grid>
