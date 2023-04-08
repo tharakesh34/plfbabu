@@ -1988,6 +1988,26 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox height="auto">
+									<caption label="${c:l('label_FinanceTypeDialog_AssetClassificationSetup')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_FinTypeAssetClassSetupCode.value')}" />
+												<hbox>
+													<extendedcombobox id="assetClassSetup" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 						</tabpanel>
 						<tabpanel>
 							<groupbox>
