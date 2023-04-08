@@ -72,6 +72,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
@@ -114,7 +115,8 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		List<OverdueChargeRecovery> odcrList = prepareDueDateData(fod, valueDate, repayments, fm, schedules);
 
-		switch (fod.getODChargeType()) {
+		String odChargeType = fod.getODChargeType();
+		switch (odChargeType) {
 		case ChargeType.FLAT:
 			/* Fixed Fee. One Time */
 			penalty = odChargeAmtOrPerc;
@@ -122,7 +124,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			break;
 		case ChargeType.FLAT_ON_PD_MTH:
 			/* Fixed Fee. On Every Passing Schedule Month */
-			balanceForCal = getBalanceForCal(fod);
+			balanceForCal = getBalanceForCal(fod, schedules);
 
 			valueDate = deriveValueDate(fod, valueDate, odcrList, repayments);
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
@@ -132,7 +134,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			break;
 		case ChargeType.PERC_ONE_TIME:
 			/* Percentage ON OD Amount. One Time */
-			balanceForCal = getBalanceForCal(fod);
+			balanceForCal = getBalanceForCal(fod, schedules);
 
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
@@ -142,7 +144,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			break;
 		case ChargeType.PERC_ON_PD_MTH:
 			/* Percentage ON OD Amount. One Time */
-			balanceForCal = getBalanceForCal(fod);
+			balanceForCal = getBalanceForCal(fod, schedules);
 
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				valueDate = deriveValueDate(fod, valueDate, odcrList, repayments);
@@ -168,6 +170,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		penalty = CalculationUtil.roundAmount(penalty, fm.getCalRoundingMode(), fm.getRoundingTarget());
 		fod.setTotPenaltyAmt(penalty); // ### 03-12-2018 PSD Ticket ID: 130669
+		if (FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+			if (penalty.compareTo(fod.getOdMinAmount()) < 0) {
+				fod.setTotPenaltyAmt(fod.getOdMinAmount());
+			}
+		}
+
 		fod.setFinODTillDate(valueDate);
 
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
@@ -285,17 +293,23 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 	}
 
-	private BigDecimal getBalanceForCal(FinODDetails fod) {
-		BigDecimal balanceForCal = BigDecimal.ZERO;
-
-		if (FinanceConstants.ODCALON_SPFT.equals(fod.getODChargeCalOn())) {
-			balanceForCal = fod.getFinMaxODPft();
-		} else if (FinanceConstants.ODCALON_SPRI.equals(fod.getODChargeCalOn())) {
-			balanceForCal = fod.getFinMaxODPri();
-		} else {
-			balanceForCal = fod.getFinMaxODAmt();
+	private BigDecimal getBalanceForCal(FinODDetails fod, List<FinanceScheduleDetail> schedules) {
+		switch (fod.getODChargeCalOn()) {
+		case FinanceConstants.ODCALON_SPFT:
+			return fod.getFinMaxODPft();
+		case FinanceConstants.ODCALON_SPRI:
+			return fod.getFinMaxODPri();
+		case FinanceConstants.ODCALON_INST:
+			FinanceScheduleDetail schd = schedules.stream()
+					.filter(s -> s.getSchDate().compareTo(fod.getFinODSchdDate()) == 0).findFirst().orElse(null);
+			if (schd != null) {
+				return schd.getRepayAmount();
+			} else {
+				return BigDecimal.ZERO;
+			}
+		default:
+			return fod.getFinMaxODAmt();
 		}
-		return balanceForCal;
 	}
 
 	/*

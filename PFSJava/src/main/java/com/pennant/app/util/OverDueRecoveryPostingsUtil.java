@@ -974,7 +974,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		fod.setODGraceDays(penaltyRate.getODGraceDays());
 		fod.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		fod.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
-
+		fod.setOdMinAmount(penaltyRate.getOdMinAmount());
 		fod.setFinCurODAmt(queue.getSchdPft().add(queue.getSchdPri()).subtract(queue.getSchdPftPaid())
 				.subtract(queue.getSchdPriPaid()));
 		fod.setFinCurODPri(queue.getSchdPri().subtract(queue.getSchdPriPaid()));

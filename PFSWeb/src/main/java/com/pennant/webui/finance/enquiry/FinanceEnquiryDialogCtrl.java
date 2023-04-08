@@ -131,6 +131,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
 /**
@@ -565,6 +566,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected A settlementEnq;
 	protected Label label_LoanBasicDetailsDialog_Settlement;
+	protected Decimalbox odMinAmount;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1680,6 +1682,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.oDAllowWaiver.setChecked(finODPenaltyRate.isODAllowWaiver());
 		this.oDMaxWaiverPerc.setValue(finODPenaltyRate.getODMaxWaiverPerc());
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.odMinAmount.setValue(PennantApplicationUtil.formateAmount(finODPenaltyRate.getOdMinAmount(),
+					PennantConstants.defaultCCYDecPos));
+			this.odMinAmount.setReadonly(true);
+		}
 		FinanceType financeType = new FinanceType();
 		FeeType feeType = feeTypeService.getApprovedFeeTypeById(finODPenaltyRate.getOverDraftColChrgFeeType());
 		financeType.setFeetype(feeType);

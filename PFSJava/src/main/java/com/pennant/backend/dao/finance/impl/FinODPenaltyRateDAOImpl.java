@@ -41,8 +41,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	public List<FinODPenaltyRate> getFinODPenaltyRateByRef(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
-		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
-		sql.append(", ODMinCapAmount, ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt");
+		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode, ODMinCapAmount");
+		sql.append(", ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt, ODMinAmount");
 		sql.append(" from FinODPenaltyRates");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinID = ?");
@@ -69,6 +69,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			pr.setOverDraftExtGraceDays(rs.getInt("OverDraftExtGraceDays"));
 			pr.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
 			pr.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
+			pr.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
 
 			return pr;
 		}, finID);
@@ -117,33 +118,34 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays");
 		sql.append(", ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount");
-		sql.append(", ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt");
-		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt, ODMinAmount");
+		sql.append(") Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index++, pr.getFinID());
-			ps.setString(index++, pr.getFinReference());
-			ps.setDate(index++, JdbcUtil.getDate(pr.getFinEffectDate()));
-			ps.setBoolean(index++, pr.isApplyODPenalty());
-			ps.setBoolean(index++, pr.isODIncGrcDays());
-			ps.setString(index++, pr.getODChargeType());
-			ps.setInt(index++, pr.getODGraceDays());
-			ps.setString(index++, pr.getODChargeCalOn());
-			ps.setBigDecimal(index++, pr.getODChargeAmtOrPerc());
-			ps.setBoolean(index++, pr.isODAllowWaiver());
-			ps.setBigDecimal(index++, pr.getODMaxWaiverPerc());
-			ps.setString(index++, pr.getODRuleCode());
-			ps.setBigDecimal(index++, pr.getoDMinCapAmount());
-			ps.setBoolean(index++, pr.isoDTDSReq());
-			ps.setInt(index++, pr.getOverDraftExtGraceDays());
-			ps.setLong(index++, pr.getOverDraftColChrgFeeType());
-			ps.setBigDecimal(index, pr.getOverDraftColAmt());
+			ps.setLong(++index, pr.getFinID());
+			ps.setString(++index, pr.getFinReference());
+			ps.setDate(++index, JdbcUtil.getDate(pr.getFinEffectDate()));
+			ps.setBoolean(++index, pr.isApplyODPenalty());
+			ps.setBoolean(++index, pr.isODIncGrcDays());
+			ps.setString(++index, pr.getODChargeType());
+			ps.setInt(++index, pr.getODGraceDays());
+			ps.setString(++index, pr.getODChargeCalOn());
+			ps.setBigDecimal(++index, pr.getODChargeAmtOrPerc());
+			ps.setBoolean(++index, pr.isODAllowWaiver());
+			ps.setBigDecimal(++index, pr.getODMaxWaiverPerc());
+			ps.setString(++index, pr.getODRuleCode());
+			ps.setBigDecimal(++index, pr.getoDMinCapAmount());
+			ps.setBoolean(++index, pr.isoDTDSReq());
+			ps.setInt(++index, pr.getOverDraftExtGraceDays());
+			ps.setLong(++index, pr.getOverDraftColChrgFeeType());
+			ps.setBigDecimal(++index, pr.getOverDraftColAmt());
+			ps.setBigDecimal(++index, pr.getOdMinAmount());
 		});
 
 		return pr.getFinReference();
@@ -160,35 +162,36 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("(LogKey, FinID, FinReference, FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
-		sql.append(
-				", ODRuleCode, ODMinCapAmount, ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType, OverDraftColAmt");
+		sql.append(", ODRuleCode, ODMinCapAmount, ODTDSReq, OverDraftExtGraceDays, OverDraftColChrgFeeType");
+		sql.append(", OverDraftColAmt, ODMinAmount");
 		sql.append(") values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index++, pr.getLogKey());
-			ps.setLong(index++, pr.getFinID());
-			ps.setString(index++, pr.getFinReference());
-			ps.setDate(index++, JdbcUtil.getDate(pr.getFinEffectDate()));
-			ps.setBoolean(index++, pr.isApplyODPenalty());
-			ps.setBoolean(index++, pr.isODIncGrcDays());
-			ps.setString(index++, pr.getODChargeType());
-			ps.setInt(index++, pr.getODGraceDays());
-			ps.setString(index++, pr.getODChargeCalOn());
-			ps.setBigDecimal(index++, pr.getODChargeAmtOrPerc());
-			ps.setBoolean(index++, pr.isODAllowWaiver());
-			ps.setBigDecimal(index++, pr.getODMaxWaiverPerc());
-			ps.setString(index++, pr.getODRuleCode());
-			ps.setBigDecimal(index++, pr.getoDMinCapAmount());
-			ps.setBoolean(index++, pr.isoDTDSReq());
-			ps.setInt(index++, pr.getOverDraftExtGraceDays());
-			ps.setLong(index++, pr.getOverDraftColChrgFeeType());
-			ps.setBigDecimal(index, pr.getOverDraftColAmt());
+			ps.setLong(++index, pr.getLogKey());
+			ps.setLong(++index, pr.getFinID());
+			ps.setString(++index, pr.getFinReference());
+			ps.setDate(++index, JdbcUtil.getDate(pr.getFinEffectDate()));
+			ps.setBoolean(++index, pr.isApplyODPenalty());
+			ps.setBoolean(++index, pr.isODIncGrcDays());
+			ps.setString(++index, pr.getODChargeType());
+			ps.setInt(++index, pr.getODGraceDays());
+			ps.setString(++index, pr.getODChargeCalOn());
+			ps.setBigDecimal(++index, pr.getODChargeAmtOrPerc());
+			ps.setBoolean(++index, pr.isODAllowWaiver());
+			ps.setBigDecimal(++index, pr.getODMaxWaiverPerc());
+			ps.setString(++index, pr.getODRuleCode());
+			ps.setBigDecimal(++index, pr.getoDMinCapAmount());
+			ps.setBoolean(++index, pr.isoDTDSReq());
+			ps.setInt(++index, pr.getOverDraftExtGraceDays());
+			ps.setLong(++index, pr.getOverDraftColChrgFeeType());
+			ps.setBigDecimal(++index, pr.getOverDraftColAmt());
+			ps.setBigDecimal(++index, pr.getOdMinAmount());
 		});
 	}
 

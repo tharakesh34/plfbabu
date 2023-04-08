@@ -108,7 +108,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
 		sql.append(", OcrRequired, AllowedOCRS, DefaultOCR, AllowedLoanPurposes, SpecificLoanPurposes");
-		sql.append(" , GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
+		sql.append(", GrcAdjReq, GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths");
 		sql.append(", MaxAutoIncrAllowed, AlwLoanSplit, SplitLoanType, TdsType, CalcOfSteps, StepsAppliedFor");
 		sql.append(", IntProvRule, RegProvRule, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, OverDraftExtGraceDays");
 		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt");
@@ -116,7 +116,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
 		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
 		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
-		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund");
+		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, ODMinAmount");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc ");
@@ -124,14 +124,14 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			sql.append(", LovDescPromoFinTypeDesc, ProfitCenterCode, ProfitCenterDesc, LovDescEntityCode");
 		}
 
-		sql.append(" , Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" , ThrldtoMaintainGrcPrd, InstBasedSchd ");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", ThrldtoMaintainGrcPrd, InstBasedSchd ");
 		sql.append(" From RMTFinanceTypes");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where FinType = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.trace(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
@@ -353,6 +353,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setAllowAutoRefund(rs.getBoolean("AllowAutoRefund"));
 				ft.setMaxAutoRefund(rs.getBigDecimal("MaxAutoRefund"));
 				ft.setMinAutoRefund(rs.getBigDecimal("MinAutoRefund"));
+				ft.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -428,7 +429,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
 		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
 		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund");
-		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt");
+		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt, ODMinAmount");
 
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
@@ -646,6 +647,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setMinAutoRefund(rs.getBigDecimal("MinAutoRefund"));
 					ft.setOverDraftColChrgFeeType(rs.getLong("OverDraftColChrgFeeType"));
 					ft.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
+					ft.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
 
 					if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 						ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
@@ -686,7 +688,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", VanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove, GrcAdjReq");
 		sql.append(", GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed, SubventionReq");
 		sql.append(", ThrldtoMaintainGrcPrd, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, ProductCategory");
-		sql.append(", TdsType, AutoApprove, GrcAdjReq, AllowAutoRefund, MaxAutoRefund, MinAutoRefund");
+		sql.append(", TdsType, AutoApprove, GrcAdjReq, AllowAutoRefund, MaxAutoRefund, MinAutoRefund, ODMinAmount");
 		sql.append(" FROM RMTFinanceTypes");
 		sql.append(" Where FinType = ?");
 
@@ -728,6 +730,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setAllowAutoRefund(rs.getBoolean("AllowAutoRefund"));
 				ft.setMaxAutoRefund(rs.getBigDecimal("MaxAutoRefund"));
 				ft.setMinAutoRefund(rs.getBigDecimal("MinAutoRefund"));
+				ft.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
 
 				return ft;
 			}, finType);
@@ -749,7 +752,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinCategory, FinDivision, ");
 		selectSql.append(" FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(" PastduePftCalMthd, PastduePftMargin,RpyHierarchy, NpaRpyHierarchy, CostOfFunds");
-		selectSql.append(", FinLTVCheck, PartiallySecured, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType");
+		selectSql.append(", FinLTVCheck, PartiallySecured, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, ODMinAmount");
 		selectSql.append(" FROM RMTFinanceTypes");
 
 		logger.debug("selectListSql: " + selectSql.toString());
@@ -866,7 +869,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
 		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
 		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
-		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund");
+		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, OdMinAmount");
 
 		sql.append(")");
 		sql.append(" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
@@ -927,7 +930,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", :MaxFPPCalType, :MaxFPPAmount, :MaxFPPPer, :MaxFPPCalOn");
 		sql.append(", :PpLockInPeriod, :EsLockInPeriod, :MinPPCalType, :MinPPCalOn");
 		sql.append(", :MinPPAmount, :MinPPPercentage, :MaxPPCalType, :MaxPPAmount, :MaxPPPercentage, :MaxPPCalOn");
-		sql.append(", :AllowAutoRefund, :MaxAutoRefund, :MinAutoRefund");
+		sql.append(", :AllowAutoRefund, :MaxAutoRefund, :MinAutoRefund, :OdMinAmount");
 		sql.append(")");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
@@ -1057,7 +1060,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MinPPPercentage = :MinPPPercentage, MaxPPCalType = :MaxPPCalType, MaxPPAmount = :MaxPPAmount");
 		sql.append(", MaxPPPercentage = :MaxPPPercentage, MaxPPCalOn = :MaxPPCalOn");
 		sql.append(", AllowAutoRefund = :AllowAutoRefund, MaxAutoRefund =:MaxAutoRefund");
-		sql.append(", MinAutoRefund = :MinAutoRefund");
+		sql.append(", MinAutoRefund = :MinAutoRefund, OdMinAmount = :OdMinAmount");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {

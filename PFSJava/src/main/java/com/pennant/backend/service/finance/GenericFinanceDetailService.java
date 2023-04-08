@@ -1853,6 +1853,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				penaltyRate.setODAllowWaiver(false);
 				penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 				penaltyRate.setODRuleCode("");
+				penaltyRate.setOdMinAmount(BigDecimal.ZERO);
 			}
 
 			penaltyRate.setFinID(finID);

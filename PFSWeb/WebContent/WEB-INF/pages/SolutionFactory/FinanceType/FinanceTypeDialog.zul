@@ -1447,6 +1447,14 @@
 													<decimalbox id="collectionAmt" width="120px" readonly="true" />
 												</hbox>
 											</row>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+												<hbox>
+													<space id="spaceODMinAmount" spacing="2px" />
+													<decimalbox id="odMinAmount" width="120px" readonly="true" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

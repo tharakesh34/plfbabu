@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Gopal.p" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.1.1" author="ramya.v">
+		<addColumn tableName="RMTFINANCETYPES">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1495.1.2" author="ramya.v">
+		<addColumn tableName="RMTFINANCETYPES_TEMP">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1495.1.3" author="ramya.v">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFINANCETYPES_TEMP SET ODMINAMOUNT = 0;
+				UPDATE RMTFINANCETYPES SET ODMINAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1495.1.4" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="odMinAmount" tableName="RMTFINANCETYPES" defaultValue="0" />
+		<addDefaultValue columnName="odMinAmount" tableName="RMTFINANCETYPES_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1495.1.4" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_FT_ODMINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_FTT_ODMINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.2.1" author="ramya.v">
+		<addColumn tableName="FINODPENALTYRATES">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1495.2.2" author="ramya.v">
+		<addColumn tableName="FINODPENALTYRATES_TEMP">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1495.2.3" author="ramya.v">
+		<sql>
+			<![CDATA[	
+				UPDATE FINODPENALTYRATES SET ODMINAMOUNT = 0;
+				UPDATE FINODPENALTYRATES_TEMP SET ODMINAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1495.2.4" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="odMinAmount" tableName="FINODPENALTYRATES" defaultValue="0" />
+		<addDefaultValue columnName="odMinAmount" tableName="FINODPENALTYRATES_TEMP" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1495.2.4" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FINODPENALTYRATES ADD CONSTRAINT DF_FOPR_MINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+				ALTER TABLE FINODPENALTYRATES_TEMP ADD CONSTRAINT DF_FOPRT_MINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.1_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.1" author="ramya.v">
+		<createView viewName="FINODPENALTYRATES_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ,
+					OVERDRAFTEXTGRACEDAYS,
+					OVERDRAFTCOLCHRGFEETYPE,
+					OVERDRAFTCOLAMT,
+					ODMINAMOUNT
+				FROM FINODPENALTYRATES
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.1_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenaltyrates_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.2_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.2" author="ramya.v">
+		<createView viewName="FINODPENALTYRATES_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ,
+					OVERDRAFTEXTGRACEDAYS,
+					OVERDRAFTCOLCHRGFEETYPE,
+					OVERDRAFTCOLAMT,
+					ODMINAMOUNT
+				FROM FINODPENALTYRATES_TEMP
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.2_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenaltyrates_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.3_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.3" author="ramya.v">
+		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ,
+					OVERDRAFTEXTGRACEDAYS,
+					OVERDRAFTCOLCHRGFEETYPE,
+					OVERDRAFTCOLAMT,
+					ODMINAMOUNT
+				FROM FINODPENALTYRATES_TEMP
+				UNION ALL
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ,
+					OVERDRAFTEXTGRACEDAYS,
+					OVERDRAFTCOLCHRGFEETYPE,
+					OVERDRAFTCOLAMT,
+					ODMINAMOUNT
+				FROM FINODPENALTYRATES
+				WHERE NOT EXISTS (SELECT 1 FROM FINODPENALTYRATES_TEMP WHERE FINID = FINODPENALTYRATES.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1495.3.3_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenaltyrates_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.4.1" author="ramya.v">
+		<addColumn tableName="FINODDETAILS">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1495.4.2" author="ramya.v">
+		<sql>
+			<![CDATA[	
+				UPDATE FINODDETAILS SET ODMINAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.4.3" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="odMinAmount" tableName="FINODDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1495.4.3" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FINODDETAILS ADD CONSTRAINT DF_FOD_MINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.5.1_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenalty_latest_rates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.5.1" author="ramya.v">
+		<createView viewName="FINODPENALTY_LATEST_RATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID, 
+					FM.FINREFERENCE,
+				    ODPR.FINEFFECTDATE,
+				    ODPR.APPLYODPENALTY,
+				    ODPR.ODINCGRCDAYS,
+				   	ODPR.ODCHARGETYPE,
+				    ODPR.ODGRACEDAYS,
+				    ODPR.ODCHARGECALON,
+				    ODPR.ODCHARGEAMTORPERC,
+				    ODPR.ODALLOWWAIVER,
+				    ODPR.ODMAXWAIVERPERC,
+				    ODPR.ODRULECODE,
+				    ODPR.ODMINAMOUNT
+				FROM FINODPENALTYRATES ODPR 
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = ODPR.FINID
+				WHERE ODPR.FINEFFECTDATE = ((SELECT MAX(FINODPENALTYRATES.FINEFFECTDATE) EXPR1 FROM FINODPENALTYRATES WHERE FINODPENALTYRATES.FINID = ODPR.FINID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1495.5.1_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenalty_latest_rates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.6.1_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finoddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.6.1" author="ramya.v">
+		<createView viewName="FINODDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					OD.FINODSCHDDATE,
+					OD.FINODFOR,
+					OD.FINBRANCH,
+					OD.FINTYPE,
+					OD.CUSTID,
+					OD.FINODTILLDATE,
+					OD.FINCURODAMT,
+					OD.FINCURODPRI,
+					OD.FINCURODPFT,
+					OD.FINMAXODAMT,
+					OD.FINMAXODPRI,
+					OD.FINMAXODPFT,
+					OD.GRACEDAYS,
+					OD.INCGRACEDAYS,
+					OD.FINCURODDAYS,
+					OD.TOTPENALTYAMT,
+					OD.TOTWAIVED,
+					OD.TOTPENALTYPAID,
+					OD.LPIAMT,
+					OD.LPIPAID,
+					OD.LPIBAL,
+					OD.TOTPENALTYBAL,
+					OD.FINLMDFDATE,
+					COALESCE(PR.APPLYODPENALTY, 0)  APPLYODPENALTY,
+					COALESCE(PR.ODINCGRCDAYS, 0)  ODINCGRCDAYS,
+					COALESCE(PR.ODCHARGETYPE, '')  ODCHARGETYPE,
+					COALESCE(PR.ODGRACEDAYS, 0)  ODGRACEDAYS,
+					COALESCE(PR.ODCHARGECALON, '')  ODCHARGECALON,
+					COALESCE(PR.ODCHARGEAMTORPERC, 0)  ODCHARGEAMTORPERC,
+					COALESCE(PR.ODALLOWWAIVER, 0)  ODALLOWWAIVER,
+					COALESCE(PR.ODMAXWAIVERPERC, 0)  ODMAXWAIVERPERC,
+					COALESCE(PR.ODRULECODE, '')  ODRULECODE,
+                    COALESCE(PR.ODMINAMOUNT, 0)  ODMINAMOUNT,
+					OD.LOCKODRECALCAL,
+					OD.LPPTDSPAID,
+					OD.LPCPZ,
+					OD.LPCPZAMOUNT,
+					OD.LPCURCPZBAL,
+					OD.PRESENTMENTID,
+					OD.CUROVERDRAFTTXNCHRG,
+					OD.MAXOVERDRAFTTXNCHRG
+				FROM FINODDETAILS OD
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = OD.FINID
+				LEFT JOIN FINODPENALTY_LATEST_RATES_VIEW PR ON FM.FINID = PR.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1495.6.1_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finoddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>

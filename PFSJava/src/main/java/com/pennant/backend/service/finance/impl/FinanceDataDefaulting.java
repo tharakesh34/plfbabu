@@ -1026,6 +1026,7 @@ public class FinanceDataDefaulting {
 			opr.setODAllowWaiver(finType.isODAllowWaiver());
 			opr.setODMaxWaiverPerc(finType.getODMaxWaiverPerc());
 			opr.setODRuleCode(finType.getODRuleCode());
+			opr.setOdMinAmount(finType.getOdMinAmount());
 
 			schdData.setFinODPenaltyRate(opr);
 

@@ -1242,6 +1242,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_SchdulePrincipalInterestPastDue")));
 			overDueCalOnList.add(
 					new ValueLabel(FinanceConstants.ODCALON_PIPD_EOM, Labels.getLabel("label_SchdulePriIntPD_atEOM")));
+			overDueCalOnList
+					.add(new ValueLabel(FinanceConstants.ODCALON_INST, Labels.getLabel("label_SchduleInstlamount")));
 		}
 		return overDueCalOnList;
 	}

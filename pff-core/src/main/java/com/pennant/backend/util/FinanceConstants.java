@@ -97,6 +97,7 @@ public class FinanceConstants {
 	public static final String ODCALON_PIPD_FRQ = "PIPDF";
 	public static final String ODCALON_PIPD_EOM = "PIPDM";
 	// public static final String ODCALON_PIPD = "PIPD";
+	public static final String ODCALON_INST = "INST";
 
 	// Schedule Apportionment Types
 	public static final String PAY_APPORTIONMENT_SPRI = "SPRI";

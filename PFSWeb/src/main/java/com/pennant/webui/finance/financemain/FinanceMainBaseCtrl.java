@@ -364,6 +364,7 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.HunterService;
@@ -1164,6 +1165,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 	private SubventionDetail oldSubventionDetail;
 	protected transient boolean oldVar_finOCRRequired;
+	protected Decimalbox odMinAmount;
 
 	private FeeTypeService feeTypeService;
 
@@ -4593,6 +4595,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
 				this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
+
+				String odChargeType = getComboboxValue(this.oDChargeType);
+				if (FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+					this.odMinAmount.setValue(penaltyRate.getOdMinAmount());
+				}
 			} else {
 				this.applyODPenalty.setChecked(false);
 				this.gb_OverDuePenalty.setVisible(false);
@@ -15053,6 +15060,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			try {
+				penaltyRate.setOdMinAmount(
+						PennantApplicationUtil.unFormateAmount(this.odMinAmount.getValue(), getCcyFormat()));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 
 			if (isOverDraft) {
 				FeeType feeType = (FeeType) this.collecChrgCode.getObject();
@@ -17516,6 +17529,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.parentLoanReference);
 		readOnlyComponent(true, this.samplingRequired);
 		readOnlyComponent(true, this.legalRequired);
+		readOnlyComponent(true, this.odMinAmount);
+
 		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
@@ -19712,6 +19727,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
 				this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
 				this.lPPRule.setValue(penaltyRate.getODRuleCode());
+				
+				if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+					this.odMinAmount.setValue(PennantApplicationUtil.formateAmount(penaltyRate.getOdMinAmount(),
+							PennantConstants.defaultCCYDecPos));
+				}
 			}
 		}
 
@@ -19935,6 +19955,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.lPPRule.setVisible(false);
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
+			this.row_odAllowTDS.setVisible(true);
 		}
 		logger.debug(Literal.LEAVING);
 	}

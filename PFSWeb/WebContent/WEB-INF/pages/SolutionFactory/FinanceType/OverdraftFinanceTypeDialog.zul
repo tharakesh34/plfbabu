@@ -348,6 +348,14 @@
 													<checkbox id="tDSApplicable" checked="false" />
 												</hbox>
 											</row>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+												<hbox>
+													<space id="spaceODMinAmount" spacing="2px" />
+													<decimalbox id="odMinAmount" width="120px" readonly="true" />
+												</hbox>
+											</row>
 											<row id="row_finAcType" visible="false">
 												<label id="label_FinanceTypeDialog_FinAcType" value="${c:l('label_OverDraftFinanceTypeDialog_FinAcType.value')}" />
 												<extendedcombobox id="finAcType" />

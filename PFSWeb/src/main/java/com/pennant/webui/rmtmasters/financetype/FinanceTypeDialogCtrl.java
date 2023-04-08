@@ -143,6 +143,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.provision.ProvisionBook;
 
@@ -659,6 +660,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected CurrencyBox minAutoRefund;
 	protected CurrencyBox maxAutoRefund;
 	protected Row rowAutoRefundLimits;
+	protected Decimalbox odMinAmount;
 
 	private List<ValueLabel> minpartpymt = PennantStaticListUtil.getMinPrePaymentCalculationTypes();
 	private List<ValueLabel> maxpartpymt = PennantStaticListUtil.getMaxPrePaymentCalculationTypes();
@@ -678,6 +680,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox instBasedSchd;
 	protected Row row_InstBasedSchd;
 	private boolean postEventReq = false;
+	protected Space spaceODMinAmount;
 
 	/**
 	 * default constructor.<br>
@@ -1108,6 +1111,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.minPPAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.minPPAmount.setScale(format);
+		this.odMinAmount.setMaxlength(10);
+		this.odMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1842,6 +1847,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.oDAllowWaiver.setChecked(aFinanceType.isODAllowWaiver());
 		this.oDMaxWaiverPerc.setValue(aFinanceType.getODMaxWaiverPerc());
 		this.oDMinCapAmount.setValue(aFinanceType.getODMinCapAmount());
+		
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.odMinAmount.setValue(CurrencyUtil.parse(aFinanceType.getOdMinAmount(), format));
+		}
 
 		if (isOverdraft) {
 			if (aFinanceType.getFeetype() != null & aFinanceType.getOverDraftColChrgFeeType() > 0) {
@@ -3829,6 +3838,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				if (this.odMinAmount.getValue() == null
+						|| this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) == 0) {
+					throw new WrongValueException(this.odMinAmount, Labels.getLabel("MUST_BE_ENTERED",
+							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value") }));
+				}
+			}
+			aFinanceType.setOdMinAmount(CurrencyUtil.unFormat(this.odMinAmount.getValue(), format));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Stepping Details
 		if (this.gb_SteppingDetails.isVisible() && this.stepFinance.isChecked()) {
 			aFinanceType.setStepFinance(this.stepFinance.isChecked());
@@ -4391,6 +4412,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				setDefaultValues();
 			}
 			onCheckODPenalty(false);
+			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(aFinanceType.getRecordStatus())) {
+				this.odMinAmount.setReadonly(true);
+			}
 			changeFinRateType();
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
@@ -5336,6 +5360,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxPPPercentage.setReadonly(isTrue);
 		this.minPPEmi.setReadonly(isTrue);
 		this.minPPPos.setReadonly(isTrue);
+		this.odMinAmount.setReadonly(isTrue);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -5488,6 +5513,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.autoIncrGrcEndDate.setChecked(false);
 		this.grcAutoIncrMonths.setValue(0);
 		this.maxAutoIncrAllowed.setValue(0);
+		this.odMinAmount.setValue(BigDecimal.ZERO);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -7001,6 +7027,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDAllowWaiver.setDisabled(true);
 			this.oDMaxWaiverPerc.setDisabled(true);
 			this.oDMinCapAmount.setDisabled(true);
+			this.odMinAmount.setDisabled(true);
 			checkAction = true;
 			if (isOverdraft) {
 				this.collectionAmt.setReadonly(!isCompReadonly);
@@ -7016,6 +7043,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
 			this.oDMinCapAmount.setValue(BigDecimal.ZERO);
 			this.space_collectionAmt.setSclass("");
+			this.odMinAmount.setValue(BigDecimal.ZERO);
 		}
 		if (!this.applyODPenalty.isChecked()) {
 			this.space_oDGraceDays.setSclass("");
@@ -7050,7 +7078,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	public void onchangeODCharges(String val) {
-		fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), "");
+		fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), ",INST,");
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), ",");
+		}
 	}
 
 	private void onChangeODChargeType(boolean changeAction) {
@@ -7058,6 +7089,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (changeAction) {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 			readOnlyComponent(false, this.oDChargeCalOn);
+			this.odMinAmount.setValue(BigDecimal.ZERO);
 		}
 
 		if (getComboboxValue(this.oDChargeType).equals(PennantConstants.List_Select)) {
@@ -7116,6 +7148,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setVisible(false);
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
+			this.odMinAmount.setReadonly(true);
+			this.spaceODMinAmount.setSclass("");
+			
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				this.odMinAmount.setReadonly(false);
+				this.spaceODMinAmount.setSclass(PennantConstants.mandateSclass);
+			}
 		}
 		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));
 	}

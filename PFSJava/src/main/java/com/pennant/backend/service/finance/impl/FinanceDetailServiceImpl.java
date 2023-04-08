@@ -10117,6 +10117,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 		finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 		finODPenaltyRate.setODRuleCode(financeType.getODRuleCode());
+		finODPenaltyRate.setOdMinAmount(financeType.getOdMinAmount());
 
 		return finODPenaltyRate;
 	}
