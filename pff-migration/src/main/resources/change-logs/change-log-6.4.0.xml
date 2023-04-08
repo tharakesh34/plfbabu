@@ -4033,4 +4033,136 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#1469.21" author="NagaVamsi.P">
+		<addColumn tableName="NPA_PROVISION_STAGE">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.21.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_PROVISION_STAGE SET CustCoreBank = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_PROVISION_STAGE.CUSTID = C.CUSTID); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.21.2" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_PROVISION_STAGE" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.22" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.22.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_INFO SET CUSTCOREBANK = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_LOAN_INFO.CUSTID = C.CUSTID); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.22.2" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_LOAN_INFO" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.23.1" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO">
+			<column name="FinType" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.23.2" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_INFO SET FINTYPE = (SELECT FM.FINTYPE FROM FINANCEMAIN FM WHERE NPA_LOAN_INFO.FINREFERENCE = FM.FINREFERENCE); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.23.3" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_LOAN_INFO" columnName="FinType" columnDataType="varchar(8)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.23.4" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.23.5" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_INFO_SNAPSHOT SET CUSTCOREBANK = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_LOAN_INFO_SNAPSHOT.CUSTID = C.CUSTID); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.23.6" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_LOAN_INFO_SNAPSHOT" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.23.7" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="FinType" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.23.8" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_INFO_SNAPSHOT SET FINTYPE = (SELECT FM.FINTYPE FROM FINANCEMAIN FM WHERE NPA_LOAN_INFO_SNAPSHOT.FINREFERENCE = FM.FINREFERENCE); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.23.9" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_LOAN_INFO_SNAPSHOT" columnName="FinType"
+			columnDataType="varchar(8)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.24" author="NagaVamsi.P">
+		<addColumn tableName="NPA_Loan_Movements">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.24.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_MOVEMENTS SET CUSTCOREBANK = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_LOAN_MOVEMENTS.CUSTID = C.CUSTID); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.24.2" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_Loan_Movements" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.25" author="NagaVamsi.P">
+		<addColumn tableName="NPA_Loan_Movement_Tagging">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_MOVEMENT_TAGGING SET CUSTCOREBANK = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_LOAN_MOVEMENT_TAGGING.CUSTID = C.CUSTID); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.2" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_Loan_Movement_Tagging" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
 </databaseChangeLog> 
