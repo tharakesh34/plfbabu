@@ -4520,4 +4520,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1470.21" author="saikrishna.b">
+		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
+	</changeSet>
+	<changeSet id="ST#1470.22" author="saikrishna.b">
+		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
+	</changeSet>
 </databaseChangeLog> 
