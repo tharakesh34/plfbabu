@@ -5,48 +5,6 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 
-	<include file="change-logs/change-log-5.3.0.xml" />
-	<include file="change-logs/change-log-5.4.0.xml" />
-	<include file="change-logs/change-log-5.5.0.xml" />
-	<include file="change-logs/change-log-5.6.0.xml" />
-	<include file="change-logs/change-log-5.7.0.xml" />
-	<include file="change-logs/change-log-5.8.0.xml" />
-	<include file="change-logs/change-log-5.9.0.xml" />
-	<include file="change-logs/change-log-5.10.0.xml" />
-	<include file="change-logs/change-log-5.11.0.xml" />
-	<include file="change-logs/change-log-security-seq-reseed_pre.xml" />
-	<include file="change-logs/change-log-5.12.0.xml" />
-	<include file="change-logs/change-log-5.13.0.xml" />
-	<include file="change-logs/change-log-5.14.0.xml" />
-	<include file="change-logs/change-log-5.15.0.xml" />
-	<include file="change-logs/change-log-5.16.0.xml" />
-	<include file="change-logs/change-log-5.17.0.xml" />
-	<include file="change-logs/change-log-gst_details.xml" />
-	<include file="change-logs/change-log-5.18.0.xml" />
-	<include file="change-logs/change-log-CDProduct.xml" />
-	<include file="change-logs/change-log-CERSAI.xml" />
-	<include file="change-logs/change-log-6.0.0.xml" />
-	<include file="change-logs/change-log-account-updater.xml" />
-	<include file="change-logs/change-log-islamic_code_removal.xml" />
-	<include file="change-logs/change-log-db-based-scheduler.xml" />
-	<include file="change-logs/change-log-single_fee_accounting.xml" />
-	<include file="change-logs/change-log-finid.xml" />
-	<include file="change-logs/change-log-6.0.0-pt.xml" />
-	<include file="change-logs/change-log-finid_views.xml" />
-	<include file="change-logs/change-log-indexes.xml" />
-	<include file="change-logs/change-log-hl-missing-indexes.xml" />
-	<include file="change-logs/change-log-otp.xml" />
-	<include file="change-logs/change-log-db-cleanup.xml" />
-	<include file="change-logs/change-log-6.1.0.xml" />
-	<include file="change-logs/change-log-6.1.0_views.xml" />
-	<include file="change-logs/change-log-6.2.0.xml" />
-	<include file="change-logs/change-log-batch_jobs.xml" />
-	<include file="change-logs/change-log-6.3.0.xml" />
-	<include file="change-logs/change-log-menu-rights.xml" />
-	<include file="change-logs/change-log-hdfc.xml" />
-	<include file="change-logs/change-log-menu-rights.xml" />
-	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
-	<include file="change-logs/change-log-meta-data.xml" />
-	<include file="change-logs/change-log-hdfc_day_0.xml" />
-	<include file="change-logs/change-log-6.5.0.xml"/>
+	
+	<include file="change-logs/change-log-6.4.0.xml"/>
 </databaseChangeLog>
