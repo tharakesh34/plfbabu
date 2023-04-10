@@ -2,6 +2,7 @@ package com.pennant.pff.presentment;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -83,6 +84,13 @@ public class SuccessResponseJob extends BatchConfiguration {
 			return;
 		}
 
+		int count = presentmentDAO.updateRespProcessFlag(batchID, 1, "S");
+
+		if (totalRecords != count) {
+			logger.error("The records are modified by other duplicate job");
+			return;
+		}
+
 		JobParameters jobParameters = new JobParametersBuilder()
 
 				.addLong("BATCH_ID", batchID)
@@ -94,7 +102,15 @@ public class SuccessResponseJob extends BatchConfiguration {
 		try {
 			start(jobParameters);
 		} catch (Exception e) {
+			presentmentDAO.updateRespProcessFlag(batchID, 0, "S");
 			bjqDAO.clearQueue();
+
+			String errMessage = e.getMessage();
+			if (StringUtils.trimToNull(errMessage) != null) {
+				errMessage = (errMessage.length() >= 1000) ? errMessage.substring(0, 988) : errMessage;
+			}
+			presentmentDAO.updateBatch(batchID, errMessage);
+
 			throw new AppException("Presentment Succes Response Job failed", e);
 		}
 	}
