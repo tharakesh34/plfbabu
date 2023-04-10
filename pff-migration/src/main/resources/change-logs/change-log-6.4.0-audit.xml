@@ -80,13 +80,45 @@
 			<column name="UnderNpa" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#1470.1_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1470.1" author="saikrishna.b">
 		<modifyDataType tableName="ADTRMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="ST#1470.1_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1470.2_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtfintypeaccounting');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1470.2" author="saikrishna.b">
 		<modifyDataType tableName="ADTFINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.2_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtfintypeaccounting');
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="ST#1495" author="ramya.v">
@@ -115,11 +147,24 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1470.21_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1470.21" author="saikrishna.b">
 		<modifyDataType tableName="ADTRMTACCOUNTINGSET" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
 	</changeSet>
-	<changeSet id="ST#1470.22" author="saikrishna.b">
-		<modifyDataType tableName="ADTRMTACCOUNTINGSET_TEMP" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
+	
+	<changeSet id="ST#1470.21_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>

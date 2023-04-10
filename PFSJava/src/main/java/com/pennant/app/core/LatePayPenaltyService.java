@@ -293,6 +293,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 	}
 
 	private BigDecimal getBalanceForCal(FinODDetails fod, List<FinanceScheduleDetail> schedules) {
+		if (fod.getODChargeCalOn() == null) {
+			return fod.getFinMaxODAmt();
+		}
+
 		switch (fod.getODChargeCalOn()) {
 		case FinanceConstants.ODCALON_SPFT:
 			return fod.getFinMaxODPft();

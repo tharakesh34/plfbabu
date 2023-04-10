@@ -50,7 +50,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceMainDAO financeMainDAO;
 
-	private static final String ERR_CODE_01 = "Asset Classification Setup configuration is not exists for Entity Code : %s";
+	private static final String ERR_CODE_01 = "Asset Classification Setup configuration is not exists for Loan Type : %s";
 
 	public AssetClassificationServiceImpl() {
 		super();
