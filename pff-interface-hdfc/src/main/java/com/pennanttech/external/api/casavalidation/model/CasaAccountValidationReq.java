@@ -2,18 +2,18 @@ package com.pennanttech.external.api.casavalidation.model;
 
 public class CasaAccountValidationReq {
 
-	public String Extsysname;
+	private String Extsysname;
 
-	public String Idtxn;
+	private String Idtxn;
 
-	public String Iduser;
+	private String Iduser;
 
-	public CustAcctDetails custacctdetails;
+	private CustAcctDetails custacctdetails;
 
 	public class CustAcctDetails {
 
-		public String accountNo;
-		public String idcust;
+		private String accountNo;
+		private String idcust;
 
 		public String getAccountNo() {
 			return accountNo;

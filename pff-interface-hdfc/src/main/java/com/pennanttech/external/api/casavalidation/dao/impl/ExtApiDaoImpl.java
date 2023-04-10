@@ -1,5 +1,6 @@
 package com.pennanttech.external.api.casavalidation.dao.impl;
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -15,7 +16,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.external.api.casavalidation.dao.ExtApiDao;
-import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -28,71 +28,54 @@ public class ExtApiDaoImpl extends BasicDao<Object> implements ExtApiDao {
 
 	@Override
 	public long insertReqData(String req) {
-		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		logger.debug(Literal.ENTERING);
-		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+		final KeyHolder keyHolder = new GeneratedKeyHolder();
 		StringBuilder sql = new StringBuilder("insert into");
 		sql.append(" EXTAPILOG");
-		sql.append("(ID, API_NAME, API_REQUEST, API_REQ_TIME, API_RESPONSE, API_RESP_TIME, ERROR");
+		sql.append("(API_NAME, API_REQUEST, API_REQ_TIME");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?");
 		sql.append(")");
-		this.jdbcOperations.update(new PreparedStatementCreator() {
+		extNamedJdbcTemplate.getJdbcOperations().update(new PreparedStatementCreator() {
 			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 				int index = 1;
+				PreparedStatement ps = connection.prepareStatement(sql.toString(), new String[] { "id" });
 				ps.setString(index++, CASA_ACC_VALIDATION);
-				ps.setString(index++, req);
-				ps.setTimestamp(index, curTimeStamp);
-				ps.setString(index++, "");
-				ps.setTimestamp(index, curTimeStamp);
-				ps.setString(index++, "");
+				Blob blob = connection.createBlob();
+				blob.setBytes(1, req.getBytes());
+				ps.setBlob(index++, blob);
+				ps.setTimestamp(index, new Timestamp(System.currentTimeMillis()));
 				return ps;
 			}
 		}, keyHolder);
-
+		logger.debug(Literal.LEAVING);
 		return keyHolder.getKey().longValue();
 	}
 
 	@Override
 	public void logResponseById(long id, String xmlResp) {
 		logger.debug(Literal.ENTERING);
-		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+		Connection connection = null;
+		PreparedStatement ps = null;
 		StringBuilder sql = new StringBuilder("UPDATE EXTAPILOG");
 		sql.append(" SET API_RESPONSE = ?,API_RESP_TIME = ? WHERE ID= ?");
-
 		logger.debug(Literal.SQL + sql.toString());
-
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+		try {
+			connection = extNamedJdbcTemplate.getJdbcTemplate().getDataSource().getConnection();
+			ps = connection.prepareStatement(sql.toString());
 			int index = 1;
-			ps.setString(index++, xmlResp);
-			ps.setTimestamp(index++, curTimeStamp);
+			Blob blob = connection.createBlob();
+			blob.setBytes(1, xmlResp.getBytes());
+			ps.setBlob(index++, blob);
+			ps.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
 			ps.setLong(index, id);
-		});
-
-	}
-
-	public void insertExcData(long id, String xmlResp) {
-
-		logger.debug(Literal.ENTERING);
-		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		StringBuilder sql = new StringBuilder("update EXTAPILOG ");
-		sql.append(" Set API_RESPONSE = ?, API_RESP_TIME = ?");
-		sql.append(" Where id = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(5, xmlResp);
-			ps.setTimestamp(6, curTimeStamp);
-
-		});
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			logger.error("Exception: ", e);
+			e.printStackTrace();
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setExtDataSource(DataSource extDataSource) {

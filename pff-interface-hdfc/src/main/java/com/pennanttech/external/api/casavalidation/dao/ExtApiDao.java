@@ -4,5 +4,5 @@ public interface ExtApiDao {
 
 	public long insertReqData(String xmlReq);
 
-	public void logResponseById(long id, String xmlResp);
+	public void logResponseById(long id, String xmlResp) throws Exception;
 }

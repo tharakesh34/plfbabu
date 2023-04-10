@@ -15,23 +15,23 @@ public class CasaAccountValidationResp implements Serializable {
 	public static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "requestdata")
-	public RequestData requestData;
+	private RequestData requestData;
 
 	@XmlElement(name = "responsedata")
-	public ResponseData respData;
+	private ResponseData respData;
 
 	@XmlElement(name = "rc")
-	public ResponseCodes responseCodes;
+	private ResponseCodes responseCodes;
 
 	@XmlElement(name = "css")
-	public Css css;
+	private Css css;
 
 	@XmlElement(name = "extsysname")
-	public String extSysName;
+	private String extSysName;
 
-	public String xmlResponse;
+	private String xmlResponse;
 
-	public boolean isException;
+	private boolean isException;
 
 	@XmlRootElement(name = "requestdata")
 	@XmlAccessorType(XmlAccessType.FIELD)
@@ -85,7 +85,7 @@ public class CasaAccountValidationResp implements Serializable {
 	public static class ResponseData {
 
 		@XmlElement(name = "customerdetails")
-		public CustomerDetails custDetails;
+		private CustomerDetails custDetails;
 
 		public CustomerDetails getCustDetails() {
 			return custDetails;
@@ -115,58 +115,58 @@ public class CasaAccountValidationResp implements Serializable {
 				public static final long serialVersionUID = 1L;
 
 				@XmlElement(name = "accdetails")
-				public AccDetails accDtls;
+				private AccDetails accDtls;
 				@XmlElement(name = "linkcustIds")
-				public String linkCustIds;
+				private String linkCustIds;
 				@XmlElement(name = "errorcode")
-				public String errorCode;
+				private String errorCode;
 				@XmlElement(name = "errormessage")
-				public String errorMessage;
+				private String errorMessage;
 
 				@XmlAccessorType(XmlAccessType.FIELD)
 				public static class AccDetails {
 
 					@XmlAttribute(name = "accountbranchcode")
-					public String accountbranchcode;
+					private String accountbranchcode;
 
 					@XmlAttribute(name = "accountnumber")
-					public String accountNumber;
+					private String accountNumber;
 
 					@XmlAttribute(name = "accountopeningdate")
-					public String accountOpeningDate;
+					private String accountOpeningDate;
 
 					@XmlAttribute(name = "accountstatus")
-					public String accountStatus;
+					private String accountStatus;
 
 					@XmlAttribute(name = "accounttitle")
-					public String accountTitle;
+					private String accountTitle;
 
 					@XmlAttribute(name = "balminreqd")
-					public String balMinReqd;
+					private String balMinReqd;
 
 					@XmlAttribute(name = "codprod")
-					public String codProd;
+					private String codProd;
 
 					@XmlAttribute(name = "currency")
-					public String currency;
+					private String currency;
 
 					@XmlAttribute(name = "customername")
-					public String customerName;
+					private String customerName;
 
 					@XmlAttribute(name = "memoflg")
-					public String memoFlg;
+					private String memoFlg;
 
 					@XmlAttribute(name = "namcurrency")
-					public String namCurrency;
+					private String namCurrency;
 
 					@XmlAttribute(name = "nreflg")
-					public String nreFlg;
+					private String nreFlg;
 
 					@XmlAttribute(name = "pricustomerid")
-					public String priCustomerId;
+					private String priCustomerId;
 
 					@XmlAttribute(name = "servicebranchcode")
-					public String serviceBranchCode;
+					private String serviceBranchCode;
 
 					public String getAccountbranchcode() {
 						return accountbranchcode;
@@ -337,11 +337,11 @@ public class CasaAccountValidationResp implements Serializable {
 			public static class Accounts {
 
 				@XmlElement(name = "accountnumber")
-				public String Accountnum;
+				private String Accountnum;
 				@XmlElement(name = "errorcode")
-				public String errorCode;
+				private String errorCode;
 				@XmlElement(name = "errormessage")
-				public String errorMessage;
+				private String errorMessage;
 
 				public String getAccountnum() {
 					return Accountnum;
@@ -402,11 +402,11 @@ public class CasaAccountValidationResp implements Serializable {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class ResponseCodes {
 		@XmlAttribute(name = "errorcode")
-		public String errorCode;
+		private String errorCode;
 		@XmlAttribute(name = "errormessage")
-		public String errorMessage;
+		private String errorMessage;
 		@XmlAttribute(name = "returncode")
-		public String returnCode;
+		private String returnCode;
 
 		public String getErrorCode() {
 			return errorCode;
@@ -443,9 +443,9 @@ public class CasaAccountValidationResp implements Serializable {
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Css {
 		@XmlAttribute(name = "langcss")
-		public String langCss;
+		private String langCss;
 		@XmlAttribute(name = "perscss")
-		public String persCss;
+		private String persCss;
 
 		public String getLangCss() {
 			return langCss;
