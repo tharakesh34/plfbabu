@@ -62,7 +62,7 @@ public interface ExtPresentmentDAO {
 
 	boolean isRecordInserted(String refernce, long headeID);
 
-	public Presentment getPDCStagingPresentmentDetails(long finId, String chequeNo, Date chequeDate);
+	public Presentment getPDCStagingPresentmentDetails(String finReference, String chequeNo, Date chequeDate);
 
 	long savePresentment(Presentment pres, long headerId, String clearingStatus);
 
