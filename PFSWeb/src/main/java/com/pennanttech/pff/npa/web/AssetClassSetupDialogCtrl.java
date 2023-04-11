@@ -476,6 +476,25 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		listcell.appendChild(hbox);
 		listitem.appendChild(listcell);
 
+		Intbox npaAge = new Intbox();
+		npaAge.setWidth("80px");
+		if (acsd.getNpaAge() != 0) {
+			npaAge.setValue(acsd.getNpaAge());
+		} else {
+			npaAge.setValue(0);
+		}
+		npaAge.setId("npaAge".concat(String.valueOf(acsd.getKeyvalue())));
+		readOnlyComponent(true, npaAge);
+		hbox = new Hbox();
+		hbox.appendChild(npaAge);
+		listcell = new Listcell();
+		listcell.appendChild(hbox);
+		listcell.setParent(listitem);
+
+		listitem.setAttribute("data", acsd);
+
+		this.listBoxAssetClassSetup.appendChild(listitem);
+
 		listcell = new Listcell();
 		hbox = new Hbox();
 		ExtendedCombobox assestClassCode = new ExtendedCombobox();
@@ -554,30 +573,11 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		npa_CheckBox.setWidth("50px");
 		lc_NPACheckBox.appendChild(npa_CheckBox);
 		listitem.appendChild(lc_NPACheckBox);
-
-		Intbox npaAge = new Intbox();
-		npaAge.setWidth("80px");
-		if (acsd.getNpaAge() != 0) {
-			npaAge.setValue(acsd.getNpaAge());
-		} else {
-			npaAge.setValue(0);
-		}
-		npaAge.setId("npaAge".concat(String.valueOf(acsd.getKeyvalue())));
-		readOnlyComponent(true, npaAge);
-		hbox = new Hbox();
-		hbox.appendChild(npaAge);
-		listcell = new Listcell();
-		listcell.appendChild(hbox);
-		listcell.setParent(listitem);
-
-		listitem.setAttribute("data", acsd);
-
-		this.listBoxAssetClassSetup.appendChild(listitem);
 	}
 
 	public void onChangeAssetClassCode(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
-		Hbox hbox = (Hbox) getComponent(listitem, 2);
+		Hbox hbox = (Hbox) getComponent(listitem, 3);
 		ExtendedCombobox assestClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assestClassCode);
 		AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
@@ -598,13 +598,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	public void onChangeAssetSubClassCode(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
-		Hbox hbox = (Hbox) getComponent(listitem, 2);
+		Hbox hbox = (Hbox) getComponent(listitem, 3);
 		ExtendedCombobox assestClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assestClassCode);
 
 		AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
 
-		hbox = (Hbox) getComponent(listitem, 3);
+		hbox = (Hbox) getComponent(listitem, 4);
 		ExtendedCombobox assetSubClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assetSubClassCode);
 
@@ -630,7 +630,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	private boolean validateSubClassCode(AssetSubClassCode ascc, int keyValue) {
 		for (Listitem component : listBoxAssetClassSetup.getItems()) {
-			Hbox hbox = (Hbox) getComponent(component, 3);
+			Hbox hbox = (Hbox) getComponent(component, 4);
 			ExtendedCombobox extendedCombobox = (ExtendedCombobox) hbox.getLastChild();
 			Clients.clearWrongValue(extendedCombobox);
 			int key = Integer.parseInt(extendedCombobox.getId().replaceAll("assetSubClassCode", ""));
@@ -1158,6 +1158,14 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 			try {
 				hbox = (Hbox) getComponent(listitem, 2);
+				Intbox npaAge = (Intbox) hbox.getFirstChild();
+				assetClassSetupDetail.setNpaAge(npaAge.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				hbox = (Hbox) getComponent(listitem, 3);
 				ExtendedCombobox assestClassCode = (ExtendedCombobox) hbox.getLastChild();
 				AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
 				Clients.clearWrongValue(assestClassCode);
@@ -1172,7 +1180,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			}
 
 			try {
-				hbox = (Hbox) getComponent(listitem, 3);
+				hbox = (Hbox) getComponent(listitem, 4);
 				ExtendedCombobox assestClassSubCode = (ExtendedCombobox) hbox.getLastChild();
 				AssetSubClassCode object = (AssetSubClassCode) assestClassSubCode.getObject();
 				Clients.clearWrongValue(assestClassSubCode);
@@ -1187,16 +1195,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			}
 
 			try {
-				Checkbox npaStage = (Checkbox) getComponent(listitem, 4);
+				Checkbox npaStage = (Checkbox) getComponent(listitem, 5);
 				assetClassSetupDetail.setNpaStage(npaStage.isChecked());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				hbox = (Hbox) getComponent(listitem, 5);
-				Intbox npaAge = (Intbox) hbox.getFirstChild();
-				assetClassSetupDetail.setNpaAge(npaAge.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

@@ -161,7 +161,7 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 	public void update(AssetClassSetupHeader asch, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update Asset_Class_Setup_Header");
 		sql.append(tableType.getSuffix());
-		sql.append(" Set EntityCode = ?, Active = ?, Code, Description");
+		sql.append(" Set EntityCode = ?, Active = ?, Code = ?, Description = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?,  RecordStatus  = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?");

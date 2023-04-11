@@ -1162,10 +1162,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				receiptDt = dates.get(dates.size() - 1);
 			}
 
-			int month = DateUtil.getMonth(appDate);
-			int month2 = DateUtil.getMonth(receiptDt);
+			int appmonth = DateUtil.getMonth(appDate);
+			int receiptmonth = DateUtil.getMonth(receiptDt);
 
-			if (month != month2) {
+			if (appmonth != receiptmonth) {
 				receiptDt = DateUtil.getMonthStart(appDate);
 			}
 		}
