@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="window_SelectFinanceCancellationDialog" apply="${selectFinanceCancellationDialogCtrl}" width="60%" height="200px"
+			style="align:start;" sizable="false" closable="true">
+
+			<borderlayout id="borderLayout_SelectFinanceCancellation">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<toolbar align="start" sclass="toolbar-start">
+
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label value="${c:l('window_SelectFinanceCancellation.title')}" sclass="label-heading" />
+							</toolbar>
+							<!-- <toolbar align="center" sclass="toolbar-center"> <label id="SelectFinanceCancellation" sclass="label-heading" /> </toolbar> -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<groupbox>
+						<grid sclass="GridLayoutNoBorder" sizedByContent="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="250px" />
+								<column width="500px"/>
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_SelectFinanceCancellation_Customer.value')}"
+										style="padding-left:12px;" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custCIF" width="150px" />
+										<button id="btnSearchCustCIF"
+											tooltiptext="${c:l('label_SelectFinanceCancellationDialog_CustID.tooltiptext')}" image="/images/icons/more.png"
+											autodisable="btnSearchCustCIF" />
+										<label id="customerNameLabel"
+											style="margin-left:10px;display:inline-block;padding-top:3px;" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_SelectFinanceCancellation_Finreference.value')}"
+										style="padding-left:12px;" />
+									<extendedcombobox id="finReference" width="250px" />
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<div>
+											<button id="btnProceed"
+												label="${c:l('label_SelectFinanceCancellation_btnProceed.value')}" width="88px" sclass="z-toolbarbutton" />
+										</div>
+									</cell>
+								</row>
+
+							</rows>
+						</grid>
+					</groupbox>
+				</center>
+				<south border="none" />
+			</borderlayout>
+		</window>
+	</window>
+</zk>
