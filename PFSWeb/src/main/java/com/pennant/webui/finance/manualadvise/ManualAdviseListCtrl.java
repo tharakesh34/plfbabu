@@ -73,6 +73,8 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Listheader listheader_AdviseType;
 	protected Listheader listheader_FinReference;
 	protected Listheader listheader_FeeTypeID;
+	protected Listheader listheader_AdviseId;
+	protected Listheader listheader_AdviseAmount;
 
 	// checkRights
 	protected Button button_ManualAdviseList_NewManualAdvise;
@@ -81,11 +83,13 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	// Search Fields
 	protected Combobox adviseType; // autowired
 	protected Textbox finReference; // autowired
-	protected Textbox feeTypeID; // autowired
+	protected Textbox feeTypeID;
+	protected Textbox adviseID;// autowired
 
 	protected Listbox sortOperator_AdviseType;
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_FeeTypeID;
+	protected Listbox sortOperator_AdviseID;
 	protected Listheader listheader_AdviseStatus;
 
 	private transient ManualAdviseService manualAdviseService;
@@ -134,13 +138,12 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		if (!enqiryModule) {
 			this.searchObject.addFilter(new Filter("BounceID", 0, Filter.OP_EQUAL));
 			whereClause = "(Status is NULL) OR (Status in ('" + PennantConstants.MANUALADVISE_MAINTAIN + "'))";
-
+			this.searchObject.addWhereClause(whereClause);
 			if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
 				whereClause = whereClause + " OR (RecordStatus not in ('" + PennantConstants.RCD_STATUS_APPROVED
 						+ "'))";
 
 				this.searchObject.addWhereClause(whereClause);
-				this.searchObject.addFilter(new Filter("ValueDate", SysParamUtil.getAppDate(), Filter.OP_GREATER_THAN));
 			}
 			if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module)) {
 				this.searchObject.addWhereClause(whereClause);
@@ -171,14 +174,16 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerButton(button_ManualAdviseList_ManualAdviseSearch);
 		registerButton(button_ManualAdviseList_NewManualAdvise, "button_ManualAdviseList_NewManualAdvise", true);
 
-		registerField("adviseID");
 		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType,
+				Operators.SIMPLE_NUMARIC);
+		registerField("adviseID", listheader_AdviseId, SortOrder.NONE, adviseID, sortOperator_AdviseID,
 				Operators.SIMPLE_NUMARIC);
 		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID,
 				Operators.STRING);
+		registerField("adviseAmount", listheader_AdviseAmount);
 
 		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
 			listheader_AdviseStatus.setVisible(true);

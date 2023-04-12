@@ -206,7 +206,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
 			// Manual Advise and Bounce Waivers
-			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(finID);
+			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(finID, true);
 
 			String taxComponent = null;
 			for (ManualAdvise ma : adviseList) {
@@ -450,7 +450,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			return;
 		}
 
-		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID());
+		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID(), true);
 		if (adviseList.isEmpty()) {
 			return;
 		}
@@ -2553,7 +2553,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 			if (!Allocation.ODC.equals(fwd.getFeeTypeCode()) && !Allocation.LPFT.equals(fwd.getFeeTypeCode())) {
 
-				manualAdviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID());
+				manualAdviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID(), false);
 
 				for (ManualAdvise manualAdvise : manualAdviseList) {
 
@@ -2567,6 +2567,15 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 
 						if (waiverAmount.compareTo(manualAdvise.getBalanceAmt()) > 0) {
+							valueParm[0] = String.valueOf(waiverAmount);
+							errParm[0] = fwd.getFeeTypeDesc();
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "91136", errParm, valueParm),
+									usrLanguage));
+						}
+
+						if (PennantConstants.MANUALADVISE_CANCEL.equals(manualAdvise.getStatus())
+								&& !PennantConstants.method_doReject.equals(method)) {
 							valueParm[0] = String.valueOf(waiverAmount);
 							errParm[0] = fwd.getFeeTypeDesc();
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -2636,7 +2645,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	@Override
 	public List<ManualAdvise> getManualAdviseByFinRef(long finID) {
-		return this.manualAdviseDAO.getManualAdvise(finID);
+		return this.manualAdviseDAO.getManualAdvise(finID, true);
 	}
 
 	@Override

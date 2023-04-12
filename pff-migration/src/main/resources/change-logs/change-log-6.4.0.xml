@@ -5307,4 +5307,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1534" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'CANMA10';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('CANMA10', 'EN', 'E', 'This Manual Advise is already Utilized and cannot be canceled', '', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
