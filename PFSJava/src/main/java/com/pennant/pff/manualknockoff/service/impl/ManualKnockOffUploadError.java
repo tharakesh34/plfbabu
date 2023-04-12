@@ -31,7 +31,9 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_1012("Its not a payable advise"),
 
-	MKOU_1013("AdviseID is Mandatory when excess type is Payable");
+	MKOU_1013("AdviseID is Mandatory when excess type is Payable"),
+
+	MKOU_1014("Either pricipal or interest amount should be given or only emi");
 
 	private String description;
 

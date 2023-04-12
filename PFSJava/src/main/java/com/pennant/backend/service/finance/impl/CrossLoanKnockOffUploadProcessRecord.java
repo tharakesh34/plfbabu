@@ -93,10 +93,7 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 				break;
 
 			case 5:
-				String strAdviseID = rowCell.toString();
-				if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
-					clku.setAdviseId(Long.valueOf(strAdviseID));
-				}
+				clku.setFeeTypeCode(rowCell.toString());
 				break;
 			default:
 				break;

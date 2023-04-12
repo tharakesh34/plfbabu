@@ -21,6 +21,7 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 	private String fromFinReference;
 	private String toFinReference;
 	private String excessType;
+	private String feeTypeCode;
 	private BigDecimal excessAmount;
 	private String allocationType;
 	private Long feeId;
@@ -34,8 +35,7 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 	private LoggedInUser userDetails;
 	private Long crossLoanId;
 	private Date appDate;
-	private ManualAdvise manualAdvise;
-	private Long adviseId;
+	private List<ManualAdvise> advises = new ArrayList<>();
 
 	public CrossLoanKnockoffUpload() {
 		super();
@@ -87,6 +87,14 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 
 	public void setExcessType(String excessType) {
 		this.excessType = excessType;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 	public BigDecimal getExcessAmount() {
@@ -193,20 +201,12 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 		this.appDate = appDate;
 	}
 
-	public ManualAdvise getManualAdvise() {
-		return manualAdvise;
+	public List<ManualAdvise> getAdvises() {
+		return advises;
 	}
 
-	public void setManualAdvise(ManualAdvise manualAdvise) {
-		this.manualAdvise = manualAdvise;
-	}
-
-	public Long getAdviseId() {
-		return adviseId;
-	}
-
-	public void setAdviseId(Long adviseId) {
-		this.adviseId = adviseId;
+	public void setAdvises(List<ManualAdvise> advises) {
+		this.advises = advises;
 	}
 
 }

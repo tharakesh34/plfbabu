@@ -163,7 +163,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
@@ -442,8 +441,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(finReceiptHeader);
+				befImage = finReceiptHeader.copyEntity();
 				receiptData.getReceiptHeader().setBefImage(befImage);
 			}
 
@@ -2013,8 +2011,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Principal", CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Principal",
+							CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
@@ -2024,8 +2022,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Interest", CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Interest",
+							CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 

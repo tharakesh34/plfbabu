@@ -527,9 +527,9 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 
 		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
 			fsi.setReceiptDetail(null);
-			fsi.setReceiptDetails(receiptService.prepareReceiptDetails(clku.getExcessList(), rud));
-		} else if (ReceiptMode.PAYABLE.equals(rud.getReceiptMode())) {
-			fsi.setAdviseId(clku.getManualAdvise().getAdviseID());
+			fsi.setReceiptDetails(receiptService.prepareRCDForExcess(clku.getExcessList(), rud));
+		} else {
+			fsi.setReceiptDetails(receiptService.prepareRCDForMA(clku.getAdvises(), rud));
 		}
 
 		fsi.setKnockOffReceipt(true);

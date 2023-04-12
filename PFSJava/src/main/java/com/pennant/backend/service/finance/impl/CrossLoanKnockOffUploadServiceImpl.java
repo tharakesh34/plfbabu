@@ -52,6 +52,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 
 public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
@@ -121,7 +122,26 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 						clk.setExcessList(finExcessAmountDAO.getExcessAmountsByRefAndType(fromFm.getFinID(),
 								clk.getExcessType()));
 					} else {
-						clk.setManualAdvise(manualAdviseDAO.getManualAdviseById(clk.getAdviseId(), ""));
+						BigDecimal balanceAmount = BigDecimal.ZERO;
+
+						if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())) {
+							List<ManualAdvise> mbList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(
+									fromFm.getFinID(), AdviseType.PAYABLE.id(), clk.getFeeTypeCode());
+
+							if (CollectionUtils.isEmpty(mbList)) {
+								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
+								return;
+							}
+
+							clk.setAdvises(mbList);
+
+							balanceAmount = ManualAdviceUtil.getBalanceAmount(mbList);
+
+							if (balanceAmount.compareTo(clk.getExcessAmount()) < 0) {
+								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
+								return;
+							}
+						}
 					}
 
 					if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
@@ -294,7 +314,8 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType()) && clk.getAdviseId() == null) {
+		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())
+				&& StringUtils.isEmpty(clk.getFeeTypeCode())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_021);
 		}
 
@@ -310,6 +331,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 		if (AllocationType.AUTO.equals(clk.getAllocationType()) && clk.getAllocations().size() > 0) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_007);
+			return;
+		}
+
+		if (AllocationType.MANUAL.equals(clk.getAllocationType()) && !isValidAlloc(clk.getAllocations())) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_022);
 			return;
 		}
 	}
@@ -348,7 +374,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		BigDecimal balanceAmount = BigDecimal.ZERO;
 		List<CrossLoanKnockoffUpload> allocations = clk.getAllocations();
 		List<FinExcessAmount> excessList = clk.getExcessList();
-		ManualAdvise ma = clk.getManualAdvise();
+		List<ManualAdvise> ma = clk.getAdvises();
 
 		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
 			if (CollectionUtils.isEmpty(excessList)) {
@@ -363,12 +389,19 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (ma.getAdviseType() != AdviseType.PAYABLE.id()) {
-				setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
-				return;
+			for (ManualAdvise maa : ma) {
+				if (maa.getAdviseType() != AdviseType.PAYABLE.id()) {
+					setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
+					return;
+				}
 			}
 
-			balanceAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
+			balanceAmount = ManualAdviceUtil.getBalanceAmount(ma);
+		}
+
+		if (balanceAmount != null && clk.getExcessAmount().compareTo(balanceAmount) > 0) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_014);
+			return;
 		}
 
 		if (balanceAmount != null && clk.getExcessAmount().compareTo(balanceAmount) > 0) {
@@ -427,12 +460,12 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		List<FinExcessAmount> excessList = clku.getExcessList();
 		CrossLoanTransfer clt = new CrossLoanTransfer();
 
-		ManualAdvise ma = clku.getManualAdvise();
+		List<ManualAdvise> advises = clku.getAdvises();
 
 		if (CollectionUtils.isNotEmpty(excessList)) {
 			clt.setExcessId(getExcessId(excessList));
-			clt.setExcessAmount(getAmount(clku));
 			clt.setUtiliseAmount(getUtilizedAmount(clku, excessList, BigDecimal.ZERO));
+			clt.setExcessAmount(getAmount(clku));
 			clt.setReserveAmount(getReservedAmount(excessList, BigDecimal.ZERO));
 			clt.setAvailableAmount(
 					getBalanceAmount(clku, BigDecimal.ZERO, getExcessAmount(excessList, BigDecimal.ZERO)));
@@ -447,11 +480,26 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				}
 			}
 		} else {
-			clt.setExcessAmount(ma.getAdviseAmount());
-			clt.setValueDate(ma.getValueDate());
-			clt.setUtiliseAmount(BigDecimal.ZERO);
-			clt.setReserveAmount(ma.getReservedAmt());
-			clt.setAvailableAmount(ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount())));
+			if (CollectionUtils.isEmpty(advises)) {
+				return clt;
+			}
+
+			clt.setExcessId(ManualAdviceUtil.getAdviseId(advises));
+			clt.setExcessAmount(getAmountForExcess(clku));
+			clt.setReserveAmount(ManualAdviceUtil.getReservedAmount(advises));
+			clt.setUtiliseAmount(getAdviseUtilizedAmount(clku, advises, BigDecimal.ZERO));
+			clt.setAvailableAmount(ManualAdviceUtil.getBalanceAmount(advises).subtract(clku.getExcessAmount()));
+			clt.setManualAdvisesList(advises);
+
+			for (ManualAdvise ma : advises) {
+				if (ma.getAdviseID() == clt.getExcessId()) {
+					if (ma.getValueDate() == null) {
+						clt.setValueDate(clku.getAppDate());
+					} else {
+						clt.setValueDate(ma.getValueDate());
+					}
+				}
+			}
 		}
 
 		clt.setCustId(frmFm.getCustID());
@@ -593,6 +641,55 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public String getSqlQuery() {
 		return crossLoanKnockoffUploadDAO.getSqlQuery();
+	}
+
+	private BigDecimal getAmountForExcess(CrossLoanKnockoffUpload clku) {
+		BigDecimal amt = BigDecimal.ZERO;
+
+		for (ManualAdvise ma : clku.getAdvises()) {
+			amt = amt.add(ma.getAdviseAmount());
+		}
+
+		return amt;
+	}
+
+	private BigDecimal getAdviseUtilizedAmount(CrossLoanKnockoffUpload clku, List<ManualAdvise> adviseList,
+			BigDecimal utilAmt) {
+
+		for (ManualAdvise ma : adviseList) {
+			utilAmt = utilAmt.add(ma.getPaidAmount());
+		}
+
+		return utilAmt;
+	}
+
+	private BigDecimal getEmiAmount(List<CrossLoanKnockoffUpload> allocations) {
+		BigDecimal emiAmount = BigDecimal.ZERO;
+		for (CrossLoanKnockoffUpload detail : allocations) {
+			if (Allocation.EMI.equals(detail.getCode())) {
+				emiAmount = emiAmount.add(detail.getAmount());
+			}
+		}
+
+		return emiAmount;
+	}
+
+	private boolean isValidAlloc(List<CrossLoanKnockoffUpload> allocations) {
+		BigDecimal emiAmount = getEmiAmount(allocations);
+
+		if (emiAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			return true;
+		}
+
+		for (CrossLoanKnockoffUpload detail : allocations) {
+			String alloc = detail.getCode();
+			if (detail.getAmount().compareTo(BigDecimal.ZERO) > 0
+					&& (Allocation.PRI.equals(alloc) || Allocation.PFT.equals(alloc))) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Autowired

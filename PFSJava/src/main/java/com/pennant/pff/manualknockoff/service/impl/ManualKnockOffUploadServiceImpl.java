@@ -28,6 +28,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -122,15 +123,19 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		if (AllocationType.MANUAL.equals(allocationType) && !isValidAlloc(detail.getAllocations())) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1014);
+			return;
+		}
+
 		String excessType = detail.getExcessType();
 
-		if ("P".equals(excessType) && (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
+		if ("P".equals(excessType) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1013);
 			return;
 		}
 
-		if ((!"E".equals(excessType) && !"A".equals(excessType))
-				&& (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
+		if ((!"E".equals(excessType) && !"A".equals(excessType)) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
 			return;
 		}
@@ -152,21 +157,17 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				balanceAmount = balanceAmount.add(fea.getBalanceAmt());
 			}
 		} else {
-			ManualAdvise ma = manualAdviseDAO.getManualAdviseById(detail.getAdviseId(), "");
+			List<ManualAdvise> maList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fm.getFinID(),
+					AdviseType.PAYABLE.id(), detail.getFeeTypeCode());
 
-			if (ma == null) {
-				setError(detail, ManualKnockOffUploadError.MKOU_1011);
+			if (CollectionUtils.isEmpty(maList)) {
+				setError(detail, ManualKnockOffUploadError.MKOU_109);
 				return;
 			}
 
-			if (ma.getAdviseType() != AdviseType.PAYABLE.id()) {
-				setError(detail, ManualKnockOffUploadError.MKOU_1012);
-				return;
-			}
+			detail.setAdvises(maList);
 
-			detail.setManualAdvise(ma);
-
-			balanceAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
+			balanceAmount = ManualAdviceUtil.getBalanceAmount(maList);
 		}
 
 		if (balanceAmount.compareTo(detail.getReceiptAmount()) < 0) {
@@ -292,7 +293,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		rud.setReference(fc.getReference());
 		rud.setFinID(fc.getReferenceID());
 		rud.setAllocationType(fc.getAllocationType());
-
 		rud.setValueDate(fc.getAppDate());
 		rud.setRealizationDate(fc.getAppDate());
 		rud.setReceivedDate(fc.getAppDate());
@@ -325,14 +325,12 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		fsi.setLoggedInUser(fc.getUserDetails());
 		fsi.setKnockOffReceipt(true);
-
-		if (!"E".equals(fc.getExcessType()) && !"A".equals(fc.getExcessType())) {
-			fsi.setAdviseId(fc.getAdviseId());
-		}
+		fsi.setReceiptDetail(null);
 
 		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
-			fsi.setReceiptDetail(null);
-			fsi.setReceiptDetails(receiptService.prepareReceiptDetails(fc.getExcessList(), rud));
+			fsi.setReceiptDetails(receiptService.prepareRCDForExcess(fc.getExcessList(), rud));
+		} else {
+			fsi.setReceiptDetails(receiptService.prepareRCDForMA(fc.getAdvises(), rud));
 		}
 
 		FinanceDetail fd = receiptService.receiptTransaction(fsi);
@@ -383,6 +381,35 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public ProcessRecord getProcessRecord() {
 		return manualKnockOffUploadProcessRecord;
+	}
+
+	private BigDecimal getEmiAmount(List<ManualKnockOffUpload> allocations) {
+		BigDecimal emiAmount = BigDecimal.ZERO;
+		for (ManualKnockOffUpload detail : allocations) {
+			if (Allocation.EMI.equals(detail.getCode())) {
+				emiAmount = emiAmount.add(detail.getAmount());
+			}
+		}
+
+		return emiAmount;
+	}
+
+	private boolean isValidAlloc(List<ManualKnockOffUpload> allocations) {
+		BigDecimal emiAmount = getEmiAmount(allocations);
+
+		if (emiAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			return true;
+		}
+
+		for (ManualKnockOffUpload detail : allocations) {
+			String alloc = detail.getCode();
+			if (detail.getAmount().compareTo(BigDecimal.ZERO) > 0
+					&& (Allocation.PRI.equals(alloc) || Allocation.PFT.equals(alloc))) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	@Autowired

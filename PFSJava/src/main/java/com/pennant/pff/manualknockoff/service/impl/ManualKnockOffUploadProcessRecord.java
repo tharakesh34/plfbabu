@@ -89,10 +89,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 				}
 				break;
 			case 4:
-				String strAdviseID = rowCell.toString();
-				if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
-					mku.setAdviseId(Long.valueOf(strAdviseID));
-				}
+				mku.setFeeTypeCode(rowCell.toString());
 				break;
 			default:
 				break;
