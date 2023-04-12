@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,15 +107,14 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	private transient FinanceMainService financeMainService;
 	private transient CustomerDetailsService customerDetailsService;
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private transient FinanceMainDAO financeMainDAO;
 	private CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl;
-	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
 	private long custId = Long.MIN_VALUE;
 	private FinReceiptData receiptData = new FinReceiptData();
 	private String module;
 	private int formatter = 2;
-	Date appDate = SysParamUtil.getAppDate();
 
 	public SelectCrossLoanKnockOffDialogCtrl() {
 		super();
@@ -178,7 +177,30 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		this.rowValueDate.setVisible(false);
 		this.valueDate.setValue(this.receiptDate.getValue());
 
+		long finID = ComponentUtil.getFinID(this.toFinReference);
+
+		Date receiptDt = this.receiptDate.getValue();
+		Date appDate = SysParamUtil.getAppDate();
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
+
+		if (FinServiceEvent.EARLYRPY.equals(recPurpose)) {
+			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
+
+			if (CollectionUtils.isNotEmpty(dates)) {
+				dates.sort((d1, d2) -> d1.compareTo(d2));
+				receiptDt = dates.get(dates.size() - 1);
+			}
+
+			int appmonth = DateUtil.getMonth(appDate);
+			int receiptmonth = DateUtil.getMonth(receiptDt);
+
+			if (appmonth != receiptmonth) {
+				receiptDt = DateUtil.getMonthStart(appDate);
+			}
+
+			this.receiptDate.setValue(receiptDt);
+		}
+
 		if (!FinServiceEvent.EARLYSETTLE.equals(recPurpose)) {
 			return;
 		}
@@ -193,6 +215,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		loadValueDate();
+
 		this.btnValidate.setDisabled(false);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
@@ -248,8 +271,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		logger.debug(Literal.ENTERING);
 
 		boolean isDisabled = false;
-		Date receiptDt = appDate;
-		long finID = ComponentUtil.getFinID(this.toFinReference);
+		Date receiptDt = receiptDate.getValue();
 
 		String knockOff = getComboboxValue(knockOffFrom);
 		FinExcessAmount fea = null;
@@ -261,28 +283,14 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			receiptDt = fea.getValueDate();
 			isDisabled = true;
 
+			long finID = ComponentUtil.getFinID(this.toFinReference);
 			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, receiptDate.getValue());
 
 			if (DateUtil.compare(receiptDt, schDate) < 0) {
 				receiptDt = schDate;
 			}
 		}
-		
-		if (getComboboxValue(receiptPurpose).equals(FinServiceEvent.EARLYRPY)) {
-			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
 
-			if (CollectionUtils.isNotEmpty(dates)) {
-				dates.sort((d1, d2) -> d1.compareTo(d2));
-				receiptDt = dates.get(dates.size() - 1);
-			}
-
-			int appmonth = DateUtil.getMonth(appDate);
-			int receiptmonth = DateUtil.getMonth(receiptDt);
-
-			if (appmonth != receiptmonth) {
-				receiptDt = DateUtil.getMonthStart(appDate);
-			}
-		}
 		this.receiptDate.setValue(receiptDt);
 		this.receiptDate.setDisabled(isDisabled);
 
@@ -1195,6 +1203,11 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	}
 
 	@Autowired
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
+	}
+
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -1205,11 +1218,6 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 	public void setCrossLoanKnockOffListCtrl(CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl) {
 		this.crossLoanKnockOffListCtrl = crossLoanKnockOffListCtrl;
-	}
-
-	@Autowired
-	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
-		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }
