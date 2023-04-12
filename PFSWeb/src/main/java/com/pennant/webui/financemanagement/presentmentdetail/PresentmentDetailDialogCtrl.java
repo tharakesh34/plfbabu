@@ -513,7 +513,10 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			Listcell lc;
 			lc = new Listcell();
 
-			if ("E".equalsIgnoreCase(moduleType)) {
+			boolean excludeflag = RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
+					|| RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason();
+
+			if ("E".equalsIgnoreCase(moduleType) && excludeflag) {
 				listheaderPresentmentDetailAction.setVisible(false);
 				addCell(item, "");
 			}
@@ -523,9 +526,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			cbActive.addForward("onClick", self, "onClick_listCellCheckBox");
 			cbActive.setAttribute("Data", presentmentDetail);
 
-			if (!"E".equalsIgnoreCase(moduleType)
-					&& (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()
-							|| RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason())) {
+			if (!"E".equalsIgnoreCase(moduleType) && (excludeflag)) {
 				lc.appendChild(cbActive);
 				lc.setParent(item);
 				if (includeList.contains(presentmentDetail.getId())
