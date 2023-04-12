@@ -1578,6 +1578,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		this.employeeNo.setValue(aMandate.getEmployeeNo());
+		this.externalMandate.setChecked(aMandate.isExternalMandate());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1913,6 +1914,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				aMandate.setSwapEffectiveDate(null);
 			}
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aMandate.setExternalMandate(this.externalMandate.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3096,7 +3103,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					new PTDateValidator(Labels.getLabel("label_MandateDialog_SwapEffectiveDate.value"), true));
 		}
 	}
-
 
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
 		return finBasicDetailsCtrl;
