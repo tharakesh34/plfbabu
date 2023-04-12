@@ -17,6 +17,7 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> dpdExtensions = new HashMap<>();
 	static Map<String, Object> partnerBankExtensions = new HashMap<>();
 	static Map<String, Object> receiptExtensions = new HashMap<>();
+	static Map<String, Object> lppExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -157,6 +158,8 @@ public class FeatureExtension implements IFeatureExtension {
 		partnerBankExtensions();
 
 		receiptExtensions();
+
+		lppExtensions();
 	}
 
 	@Override
@@ -205,6 +208,11 @@ public class FeatureExtension implements IFeatureExtension {
 		return receiptExtensions;
 	}
 
+	@Override
+	public Map<String, Object> getLPPExtensions() {
+		return lppExtensions;
+	}
+
 	private void customerExtensions() {
 		customerExtensions.put("CUST_CORE_BANK_ID", true);
 		customerExtensions.put("ALLOW_DUPLICATE_PAN", true);
@@ -248,4 +256,9 @@ public class FeatureExtension implements IFeatureExtension {
 	private void receiptExtensions() {
 		receiptExtensions.put("STOP_BACK_DATED_EARLY_SETTLE", false);
 	}
+
+	private void lppExtensions() {
+		lppExtensions.put("LPP_DUE_CREATION_REQ", true);
+	}
+
 }

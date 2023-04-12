@@ -684,8 +684,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox instBasedSchd;
 	protected Row row_InstBasedSchd;
 	protected ExtendedCombobox assetClassSetup;
-	protected Space spaceODMinAmount;
 	private boolean postEventReq = false;
+	protected Row row_odMinAmount;
 
 	/**
 	 * default constructor.<br>
@@ -3873,13 +3873,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
-				if (this.odMinAmount.getValue() == null
-						|| this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) == 0) {
+				if (this.odMinAmount.getValue() == null) {
 					throw new WrongValueException(this.odMinAmount, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value") }));
 				}
+				aFinanceType.setOdMinAmount(CurrencyUtil.unFormat(this.odMinAmount.getValue(), format));
 			}
-			aFinanceType.setOdMinAmount(CurrencyUtil.unFormat(this.odMinAmount.getValue(), format));
+
+			if (!FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				aFinanceType.setOdMinAmount(BigDecimal.ZERO);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4445,9 +4448,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				setDefaultValues();
 			}
 			onCheckODPenalty(false);
-			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(aFinanceType.getRecordStatus())) {
-				this.odMinAmount.setReadonly(true);
-			}
+
 			changeFinRateType();
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
@@ -4723,6 +4724,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					|| ChargeType.PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
 				this.oDChargeAmtOrPerc.setConstraint(new PTDecimalValidator(
 						Labels.getLabel("label_FinanceTypeDialog_ODChargeAmtOrPerc.value"), 2, true, false, 100));
+			}
+		}
+
+		if (!this.odMinAmount.isDisabled()) {
+
+			if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
+				this.odMinAmount.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
 			}
 		}
 		if (!this.profitCenter.isReadonly()) {
@@ -7067,7 +7076,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDAllowWaiver.setDisabled(true);
 			this.oDMaxWaiverPerc.setDisabled(true);
 			this.oDMinCapAmount.setDisabled(true);
-			this.odMinAmount.setDisabled(true);
+			// this.odMinAmount.setDisabled(true);
 			checkAction = true;
 			if (isOverdraft) {
 				this.collectionAmt.setReadonly(!isCompReadonly);
@@ -7188,12 +7197,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setVisible(false);
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
-			this.odMinAmount.setReadonly(true);
-			this.spaceODMinAmount.setSclass("");
+			this.row_odMinAmount.setVisible(false);
 
 			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				this.row_odMinAmount.setVisible(true);
 				this.odMinAmount.setReadonly(false);
-				this.spaceODMinAmount.setSclass(PennantConstants.mandateSclass);
 			}
 		}
 		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));

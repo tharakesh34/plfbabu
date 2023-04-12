@@ -131,6 +131,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
 
@@ -791,6 +792,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.label_FinanceMainDialog_TDSType.setVisible(false);
 			this.cbTdsType.setVisible(false);
 			this.cbTdsType.setDisabled(true);
+		}
+
+		if (PennantConstants.RCD_STATUS_SUBMITTED.equals(aFinanceMain.getRecordStatus())) {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_ODMinAmount"), this.odMinAmount);
 		}
 
 		logger.debug("Leaving");
@@ -1473,6 +1478,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeAmtOrPerc.setValue(this.oldVar_oDChargeAmtOrPerc);
 		this.oDAllowWaiver.setChecked(this.oldVar_oDAllowWaiver);
 		this.oDMaxWaiverPerc.setValue(this.oldVar_oDMaxWaiverPerc);
+		this.odMinAmount.setValue(this.oldVar_odMinAmount);
 
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -1712,6 +1718,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (!this.odMinAmount.isDisabled()) {
+
+			if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
+				this.odMinAmount.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1782,6 +1796,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeType.setConstraint("");
 		this.oDChargeAmtOrPerc.setConstraint("");
 		this.oDMaxWaiverPerc.setConstraint("");
+		this.odMinAmount.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -2978,6 +2993,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			// this.oDChargeAmtOrPerc.setMaxlength(6);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		}
+		this.row_odMinAmount.setVisible(false);
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.row_odMinAmount.setVisible(true);
 		}
 	}
 

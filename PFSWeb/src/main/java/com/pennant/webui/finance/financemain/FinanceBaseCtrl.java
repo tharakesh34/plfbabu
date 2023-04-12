@@ -160,6 +160,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
@@ -358,6 +359,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox oDChargeAmtOrPerc; // autoWired
 	protected Checkbox oDAllowWaiver; // autoWired
 	protected Decimalbox oDMaxWaiverPerc; // autoWired
+	protected Decimalbox odMinAmount;
 
 	protected Space space_oDChargeAmtOrPerc; // autoWired
 	protected Space space_oDMaxWaiverPerc; // autoWired
@@ -476,6 +478,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	protected transient BigDecimal oldVar_oDChargeAmtOrPerc;
 	protected transient boolean oldVar_oDAllowWaiver;
 	protected transient BigDecimal oldVar_oDMaxWaiverPerc;
+
+	protected transient BigDecimal oldVar_odMinAmount;
+	protected Row row_odMinAmount;
 
 	protected transient String oldVar_recordStatus;
 
@@ -2526,6 +2531,10 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
 				this.odTDSApplicable.setChecked(penaltyRate.isoDTDSReq());
+
+				if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+					this.odMinAmount.setValue(CurrencyUtil.parse(penaltyRate.getOdMinAmount(), 2));
+				}
 			} else {
 				this.applyODPenalty.setChecked(false);
 				this.gb_OverDuePenalty.setVisible(false);
@@ -2923,12 +2932,11 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			if (null != this.finStartDate.getValue()) {
 				if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode)
 						|| FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)) {
-					mnth = FrequencyUtil.getMonthFrqValue(DateUtil
-							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
+					mnth = FrequencyUtil.getMonthFrqValue(
+							DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
 							frqCode);
 				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)) {
-					mnth = DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
-							.split("-")[1];
+					mnth = DateUtil.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1];
 				}
 			}
 			mnth = frqCode.concat(mnth).concat("00");
@@ -4234,8 +4242,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			if (this.gracePeriodEndDate_two.getValue() != null) {
 
-				aFinanceMain.setGrcPeriodEndDate(DateUtil.getDate(
-						DateUtil.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
+				aFinanceMain.setGrcPeriodEndDate(DateUtil
+						.getDate(DateUtil.format(this.gracePeriodEndDate_two.getValue(), PennantConstants.dateFormat)));
 
 			}
 		} catch (WrongValueException we) {
@@ -4410,8 +4418,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						this.nextGrcPftRvwDate_two.setValue(this.nextGrcPftRvwDate.getValue());
 					}
 					if (FrequencyUtil.validateFrequency(this.gracePftRvwFrq.getValue()) == null) {
-						aFinanceMain.setNextGrcPftRvwDate(DateUtil.getDate(DateUtil
-								.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
+						aFinanceMain.setNextGrcPftRvwDate(DateUtil.getDate(
+								DateUtil.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					// Validation Against the Repay Frequency and the next Frequency Date
 					if (isFrqDateValReq && this.nextGrcPftRvwDate.getValue() != null && !FrequencyUtil
@@ -4711,8 +4719,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
-					aFinanceMain.setNextRepayDate(DateUtil.getDate(
-							DateUtil.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
+					aFinanceMain.setNextRepayDate(DateUtil
+							.getDate(DateUtil.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				// Validation Against the Repay Frequency and the next Frequency Date
 				if (isFrqDateValReq && this.nextRepayDate.getValue() != null
@@ -5004,6 +5012,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 			try {
 				penaltyRate.setoDTDSReq(this.odTDSApplicable.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+					penaltyRate.setOdMinAmount(CurrencyUtil.unFormat(this.odMinAmount.getValue(), formatter));
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -6389,6 +6404,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(true, this.oDChargeAmtOrPerc);
 		readOnlyComponent(true, this.oDAllowWaiver);
 		readOnlyComponent(true, this.oDMaxWaiverPerc);
+		readOnlyComponent(true, this.odMinAmount);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -6482,6 +6498,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
 		this.oDAllowWaiver.setChecked(false);
 		this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
+		this.odMinAmount.setValue(BigDecimal.ZERO);
 		readOnlyComponent(true, this.oDChargeAmtOrPerc);
 		readOnlyComponent(true, this.oDMaxWaiverPerc);
 

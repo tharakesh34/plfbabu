@@ -114,6 +114,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.LPPExtension;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1314,84 +1315,87 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					}
 
-					BigDecimal prvMnthPenaltyAmt = BigDecimal.ZERO;
-					List<FinOverDueChargeMovement> dueMovements = new ArrayList<>();
-					BigDecimal currWaivedAmt = BigDecimal.ZERO;
-					BigDecimal waivedAmt = amountWaived;
+					if (LPPExtension.LPP_DUE_CREATION_REQ) {
+						BigDecimal prvMnthPenaltyAmt = BigDecimal.ZERO;
+						List<FinOverDueChargeMovement> dueMovements = new ArrayList<>();
+						BigDecimal currWaivedAmt = BigDecimal.ZERO;
+						BigDecimal waivedAmt = amountWaived;
 
-					List<FinOverDueCharges> odcAmounts = finODCAmountDAO.getFinODCAmtByFinRef(finID,
-							pdPenality.getFinODSchdDate(), RepayConstants.FEE_TYPE_LPP);
+						List<FinOverDueCharges> odcAmounts = finODCAmountDAO.getFinODCAmtByFinRef(finID,
+								pdPenality.getFinODSchdDate(), RepayConstants.FEE_TYPE_LPP);
 
-					boolean createOdc = true;
-					Date lpiDueTillDate = pdPenality.getLppDueTillDate();
-					for (FinOverDueCharges finODCAmount : odcAmounts) {
-						BigDecimal balanceAmt = finODCAmount.getBalanceAmt();
-						if (postDate.compareTo(finODCAmount.getValueDate()) == 0) {
-							createOdc = false;
-						}
-						if (balanceAmt.compareTo(BigDecimal.ZERO) <= 0 || waivedAmt.compareTo(BigDecimal.ZERO) <= 0) {
-							continue;
-						}
-						prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(finODCAmount.getAmount());
-						// Waived Amount Update
-						if (waivedAmt.compareTo(balanceAmt) >= 0) {
-							finODCAmount.setWaivedAmount(finODCAmount.getWaivedAmount().add(balanceAmt));
-							currWaivedAmt = balanceAmt;
-							waivedAmt = waivedAmt.subtract(balanceAmt);
-							balanceAmt = BigDecimal.ZERO;
-						} else {
-							finODCAmount.setWaivedAmount(finODCAmount.getWaivedAmount().add(waivedAmt));
-							currWaivedAmt = waivedAmt;
-							balanceAmt = balanceAmt.subtract(waivedAmt);
-							waivedAmt = BigDecimal.ZERO;
-						}
-						finODCAmount.setBalanceAmt(balanceAmt);
-						pdPenality.setLppDueTillDate(lpiDueTillDate);
-						FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
-						movement.setMovementDate(appDate);
-						movement.setChargeId(finODCAmount.getId());
-						movement.setMovementAmount(currWaivedAmt);
-						movement.setWaivedAmount(currWaivedAmt);
-						movement.setWaiverID(fwd.getWaiverId());
-						dueMovements.add(movement);
-					}
-					if (createOdc) {
-						if (waivedAmt.compareTo(BigDecimal.ZERO) > 0) {
-							FinOverDueCharges finod = new FinOverDueCharges();
-							BigDecimal penaltyAmt = pdPenality.getTotPenaltyAmt()
-									.subtract(prvMnthPenaltyAmt.add(waivedAmt));
-							finod.setFinID(pdPenality.getFinID());
-							finod.setSchDate(pdPenality.getFinODSchdDate());
-							finod.setPostDate(appDate);
-							finod.setValueDate(postDate);
-							finod.setAmount(pdPenality.getTotPenaltyAmt().subtract(prvMnthPenaltyAmt));
-							finod.setPaidAmount(BigDecimal.ZERO);
-							finod.setWaivedAmount(waivedAmt);
-							finod.setNewRecord(true);
-							finod.setBalanceAmt(penaltyAmt);
-							finod.setOdPri(pdPenality.getFinCurODPri());
-							finod.setOdPft(pdPenality.getFinCurODPft());
-							finod.setFinOdTillDate(postDate);
-							finod.setDueDays(DateUtil.getDaysBetween(pdPenality.getFinODSchdDate(), postDate));
-							finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
-							pdPenality.setLpiDueTillDate(fwh.getValueDate());
-							pdPenality.setLpiDueAmt(
-									pdPenality.getLpiDueAmt().add(pdPenality.getLPIAmt().subtract(prvMnthPenaltyAmt)));
-
-							long referenceID = finODCAmountDAO.saveFinODCAmt(finod);
+						boolean createOdc = true;
+						Date lpiDueTillDate = pdPenality.getLppDueTillDate();
+						for (FinOverDueCharges finODCAmount : odcAmounts) {
+							BigDecimal balanceAmt = finODCAmount.getBalanceAmt();
+							if (postDate.compareTo(finODCAmount.getValueDate()) == 0) {
+								createOdc = false;
+							}
+							if (balanceAmt.compareTo(BigDecimal.ZERO) <= 0
+									|| waivedAmt.compareTo(BigDecimal.ZERO) <= 0) {
+								continue;
+							}
+							prvMnthPenaltyAmt = prvMnthPenaltyAmt.add(finODCAmount.getAmount());
+							// Waived Amount Update
+							if (waivedAmt.compareTo(balanceAmt) >= 0) {
+								finODCAmount.setWaivedAmount(finODCAmount.getWaivedAmount().add(balanceAmt));
+								currWaivedAmt = balanceAmt;
+								waivedAmt = waivedAmt.subtract(balanceAmt);
+								balanceAmt = BigDecimal.ZERO;
+							} else {
+								finODCAmount.setWaivedAmount(finODCAmount.getWaivedAmount().add(waivedAmt));
+								currWaivedAmt = waivedAmt;
+								balanceAmt = balanceAmt.subtract(waivedAmt);
+								waivedAmt = BigDecimal.ZERO;
+							}
+							finODCAmount.setBalanceAmt(balanceAmt);
+							pdPenality.setLppDueTillDate(lpiDueTillDate);
 							FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
 							movement.setMovementDate(appDate);
-							movement.setChargeId(referenceID);
-							movement.setMovementAmount(finod.getWaivedAmount());
-							movement.setPaidAmount(BigDecimal.ZERO);
-							movement.setWaivedAmount(finod.getWaivedAmount());
-							movement.setReceiptID(fwh.getWaiverId());
+							movement.setChargeId(finODCAmount.getId());
+							movement.setMovementAmount(currWaivedAmt);
+							movement.setWaivedAmount(currWaivedAmt);
+							movement.setWaiverID(fwd.getWaiverId());
 							dueMovements.add(movement);
 						}
-					}
+						if (createOdc) {
+							if (waivedAmt.compareTo(BigDecimal.ZERO) > 0) {
+								FinOverDueCharges finod = new FinOverDueCharges();
+								BigDecimal penaltyAmt = pdPenality.getTotPenaltyAmt()
+										.subtract(prvMnthPenaltyAmt.add(waivedAmt));
+								finod.setFinID(pdPenality.getFinID());
+								finod.setSchDate(pdPenality.getFinODSchdDate());
+								finod.setPostDate(appDate);
+								finod.setValueDate(postDate);
+								finod.setAmount(pdPenality.getTotPenaltyAmt().subtract(prvMnthPenaltyAmt));
+								finod.setPaidAmount(BigDecimal.ZERO);
+								finod.setWaivedAmount(waivedAmt);
+								finod.setNewRecord(true);
+								finod.setBalanceAmt(penaltyAmt);
+								finod.setOdPri(pdPenality.getFinCurODPri());
+								finod.setOdPft(pdPenality.getFinCurODPft());
+								finod.setFinOdTillDate(postDate);
+								finod.setDueDays(DateUtil.getDaysBetween(pdPenality.getFinODSchdDate(), postDate));
+								finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
+								pdPenality.setLpiDueTillDate(fwh.getValueDate());
+								pdPenality.setLpiDueAmt(pdPenality.getLpiDueAmt()
+										.add(pdPenality.getLPIAmt().subtract(prvMnthPenaltyAmt)));
 
-					finODCAmountDAO.updateFinODCBalAmts(odcAmounts);
-					finODCAmountDAO.saveMovement(dueMovements);
+								long referenceID = finODCAmountDAO.saveFinODCAmt(finod);
+								FinOverDueChargeMovement movement = new FinOverDueChargeMovement();
+								movement.setMovementDate(appDate);
+								movement.setChargeId(referenceID);
+								movement.setMovementAmount(finod.getWaivedAmount());
+								movement.setPaidAmount(BigDecimal.ZERO);
+								movement.setWaivedAmount(finod.getWaivedAmount());
+								movement.setReceiptID(fwh.getWaiverId());
+								dueMovements.add(movement);
+							}
+						}
+
+						finODCAmountDAO.updateFinODCBalAmts(odcAmounts);
+						finODCAmountDAO.saveMovement(dueMovements);
+					}
 
 					finODDetailsDAO.updatePenaltyTotals(pdPenality);
 
@@ -1452,8 +1456,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						curwaivedAmt = curwaivedAmt.subtract(oddetail.getLPIBal());
 						oddetail.setLPIBal(BigDecimal.ZERO);
 					}
-
-					saveLPIWaiver(fwh, appDate, finID, postDate, fwd, curwaivedAmt, oddetail);
+					if (LPPExtension.LPP_DUE_CREATION_REQ) {
+						saveLPIWaiver(fwh, appDate, finID, postDate, fwd, curwaivedAmt, oddetail);
+					}
 
 					finODDetailsDAO.updateLatePftTotals(oddetail.getFinID(), oddetail.getFinODSchdDate(),
 							BigDecimal.ZERO, oddetail.getLPIWaived());

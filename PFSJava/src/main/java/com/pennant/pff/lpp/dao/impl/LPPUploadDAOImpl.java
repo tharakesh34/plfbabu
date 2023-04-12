@@ -21,7 +21,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 		sql.append(", ApplyToExistingLoans, ApplyOverDue, FinID, FinReference");
 		sql.append(", PenaltyType, IncludeGraceDays, GraceDays, CalculatedOn");
 		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, HoldStatus");
-		sql.append(", Progress, Status, ErrorCode, ErrorDesc, Reason, Remarks");
+		sql.append(", Progress, Status, ErrorCode, ErrorDesc, Reason, Remarks, ODMinAmount");
 		sql.append(" From LPP_UPLOAD");
 		sql.append(" Where HeaderId = ?");
 
@@ -49,6 +49,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 			lpp.setStatus(rs.getString("Status"));
 			lpp.setErrorCode(rs.getString("ErrorCode"));
 			lpp.setErrorDesc(rs.getString("ErrorDesc"));
+			lpp.setODMinAmount(rs.getBigDecimal("ODMinAmount"));
 
 			return lpp;
 		}, headerID);
@@ -122,7 +123,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 		sql.append(", lp.CalculatedOn, lp.AmountOrPercent, lp.AllowWaiver, lp.MaxWaiver, lp.HoldStatus");
 		sql.append(", lp.Reason, lp.Remarks, lp.Status, lp.ErrorCode, lp.ErrorDesc");
 		sql.append(", uh.ApprovedOn, uh.CreatedOn");
-		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName, lp.ODMinAmount");
 		sql.append(" From LPP_Upload lp");
 		sql.append(" Inner Join File_Upload_Header uh on uh.Id = lp.HeaderId");
 		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");

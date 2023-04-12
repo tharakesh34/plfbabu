@@ -1434,7 +1434,7 @@
 												<label id="label_FinanceTypeDialog_ODMinCapAmount"
 													value="${c:l('label_FinanceTypeDialog_ODMinCapAmount.value')}" />
 												<hbox>
-													<space id="space_ODMinCapAmount" spacing="2px" />
+													<space id="space_ODMinCapAmount" spacing="2px" sclass="mandatory" />
 													<decimalbox id="oDMinCapAmount" width="120px" maxlength="15" />
 												</hbox>
 											</row>
@@ -1450,12 +1450,12 @@
 													<decimalbox id="collectionAmt" width="120px" readonly="true" />
 												</hbox>
 											</row>
-											<row>
-												<label
+											<row id="row_odMinAmount" visible="false">
+												<label 
 													value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
 												<hbox>
-													<space id="spaceODMinAmount" spacing="2px" />
-													<decimalbox id="odMinAmount" width="120px" readonly="true" />
+													<space  spacing="2px" />
+													<decimalbox id="odMinAmount" width="120px"  />
 												</hbox>
 											</row>
 										</rows>

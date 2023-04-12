@@ -579,6 +579,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			}
 		}
 
+		if (Allocation.ODC.equals(this.feeTypeCode.getValue())) {
+			this.feeTypeDesc.setReadonly(true);
+			this.amortzReq.setDisabled(true);
+			this.tdsReq.setDisabled(true);
+			this.incomeOrExpenseAcType.setReadonly(true);
+			this.waiverOrRefundAcType.setReadonly(true);
+			this.taxComponent.setDisabled(true);
+			this.taxApplicable.setDisabled(true);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1463,7 +1473,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private boolean isSingleFeeTypeRequired(String feeTypeCode) {
 		boolean alwvalidation = true;
-		
+
 		if (feeTypeCode.equals(pftInvFeeCode) || feeTypeCode.equals(priInvFeeCode)
 				|| feeTypeCode.equals(restructFeeCode)) {
 			return alwvalidation = false;

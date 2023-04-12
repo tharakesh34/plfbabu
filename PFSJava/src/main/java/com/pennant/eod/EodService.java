@@ -40,6 +40,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.core.loan.util.DPDStringCalculator;
+import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -259,7 +260,7 @@ public class EodService {
 
 		// if month end then only it should run
 		if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
-				|| eventProperties.isEomOnEOD()) {
+				|| eventProperties.isEomOnEOD() && LPPExtension.LPP_DUE_CREATION_REQ) {
 			// Calculate MonthEnd LPI
 			logger.info("Processing Late Pay interest started...");
 			custEODEvent = latePayMarkingService.processLPIAccrual(custEODEvent);
@@ -285,7 +286,7 @@ public class EodService {
 		}
 
 		if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
-				|| eventProperties.isEomOnEOD()) {
+				|| eventProperties.isEomOnEOD() && LPPExtension.LPP_DUE_CREATION_REQ) {
 			// Calculate MonthEnd Penalty
 			logger.info("Processing Late Pay Accruals started...");
 			latePayMarkingService.processLatePayAccrual(custEODEvent);

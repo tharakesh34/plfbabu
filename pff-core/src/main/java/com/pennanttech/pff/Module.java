@@ -22,5 +22,7 @@ public enum Module {
 
 	PARTNERBANK,
 
-	RECEIPT
+	RECEIPT,
+
+	LPP
 }

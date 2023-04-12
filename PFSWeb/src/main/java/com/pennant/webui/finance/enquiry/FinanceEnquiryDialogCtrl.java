@@ -567,6 +567,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected A settlementEnq;
 	protected Label label_LoanBasicDetailsDialog_Settlement;
 	protected Decimalbox odMinAmount;
+	protected Label label_FinanceTypeDialog_ODMinAmount;
+	protected Row row_odMinAmount;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1683,6 +1685,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oDAllowWaiver.setChecked(finODPenaltyRate.isODAllowWaiver());
 		this.oDMaxWaiverPerc.setValue(finODPenaltyRate.getODMaxWaiverPerc());
 		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.row_odMinAmount.setVisible(true);
 			this.odMinAmount.setValue(PennantApplicationUtil.formateAmount(finODPenaltyRate.getOdMinAmount(),
 					PennantConstants.defaultCCYDecPos));
 			this.odMinAmount.setReadonly(true);
@@ -2307,8 +2310,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Payment", CurrencyUtil.parse(listScheduleDetail.get(i).getRepayAmount(), formatter)
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Payment",
+							CurrencyUtil.parse(listScheduleDetail.get(i).getRepayAmount(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
