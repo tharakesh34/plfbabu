@@ -55,11 +55,13 @@ public class CasaAccountValidationService implements BankAccountValidationServic
 		CasaAccountValidationResp resp = postRequest(request, url);
 
 		// Log Response into EXTAPILOG table by Id
+
 		try {
 			logResp(resp.getXmlResponse(), id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		logger.debug(Literal.LEAVING);
 		// Creating response to send
 		return getAccountStatus(resp, (String) prop.get("ACCOUNT_STATUS"), bankAccountValidations);
@@ -69,27 +71,33 @@ public class CasaAccountValidationService implements BankAccountValidationServic
 	private boolean getAccountStatus(CasaAccountValidationResp resp, String prop,
 			BankAccountValidation bankAccValidations) {
 		logger.debug(Literal.ENTERING);
-		if ("0".equals(resp.getResponseCodes().getErrorCode())) {
-			String[] params = Pattern.compile("\\|").split(prop);
-			if (params != null) {
-				for (String st : params) {
-					String[] accStat = st.split("~");
-					if (accStat[0]
-							.equals(resp.getRespData().getCustDetails().getCasaAcc().getAccDtls().getAccountStatus())) {
-						bankAccValidations.setReason(accStat[1]);
+		if (resp != null && resp.getResponseCodes() != null && resp.getResponseCodes().getErrorCode() != null
+				&& resp.getResponseCodes().getErrorCode().equals("0")) {
+			return createResponse(resp, prop, bankAccValidations);
+		}
+		bankAccValidations.setReason(resp.getXmlResponse());
+		return false;
 
-						if (accStat[2].equals("Y")) {
-							return true;
-						}
+	}
+
+	protected boolean createResponse(CasaAccountValidationResp resp, String prop,
+			BankAccountValidation bankAccValidations) {
+		String[] params = Pattern.compile("\\|").split(prop);
+		if (params != null) {
+			for (String st : params) {
+				String[] accStat = st.split("~");
+				if (accStat[0]
+						.equals(resp.getRespData().getCustDetails().getCasaAcc().getAccDtls().getAccountStatus())) {
+					bankAccValidations.setReason(accStat[1]);
+
+					if (accStat[2].equals("Y")) {
+						return true;
 					}
 				}
 			}
-			logger.debug(Literal.LEAVING);
-			return false;
 		}
-
+		logger.debug(Literal.LEAVING);
 		return false;
-
 	}
 
 	private Properties loadProperties() {
@@ -107,7 +115,6 @@ public class CasaAccountValidationService implements BankAccountValidationServic
 	private CasaAccountValidationResp postRequest(CasaAccountValidationReq req, String url) {
 		logger.debug(Literal.ENTERING);
 		CasaAccountValidationResp resp = null;
-		url = "http://192.168.121.149:8080/product";
 		HttpHeaders headers = new HttpHeaders();
 		RestTemplate restTemplate = getRestTemplate();
 		headers.setContentType(org.springframework.http.MediaType.APPLICATION_XML);
