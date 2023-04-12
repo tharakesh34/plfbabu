@@ -35,6 +35,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -101,6 +102,7 @@ import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.finance.LoanDownSizingService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
@@ -222,6 +224,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient LinkedFinancesService linkedFinancesService;
 	private transient FinOCRHeaderService finOCRHeaderService;
 	private transient OverdrafLoanService overdrafLoanService;
+	private transient ManualAdviseService manualAdviseService;
 
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -3017,7 +3020,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
-		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts) ? isValidateCancelManualAdvise(finID) : true)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return;
 		}
@@ -3113,6 +3117,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private boolean isValidateCancelManualAdvise(long finID) {
+		List<ManualAdvise> list = manualAdviseService.getCancelledManualAdvise(finID);
+		return list.stream().anyMatch(m -> m.getStatus() == null) ? true : false;
 	}
 
 	private void openLinkDelinkMaintenanceDialog(Listitem item) {
@@ -4225,5 +4234,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
 		this.overdrafLoanService = overdrafLoanService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 }

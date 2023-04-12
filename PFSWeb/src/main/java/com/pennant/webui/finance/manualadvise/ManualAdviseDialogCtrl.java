@@ -781,6 +781,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.sequence.setValue(aManualAdvise.getSequence());
 		this.adviseAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getAdviseAmount(),
 				PennantConstants.defaultCCYDecPos));
+		if (enqiryModule && PennantConstants.MANUALADVISE_CANCEL.equals(aManualAdvise.getStatus())) {
+			this.adviseAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getBalanceAmt(),
+					PennantConstants.defaultCCYDecPos));
+		}
 		this.paidAmount.setValue(
 				PennantApplicationUtil.formateAmount(aManualAdvise.getPaidAmount(), PennantConstants.defaultCCYDecPos));
 		this.waivedAmount.setValue(PennantApplicationUtil.formateAmount(aManualAdvise.getWaivedAmount(),
@@ -1062,6 +1066,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			aManualAdvise.setReason(this.reason.getValue());
 
 			if (StringUtils.isNotEmpty(aManualAdvise.getReason())) {
+				if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
+					aManualAdvise.setBalanceAmt(BigDecimal.ZERO);
+				}
 				aManualAdvise.setStatus(PennantConstants.MANUALADVISE_CANCEL);
 			} else {
 				aManualAdvise.setReason(null);
@@ -1376,6 +1383,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		final ManualAdvise aManualAdvise = new ManualAdvise();
 		BeanUtils.copyProperties(this.manualAdvise, aManualAdvise);
 		boolean isNew = false;
+		String errMsg = null;
 
 		doSetValidation();
 
@@ -1387,7 +1395,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 		doWriteComponentsToBean(aManualAdvise);
 
-		String errMsg = validatePayableAmount(aManualAdvise);
+		if (!PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
+			errMsg = validatePayableAmount(aManualAdvise);
+		}
 
 		if (errMsg != null) {
 			MessageUtil.showError(errMsg);
@@ -1503,23 +1513,10 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 		}
 
-		Date appDate = SysParamUtil.getAppDate();
-		if (valueDate.compareTo(appDate) != 0 && !finIsActive) {
+		if (!finIsActive) {
 			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_LoanClosed.ErrMsg"));
 			return true;
 		}
-
-		if (PennantConstants.MANUALADVISE_MAINTAIN_MODULE.equals(this.module) && valueDate.compareTo(appDate) <= 0) {
-			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_BackDate.ErrMsg"));
-			return true;
-		}
-
-		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module) && appDate.compareTo(valueDate) >= 0) {
-			MessageUtil
-					.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_DueDateCrossedBeforeApprove.ErrMsg"));
-			return true;
-		}
-
 		return false;
 	}
 

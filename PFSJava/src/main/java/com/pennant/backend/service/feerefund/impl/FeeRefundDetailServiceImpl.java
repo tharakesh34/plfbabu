@@ -200,7 +200,12 @@ public class FeeRefundDetailServiceImpl extends GenericService<FeeRefundDetail> 
 	public BigDecimal getPreviousRefundAmt(long finID, FeeRefundDetail frd) {
 		long receivableID = frd.getReceivableID();
 		long receivableFeeTypeID = frd.getReceivableFeeTypeID();
-		return manualAdviseDAO.getRefundedAmt(finID, receivableID, receivableFeeTypeID);
+		BigDecimal refundedAmt = BigDecimal.ZERO;
+		if (Allocation.MANADV.equals(frd.getReceivableType())) {
+			refundedAmt = manualAdviseDAO.getPaidAmtByFeeType(finID, frd.getPayableFeeTypeID());
+		}
+
+		return manualAdviseDAO.getRefundedAmt(finID, receivableID, receivableFeeTypeID).add(refundedAmt);
 	}
 
 	@Override
