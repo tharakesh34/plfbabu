@@ -1703,6 +1703,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				pslDetail.setLastMntBy(userDetails.getUserId());
 				pslDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				pslDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				pslDetail.setFinID(fm.getFinID());
+				pslDetail.setFinReference(fm.getFinReference());
 			}
 
 			if (!stp) {
