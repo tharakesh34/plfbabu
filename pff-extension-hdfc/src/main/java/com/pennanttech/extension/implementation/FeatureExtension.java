@@ -225,6 +225,7 @@ public class FeatureExtension implements IFeatureExtension {
 		mandateExtensions.put("MANDATE_SPLIT_COUNT", 100);
 		mandateExtensions.put("PARTNER_BANK_WISE_EXTARCTION", true);
 		mandateExtensions.put("AUTO_UPLOAD", true);
+		mandateExtensions.put("BR_INST_TYPE_MAN", true);
 	}
 
 	private void presentmentExtensaions() {

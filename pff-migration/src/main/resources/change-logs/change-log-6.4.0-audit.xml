@@ -167,4 +167,62 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1529.1" author="Gireesh.G">
+		<addColumn tableName="ADTMANDATES">
+			<column name="ExternalMandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					Update ADTMANDATES M SET ExternalMandate = t2.EXTMAN from 
+					(Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2
+					where M.MandateID = t2.MandateID;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE M set M.ExternalMandate = t2.EXTMAN
+						From ADTMANDATES M 
+					INNER JOIN (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2 on M.MandateID = t2.MandateID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO ADTMANDATES M 
+				USING (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2 on (M.MandateID = t2.MandateID)
+				WHEN MATCHED THEN UPDATE SET 
+				M.ExternalMandate = t2.EXTMAN;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.2" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMAN_EXTERNALMANDATE DEFAULT 0 FOR EXTERNALMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.2" author="Gireesh.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ExternalMandate" tableName="ADTMANDATES" defaultValue="0" />
+	</changeSet>
+	
 </databaseChangeLog>
