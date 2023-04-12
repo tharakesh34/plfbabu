@@ -2147,7 +2147,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		listDeletion(finID, "");
 		listSave(scheduleData, "", 0, false);
-		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
+		if (!FinanceConstants.LOAN_CANCEL_REMARKS.equals(schdData.getFinServiceInstruction().getRemarks())) {
+			financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
+		}
 
 		if (scheduleData.getFinFeeDetailList() != null) {
 			if (!FinServiceEvent.RESTRUCTURE.equals(rch.getReceiptPurpose())) {
@@ -3974,7 +3976,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)
+				&& !FinanceConstants.LOAN_CANCEL_REMARKS.equals(fsi.getRemarks())) {
 			panValidation(schdData, fsi);
 		}
 

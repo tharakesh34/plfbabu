@@ -406,4 +406,9 @@ public class FinanceConstants {
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_MAKER = "CROSS_LOAN_KNOCKOFF_CANCEL_MAKER";
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER = "CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER";
 	public static final BigDecimal LEI_NUM_LIMIT = new BigDecimal("50000000000");
+
+	// Loan Cancel Types
+	public static final String LOAN_CANCEL = "C";
+	public static final String LOAN_CANCEL_REBOOK = "CR";
+	public static final String LOAN_CANCEL_REMARKS = "Loan Cancellation Reversal";
 }

@@ -1214,4 +1214,19 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
+
+	@Override
+	public void deleteOdDetailsForFinCancel(String finreference) {
+
+		StringBuilder sql = new StringBuilder("Delete from FinODDetails");
+		sql.append(" Where FinReference = ? ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index, finreference);
+		});
+
+	}
 }

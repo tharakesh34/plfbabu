@@ -87,4 +87,6 @@ public interface ManualAdviseService {
 	BigDecimal getRefundedAmount(long finID, long feeTypeID);
 
 	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
+
+	void updateAdviseStatusForFinCancel(String finReference);
 }

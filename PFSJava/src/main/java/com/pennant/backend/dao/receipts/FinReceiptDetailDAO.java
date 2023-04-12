@@ -13,6 +13,8 @@ public interface FinReceiptDetailDAO {
 
 	List<FinReceiptDetail> getReceiptHeaderByID(long receiptID, String type);
 
+	List<FinReceiptDetail> getReceiptDetailForCancelReversalByID(long receiptID, String type);
+
 	long save(FinReceiptDetail receiptDetail, TableType tableType);
 
 	void deleteByReceiptID(long receiptID, TableType tableType);

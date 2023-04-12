@@ -74,4 +74,6 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 
 	int getPaymenttId(long paymentId, String finReference);
 
+	boolean isRefundProvided(long finId);
+
 }

@@ -26,7 +26,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	public void init() {
-		loadConfigurations();
+		// loadConfigurations();
 	}
 
 	public void setMasterDefDAO(MasterDefDAO masterDefDAO) {

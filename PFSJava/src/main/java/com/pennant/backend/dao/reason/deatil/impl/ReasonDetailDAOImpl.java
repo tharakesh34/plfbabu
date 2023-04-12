@@ -56,8 +56,8 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Insert Into  ReasonHeader ");
-		sql.append(" (Id, Module, Reference, Remarks, Rolecode, Activity, ToUser, LogTime)");
-		sql.append(" Values(:Id, :Module, :Reference, :Remarks, :RoleCode, :Activity, :ToUser, :LogTime)");
+		sql.append(" (Id, Module, Reference, Remarks, cancelType, Rolecode, Activity, ToUser, LogTime)");
+		sql.append(" Values(:Id, :Module, :Reference, :Remarks, :cancelType, :RoleCode, :Activity, :ToUser, :LogTime)");
 		logger.debug("insertSql: " + sql.toString());
 
 		if (reasonHeader.getId() == Long.MIN_VALUE) {
@@ -97,7 +97,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode, SR.RoleDesc");
+		sql.append("Select RH.Module, RH.Reference, RH.Remarks, RH.cancelType, RH.Rolecode, SR.RoleDesc");
 		sql.append(", RH.Activity, RC.Code, RC.Description, RH.Touser, SU.UsrLogin, SU.Usrfname");
 		sql.append(", SU.Usrmname ,SU.Usrlname , RH.Logtime, RS.Description as rejectReasonDesc");
 		sql.append(" from ReasonHeader RH");
@@ -123,7 +123,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("Select RD.reasonid, RH.remarks");
+		sql.append("Select RD.reasonid, RH.remarks, RH.CancelType");
 		sql.append(" From ReasonHeader RH  ");
 		sql.append(" left join ReasonDetails RD ON RH.ID = RD.HeaderId ");
 		sql.append(" Where RH.Reference=:Reference");

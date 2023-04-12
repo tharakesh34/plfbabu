@@ -299,6 +299,13 @@
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
 													</hbox>
 												</row>
+												<row id="row_cancelType" >
+													<label id="label_FinanceMainDialog_CancelType" value="${c:l('label_FinanceMainDialog_CancelType.value')}" />
+													<hbox>
+														<space id="space_cancelType" spacing="2px" sclass="mandatory" />
+														<combobox id="cancelType" width="275px" readonly="true" />
+													</hbox>
+												</row>
 												<row id="row_CancelReason">
 													<label value="${c:l('label_FinanceMainDialog_CancelReason.value')}" />
 													<hlayout spacing="2px">

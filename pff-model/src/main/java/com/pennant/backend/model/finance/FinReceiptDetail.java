@@ -78,6 +78,7 @@ public class FinReceiptDetail implements Serializable {
 	private BigDecimal dueAmount = BigDecimal.ZERO;
 	@XmlElement
 	private String bankBranchCode;
+	private Date realizationDate;
 	@XmlElement
 	private String micr;
 
@@ -151,6 +152,7 @@ public class FinReceiptDetail implements Serializable {
 		entity.setPartialPaidAMount(this.partialPaidAMount);
 		entity.setDueAmount(this.dueAmount);
 		entity.setBankBranchCode(this.bankBranchCode);
+		entity.setRealizationDate(this.realizationDate);
 		entity.setMicr(this.micr);
 
 		return entity;
@@ -183,6 +185,7 @@ public class FinReceiptDetail implements Serializable {
 		excludeFields.add("branchDesc");
 		excludeFields.add("noManualReserve");
 		excludeFields.add("bankBranchCode");
+		excludeFields.add("realizationDate");
 		excludeFields.add("micr");
 		return excludeFields;
 	}
@@ -562,4 +565,13 @@ public class FinReceiptDetail implements Serializable {
 	public void setMicr(String micr) {
 		this.micr = micr;
 	}
+
+	public Date getRealizationDate() {
+		return realizationDate;
+	}
+
+	public void setRealizationDate(Date realizationDate) {
+		this.realizationDate = realizationDate;
+	}
+
 }

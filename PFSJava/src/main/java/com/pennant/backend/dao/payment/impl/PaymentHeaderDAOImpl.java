@@ -562,4 +562,12 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				finReference);
 	}
 
+	@Override
+	public boolean isRefundProvided(long finId) {
+		String sql = "Select count(FinId) From PaymentHeader Where FinId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finId) > 0;
+	}
 }

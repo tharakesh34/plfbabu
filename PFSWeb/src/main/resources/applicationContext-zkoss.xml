@@ -1807,6 +1807,9 @@
 		<property name="linkedFinancesService" ref="linkedFinancesService" />
 		<property name="extendedFieldMaintenanceService" ref="extendedFieldMaintenanceService" />
 		<property name="overdrafLoanService" ref="overdrafLoanService" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="settlementService" ref="settlementService" />
+		<property name="crossLoanKnockOffService" ref="crossLoanKnockOffService" />
 	</bean>
 
 	<!--============ Step Detail Detail ============== -->
@@ -3449,6 +3452,20 @@
 	<bean id="selectMandateDialogCtrl" class="com.pennant.webui.mandate.mandate.SelectMandateDialogCtrl"
 		parent="basisCtrl" scope="prototype" />
 
+	<bean id="selectFinanceCancellationDialogCtrl" class="com.pennant.webui.finance.financemain.SelectFinanceCancellationDialogCtrl"
+		parent="basisCtrl" scope="prototype" >
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="customerDataService" ref="customerDataService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="financeCancellationService" ref="financeCancellationService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="settlementService" ref="settlementService" />
+		<property name="crossLoanKnockOffService" ref="crossLoanKnockOffService" />
+	</bean>
+		
 	<bean id="mandateDialogCtrl" class="com.pennant.webui.mandate.mandate.MandateDialogCtrl" parent="basisCtrl"
 		scope="prototype" >
 		<property name="finTypePartnerBankService" ref="finTypePartnerBankService" />

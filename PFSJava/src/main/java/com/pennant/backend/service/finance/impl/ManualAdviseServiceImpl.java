@@ -1041,6 +1041,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	@Override
+	public void updateAdviseStatusForFinCancel(String finReference) {
+		manualAdviseDAO.updateAdviseStatusForFinCancel(finReference);
+	}
+
+	@Override
 	public BigDecimal getRefundedAmount(long finID, long feeTypeID) {
 		return manualAdviseDAO.getRefundedAmount(finID, feeTypeID);
 	}

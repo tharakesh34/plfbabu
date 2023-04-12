@@ -67,7 +67,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>1.21.0</version>
+				<version>1.21.03</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps.pff</groupId>

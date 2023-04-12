@@ -57,6 +57,7 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -72,6 +73,7 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -83,27 +85,37 @@ import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
+import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.settlement.service.SettlementService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
@@ -115,6 +127,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private ReceiptService receiptService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	@Autowired(required = false)
 	private NotificationService notificationService;
@@ -122,6 +135,11 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private long tempWorkflowId;
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinChequeHeaderService finChequeHeaderService;
+	private ManualAdviseService manualAdviseService;
+	private FinODDetailsDAO finODDetailsDAO;
+	private SettlementService settlementService;
+	private PaymentHeaderService paymentHeaderService;
+	private CrossLoanKnockOffService crossLoanKnockOffService;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -320,6 +338,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		reasonHeader.setModule("FINANCE");
 		reasonHeader.setReference(financeMain.getFinReference());
 		reasonHeader.setRemarks(financeMain.getCancelRemarks());
+		reasonHeader.setCancelType(financeMain.getCancelType());
 		reasonHeader.setActivity("Cancled");
 		reasonHeader.setDetailsList(financeMain.getDetailsList());
 		reasonDetailDAO.save(reasonHeader);
@@ -467,17 +486,38 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			}
 		}
 
-		// Cancelling IMD receipts
+		//// creating reversal receipts for Cancelled receipts and Canceling IMD receipts
 		if (isNotReqEOD) {
 			List<Long> receiptIdList = finReceiptHeaderDAO.fetchReceiptIdList(finReference);
+			List<FinReceiptDetail> receiptDetailList = new ArrayList<FinReceiptDetail>();
+			for (Long receiptId : receiptIdList) {
+				receiptDetailList.addAll(finReceiptDetailDAO.getReceiptDetailForCancelReversalByID(receiptId, "_view"));
+			}
 			if (receiptIdList != null && receiptIdList.size() > 0) {
+
 				finReceiptHeaderDAO.cancelReceipts(finReference);
 				finReceiptDetailDAO.cancelReceiptDetails(receiptIdList);
+			}
+
+			for (FinReceiptDetail rd : receiptDetailList) {
+
+				// Create Finance Service Instruction
+				FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
+
+				// Create Receipt Against Loan
+				FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
+				if (detail.getReturnStatus() != null) {
+					throw new AppException("AppException", detail.getReturnStatus().getReturnText());
+				}
 			}
 		}
 		tranType = PennantConstants.TRAN_UPD;
 		fm.setRecordType("");
 		financeMainDAO.update(fm, TableType.MAIN_TAB, false);
+
+		manualAdviseService.updateAdviseStatusForFinCancel(finReference);
+
+		finODDetailsDAO.deleteOdDetailsForFinCancel(finReference);
 
 		// Profit Details Inactive status Updation
 		// Bug FIX: Closing status not updated in FinPftDetails while cancel the loan.
@@ -598,6 +638,58 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private FinServiceInstruction createFinServInstr(String finReference, FinReceiptDetail rd, long finId) {
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinReference(finReference);
+		fsi.setModule("Receipts");
+		fsi.setFinID(finId);
+		fsi.setValueDate(rd.getValueDate());
+		fsi.setAmount(rd.getAmount());
+		fsi.setAllocationType(AllocationType.AUTO);
+		fsi.setFundingAc(rd.getFundingAc());
+
+		LoggedInUser loggedInUser = new LoggedInUser();
+		loggedInUser.setLoginUsrID(1000);
+		fsi.setLoggedInUser(loggedInUser);
+		fsi.setBankCode(rd.getBankCode());
+		fsi.setStatus("A");
+		fsi.setDepositDate(rd.getDepositDate());
+		fsi.setRealizationDate(rd.getRealizationDate());
+		fsi.setInstrumentDate(appDate);
+		fsi.setReceivedDate(rd.getReceivedDate());
+		fsi.setRemarks(FinanceConstants.LOAN_CANCEL_REMARKS);
+		fsi.setPaymentMode(rd.getPaymentType());
+		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+
+		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		fsi.setReceiptdetailExits(false);
+		fsi.setUploadAllocationDetails(null);
+		fsi.setReqType(RepayConstants.REQTYPE_POST);
+
+		FinReceiptDetail rcd = new FinReceiptDetail();
+		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rcd.setAmount(fsi.getAmount());
+
+		rcd.setValueDate(rd.getValueDate());
+		rcd.setBankCode(rd.getBankCode());
+		rcd.setDepositDate(rd.getDepositDate());
+		rcd.setFundingAc(rd.getFundingAc());
+
+		rcd.setReceivedDate(rd.getReceivedDate());
+		rcd.setStatus(fsi.getStatus());
+		rcd.setRemarks(FinanceConstants.LOAN_CANCEL_REMARKS);
+		rcd.setReference(finReference);
+		rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rcd.setPaymentType(ReceiptMode.EXCESS);
+
+		fsi.setReceiptDetail(rcd);
+		return fsi;
+
 	}
 
 	private void cancelChildLoan(String finReference) {
@@ -892,37 +984,40 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
-		List<FinAdvancePayments> list = fd.getAdvancePaymentsList();
-		if (CollectionUtils.isNotEmpty(list)) {
-			// Disbursement instructions should be reversed before canceling loan
-			for (FinAdvancePayments finAdvPayment : list) {
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "60406", errParm, valueParm), usrLanguage));
-				}
+		if (!ImplementationConstants.ALLOW_CANCEL_LOAN_AFTER_PAYMENTS) {
 
-				// instructions should be cancelled before canceling a loan.
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { // Disbursement
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "60408", errParm, valueParm), usrLanguage));
+			List<FinAdvancePayments> list = fd.getAdvancePaymentsList();
+			if (CollectionUtils.isNotEmpty(list)) {
+				// Disbursement instructions should be reversed before canceling loan
+				for (FinAdvancePayments finAdvPayment : list) {
+					if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "60406", errParm, valueParm), usrLanguage));
+					}
+
+					// instructions should be cancelled before canceling a loan.
+					if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { // Disbursement
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "60408", errParm, valueParm), usrLanguage));
+					}
 				}
 			}
-		}
 
-		List<VASRecording> vasRecordings = vASRecordingDAO.getVASRecordingsStatusByReference(finReference, "");
-		// Checking VAS instruction status.
-		if (CollectionUtils.isNotEmpty(vasRecordings)) {
-			for (VASRecording vasRecording : vasRecordings) {
-				if (!StringUtils.equals(vasRecording.getVasStatus(), VASConsatnts.STATUS_CANCEL)) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "60214", errParm, valueParm), usrLanguage));
+			List<VASRecording> vasRecordings = vASRecordingDAO.getVASRecordingsStatusByReference(finReference, "");
+			// Checking VAS instruction status.
+			if (CollectionUtils.isNotEmpty(vasRecordings)) {
+				for (VASRecording vasRecording : vasRecordings) {
+					if (!StringUtils.equals(vasRecording.getVasStatus(), VASConsatnts.STATUS_CANCEL)) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "60214", errParm, valueParm), usrLanguage));
+					}
 				}
 			}
-		}
-		// vallidation for manual dues
-		List<ManualAdvise> manualAdvise = manualAdviseDAO.getReceivableAdvises(finID, "");
-		if (CollectionUtils.isNotEmpty(manualAdvise)) {
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
+			// vallidation for manual dues
+			List<ManualAdvise> manualAdvise = manualAdviseDAO.getReceivableAdvises(finID, "");
+			if (CollectionUtils.isNotEmpty(manualAdvise)) {
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "60022", errParm, valueParm));
+			}
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -1057,4 +1152,61 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	public void setFinChequeHeaderService(FinChequeHeaderService finChequeHeaderService) {
 		this.finChequeHeaderService = finChequeHeaderService;
 	}
+
+	public ReceiptService getReceiptService() {
+		return receiptService;
+	}
+
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
+	}
+
+	public ManualAdviseService getManualAdviseService() {
+		return manualAdviseService;
+	}
+
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public SettlementService getSettlementService() {
+		return settlementService;
+	}
+
+	public void setSettlementService(SettlementService settlementService) {
+		this.settlementService = settlementService;
+	}
+
+	public PaymentHeaderService getPaymentHeaderService() {
+		return paymentHeaderService;
+	}
+
+	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
+		this.paymentHeaderService = paymentHeaderService;
+	}
+
+	public CrossLoanKnockOffService getCrossLoanKnockOffService() {
+		return crossLoanKnockOffService;
+	}
+
+	public void setCrossLoanKnockOffService(CrossLoanKnockOffService crossLoanKnockOffService) {
+		this.crossLoanKnockOffService = crossLoanKnockOffService;
+	}
+
+	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
+		return finReceiptHeaderDAO;
+	}
+
+	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
+		return finReceiptDetailDAO;
+	}
+
 }

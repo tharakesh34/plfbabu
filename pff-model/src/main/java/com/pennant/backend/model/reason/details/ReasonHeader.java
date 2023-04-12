@@ -20,6 +20,8 @@ public class ReasonHeader implements Serializable {
 	private String roleCode;
 	private String activity;
 	private long toUser;
+	@XmlElement
+	private String cancelType;
 	private Timestamp logTime;
 	private Long reasonId;
 	@XmlElement(name = "reasonDetails")
@@ -111,6 +113,14 @@ public class ReasonHeader implements Serializable {
 
 	public void setReasonId(Long reasonId) {
 		this.reasonId = reasonId;
+	}
+
+	public String getCancelType() {
+		return cancelType;
+	}
+
+	public void setCancelType(String cancelType) {
+		this.cancelType = cancelType;
 	}
 
 }

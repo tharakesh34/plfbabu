@@ -4698,6 +4698,12 @@
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="manualAdviseService" ref="manualAdviseService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="settlementService" ref="settlementService" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="crossLoanKnockOffService" ref="crossLoanKnockOffService" />
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />

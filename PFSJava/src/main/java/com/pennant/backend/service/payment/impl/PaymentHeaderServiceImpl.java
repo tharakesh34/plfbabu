@@ -1136,4 +1136,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Override
+	public boolean isRefundProvided(long finId) {
+		return paymentHeaderDAO.isRefundProvided(finId);
+	}
+
 }

@@ -243,6 +243,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> depositTypesList;
 	private static List<String> denominations;
 	private static List<ValueLabel> invoiceTypes;
+	private static List<ValueLabel> cancelTypes;
 
 	private static List<ValueLabel> filtersList;
 
@@ -3030,6 +3031,22 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PlanEmiHolidayMethod_Adhoc.label")));
 		}
 		return planEmiHolidayMethods;
+	}
+
+	/**
+	 * Method for Fetching Types of Loan Cancellation
+	 * 
+	 * @return
+	 */
+	public static List<ValueLabel> getLoancancelTypes() {
+		if (cancelTypes == null) {
+			cancelTypes = new ArrayList<ValueLabel>(2);
+			cancelTypes.add(new ValueLabel(FinanceConstants.LOAN_CANCEL,
+					Labels.getLabel("label_CancelType_Cancellation.label")));
+			cancelTypes.add(new ValueLabel(FinanceConstants.LOAN_CANCEL_REBOOK,
+					Labels.getLabel("label_CancelType_CancelRebooked.label")));
+		}
+		return cancelTypes;
 	}
 
 	public static List<ValueLabel> getFeeCalculationTypes() {

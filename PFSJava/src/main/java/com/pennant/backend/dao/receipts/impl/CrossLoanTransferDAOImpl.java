@@ -310,4 +310,27 @@ public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> imp
 		}
 	}
 
+	@Override
+	public List<CrossLoanTransfer> getCrossLoanTransferByFinId(long finId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FromFinID, ToFinID, FromFinReference, ToFinReference");
+		sql.append(", TransferAmount From Cross_Loan_Transfer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FromFinID = ? OR ToFinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CrossLoanTransfer clt = new CrossLoanTransfer();
+
+			clt.setFromFinID(rs.getLong("FromFinID"));
+			clt.setToFinID(rs.getLong("ToFinID"));
+			clt.setFromFinReference(rs.getString("FromFinReference"));
+			clt.setToFinReference(rs.getString("ToFinReference"));
+			clt.setTransferAmount(rs.getBigDecimal("TransferAmount"));
+
+			return clt;
+		}, finId, finId);
+	}
+
 }

@@ -2486,4 +2486,20 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		});
 	}
 
+	@Override
+	public void updateAdviseStatusForFinCancel(String finReference) {
+		StringBuilder sql = new StringBuilder("Update ManualAdvise");
+		sql.append(" Set Status = ?");
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, PennantConstants.MANUALADVISE_CANCEL);
+			ps.setString(index++, finReference);
+		});
+	}
+
 }

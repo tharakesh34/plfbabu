@@ -23,6 +23,8 @@ public interface SettlementService {
 
 	FinSettlementHeader getSettlementByRef(String finReference, String type);
 
+	boolean isSettlementInitiated(long finId, String type);
+
 	void processSettlementCancellation(FinSettlementHeader fsh);
 
 	void processSettlement(FinSettlementHeader fsh);

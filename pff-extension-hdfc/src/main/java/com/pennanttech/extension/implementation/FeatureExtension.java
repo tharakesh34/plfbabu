@@ -142,6 +142,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("AUTO_EOD_REQUIRED", true);
 
+		customConstants.put("ALLOW_CANCEL_LOAN_AFTER_PAYMENTS", true);
+
 		customerExtensions();
 
 		mandateExtensaions();

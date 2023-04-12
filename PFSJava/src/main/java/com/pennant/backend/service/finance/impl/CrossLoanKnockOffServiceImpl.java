@@ -548,6 +548,11 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		return crossLoanTransferDAO.getCrossLoanTransferById(crossLoanId, string);
 	}
 
+	@Override
+	public List<CrossLoanTransfer> getCrossLoanTransferByFinId(long finId, String type) {
+		return crossLoanTransferDAO.getCrossLoanTransferByFinId(finId, type);
+	}
+
 	protected AuditHeader getAuditHeader(FinReceiptData frd, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, frd);
 		return new AuditHeader(frd.getFinReference(), null, null, null, auditDetail,
@@ -607,4 +612,5 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
 		this.receiptCancellationService = receiptCancellationService;
 	}
+
 }
