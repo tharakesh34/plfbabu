@@ -437,7 +437,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setDescColumn("AccountSetCodeName");
 		this.dueAccSet.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.dueAccSet.setMandatoryStyle(true);
-
+		this.dueAccSet.setWhereClause(
+				"AccountSetCode Not Like '%_W'  AND AccountSetCode NOT Like '%_N'  AND AccountSetCode NOT Like '%_S'");
 		this.dueAccRow.setVisible(dueCreationReq);
 		this.tdsRow.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
@@ -1487,7 +1488,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				break;
 			}
 		}
-		
+
 		return alwvalidation;
 	}
 

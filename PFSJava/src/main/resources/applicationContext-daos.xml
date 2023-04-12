@@ -13265,4 +13265,14 @@
 
 	<bean id="hostGLMappingUploadValidateRecord"
 		class="com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadValidateRecord" />
+		
+	<bean id="miscellaneouspostingUploadService"
+		class="com.pennant.pff.miscellaneouspostingupload.service.impl.MiscellaneousPostingUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="miscellaneousPostingUploadDAO" class="com.pennant.pff.miscellaneouspostingupload.dao.impl.MiscellaneousPostingUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="miscellaneousPostingUploadValidateRecord"
+		class="com.pennant.pff.miscellaneouspostingupload.service.impl.MiscellaneousPostingUploadValidateRecord" />
+
 </beans>
