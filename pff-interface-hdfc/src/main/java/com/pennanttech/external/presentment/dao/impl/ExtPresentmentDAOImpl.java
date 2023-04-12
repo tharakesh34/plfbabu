@@ -203,7 +203,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 			StringBuilder query = new StringBuilder();
 			query.append(
-					" SELECT rm.CLUSTERID,rft.FINTYPEDESC,FM.FINBRANCH,rm.BRANCHDESC RBRANCHNAME,PD.FINID,CQ.ACCHOLDERNAME,");
+					" SELECT rm.CLUSTERID,rft.FINTYPEDESC,FM.FINBRANCH,rm.BRANCHDESC RBRANCHNAME,PD.FINREFERENCE,CQ.ACCHOLDERNAME,");
 			query.append(" bt.BANKNAME,BK.BANKBRANCHID,BK.BRANCHDESC BBRANCHNAME,");
 			query.append(" BK.MICR,PH.ID,CQ.ACCOUNTNO,");
 			query.append(" CQ.CHEQUESERIALNO,CQ.CHEQUEDATE,PD.SCHDATE,");
@@ -237,7 +237,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 				details.setFinBranchId(rs.getString("FINBRANCH"));
 				details.setFinBranchName(rs.getString("RBRANCHNAME"));
 				details.setProduct(rs.getString("FINTYPEDESC"));
-				details.setAgreementId(rs.getLong("FINID"));
+				details.setAgreementId(Long.parseLong(rs.getString("FINREFERENCE")));
 				details.setCustomerName(rs.getString("ACCHOLDERNAME"));
 				details.setBankName(rs.getString("BANKNAME"));
 				details.setCityId(rs.getString("CITY"));
@@ -743,7 +743,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	}
 
 	@Override
-	public Presentment getPDCStagingPresentmentDetails(long finId, String chequeNo, java.util.Date chequeDate) {
+	public Presentment getPDCStagingPresentmentDetails(String finReference, String chequeNo, java.util.Date chequeDate) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -764,12 +764,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 		query.append(" INNER JOIN BANKBRANCHES BK on CQ.BANKBRANCHID = BK.BANKBRANCHID ");
 		query.append(" INNER JOIN BMTBankDetail BMT on BMT.BANKCODE = BK.BANKCODE ");
 		query.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
-		query.append(" WHERE PD.FINID = ? AND CQ.CHEQUESERIALNO = ? AND CQ.CHEQUEDATE = ?");
+		query.append(" WHERE PD.FINREFERENCE = ? AND CQ.CHEQUESERIALNO = ? AND CQ.CHEQUEDATE = ?");
 
 		String sql = query.toString();
 
 		logger.debug(Literal.SQL + sql);
-		Object[] parameters = new Object[] { finId, chequeNo, chequeDate };
+		Object[] parameters = new Object[] { finReference, chequeNo, chequeDate };
 		try {
 			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
 				Presentment pres = new Presentment();
