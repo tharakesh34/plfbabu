@@ -72,6 +72,8 @@ public class MandateExtension {
 
 	public static int MANDATE_SPLIT_COUNT;
 
+	public static boolean BR_INST_TYPE_MAN;
+
 	static {
 		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
 		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
@@ -86,6 +88,7 @@ public class MandateExtension {
 		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
 		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
 		MANDATE_SPLIT_COUNT = getValueAsInt("MANDATE_SPLIT_COUNT", 0);
+		BR_INST_TYPE_MAN = getValueAsBoolean("BR_INST_TYPE_MAN", false);
 	}
 
 	private static boolean getValueAsBoolean(String key, boolean defaultValue) {
