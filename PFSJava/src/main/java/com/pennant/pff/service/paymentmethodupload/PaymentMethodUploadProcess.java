@@ -3,11 +3,13 @@ package com.pennant.pff.service.paymentmethodupload;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -27,6 +29,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -52,6 +55,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private MandateService mandateService;
 	private ChequeHeaderDAO chequeHeaderDAO;
+	private ChequeHeaderService chequeHeaderService;
 
 	/**
 	 * Process
@@ -135,6 +139,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 		logger.debug(Literal.ENTERING);
 
 		List<FinanceMain> fmList = paymentMethodUploadDAO.getFinanceMain(header.getId());
+		Date appDate = SysParamUtil.getAppDate();
 
 		logger.info("Validationg the records...");
 		for (PaymentMethodUpload pmu : header.getPaymentmethodUpload()) {
@@ -260,6 +265,40 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 				if (!mandate.isOpenMandate() && paymentMethodUploadDAO.isMandateIdExists(mandateId)) {
 					setErrorDeatils(pmu, remarks, error, "CPU002");
 					continue;
+				}
+			}
+
+			error = "No cheque are available for Reference:".concat(pmu.getFinReference());
+			if (InstrumentType.isPDC(pmu.getFinRepayMethod())) {
+				ChequeHeader ch = chequeHeaderService.getChequeHeaderByRef(pmu.getFinID());
+
+				if (ch == null || (ch != null && CollectionUtils.isEmpty(ch.getChequeDetailList()))) {
+					setErrorDeatils(pmu, remarks, error, "CPU002");
+					continue;
+				}
+
+				boolean validateflag = true;
+				if (CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+					int size = ch.getChequeDetailList().stream()
+							.filter(cd -> cd.getChequeDate().compareTo(appDate) > 0
+									&& PennantConstants.RECORD_TYPE_NEW.equals(cd.getStatus()))
+							.collect(Collectors.toList()).size();
+					/*
+					 * for (ChequeDetail cd : ch.getChequeDetailList()) { if (cd.getChequeDate().compareTo(appDate) > 0
+					 * && PennantConstants.RECORD_TYPE_NEW.equals(cd.getStatus())) { //validateflag = false; } }
+					 * 
+					 * 
+					 */
+
+					if (size > 0) {
+						validateflag = false;
+					}
+					error = "minimum 1 cheque for future instalment to be available for Reference:"
+							.concat(pmu.getFinReference());
+					if (validateflag) {
+						setErrorDeatils(pmu, remarks, error, "CPU002");
+						continue;
+					}
 				}
 			}
 		}
@@ -446,4 +485,10 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
 	}
+
+	@Autowired
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
+
 }
