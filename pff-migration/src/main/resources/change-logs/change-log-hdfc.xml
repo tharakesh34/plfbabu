@@ -1020,4 +1020,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="UDGAP#72.3" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET MULTISELECTSEARCH = 0 WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 1;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
