@@ -4396,12 +4396,11 @@ public class ScheduleCalculator {
 				return finScheduleData;
 			}
 
-			finScheduleData = getRpyInstructDetails(finScheduleData);
-
 			/* Grace Schedule calculation */
 			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
 					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
+				finScheduleData = getRpyInstructDetails(finScheduleData);
 				finScheduleData = graceSchdCal(finScheduleData);
 			}
 		} else {
