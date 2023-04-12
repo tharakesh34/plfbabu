@@ -1673,21 +1673,6 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	}
 
 	@Override
-	public int updateRespProcessFlag(long batchID, String responseType) {
-		StringBuilder sql = new StringBuilder("UPDATE PRESENTMENT_RESP_DTLS Set PROCESS_FLAG = ? Where ID IN (");
-		if ("S".equals(responseType)) {
-			sql.append("SELECT REFERENCEID FROM PRMNT_RESP_SUCCESS_QUEUE WHERE BATCHID = ?");
-		} else {
-			sql.append("SELECT REFERENCEID FROM PRMNT_RESP_BOUNCE_QUEUE WHERE BATCHID = ?");
-		}
-		sql.append(")");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		return this.jdbcOperations.update(sql.toString(), 1, batchID);
-	}
-
-	@Override
 	public PresentmentDetail getPresentmenForResponse(Long responseID) {
 		StringBuilder sql = new StringBuilder("SELECT");
 		sql.append(" PRD.HEADER_ID, PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
@@ -1947,4 +1932,40 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 	public long getSeqNumber(String tableName) {
 		return getNextValue(tableName);
 	}
+
+	@Override
+	public void updateBatch(Long batchId, String remarks) {
+		logger.debug(Literal.ENTERING);
+
+		String sql = "Update PRMNT_BATCH_JOBS Set End_Time = ?, Status = ?, Remarks = ? Where ID = ?";
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+			ps.setString(2, "FAILED");
+			ps.setString(3, remarks);
+			ps.setLong(4, batchId);
+
+		});
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public int updateRespProcessFlag(long batchID, int processFlag, String responseType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("UPDATE PRESENTMENT_RESP_DTLS Set PROCESS_FLAG = ? Where ID IN (");
+		if ("S".equals(responseType)) {
+			sql.append("SELECT REFERENCEID FROM PRMNT_RESP_SUCCESS_QUEUE WHERE BATCHID = ?");
+		} else {
+			sql.append("SELECT REFERENCEID FROM PRMNT_RESP_BOUNCE_QUEUE WHERE BATCHID = ?");
+		}
+		sql.append(")");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.update(sql.toString(), processFlag, batchID);
+
+	}
+
 }

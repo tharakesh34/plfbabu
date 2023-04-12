@@ -203,7 +203,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 
 			StringBuilder query = new StringBuilder();
 			query.append(
-					" SELECT rm.CLUSTERID,rft.FINTYPEDESC,FM.FINBRANCH,rm.BRANCHDESC RBRANCHNAME,PD.FINID,CQ.ACCHOLDERNAME,");
+					" SELECT rm.CLUSTERID,rft.FINTYPEDESC,FM.FINBRANCH,rm.BRANCHDESC RBRANCHNAME,PD.FINREFERENCE,CQ.ACCHOLDERNAME,");
 			query.append(" bt.BANKNAME,BK.BANKBRANCHID,BK.BRANCHDESC BBRANCHNAME,");
 			query.append(" BK.MICR,PH.ID,CQ.ACCOUNTNO,");
 			query.append(" CQ.CHEQUESERIALNO,CQ.CHEQUEDATE,PD.SCHDATE,");
@@ -237,7 +237,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 				details.setFinBranchId(rs.getString("FINBRANCH"));
 				details.setFinBranchName(rs.getString("RBRANCHNAME"));
 				details.setProduct(rs.getString("FINTYPEDESC"));
-				details.setAgreementId(rs.getLong("FINID"));
+				details.setAgreementId(Long.parseLong(rs.getString("FINREFERENCE")));
 				details.setCustomerName(rs.getString("ACCHOLDERNAME"));
 				details.setBankName(rs.getString("BANKNAME"));
 				details.setCityId(rs.getString("CITY"));
@@ -304,12 +304,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	}
 
 	@Override
-	public void saveResponseFile(ExtPresentment extPresentment) {
+	public void saveExtPresentment(ExtPresentment extPresentment) {
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
 		StringBuilder sql = new StringBuilder("INSERT INTO PRMNT_HEADER");
-		sql.append(" (MODULE,FILE_NAME,FILE_LOCATION,STATUS, EXTRACTION,CREATED_DATE)");
+		sql.append(" (MODULE,FILE_NAME,STATUS,FILE_LOCATION, CREATED_DATE,EXTRACTION,ERROR_CODE,ERROR_MESSAGE)");
 		sql.append(" VALUES (");
-		sql.append("?, ?, ?, ?, ?, ?)");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -317,10 +317,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 			int index = 1;
 			ps.setString(index++, extPresentment.getModule());
 			ps.setString(index++, extPresentment.getFileName());
-			ps.setString(index++, extPresentment.getFileLocation());
 			ps.setInt(index++, extPresentment.getStatus());
+			ps.setString(index++, extPresentment.getFileLocation());
+			ps.setTimestamp(index++, curTimeStamp);
 			ps.setInt(index++, extPresentment.getExtraction());
-			ps.setTimestamp(index, curTimeStamp);
+			ps.setString(index++, extPresentment.getErrorCode());
+			ps.setString(index, extPresentment.getErrorMessage());
 		});
 
 	}
@@ -741,7 +743,7 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 	}
 
 	@Override
-	public Presentment getPDCStagingPresentmentDetails(long finId, String chequeNo, java.util.Date chequeDate) {
+	public Presentment getPDCStagingPresentmentDetails(String finReference, String chequeNo, java.util.Date chequeDate) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -762,12 +764,12 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 		query.append(" INNER JOIN BANKBRANCHES BK on CQ.BANKBRANCHID = BK.BANKBRANCHID ");
 		query.append(" INNER JOIN BMTBankDetail BMT on BMT.BANKCODE = BK.BANKCODE ");
 		query.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = PH.PARTNERBANKID ");
-		query.append(" WHERE PD.FINID = ? AND CQ.CHEQUESERIALNO = ? AND CQ.CHEQUEDATE = ?");
+		query.append(" WHERE PD.FINREFERENCE = ? AND CQ.CHEQUESERIALNO = ? AND CQ.CHEQUEDATE = ?");
 
 		String sql = query.toString();
 
 		logger.debug(Literal.SQL + sql);
-		Object[] parameters = new Object[] { finId, chequeNo, chequeDate };
+		Object[] parameters = new Object[] { finReference, chequeNo, chequeDate };
 		try {
 			return mainNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
 				Presentment pres = new Presentment();
@@ -880,27 +882,4 @@ public class ExtPresentmentDAOImpl extends SequenceDao<Presentment> implements E
 		return pres.getTxnReference();
 	}
 
-	@Override
-	public void saveRejectResponseFile(ExtPresentment extPresentment) {
-		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
-		StringBuilder sql = new StringBuilder("INSERT INTO PRMNT_HEADER");
-		sql.append(" (MODULE,FILE_NAME,FILE_LOCATION,STATUS, EXTRACTION,ERROR_CODE,ERROR_MESSAGE,CREATED_DATE)");
-		sql.append(" VALUES (");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?)");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setString(index++, extPresentment.getModule());
-			ps.setString(index++, extPresentment.getFileName());
-			ps.setString(index++, extPresentment.getFileLocation());
-			ps.setInt(index++, extPresentment.getStatus());
-			ps.setInt(index++, extPresentment.getExtraction());
-			ps.setString(index++, extPresentment.getErrorCode());
-			ps.setString(index++, extPresentment.getErrorMessage());
-			ps.setTimestamp(index, curTimeStamp);
-		});
-
-	}
 }

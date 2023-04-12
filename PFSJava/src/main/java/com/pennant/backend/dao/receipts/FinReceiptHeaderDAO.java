@@ -151,4 +151,6 @@ public interface FinReceiptHeaderDAO {
 	void updateExcessAdjustTo(long receiptID, String excessAdjustTo);
 
 	String getReceiptModeStatuByExcessId(long excessID);
+
+	Long getReceiptIdByChequeSerialNo(String chequeSerialNo);
 }
