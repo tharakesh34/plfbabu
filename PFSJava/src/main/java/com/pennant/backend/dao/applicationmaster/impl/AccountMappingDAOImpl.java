@@ -322,4 +322,19 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isValidAccount(String account) {
+		String sql = "Select count(Account) From AccountMapping Where Account = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, Integer.class, account) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+
+	}
 }

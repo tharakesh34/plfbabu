@@ -77,6 +77,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -294,7 +295,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						entry.setLinkedTranId(linkedTranId);
 					}
 				}
-				if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
+				if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())
+						&& !RequestSource.UPLOAD.equals(jVPosting.getRequestSource())) {
 					// Update Child Records Status
 					jVPostingEntryDAO.updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
 					// Updating Header Status
@@ -386,106 +388,110 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		valueParm[0] = Long.toString(jVPosting.getId());
 		errParm[0] = PennantJavaUtil.getLabel("label_BatchReference") + ":" + valueParm[0];
 
-		if (jVPosting.isNewRecord()) { // for New record or new record into work flow
+		if (!RequestSource.UPLOAD.equals(jVPosting.getRequestSource())) {
+			if (jVPosting.isNewRecord()) { // for New record or new record into work flow
 
-			if (!jVPosting.isWorkflow()) {// With out Work flow only new records
-				if (befJVPosting != null) { // Record Already Exists in the
-											// table then error
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
-				}
-			} else { // with work flow
-				if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
-																							// type
-																							// is
-																							// new
-					if (befJVPosting != null || tempJVPosting != null) { // if
-																			// records
-																			// already
-																			// exists
-																			// in
-																			// the
-																			// main
-																			// table
+				if (!jVPosting.isWorkflow()) {// With out Work flow only new records
+					if (befJVPosting != null) { // Record Already Exists in the
+												// table then error
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
-				} else { // if records not exists in the Main flow table
-					if (befJVPosting == null || tempJVPosting != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!jVPosting.isWorkflow()) { // With out Work flow for update and
-											// delete
-
-				if (befJVPosting == null) { // if records not exists in the main
-											// table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
-				} else {
-					if (oldJVPosting != null && !oldJVPosting.getLastMntOn().equals(befJVPosting.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+				} else { // with work flow
+					if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																								// records
+																								// type
+																								// is
+																								// new
+						if (befJVPosting != null || tempJVPosting != null) { // if
+																				// records
+																				// already
+																				// exists
+																				// in
+																				// the
+																				// main
+																				// table
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
 									usrLanguage));
-						} else {
+						}
+					} else { // if records not exists in the Main flow table
+						if (befJVPosting == null || tempJVPosting != null) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 									usrLanguage));
 						}
 					}
 				}
 			} else {
+				// for work flow process records or (Record to update or Delete with
+				// out work flow)
+				if (!jVPosting.isWorkflow()) { // With out Work flow for update and
+												// delete
 
-				if (tempJVPosting == null) { // if records not exists in the
-												// Work flow table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-				}
-				if (oldJVPosting != null && !StringUtils.equals(oldJVPosting.getLastMntOn().toString(),
-						tempJVPosting.getLastMntOn().toString())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					if (befJVPosting == null) { // if records not exists in the main
+												// table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
+					} else {
+						if (oldJVPosting != null && !oldJVPosting.getLastMntOn().equals(befJVPosting.getLastMntOn())) {
+							if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
+									.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
+										usrLanguage));
+							} else {
+								auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+										new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
+										usrLanguage));
+							}
+						}
+					}
+				} else {
+
+					if (tempJVPosting == null) { // if records not exists in the
+													// Work flow table
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					}
+					if (oldJVPosting != null && !StringUtils.equals(oldJVPosting.getLastMntOn().toString(),
+							tempJVPosting.getLastMntOn().toString())) {
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
+					}
 				}
 			}
-		}
 
-		// To validate if the posting amount Exceeds the tracked amount for
-		// expreference.
-		if (jVPosting.getExpReference() != null) {
-			LegalExpenses expenses = legalExpensesDAO.getLegalExpensesById(jVPosting.getExpReference(), "_Aview");
-			if (expenses != null && jVPosting.getTotDebitsByBatchCcy().compareTo(expenses.getAmount()) > 0) {
-				valueParm[0] = jVPosting.getExpReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_LegalExpensesList_ExpReference.value") + ":"
-						+ valueParm[0];
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "E0061", errParm, valueParm), usrLanguage));
+			// To validate if the posting amount Exceeds the tracked amount for
+			// expreference.
+			if (jVPosting.getExpReference() != null) {
+				LegalExpenses expenses = legalExpensesDAO.getLegalExpensesById(jVPosting.getExpReference(), "_Aview");
+				if (expenses != null && jVPosting.getTotDebitsByBatchCcy().compareTo(expenses.getAmount()) > 0) {
+					valueParm[0] = jVPosting.getExpReference();
+					errParm[0] = PennantJavaUtil.getLabel("label_LegalExpensesList_ExpReference.value") + ":"
+							+ valueParm[0];
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "E0061", errParm, valueParm), usrLanguage));
+				}
 			}
-		}
 
-		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String reference = jVPosting.getReference();
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.MAIN_TAB);
+			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
+			String reference = jVPosting.getReference();
+			FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.MAIN_TAB);
 
-		String rcdMntnSts = fm.getRcdMaintainSts();
+			String rcdMntnSts = fm.getRcdMaintainSts();
 
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.JVPOSTING.equals(rcdMntnSts)) {
-			String[] valueParm1 = new String[1];
-			valueParm1[0] = rcdMntnSts;
-			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
-		}
+			if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.JVPOSTING.equals(rcdMntnSts)) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = rcdMntnSts;
+				auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
+			}
 
-		if (financeWriteoffDAO.isWriteoffLoan(fm.getFinID(), "")) {
-			String[] valueParm1 = new String[1];
-			valueParm1[0] = "";
-			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
+			if (financeWriteoffDAO.isWriteoffLoan(fm.getFinID(), "")) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = "";
+				auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
