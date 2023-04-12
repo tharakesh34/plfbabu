@@ -35,6 +35,7 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
@@ -50,6 +51,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
+	private ValidateRecord chequeUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -174,16 +176,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						chequeHeader.setNoOfCheques(chequeSize);
 						chequeHeaderDAO.updatesize(chequeHeader);
 
-						for (ChequeUpload chequeUpload : chequeUploads) {
-							if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
-								failRecords++;
-							} else {
-								sucessRecords++;
-							}
-						}
-
-						chequeUploadDAO.update(chequeUploads);
-
 						transactionManager.commit(txStatus);
 					} catch (Exception e) {
 						logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -196,18 +188,20 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 					}
 				}
 
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
+				for (String finReference : finReferences) {
+					List<ChequeUpload> chequeUploads = map.get(finReference);
+					for (ChequeUpload chequeUpload : chequeUploads) {
+						if (chequeUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
+							failRecords++;
+						} else {
+							sucessRecords++;
+						}
+					}
 
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
+					chequeUploadDAO.update(chequeUploads);
+					header.setSuccessRecords(sucessRecords);
+					header.setFailureRecords(failRecords);
 				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
 
 				logger.info("Processed the File {}", header.getFileName());
 
@@ -325,6 +319,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		return chequeUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return chequeUploadValidateRecord;
+	}
+
 	private void process(ChequeHeader header, List<ChequeUpload> uploads) {
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData data = new FinScheduleData();
@@ -426,6 +425,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setChequeUploadValidateRecord(ChequeUploadValidateRecord chequeUploadValidateRecord) {
+		this.chequeUploadValidateRecord = chequeUploadValidateRecord;
 	}
 
 }

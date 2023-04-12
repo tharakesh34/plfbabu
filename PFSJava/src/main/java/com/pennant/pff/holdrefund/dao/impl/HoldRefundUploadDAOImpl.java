@@ -342,7 +342,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 		StringBuilder sql = new StringBuilder("Select Count(FinReference)");
 		sql.append(" From HOLD_REFUND_UPLOAD ru");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = ru.HeaderID");
-		sql.append(" Where ru.FinReference = ? and ru.HeaderID <> ? and ru.progress not in (?, ?, ?, ?)");
+		sql.append(" Where ru.FinReference = ? and uh.Id <> ? and uh.progress in (?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

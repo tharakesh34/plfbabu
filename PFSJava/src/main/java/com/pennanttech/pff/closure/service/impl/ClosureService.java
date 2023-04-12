@@ -103,6 +103,8 @@ public class ClosureService {
 		} else {
 			updateTerminationExcessAmount(finEODEvent, calcClosureAmt);
 			finEODEvent.setFinODDetails(new ArrayList<>());
+			finEODEvent.setFinanceScheduleDetails(schdData.getFinanceScheduleDetails());
+			finEODEvent.setFinProfitDetail(schdData.getFinPftDeatil());
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -120,7 +122,9 @@ public class ClosureService {
 
 		fsi.setFinReference(fm.getFinReference());
 		fsi.setFinID(finEODEvent.getFinanceMain().getFinID());
-		fsi.setFromDate(fm.getAppDate());
+		Date appDate = fm.getAppDate();
+
+		fsi.setFromDate(appDate);
 		fsi.setAmount(calcClosureAmt);
 
 		/* Payment Mode should be empty for Closer receipt with Termination Excess */
@@ -131,12 +135,12 @@ public class ClosureService {
 		fsi.setNonStp(true);
 		fsi.setRequestSource(RequestSource.EOD);
 		fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		fsi.setValueDate(fm.getAppDate());
+		fsi.setValueDate(appDate);
 		fsi.setLoggedInUser(PFSBatchAdmin.loggedInUser);
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
-		rcd.setReceivedDate(fm.getAppDate());
-		rcd.setValueDate(fm.getAppDate());
+		rcd.setReceivedDate(appDate);
+		rcd.setValueDate(appDate);
 		fsi.setReceiptDetail(rcd);
 
 		for (FinFeeDetail fee : fees) {
@@ -153,7 +157,7 @@ public class ClosureService {
 		}
 
 		if (fsi.getReceiptDetail().getReceivedDate() == null) {
-			fsi.getReceiptDetail().setReceivedDate(SysParamUtil.getAppDate());
+			fsi.getReceiptDetail().setReceivedDate(appDate);
 		}
 
 		fsi.setReceivedDate(rd.getReceivedDate());
@@ -162,9 +166,9 @@ public class ClosureService {
 		String paymentMode = fsi.getPaymentMode();
 		if (fsi.getRealizationDate() == null && ReceiptMode.CHEQUE.equals(paymentMode)
 				|| ReceiptMode.DD.equals(paymentMode)) {
-			fsi.setRealizationDate(SysParamUtil.getAppDate());
+			fsi.setRealizationDate(appDate);
 		} else {
-			fsi.setRealizationDate(fm.getAppDate());
+			fsi.setRealizationDate(appDate);
 		}
 		return fsi;
 	}
@@ -202,6 +206,7 @@ public class ClosureService {
 		FinanceType financeType = finEODEvent.getFinType();
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		Date appDate = fm.getEventProperties().getAppDate();
+		fm.setAppDate(appDate);
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		schdData.setFinanceScheduleDetails(schedules);
 		schdData.setFinanceMain(fm);
@@ -298,6 +303,7 @@ public class ClosureService {
 
 		updateUtilizedExcess(finEOD.getFinExcessAmounts(), true);
 		processReceipt(finEOD, receiptAmount, receiptDTO);
+
 	}
 
 	@Autowired

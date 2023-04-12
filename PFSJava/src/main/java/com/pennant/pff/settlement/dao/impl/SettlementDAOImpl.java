@@ -288,6 +288,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			sad.setHeaderID(rs.getLong("HeaderID"));
 			sad.setId(rs.getLong("ID"));
 			sad.setAllocationType(rs.getString("AllocationType"));
+			sad.setAllocationTo(rs.getLong("AllocationTo"));
 			sad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 			sad.setTotalDue(rs.getBigDecimal("TotalDue"));
 			sad.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));

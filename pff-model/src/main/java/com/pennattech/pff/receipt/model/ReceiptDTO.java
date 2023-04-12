@@ -3,7 +3,9 @@ package com.pennattech.pff.receipt.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FeeType;
@@ -47,6 +49,7 @@ public class ReceiptDTO implements Serializable {
 	private String roundAdjMth;
 	private FeeType lppFeeType;
 	private FinReceiptData finReceiptData;
+	private Map<String, String> bounceForPD = new HashMap<String, String>();
 
 	public ReceiptDTO() {
 		super();
@@ -235,4 +238,13 @@ public class ReceiptDTO implements Serializable {
 	public void setFinReceiptData(FinReceiptData finReceiptData) {
 		this.finReceiptData = finReceiptData;
 	}
+
+	public Map<String, String> getBounceForPD() {
+		return bounceForPD;
+	}
+
+	public void setBounceForPD(Map<String, String> bounceForPD) {
+		this.bounceForPD = bounceForPD;
+	}
+
 }

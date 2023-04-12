@@ -552,10 +552,12 @@ public class FileUploadList extends Window implements Serializable {
 			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
 			this.fileName.setFilters(filters);
 		} else {
+
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", this.workflowRoles, Filter.OP_IN);
 			this.fileName.setFilters(filters);
+
 		}
 
 		if (!"M".equals(this.stage)) {
@@ -943,7 +945,7 @@ public class FileUploadList extends Window implements Serializable {
 	private void onClickSearch() {
 		if (this.fromDate.getValue() != null) {
 			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
-					this.fromDate.getValue(), null, true));
+					DateUtil.addDays(this.fromDate.getValue(), -1), null, true));
 			try {
 				this.toDate.getValue();
 			} catch (WrongValueException e) {
@@ -1378,6 +1380,9 @@ public class FileUploadList extends Window implements Serializable {
 			case IMPORT_FAILED:
 				lc = new Listcell("Failed");
 				break;
+			case DOWNLOADED:
+				lc = new Listcell("Downloaded");
+				break;
 			default:
 				lc = new Listcell("");
 				break;
@@ -1532,8 +1537,6 @@ public class FileUploadList extends Window implements Serializable {
 			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("HEADER_ID", uploadHeader.getId());
 			parameterMap.put("FILE_UPLOAD_HEADER", uploadHeader);
-			parameterMap.put("ERROR_CODE", "");
-			parameterMap.put("ERROR_DESC", "");
 			engine.setParameterMap(parameterMap);
 
 			DataEngineStatus status = uploadHeader.getDeStatus();

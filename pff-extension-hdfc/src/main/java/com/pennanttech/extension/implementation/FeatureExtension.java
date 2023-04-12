@@ -215,7 +215,7 @@ public class FeatureExtension implements IFeatureExtension {
 		mandateExtensions.put("PARTNER_BANK_REQ", true);
 		mandateExtensions.put("ALLOW_CONSECUTIVE_BOUNCE", true);
 		mandateExtensions.put("EXPIRY_DATE_MANDATORY", false);
-		mandateExtensions.put("MANDATE_SPLIT_COUNT", 100);
+		mandateExtensions.put("MANDATE_SPLIT_COUNT", 3000);
 		mandateExtensions.put("PARTNER_BANK_WISE_EXTARCTION", true);
 		mandateExtensions.put("AUTO_UPLOAD", true);
 	}

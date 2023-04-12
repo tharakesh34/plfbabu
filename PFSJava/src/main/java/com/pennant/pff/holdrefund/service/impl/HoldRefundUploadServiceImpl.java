@@ -16,7 +16,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.systemmasters.LovFieldDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.finance.impl.HoldRefundUploadValidateRecord;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
@@ -24,6 +23,7 @@ import com.pennant.pff.holdrefund.model.HoldRefundUploadDetail;
 import com.pennant.pff.paymentupload.exception.PaymentUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 
 public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
@@ -32,7 +32,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;
-	private HoldRefundUploadValidateRecord holdRefundUploadValidateRecord;
+	private ValidateRecord holdRefundUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -267,7 +267,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public HoldRefundUploadValidateRecord getValidateRecord() {
+	public ValidateRecord getValidateRecord() {
 		return holdRefundUploadValidateRecord;
 	}
 

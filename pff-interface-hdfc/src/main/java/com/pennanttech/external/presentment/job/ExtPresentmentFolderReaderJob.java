@@ -1,6 +1,8 @@
 package com.pennanttech.external.presentment.job;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,9 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
+import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -61,6 +65,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processSIReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
 
@@ -73,6 +78,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processIPDCReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_IPDC_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_IPDC_REQ);
 
@@ -85,6 +91,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processNACHReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
 
@@ -97,6 +104,13 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processResponseFiles(ExternalConfig respConfig, ExternalConfig reqConfig) {
 		logger.debug(Literal.ENTERING);
+
+		// get error codes handy
+		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+		}
+
 		// Get Interface/Module wise folder path
 		String folderPath = App.getResourcePath(respConfig.getFileLocation());
 
@@ -127,6 +141,15 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		// Process each file individually
 		for (File file : filesList) {
 
+			// Check if the file is already saved in table for the particular interface/module
+			boolean isRecordExist = externalPresentmentDAO.isFileProcessed(file.getName(),
+					respConfig.getInterfaceName());
+
+			if (isRecordExist) {
+				logger.debug("EXT_FILE: File status already saved, so returning.");
+				continue;
+			}
+
 			String fileName = file.getName();
 			String filePrepend = respConfig.getFilePrepend();
 			String fileExtension = respConfig.getFileExtension();
@@ -142,10 +165,10 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 				// Check with request file name for SI and INTERNAl
 				// Split with , and _ and check request file name in request folder
 
-				boolean isValid = false;
+				boolean isValid = true;
 
-				if (CONFIG_IPDC_REQ.equals(reqConfig.getInterfaceName())
-						|| CONFIG_SI_REQ.equals(reqConfig.getInterfaceName())) {
+				if (CONFIG_IPDC_RESP.equals(respConfig.getInterfaceName())
+						|| CONFIG_SI_RESP.equals(respConfig.getInterfaceName())) {
 
 					if ((!fileName.startsWith(filePrepend.concat(respConfig.getSuccessIndicator()))
 							|| !fileName.startsWith(filePrepend.concat(respConfig.getFailIndicator())))
@@ -175,27 +198,41 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					}
 
 					String reqFileNameInRespFile = getReqFileNameFromRespFileName(fNameArray, fileExtension,
-							reqConfig.getInterfaceName(), fileType);
+							respConfig.getInterfaceName(), fileType);
+
 					isValid = requestFileNames.contains(reqFileNameInRespFile);
-				} else if (CONFIG_NACH_REQ.equals(reqConfig.getInterfaceName())) {
-					isValid = true;
+
+					if (!isValid) {
+						logger.debug(
+								"Error Code F401, Request file name is invalid. So not processing the response file.");
+						continue;
+					}
+
+					// Added for reject file count validation
+					if ("R".equals(fileType)) {
+						boolean isValidRejectFile = validateRejectFile(file);
+
+						if (!isValidRejectFile) {
+							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
+
+							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
+							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
+						}
+
+					}
+
 				}
 
-				if (!isValid) {
-					logger.debug("Error Code F401, Request file name is invalid. So not processing the response file.");
-					continue;
-				}
-
-				// Check if the file is already saved in table for the particular interface/module
-				boolean isRecordExist = externalPresentmentDAO.isFileProcessed(file.getName(),
-						respConfig.getInterfaceName());
-
-				if (!isRecordExist) {
-					// Add unprocessed files in to table
+				// Add unprocessed files in to table
+				if (extPresentment.getErrorCode() != null && !"".equals(extPresentment.getErrorCode())) {
+					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
+					extPresentment.setExtraction(FAILED); // set file extract process unprocessed
+				} else {
 					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
 					extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
-					externalPresentmentDAO.saveResponseFile(extPresentment);
 				}
+				externalPresentmentDAO.saveExtPresentment(extPresentment);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -206,7 +243,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.ENTERING);
 		String reqFileNameInRespFile = "";
 
-		if (CONFIG_SI_REQ.equals(interfaceName) && "R".equals(fileType)) {
+		if (CONFIG_SI_RESP.equals(interfaceName) && "R".equals(fileType)) {
 
 			if (fNameArray.length >= 3) {
 				if (fNameArray[2].contains(fileExtension)) {
@@ -216,9 +253,9 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					reqFileNameInRespFile = fNameArray[1] + "_" + fNameArray[2];
 				}
 			}
-		} else if (CONFIG_SI_REQ.equals(interfaceName) && "S".equals(fileType)
-				|| CONFIG_IPDC_REQ.equals(interfaceName) && "S".equals(fileType)
-				|| CONFIG_IPDC_REQ.equals(interfaceName) && "R".equals(fileType)) {
+		} else if (CONFIG_SI_RESP.equals(interfaceName) && "S".equals(fileType)
+				|| CONFIG_IPDC_RESP.equals(interfaceName) && "S".equals(fileType)
+				|| CONFIG_IPDC_RESP.equals(interfaceName) && "R".equals(fileType)) {
 			if (fNameArray[1].contains(fileExtension)) {
 				reqFileNameInRespFile = fNameArray[1].substring(0, fNameArray[1].indexOf(fileExtension));
 			} else {
@@ -248,5 +285,70 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			}
 		}
 		return requestFileNames;
+	}
+
+	public boolean validateRejectFile(File file) {
+		logger.debug(Literal.ENTERING);
+		try {
+			RejectFileData cntData = new RejectFileData();
+			readLastLine(file, cntData);
+			long fileLines = cntData.getLinesCount();
+			String data = cntData.getLastLine();
+			long recSize = fileLines - 2;
+			if (data != null && !"".equals(data)) {
+				if (data.startsWith("F") && data.length() > 1) {
+					int fileRecSize = 0;
+					fileRecSize = Integer.parseInt(data.substring(1));
+					if (fileRecSize == recSize) {
+						return true;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
+	public void readLastLine(File file, RejectFileData cntData) throws Exception {
+		logger.debug(Literal.ENTERING);
+		String last = null, line;
+		long cnt = 0;
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+			while ((line = in.readLine()) != null) {
+				cnt = cnt + 1;
+				if (line != null) {
+					last = line;
+				}
+			}
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		cntData.setLastLine(last);
+		cntData.setLinesCount(cnt);
+		logger.debug(Literal.LEAVING);
+	}
+
+	class RejectFileData {
+		private long linesCount;
+		private String lastLine;
+
+		public long getLinesCount() {
+			return linesCount;
+		}
+
+		public void setLinesCount(long linesCount) {
+			this.linesCount = linesCount;
+		}
+
+		public String getLastLine() {
+			return lastLine;
+		}
+
+		public void setLastLine(String lastLine) {
+			this.lastLine = lastLine;
+		}
+
 	}
 }

@@ -31,6 +31,7 @@ import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.excess.service.ExcessTransferService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -41,6 +42,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ExcessTransferService excessTransferService;
+	private ValidateRecord excessTransferUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -228,7 +230,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 				FinExcessTransfer transfer = new FinExcessTransfer();
 
-				transfer.setId(excess.getReceiptID());
+				transfer.setId(excessTransferUploadDAO.getNextValue());
 				transfer.setFinId(exc.getReferenceID());
 				transfer.setFinReference(exc.getReference());
 				transfer.setTransferFromType(exc.getTransferFromType());
@@ -309,6 +311,11 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		return excessTransferUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return excessTransferUploadValidateRecord;
+	}
+
 	@Autowired
 	public void setExcessTransferUploadDAO(ExcessTransferUploadDAO excessTransferUploadDAO) {
 		this.excessTransferUploadDAO = excessTransferUploadDAO;
@@ -327,6 +334,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setExcessTransferService(ExcessTransferService excessTransferService) {
 		this.excessTransferService = excessTransferService;
+	}
+
+	@Autowired
+	public void setExcessTransferUploadValidateRecord(
+			ExcessTransferUploadValidateRecord excessTransferUploadValidateRecord) {
+		this.excessTransferUploadValidateRecord = excessTransferUploadValidateRecord;
 	}
 
 }

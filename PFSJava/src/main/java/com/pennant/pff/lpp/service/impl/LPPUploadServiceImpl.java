@@ -26,7 +26,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lpp.upload.LPPUpload;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
-import com.pennant.backend.service.finance.impl.LppUploadValidateRecord;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;

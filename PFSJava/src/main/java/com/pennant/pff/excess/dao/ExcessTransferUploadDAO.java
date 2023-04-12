@@ -23,4 +23,6 @@ public interface ExcessTransferUploadDAO {
 
 	void updateFailure(ExcessTransferUpload detail);
 
+	long getNextValue();
+
 }

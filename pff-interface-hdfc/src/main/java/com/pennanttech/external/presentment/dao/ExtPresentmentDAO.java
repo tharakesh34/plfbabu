@@ -26,15 +26,13 @@ public interface ExtPresentmentDAO {
 
 	int saveExternalRecords(List<Presentment> presentments, long headerId);
 
-	public void saveResponseFile(ExtPresentment extPresentment);
-
 	public boolean isFileProcessed(String fileName, String moduleName);
 
 	public Presentment getPresenementMandateRecord(long p_id);
 
 	public Presentment getPresenementPDCRecord(long p_id);
 
-	public long savePresentment(Presentment pres, long headerId, String clearingStatus);
+	public long savePresentment(List<Presentment> presList, long headerId);
 
 	public void updateFileStatus(long id, long status);
 
@@ -64,6 +62,10 @@ public interface ExtPresentmentDAO {
 
 	boolean isRecordInserted(String refernce, long headeID);
 
-	public Presentment getPDCStagingPresentmentDetails(long finId, String chequeNo, Date chequeDate);
+	public Presentment getPDCStagingPresentmentDetails(String finReference, String chequeNo, Date chequeDate);
+
+	long savePresentment(Presentment pres, long headerId, String clearingStatus);
+
+	void saveExtPresentment(ExtPresentment extPresentment);
 
 }

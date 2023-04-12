@@ -55,8 +55,8 @@ public class UpdateResponseTasklet implements Tasklet {
 		int successRecords = 0;
 		int failedRecords = 0;
 
-		for (Long presentmentHeaderID : list) {
-			List<String> statusList = presentmentDAO.getStatusByPresentmentHeader(presentmentHeaderID);
+		for (Long presentmentDetailID : list) {
+			List<String> statusList = presentmentDAO.getStatusByPresentmentDetail(presentmentDetailID);
 			int successCount = 0;
 			int failedCount = 0;
 			int totalCount = statusList.size();
@@ -69,11 +69,7 @@ public class UpdateResponseTasklet implements Tasklet {
 				}
 			}
 
-			presentmentDAO.updateHeaderCounts(presentmentHeaderID, successCount, failedCount);
-
-			if (totalCount == (successCount + failedCount)) {
-				presentmentDAO.updateHeaderStatus(presentmentHeaderID, RepayConstants.PEXC_RECEIVED);
-			}
+			presentmentDAO.updateHeaderCounts(presentmentDetailID, successCount, failedCount);
 
 			totalRecords = totalRecords + totalCount;
 			successRecords = successRecords + successCount;
@@ -88,6 +84,25 @@ public class UpdateResponseTasklet implements Tasklet {
 
 			presentmentDAO.updateResponseHeader(headerId, totalRecords, successRecords, failedRecords, status, remarks);
 
+			long presentmentId = presentmentDAO.getPresentmentDetailPresenmentId(presentmentDetailID);
+
+			List<String> headerStatusList = presentmentDAO.getStatusByPresentmentHeader(presentmentId);
+			int headerSuccessCount = 0;
+			int headerFailedCount = 0;
+			int headerTotalCount = headerStatusList.size();
+
+			for (String sts : headerStatusList) {
+				if (RepayConstants.PEXC_SUCCESS.equals(sts) || RepayConstants.PEXC_BOUNCE.equals(sts)) {
+					headerSuccessCount++;
+				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
+					headerFailedCount++;
+				}
+			}
+
+			if (headerTotalCount == (headerSuccessCount + headerFailedCount)) {
+
+				presentmentDAO.updateHeaderStatus(presentmentId, RepayConstants.PEXC_RECEIVED);
+			}
 		}
 	}
 

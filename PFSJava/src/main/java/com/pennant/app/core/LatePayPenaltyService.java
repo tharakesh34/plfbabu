@@ -118,12 +118,13 @@ public class LatePayPenaltyService extends ServiceHelper {
 		case ChargeType.FLAT:
 			/* Fixed Fee. One Time */
 			penalty = odChargeAmtOrPerc;
+			valueDate = deriveValueDate(fod, valueDate, odcrList, repayments);
 			break;
 		case ChargeType.FLAT_ON_PD_MTH:
 			/* Fixed Fee. On Every Passing Schedule Month */
 			balanceForCal = getBalanceForCal(fod);
 
-			valueDate = deriveValueDate(fod, valueDate, odcrList);
+			valueDate = deriveValueDate(fod, valueDate, odcrList, repayments);
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
 				penalty = odChargeAmtOrPerc.multiply(new BigDecimal(numberOfMonths));
@@ -144,7 +145,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			balanceForCal = getBalanceForCal(fod);
 
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
-				valueDate = deriveValueDate(fod, valueDate, odcrList);
+				valueDate = deriveValueDate(fod, valueDate, odcrList, repayments);
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
 				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
 				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
@@ -184,10 +185,15 @@ public class LatePayPenaltyService extends ServiceHelper {
 		setTotals(fod);
 
 		if (fod.getLppDueTillDate() != null && fod.getLppDueAmt().compareTo(fod.getTotPenaltyAmt()) > 0) {
-			fod.setPayableAmount(fod.getLppDueAmt().subtract(fod.getTotPenaltyAmt()));
-			fod.setTotPenaltyAmt(fod.getLppDueAmt());
-			if (fod.getTotPenaltyPaid().compareTo(fod.getTotPenaltyAmt()) != 0) {
-				fod.setTotPenaltyBal(fod.getLppDueAmt());
+			if (fm.isEOD()) {
+				fod.setTotPenaltyBal(fod.getTotPenaltyAmt());
+				fod.setTotPenaltyAmt(fod.getLppDueAmt().add(fod.getTotPenaltyAmt()));
+			} else {
+				fod.setPayableAmount(fod.getLppDueAmt().subtract(fod.getTotPenaltyAmt()));
+				fod.setTotPenaltyAmt(fod.getLppDueAmt());
+				if (fod.getTotPenaltyPaid().compareTo(fod.getTotPenaltyAmt()) != 0) {
+					fod.setTotPenaltyBal(fod.getLppDueAmt());
+				}
 			}
 		}
 	}
@@ -888,11 +894,30 @@ public class LatePayPenaltyService extends ServiceHelper {
 		return odcrList;
 	}
 
-	private Date deriveValueDate(FinODDetails fod, Date valueDate, List<OverdueChargeRecovery> odcrList) {
+	private Date deriveValueDate(FinODDetails fod, Date valueDate, List<OverdueChargeRecovery> odcrList,
+			List<FinanceRepayments> repayments) {
+		boolean flag = true;
+
+		if (odcrList.isEmpty()) {
+			return valueDate;
+		}
+
+		Date finValueDate = odcrList.get(odcrList.size() - 1).getMovementDate();
+		Date movementDate = odcrList.get(odcrList.size() - 1).getMovementDate();
+
+		if (CollectionUtils.isNotEmpty(repayments)) {
+			finValueDate = repayments.get(repayments.size() - 1).getFinValueDate();
+			movementDate = odcrList.get(0).getMovementDate();
+		}
+
+		if (DateUtil.compare(movementDate, finValueDate) == 0) {
+			flag = false;
+		}
+
 		for (int iOdcr = 0; iOdcr < odcrList.size(); iOdcr++) {
 			OverdueChargeRecovery odcrCur = odcrList.get(iOdcr);
 
-			if (iOdcr == 0) {
+			if (iOdcr == 0 && flag) {
 				continue;
 			}
 

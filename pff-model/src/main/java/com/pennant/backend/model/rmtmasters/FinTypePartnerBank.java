@@ -386,4 +386,10 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		this.payableLoc = payableLoc;
 	}
 
+	public String getMapping() {
+		return String.format(
+				"[Loan Type - %s] and [Purpose - %s] and [Payment Mode - %s] and [[Branch Code - %s ] or [Cluster Id - %d] ] ",
+				this.finType, this.purpose, this.paymentMode, this.branchCode, this.clusterId);
+	}
+
 }

@@ -1,8 +1,6 @@
 package com.pennanttech.external.presentment.job;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,9 +27,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -45,7 +40,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtPresentmentFileExtractionJob extends AbstractJob implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentFileExtractionJob.class);
-	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ?";
+	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ? AND STATUS = ?";
 
 	private DataSource dataSource;
 	private ExtInterfaceDao extInterfaceDao;
@@ -75,14 +70,6 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 	public void readAndExtractFiles() throws UnexpectedInputException, ParseException, TransactionException, Exception {
 		logger.debug(Literal.ENTERING);
 
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
-
-		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
-
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<ExtPresentment> cursorItemReader = new JdbcCursorItemReader<ExtPresentment>();
 		cursorItemReader.setDataSource(dataSource);
@@ -106,6 +93,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setLong(1, UNPROCESSED);
+				ps.setLong(2, UNPROCESSED);
 			}
 		});
 
@@ -129,44 +117,20 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 					String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
 							+ extPresentment.getFileName();
 
-					// Validation on reject file 501
-					if (CONFIG_SI_RESP.equals(extPresentment.getModule())
-							|| CONFIG_IPDC_RESP.equals(extPresentment.getModule())) {
-
-						ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
-
-						String fileName = extPresentment.getFileName();
-						String filePrepend = config.getFilePrepend();
-						String fileExtension = config.getFileExtension();
-						if (fileName.startsWith(filePrepend.concat(config.getFailIndicator()))
-								&& fileName.endsWith(fileExtension)) {
-							if (!validateRejectFile(fileData)) {
-								// update the file extraction status as unprocessed because of invalid record count
-								InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-										ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
-
-								externalPresentmentDAO.updateFileExtractionStatusWithError(extPresentment.getId(),
-										FAILED, interfaceErrorCode.getErrorCode(),
-										interfaceErrorCode.getErrorMessage());
-								continue;
-							}
-						}
-					}
-
 					File file = new File(fileData);
 					// Fetch list of record data from the file
 					List<ExtPresentmentData> extPresentmentDataList = new ArrayList<ExtPresentmentData>();
 					sc = new Scanner(file);
 
-					boolean isTrue = true;
+					boolean isTransactionStarted = false;
 
 					// Read file line by line
 					while (sc.hasNextLine()) {
 
-						if (isTrue) {
+						if (!isTransactionStarted) {
 							// begin the transaction
 							txStatus = transactionManager.getTransaction(txDef);
-							isTrue = false;
+							isTransactionStarted = true;
 						}
 
 						String lineData = sc.nextLine();
@@ -205,7 +169,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 							extPresentmentDataList.clear();
 							// commit the transaction
 							transactionManager.commit(txStatus);
-							isTrue = true;
+							isTransactionStarted = false;
 						}
 
 					}
@@ -213,6 +177,11 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 					if (extPresentmentDataList.size() > 0) {
 						// save records remaining after bulk insert
 						externalPresentmentDAO.saveExternalPresentmentRecordsData(extPresentmentDataList);
+						if (isTransactionStarted) {
+							// commit the transaction
+							transactionManager.commit(txStatus);
+							isTransactionStarted = false;
+						}
 						extPresentmentDataList.clear();
 					}
 
@@ -243,30 +212,4 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 		logger.debug(Literal.LEAVING);
 	}
 
-	private boolean validateRejectFile(String filePath) {
-		try {
-			List<String> fileLines = Files.readAllLines(Paths.get(filePath));
-			if (fileLines != null && fileLines.size() > 0) {
-				int size = fileLines.size();
-				String data = fileLines.get(size - 1);
-				int recSize = size - 2;
-				if (data != null && !"".equals(data)) {
-					if (data.startsWith("F") && data.length() > 1) {
-						int fileRecSize = 0;
-						try {
-							fileRecSize = Integer.parseInt(data.substring(1));
-							if (fileRecSize == recSize) {
-								return true;
-							}
-						} catch (Exception e) {
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
 }

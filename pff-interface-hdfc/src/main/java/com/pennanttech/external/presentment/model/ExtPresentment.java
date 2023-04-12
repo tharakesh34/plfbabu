@@ -12,6 +12,8 @@ public class ExtPresentment {
 	private int extraction;
 	private String fileLocation;
 	private Date createdDate;
+	private String errorCode;
+	private String errorMessage;
 
 	private List<ExtPresentmentData> extPresentmentDataList = new ArrayList<ExtPresentmentData>();
 
@@ -69,6 +71,30 @@ public class ExtPresentment {
 
 	public void setExtraction(int extraction) {
 		this.extraction = extraction;
+	}
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public List<ExtPresentmentData> getExtPresentmentDataList() {
+		return extPresentmentDataList;
+	}
+
+	public void setExtPresentmentDataList(List<ExtPresentmentData> extPresentmentDataList) {
+		this.extPresentmentDataList = extPresentmentDataList;
 	}
 
 	@Override

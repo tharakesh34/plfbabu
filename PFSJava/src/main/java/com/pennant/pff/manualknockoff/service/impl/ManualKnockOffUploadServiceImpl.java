@@ -420,4 +420,5 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
+
 }

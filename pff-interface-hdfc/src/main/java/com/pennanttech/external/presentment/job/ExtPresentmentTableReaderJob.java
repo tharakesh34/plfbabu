@@ -163,7 +163,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 				}
 
 				Presentment data = externalPresentmentDAO.getPDCStagingPresentmentDetails(
-						extPresentmentFile.getAgreementId(), extPresentmentFile.getChequeSerialNo(),
+						String.valueOf(extPresentmentFile.getAgreementId()), extPresentmentFile.getChequeSerialNo(),
 						extPresentmentFile.getChequeDate());
 
 				if (data == null) {
