@@ -744,11 +744,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			if (this.recordStatus.getValue().equals("Submitted")) {
 				readOnlyComponent(true, this.btnReasons);
 				readOnlyComponent(true, this.cancelRemarks);
-				this.cancelType.setReadonly(true);
+				readOnlyComponent(true, this.cancelType);
 			} else {
 				readOnlyComponent(false, this.btnReasons);
 				readOnlyComponent(false, this.cancelRemarks);
-				this.cancelType.setReadonly(false);
+				readOnlyComponent(false, this.cancelType);
 			}
 
 			doStoreServiceIds(afinanceDetail.getFinScheduleData().getFinanceMain());

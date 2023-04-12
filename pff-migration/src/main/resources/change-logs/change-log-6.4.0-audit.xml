@@ -39,5 +39,17 @@
 		</sql>
 	</changeSet>
 
-	
+	<changeSet id="ST#726.1" author="anilkumar.g">	
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="AllowCancelFin" type="smallint" />			
+		</addColumn>
+    </changeSet>
+    
+    <changeSet id="ST#726.1.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE ADTRMTFINANCETYPES SET AllowCancelFin = 0;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

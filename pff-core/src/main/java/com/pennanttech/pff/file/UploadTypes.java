@@ -21,7 +21,9 @@ public enum UploadTypes {
 
 	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen"),
 
-	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen");
+	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen"),
+
+	LOAN_CANCEL("Loan Cancellation Upload Screen");
 
 	private String description;
 

@@ -4699,8 +4699,8 @@
 		<property name="covenantsService" ref="covenantsService" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 		<property name="receiptService" ref="receiptService" />
-		<property name="manualAdviseService" ref="manualAdviseService" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO"/>
 		<property name="settlementService" ref="settlementService" />
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="crossLoanKnockOffService" ref="crossLoanKnockOffService" />
@@ -13247,4 +13247,11 @@
 	<bean id = "customerPhoneNumberUpload" class = "com.pennant.pff.customer.service.impl.CustomerPhoneNumberUpload" parent="kycDetailsUploadService"/>
 	
 	<bean id = "customerEmailUpload" class = "com.pennant.pff.customer.service.impl.CustomerEmailUpload" parent="kycDetailsUploadService"/>
+
+	<bean id="financeCancellationUploadDAO"
+		class="com.pennant.backend.dao.loancancel.impl.FinanceCancellationUploadDAOImpl" parent="sequenceDao" />
+
+	<bean id="financeCancellationUploadService"
+	class="com.pennant.backend.service.fincancelupload.impl.FinanceCancellationUploadServiceImpl" parent="aUploadService" />
+	 
 </beans>

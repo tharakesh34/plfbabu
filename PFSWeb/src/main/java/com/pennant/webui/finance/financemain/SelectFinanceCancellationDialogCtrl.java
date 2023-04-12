@@ -630,6 +630,9 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		if (dataObject == null || dataObject instanceof String) {
 			this.finReference.setValue("");
 			this.finReference.setDescription("");
+			this.custCIF.setValue("");
+			this.customerNameLabel.setValue("");
+			this.finReference.setFilters(null);
 		} else {
 			FinanceMain fm = (FinanceMain) dataObject;
 			if (fm != null) {

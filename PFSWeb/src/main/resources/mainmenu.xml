@@ -1270,6 +1270,15 @@
 				zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
 				rightName="menu_Item_ManualRefUpload_Approver" />
 		</menu>
+		
+		<menu id="menu_Category_LoanCancel">
+			<menuItem id="menu_Item_LoanCancelUpload_Maker"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationUploadList.zul?stage=M"
+				rightName="menu_Item_LoanCancelUpload_Maker" />
+			<menuItem id="menu_Item_LoanCancelUpload_Approver"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationUploadList.zul?stage=A"
+				rightName="menu_Item_LoanCancelUpload_Approver" />
+		</menu>
 		<menu id="menu_Category_BulkOverduePenaltyDetailsUpload">
 			<menuItem id="menu_Item_BulkOverduePenaltyDetailsUpload_Maker"
 				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=M"

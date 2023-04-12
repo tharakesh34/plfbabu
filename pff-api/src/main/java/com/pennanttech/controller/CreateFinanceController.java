@@ -178,6 +178,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
@@ -3833,16 +3834,19 @@ public class CreateFinanceController extends SummaryDetailService {
 		List<FinanceScheduleDetail> schdList = findetail.getFinScheduleData().getFinanceScheduleDetails();
 		Date appDate = SysParamUtil.getAppDate();
 
-		for (FinanceScheduleDetail curSchd : schdList) {
-			if (curSchd.getSchDate().compareTo(appDate) <= 0) {
-				ErrorDetail ed = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null), userDetails.getLanguage());
+		if (!ImplementationConstants.ALLOW_CANCEL_LOAN_AFTER_PAYMENTS) {
+			for (FinanceScheduleDetail curSchd : schdList) {
+				if (curSchd.getSchDate().compareTo(appDate) <= 0) {
+					ErrorDetail ed = ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null),
+							userDetails.getLanguage());
 
-				fd = new FinanceDetail();
-				doEmptyResponseObject(fd);
-				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", ed.getError()));
-				logger.debug(Literal.LEAVING);
-				return fd;
+					fd = new FinanceDetail();
+					doEmptyResponseObject(fd);
+					fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", ed.getError()));
+					logger.debug(Literal.LEAVING);
+					return fd;
+				}
 			}
 		}
 		// process Extended field details
@@ -3886,6 +3890,36 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		ReasonHeader reasonHeader = fd.getReasonHeader();
 		if (reasonHeader != null) {
+
+			if (StringUtils.isBlank(reasonHeader.getCancelType())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "cancelType";
+				ErrorDetail ed = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "30561", valueParm, null),
+						userDetails.getLanguage());
+
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", ed.getError()));
+				logger.debug(Literal.LEAVING);
+				return fd;
+			}
+
+			if (!(FinanceConstants.LOAN_CANCEL.equals(reasonHeader.getCancelType())
+					|| FinanceConstants.LOAN_CANCEL_REBOOK.equals(reasonHeader.getCancelType()))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = " cancelType";
+				valueParm[1] = reasonHeader.getCancelType();
+				ErrorDetail ed = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "90224", valueParm, null),
+						userDetails.getLanguage());
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", ed.getError()));
+				logger.debug(Literal.LEAVING);
+				return fd;
+			}
+
 			if (!CollectionUtils.isEmpty(reasonHeader.getDetailsList())) {
 				for (ReasonDetails reasonDetails : reasonHeader.getDetailsList()) {
 					if (StringUtils.isBlank(reasonDetails.getReasonCode())) {
@@ -3920,6 +3954,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				financeMain.setDetailsList(reasonHeader.getDetailsList());
 				financeMain.setCancelRemarks(reasonHeader.getRemarks());
+				financeMain.setCancelType(reasonHeader.getCancelType());
 			}
 		}
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, findetail);
@@ -3930,6 +3965,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 		auditHeader.setApiHeader(reqHeaderDetails);
+
+		FinCancelUploadError errorDetail = financeCancellationService.validLoan(financeMain);
+
+		if (errorDetail != null) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.name(), errorDetail.description()));
+			logger.debug(Literal.LEAVING);
+			return fd;
+		}
 
 		auditHeader = financeCancellationService.doApprove(auditHeader, true);
 		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {

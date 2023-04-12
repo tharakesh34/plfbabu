@@ -6192,4 +6192,6 @@
 
 	<bean id ="kycDetailsUploadList" class ="com.pennant.pff.customer.upload.list.KycDetailsUploadListCtrl" parent ="uploadList" />
 	
+	<bean id="financeCancellationUploadList" class="com.pennant.webui.finance.fincancelupload.FinanceCancellationUploadListCtrl"
+	parent="uploadList" />
 </beans>

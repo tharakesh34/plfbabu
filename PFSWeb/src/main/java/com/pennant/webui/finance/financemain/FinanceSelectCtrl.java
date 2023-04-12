@@ -1130,8 +1130,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String backValDate = DateUtil.formatToFullDate(backValueDate);
 
 			// whereClause.append(" AND MigratedFinance = 0 ");
-			// whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
-			whereClause.append(" AND (FinStartDate >= '" + backValDate + "')");
+			whereClause.append("AND (");
+			if (!ImplementationConstants.ALLOW_CANCEL_LOAN_AFTER_PAYMENTS) {
+				whereClause.append(" FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
+			}
+			whereClause.append(" FinStartDate >= '" + backValDate + "')");
+			whereClause.append(" AND AllowCancelFin = 1");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 			whereClause.append(" AND RcdMaintainSts = 'CancelFinance' AND FinIsActive = 1 ");
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELDISB)) {

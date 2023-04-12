@@ -204,6 +204,7 @@ public class APIServices {
 		services.add("getFinanceByNameAndDateOfBirth");
 		services.add("getFinanceByNameAndEMIAmount");
 		services.add("loanAuthentication");
+		services.add("cancelLoan");
 
 		return services;
 	}
