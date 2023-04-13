@@ -80,13 +80,45 @@
 			<column name="UnderNpa" type="boolean" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="ST#1470.1_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1470.1" author="saikrishna.b">
 		<modifyDataType tableName="ADTRMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="ST#1470.1_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1470.2_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtfintypeaccounting');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1470.2" author="saikrishna.b">
 		<modifyDataType tableName="ADTFINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
+	</changeSet>
+	
+	<changeSet id="ST#1470.2_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtfintypeaccounting');
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="ST#1495" author="ramya.v">
@@ -115,11 +147,83 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1470.21_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1470.21" author="saikrishna.b">
 		<modifyDataType tableName="ADTRMTACCOUNTINGSET" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
 	</changeSet>
-	<changeSet id="ST#1470.22" author="saikrishna.b">
-		<modifyDataType tableName="ADTRMTACCOUNTINGSET_TEMP" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
+	
+	<changeSet id="ST#1470.21_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtrmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.1" author="Gireesh.G">
+		<addColumn tableName="ADTMANDATES">
+			<column name="ExternalMandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					Update ADTMANDATES M SET ExternalMandate = t2.EXTMAN from 
+					(Select MandateID, AuditID, AuditDate, AuditSeq, AuditImage, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2
+					where M.MandateID = t2.MandateID and M.AuditID = t2.AuditID and M.AuditDate = t2.AuditDate and M.AuditSeq = t2.AuditSeq and M.AuditImage = t2.AuditImage;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE M set M.ExternalMandate = t2.EXTMAN
+						From ADTMANDATES M 
+					INNER JOIN (Select MandateID, AuditID, AuditDate, AuditSeq, AuditImage, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2 on M.MandateID = t2.MandateID
+							 and M.AuditID = t2.AuditID and M.AuditDate = t2.AuditDate and M.AuditSeq = t2.AuditSeq and M.AuditImage = t2.AuditImage;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO ADTMANDATES M 
+				USING (Select MandateID, AuditID, AuditDate, AuditSeq, AuditImage, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2 on (M.MandateID = t2.MandateID and M.AuditID = t2.AuditID and M.AuditDate = t2.AuditDate and M.AuditSeq = t2.AuditSeq and M.AuditImage = t2.AuditImage)
+				WHEN MATCHED THEN UPDATE SET 
+				M.ExternalMandate = t2.EXTMAN;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.2" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMAN_EXTERNALMANDATE DEFAULT 0 FOR EXTERNALMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.2" author="Gireesh.G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ExternalMandate" tableName="ADTMANDATES" defaultValue="0" />
 	</changeSet>
 	
 </databaseChangeLog>

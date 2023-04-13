@@ -73,14 +73,13 @@
 										<space id="space_AssetClassSetupCode" spacing="2px" sclass="mandatory" />
 										<uppercasebox id="code" maxlength="8" width="100px" />
 									</hbox>
-								</row>
-								<row>
 									<label value="${c:l('label_AssetClassSetupDialog_AssetClassSetupDescription')}" />
 									<hbox>
 										<space id="space_AssetClassSetupDescription" spacing="2px" sclass="mandatory" />
-										<textbox id="description" maxlength="100" width="450px" />
+										<textbox id="description"  maxlength="50" width="300px" />
 									</hbox>
 								</row>
+					
 								</rows>
 							</grid>
 						</groupbox>
@@ -99,14 +98,14 @@
 								<listhead id="listHeadAssetClassSetup" sizable="true">
 									<listheader id="listheader_NPADPD" align="left"
 										label="${c:l('listheader_AssetClassSetupDialog_NPADPD.label')}" sort="false" width="80px" />
+								 <listheader id="listheader_NPAAge" align="left"
+										label="${c:l('listheader_AssetClassSetupDialog_NPAAge.label')}" sort="false" width="110px" />
 									<listheader id="listheader_AssestClassification" align="left"
 										label="${c:l('listheader_AssetClassSetupDialog_AssestClassification.label')}" sort="false" width="140px" />
 									<listheader id="listheader_AssestSubClassification" align="left"
 										label="${c:l('listheader_AssetClassSetupDialog_AssestSubClassification.label')}" sort="false" width="140px" />
 									<listheader id="listheader_NPAStage" align="left"
 										label="${c:l('listheader_AssetClassSetupDialog_NPAStage.label')}" sort="false" width="110px" />
-									<listheader id="listheader_NPAAge" align="left"
-										label="${c:l('listheader_AssetClassSetupDialog_NPAAge.label')}" sort="false" width="110px" />
 								</listhead>
 							</listbox>
 						</groupbox>

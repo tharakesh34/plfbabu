@@ -57,6 +57,7 @@ import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.loanauthentication.LoanAuthentication;
+import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -2234,6 +2235,7 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		if (CollectionUtils.isEmpty(list)) {
 			response.add(getFinanceDetail(getFailedStatus("90260", "Customer Date of Birth and Short Name")));
 			logger.debug(Literal.LEAVING);
+			return response;
 		}
 
 		for (Long finID : list.stream().collect(Collectors.toSet())) {
@@ -2254,7 +2256,15 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		String custShrtName = financeMain.getLovDescCustShrtName();
 		BigDecimal repayAmount = financeMain.getRepayAmount();
 
-		WSReturnStatus wsrs = validateRepayAmount(repayAmount);
+		WSReturnStatus wsrs = validateCustShrtName(custShrtName);
+
+		if (wsrs != null) {
+			response.add(getFinanceDetail(wsrs));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		wsrs = validateRepayAmount(repayAmount);
 
 		if (wsrs != null) {
 			response.add(getFinanceDetail(wsrs));
@@ -2335,6 +2345,84 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 
 		return response;
 
+	}
+
+	@Override
+	public List<PaymentMode> getPDCEnquiry(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		List<PaymentMode> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(wsrs);
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logKeyFields(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(getFailedStatus("90201", "FinReference"));
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return createFinanceController.getPDCEnquiry(fm);
+	}
+
+	@Override
+	public List<PaymentMode> getPDCDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		List<PaymentMode> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(wsrs);
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logKeyFields(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(getFailedStatus("90201", "FinReference"));
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return createFinanceController.getPDCDetails(fm);
 	}
 
 	private WSReturnStatus validateFinReference(String finReference) {

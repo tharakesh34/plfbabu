@@ -28,7 +28,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public List<ManualKnockOffUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select Id, HeaderId");
-		sql.append(", FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, AdviseID");
+		sql.append(", FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From MANUAL_KNOCKOFF_UPLOAD");
 		sql.append(" Where HeaderId = ?");
@@ -47,7 +47,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 			fc.setExcessType(rs.getString("ExcessType"));
 			fc.setAllocationType(rs.getString("AllocationType"));
 			fc.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-			fc.setAdviseId(JdbcUtil.getLong(rs.getObject("AdviseID")));
+			fc.setFeeTypeCode((rs.getString("FeeTypeCode")));
 			fc.setProgress(rs.getInt("Progress"));
 			fc.setStatus(rs.getString("Status"));
 			fc.setErrorCode(rs.getString("ErrorCode"));
@@ -81,7 +81,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public long save(ManualKnockOffUpload mk) {
 		StringBuilder sql = new StringBuilder("Insert into MANUAL_KNOCKOFF_UPLOAD");
-		sql.append(" (HeaderId, FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, AdviseID)");
+		sql.append(" (HeaderId, FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -102,7 +102,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 					ps.setString(++index, mk.getExcessType());
 					ps.setString(++index, mk.getAllocationType());
 					ps.setBigDecimal(++index, mk.getReceiptAmount());
-					ps.setObject(++index, mk.getAdviseId());
+					ps.setString(++index, mk.getFeeTypeCode());
 
 					return ps;
 				}
@@ -208,7 +208,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" mk.FinReference, mk.ExcessType, mk.AllocationType, mk.ReceiptAmount, mk.AdviseID");
+		sql.append(" mk.FinReference, mk.ExcessType, mk.AllocationType, mk.ReceiptAmount, mk.FeeTypeCode");
 		sql.append(", mk.Progress, mk.Status, mk.ErrorCode, mk.ErrorDesc");
 		sql.append(", uh.CreatedOn, uh.CreatedBy, uh.ApprovedOn, uh.ApprovedBy");
 		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");

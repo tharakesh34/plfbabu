@@ -1323,8 +1323,7 @@ public class ScheduleCalculator {
 		String prvRpySchMthd = null;
 		// Delete All repay instructions in repayment period
 		for (int i = 0; i < finScheduleData.getRepayInstructions().size(); i++) {
-			if (DateUtil.compare(finScheduleData.getRepayInstructions().get(i).getRepayDate(),
-					oldInstructions) >= 0) {
+			if (DateUtil.compare(finScheduleData.getRepayInstructions().get(i).getRepayDate(), oldInstructions) >= 0) {
 				finScheduleData.getRepayInstructions().remove(i);
 				i = i - 1;
 			} else if (DateUtil.compare(finScheduleData.getRepayInstructions().get(i).getRepayDate(),
@@ -3707,8 +3706,8 @@ public class ScheduleCalculator {
 					curStartDate = nextSchdDate;
 					break;
 				} else {
-					if (DateUtil.compare(nextSchdDate, curSchd.getSchDate()) > 0 && DateUtil.compare(nextSchdDate,
-							finScheduleData.getFinanceMain().getCalMaturity()) <= 0) {
+					if (DateUtil.compare(nextSchdDate, curSchd.getSchDate()) > 0
+							&& DateUtil.compare(nextSchdDate, finScheduleData.getFinanceMain().getCalMaturity()) <= 0) {
 						// Set Schedule Dates in between Previous schedule (Cur
 						// Schedule and
 						// Last Repayment Date)
@@ -4044,7 +4043,7 @@ public class ScheduleCalculator {
 						&& !(FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday()))) {
 					if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
 						if (firstRepayDate != null && DateUtil.compare(firstRepayDate, curSchdDate) == 0) {// bpi
-																												// change
+																											// change
 							curSchd.setRepayAmount(instructAmount.add(bpiBalance));
 							bpiBalance = BigDecimal.ZERO;
 						} else {
@@ -4402,6 +4401,7 @@ public class ScheduleCalculator {
 			if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())
 					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
+				finScheduleData = getRpyInstructDetails(finScheduleData);
 				finScheduleData = graceSchdCal(finScheduleData);
 			}
 		} else {
@@ -4540,8 +4540,8 @@ public class ScheduleCalculator {
 			}
 
 			// Subvention Rate Reset
-			if (fm.isAllowSubvention() && finScheduleData.getSubventionDetail() != null && DateUtil
-					.compare(curSchd.getSchDate(), finScheduleData.getSubventionDetail().getEndDate()) < 0) {
+			if (fm.isAllowSubvention() && finScheduleData.getSubventionDetail() != null
+					&& DateUtil.compare(curSchd.getSchDate(), finScheduleData.getSubventionDetail().getEndDate()) < 0) {
 
 				String subventionType = finScheduleData.getSubventionDetail().getType();
 

@@ -35,12 +35,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -80,6 +82,7 @@ import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -99,6 +102,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.lmtmasters.FinanceReferenceDetailService;
+import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -131,6 +135,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.rits.cloning.Cloner;
 
@@ -182,6 +187,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	private FinanceMaintenanceService financeMaintenanceService;
 	private FinanceReferenceDetailService financeReferenceDetailService;
+	private ChequeHeaderService chequeHeaderService;
 
 	protected Label label_FinanceMainDialog_FinAssetValue;
 	protected Label label_FinanceMainDialog_ODFinAssetValue;
@@ -791,6 +797,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.label_FinanceMainDialog_TDSType.setVisible(false);
 			this.cbTdsType.setVisible(false);
 			this.cbTdsType.setDisabled(true);
+		}
+
+		if (PennantConstants.RCD_STATUS_SUBMITTED.equals(aFinanceMain.getRecordStatus())) {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_ODMinAmount"), this.odMinAmount);
 		}
 
 		logger.debug("Leaving");
@@ -1473,6 +1483,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeAmtOrPerc.setValue(this.oldVar_oDChargeAmtOrPerc);
 		this.oDAllowWaiver.setChecked(this.oldVar_oDAllowWaiver);
 		this.oDMaxWaiverPerc.setValue(this.oldVar_oDMaxWaiverPerc);
+		this.odMinAmount.setValue(this.oldVar_odMinAmount);
 
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -1712,6 +1723,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (!this.odMinAmount.isDisabled()) {
+
+			if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
+				this.odMinAmount.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1782,6 +1801,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeType.setConstraint("");
 		this.oDChargeAmtOrPerc.setConstraint("");
 		this.oDMaxWaiverPerc.setConstraint("");
+		this.odMinAmount.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -2059,7 +2079,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceDetail = cloner.deepClone(getFinanceDetail());
 
 		boolean isNew = false;
-		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain afm = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 		String actionLabel = this.userAction.getSelectedItem().getLabel();
 		if (actionLabel != null) {
@@ -2075,11 +2095,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceDetail.setAccountingEventCode(eventCode);
 
 		// Resetting Service Task ID's from Original State
-		aFinanceMain.setRoleCode(this.curRoleCode);
-		aFinanceMain.setNextRoleCode(this.curNextRoleCode);
-		aFinanceMain.setTaskId(this.curTaskId);
-		aFinanceMain.setNextTaskId(this.curNextTaskId);
-		aFinanceMain.setNextUserId(this.curNextUserId);
+		afm.setRoleCode(this.curRoleCode);
+		afm.setNextRoleCode(this.curNextRoleCode);
+		afm.setTaskId(this.curTaskId);
+		afm.setNextTaskId(this.curNextTaskId);
+		afm.setNextUserId(this.curNextUserId);
 
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
@@ -2087,8 +2107,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
 				|| actionLabel.contains("Resubmit") || actionLabel.contains("Decline"))) {
-			if (!(PennantConstants.TRAN_WF.equals(aFinanceMain.getClosingStatus()))) {
-				if (!financeMaintenanceService.isFinActive(aFinanceMain.getFinID())) {
+			if (!(PennantConstants.TRAN_WF.equals(afm.getClosingStatus()))) {
+				if (!financeMaintenanceService.isFinActive(afm.getFinID())) {
 					MessageUtil.showError(Labels.getLabel("label_Inactive_Loans"));
 					return;
 				}
@@ -2098,8 +2118,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Check disbursement case
 		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
 				|| actionLabel.contains("Resubmit"))) {
-			int schDVersion = financeMaintenanceService.getSchdVersion(aFinanceMain.getFinID());
-			if (schDVersion != aFinanceMain.getSchdVersion()) {
+			int schDVersion = financeMaintenanceService.getSchdVersion(afm.getFinID());
+			if (schDVersion != afm.getSchdVersion()) {
 				MessageUtil.showError(Labels.getLabel("FINSRV_Validation"));
 				return;
 			}
@@ -2179,7 +2199,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinanceCheckList(null);
 		}
 
-		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		afm = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 		// Guaranteer Details Tab ---> Guaranteer Details
 		if (getJointAccountDetailDialogCtrl() != null) {
@@ -2200,8 +2220,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (getCollateralHeaderDialogCtrl() != null) {
 
 			// Validate Assigned Collateral Value
-			if (!recSave
-					&& !StringUtils.equals(FinanceConstants.CLOSE_STATUS_CANCELLED, aFinanceMain.getClosingStatus())
+			if (!recSave && !StringUtils.equals(FinanceConstants.CLOSE_STATUS_CANCELLED, afm.getClosingStatus())
 					&& (getFinanceDetail().getFinScheduleData().getFinanceType().isFinCollateralReq()
 							|| !getCollateralHeaderDialogCtrl().getCollateralAssignments().isEmpty())) {
 
@@ -2209,7 +2228,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 				if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT
 						.equals(getFinanceDetail().getFinScheduleData().getFinanceType().getFinLTVCheck())) {
-					utilizedAmt = utilizedAmt.add(aFinanceMain.getFinAssetValue()).add(aFinanceMain.getFeeChargeAmt());
+					utilizedAmt = utilizedAmt.add(afm.getFinAssetValue()).add(afm.getFeeChargeAmt());
 				} else {
 					for (FinanceDisbursement curDisb : getFinanceDetail().getFinScheduleData()
 							.getDisbursementDetails()) {
@@ -2221,10 +2240,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							continue;
 						}
 
-						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(aFinanceMain.getFeeChargeAmt());
+						utilizedAmt = utilizedAmt.add(curDisb.getDisbAmount()).add(afm.getFeeChargeAmt());
 					}
-					utilizedAmt = utilizedAmt.subtract(aFinanceMain.getDownPayment())
-							.subtract(aFinanceMain.getFinRepaymentAmount());
+					utilizedAmt = utilizedAmt.subtract(afm.getDownPayment()).subtract(afm.getFinRepaymentAmount());
 				}
 
 				boolean isValid = getCollateralHeaderDialogCtrl().validCollateralValue(utilizedAmt);
@@ -2278,7 +2296,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			if (!getFinCollateralHeaderDialogCtrl().getFinCollateralDetailsList().isEmpty()
-					&& totCost.compareTo(aFinanceMain.getFinAmount()) < 0 && isFDAmount) {
+					&& totCost.compareTo(afm.getFinAmount()) < 0 && isFDAmount) {
 				if (tabsIndexCenter.getFellowIfAny("finCollateralsTab") != null) {
 					if (tabsIndexCenter.getFellowIfAny("finCollateralsTab") instanceof Tab) {
 						Tab collateralTab = (Tab) tabsIndexCenter.getFellowIfAny("finCollateralsTab");
@@ -2303,6 +2321,33 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			aFinanceDetail.setTanAssignments(null);
 		}
 
+		if (InstrumentType.isPDC(afm.getFinRepayMethod())) {
+			ChequeHeader ch = chequeHeaderService.getChequeHeaderByRef(afm.getFinID());
+
+			if (ch == null || (ch != null && CollectionUtils.isEmpty(ch.getChequeDetailList()))) {
+				MessageUtil.showError("No cheque are available for Reference:".concat(afm.getFinReference()));
+				return;
+			}
+
+			Date appDate = SysParamUtil.getAppDate();
+			boolean validateflag = true;
+
+			if (CollectionUtils.isNotEmpty(ch.getChequeDetailList())) {
+				int size = ch.getChequeDetailList().stream()
+						.filter(cd -> cd.getChequeDate().compareTo(appDate) > 0
+								&& PennantConstants.RECORD_TYPE_NEW.equals(cd.getStatus()))
+						.collect(Collectors.toList()).size();
+				if (size > 0) {
+					validateflag = false;
+				}
+
+				if (validateflag) {
+					MessageUtil.showError("Minimum 1 cheque for future instalment to be available for Reference:"
+							.concat(afm.getFinReference()));
+				}
+			}
+		}
+
 		if (isFeeReExecute) {
 			String message = Labels.getLabel("label_FeeExecute");
 			MessageUtil.showMessage(message);
@@ -2316,18 +2361,18 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (isWorkFlowEnabled()) {
 
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aFinanceMain.getRecordType())) {
-				aFinanceMain.setVersion(aFinanceMain.getVersion() + 1);
+			if (StringUtils.isBlank(afm.getRecordType())) {
+				afm.setVersion(afm.getVersion() + 1);
 				if (isNew) {
-					aFinanceMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					afm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aFinanceMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					aFinanceMain.setNewRecord(true);
+					afm.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					afm.setNewRecord(true);
 				}
 			}
 
 		} else {
-			aFinanceMain.setVersion(aFinanceMain.getVersion() + 1);
+			afm.setVersion(afm.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -2336,7 +2381,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 		// save it to database
 		try {
-			aFinanceDetail.getFinScheduleData().setFinanceMain(aFinanceMain);
+			aFinanceDetail.getFinScheduleData().setFinanceMain(afm);
 			if (doProcess(aFinanceDetail, tranType)) {
 
 				if (getFinanceSelectCtrl() != null) {
@@ -2344,12 +2389,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				// Customer Notification for Role Identification
-				if (StringUtils.isBlank(aFinanceMain.getNextTaskId())) {
-					aFinanceMain.setNextRoleCode("");
+				if (StringUtils.isBlank(afm.getNextTaskId())) {
+					afm.setNextRoleCode("");
 				}
-				String msg = PennantApplicationUtil.getSavingStatus(aFinanceMain.getRoleCode(),
-						aFinanceMain.getNextRoleCode(), aFinanceMain.getFinReference(), " Finance ",
-						aFinanceMain.getRecordStatus());
+				String msg = PennantApplicationUtil.getSavingStatus(afm.getRoleCode(), afm.getNextRoleCode(),
+						afm.getFinReference(), " Finance ", afm.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);
 
 				// Mail Alert Notification for Customer/Dealer/Provider...etc
@@ -2369,15 +2413,14 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 
 				// User Notifications Message/Alert
-				FinanceMain fm = aFinanceMain;
+				FinanceMain fm = afm;
 				if (fm.getNextUserId() != null) {
 					publishNotification(Notify.USER, fm.getFinReference(), fm);
 				} else {
 					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 						publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 					} else {
-						publishNotification(Notify.ROLE, fm.getFinReference(), fm, finDivision,
-								aFinanceMain.getFinBranch());
+						publishNotification(Notify.ROLE, fm.getFinReference(), fm, finDivision, afm.getFinBranch());
 					}
 				}
 
@@ -2979,6 +3022,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			// this.oDChargeAmtOrPerc.setMaxlength(6);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		}
+		this.row_odMinAmount.setVisible(false);
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.row_odMinAmount.setVisible(true);
+		}
 	}
 
 	public void onCheck$oDAllowWaiver(Event event) {
@@ -3559,4 +3606,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	public void setLabel_FinanceMainDialog_PromotionProduct(Label label_FinanceMainDialog_PromotionProduct) {
 		this.label_FinanceMainDialog_PromotionProduct = label_FinanceMainDialog_PromotionProduct;
 	}
+
+	@Autowired
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
+
 }

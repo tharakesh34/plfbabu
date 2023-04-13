@@ -65,6 +65,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processSIReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
 
@@ -77,6 +78,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processIPDCReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_IPDC_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_IPDC_REQ);
 
@@ -89,6 +91,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void processNACHReposne(List<ExternalConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
+
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
 
@@ -162,10 +165,10 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 				// Check with request file name for SI and INTERNAl
 				// Split with , and _ and check request file name in request folder
 
-				boolean isValid = false;
+				boolean isValid = true;
 
-				if (CONFIG_IPDC_REQ.equals(reqConfig.getInterfaceName())
-						|| CONFIG_SI_REQ.equals(reqConfig.getInterfaceName())) {
+				if (CONFIG_IPDC_RESP.equals(respConfig.getInterfaceName())
+						|| CONFIG_SI_RESP.equals(respConfig.getInterfaceName())) {
 
 					if ((!fileName.startsWith(filePrepend.concat(respConfig.getSuccessIndicator()))
 							|| !fileName.startsWith(filePrepend.concat(respConfig.getFailIndicator())))
@@ -195,50 +198,41 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					}
 
 					String reqFileNameInRespFile = getReqFileNameFromRespFileName(fNameArray, fileExtension,
-							reqConfig.getInterfaceName(), fileType);
+							respConfig.getInterfaceName(), fileType);
 
 					isValid = requestFileNames.contains(reqFileNameInRespFile);
 
-					// Added for reject file count validation
-					if (isValid && "R".equals(fileType)) {
-						logger.debug("EXT_VRF: NEED TO VALIDATE REJECT FILE FOR VALIDATION FOR " + file.getName());
-						String fileData = App.getResourcePath(extPresentment.getFileLocation()) + File.separator
-								+ extPresentment.getFileName();
+					if (!isValid) {
+						logger.debug(
+								"Error Code F401, Request file name is invalid. So not processing the response file.");
+						continue;
+					}
 
-						boolean isValidRejectFile = validateRejectFile(fileData);
-						logger.debug("EXT_VRF: FILE VALIDATION FOR" + file.getName() + "+ IS : " + isValidRejectFile);
+					// Added for reject file count validation
+					if ("R".equals(fileType)) {
+						boolean isValidRejectFile = validateRejectFile(file);
+
 						if (!isValidRejectFile) {
-							logger.debug("EXT_VRF: FILE VALIDATION FAILED FOR " + file.getName());
 							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
 									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
 
-							extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
-							extPresentment.setExtraction(FAILED); // set file extract process unprocessed
 							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
 							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
-							externalPresentmentDAO.saveRejectResponseFile(extPresentment);
-							logger.debug("EXT_VRF: FILE VALIDATION EXCEPTION SAVING , CONTINUING");
-							continue;
 						}
 
 					}
 
-				} else if (CONFIG_NACH_REQ.equals(reqConfig.getInterfaceName())) {
-					isValid = true;
 				}
 
-				logger.debug("EXT_VRF: PROCEEDING FURTHER FOR FILE: " + file.getName());
-
-				if (!isValid) {
-					logger.debug("Error Code F401, Request file name is invalid. So not processing the response file.");
-					continue;
-				}
-
-				logger.debug("EXT_VRF: SAVING FILE: " + file.getName());
 				// Add unprocessed files in to table
-				extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
-				extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
-				externalPresentmentDAO.saveResponseFile(extPresentment);
+				if (extPresentment.getErrorCode() != null && !"".equals(extPresentment.getErrorCode())) {
+					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
+					extPresentment.setExtraction(FAILED); // set file extract process unprocessed
+				} else {
+					extPresentment.setStatus(UNPROCESSED); // set file record process as unprocessed
+					extPresentment.setExtraction(UNPROCESSED); // set file extract process unprocessed
+				}
+				externalPresentmentDAO.saveExtPresentment(extPresentment);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -249,7 +243,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.ENTERING);
 		String reqFileNameInRespFile = "";
 
-		if (CONFIG_SI_REQ.equals(interfaceName) && "R".equals(fileType)) {
+		if (CONFIG_SI_RESP.equals(interfaceName) && "R".equals(fileType)) {
 
 			if (fNameArray.length >= 3) {
 				if (fNameArray[2].contains(fileExtension)) {
@@ -259,9 +253,9 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					reqFileNameInRespFile = fNameArray[1] + "_" + fNameArray[2];
 				}
 			}
-		} else if (CONFIG_SI_REQ.equals(interfaceName) && "S".equals(fileType)
-				|| CONFIG_IPDC_REQ.equals(interfaceName) && "S".equals(fileType)
-				|| CONFIG_IPDC_REQ.equals(interfaceName) && "R".equals(fileType)) {
+		} else if (CONFIG_SI_RESP.equals(interfaceName) && "S".equals(fileType)
+				|| CONFIG_IPDC_RESP.equals(interfaceName) && "S".equals(fileType)
+				|| CONFIG_IPDC_RESP.equals(interfaceName) && "R".equals(fileType)) {
 			if (fNameArray[1].contains(fileExtension)) {
 				reqFileNameInRespFile = fNameArray[1].substring(0, fNameArray[1].indexOf(fileExtension));
 			} else {
@@ -293,22 +287,19 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		return requestFileNames;
 	}
 
-	public boolean validateRejectFile(String filePath) {
+	public boolean validateRejectFile(File file) {
 		logger.debug(Literal.ENTERING);
 		try {
 			RejectFileData cntData = new RejectFileData();
-			File file = new File(filePath);
 			readLastLine(file, cntData);
 			long fileLines = cntData.getLinesCount();
 			String data = cntData.getLastLine();
-			logger.debug("EXT_VRF: fileLines:" + fileLines + ", lastLine: " + data);
 			long recSize = fileLines - 2;
 			if (data != null && !"".equals(data)) {
 				if (data.startsWith("F") && data.length() > 1) {
 					int fileRecSize = 0;
 					fileRecSize = Integer.parseInt(data.substring(1));
 					if (fileRecSize == recSize) {
-						logger.debug("EXT_VRF: SUCCESS COUNT");
 						return true;
 					}
 				}
@@ -316,7 +307,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		logger.debug("EXT_VRF: FAILED COUNT");
 		logger.debug(Literal.LEAVING);
 		return false;
 	}

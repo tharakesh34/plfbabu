@@ -23,7 +23,9 @@ public enum UploadTypes {
 
 	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen"),
 
-	HOST_GL("Host GL Mapping Upload Details Screen");
+	HOST_GL("Host GL Mapping Upload Details Screen"),
+
+	MISCELLANEOUS_POSTING("Miscellaneous Posting Upload Details Screen");
 
 	private String description;
 

@@ -202,8 +202,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		sql.append(" Set FinEffectDate = ?, ApplyODPenalty = ?, ODIncGrcDays = ?");
 		sql.append(", ODChargeType = ?, ODChargeAmtOrPerc = ?, ODGraceDays = ?");
 		sql.append(", ODChargeCalOn = ?, ODAllowWaiver = ?, ODMaxWaiverPerc = ?");
-		sql.append(", ODRuleCode = ?, ODMinCapAmount = ?, ODTDSReq = ?");
-		sql.append(", OverDraftExtGraceDays = ?, OverDraftColChrgFeeType = ?, OverDraftColAmt = ?");
+		sql.append(", ODRuleCode = ?, ODMinCapAmount = ?, ODTDSReq = ?, OverDraftExtGraceDays = ?");
+		sql.append(", OverDraftColChrgFeeType = ?, OverDraftColAmt = ?, ODMinAmount = ?");
 		sql.append(" Where  FinID = ? and FinEffectDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -226,6 +226,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setInt(index++, odpr.getOverDraftExtGraceDays());
 			ps.setLong(index++, odpr.getOverDraftColChrgFeeType());
 			ps.setBigDecimal(index++, odpr.getOverDraftColAmt());
+			ps.setBigDecimal(index++, odpr.getOdMinAmount());
 
 			ps.setLong(index++, odpr.getFinID());
 			ps.setDate(index++, JdbcUtil.getDate(odpr.getFinEffectDate()));

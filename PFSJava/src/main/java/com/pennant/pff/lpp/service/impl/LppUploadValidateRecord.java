@@ -52,6 +52,7 @@ public class LppUploadValidateRecord implements ValidateRecord {
 		details.setAmountOrPercent(ObjectUtil.valueAsBigDecimal(record.getValue("AMOUNTORPERCENT")));
 		details.setAllowWaiver(ObjectUtil.valueAsString(record.getValue("ALLOWWAIVER")));
 		details.setMaxWaiver(ObjectUtil.valueAsBigDecimal(record.getValue("MAXWAIVER")));
+		details.setODMinAmount(ObjectUtil.valueAsBigDecimal(record.getValue("ODMinAmount")));
 
 		lPPUploadService.doValidate(header, details);
 

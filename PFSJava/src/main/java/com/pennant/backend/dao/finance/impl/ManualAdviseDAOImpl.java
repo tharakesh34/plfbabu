@@ -926,7 +926,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdvise(long finID) {
+	public List<ManualAdvise> getManualAdvise(long finID, boolean status) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ma.AdviseID, ma.AdviseType, ma.FeeTypeID, ma.Sequence, ma.FinID, ma.FinRefeRence");
 		sql.append(", (ma.AdviseAmount - ma.PaidAmount - ma.WaivedAmount) BalanceAmt, ma.AdviseAmount");
@@ -937,11 +937,14 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", ma.WaivedCGST, ma.WaivedSGST, ma.WaivedIGST,  ma.WaivedUGST, ma.WaivedCESS");
 		sql.append(", ma.Remarks, ma.FinSource, ma.LinkedTranId, ma.TdsPaid");
 		sql.append(", ma.Version, ma.LastMntOn, ma.LastMntBy, ma.RecordStatus");
-		sql.append(", ma.RoleCode, ma.NextRoleCode, ma.TaskId, ma.NextTaskId, ma.RecordType, ma.WorkflowId");
+		sql.append(", ma.RoleCode, ma.NextRoleCode, ma.TaskId, ma.NextTaskId, ma.RecordType, ma.WorkflowId, ma.Status");
 		sql.append(" From ManualAdvise_Aview ma");
 		sql.append(" Left Join FeeTypes ft on ma.FeeTypeId = ft.FeeTypeId");
-		sql.append(" Where FinID = ?  and ma.Advisetype = ?");
-		sql.append(" and ma.ValueDate <= ? and ma.Status is null");
+		sql.append(" Where FinID = ?  and ma.Advisetype = ? and ma.ValueDate <= ?");
+
+		if (status) {
+			sql.append(" and ma.Status is null");
+		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -998,6 +1001,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setNextTaskId(rs.getString("NextTaskId"));
 			ma.setRecordType(rs.getString("RecordType"));
 			ma.setWorkflowId(rs.getLong("WorkflowId"));
+			ma.setStatus(rs.getString("Status"));
 
 			return ma;
 
@@ -1987,7 +1991,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public BigDecimal getExistingPayableAmount(long finID, long feeTypeId) {
-		String sql = "Select coalesce(sum(AdviseAmount), 0) From ManualAdvise Where FinID = ? and FeeTypeID = ?";
+		String sql = "Select coalesce(sum(AdviseAmount), 0) From ManualAdvise Where FinID = ? and FeeTypeID = ? and Status is null";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -2486,4 +2490,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		});
 	}
 
+	@Override
+	public BigDecimal getPaidAmtByFeeType(long finID, long payableFeeTypeID) {
+		String sql =" Select coalesce(sum(AdviseAmount), 0) AdviseAmount From ManualAdvise ma Where ma.FinID = ? and ma.FeeTypeId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, payableFeeTypeID);
+	}
 }

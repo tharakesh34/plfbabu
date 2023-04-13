@@ -1,6 +1,9 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import com.pennant.app.util.CalculationUtil;
@@ -40,4 +43,38 @@ public class ManualAdviceUtil {
 
 		advice.setBalanceAmt(bal);
 	}
+
+	public static long getAdviseId(List<ManualAdvise> adviseList) {
+		List<Long> adviseId = new ArrayList<>();
+
+		for (ManualAdvise mas : adviseList) {
+			if (mas.getBalanceAmt().compareTo(BigDecimal.ZERO) > 0) {
+				adviseId.add(mas.getAdviseID());
+			}
+		}
+
+		return Collections.max(adviseId);
+
+	}
+
+	public static BigDecimal getReservedAmount(List<ManualAdvise> adviseList) {
+		BigDecimal reserveAmount = BigDecimal.ZERO;
+
+		for (ManualAdvise ma : adviseList) {
+			reserveAmount = reserveAmount.add(ma.getReservedAmt());
+		}
+
+		return reserveAmount;
+	}
+
+	public static BigDecimal getBalanceAmount(List<ManualAdvise> advisesList) {
+		BigDecimal balanceAmount = BigDecimal.ZERO;
+
+		for (ManualAdvise ma : advisesList) {
+			balanceAmount = balanceAmount.add(ma.getBalanceAmt());
+		}
+
+		return balanceAmount;
+	}
+
 }

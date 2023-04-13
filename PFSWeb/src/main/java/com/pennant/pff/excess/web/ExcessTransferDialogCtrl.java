@@ -693,6 +693,7 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 			}
 		} catch (AppException e) {
 			logger.error("Exception: ", e);
+			MessageUtil.showError(e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

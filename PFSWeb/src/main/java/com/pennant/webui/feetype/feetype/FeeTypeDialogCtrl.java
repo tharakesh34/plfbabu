@@ -437,7 +437,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setDescColumn("AccountSetCodeName");
 		this.dueAccSet.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.dueAccSet.setMandatoryStyle(true);
-
+		this.dueAccSet.setWhereClause(
+				"AccountSetCode Not Like '%_W'  AND AccountSetCode NOT Like '%_N'  AND AccountSetCode NOT Like '%_S'");
 		this.dueAccRow.setVisible(dueCreationReq);
 		this.tdsRow.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
@@ -577,6 +578,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			if (this.tdsReq.isChecked()) {
 				readOnlyComponent(true, this.tdsReq);
 			}
+		}
+
+		if (Allocation.ODC.equals(this.feeTypeCode.getValue())) {
+			this.feeTypeDesc.setReadonly(true);
+			this.amortzReq.setDisabled(true);
+			this.tdsReq.setDisabled(true);
+			this.incomeOrExpenseAcType.setReadonly(true);
+			this.waiverOrRefundAcType.setReadonly(true);
+			this.taxComponent.setDisabled(true);
+			this.taxApplicable.setDisabled(true);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1463,7 +1474,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 	private boolean isSingleFeeTypeRequired(String feeTypeCode) {
 		boolean alwvalidation = true;
-		
+
 		if (feeTypeCode.equals(pftInvFeeCode) || feeTypeCode.equals(priInvFeeCode)
 				|| feeTypeCode.equals(restructFeeCode)) {
 			return alwvalidation = false;
@@ -1477,7 +1488,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				break;
 			}
 		}
-		
+
 		return alwvalidation;
 	}
 

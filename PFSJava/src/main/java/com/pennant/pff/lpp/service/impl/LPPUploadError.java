@@ -50,7 +50,11 @@ public enum LPPUploadError {
 
 	LPP23("Calculated On should not blank if you are penalty type captured as 'P','D','M' OR 'E'."),
 
-	LPP24("Not allowed to maintain the LAN as It is already initiated.");
+	LPP24("Not allowed to maintain the LAN as It is already initiated."),
+
+	LPP25("Calculated On value 'INST' is allowed only If penalty types captured as 'P' OR 'M'. "),
+
+	LPP26("For Penalty type 'P' OR 'M' Minimum Amount should not be Blank ");
 
 	private String description;
 

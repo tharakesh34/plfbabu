@@ -325,7 +325,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	@Override
 	public List<ManualAdvise> getManualAdvise(long finID) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinID = ? and ma.AdviseType = ?");
+		sql.append(" Where FinID = ? and ma.AdviseType = ? and ma.Status is null");
 
 		logger.trace(Literal.SQL + sql.toString());
 

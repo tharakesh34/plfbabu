@@ -6177,4 +6177,7 @@
 	
 	<bean id="hostGLMappingUploadListCtrl" class="com.pennant.pff.hostglmapping.upload.list.HostGLMappingUploadListCtrl"
 	parent="uploadList" />
+	
+	<bean id="miscellaneousPostingUploadListCtrl" class="com.pennant.pff.miscellaneousposting.upload.list.MiscellaneousPostingUploadListCtrl"
+	parent="uploadList" />
 </beans>

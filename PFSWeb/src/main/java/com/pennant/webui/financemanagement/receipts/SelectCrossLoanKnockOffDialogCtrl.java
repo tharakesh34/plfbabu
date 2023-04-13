@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -105,6 +107,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	private transient FinanceMainService financeMainService;
 	private transient CustomerDetailsService customerDetailsService;
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private transient FinanceMainDAO financeMainDAO;
 	private CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl;
 
@@ -174,7 +177,30 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		this.rowValueDate.setVisible(false);
 		this.valueDate.setValue(this.receiptDate.getValue());
 
+		long finID = ComponentUtil.getFinID(this.toFinReference);
+
+		Date receiptDt = this.receiptDate.getValue();
+		Date appDate = SysParamUtil.getAppDate();
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
+
+		if (FinServiceEvent.EARLYRPY.equals(recPurpose)) {
+			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
+
+			if (CollectionUtils.isNotEmpty(dates)) {
+				dates.sort((d1, d2) -> d1.compareTo(d2));
+				receiptDt = dates.get(dates.size() - 1);
+			}
+
+			int appmonth = DateUtil.getMonth(appDate);
+			int receiptmonth = DateUtil.getMonth(receiptDt);
+
+			if (appmonth != receiptmonth) {
+				receiptDt = DateUtil.getMonthStart(appDate);
+			}
+
+			this.receiptDate.setValue(receiptDt);
+		}
+
 		if (!FinServiceEvent.EARLYSETTLE.equals(recPurpose)) {
 			return;
 		}
@@ -189,6 +215,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		loadValueDate();
+
 		this.btnValidate.setDisabled(false);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
@@ -1173,6 +1200,11 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 	@Autowired

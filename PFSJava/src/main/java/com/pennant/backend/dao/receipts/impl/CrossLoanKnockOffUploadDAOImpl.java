@@ -26,7 +26,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	public List<CrossLoanKnockoffUpload> loadRecordData(long id) {
 		StringBuilder sql = new StringBuilder("");
 		sql.append("Select Id, HeaderID, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
-		sql.append(", ExcessAmount, AllocationType, AdviseID, Progress, Status, ErrorCode, ErrorDesc");
+		sql.append(", ExcessAmount, AllocationType, FeeTypeCode, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CROSS_LOAN_KNOCKOFF_UPLOAD");
 		sql.append(" Where HeaderID = ?");
 
@@ -46,7 +46,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 			upload.setExcessType(rs.getString("ExcessType"));
 			upload.setExcessAmount(rs.getBigDecimal("ExcessAmount"));
 			upload.setAllocationType(rs.getString("AllocationType"));
-			upload.setAdviseId(rs.getLong("AdviseID"));
+			upload.setFeeTypeCode(rs.getString("FeeTypeCode"));
 			upload.setProgress(rs.getInt("Progress"));
 			upload.setStatus(rs.getString("Status"));
 			upload.setErrorCode(rs.getString("ErrorCode"));
@@ -148,7 +148,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" cu.Id, cu.HeaderID, cu.FromFinReference, cu.TOFinReference, cu.ExcessType");
-		sql.append(", cu.ExcessAmount, cu.AllocationType, cu.AdviseID, cu.Progress, cu.Status");
+		sql.append(", cu.ExcessAmount, cu.AllocationType, cu.FeeTypeCode, cu.Progress, cu.Status");
 		sql.append(", cu.ErrorCode, cu.ErrorDesc, uh.CreatedOn, uh.ApprovedOn");
 		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApproverName");
 		sql.append(" From CROSS_LOAN_KNOCKOFF_UPLOAD cu");
@@ -192,7 +192,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	public long save(CrossLoanKnockoffUpload ck) {
 		StringBuilder sql = new StringBuilder("Insert into CROSS_LOAN_KNOCKOFF_UPLOAD");
 		sql.append(" (HeaderId, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
-		sql.append(", ExcessAmount, AllocationType, AdviseID)");
+		sql.append(", ExcessAmount, AllocationType, FeeTypeCode)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -215,7 +215,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 					ps.setString(++index, ck.getExcessType());
 					ps.setBigDecimal(++index, ck.getExcessAmount());
 					ps.setString(++index, ck.getAllocationType());
-					ps.setObject(++index, ck.getAdviseId());
+					ps.setString(++index, ck.getFeeTypeCode());
 
 					return ps;
 				}

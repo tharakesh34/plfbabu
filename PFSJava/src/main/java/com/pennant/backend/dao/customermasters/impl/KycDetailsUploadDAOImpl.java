@@ -154,11 +154,11 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		StringBuilder sql = new StringBuilder("Select Count(custCif)");
 		sql.append(" From Customer_Kyc_Details_Upload bcd");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = bcd.HeaderID");
-		sql.append(" Where uh.Id <> ? and uh.progress in (?, ?, ?, ?)");
+		sql.append(" Where bcd.CustCif = ? and uh.Id <> ? and uh.progress in (?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.queryForObject(sql.toString(), Integer.class/* , custCif */, headerID,
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, custCif, headerID,
 				Status.DOWNLOADED.getValue(), Status.IMPORT_IN_PROCESS.getValue(), Status.IMPORTED.getValue(),
 				Status.IN_PROCESS.getValue()) > 0;
 	}
@@ -189,7 +189,8 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		sql.append(", bcd.CustAddrLine2, bcd.CustAddrCity, bcd.CustAddrLine4, bcd.CustDistrict, bcd.CustAddrProvince");
 		sql.append(", bcd.CustAddrCountry, bcd.CustAddrZip, bcd.PhoneTypeCode, bcd.PhoneNumber, bcd.PhoneTypePriority");
 		sql.append(", bcd.CustEmailTypeCode, bcd.CustEmail, bcd.CustEmailPriority, bcd.Status, bcd.progress");
-		sql.append(", bcd.ErrorCode, bcd.ErrorDesc, su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
+		sql.append(", bcd.ErrorCode, bcd.ErrorDesc, su1.UsrLogin CreatedName");
+		sql.append(", uh.CreatedOn, su2.UsrLogin ApprovedName, uh.ApprovedOn");
 		sql.append(" From Customer_Kyc_Details_Upload bcd");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = bcd.HeaderID");
 		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");

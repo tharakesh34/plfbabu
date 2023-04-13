@@ -250,7 +250,30 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.row_valueDate.setVisible(false);
 		this.valueDate.setValue(this.receiptDate.getValue());
 
+		long finID = ComponentUtil.getFinID(this.finReference);
+		Date receiptDt = this.receiptDate.getValue();
+		Date appDate = SysParamUtil.getAppDate();
+
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
+
+		if (isKnockOff && FinServiceEvent.EARLYRPY.equals(recPurpose)) {
+			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
+
+			if (CollectionUtils.isNotEmpty(dates)) {
+				dates.sort((d1, d2) -> d1.compareTo(d2));
+				receiptDt = dates.get(dates.size() - 1);
+			}
+
+			int appmonth = DateUtil.getMonth(appDate);
+			int receiptmonth = DateUtil.getMonth(receiptDt);
+
+			if (appmonth != receiptmonth) {
+				receiptDt = DateUtil.getMonthStart(appDate);
+			}
+
+			this.receiptDate.setValue(receiptDt);
+		}
+
 		if (!FinServiceEvent.EARLYSETTLE.equals(recPurpose)) {
 			return;
 		}
@@ -1136,7 +1159,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		boolean isDisabled = false;
 		Date receiptDt = appDate;
-		long finID = ComponentUtil.getFinID(this.finReference);
+
 		String knockOff = getComboboxValue(knockOffFrom);
 		FinExcessAmount fea = null;
 		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
@@ -1147,26 +1170,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			receiptDt = fea.getValueDate();
 			isDisabled = true;
 
+			long finID = ComponentUtil.getFinID(this.finReference);
 			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
 
 			if (DateUtil.compare(receiptDt, schDate) < 0) {
 				receiptDt = schDate;
-			}
-		}
-
-		if (getComboboxValue(receiptPurpose).equals(FinServiceEvent.EARLYRPY)) {
-			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
-
-			if (CollectionUtils.isNotEmpty(dates)) {
-				dates.sort((d1, d2) -> d1.compareTo(d2));
-				receiptDt = dates.get(dates.size() - 1);
-			}
-
-			int month = DateUtil.getMonth(appDate);
-			int month2 = DateUtil.getMonth(receiptDt);
-
-			if (month != month2) {
-				receiptDt = DateUtil.getMonthStart(appDate);
 			}
 		}
 

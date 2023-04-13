@@ -90,6 +90,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 	protected Combobox instrumentType;
 	protected Intbox holdMarkBounceCount;
 	protected Space space_holdMarkBounceCount;
+	protected Space spaceInstrumentType;
 
 	private transient BounceReasonListCtrl bounceReasonListCtrl;
 	private transient BounceReasonService bounceReasonService;
@@ -186,6 +187,10 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 
 		if (MandateExtension.ALLOW_CONSECUTIVE_BOUNCE) {
 			this.space_holdMarkBounceCount.setSclass("mandatory");
+		}
+
+		if (MandateExtension.BR_INST_TYPE_MAN) {
+			this.spaceInstrumentType.setSclass("mandatory");
 		}
 
 		setStatusDetails();

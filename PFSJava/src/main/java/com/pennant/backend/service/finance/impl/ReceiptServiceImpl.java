@@ -6099,7 +6099,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	}
 
 	@Override
-	public List<FinReceiptDetail> prepareReceiptDetails(List<FinExcessAmount> excessList, ReceiptUploadDetail rud) {
+	public List<FinReceiptDetail> prepareRCDForExcess(List<FinExcessAmount> excessList, ReceiptUploadDetail rud) {
 		excessList = excessList.stream().sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
 				.collect(Collectors.toList());
 
@@ -6126,41 +6126,90 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				receiptAmount = receiptAmount.subtract(payableAmount);
 			}
 
-			FinReceiptDetail rcd = new FinReceiptDetail();
-
-			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			FinReceiptDetail rcd = prepareRCD(rud, partnerBank);
 			rcd.setAmount(payableAmount);
-			rcd.setBankCode(rud.getBankCode());
-			rcd.setDepositDate(rud.getDepositDate());
-			rcd.setPaymentRef(rud.getPaymentRef());
-			rcd.setTransactionRef(rud.getTransactionRef());
-			rcd.setFavourNumber(rud.getFavourNumber());
-			rcd.setChequeAcNo(rud.getChequeNo());
-			rcd.setReceivedDate(rud.getReceivedDate());
-			rcd.setStatus(rud.getStatus());
-			rcd.setRemarks(rud.getRemarks());
 			rcd.setReference(fea.getFinReference());
-			rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 			rcd.setPayAgainstID(fea.getExcessID());
-			rcd.setNoReserve(true);
 			rcd.setValueDate(fea.getValueDate());
-			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			rcd.setPaymentType(rud.getReceiptMode());
-
 			if (fea.getValueDate() == null) {
 				rcd.setValueDate(rud.getValueDate());
-			}
-
-			if (partnerBank != null) {
-				rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
-				rcd.setPartnerBankAc(partnerBank.getAccountNo());
-				rcd.setPartnerBankAcType(partnerBank.getAcType());
 			}
 
 			rcdList.add(rcd);
 		}
 
 		return rcdList;
+	}
+
+	@Override
+	public List<FinReceiptDetail> prepareRCDForMA(List<ManualAdvise> manualAdviseList, ReceiptUploadDetail rud) {
+		manualAdviseList = manualAdviseList.stream()
+				.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
+				.collect(Collectors.toList());
+
+		List<FinReceiptDetail> rcdList = new ArrayList<>();
+
+		BigDecimal receiptAmount = rud.getReceiptAmount();
+
+		PartnerBank partnerBank = null;
+		if (StringUtils.isNotEmpty(rud.getFundingAc())) {
+			partnerBank = partnerBankDAO.getPartnerBankById(Long.parseLong(rud.getFundingAc()));
+		}
+
+		for (ManualAdvise ma : manualAdviseList) {
+			if (receiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+
+			BigDecimal payableAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
+
+			if (payableAmount.compareTo(receiptAmount) >= 0) {
+				payableAmount = receiptAmount;
+				receiptAmount = BigDecimal.ZERO;
+			} else {
+				receiptAmount = receiptAmount.subtract(payableAmount);
+			}
+
+			FinReceiptDetail rcd = prepareRCD(rud, partnerBank);
+			rcd.setPayAgainstID(ma.getAdviseID());
+			rcd.setReference(ma.getFinReference());
+			rcd.setValueDate(ma.getValueDate());
+			rcd.setAmount(payableAmount);
+			if (ma.getValueDate() == null) {
+				rcd.setValueDate(rud.getValueDate());
+			}
+
+			rcdList.add(rcd);
+		}
+
+		return rcdList;
+	}
+
+	private FinReceiptDetail prepareRCD(ReceiptUploadDetail rud, PartnerBank partnerBank) {
+		FinReceiptDetail rcd = new FinReceiptDetail();
+
+		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rcd.setBankCode(rud.getBankCode());
+		rcd.setDepositDate(rud.getDepositDate());
+		rcd.setPaymentRef(rud.getPaymentRef());
+		rcd.setTransactionRef(rud.getTransactionRef());
+		rcd.setFavourNumber(rud.getFavourNumber());
+		rcd.setChequeAcNo(rud.getChequeNo());
+		rcd.setReceivedDate(rud.getReceivedDate());
+		rcd.setStatus(rud.getStatus());
+		rcd.setRemarks(rud.getRemarks());
+		rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rcd.setNoReserve(true);
+		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		rcd.setPaymentType(rud.getReceiptMode());
+
+		if (partnerBank != null) {
+			rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
+			rcd.setPartnerBankAc(partnerBank.getAccountNo());
+			rcd.setPartnerBankAcType(partnerBank.getAcType());
+		}
+
+		return rcd;
 	}
 
 	private FinReceiptDetail prepareRCD(FinServiceInstruction fsi, FinReceiptData rd) {

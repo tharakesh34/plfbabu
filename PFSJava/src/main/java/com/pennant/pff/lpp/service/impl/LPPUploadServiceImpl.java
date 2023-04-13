@@ -161,6 +161,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		pr.setFinID(finID);
 		pr.setFinEffectDate(SysParamUtil.getAppDate());
 		pr.setRequestSource(RequestSource.UPLOAD);
+		pr.setOdMinAmount(detail.getODMinAmount());
 
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
 
@@ -307,6 +308,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		String calculatedOn = detail.getCalculatedOn();
 
 		BigDecimal maxWaiver = detail.getMaxWaiver();
+		BigDecimal minAmount = detail.getODMinAmount();
 
 		if (maxWaiver == null) {
 			maxWaiver = BigDecimal.ZERO;
@@ -321,7 +323,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
 					|| (StringUtils.isNotBlank(penaltyType)) || StringUtils.isNotBlank(detail.getAllowWaiver())
 					|| (maxWaiver.compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
-					|| amountOrPercent.compareTo(BigDecimal.ZERO) > 0) {
+					|| amountOrPercent.compareTo(BigDecimal.ZERO) > 0 || minAmount.compareTo(BigDecimal.ZERO) > 0) {
 				setError(detail, LPPUploadError.LPP09);
 				return;
 			}
@@ -403,7 +405,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 				if (!(FinanceConstants.ODCALON_STOT.equals(calculatedOn)
 						|| FinanceConstants.ODCALON_SPRI.equals(calculatedOn)
-						|| FinanceConstants.ODCALON_SPFT.equals(calculatedOn))) {
+						|| FinanceConstants.ODCALON_SPFT.equals(calculatedOn)
+						|| FinanceConstants.ODCALON_INST.equals(calculatedOn))) {
 					setError(detail, LPPUploadError.LPP06);
 					return;
 				}
@@ -412,7 +415,22 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			default:
 				break;
 			}
+
+			if (!(PenaltyTypes.PERC_ONE_TIME.equals(lppType) || PenaltyTypes.PERC_ON_PD_MTH.equals(lppType))) {
+				if (FinanceConstants.ODCALON_INST.equals(calculatedOn)) {
+					setError(detail, LPPUploadError.LPP25);
+					return;
+				}
+			}
+
+			if ((PenaltyTypes.PERC_ONE_TIME.equals(lppType) || PenaltyTypes.PERC_ON_PD_MTH.equals(lppType))) {
+				if (StringUtils.isBlank(String.valueOf(detail.getODMinAmount()))) {
+					setError(detail, LPPUploadError.LPP26);
+					return;
+				}
+			}
 		}
+
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {

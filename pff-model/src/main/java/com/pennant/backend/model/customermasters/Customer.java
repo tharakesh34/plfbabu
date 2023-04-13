@@ -362,6 +362,8 @@ public class Customer extends AbstractWorkflowEntity {
 	private boolean prospectAsCIF = false;
 	@XmlElement
 	private String loanName;
+	@XmlElement
+	private BigDecimal loanInstalmentAmount = null;
 
 	public Customer() {
 		super();
@@ -444,6 +446,7 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustAddrProvince");
 		excludeFields.add("prospectAsCIF");
 		excludeFields.add("loanName");
+		excludeFields.add("loanInstalmentAmount");
 
 		return excludeFields;
 	}
@@ -2272,4 +2275,11 @@ public class Customer extends AbstractWorkflowEntity {
 		this.loanName = loanName;
 	}
 
+	public BigDecimal getLoanInstalmentAmount() {
+		return loanInstalmentAmount;
+	}
+
+	public void setLoanInstalmentAmount(BigDecimal loanInstalmentAmount) {
+		this.loanInstalmentAmount = loanInstalmentAmount;
+	}
 }

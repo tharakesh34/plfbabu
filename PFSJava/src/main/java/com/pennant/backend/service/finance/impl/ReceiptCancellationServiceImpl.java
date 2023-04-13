@@ -173,6 +173,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennant.pff.eod.cache.RuleConfigCache;
+import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -1317,7 +1318,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		List<FinOverDueCharges> updatedODAmt = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(dueMovements)) {
+		if (CollectionUtils.isNotEmpty(dueMovements) && LPPExtension.LPP_DUE_CREATION_REQ) {
 			for (FinOverDueChargeMovement movement : dueMovements) {
 				FinOverDueCharges odcAmount = new FinOverDueCharges();
 				odcAmount.setPaidAmount(movement.getPaidAmount());
@@ -1460,8 +1461,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			Date rcptDate = rch.getReceiptDate();
 			Date rcptMonthEndDate = DateUtil.getMonthEnd(rch.getReceiptDate());
 			boolean accrualDiffPostReq = false;
-			if (DateUtil.compare(rcptDate, rcptMonthEndDate) <= 0
-					&& DateUtil.compare(appDate, rcptMonthEndDate) > 0) {
+			if (DateUtil.compare(rcptDate, rcptMonthEndDate) <= 0 && DateUtil.compare(appDate, rcptMonthEndDate) > 0) {
 				accrualDiffPostReq = true;
 			}
 

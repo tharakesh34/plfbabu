@@ -42,7 +42,8 @@ public final class FeatureExtension {
 			return extension.getPartnerBankExtensions();
 		case RECEIPT:
 			return extension.getReceiptExtensions();
-
+		case LPP:
+			return extension.getLPPExtensions();
 		default:
 			return extension.getCustomConstants();
 		}

@@ -1703,4 +1703,18 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return null;
 		}
 	}
+
+	@Override
+	public Long getReceiptIdByChequeSerialNo(String chequeSerialNo) {
+		String sql = "Select ReceiptID from FinReceiptHeader where TransactioNRef = ? and ReceiptModeStatus = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, chequeSerialNo, "B");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

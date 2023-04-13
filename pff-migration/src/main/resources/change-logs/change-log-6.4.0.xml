@@ -617,44 +617,43 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.6_01" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					Update RMTFINANCETYPES_TEMP RFT SET ASSETCLASSSETUP =t2.ID from 
-					(Select t1.ID,t2.DivisionCode From ASSET_CLASS_SETUP_HEADER t1
+					(Select t1.ID,t2.DivisionCode, t1.Active From ASSET_CLASS_SETUP_HEADER t1
 					inner join 	SmtDivisionDetail t2 on t1.ENTITYCODE = t2.EntityCode	
-					Where t1.Code = 'DEFAULT' ) t2
+					Where t1.Code = 'DEFAULT' and t1.Active = 1) t2
 					where RFT.FinDivision = t2.DivisionCode;	
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.6_01" author="NagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[
 					UPDATE RH set  RH.ASSETCLASSSETUP = t2.ID
 						From RMTFINANCETYPES_TEMP RH 
-					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode From ASSET_CLASS_SETUP_HEADER ACSH
+					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode, t1.Active From ASSET_CLASS_SETUP_HEADER ACSH
 								inner join SmtDivisionDetail sdd on   sdd.EntityCode=ACSH.ENTITYCODE 
-								Where ACSH.Code = 'DEFAULT' ) t2 on  t2.DivisionCode=RH.FinDivision  ;
+								Where ACSH.Code = 'DEFAULT' and t1.Active = 1) t2 on  t2.DivisionCode=RH.FinDivision  ;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.6" author="NagaVamsi.P" dbms="oracle">
+	<changeSet id="ST#1469.6_01" author="NagaVamsi.P" dbms="oracle">
 		<sql>
 			<![CDATA[
 				MERGE INTO RMTFINANCETYPES_TEMP FT 
 				USING (
-				SELECT ID, DivisionCode From ASSET_CLASS_SETUP_HEADER HDR 
-				Inner Join SmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT'
+				SELECT ID, DivisionCode, HDR.Active From ASSET_CLASS_SETUP_HEADER HDR 
+				Inner Join SmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT' and HDR.Active = 1
 				) H on (H.DivisionCode = FT.FinDivision)
 				 WHEN MATCHED THEN UPDATE SET 
 			 	FT.ASSETCLASSSETUP = H.ID;
 			]]>
 		</sql>
 	</changeSet>
-
 
 	<changeSet id="ST#1469.7" author="NagaVamsi.P">
 		<createIndex tableName="RMTFINANCETYPES_TEMP" indexName="IDX_RMTF_T_ACSUP">
@@ -668,37 +667,37 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="postgresql">
+	<changeSet id="ST#1469.9_01" author="NagaVamsi.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					Update RMTFINANCETYPES RFT SET ASSETCLASSSETUP =t2.ID from 
-					(Select t1.ID,t2.DivisionCode From ASSET_CLASS_SETUP_HEADER t1
+					Update RMTFINANCETYPES RFT SET ASSETCLASSSETUP = t2.ID from 
+					(Select t1.ID,t2.DivisionCode, t1.Active From ASSET_CLASS_SETUP_HEADER t1
 					inner join 	SmtDivisionDetail t2 on t1.ENTITYCODE = t2.EntityCode	
-					Where t1.Code = 'DEFAULT' ) t2
+					Where t1.Code = 'DEFAULT' and t1.Active = 1) t2
 					where RFT.FinDivision = t2.DivisionCode;	
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.9_01" author="NagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[
 					UPDATE RH set  RH.ASSETCLASSSETUP = t2.ID
 						From RMTFINANCETYPES RH 
-					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode From ASSET_CLASS_SETUP_HEADER ACSH
-								inner join SmtDivisionDetail sdd on   sdd.EntityCode=ACSH.ENTITYCODE 
-								Where ACSH.Code = 'DEFAULT' ) t2 on  t2.DivisionCode=RH.FinDivision  ;
+					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode, ACSH.Active From ASSET_CLASS_SETUP_HEADER ACSH
+								inner join SmtDivisionDetail sdd on sdd.EntityCode=ACSH.ENTITYCODE 
+								Where ACSH.Code = 'DEFAULT' and ACSH.Active = 1) t2 on t2.DivisionCode=RH.FinDivision;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.9" author="NagaVamsi.P" dbms="oracle">
+	<changeSet id="ST#1469.9_01" author="NagaVamsi.P" dbms="oracle">
 		<sql>
 			<![CDATA[
 				MERGE INTO RMTFINANCETYPES FT 
 				USING (
-				SELECT ID, DivisionCode From ASSET_CLASS_SETUP_HEADER HDR 
-				Inner Join SmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT'
+				SELECT ID, DivisionCode, HDR.Active From ASSET_CLASS_SETUP_HEADER HDR 
+				Inner Join SmtDivisionDetail sd on sd.EntityCode = HDR.EntityCode and HDR.Code = 'DEFAULT' and HDR.Active = 1
 				) H on (H.DivisionCode = FT.FinDivision)
 				WHEN MATCHED THEN UPDATE SET 
 				FT.ASSETCLASSSETUP = H.ID;
@@ -2249,7 +2248,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.2_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.2_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents');
@@ -2257,28 +2256,28 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.1" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.1" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="BMTAEEVENTS" indexName="IX_BMTAEEVT_AEEVTCD" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2.0" author="saikrishna.b">
+	<changeSet id="ST#1470.2.0" author="saikrihna.b">
 		<dropPrimaryKey constraintName="PK_BMTAEEvents" tableName="BMTAEEVENTS" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2" author="saikrishna.b">
+	<changeSet id="ST#1470.2" author="saikrihna.b">
 		<modifyDataType tableName="BMTAEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2.1" author="saikrishna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.2.1" author="saikrihna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="BMTAEEVENTS" columnName="AEEventCode"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.2.2" author="saikrishna.b">
+	<changeSet id="ST#1470.2.2" author="saikrihna.b">
 		<addPrimaryKey tableName="BMTAEEVENTS" columnNames="AEEventCode" constraintName="PK_BMTAEEvents" />
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(lower(aeeventcode));
@@ -2286,7 +2285,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(NLSSORT(aeeventcode,'nls_sort=''BINARY_CI'''));
@@ -2294,7 +2293,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.3" author="saikrishna.b" dbms="mssql">
+	<changeSet id="ST#1470.3" author="saikrihna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  IX_BMTAEEVT_AEEVTCD on BMTAEEVENTS(aeeventcode);
@@ -2302,7 +2301,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.2_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.2_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feewaiverheader');
@@ -2310,7 +2309,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.5_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.5_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'bmtaeevents_temp');
@@ -2318,29 +2317,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.4" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.4" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="BMTAEEVENTS_TEMP" indexName="IX_BMTAEEVT_T_AEEVTCD" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5.0" author="saikrishna.b">
+	<changeSet id="ST#1470.5.0" author="saikrihna.b">
 		<dropPrimaryKey constraintName="PK_BMTAEEVENTS_TEMP" tableName="BMTAEEVENTS_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5" author="saikrishna.b">
+	<changeSet id="ST#1470.5" author="saikrihna.b">
 		<modifyDataType tableName="BMTAEEVENTS_TEMP" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5.1" author="saikrishna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.5.1" author="saikrihna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="BMTAEEVENTS_TEMP" columnName="AEEventCode"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.5.2" author="saikrishna.b">
+	<changeSet id="ST#1470.5.2" author="saikrihna.b">
 		<addPrimaryKey tableName="BMTAEEVENTS_TEMP" columnNames="AEEventCode"
 			constraintName="PK_BMTAEEVENTS_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.6" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(lower(aeeventcode));
@@ -2348,7 +2347,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.6" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(NLSSORT(aeeventcode,'nls_sort=''BINARY_CI'''));
@@ -2356,7 +2355,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.6" author="saikrishna.b" dbms="mssql">
+	<changeSet id="ST#1470.6" author="saikrihna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  ix_bmtaeevt_t_aeevtcd on BMTAEEVENTS_TEMP(aeeventcode);
@@ -2364,7 +2363,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.5_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.5_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'bmtaeevents_temp');
@@ -2372,7 +2371,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.7" author="saikrishna.b">
+	<changeSet id="ST#1470.7" author="saikrihna.b">
 		<sql>
 			<![CDATA[
 				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('AMZ_S', 		'Accruals For Settlement', 				1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
@@ -2411,7 +2410,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.8_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.8_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'categorywiseevents');
@@ -2419,25 +2418,25 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.8.0" author="saikrishna.b">
+	<changeSet id="ST#1470.8.0" author="saikrihna.b">
 		<dropPrimaryKey constraintName="PK_CATEGORYWISEEVENTS" tableName="CATEGORYWISEEVENTS" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8" author="saikrishna.b">
+	<changeSet id="ST#1470.8" author="saikrihna.b">
 		<modifyDataType tableName="CATEGORYWISEEVENTS" columnName="AEEVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8.1" author="saikrishna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.8.1" author="saikrihna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="CATEGORYWISEEVENTS" columnName="AEEventCode"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8.2" author="saikrishna.b">
+	<changeSet id="ST#1470.8.2" author="saikrihna.b">
 		<addPrimaryKey tableName="CATEGORYWISEEVENTS" columnNames="AEEventCode,CategoryCode"
 			constraintName="PK_CATEGORYWISEEVENTS" />
 	</changeSet>
 
-	<changeSet id="ST#1470.8_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.8_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'categorywiseevents');
@@ -2445,7 +2444,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.9_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.9_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset');
@@ -2453,11 +2452,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.9" author="saikrishna.b">
+	<changeSet id="ST#1470.9" author="saikrihna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.9_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.9_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtaccountingset');
@@ -2465,7 +2464,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.10_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.10_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_temp');
@@ -2473,11 +2472,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.10" author="saikrishna.b">
+	<changeSet id="ST#1470.10" author="saikrihna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="EVENTCODE" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.10_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.10_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtaccountingset_temp');
@@ -2485,7 +2484,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.13_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.13_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintypeaccounting');
@@ -2493,33 +2492,33 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.11" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.11" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT" />
 	</changeSet>
 
-	<changeSet id="ST#1470.12" author="saikrishna.b">
+	<changeSet id="ST#1470.12" author="saikrihna.b">
 		<dropIndex tableName="FINTYPEACCOUNTING" indexName="IX_FINTYPACCG_TYP_EVT_MDID" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13.0" author="saikrishna.b">
+	<changeSet id="ST#1470.13.0" author="saikrihna.b">
 		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING" tableName="FINTYPEACCOUNTING" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13" author="saikrishna.b">
+	<changeSet id="ST#1470.13" author="saikrihna.b">
 		<modifyDataType tableName="FINTYPEACCOUNTING" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13.1" author="saikrishna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.13.1" author="saikrihna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="FINTYPEACCOUNTING" columnName="EVENT"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.13.2" author="saikrishna.b">
+	<changeSet id="ST#1470.13.2" author="saikrihna.b">
 		<addPrimaryKey tableName="FINTYPEACCOUNTING" columnNames="FinType, Event, ModuleId"
 			constraintName="PK_FINTYPEACCOUNTING" />
 	</changeSet>
 
-	<changeSet id="ST#1470.14" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index IX_FINTYPACCG_TYP_EVT on FINTYPEACCOUNTING(lower(event));
@@ -2528,7 +2527,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.14" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				CREATE INDEX IX_FINTYPACCG_TYP_EVT ON FINTYPEACCOUNTING  (NLSSORT(EVENT,'nls_sort=''BINARY_CI'''));
@@ -2538,7 +2537,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.14" author="saikrishna.b" dbms="mssql">
+	<changeSet id="ST#1470.14" author="saikrihna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  IX_FINTYPACCG_TYP_EVT on FINTYPEACCOUNTING(event);
@@ -2547,7 +2546,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.13_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.13_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintypeaccounting');
@@ -2555,7 +2554,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.18_pre" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.18_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintypeaccounting_temp');
@@ -2563,29 +2562,29 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.16" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.16" author="saikrihna.b" dbms="oracle">
 		<dropIndex tableName="FINTYPEACCOUNTING_TEMP" indexName="IX_FINTYPACCG_T_TYP_EVT" />
 	</changeSet>
 
-	<changeSet id="ST#1470.17" author="saikrishna.b">
+	<changeSet id="ST#1470.17" author="saikrihna.b">
 		<dropPrimaryKey constraintName="PK_FINTYPEACCOUNTING_TEMP" tableName="FINTYPEACCOUNTING_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.18" author="saikrishna.b">
+	<changeSet id="ST#1470.18" author="saikrihna.b">
 		<modifyDataType tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT" newDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.18.1" author="saikrishna.b" dbms="mssql,postgresql">
+	<changeSet id="ST#1470.18.1" author="saikrihna.b" dbms="mssql,postgresql">
 		<addNotNullConstraint tableName="FINTYPEACCOUNTING_TEMP" columnName="EVENT"
 			columnDataType="varchar(10)" />
 	</changeSet>
 
-	<changeSet id="ST#1470.19" author="saikrishna.b">
+	<changeSet id="ST#1470.19" author="saikrihna.b">
 		<addPrimaryKey tableName="FINTYPEACCOUNTING_TEMP" columnNames="FINTYPE, EVENT, MODULEID"
 			constraintName="PK_FINTYPEACCOUNTING_TEMP" />
 	</changeSet>
 
-	<changeSet id="ST#1470.20" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				create index ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(lower(event));
@@ -2593,7 +2592,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.20" author="saikrishna.b" dbms="oracle">
+	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="oracle">
 		<sql>
 			<![CDATA[
 				create index ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(NLSSORT(event,'nls_sort=''BINARY_CI'''));
@@ -2601,7 +2600,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1470.20" author="saikrishna.b" dbms="mssql">
+	<changeSet id="ST#1470.20" author="saikrihna.b" dbms="mssql">
 		<sql>
 			<![CDATA[
 				create nonclustered index  ix_fintypaccg_t_typ_evt on fintypeaccounting_temp(event);
@@ -2610,7 +2609,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#1470.18_post" author="saikrishna.b" dbms="postgresql">
+	<changeSet id="ST#1470.18_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintypeaccounting_temp');
@@ -4521,10 +4520,978 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1470.21_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1470.21" author="saikrishna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="ST#1470.21_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtaccountingset');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1470.22_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtaccountingset_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1470.22" author="saikrishna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
 	</changeSet>
+	
+	<changeSet id="ST#1470.22_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtaccountingset_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#724.1" author="Sravanthi.g">
+		<dropColumn tableName="MANUAL_KNOCKOFF_UPLOAD" columnName="AdviseID"/>
+	</changeSet>
+	 
+	<changeSet id="ST#724.2" author="Sravanthi.g">
+		<addColumn tableName="MANUAL_KNOCKOFF_UPLOAD">
+			<column name="FeeTypeCode" type="varchar(10)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#724.3" author="Sravanthi.g">
+		<dropColumn tableName="CROSS_LOAN_KNOCKOFF_UPLOAD" columnName="AdviseID"/>
+	</changeSet>
+	 
+	  <changeSet id="ST#724.4" author="Sravanthi.g">
+		<addColumn tableName="CROSS_LOAN_KNOCKOFF_UPLOAD">
+			<column name="FeeTypeCode" type="varchar(10)"/>
+		</addColumn>
+	</changeSet> 
+
+	<changeSet id="ST#724.5" author="Sravanthi.g">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD';
+				
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'CROSS_LOAN_KNOCKOFF_UPLOAD', 'CROSS_LOAN_KNOCKOFF_UPLOAD FILE', 12, 'CROSSLOANKNOCKOFF', null, null, ',', 1, 1, null, null, null, 'C', '/opt/pff/hdfc/cross_loan_knockoff/upload', 'CROSSLOANKNOCKOFF_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, '0', NULL, 1, 1);
+		
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD'), 'CROSS_LOAN_KNOCKOFF_UPLOAD', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 0, 0);
+						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'HEADERID',				0, 'N', NULL, NULL, '${HEADER_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'FROMFINREFERENCE',  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'TOFINREFERENCE',  		0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'EXCESSTYPE',  			0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'EXCESSAMOUNT',  			0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'M');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'ALLOCATIONTYPE',  		0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'FEETYPECODE',  			0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD')), 'STATUS',    	            0, 'N', NULL, 'S',  NULL, NULL, '6', NULL, NULL, NULL, NULL, 'M');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#724.6" author="Sravanthi.g">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'CROSS_LOAN_KNOCKOFF_TEMPLATE', 'CROSSLOAN KNOCKOFF TEMPLATE DOWNLOAD', 3, 'CROSSLOANKNOCKOFF', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{FROMFINREFERENCE, TOFINREFERENCE, EXCESSTYPE, EXCESSAMOUNT, ALLOCATIONTYPE, FEETYPECODE, PRI, PFT,EMI, ODC, BOUNCE, FEETYPE1}',  NULL, 'A', '/opt/pff/hdfc/cross_loan_knockoff/template', 'CROSSLOANKNOCKOFF_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE'), 'CROSS_LOAN_KNOCKOFF_UPLOAD',  1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 0, 0);
+					
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'HEADERID',					0, 'N', NULL, NULL, '${HEADER_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'FROMFINREFERENCE',  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'TOFINREFERENCE',  			0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'EXCESSTYPE',  				0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'EXCESSAMOUNT',  			0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'O');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'ALLOCATIONTYPE',  			0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'FEETYPECODE',  			0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'O');		
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'PRI',  					0, 'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'INT',  					0, 'N', NULL, NULL, NULL, NULL, '7', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'EMI',  					0, 'N', NULL, NULL, NULL, NULL, '8', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'LPP',  					0, 'N', NULL, NULL, NULL, NULL, '9', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'BOUNCE',  					0, 'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL, NULL, 'O');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_TEMPLATE')), 'FEETYPE',  				0, 'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL, NULL, 'O');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#724.7" author="Sravanthi.g">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='CROSS_LOAN_KNOCKOFF_DOWNLOAD';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'CROSS_LOAN_KNOCKOFF_DOWNLOAD', 'CROSSLOAN KNOCKOFF FILE DOWNLOAD', 3, 'CROSSLOANKNOCKOFF', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{FROMFINREFERENCE, TOFINREFERENCE, EXCESSTYPE, EXCESSAMOUNT, ALLOCATIONTYPE, FEETYPECODE, UPLOADDATE, APPROVEDDATE, CREATED NAME, APPROVER NAME, UPLOADSTATUS, ERRORCODE, ERRORDESC}',  NULL, 'A', '/opt/pff/hdfc/cross_loan_knockoff/template', 'CROSSLOANKNOCKOFF_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD'), 'CROSS_LOAN_KNOCKOFF_UPLOAD',  1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'FROMFINREFERENCE',  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'TOFINREFERENCE',  			0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'EXCESSTYPE',  				0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'EXCESSAMOUNT',  			0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT:.00', 'O');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'ALLOCATIONTYPE',  			0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'FEETYPECODE',  			0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'CREATEDON',       			0, 'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL,'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'APPROVEDON',     			0, 'N', NULL, NULL, NULL, NULL, '12', NULL, NULL, NULL,'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'CREATEDNAME',    	 		0, 'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'APPROVERNAME',	      		0, 'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL, NULL,'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'STATUS',	                0, 'N', NULL, NULL, NULL, NULL, '15', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'ERRORCODE',	            0, 'N', NULL, NULL, NULL, NULL, '16', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'CROSS_LOAN_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'CROSS_LOAN_KNOCKOFF_DOWNLOAD')), 'ERRORDESC',	            0, 'N', NULL, NULL, NULL, NULL, '17', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#724.8" author="Sravanthi.g">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD';
+				
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'MANUAL_KNOCKOFF_UPLOAD', 'MANUAL KNOCKOFF UPLOAD FILE.', 12, 'MANUALKNOCKOFF', null, null, ',', 1, 1, null, 'ROW:{LoanReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode, PRI, PFT, EMI, ODC, Bounce, FEETYP1, FEETYP2}', null, 'C', '/opt/pff/hdfc/ManualKnockOff/upload', 'ManualKnockOff_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', NULL, '0', NULL, 1, 1);
+		
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD'), 'MANUAL_KNOCKOFF_UPLOAD', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, 0, 0);
+						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD')), 'HEADERID',			0, 'N', NULL, NULL, '${HEADER_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD')), 'FINREFERENCE',  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD')), 'EXCESSTYPE',  		0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD')), 'ALLOCATIONTYPE',  	0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD')), 'RECEIPTAMOUNT',  	0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'M');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD')), 'FEETYPECODE',  		0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#724.9" author="Sravanthi.g">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'MANUAL_KNOCKOFF_TEMPLATE', 'MANUAL KNOCKOFF TEMPLATE DOWNLOAD', 3, 'MANUALKNOCKOFF', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{LoanReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode, PRI, PFT, EMI, ODC, Bounce, FEETYP1, FEETYP2}',  NULL, 'A', '/opt/pff/hdfc/ManualKnockOff/template', 'ManualKnockOff_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE'), 'MANUAL_KNOCKOFF_UPLOAD',  1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, 0, 0);
+				
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'FINREFERENCE',  	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'EXCESSTYPE',  		0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'ALLOCATIONTYPE',  	0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'RECEIPTAMOUNT',  	0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'O');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'FEETYPECODE',  	0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'PRI',  		    0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'INT',  		    0, 'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'EMI',  		    0, 'N', NULL, NULL, NULL, NULL, '7', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'ODC',  			0, 'N', NULL, NULL, NULL, NULL, '8', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'BOUNCE',  			0, 'N', NULL, NULL, NULL, NULL, '9', NULL, NULL, NULL, NULL, 'O');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'FEETYP1',  		0, 'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_TEMPLATE')), 'FEETYP2',  		0, 'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#724.10" author="bhaskara.k">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='MANUAL_KNOCKOFF_DOWNLOAD';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'MANUAL_KNOCKOFF_DOWNLOAD', 'MANUAL KNOCKOFF DOWNLOAD', 3, 'MANUALKNOCKOFF', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{LoanReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode, CreatedOn, Status, ErrorCode, ErrorDesc, CreatedName, ApprovedName}', NULL, 'A', '/opt/pff/hdfc/ManualKnockOff/download', 'ManualKnockOff_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD'), 'MANUAL_KNOCKOFF_UPLOAD',  1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 17, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'FINREFERENCE',  	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'EXCESSTYPE',  		0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'ALLOCATIONTYPE',  	0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'RECEIPTAMOUNT',  	0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT:.00', 'O');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'FEETYPECODE',  		0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'CREATEDON',	    0, 'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'STATUS',	        0, 'N', NULL, NULL, NULL, NULL, '12', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'ERRORCODE',	    0, 'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'ERRORDESC',	    0, 'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'CREATEDNAME',	    0, 'N', NULL, NULL, NULL, NULL, '15', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'APPROVEDNAME',	    0, 'N', NULL, NULL, NULL, NULL, '16', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="ST#1495.01" author="Ramya.v">
+		<addColumn tableName="LPP_UPLOAD">
+			<column name="ODMinAmount" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1495.02" author="ramya.v">
+		<sql>
+			<![CDATA[	
+				UPDATE LPP_UPLOAD SET ODMINAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="ST#1495.03" author="Ramya.v" dbms="postgresql,oracle">
+		<addDefaultValue columnName="ODMinAmount" tableName="LPP_UPLOAD" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1495.03" author="Ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LPP_UPLOAD ADD CONSTRAINT DF_LU_ODMINAMOUNT DEFAULT 0 FOR ODMINAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1495.04" author="Ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD';
+
+                INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LPP_UPLOAD', 'LPP Upload File.', 12, 'LPP', null, null, ',', 0, 1, null, 'ROW:{Loan Reference, Loan Type, Apply to Existing Loans, Apply Overdue Penalty, Penalty Type, Include Grace Days, Grace Days,  Calculated On, Amount\Percentage, Allow Waivers, Max Waivers, Minimum Amount}', null, 'C', '/opt/PFF/BASE/hdfc/LPPUpload/upload', 'LPPUpload_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD'), 'LPP_UPLOAD', 1, 'HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'HEADERID',                0, 'N', NULL, NULL, '${HEADER_ID}',   NULL, '0', NULL, NULL, NULL, NULL, 'M');								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'FINREFERENCE',         	 0, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'LOANTYPE',              	 0, 'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'APPLYTOEXISTINGLOANS', 	 0, 'N', NULL, NULL, NULL, NULL, '2',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'APPLYOVERDUE', 		     0, 'N', NULL, NULL, NULL, NULL, '3',  NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'PENALTYTYPE',  			 0, 'N', NULL, NULL, NULL, NULL, '4',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'INCLUDEGRACEDAYS',	     0, 'N', NULL, NULL, NULL, NULL, '5',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'GRACEDAYS',               0, 'N', NULL, NULL, NULL, NULL, '6',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'CALCULATEDON',            0, 'N', NULL, NULL, NULL, NULL, '7',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'AMOUNTORPERCENT',         0, 'N', NULL, NULL, NULL, NULL, '8',  NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'ALLOWWAIVER',             0, 'N', NULL, NULL, NULL, NULL, '9',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'MAXWAIVER',               0, 'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'ODMINAMOUNT',             0, 'N', NULL, NULL, NULL, NULL,  '11', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_UPLOAD')), 'STATUS',                  0, 'N', NULL, 'S', NULL, NULL,  '12', NULL, NULL, NULL, NULL, 'O');
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.05" author="Ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LPP_TEMPLATE', 'LPP template download', 3, 'LPP', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference, Loan Type, Apply to Existing Loans, Apply Overdue Penalty, Penalty Type, Include Grace Days, Grace Days,  Calculated On, Amount\Percentage, Allow Waivers, Max Waivers, Minimum Amount}',  '', 'A', '/opt/PFF/BASE/hdfc/LPPUpload/template', 'LPP_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE'), 'LPP_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 12, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'HEADERID',                1, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'FINREFERENCE',            0, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'LOANTYPE',                0, 'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'APPLYTOEXISTINGLOANS',    0, 'N', NULL, NULL, NULL, NULL, '2',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'APPLYOVERDUE',            0, 'N', NULL, NULL, NULL, NULL, '3',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'PENALTYTYPE',             0, 'N', NULL, NULL, NULL, NULL, '4',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'INCLUDEGRACEDAYS',        0, 'N', NULL, NULL, NULL, NULL, '5',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'GRACEDAYS',               0, 'N', NULL, NULL, NULL, NULL, '6',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'CALCULATEDON',            0, 'N', NULL, NULL, NULL, NULL, '7',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'AMOUNTORPERCENT',         0, 'N', NULL, NULL, NULL, NULL, '8',  NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'ALLOWWAIVER',             0, 'N', NULL, NULL, NULL, NULL, '9',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'MAXWAIVER',               0, 'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'ODMINAMOUNT',             0, 'N', NULL, NULL, NULL, NULL,  '11', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_TEMPLATE')), 'STATUS',                  0, 'N', NULL, 'S', NULL, NULL,  '12', NULL, NULL, NULL, NULL, 'O');
+				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.06" author="Ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='LPP_DOWNLOAD';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LPP_DOWNLOAD', 'LPP download', 3, 'LPP', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference, Loan Type, Apply to Existing Loans, Apply Overdue Penalty, Penalty Type, Include Grace Days, Grace Days,  Calculated On, Amount\Percentage, Allow Waivers, Max Waivers, Minimum Amount, HoldStatus, Reason, Remarks, Upload Status, ErrorCode, ErrorDesc, Created On, Created By, Approved On, Approved By}',  '', 'A', '/opt/PFF/BASE/hdfc/LPPUpload/download', 'LPP_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD'), 'LPP_UPLOAD',  1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 21, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'FINREFERENCE',     	   	      0,'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'LOANTYPE',      			      0,'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'APPLYTOEXISTINGLOANS',    	      0,'N', NULL, NULL, NULL, NULL, '2',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'APPLYOVERDUE',     		      0,'N', NULL, NULL, NULL, NULL, '3',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'PENALTYTYPE',     			      0,'N', NULL, NULL, NULL, NULL, '4',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'INCLUDEGRACEDAYS',      	      0,'N', NULL, NULL, NULL, NULL, '5',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'GRACEDAYS',     			      0,'N', NULL, NULL, NULL, NULL, '6',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'CALCULATEDON',    		          0,'N', NULL, NULL, NULL, NULL, '7',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'AMOUNTORPERCENT',                0,'N', NULL, NULL, NULL, NULL, '8',  NULL, NULL, NULL,  'AMOUNT:.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'ALLOWWAIVER',                    0,'N', NULL, NULL, NULL, NULL, '9',  NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'MAXWAIVER',                      0,'N', NULL, NULL, NULL, NULL, '10', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'ODMINAMOUNT',                    0,'N', NULL, NULL, NULL, NULL, '11', NULL, NULL, NULL, 'AMOUNT:0.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'HOLDSTATUS',	                  0,'N', NULL, NULL, NULL, NULL, '12', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'REASON',	                      0,'N', NULL, NULL, NULL, NULL, '13', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'REMARKS',	                      0,'N', NULL, NULL, NULL, NULL, '14', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'STATUS',	                      0,'N', NULL, NULL, NULL, NULL, '15', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'ERRORCODE',	                  0,'N', NULL, NULL, NULL, NULL, '16', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'ERRORDESC',	                  0,'N', NULL, NULL, NULL, NULL, '17', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'CREATEDON',	                  0,'N', NULL, NULL, NULL, NULL, '18', NULL, NULL, NULL,  'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'CREATEDNAME',	                  0,'N', NULL, NULL, NULL, NULL, '19', NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'APPROVEDON',	                  0,'N', NULL, NULL, NULL, NULL, '20', NULL, NULL, NULL,  'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LPP_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LPP_DOWNLOAD')), 'APPROVEDNAME',	                  0,'N', NULL, NULL, NULL, NULL, '21', NULL, NULL, NULL,  NULL, 'O');
+             ]]>
+		</sql>
+	</changeSet>
+	
+	 <changeSet id="ST#1495.2.13" author="ramya.v">
+		<addColumn tableName="FINODPENALTYRATES_LOG">
+			<column name="ODMinAmount" type="decimal(18, 0)" />
+		</addColumn>
+	 </changeSet>
+	
+	<changeSet id="ST#1495.2.131" author="ramya.v">
+		<sql>
+			<![CDATA[
+			    DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FinanceMainDialog_ODMinAmount');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'FinanceMainDialog_ODMinAmount';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'FinanceMainDialog_ODMinAmount', 'FinanceMainDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'FINANCETYPE_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'FinanceMainDialog_ODMinAmount'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.2" author="Gireesh.G">
+		<addColumn tableName="MANDATES_TEMP">
+			<column name="ExternalMandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1529.2_01" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					Update MANDATES_TEMP M SET ExternalMandate = t2.EXTMAN from 
+					(Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef not null) t2
+					where M.MandateID = t2.MandateID;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.2_01" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE M set M.ExternalMandate = t2.EXTMAN
+						From MANDATES_TEMP M 
+					INNER JOIN (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef not null) t2 on M.MandateID = t2.MandateID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.2_01" author="Gireesh.G" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO MANDATES_TEMP M 
+				USING (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef is not null) t2 on (M.MandateID = t2.MandateID)
+				WHEN MATCHED THEN UPDATE SET 
+				M.ExternalMandate = t2.EXTMAN;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.3" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE MANDATES_TEMP ADD CONSTRAINT DF_MAN_T_EXTERNALMANDATE DEFAULT 0 FOR EXTERNALMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.3" author="Gireesh.G" dbms="postgresql, oracle">
+		<addDefaultValue tableName="MANDATES_TEMP" columnName="ExternalMandate" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1529.4" author="Gireesh.G">
+		<addColumn tableName="MANDATES">
+			<column name="ExternalMandate" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1529.4_01" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					Update MANDATES M SET ExternalMandate = t2.EXTMAN from 
+					(Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From Mandates Where MandateRef is not null) t2
+					where M.MandateID = t2.MandateID;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.4_01" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE M set M.ExternalMandate = t2.EXTMAN
+						From MANDATES M 
+					INNER JOIN (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From Mandates Where MandateRef is not null) t2 on M.MandateID = t2.MandateID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.4_01" author="Gireesh.G" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO MANDATES M 
+				USING (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From Mandates Where MandateRef is not null) t2 on (M.MandateID = t2.MandateID)
+				WHEN MATCHED THEN UPDATE SET 
+				M.ExternalMandate = t2.EXTMAN;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.5" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE MANDATES ADD CONSTRAINT DF_MAN_EXTERNALMANDATE DEFAULT 0 FOR EXTERNALMANDATE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.5" author="Gireesh.G" dbms="postgresql, oracle">
+		<addDefaultValue tableName="MANDATES" columnName="ExternalMandate" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1529.6_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.6" author="Gireesh.G">
+		<createView viewName="MANDATES_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.INPUTDATE FROMDATE
+					, M.INPUTDATE TODATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 1 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+					, M.EMPLOYERID
+					, ED.EMPNAME
+					, M.EMPLOYEENO
+					, M.EXTERNALMANDATE
+				FROM MANDATES M
+				INNER JOIN CUSTOMERS C ON C.CUSTID = M.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BD.BANKCODE = BB.BANKCODE 
+				LEFT JOIN RMTPROVINCEVSCITY PC ON PC.PCCITY = BB.CITY
+				LEFT JOIN ENTITY E ON E.ENTITYCODE = M.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON FM.FINREFERENCE = M.ORGREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1529.6_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1529.7_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'mandates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.7" author="Gireesh.G">
+		<createView viewName="MANDATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 0 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+					, M.EMPLOYERID
+					, ED.EMPNAME
+					, M.EMPLOYEENO
+					, M.EXTERNALMANDATE
+				FROM MANDATES_TEMP M
+				INNER JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON M.BANKBRANCHID = BB.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BB.BANKCODE = BD.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PC ON BB.CITY = PC.PCCITY
+				LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
+				UNION ALL
+				SELECT M.MANDATEID
+					, M.CUSTID
+					, M.MANDATEREF
+					, M.MANDATETYPE
+					, M.BANKBRANCHID
+					, M.ACCNUMBER
+					, M.ACCHOLDERNAME
+					, M.JOINTACCHOLDERNAME
+					, M.ACCTYPE
+					, M.OPENMANDATE
+					, M.STARTDATE
+					, M.EXPIRYDATE
+					, M.MAXLIMIT
+					, M.PERIODICITY
+					, M.PHONECOUNTRYCODE
+					, M.PHONEAREACODE
+					, M.PHONENUMBER
+					, M.STATUS
+					, M.APPROVALID
+					, M.VERSION
+					, M.LASTMNTBY
+					, M.LASTMNTON
+					, M.RECORDSTATUS
+					, M.ROLECODE
+					, M.NEXTROLECODE
+					, M.TASKID
+					, M.NEXTTASKID
+					, M.RECORDTYPE
+					, M.WORKFLOWID
+					, M.REASON
+					, M.MANDATECCY
+					, C.CUSTCIF
+					, C.CUSTSHRTNAME
+					, C.CUSTCOREBANK
+					, BB.BANKCODE
+					, BB.BRANCHCODE
+					, BB.BRANCHDESC
+					, BB.MICR
+					, BB.IFSC
+					, BB.CITY
+					, BD.BANKNAME
+					, M.INPUTDATE
+					, M.ACTIVE
+					, M.DEFAULTMANDATE
+					, 1 USEEXISTING
+					, M.ORGREFERENCE
+					, PC.PCCITYNAME
+					, M.DOCUMENTNAME
+					, M.DOCUMENTREF
+					, M.EXTERNALREF
+					, M.ENTITYCODE
+					, E.ENTITYDESC
+					, M.PRIMARYMANDATEID
+					, M.SWAPISACTIVE
+					, M.BARCODENUMBER
+					, PB.PARTNERBANKCODE
+					, PB.PARTNERBANKNAME
+					, M.PARTNERBANKID
+					, M.EMANDATESOURCE
+					, M.EMANDATEREFERENCENO
+					, FM.FINTYPE
+					, M.HOLDREASON
+					, M.SWAPEFFECTIVEDATE
+					, M.SECURITYMANDATE
+					, M.EMPLOYERID
+					, ED.EMPNAME
+					, M.EMPLOYEENO
+					, M.EXTERNALMANDATE
+				FROM MANDATES M
+				INNER JOIN CUSTOMERS C ON M.CUSTID = C.CUSTID
+				LEFT JOIN BANKBRANCHES BB ON M.BANKBRANCHID = BB.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL BD ON BB.BANKCODE = BD.BANKCODE
+				LEFT JOIN RMTPROVINCEVSCITY PC ON BB.CITY = PC.PCCITY
+				LEFT JOIN ENTITY E ON M.ENTITYCODE = E.ENTITYCODE
+				LEFT JOIN PARTNERBANKS PB ON M.PARTNERBANKID = PB.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN FM ON M.ORGREFERENCE = FM.FINREFERENCE
+				LEFT JOIN EMPLOYERDETAIL ED ON ED.EMPLOYERID = M.EMPLOYERID
+				WHERE NOT EXISTS (SELECT 1 FROM MANDATES_TEMP WHERE MANDATES_TEMP.MANDATEID = M.MANDATEID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1529.7_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'mandates_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1534" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'CANMA10';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('CANMA10', 'EN', 'E', 'This Manual Advise is already Utilized and cannot be canceled', '', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+    <changeSet id="ST#1537.1" author="sainaveen.y">
+		<createTable tableName="MISCELLANEOUS_POSTING_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderID" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="BatchReference" type="bigint" />
+			<column name="BatchName " type="varchar(5)"/>
+			<column name="BatchPurpose" type="varchar(200)" />
+			<column name="Reference" type="varchar(20)" />
+			<column name="DebitGL " type="varchar(20)" />
+			<column name="CreditGL " type="varchar(20)" />
+			<column name="TxnAmount" type="decimal(18,0)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="NarrLine1" type="varchar(100)" />
+			<column name="NarrLine2" type="varchar(100)" />
+			<column name="NarrLine3" type="varchar(100)" />
+			<column name="NarrLine4" type="varchar(100)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+			</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1537.2" author="sainaveen.y">
+		<addPrimaryKey constraintName="PK_MISCELL_POSTING_UPLOAD_ID" tableName="MISCELLANEOUS_POSTING_UPLOAD" columnNames="id" />
+	</changeSet>
+	
+	<changeSet id="ST#1537.3" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'MISCELLANEOUS_POSTING_UPLOAD', 'Miscellaneous Posting Upload File.', 12, 'MiscellaneousPosting', null, null, ',', 0, 1, null, 'ROW:{Batch Name, Batch Purpose, Reference, Debit GL, Credit GL, Txnamount, Value Date, Narr1, Narr2, Narr3, Narr4}', null, 'C', '/opt/PFF/BASE/hdfc/MiscellaneousPosting/upload', 'Miscellaneous_Posting_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, '0', NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD'), 'MISCELLANEOUS_POSTING_UPLOAD', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, 0, 0);
+								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'HEADERID',     		0, 'N', NULL, NULL, '${HEADER_ID}',   NULL, '0',  NULL, NULL, NULL, NULL,        			'M');								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'BATCHNAME',      	0, 'N', NULL, NULL, NULL,             NULL, '0',  NULL, NULL, NULL, NULL, 					'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'BATCHPURPOSE',      0, 'N', NULL, NULL, NULL,             NULL, '1',  NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'REFERENCE',      	0, 'N', NULL, NULL, NULL,             NULL, '2',  NULL, NULL, NULL, NULL, 					'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'DEBITGL',      		0, 'N', NULL, NULL, NULL,             NULL, '3',  NULL, NULL, NULL, NULL, 					'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'CREDITGL',          0, 'N', NULL, NULL, NULL,             NULL, '4',  NULL, NULL, NULL, NULL, 					'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'TXNAMOUNT',         0, 'N', NULL, NULL, NULL,             NULL, '5',  NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 	'M');
+			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'VALUEDATE',         0, 'N', NULL, NULL, NULL,             NULL, '6',  NULL, NULL, NULL, 'dd-MMM-yyyy', 			'M');
+			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'NARRLINE1',         0, 'N', NULL, NULL, NULL,             NULL, '7',  NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'NARRLINE2',         0, 'N', NULL, NULL, NULL,             NULL, '8',  NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'NARRLINE3',         0, 'N', NULL, NULL, NULL,             NULL, '9',  NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'NARRLINE4',         0, 'N', NULL, NULL, NULL,             NULL, '10', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'STATUS',            0, 'N', NULL, 'S',  NULL, 			  NULL, '11', NULL, NULL, NULL, NULL,          		 	'O');
+			]]>
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="ST#1537.4" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_TEMPLATE';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'MISCELLANEOUS_POSTING_TEMPLATE', 'Miscellaneous Posting Upload File.', 3, 'MiscellaneousPosting', null, null, ',', 0, 1, null, 'ROW:{Batch Name, Batch Purpose, Reference, Debit GL, Credit GL, Txnamount, Value Date, Narr1, Narr2, Narr3, Narr4}', null, 'C', '/opt/PFF/BASE/hdfc/MiscellaneousPosting/template', 'Miscellaneous_Posting_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, '0', NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE'), 'Miscellaneous_Posting_Upload', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, 0, 0);
+								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'HEADERID',     	  0, 'N', NULL,  NULL,  '${HEADER_ID}',     NULL,  '0',   NULL, NULL, NULL,   NULL,             		'M');								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'BATCHNAME',      	  0, 'N', NULL,  NULL,   NULL,              NULL,  '0',   NULL, NULL, NULL,   NULL,             		'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'BATCHPURPOSE',      0, 'N', NULL,  NULL,   NULL,              NULL,  '1',   NULL, NULL, NULL,   NULL,             		'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'REFERENCE',         0, 'N', NULL,  NULL,   NULL,              NULL,  '2',   NULL, NULL, NULL,   NULL,             		'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'DEBITGL',      	  0, 'N', NULL,  NULL,   NULL,              NULL,  '3',   NULL, NULL, NULL,   NULL,            			'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'CREDITGL',          0, 'N', NULL,  NULL,   NULL,              NULL,  '4',   NULL, NULL, NULL,   NULL,             		'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'TXNAMOUNT',         0, 'N', NULL,  NULL,   NULL,              NULL,  '5',   NULL, NULL, NULL,   'AMOUNT_MINOR:0.00',      'M');
+			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'VALUEDATE',         0, 'N', NULL,  NULL,   NULL,              NULL,  '6',   NULL, NULL, NULL,   'dd-MMM-yyyy',    		'M');
+			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'NARRLINE1',         0, 'N', NULL,  NULL,   NULL,              NULL,  '7',   NULL, NULL, NULL,   NULL,            		 	'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'NARRLINE2',         0, 'N', NULL,  NULL,   NULL,              NULL,  '8',   NULL, NULL, NULL,   NULL,             		'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'NARRLINE3',         0, 'N', NULL,  NULL,   NULL,              NULL,  '9',   NULL, NULL, NULL,   NULL,             		'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'NARRLINE4',         0, 'N', NULL,  NULL,   NULL,              NULL,  '10',  NULL, NULL, NULL,   NULL,             		'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'Miscellaneous_Posting_Upload' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'STATUS',            0, 'N', NULL,  'S',    NULL,              NULL,  '11',  NULL, NULL, NULL,   NULL,             		'O');
+			]]>
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="ST#1537.5" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='MISCELLANEOUS_POSTING_DOWNLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'MISCELLANEOUS_POSTING_DOWNLOAD', 'Miscellaneous Posting Download File.', 3, 'MiscellaneousPosting', null, null, ',', 0, 1, null, 'ROW:{Batch Name, Batch Purpose, Reference, Debit GL, Credit GL, Txnamount, Value Date, Narr1, Narr2, Narr3, Narr4, Upload Status, ErrorCode, ErrorDesc, Created On, Created By, Approved On, Approved By}', null, 'C', '/opt/PFF/BASE/hdfc/MiscellaneousPosting/download', 'Miscellaneous_Posting_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, '0', NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD'), 'Miscellaneous_Posting_Upload', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 19, 0, 0);
+								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'BATCHNAME',              0, 'N', NULL,  NULL,   NULL,            NULL,  '0',   NULL, NULL, NULL,  NULL,           'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'BATCHPURPOSE',           0, 'N', NULL,  NULL,   NULL,            NULL,  '1',   NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'REFERENCE',              0, 'N', NULL,  NULL,   NULL,            NULL,  '2',   NULL, NULL, NULL,  NULL,           'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'DEBITGL',      	       0, 'N', NULL,  NULL,   NULL,            NULL,  '3',   NULL, NULL, NULL,  NULL,           'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'CREDITGL',               0, 'N', NULL,  NULL,   NULL,            NULL,  '4',   NULL, NULL, NULL,  NULL,           'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'TXNAMOUNT',              0, 'N', NULL,  NULL,   NULL,            NULL,  '5',   NULL, NULL, NULL, 'AMOUNT:.00',    'M');
+			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'VALUEDATE',              0, 'N', NULL,  NULL,   NULL,            NULL,  '6',   NULL, NULL, NULL, 'dd-MMM-yyyy',   'M');
+			    INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'NARRLINE1',              0, 'N', NULL,  NULL,   NULL,            NULL,  '7',   NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'NARRLINE2',              0, 'N', NULL,  NULL,   NULL,            NULL,  '8',   NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'NARRLINE3',              0, 'N', NULL,  NULL,   NULL,            NULL,  '9',   NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'NARRLINE4',              0, 'N', NULL,  NULL,   NULL,            NULL,  '10',  NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'STATUS',                 0, 'N', NULL, 'S',     NULL,            NULL,  '11',  NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'ERRORCODE',              0, 'N', NULL, 'NULL',  NULL,            NULL,  '12',  NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'ERRORDESC',              0, 'N', NULL, 'NULL',  NULL,            NULL,  '13',  NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'CREATEDON',              0, 'N', NULL, 'NULL',  NULL,            NULL,  '14',  NULL, NULL, NULL,  'dd-MMM-yyyy',  'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'CREATEDNAME',            0, 'N', NULL, 'NULL',  NULL,            NULL,  '15',  NULL, NULL, NULL,  NULL,           'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'APPROVEDON',             0, 'N', NULL, 'NULL',  NULL,            NULL,  '16',  NULL, NULL, NULL,  'dd-MMM-yyyy',  'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'APPROVEDNAME',           0, 'N', NULL, 'NULL',  NULL,            NULL,  '17',  NULL, NULL, NULL,  NULL,           'O');
+			]]>
+		 </sql>
+	</changeSet>
+	
+	<changeSet id="ST#1537.6" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_VIEW');
+
+				DELETE FROM SECROLES WHERE ROLECD ='MISCELLANEOUS_POSTING_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='MISCELLANEOUS_POSTING_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD ='MISCELLANEOUS_POSTING_VIEW';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_VIEW');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='MISCELLANEOUS_POSTING_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='MISCELLANEOUS_POSTING_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='MISCELLANEOUS_POSTING_VIEW';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_MiscellaneousPostingUpload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_MiscellaneousPostingUpload_Approver';
+
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_MiscellaneousPostingUpload_Maker',    'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_MiscellaneousPostingUpload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'MISCELLANEOUS_POSTING_MAKER',        'WF Maker for Miscellaneous Posting Upload',    0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'MISCELLANEOUS_POSTING_APPROVER',     'WF Approver for Miscellaneous Posting Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'MISCELLANEOUS_POSTING_VIEW', 		'WF View for Miscellaneous Posting Upload', 	0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_MAKER'),     (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_MiscellaneousPostingUpload_Maker'),     1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_APPROVER'),  (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_MiscellaneousPostingUpload_Approver'),  1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_VIEW'),      (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_BulkHostGLUpload_Maker'), 		         1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_VIEW'), 	 (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_BulkHostGLUpload_Approver'), 	         1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'MISCELLANEOUS_POSTING_MAKER',      'Maker role from Miscellaneous Posting Upload',       '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'MISCELLANEOUS_POSTING_APPROVER',   'Approver role from Miscellaneous Posting Upload',	  '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'MISCELLANEOUS_POSTING_VIEW', 		'View role from Host GL Upload',		              '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MISCELLANEOUS_POSTING_MAKER'),     0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MISCELLANEOUS_POSTING_APPROVER'),  0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCELLANEOUS_POSTING_VIEW'), 	   (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MISCELLANEOUS_POSTING_VIEW'),  	   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);			
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

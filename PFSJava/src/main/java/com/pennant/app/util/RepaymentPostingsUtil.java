@@ -110,6 +110,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.LPPExtension;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -595,7 +596,7 @@ public class RepaymentPostingsUtil {
 				FinODDetails latePftODTotal = getLatePftODTotal(repayQueue);
 
 				if (latePftODTotal != null) {
-					if (!financeMain.isSimulateAccounting()
+					if (LPPExtension.LPP_DUE_CREATION_REQ && !financeMain.isSimulateAccounting()
 							&& (repayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0
 									|| repayQueue.getLatePayPftWaivedNow().compareTo(BigDecimal.ZERO) > 0)) {
 						saveFinLPPAmount(repayQueue, valueDate, rpyQueueHeader, latePftODTotal);
@@ -606,7 +607,7 @@ public class RepaymentPostingsUtil {
 
 				FinODDetails odDetail = getODDetail(repayQueue);
 				if (odDetail != null) {
-					if (!financeMain.isSimulateAccounting()
+					if (LPPExtension.LPP_DUE_CREATION_REQ && !financeMain.isSimulateAccounting()
 							&& (repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
 									|| repayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
 						saveFinODCAmount(repayQueue, valueDate, rpyQueueHeader, odDetail);
