@@ -26,7 +26,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ExtendedFieldMaintenanceServiceImpl extends GenericService<ExtendedFieldMaintenance>
 		implements ExtendedFieldMaintenanceService {
@@ -60,8 +60,7 @@ public class ExtendedFieldMaintenanceServiceImpl extends GenericService<Extended
 		}
 
 		ExtendedFieldMaintenance efm = (ExtendedFieldMaintenance) aAuditHeader.getAuditDetail().getModelData();
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (efm.isWorkflow()) {

@@ -80,7 +80,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/CollateralHeaderDialog.zul file.
@@ -337,8 +337,8 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
-		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
+
+		aFinMaintainInstruction = ObjectUtil.clone(finMaintainInstruction);
 
 		doWriteComponentsToBean(aFinMaintainInstruction);
 

@@ -95,7 +95,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> implements FeeReceiptService {
 	private static final Logger logger = LogManager.getLogger(FeeReceiptServiceImpl.class);
@@ -253,8 +253,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (rch.isWorkflow()) {
@@ -442,8 +441,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Accounting Process Execution

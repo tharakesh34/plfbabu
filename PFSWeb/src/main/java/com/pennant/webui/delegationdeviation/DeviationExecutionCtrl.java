@@ -58,7 +58,7 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostDeviationHook;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class DeviationExecutionCtrl {
 	private static final Logger logger = LogManager.getLogger(DeviationExecutionCtrl.class);
@@ -165,8 +165,7 @@ public class DeviationExecutionCtrl {
 				.getWorkflowRoles(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 
 		// Clone the object.
-		Cloner cloner = new Cloner();
-		FinanceDetail aFinanceDetail = cloner.deepClone(financeDetail);
+		FinanceDetail aFinanceDetail = ObjectUtil.clone(financeDetail);
 
 		// Prepare additional data like co-applicants, collateral details.
 		// *** Co-applicant's details. ***

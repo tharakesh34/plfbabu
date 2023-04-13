@@ -84,7 +84,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
@@ -326,8 +326,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected void doSave() {
 		logger.debug("Entering");
 
-		Cloner cloner = new Cloner();
-		FinMaintainInstruction aFinMaintainInstruction = cloner.deepClone(getFinMaintainInstruction());
+		FinMaintainInstruction aFinMaintainInstruction = ObjectUtil.clone(getFinMaintainInstruction());
 
 		doSetValidation();
 
@@ -1072,8 +1071,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			}
 			tdsEndDate = this.tdsEndDate.getValue();
 			tdsStartDate = this.tdsStartDate.getValue();
-			if (DateUtil.compare(tdsformateEndDate, tdsEndDate) == -1
-					|| DateUtil.compare(tdsStartDate, tdsEndDate) == 0
+			if (DateUtil.compare(tdsformateEndDate, tdsEndDate) == -1 || DateUtil.compare(tdsStartDate, tdsEndDate) == 0
 					|| DateUtil.compare(tdsEndDate, tdsStartDate) == -1) {
 				throw new WrongValueException(this.tdsEndDate,
 						"End Date must be after" + " " + DateUtil.format(this.tdsStartDate.getValue(), "dd/MM/yyyy")

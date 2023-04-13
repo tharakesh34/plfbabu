@@ -1,11 +1,38 @@
 package com.pennapps.core.util;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 public class ObjectUtil {
 	private ObjectUtil() {
 		super();
+	}
+
+	public static <T extends Serializable> T clone(T object) {
+		return SerializationUtils.clone(object);
+	}
+
+	public static <T extends Serializable> List<T> clone(List<T> objects) {
+		List<T> list = new ArrayList<>();
+
+		for (T object : objects) {
+			clone(object);
+		}
+
+		return list;
+	}
+
+	public static <T extends Serializable> Map<Long, T> clone(Map<Long, T> objects) {
+		Map<Long, T> map = new HashMap<>();
+
+		return map;
 	}
 
 	public static String valueAsString(Object object) {

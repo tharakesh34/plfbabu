@@ -134,7 +134,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>VASRecording</b>.<br>
@@ -630,8 +630,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		VASRecording vASRecording = new VASRecording("");
 		BeanUtils.copyProperties((VASRecording) auditHeader.getAuditDetail().getModelData(), vASRecording);
 
@@ -2150,10 +2149,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (detail.getCustDocIssuedOn() != null && detail.getCustDocExpDate() != null) {
 						if (detail.getCustDocIssuedOn().compareTo(detail.getCustDocExpDate()) > 0) {
 							String[] valueParm = new String[2];
-							valueParm[0] = DateUtil.format(detail.getCustDocIssuedOn(),
-									PennantConstants.XMLDateFormat);
-							valueParm[1] = DateUtil.format(detail.getCustDocExpDate(),
-									PennantConstants.XMLDateFormat);
+							valueParm[0] = DateUtil.format(detail.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
+							valueParm[1] = DateUtil.format(detail.getCustDocExpDate(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 							return auditDetail;

@@ -262,7 +262,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
@@ -594,8 +594,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				recordType = rch.getRecordType();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(rch);
+				befImage = ObjectUtil.clone(rch);
 				receiptData.getReceiptHeader().setBefImage(befImage);
 			}
 
@@ -1718,9 +1717,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (!isValidateData(true)) {
 			return;
 		}
-		Cloner cloner = new Cloner();
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 		setOrgReceiptData(tempReceiptData);
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		Date maturityDate = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getMaturityDate();
@@ -2915,8 +2913,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Making Single Set of Repay Schedule Details and sent to Rendering
-		Cloner cloner = new Cloner();
-		List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+		List<RepayScheduleDetail> tempRpySchdList = ObjectUtil.clone(rpySchdList);
 		Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 		for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 
@@ -3242,8 +3239,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		rch.setNextTaskId(curNextTaskId);
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptData aReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData aReceiptData = ObjectUtil.clone(receiptData);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -7325,9 +7321,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Principal", PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Principal",
+							PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
@@ -7336,9 +7332,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Interest", PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Interest",
+							PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}
@@ -8052,8 +8048,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", module);
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
-			Cloner cloner = new Cloner();
-			FinanceDetail fd = cloner.deepClone(getFinanceDetail());
+			FinanceDetail fd = ObjectUtil.clone(getFinanceDetail());
 			fd.setFinScheduleData(befFinSchedData);
 			map.put("financeDetail", fd);
 			map.put("isEnquiry", true);

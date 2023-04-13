@@ -170,7 +170,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/CrossLoanKnockOffDialog.zul
@@ -375,9 +375,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					recordType = finReceiptHeader.getRecordType();
 					isCancel = crossLoanHeader.isCancelProcess();
 
-					Cloner cloner = new Cloner();
-					befImage = cloner.deepClone(crossLoanHeader);
-					orgFinanceDetail = cloner.deepClone(financeDetail);
+					befImage = ObjectUtil.clone(crossLoanHeader);
+					orgFinanceDetail = ObjectUtil.clone(financeDetail);
 					crossLoanHeader.setBefImage(befImage);
 				}
 			}
@@ -956,9 +955,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		if (!isValidateData(true)) {
 			return;
 		}
-		Cloner cloner = new Cloner();
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 		setOrgReceiptData(tempReceiptData);
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
@@ -1844,8 +1842,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		}
 
 		// Making Single Set of Repay Schedule Details and sent to Rendering
-		Cloner cloner = new Cloner();
-		List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+		List<RepayScheduleDetail> tempRpySchdList = ObjectUtil.clone(rpySchdList);
 		Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 		for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 
@@ -2111,8 +2108,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		}
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		CrossLoanKnockOff crossLoanHKnockOff = cloner.deepClone(crossLoanHeader);
+		CrossLoanKnockOff crossLoanHKnockOff = ObjectUtil.clone(crossLoanHeader);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {

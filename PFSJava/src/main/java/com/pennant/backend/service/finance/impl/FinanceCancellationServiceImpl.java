@@ -104,7 +104,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
 	private static final Logger logger = LogManager.getLogger(FinanceCancellationServiceImpl.class);
@@ -188,8 +188,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -412,8 +411,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		Date appData = SysParamUtil.getAppDate();
 

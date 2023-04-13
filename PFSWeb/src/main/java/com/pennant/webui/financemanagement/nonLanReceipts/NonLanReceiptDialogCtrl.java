@@ -126,7 +126,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
@@ -304,8 +304,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				recordType = finReceiptHeader.getRecordType();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(finReceiptHeader);
+				befImage = ObjectUtil.clone(finReceiptHeader);
 				receiptData.getReceiptHeader().setBefImage(befImage);
 			}
 
@@ -1189,8 +1188,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptData aReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData aReceiptData = ObjectUtil.clone(receiptData);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {

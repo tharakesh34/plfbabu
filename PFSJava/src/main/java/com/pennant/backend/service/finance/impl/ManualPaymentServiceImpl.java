@@ -107,7 +107,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
 	private static final Logger logger = LogManager.getLogger(ManualPaymentServiceImpl.class);
@@ -266,8 +266,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail fd = repayData.getFinanceDetail();
@@ -540,8 +539,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		Date appDate = SysParamUtil.getAppDate();
@@ -1196,8 +1194,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData = calculateRepayments(repayData, fd, finServiceInst, false, null);
 
 		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
-			Cloner cloner = new Cloner();
-			List<FinanceScheduleDetail> schedules = cloner.deepClone(schdData.getFinanceScheduleDetails());
+			List<FinanceScheduleDetail> schedules = ObjectUtil.clone(schdData.getFinanceScheduleDetails());
 			if (finServiceInst.getToDate() != null) {
 				schedules = rePrepareScheduleTerms(schedules, finServiceInst.getToDate());
 				schdData.setFinanceScheduleDetails(schedules);

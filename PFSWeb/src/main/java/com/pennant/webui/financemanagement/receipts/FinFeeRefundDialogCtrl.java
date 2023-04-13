@@ -112,7 +112,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundDialog.zul
@@ -213,8 +213,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			if (arguments.containsKey("finFeeRefundHeader")) {
 				feeRefundHeader = (FinFeeRefundHeader) arguments.get("finFeeRefundHeader");
 
-				Cloner cloner = new Cloner();
-				FinFeeRefundHeader befImage = cloner.deepClone(feeRefundHeader);
+				FinFeeRefundHeader befImage = ObjectUtil.clone(feeRefundHeader);
 				feeRefundHeader.setBefImage(befImage);
 
 			}

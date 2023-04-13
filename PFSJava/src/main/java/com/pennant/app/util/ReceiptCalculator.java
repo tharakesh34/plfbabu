@@ -122,7 +122,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReceiptCalculator {
 	private static Logger logger = LogManager.getLogger(ReceiptCalculator.class);
@@ -3897,8 +3897,7 @@ public class ReceiptCalculator {
 			List<Taxes> taxDetails = header.getTaxDetails();
 			if (CollectionUtils.isNotEmpty(taxDetails)) {
 				for (Taxes taxDetail : taxDetails) {
-					Cloner cloner = new Cloner();
-					Taxes taxes = cloner.deepClone(taxDetail);
+					Taxes taxes = ObjectUtil.clone(taxDetail);
 					taxes.setId(Long.MIN_VALUE);
 					taxHeader.getTaxDetails().add(taxes);
 				}

@@ -172,7 +172,7 @@ import com.pennanttech.pff.external.insurance.InsuranceCalculatorService;
 import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
 import com.pennanttech.pff.model.InsPremiumCalculatorResponse;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/configuration/VASRecording/vASRecordingDialog.zul file. <br>
@@ -2935,8 +2935,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		if (getFinanceDetail() != null) {
 			FinanceDetail detail = getFinanceDetail();
 
-			Cloner cloner = new Cloner();
-			FinanceDetail clonedDetail = cloner.deepClone(detail);
+			FinanceDetail clonedDetail = ObjectUtil.clone(detail);
 
 			CustomerDetails customerDetails = clonedDetail.getCustomerDetails();
 			formatCustomerData(customerDetails.getCustomer());

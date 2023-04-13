@@ -193,7 +193,7 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHeader>
 		implements ReceiptCancellationService {
@@ -341,8 +341,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 
@@ -484,8 +483,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData rd = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
@@ -2800,8 +2798,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 

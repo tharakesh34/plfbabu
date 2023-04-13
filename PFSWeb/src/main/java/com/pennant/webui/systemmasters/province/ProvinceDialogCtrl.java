@@ -75,7 +75,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/SystemMaster/Province/provinceDialog.zul file.
@@ -501,8 +501,7 @@ public class ProvinceDialogCtrl extends GFCBaseCtrl<Province> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		Cloner cloner = new Cloner();
-		aProvince.setTaxDetailList(cloner.deepClone(getTaxDetailList()));
+		aProvince.setTaxDetailList(ObjectUtil.clone(getTaxDetailList()));
 		doRemoveValidation();
 
 		if (wve.size() > 0) {

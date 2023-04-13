@@ -49,7 +49,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHeader>
 		implements ReceiptRealizationService {
@@ -106,8 +106,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
@@ -190,8 +189,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		}
 
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData rd = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader rch = rd.getReceiptHeader();
 

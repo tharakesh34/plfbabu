@@ -81,7 +81,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.staticlist.AppStaticList;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private static final long serialVersionUID = 8661799804403963415L;
@@ -1287,8 +1287,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
-		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
+		aFinMaintainInstruction = ObjectUtil.clone(finMaintainInstruction);
 
 		doClearMessage();
 

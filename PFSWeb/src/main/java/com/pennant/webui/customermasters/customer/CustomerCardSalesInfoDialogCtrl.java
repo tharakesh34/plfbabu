@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> {
 	private static final long serialVersionUID = -7522534300621535097L;
@@ -566,8 +566,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		this.recordStatus.setValue(aCustCardSales.getRecordStatus());
 
 		if (aCustCardSales.getCustCardMonthSales().size() > 0) {
-			Cloner cloner = new Cloner();
-			CustCardSales detail = (CustCardSales) cloner.deepClone(aCustCardSales);
+			CustCardSales detail = (CustCardSales) ObjectUtil.clone(aCustCardSales);
 			List<CustCardSalesDetails> custCardMonthSales = detail.getCustCardMonthSales();
 			for (int i = 0; i < custCardMonthSales.size(); i++) {
 				custCardMonthSales.get(i).setKeyValue(i + 1);

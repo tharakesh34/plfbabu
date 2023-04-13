@@ -162,7 +162,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Commitment/Commitment/commitmentDialog.zul file.
@@ -2021,8 +2021,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 		// Commitment Rates
-		Cloner cloner = new Cloner();
-		aCommitment.setCommitmentRateList(cloner.deepClone(this.commitmentRateDetailList));
+		aCommitment.setCommitmentRateList(ObjectUtil.clone(this.commitmentRateDetailList));
 
 		try {
 			if (wve.size() == 0) {

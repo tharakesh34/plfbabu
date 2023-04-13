@@ -122,7 +122,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerDocument/customerDocumentDialog.zul file.
@@ -267,8 +267,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			setSecUserPagedListWrapper();
 
 			if (arguments.containsKey("customerDocument")) {
-				Cloner cloner = new Cloner();
-				this.customerDocument = cloner.deepClone((CustomerDocument) arguments.get("customerDocument"));
+				this.customerDocument = ObjectUtil.clone((CustomerDocument) arguments.get("customerDocument"));
 				CustomerDocument befImage = new CustomerDocument();
 				BeanUtils.copyProperties(this.customerDocument, befImage);
 				this.customerDocument.setBefImage(befImage);

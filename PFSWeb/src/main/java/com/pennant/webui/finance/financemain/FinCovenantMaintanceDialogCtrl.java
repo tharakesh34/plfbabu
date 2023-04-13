@@ -67,7 +67,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinCovenantMaintanceDialog.zul file.
@@ -417,8 +417,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 		logger.debug("Entering");
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
-		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(getFinMaintainInstruction());
+		aFinMaintainInstruction = ObjectUtil.clone(getFinMaintainInstruction());
 
 		doWriteComponentsToBean(aFinMaintainInstruction);
 

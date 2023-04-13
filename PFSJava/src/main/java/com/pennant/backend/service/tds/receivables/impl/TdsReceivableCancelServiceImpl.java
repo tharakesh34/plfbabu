@@ -47,7 +47,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>TdsReceivable</b>.<br>
@@ -84,8 +84,7 @@ public class TdsReceivableCancelServiceImpl extends GenericService<TdsReceivable
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		TdsReceivable tdsReceivable = (TdsReceivable) auditHeader.getAuditDetail().getModelData();
 
