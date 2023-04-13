@@ -1,4 +1,3 @@
-
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
@@ -1555,8 +1554,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	/*
 	 * public FinRepayHeader getRepayHeader() { return repayHeader; }
 	 * 
-	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader =
-	 * repayHeader; }
+	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader = repayHeader; }
 	 */
 
 	public String getCollectionAgentCode() {

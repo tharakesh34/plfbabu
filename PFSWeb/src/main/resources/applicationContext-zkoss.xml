@@ -6175,4 +6175,5 @@
 
 	<bean id ="kycDetailsUploadList" class ="com.pennant.pff.customer.upload.list.KycDetailsUploadListCtrl" parent ="uploadList" />
 	
+	<bean id="createReceiptUploadList" class="com.pennant.pff.receipt.web.CreateReceiptUploadListCtrl" parent="uploadList"/>
 </beans>

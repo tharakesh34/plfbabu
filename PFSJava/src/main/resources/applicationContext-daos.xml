@@ -13241,4 +13241,10 @@
 	<bean id = "customerPhoneNumberUpload" class = "com.pennant.pff.customer.service.impl.CustomerPhoneNumberUpload" parent="kycDetailsUploadService"/>
 	
 	<bean id = "customerEmailUpload" class = "com.pennant.pff.customer.service.impl.CustomerEmailUpload" parent="kycDetailsUploadService"/>
+	
+	<bean id="createReceiptUploadService" class="com.pennant.pff.receipt.service.impl.CreateReceiptUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="createReceiptUploadDataValidator" class="com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator"/>
+	
+	<bean id="createReceiptUploadDAO" class="com.pennant.pff.receipt.dao.impl.CreateReceiptUploadDAOImpl" parent="sequenceDao"/>
 </beans>

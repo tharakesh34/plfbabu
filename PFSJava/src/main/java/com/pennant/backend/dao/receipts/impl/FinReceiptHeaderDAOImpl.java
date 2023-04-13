@@ -60,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -1504,6 +1505,30 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
+	public boolean isReceiptExists(CreateReceiptUpload rud, String type) {
+		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader");
+		sql.append(type);
+		sql.append(" rh Inner Join FinReceiptDetail").append(type);
+		sql.append(" rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rh.ReceiptMode = ? and rd.ChequeAcNo = ? and rh.TransactionRef = ?");
+		sql.append("and (rh.ReceiptModeStatus in ('A') or rh.ReceiptModeStatus is null)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return !(this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getChequeNumber());
+			ps.setString(index, rud.getTransactionRef());
+
+		}, (rs, roNum) -> {
+			return rs.getLong(1);
+		}).isEmpty());
+	}
+
+	@Override
 	public boolean isChequeExists(ReceiptUploadDetail rud) {
 		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
 		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
@@ -1539,7 +1564,75 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
+	public boolean isChequeExists(CreateReceiptUpload rud) {
+		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
+		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.BankCode = ? and rd.Status not in (?, ?) ");
+		sql.append(" Union All");
+		sql.append(" Select rh.ReceiptID From FinReceiptHeader_Temp rh");
+		sql.append(" Inner Join FinReceiptDetail_Temp rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.BankCode = ? and rd.Status not in (?, ?) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, rud.getBankCode());
+			ps.setString(index++, "B");
+			ps.setString(index++, "C");
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, rud.getBankCode());
+			ps.setString(index++, "B");
+			ps.setString(index, "C");
+		}, (rs, rowNum) -> {
+			return rs.getLong(1);
+		}).size() > 0;
+	}
+
+	@Override
 	public boolean isOnlineExists(ReceiptUploadDetail rud) {
+		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
+		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.Status not in (?, ?) ");
+		sql.append(" Union All");
+		sql.append(" Select rh.ReceiptID From FinReceiptHeader_Temp rh");
+		sql.append(" Inner Join FinReceiptDetail_Temp rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.Status not in (?, ?) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, "B");
+			ps.setString(index++, "C");
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, "B");
+			ps.setString(index, "C");
+		}, (rs, rowNum) -> {
+			return rs.getLong(1);
+		}).size() > 0;
+	}
+
+	@Override
+	public boolean isOnlineExists(CreateReceiptUpload rud) {
 		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
 		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
 		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
