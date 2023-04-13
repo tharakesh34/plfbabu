@@ -12,4 +12,6 @@ public interface MiscellaneousPostingUploadDAO {
 	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
 
 	String getSqlQuery();
+
+	void updateBatchReference(List<MiscellaneousPostingUpload> details, long batchReference);
 }

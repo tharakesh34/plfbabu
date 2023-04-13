@@ -19,7 +19,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 	@Override
 	public List<MiscellaneousPostingUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select ID, HeaderId, BatchName");
-		sql.append(", BatchPurpose, Reference, FinID, DebitGL, CreditGL");
+		sql.append(", BatchPurpose, Reference, FinID, BatchReference, DebitGL, CreditGL");
 		sql.append(", TxnAmount, ValueDate, NarrLine1, NarrLine2, NarrLine3, NarrLine4");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From MISCELLANEOUS_POSTING_UPLOAD");
@@ -35,7 +35,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 			mp.setBatchName(rs.getString("BatchName"));
 			mp.setBatchPurpose(rs.getString("BatchPurpose"));
 			mp.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
-			// mp.setBatchReference(JdbcUtil.getLong(rs.getObject("BatchReference")));
+			mp.setBatchReference(rs.getLong("BatchReference"));
 			mp.setReference(rs.getString("Reference"));
 			mp.setDebitGL(rs.getString("DebitGL"));
 			mp.setCreditGL(rs.getString("CreditGL"));
@@ -56,7 +56,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 
 	@Override
 	public void update(List<MiscellaneousPostingUpload> details) {
-		String sql = "Update MISCELLANEOUS_POSTING_UPLOAD set FinID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ?, BatchReference = ? Where ID = ?";
+		String sql = "Update MISCELLANEOUS_POSTING_UPLOAD set FinID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -72,7 +72,6 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());
 				ps.setString(++index, detail.getErrorDesc());
-				ps.setLong(++index, detail.getBatchReference());
 
 				ps.setLong(++index, detail.getId());
 			}
@@ -117,7 +116,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  mp.BatchName, mp.BatchPurpose, mp.Reference, mp.DebitGL, mp.CreditGL, mp.TxnAmount");
-		sql.append(", mp.ValueDate, mp.NarrLine1, mp.NarrLine2, mp.NarrLine3, mp.NarrLine4");
+		sql.append(", mp.ValueDate, mp.NarrLine1, mp.NarrLine2, mp.NarrLine3, mp.NarrLine4, mp.BatchReference");
 		sql.append(", mp.Status, mp.ErrorCode, mp.ErrorDesc, uh.ApprovedOn, uh.CreatedOn");
 		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append("  From MISCELLANEOUS_POSTING_UPLOAD mp");
@@ -127,6 +126,31 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 		sql.append("  Where uh.Id = :HEADER_ID");
 
 		return sql.toString();
+	}
+
+	@Override
+	public void updateBatchReference(List<MiscellaneousPostingUpload> details, long batchReference) {
+		String sql = "Update MISCELLANEOUS_POSTING_UPLOAD  Set BatchReference = ? Where ID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 0;
+				MiscellaneousPostingUpload detail = details.get(i);
+
+				ps.setLong(++index, batchReference);
+
+				ps.setObject(++index, detail.getId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return details.size();
+			}
+		});
 	}
 
 }
