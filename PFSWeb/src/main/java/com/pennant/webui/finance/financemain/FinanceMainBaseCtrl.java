@@ -6689,9 +6689,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						Labels.getLabel("label_FinanceMainDialog_ODGraceDays.value"), false, false));
 			}
 			if (!this.odMinAmount.isDisabled()) {
-				if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
-					this.odMinAmount.setConstraint(new PTDecimalValidator(
-							Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+				if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+					if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						this.odMinAmount.setConstraint(new PTDecimalValidator(
+								Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+					}
 				}
 			}
 		}
