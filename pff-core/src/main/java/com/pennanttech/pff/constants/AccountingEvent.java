@@ -136,6 +136,7 @@ public class AccountingEvent {
 	public static final String EVENTCTG_GOLD = "G";
 	public static final String EVENTCTG_CD = "C";
 	public static final String EXTRF = "EXTRF";
+	public static final String REV_WRITEOFF = "REVWRITE";
 
 	public static boolean isDisbursementEvent(String eventCode) {
 		if (StringUtils.isEmpty(eventCode)) {
