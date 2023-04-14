@@ -6135,6 +6135,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				rcd.setValueDate(rud.getValueDate());
 			}
 
+			rud.setValueDate(rcd.getValueDate());
+
 			rcdList.add(rcd);
 		}
 
@@ -6178,6 +6180,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (ma.getValueDate() == null) {
 				rcd.setValueDate(rud.getValueDate());
 			}
+
+			rud.setValueDate(rcd.getValueDate());
 
 			rcdList.add(rcd);
 		}
