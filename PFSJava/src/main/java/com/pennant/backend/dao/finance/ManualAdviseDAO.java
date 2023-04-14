@@ -197,4 +197,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
 
 	List<ManualAdvise> getAdvisesList(long finID, int adviseType, String type);
+
+	List<ManualAdviseMovements> getAdvisePaidAmount(long receiptId, String finReference);
 }

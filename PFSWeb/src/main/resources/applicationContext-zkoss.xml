@@ -6175,4 +6175,7 @@
 
 	<bean id ="kycDetailsUploadList" class ="com.pennant.pff.customer.upload.list.KycDetailsUploadListCtrl" parent ="uploadList" />
 	
+	<bean id="writeOffUploadList" class="com.pennant.pff.writeoff.upload.list.WriteOffUploadListCtrl" parent="uploadList" />
+	
+	<bean id="revWriteOffUploadList" class="com.pennant.pff.revwriteoff.upload.list.RevWriteOffUploadListCtrl" parent="uploadList" />
 </beans>

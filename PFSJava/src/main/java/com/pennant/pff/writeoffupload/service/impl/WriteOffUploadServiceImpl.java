@@ -1,0 +1,509 @@
+package com.pennant.pff.writeoffupload.service.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.zkoss.util.resource.Labels;
+
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.FinanceWriteoffHeader;
+import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceWriteoffService;
+import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.UploadConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennant.pff.writeoffupload.dao.WriteOffUploadDAO;
+import com.pennant.pff.writeoffupload.exception.WriteOffUploadError;
+import com.pennant.pff.writeoffupload.model.WriteOffUploadDetail;
+import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
+
+public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
+	private static final Logger logger = LogManager.getLogger(WriteOffUploadServiceImpl.class);
+
+	private WriteOffUploadDAO writeOffUploadDAO;
+	private FinanceMainDAO financeMainDAO;
+	private ValidateRecord writeOffUploadValidateRecord;
+	private FinanceWriteoffService financeWriteoffService;
+	private ReceiptService receiptService;
+	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private FinanceDetailService financeDetailService;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+
+	@Override
+	public void doApprove(List<FileUploadHeader> headers) {
+		new Thread(() -> {
+
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			TransactionStatus txStatus = null;
+
+			Date appDate = SysParamUtil.getAppDate();
+
+			for (FileUploadHeader header : headers) {
+				logger.info("Processing the File {}", header.getFileName());
+
+				List<WriteOffUploadDetail> details = writeOffUploadDAO.getDetails(header.getId());
+
+				header.setAppDate(appDate);
+				header.setTotalRecords(details.size());
+				int sucessRecords = 0;
+				int failRecords = 0;
+
+				List<String> key = new ArrayList<>();
+
+				for (WriteOffUploadDetail detail : details) {
+
+					String reference = detail.getReference();
+
+					if (key.contains(reference)) {
+						setError(detail, WriteOffUploadError.WOUP009);
+						failRecords++;
+						continue;
+					}
+
+					key.add(reference);
+
+					doValidate(header, detail);
+
+					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+						failRecords++;
+					} else {
+						sucessRecords++;
+					}
+				}
+
+				try {
+
+					header.setSuccessRecords(sucessRecords);
+					header.setFailureRecords(failRecords);
+
+					StringBuilder remarks = new StringBuilder("Process Completed");
+
+					if (failRecords > 0) {
+						remarks.append(" with exceptions, ");
+					}
+
+					remarks.append(" Total Records : ").append(header.getTotalRecords());
+					remarks.append(" Success Records : ").append(sucessRecords);
+					remarks.append(" Failed Records : ").append(failRecords);
+
+					logger.info("Processed the File {}", header.getFileName());
+
+					txStatus = transactionManager.getTransaction(txDef);
+
+					writeOffUploadDAO.update(details);
+
+					List<FileUploadHeader> headerList = new ArrayList<>();
+					headerList.add(header);
+					updateHeader(headerList, true);
+
+					transactionManager.commit(txStatus);
+				} catch (Exception e) {
+					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+					if (txStatus != null) {
+						transactionManager.rollback(txStatus);
+					}
+				} finally {
+					txStatus = null;
+				}
+
+				logger.info("WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
+
+				processWriteOffLoan(header);
+
+				logger.info("WriteOff Upload Process is Completed for the Header ID {}", header.getId());
+			}
+		}).start();
+
+	}
+
+	private void processWriteOffLoan(FileUploadHeader header) {
+		List<WriteOffUploadDetail> details = writeOffUploadDAO.getDetails(header.getId());
+		Date appDate = SysParamUtil.getAppDate();
+		for (WriteOffUploadDetail detail : details) {
+			if ("S".equals(detail.getStatus())) {
+				detail.setAppDate(appDate);
+				processSucessWriteOff(detail, header);
+			}
+		}
+	}
+
+	private void processSucessWriteOff(WriteOffUploadDetail detail, FileUploadHeader fuh) {
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+		try {
+			long finId = financeMainDAO.getFinID(detail.getReference(), TableType.MAIN_TAB);
+			FinanceWriteoffHeader header = financeWriteoffService.getFinanceWriteoffDetailById(finId, "_View", null,
+					FinServiceEvent.WRITEOFFPAY);
+
+			setWriteOffTotals(header);
+			header.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
+
+			AuditHeader auditHeader = getAuditHeader(header, PennantConstants.TRAN_WF);
+
+			this.financeWriteoffService.doApprove(auditHeader);
+
+			saveLog(detail, fuh);
+
+			this.transactionManager.commit(transactionStatus);
+		} catch (Exception e) {
+			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+			transactionManager.rollback(transactionStatus);
+
+			String error = StringUtils.trimToEmpty(e.getMessage());
+
+			if (error.length() > 1999) {
+				error = error.substring(0, 1999);
+			}
+
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc(error);
+			this.writeOffUploadDAO.update(detail);
+		}
+
+		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+			updateFailRecords(1, 1, detail.getHeaderId());
+		}
+	}
+
+	private void saveLog(WriteOffUploadDetail detail, FileUploadHeader header) {
+
+		long receiptId = finReceiptHeaderDAO.getMaxReceiptIdFinRef(detail.getReference());
+
+		detail.setReceiptId(receiptId);
+		detail.setEvent(FinanceConstants.WRITEOFF);
+
+		writeOffUploadDAO.saveLog(detail, header);
+	}
+
+	private void setWriteOffTotals(FinanceWriteoffHeader header) {
+		FinanceWriteoff fw = header.getFinanceWriteoff();
+		if (fw.getWriteoffPrincipal().compareTo(BigDecimal.ZERO) == 0
+				&& fw.getWriteoffProfit().compareTo(BigDecimal.ZERO) == 0
+				&& fw.getWriteoffSchFee().compareTo(BigDecimal.ZERO) == 0) {
+
+			fw.setWriteoffPrincipal(fw.getUnPaidSchdPri());
+			fw.setWriteoffProfit(fw.getUnPaidSchdPft());
+			fw.setWriteoffSchFee(fw.getUnpaidSchFee());
+		}
+
+		List<FinanceScheduleDetail> financeScheduleDetails;
+		try {
+			financeScheduleDetails = calScheduleWriteOffDetails(header);
+			header.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(financeScheduleDetails);
+		} catch (Exception e) {
+			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+		}
+
+	}
+
+	private List<FinanceScheduleDetail> calScheduleWriteOffDetails(FinanceWriteoffHeader financeWriteoffHeader) {
+		logger.debug("Entering");
+
+		FinanceWriteoff fw = financeWriteoffHeader.getFinanceWriteoff();
+
+		BigDecimal woPriAmt = fw.getWriteoffPrincipal();
+		BigDecimal woPftAmt = fw.getWriteoffProfit();
+		BigDecimal woSchFee = fw.getWriteoffSchFee();
+
+		List<FinanceScheduleDetail> effectedFinSchDetails = financeWriteoffHeader.getFinanceDetail()
+				.getFinScheduleData().getFinanceScheduleDetails();
+
+		if (effectedFinSchDetails != null && effectedFinSchDetails.size() > 0) {
+			for (int i = 0; i < effectedFinSchDetails.size(); i++) {
+
+				FinanceScheduleDetail curSchdl = effectedFinSchDetails.get(i);
+
+				// Reset Write-off Principal Amount
+				if (woPriAmt.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal schPriBal = curSchdl.getPrincipalSchd().subtract(curSchdl.getSchdPriPaid())
+							.subtract(curSchdl.getWriteoffPrincipal());
+					if (schPriBal.compareTo(BigDecimal.ZERO) > 0) {
+						if (woPriAmt.compareTo(schPriBal) >= 0) {
+							curSchdl.setWriteoffPrincipal(curSchdl.getWriteoffPrincipal().add(schPriBal));
+							woPriAmt = woPriAmt.subtract(schPriBal);
+						} else {
+							curSchdl.setWriteoffPrincipal(curSchdl.getWriteoffPrincipal().add(woPriAmt));
+							woPriAmt = BigDecimal.ZERO;
+						}
+					}
+				}
+				// Reset Write-off Profit Amount
+				if (woPftAmt.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal schPftBal = curSchdl.getProfitSchd().subtract(curSchdl.getSchdPftPaid())
+							.subtract(curSchdl.getWriteoffProfit());
+					if (schPftBal.compareTo(BigDecimal.ZERO) > 0) {
+						if (woPftAmt.compareTo(schPftBal) >= 0) {
+							curSchdl.setWriteoffProfit(curSchdl.getWriteoffProfit().add(schPftBal));
+							woPftAmt = woPftAmt.subtract(schPftBal);
+						} else {
+							curSchdl.setWriteoffProfit(curSchdl.getWriteoffProfit().add(woPftAmt));
+							woPftAmt = BigDecimal.ZERO;
+						}
+					}
+				}
+
+				// Reset Write-off Schedule Fee
+				if (woSchFee.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal schFee = curSchdl.getFeeSchd()
+							.subtract(curSchdl.getSchdFeePaid().subtract(curSchdl.getWriteoffSchFee()));
+					if (schFee.compareTo(BigDecimal.ZERO) > 0) {
+						if (woSchFee.compareTo(schFee) >= 0) {
+							curSchdl.setWriteoffSchFee(curSchdl.getWriteoffSchFee().add(schFee));
+							woSchFee = woSchFee.subtract(schFee);
+						} else {
+							curSchdl.setWriteoffSchFee(curSchdl.getWriteoffSchFee().add(woSchFee));
+							woSchFee = BigDecimal.ZERO;
+						}
+					}
+				}
+
+			}
+		}
+
+		return effectedFinSchDetails;
+
+	}
+
+	@Override
+	public void doReject(List<FileUploadHeader> headers) {
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+		try {
+			txStatus = transactionManager.getTransaction(txDef);
+
+			writeOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+
+			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			updateHeader(headers, false);
+
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+		}
+	}
+
+	@Override
+	public void doValidate(FileUploadHeader header, Object object) {
+		WriteOffUploadDetail detail = null;
+
+		if (object instanceof WriteOffUploadDetail) {
+			detail = (WriteOffUploadDetail) object;
+		}
+
+		if (detail == null) {
+			throw new AppException("Invalid Data transferred...");
+		}
+
+		detail.setHeaderId(header.getId());
+
+		String reference = detail.getReference();
+
+		if (StringUtils.isBlank(reference)) {
+			setError(detail, WriteOffUploadError.WOUP001);
+			return;
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
+
+		if (fm == null) {
+			setError(detail, WriteOffUploadError.WOUP002);
+			return;
+		}
+
+		long finID = fm.getFinID();
+		boolean isPending = receiptService.isReceiptsPending(finID, Long.MIN_VALUE);
+		boolean receiptsQueue = receiptUploadDetailDAO.isReceiptsQueue(reference);
+		boolean presentmentsInQueue = finReceiptHeaderDAO.checkPresentmentsInQueue(finID);
+
+		if (isPending || receiptsQueue || presentmentsInQueue) {
+			setError(detail, WriteOffUploadError.WOUP004);
+			return;
+		}
+
+		boolean finExcessAmtExists = finExcessAmountDAO.isFinExcessAmtExists(finID);
+		if (finExcessAmtExists) {
+			setError(detail, WriteOffUploadError.WOUP005);
+			return;
+		}
+
+		// check if payable amount present
+		List<ManualAdvise> manualAdvise = financeWriteoffService.getPayableAdvises(finID, "");
+		if (CollectionUtils.isNotEmpty(manualAdvise)) {
+			setError(detail, WriteOffUploadError.WOUP005);
+			return;
+		}
+
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, FinServiceEvent.WRITEOFF)) {
+			String reason = Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts);
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode("WOUP006");
+			detail.setErrorDesc(reason);
+			return;
+		}
+
+		if (!fm.isFinIsActive()) {
+			setError(detail, WriteOffUploadError.WOUP007);
+			return;
+		}
+
+		List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(reference, "_Temp");
+		if (CollectionUtils.isNotEmpty(finEvents)) {
+			rcdMaintainSts = finEvents.get(0);
+			if (!rcdMaintainSts.equals(FinServiceEvent.WRITEOFF)) {
+				String reason = Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts);
+				detail.setProgress(EodConstants.PROGRESS_FAILED);
+				detail.setErrorCode("WOUP006");
+				detail.setErrorDesc(reason);
+				return;
+			}
+		}
+
+		if (fm.isWriteoffLoan()) {
+			setError(detail, WriteOffUploadError.WOUP008);
+			return;
+		}
+
+		boolean isWriteOffInQueue = financeWriteoffService.isWriteoffLoan(finID, "_Temp");
+
+		if (isWriteOffInQueue) {
+			setError(detail, WriteOffUploadError.WOUP0010);
+			return;
+		}
+
+		detail.setReferenceID(finID);
+
+		logger.info("Validating the Data for the reference {}", detail.getReference());
+		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+		detail.setErrorCode("");
+		detail.setErrorDesc("");
+
+		logger.info("Validated the Data for the reference {}", detail.getReference());
+	}
+
+	@Override
+	public String getSqlQuery() {
+		return writeOffUploadDAO.getSqlQuery();
+	}
+
+	private void setError(WriteOffUploadDetail detail, WriteOffUploadError error) {
+		detail.setProgress(EodConstants.PROGRESS_FAILED);
+		detail.setErrorCode(error.name());
+		detail.setErrorDesc(error.description());
+	}
+
+	private AuditHeader getAuditHeader(FinanceWriteoffHeader header, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, header);
+		return new AuditHeader(String.valueOf(header.getFinReference()), String.valueOf(header.getFinReference()), null,
+				null, auditDetail, header.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(),
+				new HashMap<String, List<ErrorDetail>>());
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return writeOffUploadDAO.isInProgress((String) args[0], headerID);
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return writeOffUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setWriteOffUploadDAO(WriteOffUploadDAO writeOffUploadDAO) {
+		this.writeOffUploadDAO = writeOffUploadDAO;
+	}
+
+	@Autowired
+	public void setWriteOffUploadValidateRecord(ValidateRecord writeOffUploadValidateRecord) {
+		this.writeOffUploadValidateRecord = writeOffUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinanceWriteoffService(FinanceWriteoffService financeWriteoffService) {
+		this.financeWriteoffService = financeWriteoffService;
+	}
+
+	@Autowired
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
+	}
+
+	@Autowired
+	public void setReceiptUploadDetailDAO(ReceiptUploadDetailDAO receiptUploadDetailDAO) {
+		this.receiptUploadDetailDAO = receiptUploadDetailDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	@Autowired
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+}

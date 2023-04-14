@@ -39,6 +39,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -284,6 +285,42 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 			rad.setAllocationType(rs.getString("AllocationType"));
 			rad.setAllocationTo(rs.getLong("AllocationTo"));
 			rad.setReceiptID(rs.getLong("ReceiptId"));
+
+			return rad;
+		});
+	}
+
+	@Override
+	public List<ReceiptAllocationDetail> getReceiptPaidAmount(long receiptId, String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ALLOCATIONTYPE,case when ALLOCATIONTYPE='EMI' then sum(PAIDAMOUNT)");
+		sql.append(" when ALLOCATIONTYPE='PRI' then sum(PAIDAMOUNT)");
+		sql.append(" when ALLOCATIONTYPE='PFT' then sum(PAIDAMOUNT) end PAIDAMOUNT from (");
+		sql.append(" select sum(rad.PaidAmount) paidamount,rad.ALLOCATIONTYPE from RECEIPTALLOCATIONDETAIL rad");
+		sql.append(" inner join finreceiptheader frh on frh.receiptid = rad.receiptid");
+		sql.append(" where frh.receiptid > ? and frh.receiptid < (select max(receiptid)");
+		sql.append(" from finreceiptheader where REFERENCE = ?)");
+		sql.append(" and frh.REFERENCE =?  and rad.ALLOCATIONTYPE not in (?, ?)");
+		sql.append(" and frh.ReceiptModeStatus not in (?, ?)");
+		sql.append(" group by rad.PAIDAMOUNT,rad.ALLOCATIONTYPE)");
+		sql.append(" group by ALLOCATIONTYPE");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, receiptId);
+			ps.setString(++index, finReference);
+			ps.setString(++index, finReference);
+			ps.setString(++index, "MANADV");
+			ps.setString(++index, "BOUNCE");
+			ps.setString(++index, RepayConstants.PAYSTATUS_BOUNCE);
+			ps.setString(++index, RepayConstants.PAYSTATUS_CANCEL);
+		}, (rs, rowNum) -> {
+			ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
+			rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			rad.setAllocationType(rs.getString("AllocationType"));
 
 			return rad;
 		});

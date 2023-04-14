@@ -1,0 +1,598 @@
+package com.pennant.pff.revwriteoffupload.service.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import com.pennant.app.util.AEAmounts;
+import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceWriteoff;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
+import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.revwriteoffupload.dao.RevWriteOffUploadDAO;
+import com.pennant.pff.revwriteoffupload.model.RevWriteOffUploadDetail;
+import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennant.pff.writeoffupload.exception.WriteOffUploadError;
+import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
+
+public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
+	private static final Logger logger = LogManager.getLogger(RevWriteOffUploadServiceImpl.class);
+
+	private RevWriteOffUploadDAO revWriteOffUploadDAO;
+	private FinanceMainDAO financeMainDAO;
+	private ValidateRecord revWriteOffUploadValidateRecord;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
+	private FinanceWriteoffDAO financeWriteoffDAO;
+	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
+	private ManualAdviseDAO manualAdviseDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
+	private FeeTypeDAO feeTypeDAO;
+
+	@Override
+	public void doApprove(List<FileUploadHeader> headers) {
+		new Thread(() -> {
+
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			TransactionStatus txStatus = null;
+
+			Date appDate = SysParamUtil.getAppDate();
+
+			for (FileUploadHeader header : headers) {
+				logger.info("Processing the File {}", header.getFileName());
+
+				List<RevWriteOffUploadDetail> details = revWriteOffUploadDAO.getDetails(header.getId());
+
+				header.setAppDate(appDate);
+				header.setTotalRecords(details.size());
+				int sucessRecords = 0;
+				int failRecords = 0;
+
+				List<String> key = new ArrayList<>();
+
+				for (RevWriteOffUploadDetail detail : details) {
+
+					String reference = detail.getReference();
+
+					if (key.contains(reference)) {
+						setError(detail, WriteOffUploadError.WOUP009);
+						failRecords++;
+						continue;
+					}
+
+					key.add(reference);
+
+					doValidate(header, detail);
+
+					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+						failRecords++;
+					} else {
+						sucessRecords++;
+					}
+				}
+
+				try {
+
+					header.setSuccessRecords(sucessRecords);
+					header.setFailureRecords(failRecords);
+
+					StringBuilder remarks = new StringBuilder("Process Completed");
+
+					if (failRecords > 0) {
+						remarks.append(" with exceptions, ");
+					}
+
+					remarks.append(" Total Records : ").append(header.getTotalRecords());
+					remarks.append(" Success Records : ").append(sucessRecords);
+					remarks.append(" Failed Records : ").append(failRecords);
+
+					logger.info("Processed the File {}", header.getFileName());
+
+					txStatus = transactionManager.getTransaction(txDef);
+
+					revWriteOffUploadDAO.update(details);
+
+					List<FileUploadHeader> headerList = new ArrayList<>();
+					headerList.add(header);
+					updateHeader(headerList, true);
+
+					transactionManager.commit(txStatus);
+				} catch (Exception e) {
+					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+					if (txStatus != null) {
+						transactionManager.rollback(txStatus);
+					}
+				} finally {
+					txStatus = null;
+				}
+
+				logger.info("Reverse WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
+
+				processRevWriteOffLoan(header);
+
+				logger.info("Reverse WriteOff Upload Process is Completed for the Header ID {}", header.getId());
+			}
+		}).start();
+
+	}
+
+	private void processRevWriteOffLoan(FileUploadHeader header) {
+		List<RevWriteOffUploadDetail> details = revWriteOffUploadDAO.getDetails(header.getId());
+		Date appDate = SysParamUtil.getAppDate();
+		for (RevWriteOffUploadDetail detail : details) {
+			if ("S".equals(detail.getStatus())) {
+				detail.setAppDate(appDate);
+				processSucessRevWriteOff(detail, header);
+			}
+		}
+	}
+
+	private void processSucessRevWriteOff(RevWriteOffUploadDetail detail, FileUploadHeader header) {
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+		try {
+			long finId = financeMainDAO.getFinID(detail.getReference(), TableType.MAIN_TAB);
+
+			executeAccountingProcess(detail, finId);
+
+			updateWriteOffStatus(detail, finId);
+
+			saveLog(detail, header);
+
+			this.transactionManager.commit(transactionStatus);
+		} catch (Exception e) {
+			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+			transactionManager.rollback(transactionStatus);
+
+			String error = StringUtils.trimToEmpty(e.getMessage());
+
+			if (error.length() > 1999) {
+				error = error.substring(0, 1999);
+			}
+
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc(error);
+			this.revWriteOffUploadDAO.update(detail);
+		}
+
+		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+			updateFailRecords(1, 1, detail.getHeaderId());
+		}
+	}
+
+	private void executeAccountingProcess(RevWriteOffUploadDetail detail, long finId) {
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finId, "_View", false);
+
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		fd.setAccountingEventCode(AccountingEvent.REV_WRITEOFF);
+
+		schdData.setFinID(finId);
+		String reference = detail.getReference();
+		schdData.setFinReference(reference);
+		schdData.setFinanceMain(fm);
+
+		// Finance Schedule Details
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finId, "_View", false));
+		AEEvent aeEvent = new AEEvent();
+		FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finId);
+
+		try {
+			aeEvent = prepareAccountingData(fd, aeEvent, pftDetail);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		long receiptId = revWriteOffUploadDAO.getReceiptIdByRef(reference);
+		amountCodes = preparePaidAmount(amountCodes, reference, receiptId);
+		Map<String, BigDecimal> extDataMap = prepareAdviseMovements(reference, receiptId);
+		Map<String, Object> dataMap = aeEvent.getDataMap();
+		dataMap.putAll(extDataMap);
+		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
+		aeEvent.setDataMap(dataMap);
+
+		postingsPreparationUtil.postAccounting(aeEvent);
+
+	}
+
+	private Map<String, BigDecimal> prepareAdviseMovements(String reference, long receiptId) {
+
+		List<ManualAdviseMovements> mamList = manualAdviseDAO.getAdvisePaidAmount(receiptId, reference);
+
+		Map<String, BigDecimal> extDataMap = prepareMovementMap(mamList);
+
+		return extDataMap;
+	}
+
+	private Map<String, BigDecimal> prepareMovementMap(List<ManualAdviseMovements> movements) {
+		Map<String, BigDecimal> movementMap = new HashMap<>();
+
+		addAmountToMap(movementMap, "bounceChargePaid", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_IGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_SGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_UGST_P", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CESS_P", BigDecimal.ZERO);
+
+		addAmountToMap(movementMap, "bounceChargeWaived", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_IGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_SGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_UGST_W", BigDecimal.ZERO);
+		addAmountToMap(movementMap, "bounceCharge_CESS_W", BigDecimal.ZERO);
+
+		String bounceComponent = feeTypeDAO.getTaxComponent(Allocation.BOUNCE);
+
+		for (ManualAdviseMovements movement : movements) {
+
+			BigDecimal cgstPaid = movement.getPaidCGST();
+			BigDecimal sgstPaid = movement.getPaidSGST();
+			BigDecimal igstPaid = movement.getPaidIGST();
+			BigDecimal ugstPaid = movement.getPaidUGST();
+			BigDecimal cessPaid = movement.getPaidCESS();
+
+			BigDecimal cgstWaived = movement.getWaivedCGST();
+			BigDecimal sgstWaived = movement.getWaivedSGST();
+			BigDecimal igstWaived = movement.getWaivedIGST();
+			BigDecimal ugstWaived = movement.getWaivedUGST();
+			BigDecimal cessWaived = movement.getWaivedCESS();
+
+			BigDecimal paidAmt = movement.getPaidAmount();
+			BigDecimal waivedAmt = movement.getWaivedAmount();
+			BigDecimal tdsPaid = movement.getTdsPaid();
+
+			BigDecimal totalPaidGST = CalculationUtil.getTotalPaidGST(movement);
+			BigDecimal totalWaivedGST = CalculationUtil.getTotalWaivedGST(movement);
+
+			String feeTypeCode = movement.getFeeTypeCode();
+			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
+
+			if (StringUtils.isEmpty(feeTypeCode) || Allocation.BOUNCE.equals(feeTypeCode)) {
+
+				if (taxComponent == null) {
+					taxComponent = bounceComponent;
+				}
+				if (bounceComponent == null) {
+					continue;
+				}
+
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+					addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
+					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
+				} else {
+					addAmountToMap(movementMap, "bounceChargePaid", paidAmt.add(totalPaidGST));
+					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt.add(totalWaivedGST));
+				}
+
+				addAmountToMap(movementMap, "bounceCharge" + "_CGST_P", cgstPaid);
+				addAmountToMap(movementMap, "bounceCharge" + "_SGST_P", sgstPaid);
+				addAmountToMap(movementMap, "bounceCharge" + "_IGST_P", igstPaid);
+				addAmountToMap(movementMap, "bounceCharge" + "_UGST_P", ugstPaid);
+				addAmountToMap(movementMap, "bounceCharge" + "_CESS_P", cessPaid);
+
+				addAmountToMap(movementMap, "bounceCharge" + "_CGST_W", cgstWaived);
+				addAmountToMap(movementMap, "bounceCharge" + "_SGST_W", sgstWaived);
+				addAmountToMap(movementMap, "bounceCharge" + "_IGST_W", igstWaived);
+				addAmountToMap(movementMap, "bounceCharge" + "_UGST_W", ugstWaived);
+				addAmountToMap(movementMap, "bounceCharge" + "_CESS_W", cessWaived);
+
+				addAmountToMap(movementMap, "bounceCharge" + "_TDS_P", tdsPaid);
+
+			} else {
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
+					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
+					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
+				} else {
+					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt.add(totalPaidGST));
+					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt.add(totalWaivedGST));
+				}
+			}
+
+			addAmountToMap(movementMap, feeTypeCode + "_CGST_P", cgstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_SGST_P", sgstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_IGST_P", igstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_UGST_P", ugstPaid);
+			addAmountToMap(movementMap, feeTypeCode + "_CESS_P", cessPaid);
+
+			addAmountToMap(movementMap, feeTypeCode + "_CGST_W", cgstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_SGST_W", sgstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_IGST_W", igstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_UGST_W", ugstWaived);
+			addAmountToMap(movementMap, feeTypeCode + "_CESS_W", cessWaived);
+
+			addAmountToMap(movementMap, feeTypeCode + "_TDS_P", tdsPaid);
+		}
+
+		return movementMap;
+	}
+
+	private void addAmountToMap(Map<String, BigDecimal> movementMap, String feeCode, BigDecimal amount) {
+		BigDecimal amt = movementMap.computeIfAbsent(feeCode, code -> BigDecimal.ZERO);
+
+		movementMap.put(feeCode, amt.add(amount));
+	}
+
+	private AEAmountCodes preparePaidAmount(AEAmountCodes amountCodes, String reference, long receiptId) {
+
+		List<ReceiptAllocationDetail> radList = receiptAllocationDetailDAO.getReceiptPaidAmount(receiptId, reference);
+
+		for (ReceiptAllocationDetail rad : radList) {
+			String allocType = rad.getAllocationType();
+			switch (allocType) {
+			case "PRI":
+				amountCodes.setPriPaidWO(rad.getPaidAmount());
+				break;
+			case "PFT":
+				amountCodes.setPftPaidWO(rad.getPaidAmount());
+				break;
+			default:
+				break;
+			}
+		}
+		return amountCodes;
+	}
+
+	private AEEvent prepareAccountingData(FinanceDetail fd, AEEvent aeEvent, FinanceProfitDetail pd) {
+
+		Date curBDay = SysParamUtil.getAppDate();
+		String eventCode = fd.getAccountingEventCode();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+
+		if (StringUtils.isBlank(eventCode)) {
+			eventCode = PennantApplicationUtil.getEventCode(fm.getFinStartDate());
+		}
+
+		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
+		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
+		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
+
+		if (pd != null) {
+			BeanUtils.copyProperties(pd, newProfitDetail);
+			totalPftSchdOld = pd.getTotalPftSchd();
+			totalPftCpzOld = pd.getTotalPftCpz();
+		}
+
+		aeEvent = AEAmounts.procAEAmounts(fm, schedules, pd, eventCode, curBDay, curBDay);
+		aeEvent.getAcSetIDList().add(
+				AccountingConfigCache.getAccountSetID(fm.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+
+		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+		if (!FinanceConstants.BPI_NO.equals(fm.getBpiTreatment())) {
+			amountCodes.setBpi(fm.getBpiAmount());
+		}
+
+		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
+		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
+
+		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
+		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
+
+		aeEvent.setModuleDefiner(FinServiceEvent.ORG);
+		amountCodes.setDisburse(fm.getFinCurrAssetValue());
+
+		if (fm.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
+			aeEvent.setNewRecord(true);
+		}
+		// setting entity code
+		aeEvent.setEntityCode(fm.getEntityCode());
+		return aeEvent;
+	}
+
+	private void updateWriteOffStatus(RevWriteOffUploadDetail detail, long finId) {
+
+		financeScheduleDetailDAO.updateWriteOffDetail(detail.getReference());
+		financeMainDAO.updateWriteOffStatus(finId, false);
+		profitDetailsDAO.updateClosingSts(finId, false);
+
+		FinanceWriteoff fwo = financeWriteoffDAO.getFinanceWriteoffById(finId, "");
+
+		revWriteOffUploadDAO.save(fwo, "");
+
+		financeWriteoffDAO.delete(finId, "");
+	}
+
+	@Override
+	public void doReject(List<FileUploadHeader> headers) {
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+
+		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		TransactionStatus txStatus = null;
+		try {
+			txStatus = transactionManager.getTransaction(txDef);
+
+			revWriteOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+
+			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			updateHeader(headers, false);
+
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+		}
+	}
+
+	private void saveLog(RevWriteOffUploadDetail detail, FileUploadHeader header) {
+
+		detail.setEvent(FinanceConstants.REV_WRITEOFF);
+
+		revWriteOffUploadDAO.saveLog(detail, header);
+	}
+
+	@Override
+	public void doValidate(FileUploadHeader header, Object object) {
+		RevWriteOffUploadDetail detail = null;
+
+		if (object instanceof RevWriteOffUploadDetail) {
+			detail = (RevWriteOffUploadDetail) object;
+		}
+
+		if (detail == null) {
+			throw new AppException("Invalid Data transferred...");
+		}
+
+		detail.setHeaderId(header.getId());
+
+		String reference = detail.getReference();
+
+		if (StringUtils.isBlank(reference)) {
+			setError(detail, WriteOffUploadError.WOUP001);
+			return;
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
+
+		if (fm == null) {
+			setError(detail, WriteOffUploadError.WOUP002);
+			return;
+		}
+
+		if (!fm.isFinIsActive()) {
+			setError(detail, WriteOffUploadError.WOUP0011);
+			return;
+		}
+
+		if (!fm.isWriteoffLoan()) {
+			setError(detail, WriteOffUploadError.WOUP0012);
+			return;
+		}
+
+		logger.info("Validating the Data for the reference {}", detail.getReference());
+		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+		detail.setErrorCode("");
+		detail.setErrorDesc("");
+
+		logger.info("Validated the Data for the reference {}", detail.getReference());
+	}
+
+	@Override
+	public String getSqlQuery() {
+		return revWriteOffUploadDAO.getSqlQuery();
+	}
+
+	private void setError(RevWriteOffUploadDetail detail, WriteOffUploadError error) {
+		detail.setProgress(EodConstants.PROGRESS_FAILED);
+		detail.setErrorCode(error.name());
+		detail.setErrorDesc(error.description());
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return revWriteOffUploadDAO.isInProgress((String) args[0], headerID);
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return revWriteOffUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setRevWriteOffUploadDAO(RevWriteOffUploadDAO revWriteOffUploadDAO) {
+		this.revWriteOffUploadDAO = revWriteOffUploadDAO;
+	}
+
+	@Autowired
+	public void setRevWriteOffUploadValidateRecord(ValidateRecord revWriteOffUploadValidateRecord) {
+		this.revWriteOffUploadValidateRecord = revWriteOffUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
+		this.profitDetailsDAO = profitDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
+		this.financeWriteoffDAO = financeWriteoffDAO;
+	}
+
+	@Autowired
+	public void setReceiptAllocationDetailDAO(ReceiptAllocationDetailDAO receiptAllocationDetailDAO) {
+		this.receiptAllocationDetailDAO = receiptAllocationDetailDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	@Autowired
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
+}

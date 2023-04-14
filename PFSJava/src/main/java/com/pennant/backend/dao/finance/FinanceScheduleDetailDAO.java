@@ -147,4 +147,6 @@ public interface FinanceScheduleDetailDAO {
 	Date getSchdDateForKnockOff(long finID, Date appDate);
 
 	FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate);
+
+	void updateWriteOffDetail(String finReference);
 }

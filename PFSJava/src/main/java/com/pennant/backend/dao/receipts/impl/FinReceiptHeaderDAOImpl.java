@@ -1703,4 +1703,18 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return null;
 		}
 	}
+
+	@Override
+	public long getMaxReceiptIdFinRef(String finReference) {
+		String sql = "Select max(ReceiptId) From FinReceiptHeader Where Reference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finReference);
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
+	}
 }

@@ -2486,4 +2486,48 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		});
 	}
 
+	@Override
+	public List<ManualAdviseMovements> getAdvisePaidAmount(long receiptId, String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fe.feetypecode, sum(mad.paidamount) paidamount, sum(mad.waivedamount) waivedamount");
+		sql.append(" ,sum(mad.paidcgst) paidcgst,sum(mad.paidsgst) paidsgst, sum(mad.paidigst) paidigst");
+		sql.append(" ,sum(mad.paidugst) paidugst, sum(mad.waivedcgst) waivedcgst");
+		sql.append(" ,sum(mad.waivedsgst) waivedsgst, sum(mad.waivedugst) waivedugst");
+		sql.append(" ,sum(mad.waivedigst) waivedigst, sum(mad.tdspaid) tdspaid");
+		sql.append(" , sum(mad.paidcess) paidcess, sum(mad.waivedcess) waivedcess");
+		sql.append(" from manualadvisemovements mad ");
+		sql.append(" inner join manualadvise ma on ma.adviseid = mad.adviseid");
+		sql.append(" inner join feetypes fe on fe.feetypeid = ma.feetypeid");
+		sql.append(" where mad.receiptid > ? and mad.receiptid <= (select max(receiptid)");
+		sql.append(" from finreceiptheader where REFERENCE = ?)");
+		sql.append(" and ma.finReference =? and mad.status is null group by fe.feetypecode");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, receiptId);
+			ps.setString(++index, finReference);
+			ps.setString(++index, finReference);
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements mam = new ManualAdviseMovements();
+			mam.setFeeTypeCode(rs.getString("feetypecode"));
+			mam.setPaidAmount(rs.getBigDecimal("paidAmount"));
+			mam.setWaivedAmount(rs.getBigDecimal("waivedamount"));
+			mam.setPaidCGST(rs.getBigDecimal("paidcgst"));
+			mam.setPaidSGST(rs.getBigDecimal("paidsgst"));
+			mam.setPaidIGST(rs.getBigDecimal("paidigst"));
+			mam.setPaidUGST(rs.getBigDecimal("paidugst"));
+			mam.setWaivedCGST(rs.getBigDecimal("waivedcgst"));
+			mam.setWaivedSGST(rs.getBigDecimal("waivedsgst"));
+			mam.setWaivedUGST(rs.getBigDecimal("waivedugst"));
+			mam.setWaivedIGST(rs.getBigDecimal("waivedigst"));
+			mam.setTdsPaid(rs.getBigDecimal("tdspaid"));
+			mam.setPaidCESS(rs.getBigDecimal("paidcess"));
+			mam.setWaivedCESS(rs.getBigDecimal("waivedcess"));
+
+			return mam;
+		});
+	}
 }

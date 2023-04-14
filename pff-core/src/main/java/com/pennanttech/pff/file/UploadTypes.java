@@ -21,7 +21,11 @@ public enum UploadTypes {
 
 	CROSS_LOAN_KNOCKOFF("CrossLoan KnockOff Upload Details Screen"),
 
-	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen");
+	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen"),
+
+	WRITEOFF("WriteOff Upload Details Screen"),
+	
+	REVWRITEOFF("Reverse WriteOff Upload Details Screen");
 
 	private String description;
 

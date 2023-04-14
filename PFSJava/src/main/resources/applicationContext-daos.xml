@@ -13241,4 +13241,16 @@
 	<bean id = "customerPhoneNumberUpload" class = "com.pennant.pff.customer.service.impl.CustomerPhoneNumberUpload" parent="kycDetailsUploadService"/>
 	
 	<bean id = "customerEmailUpload" class = "com.pennant.pff.customer.service.impl.CustomerEmailUpload" parent="kycDetailsUploadService"/>
+
+	<bean id ="writeOffUploadValidateRecord" class = "com.pennant.pff.writeoffupload.service.impl.WriteOffUploadValidateRecord"/>
+	
+	<bean id="writeOffUploadDAO" class="com.pennant.pff.writeoffupload.dao.impl.WriteOffUploadDAOImpl" parent="sequenceDao" />
+
+	<bean id="writeOffUploadService" class="com.pennant.pff.writeoffupload.service.impl.WriteOffUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id ="revWriteOffUploadValidateRecord" class = "com.pennant.pff.revwriteoffupload.service.impl.RevWriteOffUploadValidateRecord"/>
+	
+	<bean id="revWriteOffUploadDAO" class="com.pennant.pff.revwriteoffupload.dao.impl.RevWriteOffUploadDAOImpl" parent="sequenceDao" />
+
+	<bean id="revWriteOffUploadService" class="com.pennant.pff.revwriteoffupload.service.impl.RevWriteOffUploadServiceImpl" parent="aUploadService" />
 </beans>

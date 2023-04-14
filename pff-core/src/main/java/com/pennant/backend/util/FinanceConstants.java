@@ -406,4 +406,7 @@ public class FinanceConstants {
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_MAKER = "CROSS_LOAN_KNOCKOFF_CANCEL_MAKER";
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER = "CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER";
 	public static final BigDecimal LEI_NUM_LIMIT = new BigDecimal("50000000000");
+
+	public static final String WRITEOFF = "WO";
+	public static final String REV_WRITEOFF = "RW";
 }

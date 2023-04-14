@@ -1288,6 +1288,23 @@
 			rightName="menu_Item_Cust_kyc_Dtls_Upload_Approver" />
 		</menu>
 		
+		<menu id="menu_Category_WriteOffUpload">
+			<menuItem id="menu_Item_WriteOffUpload_Maker"
+				zulNavigation="/WEB-INF/pages/WriteOffUpload/WriteOffUploadList.zul?stage=M"
+				rightName="menu_Item_WriteOffUpload_Maker" />
+			<menuItem id="menu_Item_WriteOffUpload_Approver"
+				zulNavigation="/WEB-INF/pages/WriteOffUpload/WriteOffUploadList.zul?stage=A"
+				rightName="menu_Item_WriteOffUpload_Approver" />
+		</menu>
+		
+		<menu id="menu_Category_RevWriteOffUpload">
+			<menuItem id="menu_Item_RevWriteOffUpload_Maker"
+				zulNavigation="/WEB-INF/pages/RevWriteOffUpload/RevWriteOffUploadList.zul?stage=M"
+				rightName="menu_Item_RevWriteOffUpload_Maker" />
+			<menuItem id="menu_Item_RevWriteOffUpload_Approver"
+				zulNavigation="/WEB-INF/pages/RevWriteOffUpload/RevWriteOffUploadList.zul?stage=A"
+				rightName="menu_Item_RevWriteOffUpload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
