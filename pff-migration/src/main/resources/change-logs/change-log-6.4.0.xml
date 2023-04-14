@@ -3093,7 +3093,7 @@
 		<addNotNullConstraint tableName="NPA_Loan_Movement_Tagging" columnName="CustCoreBank"
 			columnDataType="varchar(50)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.1.1" author="ramya.v">
 		<addColumn tableName="RMTFINANCETYPES">
 			<column name="ODMinAmount" type="decimal(18, 0)" />
@@ -3105,7 +3105,7 @@
 			<column name="ODMinAmount" type="decimal(18, 0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.1.3" author="ramya.v">
 		<sql>
 			<![CDATA[	
@@ -3114,7 +3114,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.1.4" author="ramya.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="odMinAmount" tableName="RMTFINANCETYPES" defaultValue="0" />
 		<addDefaultValue columnName="odMinAmount" tableName="RMTFINANCETYPES_TEMP" defaultValue="0" />
@@ -3128,7 +3128,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.1.5_pre" author="ramya.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4202,7 +4202,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 
 	<changeSet id="ST#1495.2.1" author="ramya.v">
 		<addColumn tableName="FINODPENALTYRATES">
@@ -4224,7 +4224,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.2.4" author="ramya.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="odMinAmount" tableName="FINODPENALTYRATES" defaultValue="0" />
 		<addDefaultValue columnName="odMinAmount" tableName="FINODPENALTYRATES_TEMP" defaultValue="0" />
@@ -4391,7 +4391,7 @@
 			<column name="ODMinAmount" type="decimal(18, 0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.4.2" author="ramya.v">
 		<sql>
 			<![CDATA[	
@@ -4519,7 +4519,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.21_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4527,11 +4527,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.21" author="saikrishna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.21_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4539,7 +4539,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.22_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4547,11 +4547,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.22" author="saikrishna.b">
 		<modifyDataType tableName="RMTACCOUNTINGSET_TEMP" columnName="ACCOUNTSETCODE" newDataType="varchar(10)" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.22_post" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4559,26 +4559,26 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#724.1" author="Sravanthi.g">
-		<dropColumn tableName="MANUAL_KNOCKOFF_UPLOAD" columnName="AdviseID"/>
+		<dropColumn tableName="MANUAL_KNOCKOFF_UPLOAD" columnName="AdviseID" />
 	</changeSet>
-	 
+
 	<changeSet id="ST#724.2" author="Sravanthi.g">
 		<addColumn tableName="MANUAL_KNOCKOFF_UPLOAD">
-			<column name="FeeTypeCode" type="varchar(10)"/>
+			<column name="FeeTypeCode" type="varchar(10)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#724.3" author="Sravanthi.g">
-		<dropColumn tableName="CROSS_LOAN_KNOCKOFF_UPLOAD" columnName="AdviseID"/>
+		<dropColumn tableName="CROSS_LOAN_KNOCKOFF_UPLOAD" columnName="AdviseID" />
 	</changeSet>
-	 
-	  <changeSet id="ST#724.4" author="Sravanthi.g">
+
+	<changeSet id="ST#724.4" author="Sravanthi.g">
 		<addColumn tableName="CROSS_LOAN_KNOCKOFF_UPLOAD">
-			<column name="FeeTypeCode" type="varchar(10)"/>
+			<column name="FeeTypeCode" type="varchar(10)" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="ST#724.5" author="Sravanthi.g">
 		<sql>
@@ -4670,7 +4670,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#724.8" author="Sravanthi.g">
 		<sql>
 			<![CDATA[	
@@ -4756,22 +4756,22 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MANUAL_KNOCKOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MANUAL_KNOCKOFF_DOWNLOAD')), 'APPROVEDNAME',	    0, 'N', NULL, NULL, NULL, NULL, '16', NULL, NULL, NULL, NULL, 'O');
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#1495.01" author="Ramya.v">
 		<addColumn tableName="LPP_UPLOAD">
 			<column name="ODMinAmount" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.02" author="ramya.v">
 		<sql>
 			<![CDATA[	
 				UPDATE LPP_UPLOAD SET ODMINAMOUNT = 0;
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#1495.03" author="Ramya.v" dbms="postgresql,oracle">
 		<addDefaultValue columnName="ODMinAmount" tableName="LPP_UPLOAD" defaultValue="0" />
 	</changeSet>
@@ -4783,7 +4783,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1495.04" author="Ramya.v">
 		<sql>
 			<![CDATA[
@@ -4891,13 +4891,13 @@
              ]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="ST#1495.2.13" author="ramya.v">
+
+	<changeSet id="ST#1495.2.13" author="ramya.v">
 		<addColumn tableName="FINODPENALTYRATES_LOG">
 			<column name="ODMinAmount" type="decimal(18, 0)" />
 		</addColumn>
-	 </changeSet>
-	
+	</changeSet>
+
 	<changeSet id="ST#1495.2.131" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -4909,13 +4909,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.2" author="Gireesh.G">
 		<addColumn tableName="MANDATES_TEMP">
 			<column name="ExternalMandate" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.2_01" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4955,7 +4955,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.3" author="Gireesh.G" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -4967,13 +4967,13 @@
 	<changeSet id="ST#1529.3" author="Gireesh.G" dbms="postgresql, oracle">
 		<addDefaultValue tableName="MANDATES_TEMP" columnName="ExternalMandate" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.4" author="Gireesh.G">
 		<addColumn tableName="MANDATES">
 			<column name="ExternalMandate" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.4_01" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5013,7 +5013,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.5" author="Gireesh.G" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -5025,7 +5025,7 @@
 	<changeSet id="ST#1529.5" author="Gireesh.G" dbms="postgresql, oracle">
 		<addDefaultValue tableName="MANDATES" columnName="ExternalMandate" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.6_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5127,7 +5127,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1529.7_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5306,7 +5306,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1534" author="Mounika.M">
 		<sql>
 			<![CDATA[
@@ -5315,8 +5315,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-    <changeSet id="ST#1537.1" author="sainaveen.y">
+
+	<changeSet id="ST#1537.1" author="sainaveen.y">
 		<createTable tableName="MISCELLANEOUS_POSTING_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
@@ -5325,7 +5325,7 @@
 			<column name="RecordSeq" type="bigint" />
 			<column name="FinID" type="bigint" />
 			<column name="BatchReference" type="bigint" />
-			<column name="BatchName " type="varchar(5)"/>
+			<column name="BatchName " type="varchar(5)" />
 			<column name="BatchPurpose" type="varchar(200)" />
 			<column name="Reference" type="varchar(20)" />
 			<column name="DebitGL " type="varchar(20)" />
@@ -5340,13 +5340,14 @@
 			<column name="Status" type="char(1)" />
 			<column name="ErrorCode" type="varchar(20)" />
 			<column name="ErrorDesc" type="varchar(2000)" />
-			</createTable>
+		</createTable>
 	</changeSet>
 
 	<changeSet id="ST#1537.2" author="sainaveen.y">
-		<addPrimaryKey constraintName="PK_MISCELL_POSTING_UPLOAD_ID" tableName="MISCELLANEOUS_POSTING_UPLOAD" columnNames="id" />
+		<addPrimaryKey constraintName="PK_MISCELL_POSTING_UPLOAD_ID" tableName="MISCELLANEOUS_POSTING_UPLOAD"
+			columnNames="id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1537.3" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -5376,9 +5377,9 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'NARRLINE4',         0, 'N', NULL, NULL, NULL,             NULL, '10', NULL, NULL, NULL, NULL, 					'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD')),  'STATUS',            0, 'N', NULL, 'S',  NULL, 			  NULL, '11', NULL, NULL, NULL, NULL,          		 	'O');
 			]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1537.4.1" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -5408,9 +5409,9 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'NARRLINE4',         0, 'N', NULL,  NULL,   NULL,              NULL,  '10',  NULL, NULL, NULL,   NULL,             		'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_TEMPLATE')),  'STATUS',            0, 'N', NULL,  'S',    NULL,              NULL,  '11',  NULL, NULL, NULL,   NULL,             		'O');
 			]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1537.5.1" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -5446,9 +5447,9 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'APPROVEDON',             0, 'N', NULL,  NULL,   NULL,  NULL,  '17',  NULL, NULL, NULL,  'dd-MMM-yyyy',  'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'MISCELLANEOUS_POSTING_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'MISCELLANEOUS_POSTING_DOWNLOAD')),  'APPROVEDNAME',           0, 'N', NULL,  NULL,   NULL,  NULL,  '18',  NULL, NULL, NULL,  NULL,           'O');
 			]]>
-		 </sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1537.6" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -5494,5 +5495,209 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="ST#1469.25.3.1" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_TEMP">
+			<column name="CustCoreBank" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.2" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[	
+				UPDATE NPA_LOAN_INFO_TEMP SET CUSTCOREBANK = (SELECT C.CUSTCOREBANK FROM CUSTOMERS C WHERE NPA_LOAN_INFO_TEMP.CUSTID = C.CUSTID); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.3" author="NagaVamsi.P">
+		<addNotNullConstraint tableName="NPA_LOAN_INFO_TEMP" columnName="CustCoreBank"
+			columnDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.4" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO">
+			<column name="SecondaryNpaStage" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.5" author="nagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE  NPA_LOAN_INFO SET SecondaryNpaStage = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.6" author="nagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_LOAN_INFO ADD CONSTRAINT DF_NLF_SNPASTG DEFAULT 0 FOR SecondaryNpaStage;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.6" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecondaryNpaStage" tableName="NPA_LOAN_INFO" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.7" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO">
+			<column name="SecondaryNpaDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.8" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO">
+			<column name="SecondaryNpaModifiedDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.3.9" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO">
+			<column name="SecondaryNpaClassId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="SecondaryNpaStage" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.1" author="nagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE  NPA_LOAN_INFO_SNAPSHOT SET SecondaryNpaStage = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.2" author="nagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_LOAN_INFO_SNAPSHOT ADD CONSTRAINT DF_NLF_SNPASTG DEFAULT 0 FOR SecondaryNpaStage;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.3" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecondaryNpaStage" tableName="NPA_LOAN_INFO_SNAPSHOT" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.4" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="SecondaryNpaDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.5" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="SecondaryNpaModifiedDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.6" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_SNAPSHOT">
+			<column name="SecondaryNpaClassId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.7" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_Temp">
+			<column name="SecondaryNpaStage" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.8" author="nagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				UPDATE  NPA_LOAN_INFO_TEMP SET SECONDARYNPASTAGE = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.9" author="nagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE NPA_LOAN_INFO_TEMP ADD CONSTRAINT DF_NLF_T_SNPTG DEFAULT 0 FOR SECONDARYNPASTAGE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.9" author="nagavamsi.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SecondaryNpaStage" tableName="NPA_LOAN_INFO" defaultValue="0" />
+	</changeSet>
+
+
+	<changeSet id="ST#1469.25.5" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_Temp">
+			<column name="SecondaryNpaDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.6" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_Temp">
+			<column name="SecondaryNpaModifiedDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.7" author="NagaVamsi.P">
+		<addColumn tableName="NPA_LOAN_INFO_Temp">
+			<column name="SecondaryNpaClassId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.8" author="NagaVamsi.P">
+		<addColumn tableName="NPA_PROVISION_STAGE">
+			<column name="WriteOffLoan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.4.9" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+				UPDATE NPA_PROVISION_STAGE SET WriteOffLoan = (SELECT FM.WriteOffLoan FROM FinanceMain FM where NPA_PROVISION_STAGE.FinID = FM.FinID) WHERE WriteOffLoan IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.5" author="NagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPA_S_WriteOffLoan DEFAULT 0 FOR WriteOffLoan;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.5" author="NagaVamsi.P" dbms="postgresql, oracle">
+		<addDefaultValue columnName="WriteOffLoan" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1469.25.6" author="NagaVamsi.P">
+		<addColumn tableName="NPA_PROVISION_STAGE">
+			<column name="UnderSettlement" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.7" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+				UPDATE NPA_PROVISION_STAGE SET UnderSettlement = (SELECT FM.UnderSettlement FROM FinanceMain FM WHERE NPA_PROVISION_STAGE.FINID = FM.FINID) where UnderSettlement IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.8" author="NagaVamsi.P" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPA_S_UnderSettlement DEFAULT 0 FOR UnderSettlement;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.9" author="NagaVamsi.P" dbms="postgresql, oracle">
+		<addDefaultValue columnName="UnderSettlement" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
+	</changeSet>
+
 </databaseChangeLog> 

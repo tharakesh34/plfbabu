@@ -51,6 +51,8 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 	private BigDecimal prvInstIncome = BigDecimal.ZERO;
 	private BigDecimal prvFuturePri = BigDecimal.ZERO;
 	private boolean selfEffected;
+	private boolean writeOffLoan;
+	private boolean underSettlement;
 
 	public NpaProvisionStage() {
 		super();
@@ -399,4 +401,21 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 	public void setSelfEffected(boolean selfEffected) {
 		this.selfEffected = selfEffected;
 	}
+
+	public boolean isWriteOffLoan() {
+		return writeOffLoan;
+	}
+
+	public void setWriteOffLoan(boolean writeOffLoan) {
+		this.writeOffLoan = writeOffLoan;
+	}
+
+	public boolean isUnderSettlement() {
+		return underSettlement;
+	}
+
+	public void setUnderSettlement(boolean underSettlement) {
+		this.underSettlement = underSettlement;
+	}
+
 }

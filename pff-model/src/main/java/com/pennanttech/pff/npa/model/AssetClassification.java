@@ -34,6 +34,12 @@ public class AssetClassification extends NpaProvisionStage {
 	private Date npaUnTaggedDate;
 	private Date classDate;
 	private Map<String, AssetClassSetupHeader> assetClassSetup = new HashMap<>();
+	private boolean secondaryNpaStage;
+	private Date secondaryNpaDate;
+	private Date secondaryNpaModifiedDate;
+	private long secondaryNpaClassId;
+	private String secondaryNpaClassCode;
+	private String secondaryNpaClassDesc;
 
 	public AssetClassification() {
 		super();
@@ -229,6 +235,54 @@ public class AssetClassification extends NpaProvisionStage {
 
 	public void setAssetClassSetup(Map<String, AssetClassSetupHeader> assetClassSetup) {
 		this.assetClassSetup = assetClassSetup;
+	}
+
+	public boolean isSecondaryNpaStage() {
+		return secondaryNpaStage;
+	}
+
+	public void setSecondaryNpaStage(boolean secondaryNpaStage) {
+		this.secondaryNpaStage = secondaryNpaStage;
+	}
+
+	public Date getSecondaryNpaDate() {
+		return secondaryNpaDate;
+	}
+
+	public void setSecondaryNpaDate(Date secondaryNpaDate) {
+		this.secondaryNpaDate = secondaryNpaDate;
+	}
+
+	public Date getSecondaryNpaModifiedDate() {
+		return secondaryNpaModifiedDate;
+	}
+
+	public void setSecondaryNpaModifiedDate(Date secondaryNpaModifiedDate) {
+		this.secondaryNpaModifiedDate = secondaryNpaModifiedDate;
+	}
+
+	public long getSecondaryNpaClassId() {
+		return secondaryNpaClassId;
+	}
+
+	public void setSecondaryNpaClassId(long secondaryNpaClassId) {
+		this.secondaryNpaClassId = secondaryNpaClassId;
+	}
+
+	public String getSecondaryNpaClassCode() {
+		return secondaryNpaClassCode;
+	}
+
+	public void setSecondaryNpaClassCode(String secondaryNpaClassCode) {
+		this.secondaryNpaClassCode = secondaryNpaClassCode;
+	}
+
+	public String getSecondaryNpaClassDesc() {
+		return secondaryNpaClassDesc;
+	}
+
+	public void setSecondaryNpaClassDesc(String secondaryNpaClassDesc) {
+		this.secondaryNpaClassDesc = secondaryNpaClassDesc;
 	}
 
 }
