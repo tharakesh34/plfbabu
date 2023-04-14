@@ -29,20 +29,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -129,28 +123,6 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 
 	@Override
 	public ErrorDetail rescheduleValidation(Date receiptDate, long finID, Date startDate) {
-		String[] parameters = new String[2];
-
-		parameters[0] = PennantJavaUtil.getLabel("label_ReceiptPayment_ReceiptDate.value");
-
-		if (DateUtil.compare(receiptDate, startDate) < 0) {
-			parameters[1] = String.valueOf(DateUtil.format(startDate, DateFormat.LONG_DATE.getPattern()));
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters, null);
-		}
-
-		Date monthStartDate = DateUtil.getMonthStart(SysParamUtil.getAppDate());
-		if (DateUtil.compare(receiptDate, monthStartDate) < 0) {
-			parameters[1] = String.valueOf(DateUtil.format(monthStartDate, DateFormat.LONG_DATE.getPattern()));
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters, null);
-		}
-
-		FinanceScheduleDetail financeScheduleDetail = financeScheduleDetailDAO.getPrvSchd(finID,
-				SysParamUtil.getAppDate());
-		if (financeScheduleDetail != null && DateUtil.compare(receiptDate, financeScheduleDetail.getSchDate()) < 0) {
-			parameters[1] = String
-					.valueOf(DateUtil.format(financeScheduleDetail.getSchDate(), DateFormat.LONG_DATE.getPattern()));
-			return new ErrorDetail(PennantConstants.KEY_FIELD, "30507", parameters, null);
-		}
 		return null;
 	}
 
