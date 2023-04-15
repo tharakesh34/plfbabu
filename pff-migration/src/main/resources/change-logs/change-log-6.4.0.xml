@@ -634,9 +634,9 @@
 			<![CDATA[
 					UPDATE RH set  RH.ASSETCLASSSETUP = t2.ID
 						From RMTFINANCETYPES_TEMP RH 
-					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode, t1.Active From ASSET_CLASS_SETUP_HEADER ACSH
+					INNER JOIN (Select ACSH.ID ID,sdd.DivisionCode DivisionCode, ACSH.Active From ASSET_CLASS_SETUP_HEADER ACSH
 								inner join SmtDivisionDetail sdd on   sdd.EntityCode=ACSH.ENTITYCODE 
-								Where ACSH.Code = 'DEFAULT' and t1.Active = 1) t2 on  t2.DivisionCode=RH.FinDivision  ;
+								Where ACSH.Code = 'DEFAULT' and ACSH.Active = 1) t2 on  t2.DivisionCode=RH.FinDivision  ;
 			]]>
 		</sql>
 	</changeSet>
@@ -710,7 +710,7 @@
 			<column name="ASSETCLASSSETUP" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="ST#1469.14" author="NagaVamsi.P">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="UnderNpa" type="boolean" />
@@ -4923,7 +4923,7 @@
 					(Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
 							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
 							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
-							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef not null) t2
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef is not null) t2
 					where M.MandateID = t2.MandateID;	
 			]]>
 		</sql>
@@ -4937,7 +4937,7 @@
 					INNER JOIN (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
 							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
 							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
-							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef not null) t2 on M.MandateID = t2.MandateID;
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef is not null) t2 on M.MandateID = t2.MandateID;
 			]]>
 		</sql>
 	</changeSet>
