@@ -446,4 +446,9 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		this.financeCancelValidator = financeCancelValidator;
 	}
 
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
 }
