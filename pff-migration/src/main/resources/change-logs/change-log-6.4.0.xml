@@ -6122,4 +6122,152 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="1001.01_pre" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintypepartnerbanks_view');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1001.01" author="Poojitha.M">
+		<createView viewName="FINTYPEPARTNERBANKS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.FINTYPE,
+					T5.FINTYPEDESC,
+					T1.PURPOSE,
+					T1.PAYMENTMODE,
+					T1.PARTNERBANKID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.PARTNERBANKCODE,
+					T2.PARTNERBANKNAME,
+					T1.VANAPPLICABLE,
+					T1.BRANCHCODE,
+					T3.BRANCHDESC,
+					T1.CLUSTERID,
+					T4.CODE CLUSTERCODE,
+					T4.NAME,
+					T4.CLUSTERTYPE,
+					T2.ACCOUNTNO SUSPENSEAC,
+					T5.FINDIVISION
+				FROM FINTYPEPARTNERBANKS_TEMP T1
+				INNER JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
+				INNER JOIN RMTFINANCETYPES T5 ON T1.FINTYPE = T5.FINTYPE
+				LEFT JOIN RMTBRANCHES T3 ON T1.BRANCHCODE = T3.BRANCHCODE
+				LEFT JOIN CLUSTERS T4 ON T1.CLUSTERID = T4.ID
+				UNION ALL
+				SELECT T1.ID,
+					T1.FINTYPE,
+					T5.FINTYPEDESC,
+					T1.PURPOSE,
+					T1.PAYMENTMODE,
+					T1.PARTNERBANKID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.PARTNERBANKCODE,
+					T2.PARTNERBANKNAME,
+					T1.VANAPPLICABLE,
+					T1.BRANCHCODE,
+					T3.BRANCHDESC,
+					T1.CLUSTERID,
+					T4.CODE CLUSTERCODE,
+					T4.NAME,
+					T4.CLUSTERTYPE,
+					T2.ACCOUNTNO SUSPENSEAC,
+					T5.FINDIVISION
+				FROM FINTYPEPARTNERBANKS T1
+				INNER JOIN RMTFINANCETYPES T5 ON T1.FINTYPE = T5.FINTYPE
+				INNER JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
+				LEFT JOIN RMTBRANCHES T3 ON T1.BRANCHCODE = T3.BRANCHCODE
+				LEFT JOIN CLUSTERS T4 ON T1.CLUSTERID = T4.ID
+				WHERE NOT EXISTS (SELECT 1 FROM FINTYPEPARTNERBANKS_TEMP WHERE FINTYPEPARTNERBANKS_TEMP.ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="1001.01_post" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintypepartnerbanks_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10020.02_pre" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintypepartnerbanks_aview');
+		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="1002.02" author="Poojitha.M">
+		<createView viewName="FINTYPEPARTNERBANKS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.FINTYPE,
+					T3.FINTYPEDESC,
+					T1.PURPOSE,
+					T1.PAYMENTMODE,
+					T1.PARTNERBANKID,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.PARTNERBANKCODE,
+					T2.PARTNERBANKNAME,
+					T2.ACTIVE,
+					T2.ACCOUNTNO,
+					T2.ACTYPE AS ACCOUNTTYPE,
+					T4.ENTITYCODE,
+					T1.VANAPPLICABLE,
+					T1.BRANCHCODE,
+					T5.BRANCHDESC,
+					T1.CLUSTERID,
+					T6.CODE CLUSTERCODE,
+					T6.NAME,
+					T6.CLUSTERTYPE,
+					T3.FINDIVISION
+				FROM FINTYPEPARTNERBANKS T1
+				INNER JOIN PARTNERBANKS T2 ON T1.PARTNERBANKID = T2.PARTNERBANKID
+				INNER JOIN RMTFINANCETYPES T3 ON T1.FINTYPE = T3.FINTYPE
+				INNER JOIN SMTDIVISIONDETAIL T4 ON T3.FINDIVISION = T4.DIVISIONCODE
+				LEFT JOIN RMTBRANCHES T5 ON T1.BRANCHCODE = T5.BRANCHCODE
+				LEFT JOIN CLUSTERS T6 ON T1.CLUSTERID = T6.ID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="1002.02_post" author="Poojitha.M" dbms="postgress">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintypepartnerbanks_aview');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 
