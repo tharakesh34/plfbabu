@@ -30,6 +30,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -109,6 +110,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private transient FinanceMainDAO financeMainDAO;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl;
 
 	private long custId = Long.MIN_VALUE;
@@ -1186,6 +1188,12 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 		}
 
+		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
+
+		if (DateUtil.compare(receiptDt, maxReceiptDt) < 0) {
+			receiptDt = maxReceiptDt;
+		}
+
 		this.receiptDate.setValue(receiptDt);
 		this.receiptDate.setDisabled(isDisabled);
 	}
@@ -1228,4 +1236,8 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		this.crossLoanKnockOffListCtrl = crossLoanKnockOffListCtrl;
 	}
 
+	@Autowired
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
+	}
 }
