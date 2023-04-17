@@ -23,7 +23,7 @@ public class ObjectUtil {
 		List<T> list = new ArrayList<>();
 
 		for (T object : objects) {
-			clone(object);
+			list.add(clone(object));
 		}
 
 		return list;
