@@ -528,4 +528,13 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			});
 		}
 	}
+
+	@Override
+	public boolean isSettlementInitiated(long finID) {
+		String sql = "Select count(ID) From Fin_Settlement_Header_Temp Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
+	}
 }

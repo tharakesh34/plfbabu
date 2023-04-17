@@ -45,4 +45,6 @@ public interface FinServiceInstrutionDAO {
 	FinServiceInstruction getFinServiceInstDetailsBySerReqNo(long finID, String serviceReqNo);
 
 	List<Date> getListDates(long finId, Date approvedDate);
+
+	boolean isLMSActionPerformed(long finID, String finEvent);
 }

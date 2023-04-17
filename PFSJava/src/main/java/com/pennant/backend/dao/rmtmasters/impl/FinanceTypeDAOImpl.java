@@ -116,7 +116,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
 		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
 		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
-		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, AssetClassSetup, ODMinAmount");
+		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, AssetClassSetup, ODMinAmount, AllowCancelFin");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinCategoryDesc, DownPayRuleCode, DownPayRuleDesc ");
@@ -356,6 +356,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setMinAutoRefund(rs.getBigDecimal("MinAutoRefund"));
 				ft.setAssetClassSetup(rs.getLong("AssetClassSetup"));
 				ft.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+				ft.setAllowCancelFin(rs.getBoolean("AllowCancelFin"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					ft.setFinCategoryDesc(rs.getString("FinCategoryDesc"));
@@ -432,8 +433,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
 		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
 		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
-		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund");
-		sql.append(", OverDraftColChrgFeeType, OverDraftColAmt, AssetClassSetup, ODMinAmount");
+		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, OverDraftColChrgFeeType");
+		sql.append(", OverDraftColAmt, AssetClassSetup, ODMinAmount, AllowCancelFin");
 
 		if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 			sql.append(", DownPayRuleCode, DownPayRuleDesc, LovDescFinDivisionName, LovDescPromoFinTypeDesc");
@@ -653,6 +654,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setOverDraftColAmt(rs.getBigDecimal("OverDraftColAmt"));
 					ft.setAssetClassSetup(rs.getLong("AssetClassSetup"));
 					ft.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+					ft.setAllowCancelFin(rs.getBoolean("AllowCancelFin"));
 
 					if (StringUtils.trimToEmpty(type).contains("ORGView")) {
 						ft.setDownPayRuleCode(rs.getString("DownPayRuleCode"));
@@ -695,7 +697,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", VanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove, GrcAdjReq");
 		sql.append(", GrcPeriodAftrFullDisb, AutoIncrGrcEndDate, GrcAutoIncrMonths, MaxAutoIncrAllowed, SubventionReq");
 		sql.append(", ThrldtoMaintainGrcPrd, OverdraftTxnChrgReq, OverdraftTxnChrgFeeType, ProductCategory");
-		sql.append(", TdsType, AutoApprove, GrcAdjReq, AllowAutoRefund, MaxAutoRefund, MinAutoRefund, ODMinAmount");
+		sql.append(", TdsType, AutoApprove, GrcAdjReq, AllowAutoRefund");
+		sql.append(", MaxAutoRefund, MinAutoRefund, ODMinAmount, AllowCancelFin");
 		sql.append(" FROM RMTFinanceTypes");
 		sql.append(" Where FinType = ?");
 
@@ -738,6 +741,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setMaxAutoRefund(rs.getBigDecimal("MaxAutoRefund"));
 				ft.setMinAutoRefund(rs.getBigDecimal("MinAutoRefund"));
 				ft.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+				ft.setAllowCancelFin(rs.getBoolean("AllowCancelFin"));
 
 				return ft;
 			}, finType);
@@ -876,7 +880,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxFPPCalType, MaxFPPAmount, MaxFPPPer, MaxFPPCalOn");
 		sql.append(", PpLockInPeriod, EsLockInPeriod, MinPPCalType, MinPPCalOn");
 		sql.append(", MinPPAmount, MinPPPercentage, MaxPPCalType, MaxPPAmount, MaxPPPercentage, MaxPPCalOn");
-		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, AssetClassSetup, OdMinAmount");
+		sql.append(", AllowAutoRefund, MaxAutoRefund, MinAutoRefund, AssetClassSetup, OdMinAmount, AllowCancelFin");
 		sql.append(")");
 		sql.append(" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, ");
 		sql.append(" :FinIsGenRef,");
@@ -936,7 +940,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", :MaxFPPCalType, :MaxFPPAmount, :MaxFPPPer, :MaxFPPCalOn");
 		sql.append(", :PpLockInPeriod, :EsLockInPeriod, :MinPPCalType, :MinPPCalOn");
 		sql.append(", :MinPPAmount, :MinPPPercentage, :MaxPPCalType, :MaxPPAmount, :MaxPPPercentage, :MaxPPCalOn");
-		sql.append(", :AllowAutoRefund, :MaxAutoRefund, :MinAutoRefund, :AssetClassSetup, :OdMinAmount");
+		sql.append(
+				", :AllowAutoRefund, :MaxAutoRefund, :MinAutoRefund, :AssetClassSetup, :OdMinAmount, :AllowCancelFin");
 		sql.append(")");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
@@ -1067,7 +1072,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", MaxPPPercentage = :MaxPPPercentage, MaxPPCalOn = :MaxPPCalOn");
 		sql.append(", AllowAutoRefund = :AllowAutoRefund, MaxAutoRefund =:MaxAutoRefund");
 		sql.append(", MinAutoRefund = :MinAutoRefund, NpaRpyHierarchy = :NpaRpyHierarchy");
-		sql.append(", AssetClassSetup= :AssetClassSetup, OdMinAmount = :OdMinAmount");
+		sql.append(", AssetClassSetup= :AssetClassSetup, OdMinAmount = :OdMinAmount, AllowCancelFin = :AllowCancelFin");
 		sql.append(" Where FinType =:FinType");
 
 		if (!type.endsWith("_Temp")) {
@@ -1475,5 +1480,19 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.LEAVING);
 		return ft;
 
+	}
+
+	@Override
+	public boolean isAllowCancelFin(String finType) {
+		String sql = "Select AllowCancelFin From RmtFinancetypes Where FinType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, finType);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
 	}
 }

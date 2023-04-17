@@ -395,6 +395,13 @@
 														visible="false" />
 												</hbox>
 											</row>
+											<row>
+												<label value="${c:l('label_FinanceTypeDialog_AllowCancelFin.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="allowCancelFin" checked="false" />
+												</hbox>
+											</row>
 											<row id="row_AllowLoanTypes" visible="true">
 												<label id="label_FinanceMainDialog_AllowLoanSplit"
 													value="${c:l('label_FinanceMainDialog_AllowLoanSplit.value')}" />

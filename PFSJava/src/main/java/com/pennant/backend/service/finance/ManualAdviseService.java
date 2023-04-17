@@ -89,4 +89,6 @@ public interface ManualAdviseService {
 	public BigDecimal getRefundedAmt(long finID, long receivableID, long receivableFeeTypeID);
 
 	List<ManualAdvise> getCancelledManualAdvise(long finID);
+
+	void cancelAdvises(long finID);
 }

@@ -1107,6 +1107,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return manualAdviseDAO.getAdvises(finID, "_Temp");
 	}
 
+	@Override
+	public void cancelAdvises(long finID) {
+		manualAdviseDAO.cancelAdvises(finID);
+	}
+
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;

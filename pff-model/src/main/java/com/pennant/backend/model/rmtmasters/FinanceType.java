@@ -263,7 +263,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// Loan Purpose
 	private String allowedLoanPurposes;
 	private String specificLoanPurposes;
-
+	private boolean allowCancelFin;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -557,6 +557,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setDefaultOCR(this.defaultOCR);
 		entity.setAllowedLoanPurposes(this.allowedLoanPurposes);
 		entity.setSpecificLoanPurposes(this.specificLoanPurposes);
+		entity.setAllowCancelFin(this.allowCancelFin);
 		entity.setUserDetails(this.userDetails);
 		this.auditDetailMap.entrySet().stream().forEach(e -> {
 			List<AuditDetail> newList = new ArrayList<AuditDetail>();
@@ -2903,5 +2904,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setOdMinAmount(BigDecimal odMinAmount) {
 		this.odMinAmount = odMinAmount;
+	}
+
+	public boolean isAllowCancelFin() {
+		return allowCancelFin;
+	}
+
+	public void setAllowCancelFin(boolean allowCancelFin) {
+		this.allowCancelFin = allowCancelFin;
 	}
 }

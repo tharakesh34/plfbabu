@@ -213,6 +213,7 @@ public class APIServices {
 		services.add("getCustomerDetailsByNameAndPhoneNumber");
 		services.add("getCustomerDetailsByNameAndDOB");
 		services.add("getCustomerDetailsByNameAndEMIAmount");
+		services.add("cancelLoan");
 
 		return services;
 	}

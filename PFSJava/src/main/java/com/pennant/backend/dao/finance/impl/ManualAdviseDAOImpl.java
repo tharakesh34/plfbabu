@@ -2492,10 +2492,19 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public BigDecimal getPaidAmtByFeeType(long finID, long payableFeeTypeID) {
-		String sql =" Select coalesce(sum(AdviseAmount), 0) AdviseAmount From ManualAdvise ma Where ma.FinID = ? and ma.FeeTypeId = ?";
+		String sql = "Select coalesce(sum(AdviseAmount), 0) AdviseAmount From ManualAdvise ma Where ma.FinID = ? and ma.FeeTypeId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID, payableFeeTypeID);
+	}
+
+	@Override
+	public void cancelAdvises(long finID) {
+		String sql = "Update ManualAdvise Set Status = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql, PennantConstants.MANUALADVISE_CANCEL, finID);
 	}
 }

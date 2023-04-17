@@ -989,9 +989,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain fm = schdData.getFinanceMain();
 
 		String finReference = fm.getFinReference();
+		List<FinServiceInstruction> siList = new ArrayList<>();
 
-		List<FinServiceInstruction> siList = finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp",
-				serviceEvent);
+		String type = "";
+		if (!FinServiceEvent.CANCELFIN.equals(eventCodeRef)) {
+			type = "_Temp";
+		}
+		siList = finServiceInstructionDAO.getFinServiceInstructions(finID, type, serviceEvent);
 
 		schdData.setFinServiceInstructions(siList);
 

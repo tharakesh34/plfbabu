@@ -39,8 +39,6 @@
 		</sql>
 	</changeSet>
 
-
-
 	<changeSet id="ST#1469.1" author="NagaVamsi.P">
 		<addColumn tableName="ADTASSET_CLASS_SETUP_HEADER">
 			<column name="Code" type="varchar(10)" />
@@ -226,4 +224,18 @@
 		<addDefaultValue columnName="ExternalMandate" tableName="ADTMANDATES" defaultValue="0" />
 	</changeSet>
 	
+	<changeSet id="ST#726.1" author="anilkumar.g">	
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="AllowCancelFin" type="smallint" />			
+		</addColumn>
+    </changeSet>
+    
+    <changeSet id="ST#726.1.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE ADTRMTFINANCETYPES SET ALLOWCANCELFIN = 0;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
