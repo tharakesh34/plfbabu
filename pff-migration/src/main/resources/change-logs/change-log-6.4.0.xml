@@ -4566,19 +4566,19 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.4.7" author="NagaVamsi.P">
+	<changeSet id="ST#1469.25.7" author="NagaVamsi.P">
 		<addColumn tableName="NPA_LOAN_INFO_Temp">
 			<column name="SecondaryNpaClassId" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.4.8" author="NagaVamsi.P">
+	<changeSet id="ST#1469.25.8" author="NagaVamsi.P">
 		<addColumn tableName="NPA_PROVISION_STAGE">
 			<column name="WriteOffLoan" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.4.9" author="NagaVamsi.P">
+	<changeSet id="ST#1469.25.9" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
 				UPDATE NPA_PROVISION_STAGE SET WRITEOFFLOAN = (SELECT FM.WRITEOFFLOAN FROM FINANCEMAIN FM WHERE NPA_PROVISION_STAGE.FINID = FM.FINID) WHERE WRITEOFFLOAN IS NULL;
@@ -4586,7 +4586,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.5" author="NagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.25.10" author="NagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPA_S_WRITEOFFLOAN DEFAULT 0 FOR WRITEOFFLOAN;
@@ -4594,17 +4594,17 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.5" author="NagaVamsi.P" dbms="postgresql, oracle">
+	<changeSet id="ST#1469.25.10" author="NagaVamsi.P" dbms="postgresql, oracle">
 		<addDefaultValue columnName="WriteOffLoan" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="ST#1469.25.6" author="NagaVamsi.P">
+	<changeSet id="ST#1469.25.11" author="NagaVamsi.P">
 		<addColumn tableName="NPA_PROVISION_STAGE">
 			<column name="UnderSettlement" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.7" author="NagaVamsi.P">
+	<changeSet id="ST#1469.25.12" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
 				UPDATE NPA_PROVISION_STAGE SET UNDERSETTLEMENT = (SELECT FM.UNDERSETTLEMENT FROM FINANCEMAIN FM WHERE NPA_PROVISION_STAGE.FINID = FM.FINID) WHERE UNDERSETTLEMENT IS NULL;
@@ -4612,7 +4612,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.8" author="NagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.25.13" author="NagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE NPA_PROVISION_STAGE ADD CONSTRAINT DF_NPA_S_UNDERSETTLEMENT DEFAULT 0 FOR UNDERSETTLEMENT;
@@ -4620,7 +4620,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.9" author="NagaVamsi.P" dbms="postgresql, oracle">
+	<changeSet id="ST#1469.25.13" author="NagaVamsi.P" dbms="postgresql, oracle">
 		<addDefaultValue columnName="UnderSettlement" tableName="NPA_PROVISION_STAGE" defaultValue="0" />
 	</changeSet>
 
