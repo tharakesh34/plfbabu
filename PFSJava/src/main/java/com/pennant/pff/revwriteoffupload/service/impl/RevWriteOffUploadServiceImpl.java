@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -28,8 +27,6 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
-import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -39,8 +36,6 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.revwriteoffupload.dao.RevWriteOffUploadDAO;
@@ -50,10 +45,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennant.pff.writeoffupload.exception.WriteOffUploadError;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
-import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
@@ -92,10 +84,10 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				List<String> key = new ArrayList<>();
 
+				// Validating Reverse Writeoff Prepared loan details
 				for (RevWriteOffUploadDetail detail : details) {
 
 					String reference = detail.getReference();
-
 					if (key.contains(reference)) {
 						setError(detail, WriteOffUploadError.WOUP009);
 						failRecords++;
@@ -104,6 +96,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 					key.add(reference);
 
+					// Validate Details
 					doValidate(header, detail);
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -132,8 +125,10 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 					txStatus = transactionManager.getTransaction(txDef);
 
+					// Success Status Update on Upload Table
 					revWriteOffUploadDAO.update(details);
 
+					// Update Header Details Count
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headerList, true);
@@ -151,7 +146,8 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				logger.info("Reverse WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
 
-				processRevWriteOffLoan(header);
+				// Method for Processing Writeoff Reversal
+				processRevWriteOffLoan(header, details, appDate);
 
 				logger.info("Reverse WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 			}
@@ -159,89 +155,112 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void processRevWriteOffLoan(FileUploadHeader header) {
-		List<RevWriteOffUploadDetail> details = revWriteOffUploadDAO.getDetails(header.getId());
-		Date appDate = SysParamUtil.getAppDate();
+	/**
+	 * Method for processing Success Writeoff Records for Writeoff reversal Execution
+	 * 
+	 * @param header
+	 */
+	private void processRevWriteOffLoan(FileUploadHeader header, List<RevWriteOffUploadDetail> details, Date appDate) {
+
+		// Rendering Write off Loan Details for Reversal
 		for (RevWriteOffUploadDetail detail : details) {
-			if ("S".equals(detail.getStatus())) {
-				detail.setAppDate(appDate);
-				processSucessRevWriteOff(detail, header);
+
+			if (detail.getProgress() != EodConstants.PROGRESS_SUCCESS) {
+				continue;
+			}
+			detail.setAppDate(appDate);
+
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+			try {
+				long finId = detail.getReferenceID();
+
+				// processing Reversal Write off Accounting
+				boolean isSuccess = executeAccountingProcess(detail, finId);
+				if (!isSuccess) {
+					throw new AppException("Postings Execution failed for Loan Reference : " + detail.getReference());
+				}
+
+				// After Success Posting status , Update Write Off Loan Status to original State
+				updateWriteOffStatus(detail, finId);
+
+				// Upload header Log Update
+				saveLog(detail, header);
+
+				this.transactionManager.commit(transactionStatus);
+			} catch (Exception e) {
+				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+				transactionManager.rollback(transactionStatus);
+
+				String error = StringUtils.trimToEmpty(e.getMessage());
+
+				if (error.length() > 1999) {
+					error = error.substring(0, 1999);
+				}
+
+				// Update Reverse Write off Loan detail Update
+				detail.setProgress(EodConstants.PROGRESS_FAILED);
+				detail.setErrorDesc(error);
+				this.revWriteOffUploadDAO.update(detail);
+			}
+
+			if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+				updateFailRecords(1, 1, detail.getHeaderId());
 			}
 		}
 	}
 
-	private void processSucessRevWriteOff(RevWriteOffUploadDetail detail, FileUploadHeader header) {
+	/**
+	 * Method for preparing Accounting and executing against Writeoff Loan amount reversals to Normal state
+	 * 
+	 * @param detail
+	 * @param finId
+	 */
+	private boolean executeAccountingProcess(RevWriteOffUploadDetail detail, long finId) {
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
-
-		try {
-			long finId = financeMainDAO.getFinID(detail.getReference(), TableType.MAIN_TAB);
-
-			executeAccountingProcess(detail, finId);
-
-			updateWriteOffStatus(detail, finId);
-
-			saveLog(detail, header);
-
-			this.transactionManager.commit(transactionStatus);
-		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-			transactionManager.rollback(transactionStatus);
-
-			String error = StringUtils.trimToEmpty(e.getMessage());
-
-			if (error.length() > 1999) {
-				error = error.substring(0, 1999);
-			}
-
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(error);
-			this.revWriteOffUploadDAO.update(detail);
-		}
-
-		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-			updateFailRecords(1, 1, detail.getHeaderId());
-		}
-	}
-
-	private void executeAccountingProcess(RevWriteOffUploadDetail detail, long finId) {
-
-		FinanceMain fm = financeMainDAO.getFinanceMainById(finId, "_View", false);
-
-		FinanceDetail fd = new FinanceDetail();
-		FinScheduleData schdData = fd.getFinScheduleData();
-		fd.setAccountingEventCode(AccountingEvent.REV_WRITEOFF);
-
-		schdData.setFinID(finId);
+		// Loan Basic Details
 		String reference = detail.getReference();
-		schdData.setFinReference(reference);
-		schdData.setFinanceMain(fm);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finId, "", false);
 
 		// Finance Schedule Details
-		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finId, "_View", false));
-		AEEvent aeEvent = new AEEvent();
-		FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finId);
+		List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getFinScheduleDetails(finId, "", false);
+		FinanceProfitDetail pd = profitDetailsDAO.getFinProfitDetailsById(finId);
 
-		try {
-			aeEvent = prepareAccountingData(fd, aeEvent, pftDetail);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+		AEEvent aeEvent = new AEEvent();
+		aeEvent.setAppDate(detail.getAppDate());
+		aeEvent.setEntityCode(fm.getEntityCode());
+
+		// preparing Accounting data and Execution
+		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
+				AccountingEvent.REV_WRITEOFF, FinanceConstants.MODULEID_FINTYPE));
+
+		aeEvent = AEAmounts.procAEAmounts(fm, schdList, pd, AccountingEvent.REV_WRITEOFF, aeEvent.getAppDate(),
+				aeEvent.getAppDate());
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+		// Fetch the Last transaction done before the wroteoff 
 		long receiptId = revWriteOffUploadDAO.getReceiptIdByRef(reference);
-		amountCodes = preparePaidAmount(amountCodes, reference, receiptId);
-		Map<String, BigDecimal> extDataMap = prepareAdviseMovements(reference, receiptId);
+
+		// Get All Paid Amounts after last Writeoff to till this process
+		Map<String, BigDecimal> extDataMap = preparePaidAmount(amountCodes, reference, receiptId);//FIXME : Create single query
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap.putAll(extDataMap);
+
+		// Advise Movement Preparation
+		extDataMap = prepareAdviseMovements(reference, receiptId);
+		dataMap.putAll(extDataMap);
+
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
-		postingsPreparationUtil.postAccounting(aeEvent);
-
+		// Executing Postings
+		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
+		return aeEvent.isPostingSucess();
 	}
 
 	private Map<String, BigDecimal> prepareAdviseMovements(String reference, long receiptId) {
@@ -361,89 +380,50 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 		movementMap.put(feeCode, amt.add(amount));
 	}
 
-	private AEAmountCodes preparePaidAmount(AEAmountCodes amountCodes, String reference, long receiptId) {
+	private Map<String, BigDecimal> preparePaidAmount(AEAmountCodes amountCodes, String reference, long receiptId) {
 
 		List<ReceiptAllocationDetail> radList = receiptAllocationDetailDAO.getReceiptPaidAmount(receiptId, reference);
+
+		Map<String, BigDecimal> alocMap = new HashMap<String, BigDecimal>();
 
 		for (ReceiptAllocationDetail rad : radList) {
 			String allocType = rad.getAllocationType();
 			switch (allocType) {
-			case "PRI":
-				amountCodes.setPriPaidWO(rad.getPaidAmount());
+			case Allocation.PRI:
+				alocMap.put("ae_priPaidWO", rad.getPaidAmount());
 				break;
-			case "PFT":
-				amountCodes.setPftPaidWO(rad.getPaidAmount());
+			case Allocation.PFT:
+				alocMap.put("ae_pftPaidWO", rad.getPaidAmount());
 				break;
 			default:
 				break;
 			}
 		}
-		return amountCodes;
+		return alocMap;
 	}
 
-	private AEEvent prepareAccountingData(FinanceDetail fd, AEEvent aeEvent, FinanceProfitDetail pd) {
-
-		Date curBDay = SysParamUtil.getAppDate();
-		String eventCode = fd.getAccountingEventCode();
-
-		FinScheduleData schdData = fd.getFinScheduleData();
-
-		FinanceMain fm = schdData.getFinanceMain();
-
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
-
-		if (StringUtils.isBlank(eventCode)) {
-			eventCode = PennantApplicationUtil.getEventCode(fm.getFinStartDate());
-		}
-
-		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
-		BigDecimal totalPftCpzOld = BigDecimal.ZERO;
-		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-
-		if (pd != null) {
-			BeanUtils.copyProperties(pd, newProfitDetail);
-			totalPftSchdOld = pd.getTotalPftSchd();
-			totalPftCpzOld = pd.getTotalPftCpz();
-		}
-
-		aeEvent = AEAmounts.procAEAmounts(fm, schedules, pd, eventCode, curBDay, curBDay);
-		aeEvent.getAcSetIDList().add(
-				AccountingConfigCache.getAccountSetID(fm.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
-
-		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-
-		if (!FinanceConstants.BPI_NO.equals(fm.getBpiTreatment())) {
-			amountCodes.setBpi(fm.getBpiAmount());
-		}
-
-		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
-		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
-
-		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
-		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
-
-		aeEvent.setModuleDefiner(FinServiceEvent.ORG);
-		amountCodes.setDisburse(fm.getFinCurrAssetValue());
-
-		if (fm.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
-			aeEvent.setNewRecord(true);
-		}
-		// setting entity code
-		aeEvent.setEntityCode(fm.getEntityCode());
-		return aeEvent;
-	}
-
+	/**
+	 * Method for Updating write off Amount Details & status against Loan
+	 * 
+	 * @param detail
+	 * @param finId
+	 */
 	private void updateWriteOffStatus(RevWriteOffUploadDetail detail, long finId) {
 
+		// Schedule Details Update
 		financeScheduleDetailDAO.updateWriteOffDetail(detail.getReference());
+
+		// Loan Details Update for CLosing Status
 		financeMainDAO.updateWriteOffStatus(finId, false);
+
+		// Loan Profit Details Update for CLosing Status
 		profitDetailsDAO.updateClosingSts(finId, false);
 
+		// Write off Details Deletion along with Log insertion
 		FinanceWriteoff fwo = financeWriteoffDAO.getFinanceWriteoffById(finId, "");
-
 		revWriteOffUploadDAO.save(fwo, "");
-
 		financeWriteoffDAO.delete(finId, "");
+
 	}
 
 	@Override
@@ -515,6 +495,8 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 			setError(detail, WriteOffUploadError.WOUP0012);
 			return;
 		}
+
+		detail.setReferenceID(fm.getFinID());
 
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);

@@ -46,7 +46,6 @@ import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.TableType;
 
 public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(WriteOffUploadServiceImpl.class);
@@ -84,6 +83,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				List<String> key = new ArrayList<>();
 
+				// Validating Writeoff Prepared loan details
 				for (WriteOffUploadDetail detail : details) {
 
 					String reference = detail.getReference();
@@ -96,6 +96,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 					key.add(reference);
 
+					// Validate Details
 					doValidate(header, detail);
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -124,8 +125,10 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 					txStatus = transactionManager.getTransaction(txDef);
 
+					// Success Status Update on Upload Table
 					writeOffUploadDAO.update(details);
 
+					// Update Header Details Count
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headerList, true);
@@ -143,7 +146,8 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				logger.info("WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
 
-				processWriteOffLoan(header);
+				// Method for Processing Writeoff Loan
+				processWriteOffLoan(header, details, appDate);
 
 				logger.info("WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 			}
@@ -151,57 +155,56 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void processWriteOffLoan(FileUploadHeader header) {
-		List<WriteOffUploadDetail> details = writeOffUploadDAO.getDetails(header.getId());
-		Date appDate = SysParamUtil.getAppDate();
+	private void processWriteOffLoan(FileUploadHeader header, List<WriteOffUploadDetail> details, Date appDate) {
+
+		// Rendering Write off Loan Details
 		for (WriteOffUploadDetail detail : details) {
-			if ("S".equals(detail.getStatus())) {
-				detail.setAppDate(appDate);
-				processSucessWriteOff(detail, header);
-			}
-		}
-	}
 
-	private void processSucessWriteOff(WriteOffUploadDetail detail, FileUploadHeader fuh) {
-
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
-
-		try {
-			long finId = financeMainDAO.getFinID(detail.getReference(), TableType.MAIN_TAB);
-			FinanceWriteoffHeader header = financeWriteoffService.getFinanceWriteoffDetailById(finId, "_View", null,
-					FinServiceEvent.WRITEOFFPAY);
-
-			setWriteOffTotals(header);
-			header.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
-
-			AuditHeader auditHeader = getAuditHeader(header, PennantConstants.TRAN_WF);
-
-			this.financeWriteoffService.doApprove(auditHeader);
-
-			saveLog(detail, fuh);
-
-			this.transactionManager.commit(transactionStatus);
-		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-			transactionManager.rollback(transactionStatus);
-
-			String error = StringUtils.trimToEmpty(e.getMessage());
-
-			if (error.length() > 1999) {
-				error = error.substring(0, 1999);
+			if (detail.getProgress() != EodConstants.PROGRESS_SUCCESS) {
+				continue;
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(error);
-			this.writeOffUploadDAO.update(detail);
-		}
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-			updateFailRecords(1, 1, detail.getHeaderId());
+			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+
+			try {
+				// Preparing the data for writeOff
+				FinanceWriteoffHeader fwh = financeWriteoffService.getFinanceWriteoffDetailById(detail.getReferenceID(),
+						"_View", null, FinServiceEvent.WRITEOFFPAY);
+
+				// setting the write off amounts
+				setWriteOffTotals(fwh);
+				fwh.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
+
+				AuditHeader auditHeader = getAuditHeader(fwh, PennantConstants.TRAN_WF);
+
+				this.financeWriteoffService.doApprove(auditHeader);
+
+				// Upload header Log Update
+				saveLog(detail, header);
+
+				this.transactionManager.commit(transactionStatus);
+			} catch (Exception e) {
+				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+
+				transactionManager.rollback(transactionStatus);
+
+				String error = StringUtils.trimToEmpty(e.getMessage());
+
+				if (error.length() > 1999) {
+					error = error.substring(0, 1999);
+				}
+
+				detail.setProgress(EodConstants.PROGRESS_FAILED);
+				detail.setErrorDesc(error);
+				this.writeOffUploadDAO.update(detail);
+			}
+
+			if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+				updateFailRecords(1, 1, detail.getHeaderId());
+			}
 		}
 	}
 
@@ -228,6 +231,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 		List<FinanceScheduleDetail> financeScheduleDetails;
 		try {
+			// calculating the schedule with writeOff amounts
 			financeScheduleDetails = calScheduleWriteOffDetails(header);
 			header.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(financeScheduleDetails);
 		} catch (Exception e) {
@@ -236,6 +240,12 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
+	/***
+	 * Method for calculating schedule for Writeoff
+	 * 
+	 * @param financeWriteoffHeader
+	 * @return
+	 */
 	private List<FinanceScheduleDetail> calScheduleWriteOffDetails(FinanceWriteoffHeader financeWriteoffHeader) {
 		logger.debug("Entering");
 
