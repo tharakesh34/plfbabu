@@ -93,7 +93,7 @@ import com.pennanttech.pff.overdraft.OverdraftConstants;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 import com.pennanttech.pff.overdraft.model.VariableOverdraftSchdDetail;
 import com.pennanttech.pff.overdraft.model.VariableOverdraftSchdHeader;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ScheduleCalculator {
 	private static final Logger logger = LogManager.getLogger(ScheduleCalculator.class);
@@ -10663,8 +10663,7 @@ public class ScheduleCalculator {
 	 * @return
 	 */
 	private FinScheduleData procGetCalManualSchd(FinScheduleData orgFinScheduleData) {
-		Cloner cloner = new Cloner();
-		FinScheduleData finScheduleData = cloner.deepClone(orgFinScheduleData);
+		FinScheduleData finScheduleData = ObjectUtil.clone(orgFinScheduleData);
 
 		finScheduleData.getScheduleMap().clear();
 		finScheduleData.getFinanceScheduleDetails().clear();

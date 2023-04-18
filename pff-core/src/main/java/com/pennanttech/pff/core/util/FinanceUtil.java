@@ -5,6 +5,7 @@ import java.util.Date;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
 public class FinanceUtil {
@@ -39,4 +40,25 @@ public class FinanceUtil {
 	public static boolean isMinimunODCChargeReq(String chargeType) {
 		return ChargeType.PERC_ONE_TIME.equals(chargeType) || ChargeType.PERC_ON_PD_MTH.equals(chargeType);
 	}
+
+	public static boolean isValidDisbStatus(String status) {
+		if (status == null) {
+			return false;
+		}
+
+		switch (status) {
+		case DisbursementConstants.STATUS_REVERSED:
+		case DisbursementConstants.STATUS_REJECTED:
+		case DisbursementConstants.STATUS_APPROVED:
+		case DisbursementConstants.STATUS_CANCEL:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	public static boolean isInValidDisbStatus(String status) {
+		return !isValidDisbStatus(status);
+	}
+
 }

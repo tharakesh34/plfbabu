@@ -49,7 +49,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class DesiredProfitCalculation {
 	private static final Logger logger = LogManager.getLogger(DesiredProfitCalculation.class);
@@ -253,8 +253,7 @@ public class DesiredProfitCalculation {
 			String repayPftFrq, String repayFrq, Date nextRepayPftDate, Date gpEndDate, Date nextRepayDate) {
 
 		BigDecimal totDesPftAmount = BigDecimal.ZERO;
-		Cloner cloner = new Cloner();
-		FinScheduleData planDeferSchdData = cloner.deepClone(orgFinSchdData);
+		FinScheduleData planDeferSchdData = ObjectUtil.clone(orgFinSchdData);
 		FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
 
 		// Maturity Date Recalculation using Number of Terms

@@ -118,7 +118,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul file.
@@ -992,8 +992,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
-		Cloner cloner = new Cloner();
-		finFeeDetailList = cloner.deepClone(finFeeDetailList);
+
+		finFeeDetailList = ObjectUtil.clone(finFeeDetailList);
 		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
 			for (FinFeeDetail fee : finFeeDetailList) {
 				fee.setFinReference(fm.getFinReference());

@@ -67,7 +67,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class RepayCalculator implements Serializable {
 	private static final long serialVersionUID = 8062681791631293126L;
@@ -220,8 +220,7 @@ public class RepayCalculator implements Serializable {
 		}
 
 		// Copy Actual Schedule Details List
-		Cloner cloner = new Cloner();
-		List<FinanceScheduleDetail> tempScheduleDetails = cloner.deepClone(schedules);
+		List<FinanceScheduleDetail> tempScheduleDetails = ObjectUtil.clone(schedules);
 		tempScheduleDetails = sortSchdDetails(tempScheduleDetails);
 		Map<Date, OverdueChargeRecovery> recMap = new HashMap<Date, OverdueChargeRecovery>();
 
@@ -391,8 +390,7 @@ public class RepayCalculator implements Serializable {
 					.add(curSchd.getFeeSchd() == null ? BigDecimal.ZERO : curSchd.getFeeSchd()));
 
 			// Overdue Principal and Profit
-			if (schdDate.compareTo(curBussniessDate) < 0
-					&& DateUtil.getDaysBetween(curBussniessDate, schdDate) >= 0) {
+			if (schdDate.compareTo(curBussniessDate) < 0 && DateUtil.getDaysBetween(curBussniessDate, schdDate) >= 0) {
 				cpzTillNow = cpzTillNow.add(curSchd.getCpzAmount());
 				repayMain.setOverduePrincipal(repayMain.getOverduePrincipal()
 						.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid())));

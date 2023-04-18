@@ -87,4 +87,6 @@ public interface FinanceTypeDAO {
 	String getFinDivsion(String finType);
 
 	List<String> getFinanceTypeList();
+
+	boolean isAllowCancelFin(String finType);
 }

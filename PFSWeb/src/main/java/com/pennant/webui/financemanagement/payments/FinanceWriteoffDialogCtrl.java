@@ -120,7 +120,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Payments/FinanceWriteoffDialog.zul
@@ -243,8 +243,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				financeWriteoff = getFinanceWriteoffHeader().getFinanceWriteoff();
 
-				Cloner cloner = new Cloner();
-				FinanceMain befImage = cloner.deepClone(financeMain);
+				FinanceMain befImage = ObjectUtil.clone(financeMain);
 				getFinanceWriteoffHeader().getFinanceDetail().getFinScheduleData().getFinanceMain()
 						.setBefImage(befImage);
 
@@ -519,8 +518,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!financeMain.isNewRecord()) {
 			this.finScheduleTab.setVisible(true);
 
-			Cloner cloner = new Cloner();
-			effectFinScheduleData = cloner.deepClone(financeWriteoffHeader);
+			effectFinScheduleData = ObjectUtil.clone(financeWriteoffHeader);
 			doFillScheduleList(effectFinScheduleData);
 
 		}
@@ -657,8 +655,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.listBoxSchedule.getItems().clear();
 
 		// Reset only Schedule Details Data
-		Cloner cloner = new Cloner();
-		FinanceWriteoffHeader schdData = cloner.deepClone(financeWriteoffHeader);
+		FinanceWriteoffHeader schdData = ObjectUtil.clone(financeWriteoffHeader);
 		schdData.getFinanceDetail().getFinScheduleData()
 				.setFinanceScheduleDetails(financeWriteoffService.getFinScheduleDetails(financeMain.getFinID()));
 
@@ -672,8 +669,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		// Copy Total Finance Schedule Data for Calculation without Effecting the Original Schedule Data
-		Cloner cloner = new Cloner();
-		effectFinScheduleData = cloner.deepClone(financeWriteoffHeader);
+		effectFinScheduleData = ObjectUtil.clone(financeWriteoffHeader);
 
 		BigDecimal woPriAmt = CurrencyUtil.unFormat(this.writeoffPriAmt.getValue(), format);
 		BigDecimal woPftAmt = CurrencyUtil.unFormat(this.writeoffPftAmt.getValue(), format);
@@ -1003,8 +999,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		Cloner cloner = new Cloner();
-		FinanceWriteoffHeader aFinanceWriteoffHeader = cloner.deepClone(getFinanceWriteoffHeader());
+		FinanceWriteoffHeader aFinanceWriteoffHeader = ObjectUtil.clone(getFinanceWriteoffHeader());
 		FinanceDetail aFinanceDetail = aFinanceWriteoffHeader.getFinanceDetail();
 
 		aFinanceDetail.getFinScheduleData().setFinanceScheduleDetails(

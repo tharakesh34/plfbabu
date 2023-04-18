@@ -164,7 +164,13 @@
 													<checkbox id="autoApprove" checked="false" />
 												</hbox>
 											</row>
-
+											<row>
+												<label value="${c:l('label_FinanceTypeDialog_AllowCancelFin.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="allowCancelFin" checked="false" />
+												</hbox>
+											</row>
 											<row>
 												<label id="label_FinanceTypeDialog_FinCollateralReq" value="${c:l('label_OverDraftFinanceTypeDialog_FinCollateralReq.value')}" />
 												<hbox>

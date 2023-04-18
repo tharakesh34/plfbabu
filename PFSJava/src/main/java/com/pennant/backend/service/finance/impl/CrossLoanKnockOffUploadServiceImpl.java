@@ -20,6 +20,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffUploadDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -48,6 +49,7 @@ import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
@@ -66,6 +68,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private CrossLoanKnockOffService crossLoanKnockOffService;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object detail) {
@@ -435,12 +438,27 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			FinanceMain toFm) {
 
 		CrossLoanKnockOff clko = new CrossLoanKnockOff();
+		Date receiptDt = clku.getAppDate();
+
+		clko.setCrossLoanTransfer(getCrossLoanTransferBean(clku, frmFm, toFm));
+		
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clku.getExcessType())) {
+			CrossLoanTransfer clt = clko.getCrossLoanTransfer();
+
+			if (clt != null && clt.getValueDate() != null) {
+				receiptDt = clt.getValueDate();
+				Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(toFm.getFinID(), clt.getValueDate());
+
+				if (DateUtil.compare(receiptDt, schDate) < 0) {
+					receiptDt = schDate;
+				}
+			}
+		}
 
 		clko.setUserDetails(clku.getUserDetails());
-		clko.setCrossLoanTransfer(getCrossLoanTransferBean(clku, frmFm, toFm));
 		clko.setPostDate(clku.getAppDate());
 		clko.setFinReceiptData(getFinReceiptDataBean(clku, toFm));
-		clko.setReceiptDate(clku.getAppDate());
+		clko.setReceiptDate(receiptDt);
 		clko.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		clko.setReceiptAmount(clku.getExcessAmount());
 		clko.setToFinReference(clku.getToFinReference());
@@ -736,6 +754,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

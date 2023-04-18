@@ -41,7 +41,7 @@ import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVetting;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LegalVettingServiceImpl extends GenericService<LegalVetting> implements LegalVettingService {
 	private static final Logger logger = LogManager.getLogger(LegalVerificationServiceImpl.class);
@@ -182,8 +182,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		LegalVetting legalVetting = (LegalVetting) auditHeader.getAuditDetail().getModelData();
 		auditDetails.addAll(deleteChilds(legalVetting, TableType.MAIN_TAB.getSuffix(), auditHeader.getAuditTranType()));
@@ -211,8 +210,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		LegalVetting lv = new LegalVetting();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), lv);

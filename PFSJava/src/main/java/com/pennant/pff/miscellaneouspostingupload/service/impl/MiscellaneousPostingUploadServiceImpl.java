@@ -222,15 +222,17 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 			List<JVPostingEntry> jVPostingEntryList = new ArrayList<>();
 
+			List<MiscellaneousPostingUpload> mpuList = entry.getValue();
 			JVPosting jVPosting = new JVPosting();
 			int newRecord = 0;
+			Long batchReference = jVPostingDAO.createBatchReference();
 
-			for (MiscellaneousPostingUpload mpus : entry.getValue()) {
-				Long batchReference = jVPostingDAO.createBatchReference();
-				mpus.setBatchReference(batchReference);
+			miscellaneousPostingUploadDAO.updateBatchReference(mpuList, batchReference);
+
+			for (MiscellaneousPostingUpload mpus : mpuList) {
 				String postingDivision = financeMainDAO.getLovDescFinDivisionByReference(mpus.getReference());
 				FinanceMain fm = financeMainDAO.getEntityByRef(mpus.getReference());
-
+				mpus.setBatchReference(batchReference);
 				jVPostingEntryList.add(getJV(mpus, mpus.getDebitGL(), AccountConstants.TRANCODE_DEBIT,
 						AccountConstants.TRANTYPE_DEBIT));
 				jVPostingEntryList.add(getJV(mpus, mpus.getCreditGL(), AccountConstants.TRANCODE_CREDIT,
@@ -242,7 +244,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 					String currency = mpus.getCurrencyParm();
 					Date postingDate = mpus.getAppDate();
 
-					jVPosting.setBatchReference(Long.valueOf(mpus.getBatchReference()));
+					jVPosting.setBatchReference(mpus.getBatchReference());
 					jVPosting.setReference(mpus.getReference());
 					jVPosting.setBatch(mpus.getBatchName());
 					jVPosting.setCurrency(currency);
@@ -353,7 +355,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 		AccountMapping am = accountMappingDAO.getAccountMapping(account, "_AView");
 
 		JVPostingEntry entry = new JVPostingEntry();
-		entry.setBatchReference(Long.valueOf(detail.getBatchReference()));
+		entry.setBatchReference(detail.getBatchReference());
 		entry.setAccount(account);
 		entry.setAccCCy(currency);
 		entry.setTxnCCy(currency);

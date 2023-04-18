@@ -14,7 +14,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ScriptValidationService {
 	private static final Logger logger = LogManager.getLogger(ScriptValidationService.class);
@@ -66,15 +66,11 @@ public class ScriptValidationService {
 			for (Object object : objectList) {
 				if (object != null) {
 
-					// Cloning the object for original data.
-					Cloner cloner = new Cloner();
-					Object clonedObject = cloner.deepClone(object);
-
-					if (clonedObject instanceof FinanceDetail) {
-						bindings.put("fd", clonedObject);
+					if (object instanceof FinanceDetail) {
+						bindings.put("fd", ObjectUtil.clone((FinanceDetail) object));
 					}
-					if (clonedObject instanceof CustomerDetails) {
-						bindings.put("cu", clonedObject);
+					if (object instanceof CustomerDetails) {
+						bindings.put("cu", ObjectUtil.clone((CustomerDetails) object));
 					}
 				}
 			}

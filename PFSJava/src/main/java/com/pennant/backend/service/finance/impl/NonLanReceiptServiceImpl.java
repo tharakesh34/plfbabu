@@ -77,7 +77,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implements NonLanReceiptService {
 	private static final Logger logger = LogManager.getLogger(NonLanReceiptServiceImpl.class);
@@ -161,8 +161,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 		boolean changeStatus = false;
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
@@ -360,8 +359,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 		String roleCode = receiptHeader.getRoleCode();
@@ -924,9 +922,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(finReference, "_AView", false);
 			finScheduleData.setFinanceMain(financeMain);
 		} else {
-			Cloner cloner = new Cloner();
-			FinServiceInstruction tempFsi = cloner.deepClone(finScheduleData.getFinServiceInstruction());
-			FinReceiptHeader rch = cloner.deepClone(receiptData.getReceiptHeader());
+			FinServiceInstruction tempFsi = ObjectUtil.clone(finScheduleData.getFinServiceInstruction());
+			FinReceiptHeader rch = ObjectUtil.clone(receiptData.getReceiptHeader());
 
 			if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 				logger.debug("Leaving");

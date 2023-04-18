@@ -200,7 +200,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger logger = LogManager.getLogger(GenericFinanceDetailService.class);
@@ -1418,11 +1418,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			List<FinServiceInstruction> serviceInsts = schdData.getFinServiceInstructions();
 
-			Cloner cloner = new Cloner();
 			int instruction = 0;
 			for (FinServiceInstruction inst : serviceInsts) {
 
-				AEAmountCodes tempAmountCodes = cloner.deepClone(amountCodes);
+				AEAmountCodes tempAmountCodes = ObjectUtil.clone(amountCodes);
 				aeEvent.setDataMap(new HashMap<>());
 
 				if (!feesExecuted) {// No segregation of fees based on instruction

@@ -124,7 +124,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
 import com.pennanttech.pff.receipt.constants.Allocation;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>FeeWaiverHeader</b>.<br>
@@ -1102,8 +1102,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 				// Tax Header Preparation
 				if (advMov.getTaxHeader() != null) {
-					Cloner cloner = new Cloner();
-					TaxHeader taxHeader = cloner.deepClone(advMov.getTaxHeader());
+					TaxHeader taxHeader = ObjectUtil.clone(advMov.getTaxHeader());
 					taxHeader.setHeaderId(0);
 					if (CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
 

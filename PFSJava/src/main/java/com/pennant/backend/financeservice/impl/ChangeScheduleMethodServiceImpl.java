@@ -25,7 +25,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodService {
 
@@ -58,8 +58,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 
 		// Check Date Status Specifier
 		FinScheduleData scheduleData = null;
-		Cloner cloner = new Cloner();
-		scheduleData = cloner.deepClone(finScheduleData);
+		scheduleData = ObjectUtil.clone(finScheduleData);
 
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 

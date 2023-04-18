@@ -767,6 +767,16 @@ public class FinTypePartnerbankMappingDialogCtrl extends GFCBaseCtrl<FinTypePart
 		String purposeValue = getComboboxValue(this.purpose);
 		String paymentModeValue = getComboboxValue(this.paymentMode);
 
+		FinanceType ft = (FinanceType) this.finType.getObject();
+
+		FinTypePartnerBank ftpb = this.finTypePartnerBank;
+
+		if (ft != null) {
+			finDivision = ft.getFinDivision();
+		} else if (ftpb != null) {
+			finDivision = ftpb.getDivisionCode();
+		}
+
 		Filter[] filters = null;
 
 		if (StringUtils.isNotEmpty(finDivision)) {

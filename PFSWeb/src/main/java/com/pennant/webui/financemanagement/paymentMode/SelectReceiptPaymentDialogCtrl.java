@@ -253,25 +253,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		long finID = ComponentUtil.getFinID(this.finReference);
 		Date receiptDt = this.receiptDate.getValue();
 		Date appDate = SysParamUtil.getAppDate();
-
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
 
-		if (isKnockOff && FinServiceEvent.EARLYRPY.equals(recPurpose)) {
-			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
-
-			if (CollectionUtils.isNotEmpty(dates)) {
-				dates.sort((d1, d2) -> d1.compareTo(d2));
-				receiptDt = dates.get(dates.size() - 1);
-			}
-
-			int appmonth = DateUtil.getMonth(appDate);
-			int receiptmonth = DateUtil.getMonth(receiptDt);
-
-			if (appmonth != receiptmonth) {
-				receiptDt = DateUtil.getMonthStart(appDate);
-			}
-
-			this.receiptDate.setValue(receiptDt);
+		if (isKnockOff) {
+			fillValueDate(receiptDt, finID, appDate);
 		}
 
 		if (!FinServiceEvent.EARLYSETTLE.equals(recPurpose)) {
@@ -1157,29 +1142,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	public void onFulfill$referenceId(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		boolean isDisabled = false;
 		Date receiptDt = appDate;
+		long finID = ComponentUtil.getFinID(this.finReference);
 
-		String knockOff = getComboboxValue(knockOffFrom);
-		FinExcessAmount fea = null;
-		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
-			fea = (FinExcessAmount) this.referenceId.getObject();
-		}
-
-		if (fea != null && fea.getValueDate() != null) {
-			receiptDt = fea.getValueDate();
-			isDisabled = true;
-
-			long finID = ComponentUtil.getFinID(this.finReference);
-			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
-
-			if (DateUtil.compare(receiptDt, schDate) < 0) {
-				receiptDt = schDate;
-			}
-		}
-
-		this.receiptDate.setValue(receiptDt);
-		this.receiptDate.setDisabled(isDisabled);
+		fillValueDate(receiptDt, finID, appDate);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
@@ -1539,6 +1505,52 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,RTRNGDS,");
 			}
 		}
+	}
+
+	private void fillValueDate(Date receiptDt, long finID, Date appDate) {
+		boolean isDisabled = false;
+		String knockOff = getComboboxValue(knockOffFrom);
+		FinExcessAmount fea = null;
+
+		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
+			fea = (FinExcessAmount) this.referenceId.getObject();
+		}
+
+		if (fea != null && fea.getValueDate() != null) {
+			receiptDt = fea.getValueDate();
+			isDisabled = true;
+
+			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
+
+			if (DateUtil.compare(receiptDt, schDate) < 0) {
+				receiptDt = schDate;
+			}
+		}
+
+		if (getComboboxValue(receiptPurpose).equals(FinServiceEvent.EARLYRPY)) {
+			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
+
+			if (CollectionUtils.isNotEmpty(dates)) {
+				dates.sort((d1, d2) -> d1.compareTo(d2));
+				receiptDt = dates.get(dates.size() - 1);
+			}
+
+			int appmonth = DateUtil.getMonth(appDate);
+			int receiptmonth = DateUtil.getMonth(receiptDt);
+
+			if (appmonth != receiptmonth) {
+				receiptDt = DateUtil.getMonthStart(appDate);
+			}
+		}
+
+		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
+
+		if (DateUtil.compare(receiptDt, maxReceiptDt) < 0) {
+			receiptDt = maxReceiptDt;
+		}
+
+		this.receiptDate.setValue(receiptDt);
+		this.receiptDate.setDisabled(isDisabled);
 	}
 
 	public CustomerDetailsService getCustomerDetailsService() {

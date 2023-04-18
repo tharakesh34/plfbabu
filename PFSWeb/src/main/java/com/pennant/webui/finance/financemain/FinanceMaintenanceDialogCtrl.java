@@ -137,7 +137,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
@@ -1725,9 +1725,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (!this.odMinAmount.isDisabled()) {
 
-			if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
-				this.odMinAmount.setConstraint(new PTDecimalValidator(
-						Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+					this.odMinAmount.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+				}
 			}
 		}
 
@@ -2075,8 +2077,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		boolean isNew = false;
 		FinanceMain afm = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -3297,8 +3298,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		doWriteComponentsToBean(aFinanceDetail);

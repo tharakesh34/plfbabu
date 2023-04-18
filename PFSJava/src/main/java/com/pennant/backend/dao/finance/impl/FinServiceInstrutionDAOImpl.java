@@ -495,4 +495,12 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		});
 	}
 
+	@Override
+	public boolean isLMSActionPerformed(long finID, String finEvent) {
+		String sql = "Select count(FinID) From FinServiceInstruction Where FinID = ? and FinEvent = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, finEvent) > 0;
+	}
 }

@@ -110,7 +110,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/PricingDetailList.zul file.
@@ -2457,8 +2457,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		topUpCount++;
 		FinScheduleData finSchdData = financeDetail.getFinScheduleData();
-		Cloner cloner = new Cloner();
-		FinScheduleData topUpFinSchdData = cloner.deepClone(finSchdData);
+		FinScheduleData topUpFinSchdData = ObjectUtil.clone(finSchdData);
 		doRenderItems(finType, topUpFinSchdData, true);
 
 		if (pricingDetail == null) {

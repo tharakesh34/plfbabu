@@ -54,7 +54,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * ************************************************************<br>
@@ -262,8 +262,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		frequencyList = PennantStaticListUtil.getfrequency(this.frequencyType.getSelectedItem().getValue());
 		this.recordStatus.setValue(acustomerGST.getRecordStatus());
 		if (CollectionUtils.isNotEmpty(acustomerGST.getCustomerGSTDetailslist())) {
-			Cloner cloner = new Cloner();
-			CustomerGST detail = (CustomerGST) cloner.deepClone(acustomerGST);
+			CustomerGST detail = (CustomerGST) ObjectUtil.clone(acustomerGST);
 			List<CustomerGSTDetails> customerGSTDetails = detail.getCustomerGSTDetailslist();
 			// customerGSTDetails= customerGSTDetails.stream().distinct().collect(Collectors.toList());
 

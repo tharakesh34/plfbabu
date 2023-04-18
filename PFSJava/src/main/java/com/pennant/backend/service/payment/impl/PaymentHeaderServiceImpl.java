@@ -1071,6 +1071,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		doReject(ah);
 
 	}
+	
+	@Override
+	public boolean isRefundProvided(long finId) {
+		return paymentHeaderDAO.isRefundProvided(finId);
+	}
 
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

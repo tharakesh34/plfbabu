@@ -42,4 +42,6 @@ public interface SettlementService {
 	long prepareQueue();
 
 	void updateProgress(long settlementId, int progress);
+
+	boolean isSettlementInitiated(long finId);
 }

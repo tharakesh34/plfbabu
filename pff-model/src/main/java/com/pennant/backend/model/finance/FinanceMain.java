@@ -764,6 +764,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean skipRateReset = false;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 	private String cancelRemarks;
+	private String cancelType;
 	private Map<String, Object> extendedFields = new HashMap<>();
 	private String hunterStatus;
 	private int autoRejectionDays;
@@ -1048,6 +1049,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		// cancelReason
 		excludeFields.add("cancelReason");
 		excludeFields.add("cancelRemarks");
+		excludeFields.add("cancelType");
 		excludeFields.add("extendedFields");
 		excludeFields.add("autoApprove");
 		// hunterStatus
@@ -1539,6 +1541,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setSkipRateReset(this.skipRateReset);
 		this.detailsList.stream().forEach(e -> entity.getDetailsList().add(e == null ? null : e.copyEntity()));
 		entity.setCancelRemarks(this.cancelRemarks);
+		entity.setCancelType(this.cancelType);
 		entity.setExtendedFields(this.extendedFields);
 		entity.setHunterStatus(this.hunterStatus);
 		entity.setAutoRejectionDays(this.autoRejectionDays);
@@ -4785,6 +4788,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setCancelRemarks(String cancelRemarks) {
 		this.cancelRemarks = cancelRemarks;
+	}
+
+	public String getCancelType() {
+		return cancelType;
+	}
+
+	public void setCancelType(String cancelType) {
+		this.cancelType = cancelType;
 	}
 
 	public List<ReasonDetails> getDetailsList() {

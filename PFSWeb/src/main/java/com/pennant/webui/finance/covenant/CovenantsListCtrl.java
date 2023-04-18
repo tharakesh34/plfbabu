@@ -93,7 +93,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private static final long serialVersionUID = 4157448822555239535L;
@@ -678,8 +678,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
-		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
+		aFinMaintainInstruction = ObjectUtil.clone(finMaintainInstruction);
 
 		doWriteComponentsToBean(aFinMaintainInstruction);
 

@@ -319,6 +319,7 @@ public class ImplementationConstants {
 		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
 		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
 		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
+		ALLOW_CANCEL_LOAN_AFTER_PAYMENTS = getValueAsBoolean("ALLOW_CANCEL_LOAN_AFTER_PAYMENTS", false);
 
 		setVerificationConstants();
 	}
@@ -727,6 +728,7 @@ public class ImplementationConstants {
 	public static String CONSECUTIVE_HOLD_REASON = "CONSECUTIVE BOUNCE";
 
 	public static boolean ALLOW_CONSECUTIVE_BOUNCE;
+	public static boolean ALLOW_CANCEL_LOAN_AFTER_PAYMENTS;
 
 	/**
 	 * Feature Extension to no mandate the expiry date

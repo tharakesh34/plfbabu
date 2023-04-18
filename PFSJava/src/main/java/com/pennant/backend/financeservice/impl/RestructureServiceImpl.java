@@ -74,7 +74,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class RestructureServiceImpl extends GenericService<FinServiceInstruction> implements RestructureService {
 	private static final Logger logger = LogManager.getLogger(RestructureServiceImpl.class);
@@ -169,8 +169,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		BigDecimal oldTotalPft = schdData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData scheduleData = null;
-		Cloner cloner = new Cloner();
-		scheduleData = cloner.deepClone(schdData);
+		scheduleData = ObjectUtil.clone(schdData);
 
 		FinanceScheduleDetail curSchd = null;
 		if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {

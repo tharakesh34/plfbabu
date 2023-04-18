@@ -998,4 +998,9 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public void updateProgress(long settlementId, int progress) {
 		settlementDAO.updateProgress(settlementId, progress);
 	}
+	
+	@Override
+	public boolean isSettlementInitiated(long finId) {
+		return settlementDAO.isSettlementInitiated(finId);
+	}
 }

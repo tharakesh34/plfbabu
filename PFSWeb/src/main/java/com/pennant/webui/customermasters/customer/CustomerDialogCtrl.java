@@ -208,7 +208,7 @@ import com.pennanttech.pff.external.FinnovService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -2295,23 +2295,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 
 		// Set KYC details
-		Cloner cloner = new Cloner();
-		aCustomerDetails.setCustomer(cloner.deepClone(aCustomer));
-		aCustomerDetails.setCustEmployeeDetail(cloner.deepClone(custEmployeeDetail));
-		aCustomerDetails.setEmploymentDetailsList(cloner.deepClone(this.customerEmploymentDetailList));
-		aCustomerDetails.setCustomerIncomeList(cloner.deepClone(this.incomeList));
-		aCustomerDetails.setRatingsList(cloner.deepClone(this.ratingsList));
-		aCustomerDetails.setCustomerDocumentsList(cloner.deepClone(this.customerDocumentDetailList));
-		aCustomerDetails.setAddressList(cloner.deepClone(this.customerAddressDetailList));
-		aCustomerDetails.setCustomerPhoneNumList(cloner.deepClone(this.customerPhoneNumberDetailList));
-		aCustomerDetails.setCustomerEMailList(cloner.deepClone(this.customerEmailDetailList));
+		aCustomerDetails.setCustomer(ObjectUtil.clone(aCustomer));
+		aCustomerDetails.setCustEmployeeDetail(ObjectUtil.clone(custEmployeeDetail));
+		aCustomerDetails.setEmploymentDetailsList(ObjectUtil.clone(this.customerEmploymentDetailList));
+		aCustomerDetails.setCustomerIncomeList(ObjectUtil.clone(this.incomeList));
+		aCustomerDetails.setRatingsList(ObjectUtil.clone(this.ratingsList));
+		aCustomerDetails.setCustomerDocumentsList(ObjectUtil.clone(this.customerDocumentDetailList));
+		aCustomerDetails.setAddressList(ObjectUtil.clone(this.customerAddressDetailList));
+		aCustomerDetails.setCustomerPhoneNumList(ObjectUtil.clone(this.customerPhoneNumberDetailList));
+		aCustomerDetails.setCustomerEMailList(ObjectUtil.clone(this.customerEmailDetailList));
 		// Set Banking details
-		aCustomerDetails.setCustomerBankInfoList(cloner.deepClone(this.customerBankInfoDetailList));
-		aCustomerDetails.setCustomerChequeInfoList(cloner.deepClone(this.customerChequeInfoDetailList));
-		aCustomerDetails.setCustomerExtLiabilityList(cloner.deepClone(this.customerExtLiabilityDetailList));
-		aCustomerDetails.setCustCardSales(cloner.deepClone(this.customerCardSales));
+		aCustomerDetails.setCustomerBankInfoList(ObjectUtil.clone(this.customerBankInfoDetailList));
+		aCustomerDetails.setCustomerChequeInfoList(ObjectUtil.clone(this.customerChequeInfoDetailList));
+		aCustomerDetails.setCustomerExtLiabilityList(ObjectUtil.clone(this.customerExtLiabilityDetailList));
+		aCustomerDetails.setCustCardSales(ObjectUtil.clone(this.customerCardSales));
 		// Custome Gst Details list
-		aCustomerDetails.setCustomerGstList(cloner.deepClone(this.customerGstList));
+		aCustomerDetails.setCustomerGstList(ObjectUtil.clone(this.customerGstList));
 
 		if (CollectionUtils.isNotEmpty(getGstDetailsList())) {
 			for (GSTDetail detail : getGstDetailsList()) {
@@ -3387,9 +3386,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private void doDelete() throws InterruptedException, InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		Cloner cloner = new Cloner();
-		CustomerDetails aCustomerDetails = new CustomerDetails();
-		aCustomerDetails = cloner.deepClone(getCustomerDetails());
+		CustomerDetails aCustomerDetails = ObjectUtil.clone(getCustomerDetails());
 		Customer aCustomer = aCustomerDetails.getCustomer();
 
 		final String keyReference = Labels.getLabel("label_CustomerDialog_CustCIF.value") + " : "
@@ -3883,9 +3880,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doSave() {
 		logger.debug("Entering");
 
-		Cloner cloner = new Cloner();
-		CustomerDetails aCustomerDetails = new CustomerDetails();
-		aCustomerDetails = cloner.deepClone(getCustomerDetails());
+		CustomerDetails aCustomerDetails = ObjectUtil.clone(getCustomerDetails());
 		boolean isNew = false;
 		Customer aCustomer = aCustomerDetails.getCustomer();
 
@@ -4599,9 +4594,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public boolean doSave_CustomerDetail(FinanceDetail aFinanceDetail, Tab tab, boolean validateChildDetails) {
 		logger.debug("Entering ");
 		if (getCustomerDetails() != null) {
-			Cloner cloner = new Cloner();
-			CustomerDetails aCustomerDetails = new CustomerDetails();
-			aCustomerDetails = cloner.deepClone(getCustomerDetails());
+			CustomerDetails aCustomerDetails = ObjectUtil.clone(getCustomerDetails());
 			boolean isNew = false;
 			Customer aCustomer = aCustomerDetails.getCustomer();
 			aCustomer.setWorkflowId(0);

@@ -135,7 +135,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul
@@ -310,12 +310,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				setReceiptHeader((FinReceiptHeader) arguments.get("receiptHeader"));
 				FinReceiptHeader befImage = new FinReceiptHeader();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(getReceiptHeader());
+				befImage = ObjectUtil.clone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
 				if (getReceiptHeader().getManualAdvise() != null) {
-					ManualAdvise adviseBefImage = cloner.deepClone(getReceiptHeader().getManualAdvise());
+					ManualAdvise adviseBefImage = ObjectUtil.clone(getReceiptHeader().getManualAdvise());
 					getReceiptHeader().getManualAdvise().setBefImage(adviseBefImage);
 				}
 			}
@@ -689,8 +688,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		logger.debug("Entering");
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
+		FinReceiptHeader aReceiptHeader = ObjectUtil.clone(getReceiptHeader());
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		boolean recReject = false;
@@ -1131,8 +1129,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			// Making Single Set of Repay Schedule Details and sent to Rendering
 			if (!rpySchdList.isEmpty()) {
 
-				Cloner cloner = new Cloner();
-				List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+				List<RepayScheduleDetail> tempRpySchdList = ObjectUtil.clone(rpySchdList);
 				Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 
 				for (RepayScheduleDetail rpySchd : tempRpySchdList) {

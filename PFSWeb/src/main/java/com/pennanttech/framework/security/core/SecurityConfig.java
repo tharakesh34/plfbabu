@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +26,7 @@ import com.pennanttech.pennapps.web.security.filter.AuthenticationFormFilter;
 
 @Configuration
 @EnableWebSecurity
-@ImportResource({ "classpath:securityContext.xml", "classpath:securityContext-saml.xml" })
+@Import({ DefaultSecurity.class, SAMLSecurity.class })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -45,18 +45,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private LoginUrlAuthenticationEntryPoint authenticationEntryPoint;
 
-	@Autowired
+	@Autowired(required = false)
 	private FilterChainProxy samlFilter;
-	@Autowired
+	@Autowired(required = false)
 	private SAMLEntryPoint samlEntryPoint;
-	@Autowired
+	@Autowired(required = false)
 	private MetadataGeneratorFilter metadataGeneratorFilter;
 
-	@Value("${authentication.sso}")
+	@Value("${authentication.sso:false}")
 	private boolean sso;
-	@Value("${authentication.sso.adfs}")
+	@Value("${authentication.sso.adfs:false}")
 	private boolean adfs;
-	@Value("${authentication.sso.adfs.protocol}")
+	@Value("${authentication.sso.adfs.protocol:#{null}}")
 	private String adfsProtocol;
 
 	@Autowired

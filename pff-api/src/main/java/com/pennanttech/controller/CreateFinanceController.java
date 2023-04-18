@@ -163,6 +163,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.notifications.NotificationsService;
@@ -182,6 +183,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
@@ -201,6 +203,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetails;
@@ -278,6 +281,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private ChequeDetailDAO chequeDetailDAO;
 	private BounceReasonDAO bounceReasonDAO;
 	private MandateDAO mandateDAO;
+	private FinanceCancelValidator financeCancelValidator;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -3836,21 +3840,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				return fd;
 			}
 		}
-		List<FinanceScheduleDetail> schdList = findetail.getFinScheduleData().getFinanceScheduleDetails();
-		Date appDate = SysParamUtil.getAppDate();
 
-		for (FinanceScheduleDetail curSchd : schdList) {
-			if (curSchd.getSchDate().compareTo(appDate) <= 0) {
-				ErrorDetail ed = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null), userDetails.getLanguage());
-
-				fd = new FinanceDetail();
-				doEmptyResponseObject(fd);
-				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", ed.getError()));
-				logger.debug(Literal.LEAVING);
-				return fd;
-			}
-		}
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
@@ -3892,6 +3882,32 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		ReasonHeader reasonHeader = fd.getReasonHeader();
 		if (reasonHeader != null) {
+			String cancelType = reasonHeader.getCancelType();
+			if (StringUtils.isBlank(cancelType)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "CancelType";
+				String error = ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)).getError();
+
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(getFailedStatus("60407", error));
+				logger.debug(Literal.LEAVING);
+				return fd;
+			}
+
+			if (!(LoanCancelationUtil.LOAN_CANCEL.equals(cancelType)
+					|| LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(cancelType))) {
+				String[] valueParm = new String[2];
+				valueParm[0] = " CancelType";
+				valueParm[1] = cancelType;
+				String error = ErrorUtil.getErrorDetail(new ErrorDetail("90224", valueParm)).getError();
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(getFailedStatus("60407", error));
+				logger.debug(Literal.LEAVING);
+				return fd;
+			}
+
 			if (!CollectionUtils.isEmpty(reasonHeader.getDetailsList())) {
 				for (ReasonDetails reasonDetails : reasonHeader.getDetailsList()) {
 					if (StringUtils.isBlank(reasonDetails.getReasonCode())) {
@@ -3926,6 +3942,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				financeMain.setDetailsList(reasonHeader.getDetailsList());
 				financeMain.setCancelRemarks(reasonHeader.getRemarks());
+				financeMain.setCancelType(cancelType);
 			}
 		}
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, findetail);
@@ -3936,6 +3953,18 @@ public class CreateFinanceController extends SummaryDetailService {
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 		auditHeader.setApiHeader(reqHeaderDetails);
+
+		financeMain.setAppDate(SysParamUtil.getAppDate());
+		List<FinanceScheduleDetail> schedules = findetail.getFinScheduleData().getFinanceScheduleDetails();
+		FinCancelUploadError error = financeCancelValidator.validLoan(financeMain, schedules);
+
+		if (error != null) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(getFailedStatus(error.name(), error.description()));
+			logger.debug(Literal.LEAVING);
+			return fd;
+		}
 
 		auditHeader = financeCancellationService.doApprove(auditHeader, true);
 		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
@@ -5384,6 +5413,11 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
+	}
+
+	@Autowired
+	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
+		this.financeCancelValidator = financeCancelValidator;
 	}
 
 }

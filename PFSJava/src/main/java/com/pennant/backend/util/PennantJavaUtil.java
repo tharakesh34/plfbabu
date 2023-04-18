@@ -906,7 +906,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PartnerBankModes",
 				new ModuleMapping("PartnerBankModes", PartnerBankModes.class,
 						new String[] { "PartnerBankModes", "PartnerBankModes_AView" }, masterWF,
-						new String[] { "PartnerBankCode", "PartnerBankName", "DivisionCode" }, null, 300));
+						new String[] { "PartnerBankCode", "PartnerBankName" }, null, 300));
 
 		ModuleUtil.register("FinTypePartnerBank",
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
@@ -3958,6 +3958,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("MiscellaneousPostingUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("LoanCancelUploadHeader",
+				new ModuleMapping("LoanCancelUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
 
 		registerCustomModules();
 	}

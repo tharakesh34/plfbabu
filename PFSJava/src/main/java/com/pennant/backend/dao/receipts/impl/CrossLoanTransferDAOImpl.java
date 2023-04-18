@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
 import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -310,4 +311,21 @@ public class CrossLoanTransferDAOImpl extends SequenceDao<CrossLoanTransfer> imp
 		}
 	}
 
+	@Override
+	public boolean isCrossLoanReceiptProcessed(long finId) {
+		StringBuilder sql = new StringBuilder("Select count(ID) From (");
+		sql.append(" Select ID From Cross_Loan_Transfer clt");
+		sql.append(" Inner join FinReceiptHeader frh on frh.ReceiptID = clt.ReceiptID");
+		sql.append(" Where clt.FromFinID = ? or clt.ToFinID = ? and frh.ReceiptModeStatus <> ?");
+		sql.append(" Union All");
+		sql.append(" Select ID From Cross_Loan_Transfer_Temp clt");
+		sql.append(" Inner join FinReceiptHeader_Temp frh on frh.ReceiptID = clt.ReceiptID");
+		sql.append(" Where clt.FromFinID = ? or clt.ToFinID = ? and frh.ReceiptModeStatus <> ?");
+		sql.append(")");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finId, finId,
+				RepayConstants.PAYSTATUS_CANCEL, finId, finId, RepayConstants.PAYSTATUS_CANCEL) > 0;
+	}
 }

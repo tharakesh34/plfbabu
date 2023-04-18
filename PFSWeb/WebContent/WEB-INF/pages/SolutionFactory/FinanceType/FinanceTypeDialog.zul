@@ -250,6 +250,13 @@
 													<checkbox id="tDSAllowToModify" checked="false" visible="false" />
 												</hbox>
 											</row>
+											<row>
+												<label value="${c:l('label_FinanceTypeDialog_AllowCancelFin.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="allowCancelFin" checked="false" />
+												</hbox>
+											</row>
 											<row id="AllowRevolving">
 												<label id="label_FinanceTypeDialog_AllowRevolving"
 													value="${c:l('label_FinanceTypeDialog_AllowRevolving.value')}" />

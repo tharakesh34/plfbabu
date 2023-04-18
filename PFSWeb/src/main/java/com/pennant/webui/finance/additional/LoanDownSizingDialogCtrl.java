@@ -72,7 +72,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
@@ -656,8 +656,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		Cloner cloner = new Cloner();
-		FinanceDetail aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		FinanceDetail aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 		// Finance Accounting Details Tab
@@ -1052,8 +1051,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				aFinScheduleData.setFinServiceInstructions(finServInstList);
 				setFinScheduleData(aFinScheduleData);
 
-				Cloner cloner = new Cloner();
-				newFinSchdData = cloner.deepClone(getFinScheduleData());
+				newFinSchdData = ObjectUtil.clone(getFinScheduleData());
 
 			} else {
 
@@ -1097,12 +1095,11 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void getScheduleDetails(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 
-		Cloner cloner = new Cloner();
 		isSchdBuildReq = false;
 		isDownsizeError = false;
 
 		// Actual Schedules
-		FinScheduleData scheduleData = cloner.deepClone(finScheduleData);
+		FinScheduleData scheduleData = ObjectUtil.clone(finScheduleData);
 
 		if (finAvailableAmt.compareTo(this.downSizingAmt.getActualValue()) == 0) {
 
@@ -1110,8 +1107,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (newFinSchdData == null) {
 				doWriteComponentsToBean(scheduleData);
 			} else {
-				cloner = new Cloner();
-				scheduleData = cloner.deepClone(newFinSchdData);
+				scheduleData = ObjectUtil.clone(newFinSchdData);
 			}
 		}
 
@@ -1120,7 +1116,6 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			scheduleDetailDialogCtrl.doFillScheduleList(scheduleData);
 		}
 
-		cloner = null;
 		scheduleData = null;
 
 		logger.debug(Literal.LEAVING);
@@ -1155,8 +1150,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// 2. ---> Schedule Rendering
 		if (!onLoadProcess) {
 
-			Cloner cloner = new Cloner();
-			FinanceDetail aFinanceDetail = cloner.deepClone(getFinanceDetail());
+			FinanceDetail aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 			// TODO : Render the Schedule Details While selecting TAB, NOT ON OPENING THE FINANCE
 			if (isSchdBuildReq) {

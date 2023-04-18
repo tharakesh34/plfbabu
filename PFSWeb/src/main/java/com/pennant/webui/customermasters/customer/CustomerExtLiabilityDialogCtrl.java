@@ -94,7 +94,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the
@@ -679,8 +679,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.mob.setValue(liability.getMob());
 
 		if (liability.getExtLiabilitiesPayments().size() > 0) {
-			Cloner cloner = new Cloner();
-			CustomerExtLiability detail = (CustomerExtLiability) cloner.deepClone(liability);
+			CustomerExtLiability detail = (CustomerExtLiability) ObjectUtil.clone(liability);
 			List<ExtLiabilityPaymentdetails> extPaymentsData = detail.getExtLiabilitiesPayments();
 			for (int i = 0; i < extPaymentsData.size(); i++) {
 				if (extPaymentsData.get(i).getKeyValue() == 0) {

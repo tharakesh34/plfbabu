@@ -263,7 +263,7 @@ import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class AgreementGeneration extends GenericService<AgreementDetail> implements Serializable {
 	private static final long serialVersionUID = -2030216591697935342L;
@@ -4812,8 +4812,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 	}
 
 	private void getFirstInstAmtOnSanAmt(AgreementDetail agreement, FinanceDetail detail, int formatter) {
-		Cloner cloner = new Cloner();
-		FinScheduleData finScheduleData = cloner.deepClone(detail.getFinScheduleData());
+		FinScheduleData finScheduleData = ObjectUtil.clone(detail.getFinScheduleData());
 		List<FinanceDisbursement> disb = new ArrayList<FinanceDisbursement>();
 		disb = finScheduleData.getDisbursementDetails();
 		disb.get(0).setDisbAmount(finScheduleData.getFinanceMain().getFinAssetValue());

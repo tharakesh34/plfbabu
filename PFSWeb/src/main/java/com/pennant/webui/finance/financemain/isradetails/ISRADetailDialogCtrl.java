@@ -44,7 +44,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ISRADetailDialogCtrl extends GFCBaseCtrl<ISRADetail> {
 	private static final long serialVersionUID = -6945930303723518608L;
@@ -298,8 +298,7 @@ public class ISRADetailDialogCtrl extends GFCBaseCtrl<ISRADetail> {
 			throw new WrongValuesException(wvea);
 		}
 
-		Cloner cloner = new Cloner();
-		iSRADetails.setIsraLiquidDetails(cloner.deepClone(this.israLiquidDetailList));
+		iSRADetails.setIsraLiquidDetails(ObjectUtil.clone(this.israLiquidDetailList));
 		aFinanceDetail.setIsraDetail(iSRADetails);
 
 		logger.debug(Literal.LEAVING);

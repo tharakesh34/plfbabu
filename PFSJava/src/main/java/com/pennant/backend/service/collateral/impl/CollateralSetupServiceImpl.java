@@ -129,7 +129,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>CollateralSetup</b>.<br>
@@ -524,8 +524,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			}
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		CollateralSetup collateralSetup = (CollateralSetup) auditHeader.getAuditDetail().getModelData();
 
 		if (collateralSetup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {

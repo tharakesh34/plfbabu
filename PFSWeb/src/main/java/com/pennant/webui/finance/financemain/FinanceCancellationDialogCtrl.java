@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -65,6 +66,7 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -74,8 +76,9 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
@@ -118,6 +121,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	private Label label_FinanceMainDialog_FinType;
 	protected Textbox cancelRemarks;
 	protected Uppercasebox reasons;
+	protected Combobox cancelType;
 	protected Button btnReasons;
 
 	/**
@@ -222,7 +226,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		super.doSetFieldProperties();
 		this.downPaySupl.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.downPaySupl.setScale(formatter);
-
+		fillComboBox(this.cancelType, "", LoanCancelationUtil.getLoancancelTypes());
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
 
@@ -422,6 +426,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		this.reasons.setText(data);
 		if (details.size() > 0) {
 			this.cancelRemarks.setText(details.get(0).getRemarks());
+			fillComboBox(this.cancelType, details.get(0).getCancelType(), LoanCancelationUtil.getLoancancelTypes());
 		}
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isManualSchedule()) {
 			this.row_ManualSchedule.setVisible(true);
@@ -639,6 +644,13 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			if (isValidComboValue(this.cancelType, Labels.getLabel("label_FinanceMainDialog_CancelType.value"))) {
+				aFinanceMain.setCancelType(getComboboxValue(this.cancelType));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
 		doRemoveValidation();
@@ -655,12 +667,18 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			this.reasons.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_CancelReason.value"), null, true));
 		}
+
+		if (!this.cancelType.isDisabled()) {
+			this.cancelType.setConstraint(new StaticListValidator(LoanCancelationUtil.getLoancancelTypes(),
+					Labels.getLabel("label_FinanceMainDialog_CancelType.value")));
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void doRemoveValidation() {
 		logger.debug(Literal.ENTERING);
 		this.reasons.setConstraint("");
+		this.cancelType.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -723,9 +741,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			if (this.recordStatus.getValue().equals("Submitted")) {
 				readOnlyComponent(true, this.btnReasons);
 				readOnlyComponent(true, this.cancelRemarks);
+				readOnlyComponent(true, this.cancelType);
 			} else {
 				readOnlyComponent(false, this.btnReasons);
 				readOnlyComponent(false, this.cancelRemarks);
+				readOnlyComponent(false, this.cancelType);
 			}
 
 			doStoreServiceIds(afinanceDetail.getFinScheduleData().getFinanceMain());
@@ -803,8 +823,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		if (this.userAction.getSelectedItem() != null) {
 			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -1171,10 +1190,10 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					if (CollectionUtils.isNotEmpty(manualAdvise)) {
 						for (ManualAdvise md : manualAdvise) {
 							Date valueDate = md.getValueDate();
-							
+
 							BigDecimal amount = md.getAdviseAmount()
 									.subtract(md.getPaidAmount().add(md.getWaivedAmount()));
-							
+
 							if (amount.compareTo(BigDecimal.ZERO) > 0) {
 								if (DateUtil.compare(valueDate, appDate) > 0) {
 									md.setStatus(PennantConstants.MANUALADVISE_CANCEL);

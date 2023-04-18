@@ -58,7 +58,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain>
 		implements RepaymentCancellationService {
@@ -122,8 +122,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -206,8 +205,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 		FinScheduleData schdData = fd.getFinScheduleData();

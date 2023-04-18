@@ -866,13 +866,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<!-- Miscellaneous -->
-		<dependency>
-			<groupId>uk.com.robust-it</groupId>
-			<artifactId>cloning</artifactId>
-			<version>1.9.12</version>
-		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-spring3</artifactId>

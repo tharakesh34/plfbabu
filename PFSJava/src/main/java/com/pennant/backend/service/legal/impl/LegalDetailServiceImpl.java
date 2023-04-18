@@ -97,7 +97,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>LegalDetail</b>.<br>
@@ -636,8 +636,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			}
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(legalDetail.getRecordType())) {
@@ -1285,8 +1284,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		List<LegalECDetail> ecDetailsList = legalDetail.getEcdDetailsList();
 		if (CollectionUtils.isNotEmpty(ecDetailsList)) {
 			for (LegalECDetail legalECDetail : ecDetailsList) {
-				legalECDetail.setStrECDate(
-						DateUtil.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
+				legalECDetail
+						.setStrECDate(DateUtil.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
 			}
 		}
 		if (legalDetail.getPropertyDetailECDate() != null) {

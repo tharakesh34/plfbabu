@@ -96,7 +96,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 import net.sf.jasperreports.engine.JasperRunManager;
 
@@ -778,10 +778,9 @@ public class FinStatementController extends SummaryDetailService {
 
 				List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
 						.getAllocationsSummary();
-				Cloner cloner = new Cloner();
 				receiptData.getFinanceDetail().getFinScheduleData()
 						.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
-				FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+				FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 				tempReceiptData.setForeClosureEnq(true);
 				// setOrgReceiptData(tempReceiptData);
 				receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();

@@ -214,6 +214,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox droppingMethod;
 	protected Checkbox manualSchedule;
 	protected Checkbox allowDrawingPower;
+	protected Checkbox allowCancelFin;
 	protected Checkbox allowRevolving;
 	protected Row row_Commitment;
 	protected Checkbox developerFinance; // autoWired
@@ -1459,6 +1460,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			doSetDroplineMethod();
 		}
 		this.manualSchedule.setChecked(aFinanceType.isManualSchedule());
+		this.allowCancelFin.setChecked(aFinanceType.isAllowCancelFin());
 		if (!isOverdraft && !consumerDurable) {
 			this.allowDrawingPower.setChecked(aFinanceType.isAllowDrawingPower());
 			this.allowRevolving.setChecked(aFinanceType.isAllowRevolving());
@@ -2531,6 +2533,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		try {
 			aFinanceType.setManualSchedule(this.manualSchedule.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setAllowCancelFin(this.allowCancelFin.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4728,10 +4736,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		if (!this.odMinAmount.isDisabled()) {
-
-			if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
-				this.odMinAmount.setConstraint(new PTDecimalValidator(
-						Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+					this.odMinAmount.setConstraint(new PTDecimalValidator(
+							Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+				}
 			}
 		}
 		if (!this.profitCenter.isReadonly()) {
@@ -5049,6 +5058,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		readOnlyComponent(isCompReadonly, this.autoIncrGrcEndDate);
 		readOnlyComponent(isCompReadonly, this.grcAutoIncrMonths);
 		readOnlyComponent(isCompReadonly, this.maxAutoIncrAllowed);
+		readOnlyComponent(isCompReadonly, this.allowCancelFin);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -5113,6 +5123,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIsActive.setDisabled(isTrue);
 		this.overrideLimit.setDisabled(isTrue);
 		this.tDSApplicable.setDisabled(isTrue);
+		this.allowCancelFin.setDisabled(isTrue);
 		if (!isOverdraft && !consumerDurable) {
 			this.btnSearchtdsApplicableTo.setDisabled(isTrue);
 			this.tdsApplicableTo.setDisabled(isTrue);
@@ -5499,6 +5510,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setValue("0");
 		this.rpyPricingMethod.setDescription("");
 		this.manualSchedule.setChecked(false);
+		this.allowCancelFin.setChecked(false);
 		this.allowRevolving.setChecked(false);
 		this.allowDrawingPower.setChecked(false);
 		this.sanBsdSchdle.setChecked(false);

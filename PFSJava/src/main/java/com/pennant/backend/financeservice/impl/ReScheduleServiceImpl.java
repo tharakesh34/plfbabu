@@ -41,7 +41,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction> implements ReScheduleService {
 	private static Logger logger = LogManager.getLogger(ReScheduleServiceImpl.class);
@@ -76,8 +76,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData scheduleData = null;
-		Cloner cloner = new Cloner();
-		scheduleData = cloner.deepClone(finScheduleData);
+		scheduleData = ObjectUtil.clone(finScheduleData);
 
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		Date fromDate = finServiceInstruction.getFromDate();

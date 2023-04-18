@@ -323,8 +323,8 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.overdraft.service.VariableOverdraftSchdService;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.service.sampling.SamplingService;
+import com.pennapps.core.util.ObjectUtil;
 import com.pennattech.pff.receipt.model.ReceiptDTO;
-import com.rits.cloning.Cloner;
 
 /**
  * Service implementation for methods that depends on <b>FinanceMain</b>.<br>
@@ -989,9 +989,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain fm = schdData.getFinanceMain();
 
 		String finReference = fm.getFinReference();
+		List<FinServiceInstruction> siList = new ArrayList<>();
 
-		List<FinServiceInstruction> siList = finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp",
-				serviceEvent);
+		String type = "";
+		if (!FinServiceEvent.CANCELFIN.equals(eventCodeRef)) {
+			type = "_Temp";
+		}
+		siList = finServiceInstructionDAO.getFinServiceInstructions(finID, type, serviceEvent);
 
 		schdData.setFinServiceInstructions(siList);
 
@@ -2003,7 +2007,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/*
-		 * Cloner cloner = new Cloner(); AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		 * Cloner cloner = new Cloner(); AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		 */
 		AuditHeader auditHeader = null;
 		try {
@@ -3652,8 +3656,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		// process to send FIN-one request and create or update the cust data.
 		String moduleDefiner = fd.getModuleDefiner();
@@ -5564,8 +5567,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		Date appData = SysParamUtil.getAppDate();
 
@@ -10808,8 +10810,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 				if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
 					for (JointAccountDetail details : jointAccountDetailList) {
-						Cloner cloner = new Cloner();
-						JointAccountDetail jointAccountDetail = cloner.deepClone(details);
+						JointAccountDetail jointAccountDetail = ObjectUtil.clone(details);
 						jointAccountDetail.setId(Long.MIN_VALUE);
 						jointAccountDetail.setFinID(fm.getFinID());
 						jointAccountDetail.setFinReference(fm.getFinReference());
@@ -10827,8 +10828,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
 				if (CollectionUtils.isNotEmpty(gurantorsDetailList)) {
 					for (GuarantorDetail details : gurantorsDetailList) {
-						Cloner cloner = new Cloner();
-						GuarantorDetail gurantorDtls = cloner.deepClone(details);
+						GuarantorDetail gurantorDtls = ObjectUtil.clone(details);
 						gurantorDtls.setId(Long.MIN_VALUE);
 						gurantorDtls.setFinID(fm.getFinID());
 						gurantorDtls.setFinReference(fm.getFinReference());

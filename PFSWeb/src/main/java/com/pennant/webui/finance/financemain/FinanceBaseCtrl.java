@@ -163,7 +163,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Base controller for creating the controllers of the zul files with the spring framework.
@@ -6899,8 +6899,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	public FinanceDetail getAgrFinanceDetails() throws Exception {
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		aFinanceDetail.setUserAction(aFinanceMain.getUserAction());

@@ -766,4 +766,15 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		}
 
 	}
+
+	@Override
+	public List<String> getFinAdvancePaymentsStatus(final long finID) {
+		String sql = "Select Status From FinAdvancePayments Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			return rs.getString(1);
+		}, finID);
+	}
 }

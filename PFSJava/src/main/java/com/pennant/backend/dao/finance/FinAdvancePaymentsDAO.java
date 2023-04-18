@@ -83,4 +83,6 @@ public interface FinAdvancePaymentsDAO {
 	PaymentInstruction getBeneficiary(long finId);
 
 	PaymentInstruction getBeneficiaryByPrintLoc(long finID);
+
+	List<String> getFinAdvancePaymentsStatus(long finID);
 }

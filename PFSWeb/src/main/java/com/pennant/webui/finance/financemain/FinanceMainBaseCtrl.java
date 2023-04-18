@@ -385,7 +385,7 @@ import com.pennanttech.webui.verification.LegalVettingInitiationCtrl;
 import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
 import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.pennanttech.webui.verification.TVerificationDialogCtrl;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Base controller for creating the controllers of the zul files with the spring framework.
@@ -6689,9 +6689,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						Labels.getLabel("label_FinanceMainDialog_ODGraceDays.value"), false, false));
 			}
 			if (!this.odMinAmount.isDisabled()) {
-				if (BigDecimal.ZERO.compareTo(this.odMinAmount.getValue()) < 0) {
-					this.odMinAmount.setConstraint(new PTDecimalValidator(
-							Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+				if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+					if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						this.odMinAmount.setConstraint(new PTDecimalValidator(
+								Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+					}
 				}
 			}
 		}
@@ -7324,8 +7326,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		FinanceDetail afd = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		afd = cloner.deepClone(getFinanceDetail());
+		afd = ObjectUtil.clone(getFinanceDetail());
 
 		boolean isNew = false;
 		FinScheduleData aSchdData = afd.getFinScheduleData();
@@ -15697,10 +15698,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			List<FinServiceInstruction> serviceInsts = finScheduleData.getFinServiceInstructions();
 
-			Cloner cloner = new Cloner();
 			for (FinServiceInstruction inst : serviceInsts) {
 
-				AEAmountCodes tempAmountCodes = cloner.deepClone(amountCodes);
+				AEAmountCodes tempAmountCodes = ObjectUtil.clone(amountCodes);
 				aeEvent.setDataMap(new HashMap<>());
 
 				if (!feesExecuted) {// No segregation of fees based on
@@ -19523,8 +19523,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 

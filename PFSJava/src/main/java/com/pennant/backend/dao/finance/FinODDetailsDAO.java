@@ -100,4 +100,6 @@ public interface FinODDetailsDAO {
 	void updateFinODTotals(List<FinODDetails> list);
 
 	BigDecimal getOverDueAmount(long finID);
+
+	void delete(long finID);
 }

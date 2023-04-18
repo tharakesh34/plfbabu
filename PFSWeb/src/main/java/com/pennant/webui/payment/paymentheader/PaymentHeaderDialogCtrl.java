@@ -1998,22 +1998,25 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal calGST = BigDecimal.ZERO;
 			BigDecimal availAmount = pd.getAvailableAmount();
 			BigDecimal paidAmount = pd.getAmount();
-			 String desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
+			String desc = "";
+			
+			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pd.getAmountType())) {
+				desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
+				TaxHeader taxHeader = pd.getTaxHeader();
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							calGST = calGST.add(taxes.getActualTax());
+						}
 
-			// GST Calculations
-			TaxHeader taxHeader = pd.getTaxHeader();
-			if (taxHeader != null) {
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						calGST = calGST.add(taxes.getActualTax());
-					}
-
-					if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-						availAmount = availAmount.subtract(calGST);
-						desc = desc.concat(" (Inclusive)");
-					} else if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-						desc = desc.concat(" (Exclusive)");
+						if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+							availAmount = availAmount.subtract(calGST);
+							desc = desc.concat(" (Inclusive)");
+						} else if (StringUtils.equals(pd.getTaxComponent(),
+								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+							desc = desc.concat(" (Exclusive)");
+						}
 					}
 				}
 			}

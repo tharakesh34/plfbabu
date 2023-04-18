@@ -76,4 +76,5 @@ public interface PaymentHeaderService {
 
 	void cancelPaymentInstruction(long receiptId);
 
+	boolean isRefundProvided(long finId);
 }

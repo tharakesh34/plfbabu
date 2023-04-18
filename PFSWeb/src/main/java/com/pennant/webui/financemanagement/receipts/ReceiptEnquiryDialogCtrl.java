@@ -66,7 +66,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationEnqDialog.zul
@@ -210,8 +210,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				setReceiptHeader((FinReceiptHeader) arguments.get("receiptHeader"));
 				FinReceiptHeader befImage = new FinReceiptHeader();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(getReceiptHeader());
+				befImage = ObjectUtil.clone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
 			}
