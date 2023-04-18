@@ -734,4 +734,10 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
+	@Override
+	public boolean isNpaLoan(long finID) {
+		return assetClassificationDAO.isNpaLoan(finID);
+	}
+
 }

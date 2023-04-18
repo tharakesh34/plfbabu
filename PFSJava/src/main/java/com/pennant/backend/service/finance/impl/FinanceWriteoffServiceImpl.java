@@ -76,6 +76,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -105,6 +106,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private AssetClassificationService assetClassificationService;
+	private FeeDetailService feeDetailService;
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -630,7 +632,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			auditDetails.addAll(details);
 		}
 
-		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, header.getFinSource())) {
+		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, header.getFinSource())
+				|| !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, header.getFinSource())) {
 			// Schedule Details delete
 			// =======================================
 			listDeletion(finID, "_Temp");
@@ -1004,6 +1007,11 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	@Autowired
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	@Autowired
+	public void setFeeDetailService(FeeDetailService feeDetailService) {
+		this.feeDetailService = feeDetailService;
 	}
 
 }

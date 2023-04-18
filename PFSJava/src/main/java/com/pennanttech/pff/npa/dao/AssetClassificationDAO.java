@@ -81,4 +81,6 @@ public interface AssetClassificationDAO {
 	AssetClassification getNpaMovemnt(long finID);
 
 	void updatePrvPastDuedays(AssetClassification ac);
+
+	boolean isNpaLoan(long finID);
 }

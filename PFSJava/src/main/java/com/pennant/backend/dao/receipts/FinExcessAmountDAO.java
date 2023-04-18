@@ -114,4 +114,6 @@ public interface FinExcessAmountDAO {
 	void updateExcessreserved(long receiptID, BigDecimal excessAmt);
 
 	BigDecimal getBalAdvIntAmt(String finReference);
+
+	List<FinExcessAmount> getExcessList(long finID);
 }

@@ -103,7 +103,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", ChequeCaptureReq, FinLTVCheck, PartiallySecured, BpiPftDaysBasis, AlwHybridRate");
 		sql.append(", FixedRateTenor, EligibilityMethods, ODRuleCode, AlwZeroIntAcc, AutoRejectionDays");
 		sql.append(", TaxNoMand, PutCallRequired, GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms");
-		sql.append(", GrcAdvDefaultTerms, AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
+		sql.append(", GrcAdvDefaultTerms,writeOffRepayHry,matureRepayHry,presentmentRepayHry");
+		sql.append(", AdvIntersetReq, AdvType, AdvMaxTerms, AdvMinTerms, AdvDefaultTerms");
 		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan, SubventionReq");
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
@@ -293,6 +294,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setGrcAdvMinTerms(rs.getInt("GrcAdvMinTerms"));
 				ft.setGrcAdvMaxTerms(rs.getInt("GrcAdvMaxTerms"));
 				ft.setGrcAdvDefaultTerms(rs.getInt("GrcAdvDefaultTerms"));
+				ft.setWriteOffRepayHry(rs.getString("writeOffRepayHry"));
+				ft.setPresentmentRepayHry(rs.getString("presentmentRepayHry"));
+				ft.setMatureRepayHry(rs.getString("matureRepayHry"));
 				ft.setAdvIntersetReq(rs.getBoolean("AdvIntersetReq"));
 				ft.setAdvType(rs.getString("AdvType"));
 				ft.setAdvMaxTerms(rs.getInt("AdvMaxTerms"));
@@ -415,7 +419,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinLTVCheck, PartiallySecured, BpiPftDaysBasis, AlwHybridRate, FixedRateTenor");
 		sql.append(", EligibilityMethods, ODRuleCode, AlwZeroIntAcc, AutoRejectionDays, TaxNoMand");
 		sql.append(", PutCallRequired, GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms");
-		sql.append(", GrcAdvDefaultTerms, AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
+		sql.append(", GrcAdvDefaultTerms,writeOffRepayHry,matureRepayHry,presentmentRepayHry");
+		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
 		sql.append(", AdvStage, DsfReq, CashCollateralReq, TdsAllowToModify, TdsApplicableTo, AlwVan");
 		sql.append(", VanAllocationMethod, AllowDrawingPower, AllowRevolving, AlwSanctionAmt");
 		sql.append(", AlwSanctionAmtOverride, SanBsdSchdle");
@@ -588,6 +593,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setGrcAdvMinTerms(rs.getInt("GrcAdvMinTerms"));
 					ft.setGrcAdvMaxTerms(rs.getInt("GrcAdvMaxTerms"));
 					ft.setGrcAdvDefaultTerms(rs.getInt("GrcAdvDefaultTerms"));
+					ft.setWriteOffRepayHry(rs.getString("writeOffRepayHry"));
+					ft.setPresentmentRepayHry(rs.getString("presentmentRepayHry"));
+					ft.setMatureRepayHry(rs.getString("matureRepayHry"));
 					ft.setAdvIntersetReq(rs.getBoolean("AdvIntersetReq"));
 					ft.setAdvType(rs.getString("AdvType"));
 					ft.setAdvMinTerms(rs.getInt("AdvMinTerms"));
@@ -658,6 +666,9 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 						ft.setDftStepPolicyType(rs.getString("DftStepPolicyType"));
 						ft.setRpyHierarchy(rs.getString("RpyHierarchy"));
 						ft.setNpaRpyHierarchy(rs.getString("NpaRpyHierarchy"));
+						ft.setWriteOffRepayHry(rs.getString("writeOffRepayHry"));
+						ft.setPresentmentRepayHry(rs.getString("presentmentRepayHry"));
+						ft.setMatureRepayHry(rs.getString("matureRepayHry"));
 						ft.setLovDescEntityCode(rs.getString("LovDescEntityCode"));
 						ft.setLovDescEntityDesc(rs.getString("LovDescEntityDesc"));
 						ft.setAlwEarlyPayMethods(rs.getString("AlwEarlyPayMethods"));
@@ -852,6 +863,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" RoundingMode,RoundingTarget, FrequencyDays,alwMaxDisbCheckReq, ProfitCenterID ,DeveloperFinance, CostOfFunds, FinLTVCheck, PartiallySecured, ");
 		sql.append(" bpiPftDaysBasis, alwHybridRate, fixedRateTenor, eligibilityMethods,ODRuleCode,AlwZeroIntAcc, ");
 		sql.append(" AutoRejectionDays, TaxNoMand , PutCallRequired  ");
+		sql.append(", writeOffRepayHry,matureRepayHry,presentmentRepayHry ");
 		sql.append(", AdvIntersetReq, AdvType, AdvMinTerms, AdvMaxTerms, AdvDefaultTerms");
 		sql.append(", GrcAdvIntersetReq, GrcAdvType, GrcAdvMinTerms, GrcAdvMaxTerms, GrcAdvDefaultTerms, AdvStage");
 		sql.append(", DsfReq, CashCollateralReq , TdsAllowToModify, TdsApplicableTo, alwVan, vanAllocationMethod ");
@@ -912,6 +924,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" :bpiPftDaysBasis, :alwHybridRate, :fixedRateTenor, :eligibilityMethods, :ODRuleCode, :AlwZeroIntAcc,");
 		sql.append(" :AutoRejectionDays, :TaxNoMand , :PutCallRequired");
+		sql.append(", :writeOffRepayHry,  :matureRepayHry, :presentmentRepayHry ");
 		sql.append(", :AdvIntersetReq, :AdvType, :AdvMinTerms, :AdvMaxTerms, :AdvDefaultTerms");
 		sql.append(
 				", :GrcAdvIntersetReq, :GrcAdvType, :GrcAdvMinTerms, :GrcAdvMaxTerms, :GrcAdvDefaultTerms, :AdvStage");
@@ -1031,6 +1044,8 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 
 		sql.append(
 				", GrcAdvIntersetReq= :GrcAdvIntersetReq, GrcAdvType= :GrcAdvType, GrcAdvMinTerms= :GrcAdvMinTerms, GrcAdvMaxTerms= :GrcAdvMaxTerms, GrcAdvDefaultTerms= :GrcAdvDefaultTerms");
+		sql.append(
+				", writeOffRepayHry= :writeOffRepayHry, matureRepayHry= :matureRepayHry, presentmentRepayHry= :presentmentRepayHry ");
 		sql.append(
 				", AdvIntersetReq= :AdvIntersetReq, AdvType= :AdvType, AdvMinTerms= :AdvMinTerms, AdvMaxTerms= :AdvMaxTerms, AdvDefaultTerms= :AdvDefaultTerms");
 		sql.append(

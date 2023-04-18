@@ -7088,4 +7088,30 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 1, repayAmount, customerName);
 	}
+
+	@Override
+	public boolean isWritOffLoan(FinanceMain fm) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = new StringBuilder("Select Count(*)");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinID = :FinID AND WriteoffLoan = :WriteoffLoan AND FinIsActive = :FinIsActive");
+		logger.debug("selectSql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinID", fm.getFinID());
+		source.addValue("WriteoffLoan", 1);
+		source.addValue("FinIsActive", 1);
+
+		try {
+			if (jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
 }

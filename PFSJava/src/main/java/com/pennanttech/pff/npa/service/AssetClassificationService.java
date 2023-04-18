@@ -69,4 +69,6 @@ public interface AssetClassificationService {
 
 	void saveNpaTaggingMovement(AssetClassification npa);
 
+	boolean isNpaLoan(long finID);
+
 }

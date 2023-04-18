@@ -590,6 +590,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Groupbox grcAdvIntAndEMIReq;
 	protected Groupbox advIntAndEMIReq;
 	protected Groupbox gb_subventionReq;
+	protected Groupbox repaymentHierarchy;
+
 	protected Checkbox subventionReq;
 	// tasks # >>End Advance EMI and DSF
 	// Under Construction
@@ -660,6 +662,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected CurrencyBox maxAutoRefund;
 	protected Row rowAutoRefundLimits;
 
+	protected Uppercasebox writeOffRepayHry;
+	protected Uppercasebox matureRepayHry;
+	protected Uppercasebox presentmentRepayHry;
+
 	private List<ValueLabel> minpartpymt = PennantStaticListUtil.getMinPrePaymentCalculationTypes();
 	private List<ValueLabel> maxpartpymt = PennantStaticListUtil.getMaxPrePaymentCalculationTypes();
 	private List<ValueLabel> partpymt = PennantStaticListUtil.getPrePaymentCalculatedOnList();
@@ -678,6 +684,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox instBasedSchd;
 	protected Row row_InstBasedSchd;
 	private boolean postEventReq = false;
+	private Space space_writeOffRepayHry;
+	private Space space_matureRepayHry;
+	private Space space_presentmentRepayHry;
 
 	/**
 	 * default constructor.<br>
@@ -1108,6 +1117,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.minPPAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.minPPAmount.setScale(format);
+
+		// repayment Hierachy
+		this.writeOffRepayHry.setMaxlength(30);
+		this.matureRepayHry.setMaxlength(30);
+		this.presentmentRepayHry.setMaxlength(30);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1943,6 +1957,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
+		this.writeOffRepayHry.setValue(aFinanceType.getWriteOffRepayHry());
+		this.matureRepayHry.setValue(aFinanceType.getMatureRepayHry());
+		this.presentmentRepayHry.setValue(aFinanceType.getPresentmentRepayHry());
 
 		if (!isOverdraft && !consumerDurable) {
 			this.sanctionAmount.setChecked(aFinanceType.isAlwSanctionAmt());
@@ -2424,6 +2441,25 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			aFinanceType.setFinIsActive(this.finIsActive.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// repayment Hierarchy
+
+		try {
+			aFinanceType.setWriteOffRepayHry(this.writeOffRepayHry.getValue().toUpperCase());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setMatureRepayHry(this.matureRepayHry.getValue().toUpperCase());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setPresentmentRepayHry(this.presentmentRepayHry.getValue().toUpperCase());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4694,6 +4730,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.autoRejectionDays.setConstraint(new PTNumberValidator(
 					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
 		}
+
+		if (!this.writeOffRepayHry.isReadonly()) {
+			this.writeOffRepayHry.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_Written_Off_Loans.value"),
+							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
+		}
+
+		if (!this.matureRepayHry.isReadonly()) {
+			this.matureRepayHry
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_Matured_Loans.value"),
+							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
+		}
+		if (!this.presentmentRepayHry.isReadonly()) {
+			this.presentmentRepayHry.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_PresentmentReceipts.value"),
+							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
+		}
+
 		if (!isOverdraft) {
 			// tasks # >>Start Advance EMI and DSF
 			if (this.advIntersetReq.isChecked()) {
@@ -4834,6 +4888,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.allowedLoanPurposes.setConstraint("");
 		this.specificLoanPurposes.setConstraint("");
 		this.cbTdsType.setConstraint("");
+		this.writeOffRepayHry.setConstraint("");
+		this.presentmentRepayHry.setConstraint("");
+		this.matureRepayHry.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -5285,6 +5342,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_alwEarlyPayMethods.setSclass("");
 			this.space_rpyHierarchy.setSclass("");
 			this.space_npaRpyHierarchy.setSclass("");
+			this.space_writeOffRepayHry.setSclass("");
+			this.space_matureRepayHry.setSclass("");
+			this.space_presentmentRepayHry.setSclass("");
 			this.space_planEmiMethod.setSclass("");
 			this.space_roundingMode.setSclass("");
 			this.space_roundingTarget.setSclass("");
@@ -5337,6 +5397,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.maxPPPercentage.setReadonly(isTrue);
 		this.minPPEmi.setReadonly(isTrue);
 		this.minPPPos.setReadonly(isTrue);
+		this.writeOffRepayHry.setReadonly(isTrue);
+		this.presentmentRepayHry.setReadonly(isTrue);
+		this.matureRepayHry.setReadonly(isTrue);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -5489,7 +5552,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.autoIncrGrcEndDate.setChecked(false);
 		this.grcAutoIncrMonths.setValue(0);
 		this.maxAutoIncrAllowed.setValue(0);
-
+		this.writeOffRepayHry.setValue("");
+		this.presentmentRepayHry.setValue("");
+		this.matureRepayHry.setValue("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -9174,6 +9239,18 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void onChange$npaRpyHierarchy(Event event) {
 		this.npaRpyHierarchy.setValue(this.npaRpyHierarchy.getValue().toUpperCase());
+	}
+
+	public void onChange$writeOffRepayHry(Event event) {
+		this.writeOffRepayHry.setValue(this.writeOffRepayHry.getValue().toUpperCase());
+	}
+
+	public void onChange$presentmentRepayHry(Event event) {
+		this.presentmentRepayHry.setValue(this.presentmentRepayHry.getValue().toUpperCase());
+	}
+
+	public void onChange$matureRepayHry(Event event) {
+		this.matureRepayHry.setValue(this.matureRepayHry.getValue().toUpperCase());
 	}
 
 	private void visibilityFieldsForStepApplied(String stepsAppliedFor, String calcOfStep, boolean alwManualStep) {

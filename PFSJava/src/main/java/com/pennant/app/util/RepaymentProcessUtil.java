@@ -83,6 +83,7 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
@@ -2694,7 +2695,8 @@ public class RepaymentProcessUtil {
 		FinScheduleData fsd = fd.getFinScheduleData();
 		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
 		FinanceMain fm = fsd.getFinanceMain();
-		String repayHierarchy = assetClassificationService.getNpaRepayHierarchy(fm.getFinID());
+
+		String repayHierarchy = getRepayHierarchy(fm, rd);
 
 		List<FinDueData> duesList = new ArrayList<>();
 
@@ -2709,10 +2711,6 @@ public class RepaymentProcessUtil {
 		duesList = duesList.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
 				.collect(Collectors.toList());
 
-		if ("".equals(repayHierarchy)) {
-			repayHierarchy = fsd.getFinanceType().getRpyHierarchy();
-		}
-
 		setFinDueDataByHierarchy(duesList, repayHierarchy);
 
 		duesList = sortDueDetailsByRelHierarchy(duesList);
@@ -2726,7 +2724,7 @@ public class RepaymentProcessUtil {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		FinScheduleData fsd = rd.getFinanceDetail().getFinScheduleData();
 		List<FinanceScheduleDetail> schdDtls = fsd.getFinanceScheduleDetails();
-
+		String repayHierarchy = getRepayHierarchy(fsd.getFinanceMain(), rd);
 		List<FinDueData> dueDataDtls = addAllocations(rd, valueDate, rch, schdDtls);
 
 		if (CollectionUtils.isEmpty(dueDataDtls)) {
@@ -2737,13 +2735,36 @@ public class RepaymentProcessUtil {
 		dueDataDtls = dueDataDtls.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
 				.collect(Collectors.toList());
 
-		setFinDueDataByHierarchy(dueDataDtls, fsd.getFinanceType().getRpyHierarchy());
+		setFinDueDataByHierarchy(dueDataDtls, repayHierarchy);
 
 		dueDataDtls = sortDueDetailsByRelHierarchy(dueDataDtls);
 		rd.setDueDataList(dueDataDtls);
 
 		logger.debug(Literal.LEAVING);
 		return rd;
+	}
+
+	private String getRepayHierarchy(FinanceMain fm, FinReceiptData rd) {
+		FinReceiptHeader rch = rd.getReceiptHeader();
+		Date valueDate = rch.getValueDate();
+		String repayHierarchy = "";
+		FinanceType finType = finReceiptHeaderDAO.getRepayHierarchy(fm);
+		if (isWriteOffLoan(fm)) {
+			repayHierarchy = finType.getWriteOffRepayHry();
+		} else if (isNPALoan(fm)) {
+			repayHierarchy = finType.getNpaRpyHierarchy();
+		} else if (isMaturedLoan(fm, valueDate)) {
+			repayHierarchy = finType.getMatureRepayHry();
+		} else if (rd.isPresentment()) {
+			repayHierarchy = finType.getPresentmentRepayHry();
+		} else {
+			repayHierarchy = finType.getRpyHierarchy();
+		}
+		return repayHierarchy;
+	}
+
+	private boolean isWriteOffLoan(FinanceMain fm) {
+		return financeMainDAO.isWritOffLoan(fm);
 	}
 
 	public List<FinDueData> addAllocations(FinReceiptData rd, Date valueDate, FinReceiptHeader rch,
@@ -2888,6 +2909,14 @@ public class RepaymentProcessUtil {
 
 			index++;
 		}
+	}
+
+	private boolean isMaturedLoan(FinanceMain fm, Date valueDate) {
+		return manualAdviseDAO.isMaturedLoan(fm, valueDate);
+	}
+
+	private boolean isNPALoan(FinanceMain fm) {
+		return assetClassificationService.isNpaLoan(fm.getFinID());
 	}
 
 	@Autowired

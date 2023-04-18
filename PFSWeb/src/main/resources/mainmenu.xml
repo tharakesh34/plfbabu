@@ -372,6 +372,10 @@
 			<menuItem id="menu_Item_AutoKnockoff"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/AutoKnockOff/AutoKnockOffList.zul"
 				rightName="menu_Item_AutoKnockOff" />
+				
+			<menuItem id="menu_Item_LoanTypeWriteOff"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/LoanTypeWriteOff/LoanTypeWriteOffList.zul"
+				rightName="menu_Item_LoanTypeWriteOff" />
 
 			<menuItem id="menu_Item_PANLetterMapping"
 				zulNavigation="/WEB-INF/pages/SystemMaster/PANMapping/CustTypePANMappingList.zul"

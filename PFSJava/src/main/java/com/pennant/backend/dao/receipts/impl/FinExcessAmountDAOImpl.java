@@ -1048,6 +1048,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	}
 
 	@Override
+	public List<FinExcessAmount> getExcessList(long finID) {
+		StringBuilder sql = getExcessAmountSqlQuery();
+		sql.append(" Where FinID = ?  and BalanceAmt > ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
+		}, new ExcessAmountRowMapper());
+	}
+
+	@Override
 	public BigDecimal getSettlementAmountReceived(long finId) {
 		String sql = "Select coalesce(sum(BalanceAmt), 0) From FinExcessAmount Where FinID = ? and AmountType= ?";
 

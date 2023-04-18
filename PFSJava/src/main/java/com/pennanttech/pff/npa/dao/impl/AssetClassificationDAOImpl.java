@@ -1035,4 +1035,19 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		}
 	}
 
+	@Override
+	public boolean isNpaLoan(long finID) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select Count(*)");
+		sql.append(" From Npa_Loan_Info npa");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = npa.FinID");
+		sql.append(" Where npa.FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.LEAVING);
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), finID) > 0;
+	}
+
 }

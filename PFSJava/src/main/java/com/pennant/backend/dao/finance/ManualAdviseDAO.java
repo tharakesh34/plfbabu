@@ -199,4 +199,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	List<ManualAdvise> getAdvisesList(long finID, int adviseType, String type);
 
 	List<ManualAdviseMovements> getAdvisePaidAmount(long receiptId, String finReference);
+
+	boolean isMaturedLoan(FinanceMain fm, Date valueDate);
 }

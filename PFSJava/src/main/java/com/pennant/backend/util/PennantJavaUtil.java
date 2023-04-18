@@ -253,6 +253,7 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinTypeKnockOff;
+import com.pennant.backend.model.finance.FinTypeWriteOff;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -1046,6 +1047,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("TransactionCode", TransactionCode.class,
 						new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, transactionCodes_WF,
 						new String[] { "TranCode", "TranDesc" }, new Object[][] { { "TranIsActive", "0", 1 } }, 300));
+
+		ModuleUtil.register("FinTypeWriteOff",
+				new ModuleMapping("FinTypeWriteOff", FinTypeWriteOff.class,
+						new String[] { "AUTO_WriteOFF_LOANTYPES", "AUTO_WriteOFF_LOANTYPES_View" }, masterWF,
+						new String[] { "LoanType" }, null, 300));
 
 		ModuleUtil.register("AutoKnockOff",
 				new ModuleMapping("AutoKnockOff", AutoKnockOff.class,

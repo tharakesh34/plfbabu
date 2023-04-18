@@ -36,10 +36,11 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Select row_number() over(order by lp.FinReference) ID, lp.FinReference");
 		sql.append(" From Loan_Provisions lp");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = lp.FinReference and fm.FinIsActive = ?");
+		sql.append(" and WriteOffLoan = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.update(sql.toString(), 1);
+		return this.jdbcOperations.update(sql.toString(), 1, 0);
 	}
 
 	@Override

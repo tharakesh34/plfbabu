@@ -38,6 +38,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -2530,4 +2531,31 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			return mam;
 		});
 	}
+
+	@Override
+	public boolean isMaturedLoan(FinanceMain fm, Date valueDate) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = new StringBuilder("Select Count(*)");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinID = :FinID AND FinIsActive = :FinIsActive AND MaturityDate <= :MaturityDate");
+		logger.debug("selectSql: " + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("FinID", fm.getFinID());
+		source.addValue("FinIsActive", 1);
+		source.addValue("MaturityDate", valueDate);
+
+		try {
+			if (jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
+				return true;
+			}
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+		logger.debug(Literal.LEAVING);
+		return false;
+	}
+
 }

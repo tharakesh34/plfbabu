@@ -47,5 +47,5 @@
 	<include file="change-logs/change-log-menu-rights.xml" />
 	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
-	<include file="change-logs/change-log-hdfc_day_0.xml" />
+	<include file="change-logs/change-log-writeoff.xml" />
 </databaseChangeLog>

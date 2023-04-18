@@ -840,6 +840,8 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (ImplementationConstants.ALLOW_PROVISION) {
 			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
 		}
+		// Auto Write Off
+		appendRow(Step.autoWriteOffCalc.name(), StepUtil.AUTOWRITEOFF_CALC.getName());
 
 		appendRow(Step.processINDASForInActiveFinances.name(), StepUtil.PROCESS_INDAS_INACTIVE_FINANCES.getName());
 

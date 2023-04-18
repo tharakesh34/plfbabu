@@ -135,6 +135,21 @@
 			<partition step="provisionCalc" partitioner="provisionCalcPartition">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="autoWriteOffCalcQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<!-- Auto Write Off -->
+		<step id="autoWriteOffCalcQueue">
+			<tasklet ref="autoWriteOffCalcQueueTasklet" />
+			<next on="*" to="autoWriteOffCalcMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoWriteOffCalcMaster">
+			<partition step="autoWriteOffCalc" partitioner="autoWriteOffCalcPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
 			<next on="*" to="processINDASForInActiveFinances" />
 			<fail on="FAILED" />
 		</step>
@@ -317,6 +332,14 @@
 	<bean id="effAssetClassificationPartition"
 		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationPartition" />
 	<bean id="provisionCalcPartition" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcPartition" />
+	
+	<bean id="autoWriteOffCalcPartition"
+		class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcPartition" />
+	<step id="autoWriteOffCalc" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="autoWriteOffClacTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
 
 
 	<step id="ledgerDownloadProcess" xmlns="http://www.springframework.org/schema/batch">

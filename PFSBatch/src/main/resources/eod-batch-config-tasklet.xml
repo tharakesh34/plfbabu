@@ -228,4 +228,8 @@
 	
 	<bean id="oTsQueueTasklet" class="com.pennant.backend.endofday.tasklet.OTSQueue" />
 	
+		<!--Auto Write Off -->
+	<bean id="autoWriteOffCalcQueueTasklet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcQueue" />
+	<bean id="autoWriteOffClacTaskLet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffClacTaskLet" />
+	
 </beans>

@@ -102,6 +102,7 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -2670,14 +2671,9 @@ public class ReceiptCalculator {
 		/* String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy(); */
 
 		FinanceMain fm = schData.getFinanceMain();
-		long finID = fm.getFinID();
 
 		EventProperties eventProperties = fm.getEventProperties();
-		String repayHierarchy = getRepayHierarchyOnNPA(finID);
-
-		if ("".equals(repayHierarchy)) {
-			repayHierarchy = schData.getFinanceType().getRpyHierarchy();
-		}
+		String repayHierarchy = getRepayHierarchy(fm, rd);
 
 		if (repayHierarchy.contains("CS")) {
 			rch.setPenalSeparate(true);
@@ -2717,6 +2713,45 @@ public class ReceiptCalculator {
 		}
 
 		return rd;
+	}
+
+	/**
+	 * Return the repayment hierachy based on the Loan type configuration
+	 * 
+	 * @param fm
+	 * @param rd
+	 * @return string
+	 */
+
+	private String getRepayHierarchy(FinanceMain fm, FinReceiptData rd) {
+		FinReceiptHeader rch = rd.getReceiptHeader();
+		Date valueDate = rch.getValueDate();
+		FinanceType finType = finReceiptHeaderDAO.getRepayHierarchy(fm);
+
+		// Check whether loan is write off or not
+		if (fm.isWriteoffLoan()) {
+			return finType.getWriteOffRepayHry();
+			// Loan Matured or not
+		} else if (isMaturedLoan(fm, valueDate)) {
+			return finType.getMatureRepayHry();
+			// Presentment Process
+		} else if (rd.isPresentment()) {
+			return finType.getPresentmentRepayHry();
+			// NPA Loan or not
+		} else if (isNPALoan(fm)) {
+			return finType.getNpaRpyHierarchy();
+		} else {
+			// Regular Loan
+			return finType.getRpyHierarchy();
+		}
+	}
+
+	private boolean isNPALoan(FinanceMain fm) {
+		return assetClassificationService.isNpaLoan(fm.getFinID());
+	}
+
+	private boolean isMaturedLoan(FinanceMain fm, Date valueDate) {
+		return manualAdviseDAO.isMaturedLoan(fm, valueDate);
 	}
 
 	private String getRepayHierarchyOnNPA(long finID) {

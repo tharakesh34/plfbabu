@@ -358,6 +358,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
 	private BigDecimal minAutoRefund = BigDecimal.ZERO;
 	private String npaRpyHierarchy;
+	private String writeOffRepayHry;
+	private String matureRepayHry;
+	private String presentmentRepayHry;
 
 	public FinanceType() {
 		super();
@@ -646,6 +649,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setMaxAutoRefund(this.maxAutoRefund);
 		entity.setMinAutoRefund(this.minAutoRefund);
 		entity.setNpaRpyHierarchy(this.npaRpyHierarchy);
+		entity.setWriteOffRepayHry(this.writeOffRepayHry);
+		entity.setPresentmentRepayHry(this.presentmentRepayHry);
+		entity.setMatureRepayHry(this.matureRepayHry);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -2861,4 +2867,29 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setNpaRpyHierarchy(String npaRpyHierarchy) {
 		this.npaRpyHierarchy = npaRpyHierarchy;
 	}
+
+	public String getWriteOffRepayHry() {
+		return writeOffRepayHry;
+	}
+
+	public void setWriteOffRepayHry(String writeOffRepayHry) {
+		this.writeOffRepayHry = writeOffRepayHry;
+	}
+
+	public String getMatureRepayHry() {
+		return matureRepayHry;
+	}
+
+	public void setMatureRepayHry(String matureRepayHry) {
+		this.matureRepayHry = matureRepayHry;
+	}
+
+	public String getPresentmentRepayHry() {
+		return presentmentRepayHry;
+	}
+
+	public void setPresentmentRepayHry(String presentmentRepayHry) {
+		this.presentmentRepayHry = presentmentRepayHry;
+	}
+
 }
