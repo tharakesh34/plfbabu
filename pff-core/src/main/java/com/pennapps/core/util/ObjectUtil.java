@@ -22,15 +22,15 @@ public class ObjectUtil {
 	public static <T extends Serializable> List<T> clone(List<T> objects) {
 		List<T> list = new ArrayList<>();
 
-		for (T object : objects) {
-			list.add(clone(object));
-		}
+		objects.forEach(l1 -> list.add(clone(l1)));
 
 		return list;
 	}
 
 	public static <T extends Serializable> Map<Long, T> clone(Map<Long, T> objects) {
 		Map<Long, T> map = new HashMap<>();
+
+		objects.entrySet().forEach(l1 -> map.put(l1.getKey(), clone(l1.getValue())));
 
 		return map;
 	}
