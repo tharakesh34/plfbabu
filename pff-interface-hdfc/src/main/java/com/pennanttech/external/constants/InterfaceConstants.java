@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
+import com.pennanttech.pennapps.core.ftp.SftpClient;
 
 public interface InterfaceConstants {
 
@@ -20,26 +22,17 @@ public interface InterfaceConstants {
 	// ----------------
 
 	String CONFIG_SI_REQ = "SI";
-	String CONFIG_SI_RESP = "SI_RESP";
-
 	String CONFIG_IPDC_REQ = "IPDC";
-	String CONFIG_IPDC_RESP = "IPDC_RESP";
-
 	String CONFIG_NACH_REQ = "NACH";
-	String CONFIG_NACH_RESP = "NACH_RESP";
-
 	String CONFIG_PDC_REQ = "PDC";
-
 	String CONFIG_LIEN_REQ = "SILIEN";
-	String CONFIG_LIEN_RESP = "SILIEN_RESP";
-
 	String CONFIG_UCIC_REQ = "UCIC_REQ";
 	String CONFIG_UCIC_REQ_COMPLETE = "UCIC_REQ_COMPLETE";
 	String CONFIG_UCIC_RESP = "UCIC_RESP";
 	String CONFIG_UCIC_RESP_COMPLETE = "UCIC_RESP_COMPLETE";
 	String CONFIG_UCIC_ACK = "UCIC_ACK";
 	String CONFIG_UCIC_ACK_CONF = "UCIC_ACK_CONF";
-	String CONFIG_PLF_DB_SERVER = "UCIC_PLF_SERVER";
+	String CONFIG_PLF_DB_SERVER = "PLF_DB_SERVER";
 
 	String CONFIG_BASEL_ONE = "BASEL1";
 	String CONFIG_BASEL_TWO = "BASEL2";
@@ -48,6 +41,11 @@ public interface InterfaceConstants {
 	String CONFIG_RPMS = "RPMS";
 
 	String CONFIG_UCIC_WEEKLY_FILE = "UCIC_WEEKLY";
+
+	String CONFIG_SI_RESP = "SI_RESP";
+	String CONFIG_IPDC_RESP = "IPDC_RESP";
+	String CONFIG_NACH_RESP = "NACH_RESP";
+	String CONFIG_LIEN_RESP = "SILIEN_RESP";
 
 	String SIHOLD = "SIHOLD";
 
@@ -115,6 +113,7 @@ public interface InterfaceConstants {
 	String F605 = "F605";
 	String F606 = "F606";
 	String F607 = "F607";
+	String F500 = "F500";
 	// ----------------------------- ERROR CODES ------------------------------
 
 	default ExternalConfig getDataFromList(List<ExternalConfig> mainConfig, String key) {
@@ -159,5 +158,19 @@ public interface InterfaceConstants {
 			}
 		}
 		return null;
+	}
+
+	default FtpClient getftpClientConnection(ExternalConfig serverConfig) {
+		FtpClient ftpClient = null;
+		String host = serverConfig.getHostName();
+		int port = serverConfig.getPort();
+		String accessKey = serverConfig.getAccessKey();
+		String secretKey = serverConfig.getSecretKey();
+		try {
+			ftpClient = new SftpClient(host, port, accessKey, secretKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ftpClient;
 	}
 }

@@ -58,11 +58,16 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 
 		if (ucicRespConfig == null || ucicRespCompleteConfig == null) {
 			logger.debug(
-					"Ext_Warning: No configuration found for type UCIC response. So returning without reading the folder.");
+					"EXT_UCIC: No configuration found for type UCIC response. So returning without reading the folder.");
 			return;
 		}
 
-		String folderPath = "";
+		String localFolderPath = App.getResourcePath(ucicRespConfig.getFileLocation());
+
+		if (localFolderPath == null || "".equals(localFolderPath)) {
+			logger.debug("EXT_UCIC:Invalid UCIC resp folder path, so returning.");
+			return;
+		}
 
 		// Check if file is in SFTP location, then get the file.
 		if ("Y".equals(StringUtils.stripToEmpty(ucicRespConfig.getIsSftp()))) {
@@ -82,23 +87,12 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 			// Get list of files in SFTP.
 			List<String> fileNames = getFileNameList(remoteFilePath, host, port, accessKey, secretKey);
 
-			String localFilePath = ucicRespConfig.getFileLocation();
-
 			for (String fileName : fileNames) {
-				ftpClient.download(remoteFilePath, localFilePath, fileName);
+				ftpClient.download(remoteFilePath, localFolderPath, fileName);
 			}
-
-			folderPath = localFilePath;
-		} else {
-			folderPath = App.getResourcePath(ucicRespConfig.getFileLocation());
 		}
 
-		if (folderPath == null || "".equals(folderPath)) {
-			logger.debug("Invalid UCIC resp folder path, so returning.");
-			return;
-		}
-
-		File dirPath = new File(folderPath);
+		File dirPath = new File(localFolderPath);
 
 		if (!dirPath.isDirectory()) {
 			logger.debug("Invalid  UCIC resp folder directory path, so returning.");
@@ -154,13 +148,13 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 
 					// Add unprocessed files in to table
 					if (isValidFile) {
-						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FILE_NOT_WRITTEN,
-								COMPLETED, "", "");
+						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), UNPROCESSED, "",
+								"");
 					} else {
 						// Add Failed file in to table with error code and error message
 						InterfaceErrorCode interfaceErrorCode = getErrorFromList(
 								ExtErrorCodes.getInstance().getInterfaceErrorsList(), F607);
-						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED, FAILED,
+						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED,
 								interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
 					}
 				}
