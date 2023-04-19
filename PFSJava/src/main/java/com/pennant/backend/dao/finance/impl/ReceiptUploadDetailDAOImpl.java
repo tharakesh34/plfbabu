@@ -328,33 +328,23 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 
 	@Override
 	public List<ThreadAllocation> getFinRefWithCount(List<Long> uploadHeaderIdList) {
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Distinct(Reference),");
-		sql.append(" (Select Count(Reference)");
-		sql.append(" From ReceiptUploadDetails");
-		sql.append(" Where Reference = ud.Reference");
-		sql.append(" and ProcessingStatus = ? and UploadHeaderId in (");
-		sql.append(commaJoin(uploadHeaderIdList));
-		sql.append(")) FinCount");
-		sql.append(" From ReceiptUploadDetails ud");
+		sql.append(" Reference, count(Reference) FinCount from receiptuploaddetails");
 		sql.append(" Where UploadHeaderId in (");
 		sql.append(commaJoin(uploadHeaderIdList));
-		sql.append(") and ProcessingStatus = ? order by Fincount");
+		sql.append(" )");
+		sql.append(" and ProcessingStatus = ? Group By Reference");
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setInt(index++, ReceiptDetailStatus.INPROGRESS.getValue());
-
-			while (index - 2 != 2 * uploadHeaderIdList.size()) {
-				for (Long uploadHeader : uploadHeaderIdList) {
-					ps.setLong(index++, uploadHeader);
-				}
+			for (Long uploadHeader : uploadHeaderIdList) {
+				ps.setLong(++index, uploadHeader);
 			}
 
-			ps.setInt(index, ReceiptDetailStatus.INPROGRESS.getValue());
+			ps.setInt(++index, ReceiptDetailStatus.INPROGRESS.getValue());
 		}, (rs, rowNum) -> {
 			ThreadAllocation thread = new ThreadAllocation();
 			thread.setReference(rs.getString("Reference"));

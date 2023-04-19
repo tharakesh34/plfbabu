@@ -1190,7 +1190,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 
 		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
 
-		if (DateUtil.compare(receiptDt, maxReceiptDt) < 0) {
+		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
 			receiptDt = maxReceiptDt;
 		}
 
