@@ -669,7 +669,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	public void onChecknpaCheckbox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		Listitem listitem = (Listitem) event.getData();
-		Checkbox checkbox = (Checkbox) getComponent(listitem, 4);
+		Checkbox checkbox = (Checkbox) getComponent(listitem, 5);
 		int keyValue = Integer.parseInt(checkbox.getId().replaceAll("NPACheckBox_", ""));
 		if (validateNPAStage(keyValue, checkbox.isChecked())) {
 			checkbox.setChecked(true);
@@ -683,7 +683,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 			for (Listitem component : listBoxAssetClassSetup.getItems()) {
 				Listitem item = (Listitem) component;
-				Checkbox itemCheckbox = (Checkbox) getComponent(item, 4);
+				Checkbox itemCheckbox = (Checkbox) getComponent(item, 5);
 				int id = Integer.parseInt(itemCheckbox.getId().replaceAll("NPACheckBox_", ""));
 				if (keyValue >= id) {
 					continue;
@@ -693,13 +693,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 				setNPAAging(item, prvDPDMax);
 			}
 		} else {
-			Intbox npaAge = (Intbox) getComponent(listitem, 5).getLastChild();
+			Intbox npaAge = (Intbox) getComponent(listitem, 2).getLastChild();
 			npaAge.setValue(0);
 			Intbox npaDPDMax = (Intbox) getComponent(listitem, 1).getLastChild();
 			int prvDPDMax = npaDPDMax.getValue();
 			for (Listitem component : listBoxAssetClassSetup.getItems()) {
 				Listitem item = (Listitem) component;
-				Checkbox itemCheckbox = (Checkbox) getComponent(item, 4);
+				Checkbox itemCheckbox = (Checkbox) getComponent(item, 5);
 				int id = Integer.parseInt(itemCheckbox.getId().replaceAll("NPACheckBox_", ""));
 				if (keyValue > id) {
 					continue;
@@ -721,7 +721,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		}
 		for (Listitem component : listBoxAssetClassSetup.getItems()) {
 			Listitem item = (Listitem) component;
-			Checkbox checkbox = (Checkbox) getComponent(item, 4);
+			Checkbox checkbox = (Checkbox) getComponent(item, 5);
 			int id = Integer.parseInt(checkbox.getId().replaceAll("NPACheckBox_", ""));
 			if (keyValue - 1 == id) {
 				if (checkbox.isChecked()) {
@@ -736,7 +736,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	private void setNPAAging(Listitem listitem, int prvDPDMax) {
 		Intbox npaDPDMax = (Intbox) getComponent(listitem, 1).getLastChild();
 		int curDPDMax = npaDPDMax.getValue();
-		Intbox npaAge = (Intbox) getComponent(listitem, 5).getLastChild();
+		Intbox npaAge = (Intbox) getComponent(listitem, 2).getLastChild();
 		npaAge.setValue(curDPDMax - prvDPDMax);
 	}
 
