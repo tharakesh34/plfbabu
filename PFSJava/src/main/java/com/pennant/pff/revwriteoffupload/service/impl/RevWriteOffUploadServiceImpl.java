@@ -235,11 +235,11 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 		aeEvent.setEntityCode(fm.getEntityCode());
 
 		// preparing Accounting data and Execution
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-				AccountingEvent.REV_WRITEOFF, FinanceConstants.MODULEID_FINTYPE));
-
 		aeEvent = AEAmounts.procAEAmounts(fm, schdList, pd, AccountingEvent.REV_WRITEOFF, aeEvent.getAppDate(),
 				aeEvent.getAppDate());
+
+		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
+				AccountingEvent.REV_WRITEOFF, FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 

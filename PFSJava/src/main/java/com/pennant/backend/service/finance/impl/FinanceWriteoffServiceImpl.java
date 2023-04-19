@@ -633,7 +633,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_AUTOPROCESS, header.getFinSource())
-				|| !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, header.getFinSource())) {
+				&& !StringUtils.equals(UploadConstants.FINSOURCE_ID_UPLOAD, header.getFinSource())) {
 			// Schedule Details delete
 			// =======================================
 			listDeletion(finID, "_Temp");
