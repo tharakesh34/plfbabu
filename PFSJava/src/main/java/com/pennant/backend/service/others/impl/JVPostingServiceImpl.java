@@ -342,7 +342,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		jVPostingDAO.delete(jVPosting, "_Temp");
-		financeMainDAO.updateMaintainceStatus(jVPosting.getExpReference(), "");
+		financeMainDAO.updateMaintainceStatus(jVPosting.getReference(), "");
 
 		String auditTranType = auditHeader.getAuditTranType();
 		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, jVPosting.getBefImage(), jVPosting));
