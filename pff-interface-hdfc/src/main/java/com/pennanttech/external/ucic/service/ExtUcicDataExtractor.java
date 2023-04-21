@@ -11,7 +11,7 @@ public class ExtUcicDataExtractor {
 
 	private ExtUcicDao extUcicDao;
 
-	public void extractCustomerData() {
+	public String extractCustomerData() {
 		logger.debug(Literal.ENTERING);
 		String resp = extUcicDao.executeDataExtractionFromSP();
 		if (resp != null && "SUCCESS".equals(resp)) {
@@ -19,6 +19,7 @@ public class ExtUcicDataExtractor {
 		}
 
 		logger.debug(Literal.LEAVING);
+		return resp;
 	}
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {

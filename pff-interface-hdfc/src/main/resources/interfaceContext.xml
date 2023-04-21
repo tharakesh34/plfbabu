@@ -47,7 +47,9 @@
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
-	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl" parent="sequenceDao" />
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl">
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
 
 
 	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
@@ -85,7 +87,7 @@
 	</bean>
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
-	
+
 	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
@@ -99,11 +101,11 @@
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
-	
+
 	<bean id="extUcicResponseProcessor" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
 	</bean>
-	
+
 	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
@@ -116,8 +118,8 @@
 
 	<bean id="jobSchedulerExtension" class="com.pennanttech.pff.scheduler.jobs.HDFCJobScheduler" />
 	<bean id="extMandateExtension" class="com.pennanttech.external.mandate.ExtMandateHandler" />
-	
-	<bean id="ucicWeeklyWritingService" class ="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">
+
+	<bean id="ucicWeeklyWritingService" class="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">
 		<property name="extUcicDao" ref="extUcicDao" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
@@ -134,7 +136,8 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="bankAccountValidationService" class="com.pennanttech.external.api.casavalidation.service.CasaAccountValidationService">
+	<bean id="externalAPIHook"
+		class="com.pennanttech.external.api.casavalidation.service.CasaAccountValidationService">
 		<property name="extApiDao" ref="extApiDao" />
 	</bean>
 </beans>

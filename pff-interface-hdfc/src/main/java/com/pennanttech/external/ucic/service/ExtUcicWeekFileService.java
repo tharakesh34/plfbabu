@@ -1,6 +1,7 @@
 package com.pennanttech.external.ucic.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.io.Files;
 import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.config.InterfaceErrorCode;
@@ -17,7 +19,6 @@ import com.pennanttech.external.fileutil.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceConstants {
@@ -56,22 +57,21 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		String status = extUcicDao.executeUcicRequestFileSP(fileName);
 
 		if ("SUCCESS".equals(status)) {
+
 			// Fetch request file from DB Server location and store it in client SFTP
 			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
-			FtpClient ftpClient = null;
-			String host = serverConfig.getHostName();
-			int port = serverConfig.getPort();
-			String accessKey = serverConfig.getAccessKey();
-			String secretKey = serverConfig.getSecretKey();
-			try {
-				ftpClient = new SftpClient(host, port, accessKey, secretKey);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.debug("Unable to connect to SFTP.");
-			}
+
 			// Now get remote file to local base location using SERVER config
 			String remoteFilePath = serverConfig.getFileSftpLocation();
+			if (remoteFilePath == null || "".equals(remoteFilePath)) {
+				logger.debug(
+						"EXT_UCIC: No configuration found for type UCIC Weekly request file. So returning without generating the request file.");
+				return;
+			}
+
+			FtpClient ftpClient = null;
 			try {
+				ftpClient = getftpClientConnection(serverConfig);
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.");
@@ -83,9 +83,26 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
 				ftpClient.upload(mainFile, ucicWeeklyConfig.getFileSftpLocation());
+
+				fileBackup(ucicWeeklyConfig, mainFile);
 			}
 		}
 
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void fileBackup(ExternalConfig ucicWeeklyConfig, File mainFile) throws IOException {
+		logger.debug(Literal.ENTERING);
+
+		String localBkpLocation = ucicWeeklyConfig.getFileLocalBackupLocation();
+		if (localBkpLocation == null || "".equals(localBkpLocation)) {
+			logger.debug("EXT_UCIC: Local backup location not configured, so returning.");
+			return;
+		}
+		String localBackupLocation = App.getResourcePath(ucicWeeklyConfig.getFileLocalBackupLocation());
+		File mainFileBkp = new File(localBackupLocation + File.separator + mainFile.getName());
+		Files.copy(mainFile, mainFileBkp);
+		logger.debug("EXT_UCIC: AckFile backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
 

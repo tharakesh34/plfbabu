@@ -1,6 +1,7 @@
 package com.pennanttech.external.ucic.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.io.Files;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
@@ -38,7 +40,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 		if (ucicAckConfig == null || ucicAckConfConfig == null) {
 			logger.debug(
-					"Ext_Warning: No configuration found for type UCIC ack file. So returning without generating the ack file.");
+					"EXT_UCIC: No configuration found for type UCIC ack file. So returning without generating the ack file.");
 			return;
 		}
 
@@ -53,6 +55,19 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP
 			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+
+			if (serverConfig == null) {
+				logger.debug("EXT_UCIC: DB Server config not found. So returning.");
+				return;
+			}
+
+			String remoteFilePath = serverConfig.getFileSftpLocation();
+
+			if (remoteFilePath == null || "".equals(remoteFilePath)) {
+				logger.debug("EXT_UCIC: RemoteFilePath in config not found. So returning.");
+				return;
+			}
+
 			FtpClient ftpClient = null;
 			String host = serverConfig.getHostName();
 			int port = serverConfig.getPort();
@@ -64,7 +79,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 				e.printStackTrace();
 				logger.debug("Unable to connect to SFTP.");
 			}
-			String remoteFilePath = serverConfig.getFileSftpLocation();
+
 			try {
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
@@ -73,21 +88,46 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 			}
 
 			if ("Y".equals(ucicAckConfig.getIsSftp())) {
-
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
+				ftpClient = getftpClientConnection(ucicAckConfig);
 				ftpClient.upload(mainFile, ucicAckConfig.getFileSftpLocation());
 
 				// Now upload complete file to SFTP of client location as per configuration
 				String completeFilePathWithName = writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
 				File completeFileToUpload = new File(completeFilePathWithName);
+				ftpClient = getftpClientConnection(ucicAckConfig);
 				ftpClient.upload(completeFileToUpload, ucicAckConfig.getFileSftpLocation());
+
+				fileBackup(ucicAckConfig, mainFile, completeFileToUpload);
+
 			} else {
 				// Request file is already downloaded to location, so we are generating complete file for the request
 				// file
 				writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
 			}
 		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void fileBackup(ExternalConfig ucicAckConfig, File mainFile, File completeFileToUpload) throws IOException {
+		logger.debug(Literal.ENTERING);
+
+		String localBkpLocation = ucicAckConfig.getFileLocalBackupLocation();
+		if (localBkpLocation == null || "".equals(localBkpLocation)) {
+			logger.debug("EXT_UCIC: Local backup location not configured, so returning.");
+			return;
+		}
+
+		String localBackupLocation = App.getResourcePath(ucicAckConfig.getFileLocalBackupLocation());
+
+		File mainFileBkp = new File(localBackupLocation + File.separator + mainFile.getName());
+		File completeFileBkp = new File(localBackupLocation + File.separator + completeFileToUpload.getName());
+
+		Files.copy(mainFile, mainFileBkp);
+		Files.copy(completeFileToUpload, completeFileBkp);
+
+		logger.debug("EXT_UCIC:MainFile & Completefile backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
 
