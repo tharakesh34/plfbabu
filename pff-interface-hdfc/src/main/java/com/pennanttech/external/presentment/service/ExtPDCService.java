@@ -172,6 +172,9 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 
 				super.writeDataToFile(fileName, itemList);
 
+				if ("Y".equals(StringUtils.stripToEmpty(config.getIsSftp()))) {
+					uploadToSFTP(fileName, config);
+				}
 			}
 
 		} catch (Exception e) {
