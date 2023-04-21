@@ -57,7 +57,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		String status = extUcicDao.executeUcicRequestFileSP(fileName);
 
 		if ("SUCCESS".equals(status)) {
-
+			FtpClient ftpClient = null;
 			// Fetch request file from DB Server location and store it in client SFTP
 			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
@@ -69,9 +69,8 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 				return;
 			}
 
-			FtpClient ftpClient = null;
+			ftpClient = getftpClientConnection(ucicWeeklyConfig);
 			try {
-				ftpClient = getftpClientConnection(serverConfig);
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.");
@@ -79,7 +78,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 			}
 
 			if ("Y".equals(ucicWeeklyConfig.getIsSftp())) {
-
+				ftpClient = getftpClientConnection(serverConfig);
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
 				ftpClient.upload(mainFile, ucicWeeklyConfig.getFileSftpLocation());

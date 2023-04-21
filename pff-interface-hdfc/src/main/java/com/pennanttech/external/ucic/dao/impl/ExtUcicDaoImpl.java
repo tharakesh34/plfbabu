@@ -67,7 +67,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
 		StringBuilder sql = new StringBuilder("INSERT INTO UCIC_RESP_FILES");
 		sql.append(" (FILE_NAME,FILE_LOCATION,STATUS,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE)");
-		sql.append(" VALUES (?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" VALUES (?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -103,7 +103,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 		logger.info("Extracting UCIC data");
 		String status = "FAIL";
 		try {
-			this.jdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -127,7 +127,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicRequestFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			this.jdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -152,7 +152,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicWeeklyRequestFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			this.jdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
@@ -177,7 +177,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicResponseFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			this.jdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 					CallableStatement callableStatement = connection
@@ -198,7 +198,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 	public String executeUcicAckFileSP(String fileName) {
 		String status = "FAIL";
 		try {
-			this.jdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+			extNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
 
 				@Override
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
