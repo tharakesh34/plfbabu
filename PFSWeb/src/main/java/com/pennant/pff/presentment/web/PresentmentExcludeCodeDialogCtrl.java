@@ -34,6 +34,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExcludeCode> {
@@ -114,6 +115,21 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		this.groupboxWf.setVisible(isWorkFlowEnabled());
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$instrumentType(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		onChangeInstrumentType();
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void onChangeInstrumentType() {
+		Filter[] filter = new Filter[1];
+		filter[0] = new Filter("InstrumentType", this.instrumentType.getValue(), Filter.OP_EQUAL);
+		this.bounceId.setFilters(filter);
 	}
 
 	private void doCheckRights() {
