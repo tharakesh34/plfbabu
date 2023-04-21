@@ -111,7 +111,7 @@ public class ExtInterfaceDaoImpl implements ExtInterfaceDao {
 		String queryStr;
 
 		List<ExternalConfig> list = new ArrayList<ExternalConfig>();
-		queryStr = "SELECT INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET FROM FILE_INTERFACE_CONFIG";
+		queryStr = "SELECT INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION FROM FILE_INTERFACE_CONFIG";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
 			ExternalConfig extConfig = new ExternalConfig();
@@ -137,7 +137,7 @@ public class ExtInterfaceDaoImpl implements ExtInterfaceDao {
 			extConfig.setFileSftpLocation(rs.getString("SFTP_LOCATION"));
 			extConfig.setIsSftp(rs.getString("IS_SFTP"));
 			extConfig.setFileLocalBackupLocation(rs.getString("LOCAL_BACKUP_LOCATION"));
-			extConfig.setSftpBucketLocation(rs.getString("SFTP_BUCKET"));
+			// extConfig.setSftpBucketLocation(rs.getString("SFTP_BUCKET"));
 
 			list.add(extConfig);
 		});
