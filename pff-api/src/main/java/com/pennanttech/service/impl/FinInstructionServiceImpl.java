@@ -1417,7 +1417,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		
+		if (ReceiptMode.CHEQUE.equals(fsi.getPaymentMode()) && rd.getDepositDate() == null) {
+			String[] param = new String[1];
+			param[0] = "DepositDate";
+			ErrorDetail er = ErrorUtil.getError("90502", param);
+			schdData.setErrorDetail(er);
+			setReturnStatus(fd);
+			return fd;
+		}
 
 		if (fsi.getValueDate() == null) {
 			fsi.setValueDate(rd.getReceivedDate());
