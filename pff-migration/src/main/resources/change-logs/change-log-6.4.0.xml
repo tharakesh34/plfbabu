@@ -731,6 +731,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1469.16.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN_TEMP SET UNDERNPA = 0 WHERE UNDERNPA IS NULL;
+				UPDATE FINANCEMAIN SET UNDERNPA = 0 WHERE UNDERNPA IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1469.17" author="NagaVamsi.P" dbms="postgresql, oracle">
 		<addDefaultValue columnName="UnderNpa" tableName="FINANCEMAIN_TEMP" defaultValue="0" />

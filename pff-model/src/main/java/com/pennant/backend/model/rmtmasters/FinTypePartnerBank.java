@@ -115,6 +115,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 		excludeFields.add("finID");
 		excludeFields.add("favourName");
 		excludeFields.add("payableLoc");
+		excludeFields.add("divisionCode");
 
 		return excludeFields;
 	}
@@ -394,7 +395,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity {
 	public void setDivisionCode(String divisionCode) {
 		this.divisionCode = divisionCode;
 	}
-	
+
 	public String getMapping() {
 		return String.format(
 				"[Loan Type - %s] and [Purpose - %s] and [Payment Mode - %s] and [[Branch Code - %s ] or [Cluster Id - %d] ] ",
