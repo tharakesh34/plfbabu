@@ -7319,7 +7319,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (StringUtils.isNotEmpty(fm.getAdvType()) && PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
 			int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
 			BigDecimal actualAmbnt = BigDecimal.ZERO;
-			BigDecimal netfinamnt = BigDecimal.ZERO;
+			BigDecimal netfinamnt = fm.getFinAmount();
 			BigDecimal disbAmount = BigDecimal.ZERO;
 
 			if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
