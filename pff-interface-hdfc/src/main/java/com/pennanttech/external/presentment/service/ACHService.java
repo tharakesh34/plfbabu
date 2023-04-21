@@ -126,6 +126,10 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 						+ fileSeqName + config.getFileExtension();
 
 				super.writeDataToFile(fileName, itemList);
+
+				if ("Y".equals(StringUtils.stripToEmpty(config.getIsSftp()))) {
+					uploadToSFTP(fileName, config);
+				}
 			} else {
 				logger.debug("No ACH request records found, so returning. ");
 			}

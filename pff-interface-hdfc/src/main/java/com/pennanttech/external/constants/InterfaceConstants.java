@@ -1,11 +1,14 @@
 package com.pennanttech.external.constants;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
+import com.pennanttech.pennapps.core.ftp.SftpClient;
 
 public interface InterfaceConstants {
 
@@ -39,7 +42,7 @@ public interface InterfaceConstants {
 	String CONFIG_UCIC_RESP_COMPLETE = "UCIC_RESP_COMPLETE";
 	String CONFIG_UCIC_ACK = "UCIC_ACK";
 	String CONFIG_UCIC_ACK_CONF = "UCIC_ACK_CONF";
-	String CONFIG_PLF_DB_SERVER = "UCIC_PLF_SERVER";
+	String CONFIG_PLF_DB_SERVER = "PLF_DB_SERVER";
 
 	String CONFIG_BASEL_ONE = "BASEL1";
 	String CONFIG_BASEL_TWO = "BASEL2";
@@ -159,5 +162,31 @@ public interface InterfaceConstants {
 			}
 		}
 		return null;
+	}
+
+	default FtpClient getftpClientConnection(ExternalConfig serverConfig) {
+		FtpClient ftpClient = null;
+		String host = serverConfig.getHostName();
+		int port = serverConfig.getPort();
+		String accessKey = serverConfig.getAccessKey();
+		String secretKey = serverConfig.getSecretKey();
+		try {
+			ftpClient = new SftpClient(host, port, accessKey, secretKey);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ftpClient;
+	}
+
+	default void uploadToSFTP(String localFileWithPath, ExternalConfig config) {
+		if (config.getFileSftpLocation() == null || "".equals(config.getFileSftpLocation())) {
+			return;
+		}
+		try {
+			FtpClient ftpClient = getftpClientConnection(config);
+			ftpClient.upload(new File(localFileWithPath), config.getFileSftpLocation());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
