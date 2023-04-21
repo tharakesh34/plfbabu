@@ -1,9 +1,11 @@
 package com.pennant.app.util;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-public class APIHeader {
+public class APIHeader implements Serializable {
+	private static final long serialVersionUID = 9074689464346069599L;
 
 	private String serviceName;
 	private String serviceVersion;
