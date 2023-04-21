@@ -243,6 +243,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -2112,8 +2113,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		isPresentProc = presentmentDetailDAO.isPresentmentInProcess(finID);
 
 		boolean finIsActive = fm.isFinIsActive();
-		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose(),
-				isPresentProc);
+		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose());
 		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY
 				&& (RepayConstants.PAYSTATUS_DEPOSITED.equals(rmStatus))) {
 
@@ -6335,6 +6335,15 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinanceMain fm = schdData.getFinanceMain();
 		fm.setUserDetails(userDetails);
 
+		if (DateUtil.compare(fm.getFinStartDate(), fsi.getValueDate()) > 0) {
+			setError(schdData, "30507",
+					"Received Date: "
+							.concat(DateUtil.format(fsi.getValueDate(), DateFormat.FULL_DATE.getPattern()).toString()),
+					"Loan StartDate: ".concat(fm.getFinStartDate().toString()));
+			logger.info(Literal.LEAVING);
+			return fd;
+		}
+
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 			logger.info(Literal.LEAVING);
 			return fd;
@@ -8463,8 +8472,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
-				isPresentProc);
+		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose());
 
 		String closingStatus = fm.getClosingStatus();
 		if (isLoanActiveBef && !fm.isFinIsActive() && (FinServiceEvent.SCHDRPY.equals(receiptPurpose))
