@@ -1055,6 +1055,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.graalvm.truffle/truffle-api -->
+		<dependency>
+			<groupId>org.graalvm.truffle</groupId>
+			<artifactId>truffle-api</artifactId>
+			<version>20.0.0</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
