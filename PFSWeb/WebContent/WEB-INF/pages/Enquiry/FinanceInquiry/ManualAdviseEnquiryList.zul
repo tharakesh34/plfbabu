@@ -65,6 +65,9 @@
 									<label id="label_ManualAdviseList_FeeTypeID" value="${c:l('label_ManualAdviseList_FeeTypeID.value')}" />
 									<listbox id="sortOperator_FeeTypeID" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="feeTypeID" width="171px" maxlength="19" />
+									<label id="label_ManualAdviseList_AdviseID" value="${c:l('label_ManualAdviseList_AdviseID.value')}" />
+									<listbox id="sortOperator_AdviseID" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="adviseID" width="171px" maxlength="19" />
 								</row>
 
 								<row>
@@ -94,9 +97,13 @@
 							<listhead sizable="true">
 								<listheader id="listheader_AdviseType" label="${c:l('listheader_AdviseType.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_AdviseId" label="${c:l('listheader_AdviseId.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_FeeTypeID" label="${c:l('listheader_FeeTypeID.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_AdviseAmount" label="${c:l('listheader_AdviseAmount.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_AdviseStatus" label="${c:l('listheader_AdviseStatus.label')}" sort="auto" hflex="min" visible="false"/>
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />

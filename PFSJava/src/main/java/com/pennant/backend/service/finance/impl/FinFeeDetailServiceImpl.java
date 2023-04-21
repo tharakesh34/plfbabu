@@ -366,7 +366,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					fee.setFeeID(finFeeDetailDAO.save(fee, isWIF, tableType));
 				}
 
-				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
+				if (CollectionUtils.isNotEmpty(fee.getFinFeeScheduleDetailList())) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
 						finFeeSchDetail.setFeeID(fee.getFeeID());
 					}
@@ -378,7 +378,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetailDAO.update(fee, isWIF, tableType);
 
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
-				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
+				if (CollectionUtils.isNotEmpty(fee.getFinFeeScheduleDetailList())) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
 						finFeeSchDetail.setFeeID(fee.getFeeID());
 					}

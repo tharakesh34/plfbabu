@@ -2199,7 +2199,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
 
 		if (error != null) {
-			MessageUtil.showError(error.description());
+			MessageUtil.showError(financeCancelValidator.getOverrideDescription(error, schdData.getFinanceMain()));
 			return;
 		}
 

@@ -39,7 +39,7 @@
 
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label value="${c:l('window_FinanceMainDialog.title')}" sclass="label-heading" />
+								<label value="${c:l('window_LoanCancellationDialog.title')}" sclass="label-heading" />
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->

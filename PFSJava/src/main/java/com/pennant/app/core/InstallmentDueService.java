@@ -308,9 +308,11 @@ public class InstallmentDueService extends ServiceHelper {
 			for (FinFeeDetail detail : totalFees) {
 				String feeTypeCode = detail.getFeeTypeCode();
 				List<FinFeeScheduleDetail> feeSchedules = detail.getFinFeeScheduleDetailList();
-				for (FinFeeScheduleDetail finFeeScheduleDetail : feeSchedules) {
-					finFeeScheduleDetail.setFeeTypeCode(feeTypeCode);
-					scheduleFees.add(finFeeScheduleDetail);
+				if (CollectionUtils.isNotEmpty(feeSchedules)) {
+					for (FinFeeScheduleDetail finFeeScheduleDetail : feeSchedules) {
+						finFeeScheduleDetail.setFeeTypeCode(feeTypeCode);
+						scheduleFees.add(finFeeScheduleDetail);
+					}
 				}
 			}
 		}

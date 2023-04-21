@@ -2,7 +2,6 @@ package com.pennant.webui.finance.financemain;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,6 @@ import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -153,14 +151,10 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		Filter filters[] = new Filter[3];
-		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
-		Date backValueDate = DateUtil.addDays(SysParamUtil.getAppDate(), backValueDays);
-		String backValDate = DateUtil.formatToFullDate(backValueDate);
+		Filter filters[] = new Filter[2];
 
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
-		filters[2] = new Filter("FinstartDate", backValDate, Filter.OP_GREATER_OR_EQUAL);
 		this.finReference.setFilters(filters);
 	}
 
@@ -267,7 +261,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
 
 		if (error != null) {
-			MessageUtil.showError(error.description());
+			MessageUtil.showError(financeCancelValidator.getOverrideDescription(error, schdData.getFinanceMain()));
 			return;
 		}
 
@@ -304,24 +298,19 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		this.finReference.setValue("");
 		this.finReference.setObject("");
 		this.custCIF.setValue("");
-		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
-		Date backValueDate = DateUtil.addDays(SysParamUtil.getAppDate(), backValueDays);
-		String backValDate = DateUtil.formatToFullDate(backValueDate);
 
-		Filter[] filters = new Filter[3];
+		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
-		filters[2] = new Filter("FinstartDate", backValDate, Filter.OP_GREATER_OR_EQUAL);
 		this.finReference.setFilters(filters);
 
 		if (customer != null && customer.getCustID() != 0) {
 			this.custCIF.setValue(customer.getCustCIF());
 
-			filters = new Filter[4];
+			filters = new Filter[3];
 			filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 			filters[1] = new Filter("CustId", customer.getCustID(), Filter.OP_EQUAL);
 			filters[2] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
-			filters[3] = new Filter("FinstartDate", backValDate, Filter.OP_GREATER_OR_EQUAL);
 
 			this.finReference.setFilters(filters);
 		}

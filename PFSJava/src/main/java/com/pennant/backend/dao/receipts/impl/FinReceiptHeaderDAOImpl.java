@@ -1438,12 +1438,21 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public String getCustCIF(String finRef) {
-		String sql = "Select CustomerCif From FinReceiptHeader_FEDVIEW Where ExtReference = ?";
+		StringBuilder sql = new StringBuilder("Select CustCIF From (");
+		sql.append(" Select CustCIF From FinReceiptHeader_Temp frh");
+		sql.append(" Left Join Customers c on CAST(c.CustID as Varchar(20)) = frh.Reference");
+		sql.append(" Where ExtReference = ?");
+		sql.append(" Union All");
+		sql.append(" Select CustCIF From FinReceiptHeader frh");
+		sql.append(" Left Join Customers c on CAST(C.CustID as Varchar(20)) = frh.Reference");
+		sql.append(" Where ExtReference = ?");
+		sql.append(" and Not Exists (Select 1 From FinReceiptHeader_Temp Where ReceiptID = frh.ReceiptID)");
+		sql.append(" )");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, String.class, finRef);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

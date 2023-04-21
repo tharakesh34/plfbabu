@@ -1545,7 +1545,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
 
-		if (DateUtil.compare(receiptDt, maxReceiptDt) < 0) {
+		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
 			receiptDt = maxReceiptDt;
 		}
 

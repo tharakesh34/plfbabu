@@ -731,6 +731,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1469.16.1" author="NagaVamsi.P">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN_TEMP SET UNDERNPA = 0 WHERE UNDERNPA IS NULL;
+				UPDATE FINANCEMAIN SET UNDERNPA = 0 WHERE UNDERNPA IS NULL;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1469.17" author="NagaVamsi.P" dbms="postgresql, oracle">
 		<addDefaultValue columnName="UnderNpa" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
@@ -4446,7 +4455,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.3.5" author="nagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.25.3.5" author="nagaVamsi.P" >
 		<sql>
 			<![CDATA[	
 				UPDATE NPA_LOAN_INFO SET SECONDARYNPASTAGE = 0;
@@ -4457,7 +4466,7 @@
 	<changeSet id="ST#1469.25.3.6" author="nagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE NPA_LOAN_INFO ADD CONSTRAINT DF_NLF_SNPASTG DEFAULT 0 FOR SecondaryNpaStage;
+				ALTER TABLE NPA_LOAN_INFO ADD CONSTRAINT DF_NLF_SecondaryNpaStage DEFAULT 0 FOR SecondaryNpaStage;
 			]]>
 		</sql>
 	</changeSet>
@@ -4490,7 +4499,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.4.1" author="nagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.25.4.1" author="nagaVamsi.P" >
 		<sql>
 			<![CDATA[	
 				UPDATE NPA_LOAN_INFO_SNAPSHOT SET SECONDARYNPASTAGE = 0;
@@ -4501,7 +4510,7 @@
 	<changeSet id="ST#1469.25.4.2" author="nagaVamsi.P" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE NPA_LOAN_INFO_SNAPSHOT ADD CONSTRAINT DF_NLF_SNPASTG DEFAULT 0 FOR SECONDARYNPASTAGE;
+				ALTER TABLE NPA_LOAN_INFO_SNAPSHOT ADD CONSTRAINT DF_NLF_SNAPSHOT_SNPASTG DEFAULT 0 FOR SECONDARYNPASTAGE;
 			]]>
 		</sql>
 	</changeSet>
@@ -4534,7 +4543,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.4.8" author="nagaVamsi.P" dbms="mssql">
+	<changeSet id="ST#1469.25.4.8" author="nagaVamsi.P" >
 		<sql>
 			<![CDATA[	
 				UPDATE  NPA_LOAN_INFO_TEMP SET SECONDARYNPASTAGE = 0;
@@ -4751,7 +4760,7 @@
 					T3.FINDIVISION LOVDESCFINDIVISION,
 					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
 					T4.PRODUCTCATEGORY,
-					COALESCE(T5.ROLEDESC,  FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+					COALESCE(T5.ROLEDESC,  ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 					COALESCE(T9.NOINST, 0) NOINST,
 					T1.SAMPLINGREQUIRED,
 					T1.ADVEMITERMS,
@@ -4832,7 +4841,7 @@
 					T3.FINDIVISION LOVDESCFINDIVISION,
 					T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
 					T4.PRODUCTCATEGORY,
-					COALESCE(T5.ROLEDESC,  FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+					COALESCE(T5.ROLEDESC,  ${add.schema} FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 					COALESCE(T9.NOINST, 0) NOINST,
 					T1.SAMPLINGREQUIRED,
 					T1.ADVEMITERMS,
