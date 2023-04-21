@@ -82,6 +82,7 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
@@ -1415,6 +1416,33 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		FinReceiptDetail rd = fsi.getReceiptDetail();
+
+		BigDecimal amount = BigDecimal.ZERO;
+
+		if (ReceiptPurpose.SCHDRPY.equals(receiptPurpose) || ReceiptPurpose.SCHDRPY.equals(receiptPurpose)) {
+			for (UploadAlloctionDetail al : fsi.getUploadAllocationDetails()) {
+				amount = amount.add(al.getPaidAmount().add(al.getWaivedAmount()));
+			}
+
+			if (fsi.getAmount().compareTo(amount) < 0) {
+				String[] param = new String[2];
+				param[0] = PennantApplicationUtil.formatAmount(fsi.getAmount(), PennantConstants.defaultCCYDecPos);
+				param[1] = PennantApplicationUtil.formatAmount(amount, PennantConstants.defaultCCYDecPos);
+				ErrorDetail er = ErrorUtil.getError("WFEE12", param);
+				schdData.setErrorDetail(er);
+				setReturnStatus(fd);
+				return fd;
+			}
+		}
+
+		if (ReceiptMode.CHEQUE.equals(fsi.getPaymentMode()) && rd.getDepositDate() == null) {
+			String[] param = new String[1];
+			param[0] = "DepositDate";
+			ErrorDetail er = ErrorUtil.getError("90502", param);
+			schdData.setErrorDetail(er);
+			setReturnStatus(fd);
+			return fd;
+		}
 
 		if (fsi.getValueDate() == null) {
 			fsi.setValueDate(rd.getReceivedDate());
