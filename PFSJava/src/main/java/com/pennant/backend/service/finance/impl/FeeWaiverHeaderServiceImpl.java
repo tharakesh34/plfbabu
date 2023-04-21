@@ -832,7 +832,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			auditHeader.getAuditDetail().setBefImage(feeWaiverHeaderDAO.getFeeWaiverHeaderById(fwh.getWaiverId(), ""));
 		}
 
-		if (fwh.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (PennantConstants.RECORD_TYPE_DEL.equals(fwh.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			feeWaiverHeaderDAO.delete(fwh, TableType.MAIN_TAB);
 		} else {

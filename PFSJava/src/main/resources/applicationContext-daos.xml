@@ -13265,4 +13265,14 @@
 
 	<bean id="hostGLMappingUploadValidateRecord"
 		class="com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadValidateRecord" />
+		
+	<!-- Bulk Fee Waiver Uploads	 -->
+	<bean id="bulkFeeWaiverUploadDAO" class="com.pennant.pff.bulkfeewaiverupload.dao.impl.BulkFeeWaiverUploadDAOImpl"
+	parent="sequenceDao" />	
+		
+	<bean id="bulkFeeWaiverUploadService"
+	class="com.pennant.pff.bulkfeewaiverupload.service.impl.BulkFeeWaiverUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="bulkFeeWaiverUploadValidateRecord"
+	class="com.pennant.pff.bulkfeewaiverupload.service.impl.BulkFeeWaiverUploadValidateRecord" />
 </beans>
