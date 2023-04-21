@@ -17,7 +17,9 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
+import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -31,7 +33,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFileProcessor.class);
 
-	private static final String FETCH_QUERY = "Select * from UCIC_RESP_FILES  Where STATUS = ? AND EXTRACTION = ?";
+	private static final String FETCH_QUERY = "Select * from UCIC_RESP_FILES  Where STATUS = ?";
 
 	private ApplicationContext applicationContext;
 	private ExtUcicDao extUcicDao;
@@ -48,6 +50,18 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
 		// Get Response file and complete file configuration
 		ExternalConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+
+		if (ucicDBServerConfig == null) {
+			logger.debug("EXT_UCIC: DB Server CONFIG_PLF_DB_SERVER configuration not found . So returning.");
+			return;
+		}
+
+		// Get configured remote path to save file to DB server location
+		String remoteFilePath = ucicDBServerConfig.getFileSftpLocation();
+		if (remoteFilePath == null || "".equals(remoteFilePath)) {
+			logger.debug("EXT_UCIC: DB RemoteFilePath configuration not found . So returning.");
+			return;
+		}
 
 		// Read 10 files at a time using file status = 0
 		JdbcCursorItemReader<ExtUcicFile> cursorItemReader = new JdbcCursorItemReader<ExtUcicFile>();
@@ -69,7 +83,6 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setLong(1, UNPROCESSED);// STATUS = UnProcessed-0
-				ps.setLong(2, UNPROCESSED);// EXTRACTION = UnProcessed-0
 			}
 		});
 
@@ -80,11 +93,18 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 
 		while ((ucicFile = cursorItemReader.read()) != null) {
 			try {
-				String folderPath = App.getResourcePath(ucicFile.getFileLocation());
-				File file = new File(folderPath + File.separator + ucicFile.getFileName());
+
+				String localFolderPath = App.getResourcePath(ucicFile.getFileLocation());
+
+				if (localFolderPath == null || "".equals(localFolderPath)) {
+					logger.debug("EXT_UCIC: Local folderPath configuration not found . So returning.");
+					return;
+				}
+
+				File file = new File(localFolderPath + File.separator + ucicFile.getFileName());
 
 				// Mark file processing status as INPROCESS
-				extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), INPROCESS);
+				extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), INPROCESS, "", "");
 
 				// Connect to SFTP..
 				FtpClient ftpClient = null;
@@ -99,9 +119,6 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 					logger.debug("Unable to connect to SFTP.");
 				}
 
-				// Get configured remote path to save file to DB server location
-				String remoteFilePath = ucicDBServerConfig.getFileSftpLocation();
-
 				// Upload the response file to DB Server to read by ORACLE Database
 				ftpClient.upload(file, remoteFilePath);
 
@@ -111,11 +128,17 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 				// check if list is null
 				if ("SUCCESS".equals(stat)) {
 					// mark file extraction and processing status as completed
-					extUcicDao.updateResponseFileExtractionFlag(ucicFile.getId(), COMPLETED, COMPLETED);
+					extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), COMPLETED, "", "");
 					continue;
 				} else {
+
+					// Add Failed file in to table with error code and error message
+					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F500);
+
 					// mark file extraction and processing status as completed
-					extUcicDao.updateResponseFileExtractionFlag(ucicFile.getId(), FAILED, FAILED);
+					extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), FAILED,
+							interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
 					continue;
 				}
 

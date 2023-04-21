@@ -20,7 +20,7 @@ public class ExtUcicRequestJob extends AbstractJob {
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
-
+		String custDataExtrctstatus = null;
 		try {
 
 			applicationContext = ApplicationContextProvider.getApplicationContext();
@@ -34,12 +34,15 @@ public class ExtUcicRequestJob extends AbstractJob {
 					ExtUcicRequestFile.class);
 
 			if (extUcicDataExtractor != null) {
-				extUcicDataExtractor.extractCustomerData();
+				custDataExtrctstatus = extUcicDataExtractor.extractCustomerData();
 			}
-
-			Date appDate = SysParamUtil.getAppDate();
-			if (extUcicRequestFile != null) {
-				extUcicRequestFile.processUcicRequestFile(appDate);
+			if (custDataExtrctstatus.equals("SUCCESS")) {
+				Date appDate = SysParamUtil.getAppDate();
+				if (extUcicRequestFile != null) {
+					extUcicRequestFile.processUcicRequestFile(appDate);
+				}
+			} else {
+				logger.debug("Customers data extraction Unsuccessful :" + custDataExtrctstatus);
 			}
 
 		} catch (Exception e) {
