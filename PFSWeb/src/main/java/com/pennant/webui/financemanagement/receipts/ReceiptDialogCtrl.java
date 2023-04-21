@@ -1751,7 +1751,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		for (int i = 0; i < receiptData.getReceiptHeader().getAllocationsSummary().size(); i++) {
 			item = listBoxPastdues.getItems().get(i);
 			CurrencyBox allocationWaived = (CurrencyBox) item.getFellowIfAny("AllocateWaived_" + i);
+			CurrencyBox allocationNetPaid = (CurrencyBox) item.getFellowIfAny("AllocateNetPaid_" + i);
 			allocationWaived.setReadonly(true);
+			allocationNetPaid.setReadonly(true);
 		}
 
 		// Reload user authorities after clicking linked loans but.
@@ -4868,7 +4870,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (!this.depositDate.isReadonly()) {
 				this.depositDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_DepositDate.value"),
-								true, this.receiptDate.getValue(), SysParamUtil.getAppDate(), true));
+								true, this.receivedDate.getValue(), SysParamUtil.getAppDate(), true));
 			}
 
 			if (!this.depositNo.isReadonly()) {
