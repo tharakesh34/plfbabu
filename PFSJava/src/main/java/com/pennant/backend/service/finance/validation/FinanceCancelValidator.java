@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
@@ -18,9 +19,11 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.settlement.service.SettlementService;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.FinanceUtil;
 
@@ -38,6 +41,12 @@ public class FinanceCancelValidator {
 		Date appDate = fm.getAppDate();
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+		Date backValueDate = DateUtil.addDays(appDate,
+				SysParamUtil.getValueAsInt(SMTParameterConstants.MAINTAIN_CANFIN_BACK_DATE));
+
+		if (DateUtil.compare(backValueDate, fm.getFinStartDate()) > 0) {
+			return FinCancelUploadError.LANCLUP018;
+		}
 
 		if (DateUtil.compare(appDate, fm.getMaturityDate()) > 0) {
 			return FinCancelUploadError.LANCLUP011;
@@ -130,6 +139,20 @@ public class FinanceCancelValidator {
 		}
 
 		return null;
+	}
+
+	public String getOverrideDescription(FinCancelUploadError error, FinanceMain fm) {
+		String description = error.description();
+
+		switch (error) {
+		case LANCLUP018:
+			Date backValueDate = DateUtil.addDays(fm.getAppDate(),
+					SysParamUtil.getValueAsInt(SMTParameterConstants.MAINTAIN_CANFIN_BACK_DATE));
+			return FinCancelUploadError.getOverrideDescription(error,
+					DateUtil.format(backValueDate, DateFormat.LONG_DATE));
+		default:
+			return description;
+		}
 	}
 
 	@Autowired

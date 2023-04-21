@@ -38,7 +38,9 @@ public enum FinCancelUploadError {
 
 	LANCLUP016("Duplicate Record is found in File for the Reference"),
 
-	LANCLUP017("Loan is not eligible for cancellation, as cancellation not allowed in loan type");
+	LANCLUP017("Loan is not eligible for cancellation, as cancellation not allowed in loan type"),
+
+	LANCLUP018("Loan Start Date should after %s only allowed for cancellelation.");
 
 	private String description;
 
@@ -48,6 +50,10 @@ public enum FinCancelUploadError {
 
 	public String description() {
 		return description;
+	}
+
+	public static String getOverrideDescription(FinCancelUploadError error, Object... parameters) {
+		return String.format(error.description(), parameters);
 	}
 
 	public static boolean isValidation(String errorCode) {

@@ -348,7 +348,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	private void setError(FinCancelUploadDetail detail, FinCancelUploadError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		detail.setErrorDesc(financeCancelValidator.getOverrideDescription(error, detail.getFm()));
 	}
 
 	@Autowired
