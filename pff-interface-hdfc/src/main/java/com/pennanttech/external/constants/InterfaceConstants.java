@@ -1,5 +1,6 @@
 package com.pennanttech.external.constants;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -172,5 +173,17 @@ public interface InterfaceConstants {
 			e.printStackTrace();
 		}
 		return ftpClient;
+	}
+
+	default void uploadToSFTP(String localFileWithPath, ExternalConfig config) {
+		if (config.getFileSftpLocation() == null || "".equals(config.getFileSftpLocation())) {
+			return;
+		}
+		try {
+			FtpClient ftpClient = getftpClientConnection(config);
+			ftpClient.upload(new File(localFileWithPath), config.getFileSftpLocation());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

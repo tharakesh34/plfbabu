@@ -52,7 +52,15 @@ public class ReceiptDataValidator {
 
 	public void validate(ReceiptUploadDetail rud) {
 		String reference = rud.getReference();
-		rud.setFinID(financeMainDAO.getFinIDByFinReference(reference, "", false));
+
+		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
+
+		if (finID == null) {
+			setError(rud, "Loan Reference is not Available or Active");
+			return;
+		} else {
+			rud.setFinID(finID);
+		}
 
 		isFileExists(rud);
 

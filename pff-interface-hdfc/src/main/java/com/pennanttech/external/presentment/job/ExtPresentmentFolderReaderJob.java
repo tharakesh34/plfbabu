@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +15,12 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.pennanttech.external.config.ApplicationContextProvider;
 import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
@@ -22,6 +30,9 @@ import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
+import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -68,6 +79,10 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
+
+		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getIsSftp()))) {
+			fetchResponseFilesFromSFTP(externalRespConfig);
+		}
 
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
@@ -328,6 +343,102 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		cntData.setLastLine(last);
 		cntData.setLinesCount(cnt);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void fetchResponseFilesFromSFTP(ExternalConfig externalRespConfig) {
+		logger.debug(Literal.ENTERING);
+		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileSftpLocation()))) {
+
+			String host = externalRespConfig.getHostName();
+			int port = externalRespConfig.getPort();
+			String accessKey = externalRespConfig.getAccessKey();
+			String secretKey = externalRespConfig.getSecretKey();
+
+			try {
+				String remoteFilePath = externalRespConfig.getFileSftpLocation();
+
+				if (remoteFilePath == null || "".equals(remoteFilePath)) {
+					logger.debug("EXT_PRMNT:Invalid PRMNT resp remote folder path, so returning.");
+					return;
+				}
+
+				String localFolderPath = App.getResourcePath(externalRespConfig.getFileLocation());
+
+				if (localFolderPath == null || "".equals(localFolderPath)) {
+					logger.debug("EXT_PRMNT:Invalid PRMNT resp local folder path, so returning.");
+					return;
+				}
+
+				FtpClient ftpClient = getftpClientConnection(externalRespConfig);
+
+				// Get list of files in SFTP.
+				List<String> fileNames = getFileNameList(remoteFilePath, host, port, accessKey, secretKey);
+
+				for (String fileName : fileNames) {
+					ftpClient.download(remoteFilePath, localFolderPath, fileName);
+					moveToBackup(externalRespConfig, localFolderPath, fileName);
+					new SftpClient(host, port, accessKey, secretKey)
+							.deleteFile(remoteFilePath + File.separator + fileName);
+				}
+
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void moveToBackup(ExternalConfig externalRespConfig, String localFolderPath, String fileName) {
+		logger.debug(Literal.ENTERING);
+		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileBackupLocation()))) {
+			logger.debug("EXT_PRMNT: No configuration found for Backup path, so returning.");
+			return;
+		}
+		try {
+			FtpClient sftpClient = getftpClientConnection(externalRespConfig);
+			sftpClient.upload(new File(localFolderPath + File.separator + fileName),
+					externalRespConfig.getFileBackupLocation());
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
+			String secretKey) {
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
+		JSch jsch = new JSch();
+		try {
+			session = jsch.getSession(accessKey, hostName, port);
+			session.setPassword(secretKey);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+		} catch (JSchException e1) {
+			logger.info(Literal.EXCEPTION, e1);
+		}
+		channelSftp = (ChannelSftp) channel;
+		LsEntry entry = null;
+		List<String> fileName = new ArrayList<String>();
+		Vector filelist = null;
+		try {
+			filelist = ((ChannelSftp) channel).ls(pathname);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage());
+		}
+		for (int i = 0; i < filelist.size(); i++) {
+			entry = (LsEntry) filelist.get(i);
+			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
+					&& !entry.getFilename().startsWith(".")) {
+				fileName.add(entry.getFilename());
+			}
+		}
+		return fileName;
 	}
 
 	class RejectFileData {
