@@ -219,6 +219,7 @@ import com.pennant.pff.document.model.DocVerificationHeader;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -1112,6 +1113,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.bounceCharge.setProperties(false, formatter);
 		this.bounceRemarks.setMaxlength(100);
 		this.bounceDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.bounceCode
+				.setFilters(new Filter[] { new Filter("InstrumentType", InstrumentType.PDC.code(), Filter.OP_EQUAL) });
 
 		this.fundingAccount.setDisplayStyle(2);
 		this.fundingAccount.setModuleName("FinTypePartner");
@@ -1753,7 +1756,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		for (int i = 0; i < receiptData.getReceiptHeader().getAllocationsSummary().size(); i++) {
 			item = listBoxPastdues.getItems().get(i);
 			CurrencyBox allocationWaived = (CurrencyBox) item.getFellowIfAny("AllocateWaived_" + i);
+			CurrencyBox allocationNetPaid = (CurrencyBox) item.getFellowIfAny("AllocateNetPaid_" + i);
 			allocationWaived.setReadonly(true);
+			allocationNetPaid.setReadonly(true);
 		}
 
 		// Reload user authorities after clicking linked loans but.
@@ -2769,7 +2774,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					}
 
 				}
-				 
 
 				mam.setTaxHeader(taxHeader);
 			} else {
