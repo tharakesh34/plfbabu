@@ -22,6 +22,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountConstants;
@@ -718,6 +719,27 @@ public class CreateFinanceController extends SummaryDetailService {
 			valueParm[1] = "ScheduleDates";
 			schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 			break;
+		}
+
+		String[] valueParm = new String[2];
+		valueParm[0] = Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value");
+
+		if (InstrumentType.isPDC(fm.getFinRepayMethod())) {
+			List<FinanceScheduleDetail> fsd = schdData.getFinanceScheduleDetails();
+
+			int noOfSchedules = fsd.size() - 1;
+			int noOfPDCCheques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_PDC_CHEQUES);
+
+			int number = noOfSchedules;
+			if (noOfSchedules >= noOfPDCCheques) {
+				number = noOfPDCCheques;
+			}
+
+			if (ch.getNoOfCheques() < number) {
+				valueParm[1] = String.valueOf(number);
+				schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+				return;
+			}
 		}
 	}
 
