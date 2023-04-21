@@ -765,6 +765,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		} else {
 			this.swapEffectiveDate.setReadonly(true);
+			this.swapEffectiveDate.setConstraint("");
 			this.swapEffectiveDate.setValue(null);
 			this.swapEffectiveDate.setDisabled(true);
 		}
@@ -996,7 +997,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		if (InstrumentType.SI == instrumentType) {
-			this.mandateSwapGroupbox.setVisible(true);
+			this.mandateSwapGroupbox.setVisible(!fromLoan);
 			this.accDetailsGroupbox.setVisible(true);
 
 			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
