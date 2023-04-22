@@ -28,10 +28,10 @@ import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(CreateReceiptUploadServiceImpl.class);
@@ -81,7 +81,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 				for (CreateReceiptUpload receipt : details) {
 					receipt.setAppDate(appDate);
 					receipt.setDedupCheck(dedupCheck);
-					// receipt.setAllocations(createReceiptUploadDAO.getAllocations(receipt.getId(), header.getId()));
+					receipt.setAllocations(createReceiptUploadDAO.getAllocations(receipt.getId(), header.getId()));
 					doValidate(header, receipt);
 					receipt.setUserDetails(header.getUserDetails());
 
@@ -154,22 +154,28 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		rud.setReceivedDate(reaceipt.getAppDate());
 		rud.setReceiptAmount(reaceipt.getReceiptAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setReceiptMode(reaceipt.getReceiptMode());
+		rud.setSubReceiptMode(reaceipt.getSubReceiptMode());
 		// rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
 
 		List<UploadAlloctionDetail> list = new ArrayList<>();
-		/*
-		 * for (ManualKnockOffUpload alloc : fc.getAllocations()) { UploadAlloctionDetail uad = new
-		 * UploadAlloctionDetail();
-		 * 
-		 * uad.setRootId(String.valueOf(alloc.getFeeId())); uad.setAllocationType(Allocation.getCode(alloc.getCode()));
-		 * uad.setReferenceCode(alloc.getCode()); uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
-		 * uad.setPaidAmount(alloc.getAmount());
-		 * 
-		 * list.add(uad); }
-		 */
+
+		for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
+			UploadAlloctionDetail uad = new UploadAlloctionDetail();
+
+			uad.setRootId(String.valueOf(alloc.getFeeId()));
+			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
+			uad.setReferenceCode(alloc.getCode());
+			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
+			uad.setPaidAmount(alloc.getAmount());
+
+			list.add(uad);
+
+		}
+
 		rud.setListAllocationDetails(list);
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
@@ -221,13 +227,13 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public String getSqlQuery() {
-		return createReceiptUploadDAO.getSqlQuery();
+	public CreateReceiptUploadDataValidator getProcessRecord() {
+		return createReceiptUploadDataValidator;
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return createReceiptUploadDataValidator;
+	public String getSqlQuery() {
+		return createReceiptUploadDAO.getSqlQuery();
 	}
 
 	@Autowired

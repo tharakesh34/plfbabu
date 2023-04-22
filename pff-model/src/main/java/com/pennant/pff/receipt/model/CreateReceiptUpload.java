@@ -1,8 +1,10 @@
 package com.pennant.pff.receipt.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.pennant.pff.upload.model.UploadDetails;
@@ -11,6 +13,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class CreateReceiptUpload extends UploadDetails {
 	private static final long serialVersionUID = -58727889587717168L;
 
+	private long id;
 	private String receiptPurpose;
 	private String excessAdjustTo;
 	private String allocationType;
@@ -37,7 +40,7 @@ public class CreateReceiptUpload extends UploadDetails {
 	private String bounceReason;
 	private String bounceRemarks;
 	private LoggedInUser userDetails;
-	private Long receiptID;
+	private long receiptID;
 	private boolean dedupCheck;
 
 	private Set<String> txnKeys = new HashSet<>();
@@ -47,9 +50,24 @@ public class CreateReceiptUpload extends UploadDetails {
 	private String code;
 	private BigDecimal paidAmount;
 	private BigDecimal waivedAmount;
+	private String partnerBankCode;
+	private Long finID;
+	private List<CreateReceiptUpload> allocations = new ArrayList<>();
+	private BigDecimal amount;
+	private Long feeId;
+	private String closureType;
+	private String reason;
 
 	public CreateReceiptUpload() {
 		super();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getReceiptPurpose() {
@@ -322,6 +340,62 @@ public class CreateReceiptUpload extends UploadDetails {
 
 	public void setWaivedAmount(BigDecimal waivedAmount) {
 		this.waivedAmount = waivedAmount;
+	}
+
+	public String getPartnerBankCode() {
+		return partnerBankCode;
+	}
+
+	public void setPartnerBankCode(String partnerBankCode) {
+		this.partnerBankCode = partnerBankCode;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
+	}
+
+	public List<CreateReceiptUpload> getAllocations() {
+		return allocations;
+	}
+
+	public void setAllocations(List<CreateReceiptUpload> allocations) {
+		this.allocations = allocations;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public Long getFeeId() {
+		return feeId;
+	}
+
+	public void setFeeId(Long feeId) {
+		this.feeId = feeId;
+	}
+
+	public String getClosureType() {
+		return closureType;
+	}
+
+	public void setClosureType(String closureType) {
+		this.closureType = closureType;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 }

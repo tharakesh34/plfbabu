@@ -21,4 +21,6 @@ public interface CreateReceiptUploadDAO {
 	List<String> isDuplicateExists(CreateReceiptUpload rud);
 
 	String getLoanReference(String finReference, String fileName);
+
+	long save(CreateReceiptUpload cru);
 }

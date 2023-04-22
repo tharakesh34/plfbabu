@@ -1,18 +1,23 @@
 package com.pennant.pff.receipt.dao.impl;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.excess.model.ExcessTransferUpload;
 import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -32,7 +37,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 		sql.append(", EffectSchdMethod, Remarks, ValueDate, ReceiptMode, SubReceiptMode, ReceiptChannel, PaymentRef");
 		sql.append(", ChequeNumber, BankCode, ChequeAccountNumber, TransactionRef, ReceiptModeStatus, DepositDate");
 		sql.append(", RealizationDate, InstrumentDate, PanNumber, ExternalRef, ReceivedFrom, BounceDate");
-		sql.append(", BounceReason, BounceRemarks, Status, Progress, ErrorCode, ErrorDesc");
+		sql.append(", BounceReason, BounceRemarks, PartnerBankCode, Status, Progress, ErrorCode, ErrorDesc");
 		sql.append(" From CREATE_RECEIPT_UPLOAD");
 		sql.append(" Where HeaderId = ?");
 
@@ -70,6 +75,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 			receipt.setBounceDate(JdbcUtil.getDate(rs.getDate("BounceDate")));
 			receipt.setBounceReason(rs.getString("BounceReason"));
 			receipt.setBounceRemarks(rs.getString("BounceRemarks"));
+			receipt.setPartnerBankCode(rs.getString("PartnerBankCode"));
 			receipt.setStatus(rs.getString("Status"));
 			receipt.setProgress(rs.getInt("Progress"));
 			receipt.setErrorCode(rs.getString("ErrorCode"));
@@ -81,7 +87,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 
 	@Override
 	public List<CreateReceiptUpload> getAllocations(long uploadId, long headerID) {
-		StringBuilder sql = new StringBuilder("Select UploadId, Code, Amount");
+		StringBuilder sql = new StringBuilder("Select Feeid,UploadId, Code, Amount");
 		sql.append(" From KNOCKOFF_UPLOAD_ALLOC");
 		sql.append(" Where UploadId = ? and HeaderID = ?");
 
@@ -91,20 +97,21 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 			ps.setLong(1, uploadId);
 			ps.setLong(2, headerID);
 		}, (rs, rownum) -> {
-			CreateReceiptUpload fc = new CreateReceiptUpload();
+			CreateReceiptUpload cru = new CreateReceiptUpload();
 
-			fc.setId(rs.getLong("UploadId"));
-			// fc.setCode(rs.getString("Code"));
-			// fc.setAmount(rs.getBigDecimal("Amount"));
+			cru.setId(rs.getLong("UploadId"));
+			cru.setFeeId(rs.getLong("Feeid"));
+			cru.setCode(rs.getString("Code"));
+			cru.setAmount(rs.getBigDecimal("Amount"));
 
-			return fc;
+			return cru;
 		});
 	}
 
 	@Override
 	public void saveAllocations(List<CreateReceiptUpload> details) {
 		StringBuilder sql = new StringBuilder("Insert into KNOCKOFF_UPLOAD_ALLOC");
-		sql.append(" (HeaderID, UploadId, Code, Amount)");
+		sql.append(" (UploadId, Code, Amount, Headerid)");
 		sql.append(" Values(?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -116,10 +123,10 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 				int index = 0;
 				CreateReceiptUpload detail = details.get(i);
 
-				ps.setLong(++index, detail.getHeaderId());
 				ps.setLong(++index, detail.getId());
-				// ps.setString(++index, detail.getCode());
-				// ps.setBigDecimal(++index, detail.getAmount());
+				ps.setString(++index, detail.getCode());
+				ps.setBigDecimal(++index, detail.getAmount());
+				ps.setLong(++index, detail.getHeaderId());
 			}
 
 			@Override
@@ -194,11 +201,13 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" r.Reference, r.ReceiptPurpose, r.ExcessAdjustTo, r.AllocationType, r.ReceiptAmount");
-		sql.append(", r.EffectSchdMethod, r.Remarks, r.ValueDate, r.ReceiptMode, r.SubReceiptMode");
-		sql.append(", r.ReceiptChannel, r.PaymentRef, r.ChequeNumber, r.BankCode, r.ChequeAccountNumber");
-		sql.append(", r.TransactionRef, r.ReceiptModeStatus, r.DepositDate, r.RealizationDate");
-		sql.append(", r.InstrumentDate, r.PanNumber, r.ExternalRef, r.ReceivedFrom, r.BounceDate");
-		sql.append(", r.BounceReason, r.BounceRemarks, r.Status, r.Progress, r.ErrorCode, r.ErrorDesc");
+		sql.append(", r.ValueDate, r.ReceiptMode, r.SubReceiptMode, r.ReceiptChannel, r.EffectSchdMethod");
+		sql.append(", r.ClosureType, r.Reason, r.Remarks, r.ReceiptID, r.ChequeNumber, r.ReceiptModeStatus");
+		sql.append(", r.BankCode, r.ChequeAccountNumber, r.PaymentRef, r.DepositDate, r.RealizationDate");
+		sql.append(", r.TransactionRef, r.PanNumber, r.ReceivedFrom, r.BounceDate");
+		sql.append(", r.BounceReason, r.BounceRemarks, r.PartnerBankCode, r.Status, r.ErrorCode, r.ErrorDesc");
+		sql.append(", uh.ApprovedOn, uh.CreatedOn");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From CREATE_RECEIPT_UPLOAD r");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = r.HeaderId");
 		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");
@@ -211,11 +220,11 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 	@Override
 	public List<String> isDuplicateExists(CreateReceiptUpload rud) {
 		boolean isOnline = StringUtils.isNotBlank(rud.getTransactionRef());
-		StringBuilder sql = new StringBuilder("Select Name From File_Upload_Header");
+		StringBuilder sql = new StringBuilder("Select FileName From File_Upload_Header");
 		sql.append(" Where ID IN (");
 		sql.append(" Select HeaderID From Create_Receipt_Upload");
 		sql.append(" Where Reference = ?  and ValueDate = ? and ReceiptAmount = ?");
-		sql.append(" and HeaderID <> ? and ProcessingStatus = ?");
+		sql.append(" and HeaderID <> ? ");
 
 		if (isOnline) {
 			sql.append(" and TransactionRef = ?");
@@ -231,7 +240,6 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 			ps.setDate(index++, JdbcUtil.getDate(rud.getValueDate()));
 			ps.setBigDecimal(index++, rud.getReceiptAmount());
 			ps.setLong(index++, rud.getHeaderId());
-			ps.setInt(index++, ReceiptDetailStatus.SUCCESS.getValue());
 
 			if (isOnline) {
 				ps.setString(index, rud.getTransactionRef());
@@ -263,4 +271,68 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 		}
 	}
 
+	@Override
+	public long save(CreateReceiptUpload cru) {
+		StringBuilder sql = new StringBuilder("Insert into CREATE_RECEIPT_UPLOAD");
+		sql.append(" (HeaderID, Reference, ReceiptPurpose, ExcessAdjustTo, AllocationType, ReceiptAmount");
+		sql.append(", EffectSchdMethod, Remarks, ValueDate, ReceiptMode, SubReceiptMode, ReceiptChannel, PaymentRef");
+		sql.append(", ChequeNumber, BankCode, ChequeAccountNumber, TransactionRef, ReceiptModeStatus, DepositDate");
+		sql.append(", RealizationDate, InstrumentDate, PanNumber, ExternalRef, ReceivedFrom, BounceDate");
+		sql.append(", BounceReason, BounceRemarks, PartnerBankCode, ClosureType, Reason, ReceiptID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			KeyHolder keyHolder = new GeneratedKeyHolder();
+
+			this.jdbcOperations.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+					int index = 0;
+
+					ps.setLong(++index, cru.getHeaderId());
+					ps.setString(++index, cru.getReference());
+					ps.setString(++index, cru.getReceiptPurpose());
+					ps.setString(++index, cru.getExcessAdjustTo());
+					ps.setString(++index, cru.getAllocationType());
+					ps.setBigDecimal(++index, cru.getReceiptAmount());
+					ps.setString(++index, cru.getEffectSchdMethod());
+					ps.setString(++index, cru.getRemarks());
+					ps.setDate(++index, JdbcUtil.getDate(cru.getValueDate()));
+					ps.setString(++index, cru.getReceiptMode());
+					ps.setString(++index, cru.getSubReceiptMode());
+					ps.setString(++index, cru.getReceiptChannel());
+					ps.setString(++index, cru.getPaymentRef());
+					ps.setString(++index, cru.getChequeNumber());
+					ps.setString(++index, cru.getBankCode());
+					ps.setString(++index, cru.getChequeAccountNumber());
+					ps.setString(++index, cru.getTransactionRef());
+					ps.setString(++index, cru.getReceiptModeStatus());
+					ps.setDate(++index, JdbcUtil.getDate(cru.getDepositDate()));
+					ps.setDate(++index, JdbcUtil.getDate(cru.getRealizationDate()));
+					ps.setDate(++index, JdbcUtil.getDate(cru.getInstrumentDate()));
+					ps.setString(++index, cru.getPanNumber());
+					ps.setString(++index, cru.getExternalRef());
+					ps.setString(++index, cru.getReceivedFrom());
+					ps.setDate(++index, JdbcUtil.getDate(cru.getBounceDate()));
+					ps.setString(++index, cru.getBounceReason());
+					ps.setString(++index, cru.getBounceRemarks());
+					ps.setString(++index, cru.getPartnerBankCode());
+					ps.setString(++index, cru.getClosureType());
+					ps.setString(++index, cru.getReason());
+					ps.setLong(++index, cru.getReceiptID());
+
+					return ps;
+				}
+			}, keyHolder);
+
+			return keyHolder.getKey().longValue();
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
 }
