@@ -145,6 +145,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_CANCEL_LOAN_AFTER_PAYMENTS", true);
 
+		customConstants.put("ALLOW_LIEN", true);
+
 		customerExtensions();
 
 		mandateExtensaions();

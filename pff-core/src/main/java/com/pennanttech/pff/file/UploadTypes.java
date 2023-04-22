@@ -29,7 +29,9 @@ public enum UploadTypes {
 
 	LOAN_CANCEL("Loan Cancellation Upload Screen"),
 
-	FEE_WAIVER("Fee Wavier Upload Details");
+	FEE_WAIVER("Fee Wavier Upload Details"),
+
+	LIEN("LIEN Upload Details Screen");
 
 	private String description;
 

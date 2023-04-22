@@ -272,6 +272,8 @@ import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.fee.service.IMDFeeService;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
 import com.pennant.pff.holdrefund.model.FinanceHoldDetail;
+import com.pennant.pff.lien.service.LienService;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -470,8 +472,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private ManualScheduleService manualScheduleService;
 	private VariableOverdraftSchdService variableOverdraftSchdService;
 	private OverdrafLoanService overdrafLoanService;
-
 	private IMDFeeService imdFeeService;
+	private LienService lienService;
 
 	public FinanceDetailServiceImpl() {
 		super();
@@ -4920,6 +4922,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.manualScheduleService.doApprove(fd);
 
 		this.variableOverdraftSchdService.doApprove(fd);
+
+		if (ImplementationConstants.ALLOW_LIEN && InstrumentType.isSI(fm.getFinRepayMethod())) {
+			lienService.save(fd);
+		}
 
 		logger.debug(Literal.LEAVING);
 
@@ -11444,4 +11450,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.imdFeeService = imdFeeService;
 	}
 
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
+	}
 }

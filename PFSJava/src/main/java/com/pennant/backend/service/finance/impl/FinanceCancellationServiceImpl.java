@@ -100,6 +100,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.lien.service.LienService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -134,6 +135,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinChequeHeaderService finChequeHeaderService;
 	private FinODDetailsDAO finODDetailsDAO;
+	private LienService lienService;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -619,6 +621,11 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		if (notificationService != null) {
 			notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
+		}
+
+		if (ImplementationConstants.ALLOW_LIEN
+				&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			lienService.update(fd);
 		}
 
 		cancelChildLoan(finReference);
@@ -1145,4 +1152,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
+	}
 }

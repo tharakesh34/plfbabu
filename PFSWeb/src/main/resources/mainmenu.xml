@@ -2612,5 +2612,16 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
+		
+		<menu id="menu_Category_Lien">
+		<menuItem id="menu_Item_LienUpload_Maker"
+			zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=M" />
+		<menuItem id="menu_Item_LienUpload_Approver"
+			zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=A"/> 
+	</menu>
+
+	<menu id="menu_Category_LienEnquiry">
+		<menuItem id="menu_Item_LienEnquiry" zulNavigation="/WEB-INF/pages/LienEnquiry/SelectLienEnquiry.zul"/>
+	</menu>
 
 </ns2:XMLRootMenu>

@@ -6201,4 +6201,13 @@
 
 	<bean id="bulkFeeWaiverUploadListCtrl" class="com.pennant.pff.feewaiver.upload.list.BulkFeeWaiverUploadListCtrl"
 	parent="uploadList" />
+	
+	<bean id="lienUploadListCtrl" class="com.pennant.pff.lien.upload.list.LienUploadListCtrl" parent="uploadList" />
+
+	<bean id="selectLienEnquiryListCtrl" class="com.pennant.webui.lien.lienEnquiry.SelectLienEnquiryListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+
+	<bean id="lienEnquiryDialogCtrl" class="com.pennant.webui.lien.lienEnquiry.LienEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>

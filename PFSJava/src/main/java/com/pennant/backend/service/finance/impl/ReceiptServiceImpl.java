@@ -234,6 +234,7 @@ import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.extension.ReceiptExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
+import com.pennant.pff.lien.service.LienService;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -349,6 +350,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private PartPayAndEarlySettleValidator partPayAndEarlySettleValidator;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
 	private FinODCAmountDAO finODCAmountDAO;
+	private LienService lienService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -2332,6 +2334,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		finServiceInstructionDAO.deleteList(finID, rch.getReceiptPurpose(), TableType.TEMP_TAB.getSuffix());
 		saveFSI(rch, fm, auditHeader, TableType.MAIN_TAB);
+
+		// delete lien
+		// =======================================
+		if (ImplementationConstants.ALLOW_LIEN && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			lienService.update(fd);
+		}
 
 		logger.debug(Literal.LEAVING);
 
@@ -9164,6 +9172,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	@Autowired
 	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
 		this.finODCAmountDAO = finODCAmountDAO;
+	}
+
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
 	}
 
 }

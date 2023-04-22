@@ -459,6 +459,7 @@ import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.finance.tds.cerificate.model.TanDetail;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.model.dms.DMSDocumentDetails;
+import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -3968,6 +3969,14 @@ public class PennantJavaUtil {
 				new ModuleMapping("BulkFeeWaiverUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("Lien",
+				new ModuleMapping("Lien", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LienEnquiry",
+				new ModuleMapping("LienEnquiry", LienDetails.class, null, masterWF, null, null, 400));
 
 		registerCustomModules();
 	}

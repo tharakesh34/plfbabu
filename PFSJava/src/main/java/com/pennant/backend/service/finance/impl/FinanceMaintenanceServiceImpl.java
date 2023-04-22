@@ -101,6 +101,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -129,6 +130,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private ISRADetailService israDetailService;
 	private CustomerDataService customerDataService;
 	private CollateralSetupService collateralSetupService;
+	private LienService lienService;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -1239,6 +1241,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 					fd.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails);
 		}
 
+		if (ImplementationConstants.ALLOW_LIEN) {
+			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
+				lienService.save(fd);
+			} else {
+				lienService.update(fd);
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -2165,4 +2175,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
+
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
+	}
+
 }

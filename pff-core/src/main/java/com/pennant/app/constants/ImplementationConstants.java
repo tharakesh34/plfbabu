@@ -320,6 +320,7 @@ public class ImplementationConstants {
 		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
 		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
 		ALLOW_CANCEL_LOAN_AFTER_PAYMENTS = getValueAsBoolean("ALLOW_CANCEL_LOAN_AFTER_PAYMENTS", false);
+		ALLOW_LIEN = getValueAsBoolean("ALLOW_LIEN", false);
 
 		setVerificationConstants();
 	}
@@ -734,6 +735,8 @@ public class ImplementationConstants {
 	 * Feature Extension to no mandate the expiry date
 	 */
 	public static boolean EXPIRY_DATE_MANDATORY;
+
+	public static boolean ALLOW_LIEN;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);
