@@ -4866,7 +4866,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (!this.depositDate.isReadonly()) {
 				this.depositDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_DepositDate.value"),
-								true, this.receiptDate.getValue(), SysParamUtil.getAppDate(), true));
+								true, this.receivedDate.getValue(), SysParamUtil.getAppDate(), true));
 			}
 
 			if (!this.depositNo.isReadonly()) {
