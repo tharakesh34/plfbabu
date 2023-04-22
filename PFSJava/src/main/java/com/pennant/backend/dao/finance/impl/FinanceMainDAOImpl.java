@@ -6567,6 +6567,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
+	public Date getMaturityDatebyFinID(long FinID) {
+		String sql = "Select MaturityDate From FinanceMain Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, FinID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
 	public FinanceMain getEntityByRef(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, fm.FinReference, fm.FinBranch, e.EntityCode, e.EntityDesc");

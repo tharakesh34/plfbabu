@@ -948,4 +948,11 @@ public class PennantConstants {
 	public static final int FEE_REFUND_APPROVAL_SUCCESS = 1;
 	public static final int FEE_REFUND_APPROVAL_HOLD = 2;
 	public static final int FEE_REFUND_APPROVAL_DOWNLOADED = 3;
+
+	public static final String CLOSURE_TYPE_CLOSURE = "CLOSURE";
+	public static final String CLOSURE_TYPE_FORECLOSURE = "FORE-CLOSURE";
+	public static final String CLOSURE_TYPE_REPOSSESSION = "REPOSSESSION";
+	public static final String CLOSURE_TYPE_TOPUP = "TOPUP";
+	public static final String CLOSURE_TYPE_CANCEL = "CANCEL";
+	public static final String CLOSURE_TYPE_SETTLEMENT = "SETTLEMENT";
 }

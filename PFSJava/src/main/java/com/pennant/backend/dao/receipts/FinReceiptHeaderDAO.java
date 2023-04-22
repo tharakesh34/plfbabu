@@ -158,4 +158,6 @@ public interface FinReceiptHeaderDAO {
 	boolean isOnlineExists(CreateReceiptUpload rud);
 
 	boolean isChequeExists(CreateReceiptUpload rud);
+
+	String getClosureTypeValue(Long finID, String receiptPurpose);
 }

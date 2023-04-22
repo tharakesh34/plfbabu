@@ -371,6 +371,7 @@ public class PennantStaticListUtil {
 	private static List<String> allowedExcessTypeList;
 	private static List<ValueLabel> enqSettlementStatus;
 	private static List<ValueLabel> excessTransferHead;
+	private static List<ValueLabel> closureTypes;
 
 	/**
 	 * Gets the list of applications.
@@ -5622,5 +5623,25 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
 		}
 		return excessTransferHead;
+	}
+
+	public static List<ValueLabel> getClosureTypes() {
+		if (closureTypes == null) {
+			closureTypes = new ArrayList<>(6);
+
+			closureTypes.add(new ValueLabel(PennantConstants.CLOSURE_TYPE_CLOSURE,
+					Labels.getLabel("label_ClosureType_Closure")));
+			closureTypes.add(new ValueLabel(PennantConstants.CLOSURE_TYPE_FORECLOSURE,
+					Labels.getLabel("label_ClosureType_ForeClosure")));
+			closureTypes.add(new ValueLabel(PennantConstants.CLOSURE_TYPE_REPOSSESSION,
+					Labels.getLabel("label_ClosureType_Repossession")));
+			closureTypes.add(
+					new ValueLabel(PennantConstants.CLOSURE_TYPE_TOPUP, Labels.getLabel("label_ClosureType_TopUp")));
+			closureTypes.add(
+					new ValueLabel(PennantConstants.CLOSURE_TYPE_CANCEL, Labels.getLabel("label_ClosureType_Cancel")));
+			closureTypes.add(new ValueLabel(PennantConstants.CLOSURE_TYPE_SETTLEMENT,
+					Labels.getLabel("label_ClosureType_Settlement")));
+		}
+		return closureTypes;
 	}
 }

@@ -129,7 +129,6 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BounceReason;
-import com.pennant.backend.model.applicationmaster.ClosureType;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -533,7 +532,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private transient SOAReportGenerationService soaReportGenerationService;
 	private LinkedFinancesService linkedFinancesService;
 	// ClosureType
-	protected ExtendedCombobox closureType;
+	protected Combobox closureType;
 	private String moduleDefiner = "";
 	private boolean isClosureTypeMandatory = false;
 	private transient ManualScheduleDialogCtrl manualScheduleDialogCtrl = null;
@@ -1189,14 +1188,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		appendScheduleMethod(receiptData.getReceiptHeader());
 
-		if (FinanceConstants.CLOSURE_MAKER.equals(module) || FinanceConstants.CLOSURE_APPROVER.equals(module)) {
+		if (FinanceConstants.CLOSURE_MAKER.equals(module) || FinanceConstants.CLOSURE_APPROVER.equals(module)
+				|| (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)
+						&& FinServiceEvent.EARLYSETTLE.equals(receiptData.getReceiptHeader().getReceiptPurpose()))) {
 			this.row_closuretype.setVisible(true);
-			this.closureType.setMandatoryStyle(false);
-			this.closureType.setModuleName("ClosureType");
-			this.closureType.setValueColumn("Code");
-			this.closureType.setDescColumn("Description");
-			this.closureType.setDisplayStyle(2);
-			this.closureType.setValidateColumns(new String[] { "Code" });
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
@@ -3475,12 +3470,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.row_DepositBank.setVisible(false);
 		}
 
-		if (isForeClosure) {
-			if (rch.getClosureTypeId() != null) {
-				this.closureType.setValue(String.valueOf(rch.getClosureTypeId()));
-			}
-			this.closureType.setDescription(rch.getClosureTypeDesc());
-			this.closureType.setAttribute("ID", rch.getClosureTypeId());
+		if (rch.getClosureType() != null) {
+			this.closureType.setDisabled(true);
+			this.closureType.setValue(rch.getClosureType());
 		}
 
 		fillComboBox(this.receiptPurpose, rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose(),
@@ -5108,12 +5100,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		try {
-			if (isForeClosure) {
-				this.closureType.getValue();
-				header.setClosureTypeId((Long) (this.closureType.getAttribute("ID")));
-			} else {
-				header.setClosureTypeId(null);
-			}
+			this.closureType.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -7095,7 +7082,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (isForeClosure && this.paidByCustomer.getValue().compareTo(BigDecimal.ZERO) == 0
 				&& (FinanceConstants.CLOSURE_MAKER.equals(module)
 						|| FinanceConstants.CLOSURE_APPROVER.equals(module))) {
-			if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0 && rch.getClosureTypeId() != 0) {
+			if (this.remBalAfterAllocation.getValue().compareTo(BigDecimal.ZERO) > 0 && rch.getClosureType() != null) {
 				MessageUtil.showError(Labels.getLabel("Unadjusted_Excess_Amount"));
 				return false;
 			}
@@ -7360,9 +7347,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Principal", PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Principal",
+							PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
@@ -7371,9 +7358,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
-							"Interest", PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Interest",
+							PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}
@@ -7837,12 +7824,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.paidByCustomer.setValue(PennantApplicationUtil.formateAmount(paidByCustomer, formatter));
 		if ((FinanceConstants.CLOSURE_MAKER.equals(module) || FinanceConstants.CLOSURE_APPROVER.equals(module))
 				&& this.paidByCustomer.getValue().compareTo(BigDecimal.ZERO) <= 0) {
-			this.closureType.setMandatoryStyle(true);
 			isClosureTypeMandatory = true;
 		} else {
-			this.closureType.setMandatoryStyle(false);
 			isClosureTypeMandatory = false;
-			this.closureType.setValue(null);
 		}
 
 		// To be Paid by Customer = Net Receivable - Excess paid
@@ -8296,6 +8280,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isModelWindow", true);
 		map.put("finReference", this.finReference.getValue());
+		map.put("closureType", this.closureType.getValue());
 		try {
 			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul",
 					null, map);
@@ -8330,25 +8315,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Filedownload.save(new AMedia("StatementOfAccount", "pdf", "application/pdf", buf));
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	public void onFulfill$closureType(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-		Object dataObject = this.closureType.getObject();
-
-		if (dataObject instanceof String) {
-			this.closureType.setValue(dataObject.toString());
-			this.closureType.setDescription("");
-			this.closureType.setAttribute("ID", new Long(0));
-		} else {
-			ClosureType closuretype = (ClosureType) dataObject;
-			if (closuretype != null) {
-				this.closureType.setAttribute("ID", closuretype.getId());
-			} else {
-				this.closureType.setAttribute("ID", new Long(0));
-			}
-		}
-		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onFulfill$customerBankAcct(Event event) {
