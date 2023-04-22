@@ -88,7 +88,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		sql.append(" (Account, HostAccount, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, FinType, CostCenterID, ProfitCenterID, AccountType");
-		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription");
+		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription, AccountTypeGroup");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
 
@@ -119,6 +119,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 				ps.setString(index++, ac.getStatus());
 				ps.setString(index++, ac.getAllowedManualEntry());
 				ps.setString(index++, ac.getGLDescription());
+				ps.setString(index++, ac.getAccountTypeGroup());
 				ps.setLong(index++, ac.getCreatedBy());
 				ps.setTimestamp(index++, ac.getCreatedOn());
 				ps.setObject(index++, ac.getApprovedBy());
@@ -141,7 +142,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", FinType = ?, CostCenterID = ?, ProfitCenterID = ?, AccountType = ?");
 		sql.append(", OpenedDate = ?, ClosedDate = ?, Status = ?, AllowedManualEntry = ?, GLDescription = ?");
-		sql.append(", CreatedBy = ?, CreatedOn = ?, ApprovedBy = ?, ApprovedOn = ?");
+		sql.append(", AccountTypeGroup = ?, CreatedBy = ?, CreatedOn = ?, ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(" Where Account = ?");
 
 		if (tableType == TableType.MAIN_TAB) {
@@ -171,6 +172,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			ps.setString(index++, ac.getStatus());
 			ps.setString(index++, ac.getAllowedManualEntry());
 			ps.setString(index++, ac.getGLDescription());
+			ps.setString(index++, ac.getAccountTypeGroup());
 			ps.setLong(index++, ac.getCreatedBy());
 			ps.setTimestamp(index++, ac.getCreatedOn());
 			ps.setObject(index++, ac.getApprovedBy());
@@ -238,7 +240,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Account, HostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
-		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription");
+		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription, AccountTypeGroup");
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
@@ -277,6 +279,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			ac.setStatus(rs.getString("Status"));
 			ac.setAllowedManualEntry(rs.getString("AllowedManualEntry"));
 			ac.setGLDescription(rs.getString("GLDescription"));
+			ac.setAccountTypeGroup(rs.getString("AccountTypeGroup"));
 			ac.setVersion(rs.getInt("Version"));
 			ac.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			ac.setLastMntBy(rs.getLong("LastMntBy"));

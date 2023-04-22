@@ -45,6 +45,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 /**
  * DAO methods implementation for the <b>AccountType model</b> class.<br>
@@ -287,5 +288,19 @@ public class AccountTypeDAOImpl extends BasicDao<AccountType> implements Account
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, acctype) > 0;
+	}
+
+	@Override
+	public String getGroupCodeByAccType(String acctype) {
+		String sql = "Select GroupCode From RMTAccountTypes_AView where AcType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, acctype);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

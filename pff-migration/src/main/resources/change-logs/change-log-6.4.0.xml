@@ -2803,7 +2803,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#840.9_pre" author="sainaveen.y" dbms="postgresql">
+	<changeSet id="ST#840.9.1_pre" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'accountmapping_view');
@@ -2811,7 +2811,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#840.9" author="sainaveen.y">
+	<changeSet id="ST#840.9.1" author="sainaveen.y">
 		<createView replaceIfExists="true" viewName="ACCOUNTMAPPING_VIEW">
 			<![CDATA[
 				SELECT AM.ACCOUNT
@@ -2845,6 +2845,7 @@
 					, AM.RECORDTYPE 
 					, AM.WORKFLOWID
 					, AM.GLDESCRIPTION
+					, AM.ACCOUNTTYPEGROUP
 				FROM ACCOUNTMAPPING_TEMP AM
 				LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID
 				LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID
@@ -2882,6 +2883,7 @@
 					, AM.RECORDTYPE 
 					, AM.WORKFLOWID
 					, AM.GLDESCRIPTION
+					, AM.ACCOUNTTYPEGROUP
 				FROM ACCOUNTMAPPING AM
 				LEFT JOIN PROFITCENTERS PC ON PC.PROFITCENTERID = AM.PROFITCENTERID   
 				LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID 
@@ -2892,7 +2894,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#840.9_post" author="sainaveen.y" dbms="postgresql">
+	<changeSet id="ST#840.9.1_post" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'accountmapping_view');
@@ -2900,7 +2902,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#840.10_pre" author="sainaveen.y" dbms="postgresql">
+	<changeSet id="ST#840.10.1_pre" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'accountmapping_aview');
@@ -2908,7 +2910,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#840.10" author="sainaveen.y">
+	<changeSet id="ST#840.10.1" author="sainaveen.y">
 		<createView replaceIfExists="true" viewName="ACCOUNTMAPPING_AVIEW">
 			<![CDATA[
 				SELECT AM.ACCOUNT
@@ -2942,6 +2944,7 @@
 					, AM.RECORDTYPE 
 					, AM.WORKFLOWID
 					, AM.GLDESCRIPTION
+					, AM.ACCOUNTTYPEGROUP
 				FROM ACCOUNTMAPPING AM   
 				LEFT JOIN PROFITCENTERS PC ON  PC.PROFITCENTERID = AM.PROFITCENTERID   
 				LEFT JOIN COSTCENTERS CC ON  CC.COSTCENTERID = AM.COSTCENTERID 
@@ -2951,7 +2954,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#840.10_post" author="sainaveen.y" dbms="postgresql">
+	<changeSet id="ST#840.10.1_post" author="sainaveen.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'accountmapping_aview');
@@ -2959,16 +2962,33 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#840.11" author="sainaveen.y">
+	<changeSet id="ST#840.11.1" author="sainaveen.y">
 		<sql>
 			<![CDATA[
 			    DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AccountMappingDialog_GLDescription');
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AccountMappingDialog_GLDescription';
+			    DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AccountMappingDialog_AccountTypeGroup');
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME = 'AccountMappingDialog_AccountTypeGroup';
 				
 				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountMappingDialog_GLDescription', 'AccountMappingDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ACCOUNTMAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AccountMappingDialog_GLDescription'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AccountMappingDialog_AccountTypeGroup', 'AccountMappingDialog', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'ACCOUNTMAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'AccountMappingDialog_AccountTypeGroup'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#840.12" author="sainaveen.y">
+		<addColumn tableName="AccountMapping">
+			<column name="AccountTypeGroup" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#840.13" author="sainaveen.y">
+		<addColumn tableName="AccountMapping_Temp">
+			<column name="AccountTypeGroup" type="varchar(50)" />
+		</addColumn>
 	</changeSet>
 
 	<changeSet id="ST#1469.21.1" author="NagaVamsi.P">

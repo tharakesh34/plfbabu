@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.hostglmapping.upload.HostGLMappingUpload;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.accounting.HostAccountStatus;
 import com.pennant.pff.accounting.TransactionType;
@@ -114,7 +116,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 		String glcode = acctype;
 
 		if (StringUtils.isNotBlank(fintype)) {
-			glcode = glcode.concat(fintype);
+			glcode = fintype.concat(glcode);
 		}
 
 		detail.setGLCode(glcode);
@@ -131,6 +133,17 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 			setError(detail, HostGLMappingUploadError.HGL08);
 			return;
 		}
+
+		String descregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM);
+		if (StringUtils.isNotBlank(detail.getGLDescription())
+				&& !Pattern.compile(descregex).matcher(detail.getGLDescription()).matches()) {
+			setError(detail, HostGLMappingUploadError.HGL09);
+			return;
+		}
+
+		String groupCode = accountTypeDAO.getGroupCodeByAccType(acctype);
+
+		detail.setAccountTypeGroup(groupCode);
 	}
 
 	@Override
@@ -230,6 +243,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 		ac.setProfitCenterID(detail.getProfitCenterID());
 		ac.setCostCenterID(detail.getCostCenterID());
 		ac.setGLDescription(detail.getGLDescription());
+		ac.setAccountTypeGroup(detail.getAccountTypeGroup());
 		ac.setRequestSource(RequestSource.UPLOAD);
 		ac.setUserDetails(detail.getUserDetails());
 		ac.setRecordType(PennantConstants.RECORD_TYPE_NEW);

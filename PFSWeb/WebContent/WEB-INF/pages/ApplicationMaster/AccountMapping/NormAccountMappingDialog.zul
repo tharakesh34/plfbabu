@@ -105,6 +105,11 @@
 									<space spacing="2px" sclass="" />
 									<textbox id="gLDescription"  width="120px" />
 								</hbox>
+								<label id="label_NormAccountMappingDialog_AccountTypeGroup" value="${c:l('label_NormAccountMappingDialog_AccountTypeGroup.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<uppercasebox id="accountTypeGroup" width="120px" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

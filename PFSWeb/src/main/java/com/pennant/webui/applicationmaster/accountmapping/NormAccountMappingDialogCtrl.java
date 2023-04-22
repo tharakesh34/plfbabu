@@ -24,6 +24,7 @@ import com.pennant.backend.model.applicationmaster.CostCenter;
 import com.pennant.backend.model.applicationmaster.ProfitCenter;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -59,6 +60,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	protected Combobox allowedManualEntry;
 	protected Space spaceClosedDate;
 	protected Textbox gLDescription;
+	protected Uppercasebox accountTypeGroup;
 
 	private AccountMapping accountMapping;
 	private transient AccountMappingListCtrl accountMappingListCtrl;
@@ -86,7 +88,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_NormAccountMappingDialog(Event event) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_NormAccountMappingDialog);
@@ -122,14 +124,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * AccountMappingDialog_ClosedDate Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.account.setMaxlength(50);
 		this.account.setDisabled(true);
@@ -168,16 +170,19 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		this.gLDescription.setMaxlength(50);
 
+		this.accountTypeGroup.setMaxlength(50);
+		this.accountTypeGroup.setDisabled(true);
+
 		setStatusDetails();
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
 
@@ -186,7 +191,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_AccountMappingDialog_btnSave"));
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -250,14 +255,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * 
 	 */
 	private void doCancel() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doWriteBeanToComponents(this.accountMapping.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		this.btnCancel.setVisible(false);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -323,6 +328,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		this.recordStatus.setValue(am.getRecordStatus());
 		this.gLDescription.setValue(am.getGLDescription());
+		this.accountTypeGroup.setValue(am.getAccountTypeDesc());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -333,7 +339,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * @param accountMapping
 	 */
 	public void doWriteComponentsToBean(AccountMapping accountMapping) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 
@@ -399,6 +405,12 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			wve.add(we);
 		}
 
+		try {
+			accountMapping.setAccountTypeGroup(this.accountTypeGroup.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -412,7 +424,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		accountMapping.setRecordStatus(this.recordStatus.getValue());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -421,7 +433,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * @param accountMapping The entity that need to be render.
 	 */
 	public void doShowDialog(AccountMapping accountMapping) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
 		if (accountMapping.isNewRecord()) {
@@ -451,14 +463,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		doWriteBeanToComponents(accountMapping);
 		setDialog(DialogType.EMBEDDED);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setValidationOn(true);
 
@@ -500,14 +512,19 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 							PennantRegularExpressions.REGEX_ALPHANUM));
 		}
 
-		logger.debug("Leaving");
+		if (!this.accountTypeGroup.isReadonly()) {
+			this.accountTypeGroup.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_NormAccountMappingDialog_AccountTypeGroup.value"), null, true));
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Disables the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setValidationOn(false);
 		this.account.setConstraint("");
@@ -518,8 +535,9 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.closedDate.setConstraint("");
 		this.allowedManualEntry.setConstraint("");
 		this.status.setConstraint("");
+		this.accountTypeGroup.setConstraint("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -539,7 +557,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.account.setErrorMessage("");
 		this.hostAccount.setErrorMessage("");
@@ -552,8 +570,9 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.allowedManualEntry.setErrorMessage("");
 		this.status.setErrorMessage("");
 		this.gLDescription.setErrorMessage("");
+		this.accountTypeGroup.setErrorMessage("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -577,16 +596,18 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (this.accountMapping.isNewRecord()) {
 			this.account.setReadonly(false);
 			this.btnCancel.setVisible(false);
 			this.status.setDisabled(true);
 			this.closedDate.setDisabled(true);
+			this.accountTypeGroup.setReadonly(false);
 		} else {
 			this.account.setReadonly(true);
 			this.btnCancel.setVisible(true);
+			this.accountTypeGroup.setReadonly(true);
 
 			this.closedDate.setDisabled(isReadOnly("AccountMappingDialog_ClosedDate"));
 			this.status.setDisabled(isReadOnly("AccountMappingDialog_Status"));
@@ -622,7 +643,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.account.setReadonly(true);
 		this.hostAccount.setReadonly(true);
 		this.profitCenter.setReadonly(true);
@@ -634,6 +655,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.allowedManualEntry.setReadonly(true);
 		this.status.setReadonly(true);
 		this.gLDescription.setReadonly(true);
+		this.accountTypeGroup.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -646,14 +668,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			this.userAction.setSelectedIndex(0);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.account.setValue("");
 		this.hostAccount.setValue("");
@@ -666,8 +688,9 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		this.allowedManualEntry.setValue("");
 		this.status.setValue("");
 		this.gLDescription.setValue("");
+		this.accountTypeGroup.setValue("");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -675,7 +698,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * 
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		final AccountMapping aAccountMapping = new AccountMapping();
 		BeanUtils.copyProperties(this.accountMapping, aAccountMapping);
@@ -725,7 +748,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -739,7 +762,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * 
 	 */
 	protected boolean doProcess(AccountMapping aAccountMapping, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader;
 		String nextRoleCode = "";
@@ -812,7 +835,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			auditHeader = getAuditHeader(aAccountMapping, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -827,7 +850,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuditHeader aAuditHeader = auditHeader;
@@ -886,7 +909,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		}
 
 		setOverideMap(aAuditHeader.getOverideMap());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -909,6 +932,14 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 	public void onFulfill$accountType(Event event) {
 		this.account.setValue(getAccount());
+
+		Object dataObject = accountType.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.accountTypeGroup.setValue(null);
+		} else {
+			AccountType details = (AccountType) dataObject;
+			this.accountTypeGroup.setValue(details.getGroupCode());
+		}
 	}
 
 	private String getAccount() {

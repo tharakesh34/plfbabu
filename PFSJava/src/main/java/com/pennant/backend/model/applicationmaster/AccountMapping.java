@@ -70,6 +70,7 @@ public class AccountMapping extends AbstractWorkflowEntity {
 	private Long approvedBy;
 	private Timestamp approvedOn;
 	private String gLDescription;
+	private String accountTypeGroup;
 	private RequestSource requestSource = RequestSource.UI;
 
 	private List<AccountMapping> accountMappingList = new ArrayList<AccountMapping>();
@@ -96,6 +97,7 @@ public class AccountMapping extends AbstractWorkflowEntity {
 		excludeFields.add("tranType");
 		excludeFields.add("gLDescription");
 		excludeFields.add("requestSource");
+		excludeFields.add("accountTypeGroup");
 		return excludeFields;
 	}
 
@@ -333,6 +335,14 @@ public class AccountMapping extends AbstractWorkflowEntity {
 
 	public void setRequestSource(RequestSource requestSource) {
 		this.requestSource = requestSource;
+	}
+
+	public String getAccountTypeGroup() {
+		return accountTypeGroup;
+	}
+
+	public void setAccountTypeGroup(String accountTypeGroup) {
+		this.accountTypeGroup = accountTypeGroup;
 	}
 
 }

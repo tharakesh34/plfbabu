@@ -22,6 +22,7 @@ public class HostGLMappingUpload extends UploadDetails {
 	private Long profitCenterID;
 	private Long costCenterID;
 	private String gLDescription;
+	private String accountTypeGroup;
 
 	public HostGLMappingUpload() {
 		super();
@@ -137,6 +138,14 @@ public class HostGLMappingUpload extends UploadDetails {
 
 	public void setGLDescription(String gLDescription) {
 		this.gLDescription = gLDescription;
+	}
+
+	public String getAccountTypeGroup() {
+		return accountTypeGroup;
+	}
+
+	public void setAccountTypeGroup(String accountTypeGroup) {
+		this.accountTypeGroup = accountTypeGroup;
 	}
 
 }

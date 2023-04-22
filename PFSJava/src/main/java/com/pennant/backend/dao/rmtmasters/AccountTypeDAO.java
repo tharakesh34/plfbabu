@@ -53,4 +53,6 @@ public interface AccountTypeDAO {
 	boolean isExsistAccountGroup(long groupId);
 
 	boolean isExsistAccountType(String acctype);
+
+	String getGroupCodeByAccType(String acctype);
 }

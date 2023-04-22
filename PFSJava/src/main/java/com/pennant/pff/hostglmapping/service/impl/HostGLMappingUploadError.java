@@ -15,7 +15,9 @@ public enum HostGLMappingUploadError {
 
 	HGL07(" System GL Code already exists."),
 
-	HGL08(" Possible values should be 'N','D','C' Or 'B'.");
+	HGL08(" Possible values should be 'N','D','C' Or 'B'."),
+
+	HGL09(" GL Description is invalid.Allowed Characters are [a-z A-Z 0-9].");
 
 	private String description;
 
