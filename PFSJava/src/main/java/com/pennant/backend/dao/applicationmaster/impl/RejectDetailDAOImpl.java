@@ -221,4 +221,15 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 
 		return jdbcOperations.queryForObject(sql, Boolean.class, rejectCode, PennantConstants.Reject_Payment);
 	}
+
+	@Override
+	public int getRejectCodeCount(String rejectCode) {
+		String sql = "Select count(RejectCode) From BMTRejectCodes Where RejectCode = ? ";
+
+		logger.debug(Literal.SQL + sql);
+
+		Object[] parameters = new Object[] { rejectCode };
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, parameters);
+	}
 }

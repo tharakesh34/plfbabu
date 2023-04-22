@@ -368,4 +368,15 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 			return br;
 		}
 	}
+
+	@Override
+	public int getBounceCodeCount(String bouncecode) {
+		String sql = "Select count(BounceID) From BounceReasons Where BounceCode = ? ";
+
+		logger.debug(Literal.SQL + sql);
+
+		Object[] parameters = new Object[] { bouncecode };
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, parameters);
+	}
 }

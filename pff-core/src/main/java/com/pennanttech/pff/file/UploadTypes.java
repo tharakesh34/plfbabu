@@ -23,7 +23,9 @@ public enum UploadTypes {
 
 	CUSTOMER_KYC_DETAILS("Bulk Customer details upload screen"),
 
-	CREATE_RECEIPT("Create Receipt Upload detail screen");
+	CREATE_RECEIPT("Create Receipt Upload detail screen"),
+
+	RECEIPTSTATUS("RECEIPT STATUS Upload Details Screen");
 
 	private String description;
 

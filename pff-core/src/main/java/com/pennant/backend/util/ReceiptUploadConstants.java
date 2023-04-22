@@ -94,4 +94,8 @@ public class ReceiptUploadConstants {
 	public static final int ATTEMPSTATUS_INPROCESS = 1;
 	public static final int ATTEMPSTATUS_DONE = 2;
 
+	public static final String RECEIPT_BOUNCE = "B";
+	public static final String RECEIPT_REALIZED = "R";
+	public static final String RECEIPT_CANCEL = "C";
+
 }

@@ -57,4 +57,5 @@ public interface BounceReasonDAO extends BasicCrudDao<BounceReason> {
 
 	Long getBounceIDByCode(String returnCode);
 
+	int getBounceCodeCount(String bouncecode);
 }

@@ -13247,4 +13247,12 @@
 	<bean id="createReceiptUploadDataValidator" class="com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator"/>
 	
 	<bean id="createReceiptUploadDAO" class="com.pennant.pff.receipt.dao.impl.CreateReceiptUploadDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="financeCancelValidator" class="com.pennant.backend.service.finance.validation.FinanceCancelValidator"/>
+	
+	<bean id="receiptStatusUploadService" class="com.pennant.pff.receipt.upload.service.impl.ReceiptStatusUploadServiceImpl" parent="aUploadService" />
+		
+	<bean id="receiptStatusUploadDAO" class="com.pennant.pff.receipt.status.dao.impl.ReceiptStatusUploadDAOImpl" parent="sequenceDao" />
+		
+	<bean id="receiptStatusUploadValidateRecord" class="com.pennant.pff.receipt.upload.service.impl.ReceiptStatusUploadValidateRecord" />
 </beans>

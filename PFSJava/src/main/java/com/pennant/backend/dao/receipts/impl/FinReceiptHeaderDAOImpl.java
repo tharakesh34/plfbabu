@@ -1810,4 +1810,29 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}
 	}
 
+	@Override
+	public FinReceiptHeader getReceiptById(long receiptId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Reference, ReceiptModeStatus, ReceiptMode, DepositDate");
+		sql.append(" From FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Where ReceiptID = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinReceiptHeader rch = new FinReceiptHeader();
+
+				rch.setReference(rs.getString("Reference"));
+				rch.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+				rch.setReceiptMode(rs.getString("ReceiptMode"));
+				rch.setDepositDate(rs.getDate("DepositDate"));
+				return rch;
+			}, receiptId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

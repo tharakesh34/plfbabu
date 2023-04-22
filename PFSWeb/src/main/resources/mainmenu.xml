@@ -1294,6 +1294,15 @@
 			rightName="menu_Item_Cust_kyc_Dtls_Upload_Approver" />
 		</menu>
 		
+		<menu id="menu_Category_ReceiptStatusUpload">
+			<menuItem id="menu_Item_ReceiptStatusUpload_Maker"
+				zulNavigation="/WEB-INF/pages/ReceiptStatusUpload/ReceiptStatusUpload.zul?stage=M"
+				rightName="" />
+			<menuItem id="menu_Item_ReceiptStatusUpload_Approver"
+				zulNavigation="/WEB-INF/pages/ReceiptStatusUpload/ReceiptStatusUpload.zul?stage=A"
+				rightName="" />
+		</menu>
+		
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
