@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 public class UploadDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -22,6 +24,7 @@ public class UploadDetails implements Serializable {
 	private String name;
 	private String recordStatus;
 	private Date appDate;
+	private LoggedInUser userDetails;
 
 	public UploadDetails() {
 		super();
@@ -147,4 +150,11 @@ public class UploadDetails implements Serializable {
 		this.appDate = appDate;
 	}
 
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
 }

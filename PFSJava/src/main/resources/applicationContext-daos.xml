@@ -13282,5 +13282,15 @@
 	<bean id="financeCancellationUploadService"
 		class="com.pennant.backend.service.fincancelupload.impl.FinanceCancellationUploadServiceImpl" parent="aUploadService" />
 
-	<bean id="financeCancelValidator" class="com.pennant.backend.service.finance.validation.FinanceCancelValidator"/>
+	<bean id="financeCancelValidator" class="com.pennant.backend.service.finance.validation.FinanceCancelValidator" />
+
+	<!-- Bulk Fee Waiver Uploads -->
+	<bean id="bulkFeeWaiverUploadDAO" class="com.pennant.pff.bulkfeewaiverupload.dao.impl.BulkFeeWaiverUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="bulkFeeWaiverUploadService"
+		class="com.pennant.pff.bulkfeewaiverupload.service.impl.BulkFeeWaiverUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="bulkFeeWaiverUploadValidateRecord"
+		class="com.pennant.pff.bulkfeewaiverupload.service.impl.BulkFeeWaiverUploadValidateRecord" />
 </beans>

@@ -27,7 +27,9 @@ public enum UploadTypes {
 
 	MISCELLANEOUS_POSTING("Miscellaneous Posting Upload Details Screen"),
 
-	LOAN_CANCEL("Loan Cancellation Upload Screen");
+	LOAN_CANCEL("Loan Cancellation Upload Screen"),
+
+	FEE_WAIVER("Fee Wavier Upload Details");
 
 	private String description;
 

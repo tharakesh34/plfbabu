@@ -1237,13 +1237,20 @@
 			rightName="menu_Item_RePresentUploadApprover" /> </menu> -->
 
 		<!-- Fee Waiver Upload -->
-		<menu id="menu_Category_FeeWaiverUpload">
+		<!-- <menu id="menu_Category_FeeWaiverUpload">
 			<menuItem id="menu_Item_FeeWaiverUpload_Maker"
 				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadDialog.zul"
 				rightName="menu_Item_FeeWaiverUpload_Maker" />
 			<menuItem id="menu_Item_FeeWaiverUpload_Approver"
 				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadList.zul?module=FeeWaiverApprover"
-				rightName="menu_Item_FeeWaiverUpload_Approver" />
+				rightName="menu_Item_FeeWaiverUpload_Approver" /> -->
+				<!-- Bulk Fee Waiver New -->
+			<menuItem id="menu_Item_BulkFeeWaiverUpload_Maker"
+				zulNavigation="/WEB-INF/pages/FeeWaivers/Upload/BulkFeeWaiverList.zul?stage=M"
+				rightName="menu_Item_Fee_Waiver_Upload_Maker" />
+			<menuItem id="menu_Item_BulkFeeWaiverUpload_Approver"
+				zulNavigation="/WEB-INF/pages/FeeWaivers/Upload/BulkFeeWaiverList.zul?stage=A"
+				rightName="menu_Item_Fee_Waiver_Upload_Approver" />	
 		</menu>
 		<menu id="menu_Category_ManualKnockOff">
 			<menuItem id="menu_Item_KnockOffUp_Maker"

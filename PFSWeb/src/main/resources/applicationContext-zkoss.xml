@@ -6199,4 +6199,6 @@
 	<bean id="selectFinanceCancellationDialogCtrl"
 		class="com.pennant.webui.finance.financemain.SelectFinanceCancellationDialogCtrl" parent="basisCtrl" scope="prototype" />
 
+	<bean id="bulkFeeWaiverUploadListCtrl" class="com.pennant.pff.feewaiver.upload.list.BulkFeeWaiverUploadListCtrl"
+	parent="uploadList" />
 </beans>
