@@ -8777,6 +8777,33 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		return odcList;
 	}
 
+	@Override
+	public FinReceiptData getDues(String finReference, Date valueDate, Date appDate, String event) {
+		FinReceiptData receiptData = getFinReceiptDataById(finReference, appDate, event, FinServiceEvent.RECEIPT, "");
+		receiptData.setEnquiry(true);
+
+		FinanceDetail fd = receiptData.getFinanceDetail();
+
+		if (fd == null) {
+			return receiptData;
+		}
+
+		fd.setFinFeeConfigList(null);
+		fd.setFinTypeFeesList(null);
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinServiceInstruction(new FinServiceInstruction());
+
+		rch.setFinType(schdData.getFinanceMain().getFinType());
+		rch.setReceiptPurpose(event);
+		rch.setReceiptDate(appDate);
+		rch.setValueDate(valueDate);
+		rch.setReceivedDate(valueDate);
+
+		return calcuateDues(receiptData);
+	}
+
 	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;

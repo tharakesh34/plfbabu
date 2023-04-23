@@ -37,7 +37,6 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -485,32 +484,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public FinReceiptData getDues(String finReference, Date valueDate) {
 		Date appDate = SysParamUtil.getAppDate();
 
-		FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference, appDate,
-				AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
-		receiptData.setEnquiry(true);
-
-		FinanceDetail fd = receiptData.getFinanceDetail();
-
-		if (fd == null) {
-			return receiptData;
-		}
-
-		fd.setFinFeeConfigList(null);
-		fd.setFinTypeFeesList(null);
-
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinServiceInstruction(new FinServiceInstruction());
-
-		rch.setFinType(schdData.getFinanceMain().getFinType());
-		rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		rch.setReceiptDate(appDate);
-		rch.setValueDate(valueDate);
-		rch.setReceivedDate(valueDate);
-
-		receiptData = receiptService.calcuateDues(receiptData);
-
-		return receiptData;
+		return receiptService.getDues(finReference, valueDate, appDate, AccountingEvent.EARLYSTL);
 	}
 
 	@Override

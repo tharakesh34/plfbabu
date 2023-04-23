@@ -6731,5 +6731,173 @@
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1553.1" author="saikiran.n">
+		<createTable tableName="CROSS_LOAN_KNOCKOFF_STAGE">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint" />
+			<column name="CoreBankId" type="varchar(50)" />
+			<column name="FinId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReferenceID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AmountType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BalanceAmt" type="Decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExecutionDay" type="char(2)" />
+			<column name="ThresholdValue" type="varchar(1000)" />
+			<column name="UtilizedAmount" type="decimal(18,0)" />
+			<column name="ValueDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
+	<changeSet id="ST#1553.2" author="saikiran.n">
+		<addPrimaryKey tableName="Cross_Loan_KnockOff_Stage" columnNames="ID"
+			constraintName="PK_CROSS_LOAN_KNOCKOFF_STAGE" />
+	</changeSet>
+
+	<changeSet id="ST#1553.3" author="saikiran.n">
+		<addColumn tableName="Auto_knockoff_Excess">
+			<column name="FromFinId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1553.4" author="saikiran.n">
+		<addColumn tableName="Auto_knockoff_Excess">
+			<column name="KnockOfftype" type="Char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1553.5" author="saikiran.n">
+		<addColumn tableName="Auto_knockoff_Excess_Stage">
+			<column name="FromFinId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1553.6" author="saikiran.n">
+		<addColumn tableName="Auto_knockoff_Excess_Stage">
+			<column name="KnockOfftype" type="Char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1553.7" author="saikiran.n">
+		<createTable tableName="Cross_Loan_KnockOff_Queue">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustID" type="bigint" />
+			<column name="CoreBankId" type="varchar(50)" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="ThreadID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1553.8" author="saikiran.n">
+		<addPrimaryKey tableName="Cross_Loan_KnockOff_Queue" columnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#1553.9" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_QUEUE ADD CONSTRAINT DF_CRLOAN_KNKOFF_QUE_TID DEFAULT 0 FOR ThreadID;
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_QUEUE ADD CONSTRAINT DF_CRLOAN_KNKOFF_QUE_PRO DEFAULT 0 FOR Progress;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1553.9" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadID" tableName="CROSS_LOAN_KNOCKOFF_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="CROSS_LOAN_KNOCKOFF_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1553.10" author="saikiran.n">
+		<createIndex tableName="CROSS_LOAN_KNOCKOFF_QUEUE" indexName="idx_crsln_knkof_qu_tid">
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#1553.11" author="saikiran.n">
+		<createIndex tableName="CROSS_LOAN_KNOCKOFF_QUEUE" indexName="idx_crsln_knkof_qu_id_progress">
+			<column name="ID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#1553.12" author="saikiran.n">
+		<createIndex tableName="CROSS_LOAN_KNOCKOFF_QUEUE" indexName="idx_crsln_knkof_qu_cid_progre">
+			<column name="CustID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1553.13" author="saikiran.n">
+		<createIndex tableName="CROSS_LOAN_KNOCKOFF_QUEUE" indexName="idx_crsln_knkof_qu_progress">
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1553.14" author="saikiran.n">
+		<comment>Staging table for cross loan Knock Off excess processing</comment>
+		<createTable tableName="CROSS_LOAN_KNOCKOFF_DTL_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExcessID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ExecutionDays" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeCode" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KnockOffOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeOrder" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="UtilizedAmnt" type="decimal(18,2)" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="Reason" type="varchar(1000)" />
+			<column name="FinCcy" type="varchar(10)" />
+			<column name="Status" type="char(1)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1553.15" author="saikiran.n">
+		<addPrimaryKey tableName="CROSS_LOAN_KNOCKOFF_DTL_STAGE" columnNames="ID"
+			constraintName="PK_CS_LN_KNFEDS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#1553.17" author="saikiran.n">
+		<createIndex tableName="CROSS_LOAN_KNOCKOFF_DTL_STAGE" indexName="IDX_CSLN_KNOCKOFF_EXD_STG_EID">
+			<column name="ExcessID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	
 </databaseChangeLog> 

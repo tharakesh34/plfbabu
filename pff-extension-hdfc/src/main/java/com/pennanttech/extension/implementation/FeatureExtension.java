@@ -147,6 +147,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_LIEN", true);
 
+		customConstants.put("ALW_AUTO_CROSS_LOAN_KNOCKOFF", true);
+
 		customerExtensions();
 
 		mandateExtensaions();

@@ -63,10 +63,10 @@ public class ExtInterfaceDaoImpl implements ExtInterfaceDao {
 
 	@Override
 	public void resetAllSequences() {
-		resetSequences("SEQ_PRMNT_SI", 1);
-		resetSequences("SEQ_PRMNT_SI_INTERNAL", 1);
-		resetSequences("SEQ_PRMNT_ACH", 1);
-		resetSequences("SEQ_PRMNT_PDC", 1);
+		/*
+		 * resetSequences("SEQ_PRMNT_SI", 1); resetSequences("SEQ_PRMNT_SI_INTERNAL", 1);
+		 * resetSequences("SEQ_PRMNT_ACH", 1); resetSequences("SEQ_PRMNT_PDC", 1);
+		 */
 	}
 
 	public void setExtDataSource(DataSource extDataSource) {

@@ -155,4 +155,6 @@ public interface ReceiptService {
 	List<FinReceiptDetail> prepareRCDForMA(List<ManualAdvise> manualAdviseList, ReceiptUploadDetail rud);
 
 	List<OverdueChargeRecovery> prepareODCRecovery(Long finID);
+
+	FinReceiptData getDues(String finReference, Date valueDate, Date appDate, String event);
 }

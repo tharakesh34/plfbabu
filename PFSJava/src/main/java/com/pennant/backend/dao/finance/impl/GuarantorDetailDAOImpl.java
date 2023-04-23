@@ -564,7 +564,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 
 	@Override
 	public boolean isGuarantor(long finID, String custCIF) {
-		String sql = "Select Count(CustCIF) From FinGuarantorsDetails Where FinID = ? and CustCIF = ?";
+		String sql = "Select Count(CustCIF) From FinGuarantorsDetails Where FinID = ? and GuarantorCif = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

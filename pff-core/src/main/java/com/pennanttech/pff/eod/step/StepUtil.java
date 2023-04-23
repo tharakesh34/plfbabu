@@ -62,6 +62,8 @@ public class StepUtil {
 
 	public static final DataEngineStatus AUTO_REFUND_PROCESS = new DataEngineStatus("AUTO_REFUND_PROCESS");
 
+	public static final DataEngineStatus CROSS_LOAN_KNOCKOFF = new DataEngineStatus("CROSS_LOAN_KNOCKOFF");
+
 	private StepUtil() {
 		super();
 	}
