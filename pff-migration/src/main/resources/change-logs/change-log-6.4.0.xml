@@ -3909,6 +3909,15 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1529.3.1" author="Gireesh.G">
+		<sql>
+			<![CDATA[	
+				UPDATE MANDATES_TEMP SET EXTERNALMANDATE = 0 WHERE EXTERNALMANDATE IS NULL;
+				UPDATE MANDATES SET EXTERNALMANDATE = 0 WHERE EXTERNALMANDATE IS NULL
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#1529.3" author="Gireesh.G" dbms="mssql">
 		<sql>
@@ -4718,7 +4727,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#726.11_pre" author="saisandeep.b" dbms="postgresql">
+	<changeSet id="ST#726.11.1_pre" author="saisandeep.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemaintenance_view');
@@ -4726,7 +4735,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#726.11" author="saisandeep.b">
+	<changeSet id="ST#726.11.1" author="saisandeep.b">
 		<createView replaceIfExists="true" viewName="FINANCEMAINTENANCE_VIEW">
 		 	<![CDATA[
 		 		SELECT T1.FINID,
@@ -4895,7 +4904,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#726.11_post" author="saisandeep.b" dbms="postgresql">
+	<changeSet id="ST#726.11.1_post" author="saisandeep.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemaintenance_view');
@@ -6430,19 +6439,25 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#0.0011" author="Sandeepkuamr.m">
-		<createSequence sequenceName="SEQ_LIEN_ID" startValue="1001" maxValue="9223372036854775807"
+	<changeSet id="ST#0.0011.1" author="Sandeepkuamr.m">
+		<createSequence sequenceName="SEQ_LIEN_HEADER_LIEN_ID" startValue="1001" maxValue="9223372036854775807"
 			incrementBy="1" />
 	</changeSet>
 
-	<changeSet id="ST#0.0012" author="Sandeepkuamr.m">
-		<createSequence sequenceName="SEQ_LIEN_REF" startValue="1" maxValue="9223372036854775807"
+	<changeSet id="ST#0.0012.2" author="Sandeepkuamr.m">
+		<createSequence sequenceName="SEQ_LIEN_HEADER_LIEN_REF" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" />
 	</changeSet>
+	
+	<changeSet id="ST#0.0013.3" author="Sandeepkuamr.m">
+		<createSequence sequenceName="SEQ_LIEN_HEADER_ID" startValue="1" maxValue="9223372036854775807"
+			incrementBy="1" />
+	</changeSet>
+	
 
-	<changeSet id="ST#0.0013" author="Sandeepkuamr.m">
+	<changeSet id="ST#0.0014.4" author="Sandeepkuamr.m">
 		<createTable tableName="LIEN_HEADER">
-			<column name="Id" type="bigint" autoIncrement="true">
+			<column name="ID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="LienID" type="bigint" />
@@ -6465,11 +6480,14 @@
 			<column name="LienReference" type="Varchar(20)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="ST#0.0015.5" author="Sandeepkumar.m">
+		<addPrimaryKey constraintName="PK_LH_ID" tableName="LIEN_HEADER" columnNames="ID" />
+	</changeSet>
 
-
-	<changeSet id="ST#0.0014" author="Sandeepkuamr.m">
+	<changeSet id="ST#0.0016.6" author="Sandeepkuamr.m">
 		<createTable tableName="LIEN_DETAILS">
-			<column name="Id" type="bigint" autoIncrement="true">
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="HeaderID" type="bigint">
@@ -6509,20 +6527,24 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="ST#0.0017.7" author="Sandeepkumar.m">
+		<addPrimaryKey constraintName="PK_LD_ID" tableName="LIEN_DETAILS" columnNames="ID" />
+	</changeSet>
 
-	<changeSet id="ST#0.0015" author="Sandeepkumar.m">
+	<changeSet id="ST#0.0018.8" author="Sandeepkumar.m">
 		<addUniqueConstraint tableName="LIEN_HEADER" columnNames="LienID"
 			constraintName="uk_LienHeader_LienId" />
 	</changeSet>
 
-	<changeSet id="ST#0.0016" author="Sandeepkumar.m">
+	<changeSet id="ST#0.0019.9" author="Sandeepkumar.m">
 		<createIndex tableName="LIEN_DETAILS" indexName="idx_src_ref">
 			<column name="Source" type="varchar(10)" />
 			<column name="Reference" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="ST#0.0017" author="Sandeepkumar.m">
+	<changeSet id="ST#0.0020.0" author="Sandeepkumar.m">
 		<createIndex tableName="LIEN_HEADER" indexName="idx_ref_accno">
 			<column name="Reference" type="varchar(20)" />
 			<column name="AccNumber" type="varchar(50)" />
@@ -6530,9 +6552,9 @@
 	</changeSet>
 
 
-	<changeSet id="ST#0.0018" author="Sandeepkumar.m">
+	<changeSet id="ST#0.0021.1" author="Sandeepkumar.m">
 		<createTable tableName="LIEN_UPLOAD">
-			<column name="Id" type="bigint" autoIncrement="true">
+			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="HeaderId" type="bigint" />
@@ -6568,11 +6590,11 @@
 
 	</changeSet>
 
-	<changeSet id="ST0.0019" author="Sandeepkumar.m">
+	<changeSet id="ST0.0022.2" author="Sandeepkumar.m">
 		<addPrimaryKey constraintName="PK_LU_ID" tableName="LIEN_UPLOAD" columnNames="ID" />
 	</changeSet>
 
-	<changeSet id="TK#0.0020" author="Sandeepkumar.m">
+ <changeSet id="TK#0.0023.3" author="Sandeepkumar.m">
 		<addForeignKeyConstraint constraintName="fk_lien_upload_headerid"
 			referencedTableName="FILE_UPLOAD_HEADER" baseColumnNames="HeaderID" baseTableName="LIEN_UPLOAD"
 			referencedColumnNames="ID" />

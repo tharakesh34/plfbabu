@@ -23,6 +23,7 @@ import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lien.dao.LienUploadDAO;
 import com.pennant.pff.lien.service.LienService;
@@ -223,6 +224,9 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 
 			FinanceDetail fd = new FinanceDetail();
 			fd.getFinScheduleData().setFinanceMain(fm);
+			Mandate mandate = new Mandate();
+			mandate.setAccNumber(lienup.getAccNumber());
+			fd.setMandate(mandate);
 
 			lienService.save(fd);
 		}

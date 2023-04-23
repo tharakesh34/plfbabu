@@ -12,11 +12,9 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -25,7 +23,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 	private static final long serialVersionUID = 966281186831332116L;
-	private static final Logger logger = LogManager.getLogger(LoanClosureEnquiryDialogCtrl.class);
+	private static final Logger logger = LogManager.getLogger(LienEnquiryDialogCtrl.class);
 
 	protected Window windowLienEnquiryDialog;
 	protected Listbox lienDetails;
@@ -33,7 +31,6 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 	protected Label title;
 	protected Listheader listheaderLienReference;
 	protected Textbox finReference;
-	private Tabpanel tabPanelDialogWindow;
 
 	public LienEnquiryDialogCtrl() {
 		super();
@@ -50,10 +47,6 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowLienEnquiryDialog);
-
-		if (event.getTarget().getParent().getParent() != null) {
-			tabPanelDialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
-		}
 
 		List<LienDetails> lienDetail = new ArrayList<>();
 		boolean headerType = false;
@@ -88,15 +81,7 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 				listheaderLienReference.setLabel(Labels.getLabel("label_SelectLienEnquiryList_accNum"));
 			}
 
-			if (tabPanelDialogWindow != null) {
-				getBorderLayoutHeight();
-				int rowsHeight = 1200;
-				this.lienDetails.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
-				this.windowLienEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight + "px");
-				tabPanelDialogWindow.appendChild(this.windowLienEnquiryDialog);
-			} else {
-				setDialog(DialogType.EMBEDDED);
-			}
+			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

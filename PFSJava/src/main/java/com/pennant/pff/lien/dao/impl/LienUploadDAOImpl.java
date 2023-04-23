@@ -136,8 +136,8 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 		sql.append(" Where HEADERID = ?");
 
 		if (lu.getLienID() <= 0) {
-			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_REF"))));
-			lu.setLienID((getNextValue("SEQ_LIEN_ID")));
+			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
+			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
 		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));

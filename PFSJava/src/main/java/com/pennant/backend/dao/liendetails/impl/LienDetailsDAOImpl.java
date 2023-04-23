@@ -28,16 +28,17 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	@Override
 	public void save(LienDetails lu) {
 		if (lu.getLienID() <= 0) {
-			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_REF"))));
-			lu.setLienID((getNextValue("SEQ_LIEN_ID")));
+			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
+			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
 		}
 
+		lu.setiD((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
 		StringBuilder sql = new StringBuilder("Insert Into Lien_Details");
-		sql.append(" (LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
+		sql.append(" ( ID, LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn)");
-		sql.append(" values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -45,6 +46,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
+				ps.setLong(++index, lu.getiD());
 				ps.setLong(++index, lu.getLienID());
 				ps.setLong(++index, lu.getHeaderID());
 				ps.setString(++index, lu.getReference());
@@ -75,11 +77,9 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	public void update(LienDetails lu) {
 		StringBuilder sql = new StringBuilder("Update Lien_Details");
 		sql.append(" Set ");
-		sql.append(" Marking = ?, MarkingDate = ?");
-		sql.append(", MarkingReason = ?, DeMarking = ?, DemarkingReason = ?");
-		sql.append(", DemarkingDate = ?, LienReference = ?, LienStatus = ?");
-		sql.append(", Source = ?, Version = ?,");
-		sql.append(", ApprovedBy = ?, ApprovedOn = ?, LastMntBy = ?, LastMntOn = ? ");
+		sql.append(" Marking = ?, MarkingDate = ?, MarkingReason = ?, DeMarking = ?");
+		sql.append(", DemarkingReason = ?, DemarkingDate = ?, LienReference = ?, LienStatus = ?");
+		sql.append(", Source = ?, Version = ?, ApprovedBy = ?, ApprovedOn = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(" Where LienID = ? and Reference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -127,10 +127,10 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	@Override
 	public LienDetails getLienById(String finreference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" (LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
+		sql.append(" LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
-		sql.append(", LastMntBy, LastMntOn)");
+		sql.append(", LastMntBy, LastMntOn ");
 		sql.append("  From  Lien_Details");
 		sql.append(" Where Reference = ?");
 
@@ -225,10 +225,10 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	public List<LienDetails> getLienListByLienId(Long lienId) {
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" (LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
+		sql.append(" LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
-		sql.append(", LastMntBy, LastMntOn)");
+		sql.append(", LastMntBy, LastMntOn ");
 		sql.append("  From  Lien_Details");
 		sql.append("  Where LienID = ?");
 

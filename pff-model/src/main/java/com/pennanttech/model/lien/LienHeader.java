@@ -7,7 +7,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class LienHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
-	private long iD;
+	private long id;
 	private long lienID = Long.MIN_VALUE;
 	private String source;
 	private String reference;
@@ -25,12 +25,12 @@ public class LienHeader extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public long getID() {
-		return iD;
+	public long getId() {
+		return id;
 	}
 
-	public void setID(long iD) {
-		this.iD = iD;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public long getLienID() {

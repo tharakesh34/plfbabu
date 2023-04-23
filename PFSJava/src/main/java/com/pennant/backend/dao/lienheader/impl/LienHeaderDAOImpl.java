@@ -1,17 +1,10 @@
 package com.pennant.backend.dao.lienheader.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennanttech.model.lien.LienHeader;
@@ -32,46 +25,39 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public long save(LienHeader lu) {
 		StringBuilder sql = new StringBuilder("Insert Into Lien_Header");
-		sql.append(" (LienID, Reference, AccNumber, Marking, MarkingDate,");
-		sql.append(" DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" (ID, LienID, Reference, AccNumber, Marking, MarkingDate");
+		sql.append(", DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		if (lu.getLienID() <= 0) {
-			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_REF"))));
-			lu.setLienID((getNextValue("SEQ_LIEN_ID")));
+		if (lu.getId() <= 0) {
+			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
+			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
+			lu.setId((getNextValue("SEQ_LIEN_HEADER_ID")));
 		}
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			KeyHolder keyHolder = new GeneratedKeyHolder();
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
 
-			this.jdbcOperations.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "ID" });
-
-					int index = 0;
-
-					ps.setLong(++index, lu.getLienID());
-					ps.setString(++index, lu.getReference());
-					ps.setString(++index, lu.getAccountNumber());
-					ps.setString(index++, lu.getMarking());
-					ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
-					ps.setString(++index, lu.getDemarking());
-					ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
-					ps.setString(++index, lu.getLienReference());
-					ps.setBoolean(++index, lu.isLienStatus());
-					ps.setString(++index, lu.getInterfaceStatus());
-
-					return ps;
-				}
-			}, keyHolder);
-			return keyHolder.getKey().longValue();
+				ps.setLong(++index, lu.getId());
+				ps.setLong(++index, lu.getLienID());
+				ps.setString(++index, lu.getReference());
+				ps.setString(++index, lu.getAccountNumber());
+				ps.setString(++index, lu.getMarking());
+				ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
+				ps.setString(++index, lu.getDemarking());
+				ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
+				ps.setString(++index, lu.getLienReference());
+				ps.setBoolean(++index, lu.isLienStatus());
+				ps.setString(++index, lu.getInterfaceStatus());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+
+		return lu.getId();
 	}
 
 	@Override
@@ -86,7 +72,6 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
-			ps.setString(++index, lu.getReference());
 			ps.setString(++index, lu.getAccountNumber());
 			ps.setString(++index, lu.getMarking());
 			ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
@@ -150,7 +135,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setDemarking(rs.getString(("DeMarking")));
 				lu.setDemarkingDate(rs.getDate("DemarkingDate"));
 				lu.setLienReference(rs.getString("LienReference"));
-				lu.setLienStatus(rs.getBoolean("LienReference"));
+				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
 				return lu;
 
@@ -175,7 +160,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				LienHeader lu = new LienHeader();
 
-				lu.setID(rs.getLong("ID"));
+				lu.setId(rs.getLong("ID"));
 				lu.setLienID(rs.getLong("LienID"));
 				lu.setReference(rs.getString("Reference"));
 				lu.setAccountNumber(rs.getString("AccNumber"));

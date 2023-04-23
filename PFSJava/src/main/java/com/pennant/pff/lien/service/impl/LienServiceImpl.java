@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -46,7 +45,7 @@ public class LienServiceImpl implements LienService {
 			lh.setDemarkingDate(null);
 			headerID = lienHeaderDAO.save(lh);
 		} else {
-			headerID = lh.getID();
+			headerID = lh.getId();
 		}
 
 		LienDetails lu = getLienDetails(lh, fm);
@@ -121,7 +120,7 @@ public class LienServiceImpl implements LienService {
 		LienDetails ld = new LienDetails();
 
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-		long userId = SessionUserDetails.getLogiedInUser().getUserId();
+		long userId = 1000;
 
 		ld.setLienID(lh.getLienID());
 		ld.setLienReference(lh.getLienReference());

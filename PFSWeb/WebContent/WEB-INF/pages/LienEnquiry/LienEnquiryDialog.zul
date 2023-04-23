@@ -51,7 +51,7 @@
 									<groupbox closable="false">
 										<caption label="${c:l('label_LienDialog_LienDetails')}" />
 										<listbox id="lienDetails" fixedLayout="true" sizedByContent="true" span="true"
-											emptyMessage="${c:l('listbox.emptyMessage')}" width="99%" height="100%" multiple="false">
+											emptyMessage="${c:l('listbox.emptyMessage')}" multiple="false">
 											<listhead sizable="false" style="padding:0px;position:relative;">
 												<listheader label="${c:l('listheader_LienDialog_LienId.label')}"
 													align="right" sort="false" hflex="min" />
