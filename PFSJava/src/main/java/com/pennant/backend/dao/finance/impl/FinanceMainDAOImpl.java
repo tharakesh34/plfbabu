@@ -428,11 +428,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue, FinRepayMethod");
 		sql.append(", RepayFrq, ClosingStatus, DueBucket, CalRoundingMode, RoundingTarget, RecordType");
 		sql.append(", Version, ProfitDaysBasis, FinStatus, FinStsReason, PastduePftCalMthd, PastduePftMargin");
-		sql.append(", InitiateUser, MaturityDate");
-		sql.append(", MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
-		sql.append(", SvAmount, CbAmount, EmployeeName, SchdVersion");
-		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
-		sql.append(" From Financemain");
+		sql.append(", InitiateUser, MaturityDate, MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle");
+		sql.append(", PromotionSeqId, SvAmount, CbAmount, EmployeeName, SchdVersion, OverdraftTxnChrgReq");
+		sql.append(", OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn, FinType, LastRepayDate");
+		sql.append(", LastRepayCpzDate From Financemain");
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
@@ -497,6 +496,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setOverdraftCalcChrg(rs.getString("OverdraftCalcChrg"));
 				fm.setOverdraftChrgAmtOrPerc(rs.getBigDecimal("OverdraftChrgAmtOrPerc"));
 				fm.setOverdraftChrCalOn(rs.getString("OverdraftChrCalOn"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setLastRepayDate(rs.getDate("LastRepayDate"));
+				fm.setLastRepayCpzDate(rs.getDate("LastRepayCpzDate"));
 
 				return fm;
 
@@ -7107,4 +7109,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 1, repayAmount, customerName);
 	}
+	
+	@Override
+	public Date getMaturityDatebyFinID(long finID) {
+		String sql = "Select MaturityDate From FinanceMain Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }

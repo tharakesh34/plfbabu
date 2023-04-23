@@ -875,12 +875,9 @@
 			<menuItem id="menu_Item_FinFeeRefunds"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundsList.zul"
 				rightName="menuItem_FinanceManagement_FinFeeRefunds" />
-			<menuItem id="menu_Item_ReceiptUpload"
-				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N"
-				rightName="menu_Item_ReceiptUpload" />
-			<menuItem id="menu_Item_ReceiptUploadApproval"
-				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y"
-				rightName="menu_Item_ReceiptUploadApprover" />
+			<!-- <menuItem id="menu_Item_ReceiptUpload" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N" 
+				rightName="menu_Item_ReceiptUpload" /> <menuItem id="menu_Item_ReceiptUploadApproval" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y" 
+				rightName="menu_Item_ReceiptUploadApprover" /> -->
 			<menuItem id="menu_Item_ExcessAmountTransfer"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/ExcessTransferList.zul"
 				rightName="menuItem_ExcessTransferMaster_ExcessTransfer" />
@@ -906,6 +903,22 @@
 				<menuItem id="menu_Item_CrossLoanKnockOff_Approver"
 					zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffUploadList.zul?stage=A"
 					rightName="menu_Item_CrossLoanKnockOff_Approver" />
+			</menu>
+			<menu id="menu_Create_Receipt_Upload">
+				<menuItem id="menu_Item_Create_Receipt_Upload_Maker"
+					zulNavigation="/WEB-INF/pages/Receipts/CreateReceiptUploadList.zul?stage=M"
+					rightName="menu_Item_Create_Receipt_Upload_Maker" />
+				<menuItem id="menu_Item_Create_Receipt_Upload_Approver"
+					zulNavigation="/WEB-INF/pages/Receipts/CreateReceiptUploadList.zul?stage=A"
+					rightName="menu_Item_Create_Receipt_Upload_Approver" />
+			</menu>
+			<menu id="menu_Category_ReceiptStatusUpload">
+				<menuItem id="menu_Item_ReceiptStatusUpload_Maker"
+					zulNavigation="/WEB-INF/pages/Receipts/ReceiptStatusUpload.zul?stage=M"
+					rightName="menu_Item_Receipt_Status_Upload_Maker" />
+				<menuItem id="menu_Item_ReceiptStatusUpload_Approver"
+					zulNavigation="/WEB-INF/pages/Receipts/ReceiptStatusUpload.zul?stage=A"
+					rightName="menu_Item_Receipt_Status_Upload_Approver" />
 			</menu>
 			<menuItem id="menu_Item_CrossLoanKnockoffCancelMaker"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_CANCEL_MAKER"
@@ -1316,6 +1329,13 @@
 				zulNavigation="/WEB-INF/pages/MiscellaneousPostingUpload/MiscellaneousPostingUploadList.zul?stage=A"
 				rightName="menu_Item_MiscellaneousPostingUpload_Approver" />
 		</menu>
+		<menu id="menu_Category_Lien">
+			<menuItem id="menu_Item_LienUpload_Maker"
+				zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=M" rightName="menu_Item_LienUpload_Maker" />
+			<menuItem id="menu_Item_LienUpload_Approver"
+				zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=A" rightName="menu_Item_LienUpload_Approver" />
+		</menu>
+
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
@@ -1571,6 +1591,9 @@
 		<menuItem id="menu_Item_TdsReceivablesTxnEnquiry"
 			zulNavigation="/WEB-INF/pages/Finance/TdsReceivablesTxnCancel/TdsReceivablesTxnCancelList.zul?enqiryModule=Y"
 			rightName="menu_Item_TdsReceivablesTxnEnquiry" />
+		<menu id="menu_Category_LienEnquiry">
+			<menuItem id="menu_Item_LienEnquiry" zulNavigation="/WEB-INF/pages/LienEnquiry/SelectLienEnquiry.zul" rightName="menu_Item_Lien_Enquiry"/>
+		</menu>
 	</menu>
 
 	<menu id="menu_Category_CIBIL">
@@ -2612,16 +2635,5 @@
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 		rightName="menu_Item_JobsMonitoring" />
-		
-		<menu id="menu_Category_Lien">
-		<menuItem id="menu_Item_LienUpload_Maker"
-			zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=M" />
-		<menuItem id="menu_Item_LienUpload_Approver"
-			zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=A"/> 
-	</menu>
-
-	<menu id="menu_Category_LienEnquiry">
-		<menuItem id="menu_Item_LienEnquiry" zulNavigation="/WEB-INF/pages/LienEnquiry/SelectLienEnquiry.zul"/>
-	</menu>
 
 </ns2:XMLRootMenu>

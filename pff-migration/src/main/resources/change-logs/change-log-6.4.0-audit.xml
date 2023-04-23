@@ -237,5 +237,15 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="ST#1554.1" author="sainaveen.y">
+		<dropColumn tableName="ADTFINRECEIPTHEADER" columnName="CLOSURETYPEID" />
+	</changeSet>
+	
+	<changeSet id="ST#1554.2" author="sainaveen.y">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="CLOSURETYPE" type="Varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

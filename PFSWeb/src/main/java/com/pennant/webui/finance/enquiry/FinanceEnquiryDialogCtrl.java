@@ -83,6 +83,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -131,6 +132,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
@@ -569,6 +571,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox odMinAmount;
 	protected Label label_FinanceTypeDialog_ODMinAmount;
 	protected Row row_odMinAmount;
+
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1154,12 +1158,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayRvwDate_two.setValue(aFinanceMain.getNextRepayRvwDate());
 			this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 			this.finReference.setValue(aFinanceMain.getFinReference());
+			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
+
 			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
 				this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else {
 				if (aFinanceMain.isFinIsActive()) {
 					this.finStatus.setValue(Labels.getLabel("label_Active"));
+				} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+					this.finStatus.setValue(Labels.getLabel("label_Closed"));
 				} else {
 					this.finStatus.setValue(Labels.getLabel("label_Matured"));
 				}
@@ -1169,13 +1177,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finStatus.setValue(Labels.getLabel("label_Rejected"));
 			}
 
-			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
 			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-				this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));
+				String closureType = finReceiptHeaderDAO.getClosureTypeValue(aFinanceMain.getFinID(),
+						FinServiceEvent.EARLYSETTLE);
+				if (closureType != null) {
+					this.finStatus_Reason.setValue(closureType);
+				}
 			}
 			if (aFinanceMain.isWriteoffLoan()) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
@@ -2604,5 +2615,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setSettlementService(SettlementService settlementService) {
 		this.settlementService = settlementService;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 }

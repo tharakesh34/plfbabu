@@ -13302,6 +13302,24 @@
 	<bean id="lienHeaderDAO" class="com.pennant.backend.dao.lienheader.impl.LienHeaderDAOImpl" parent="sequenceDao" />
 
 	<bean id="lienDetailsDAO" class="com.pennant.backend.dao.liendetails.impl.LienDetailsDAOImpl" parent="sequenceDao" />
-	
-	<bean id = "lienService" class="com.pennant.pff.lien.service.impl.LienServiceImpl"/>
+
+	<bean id="lienService" class="com.pennant.pff.lien.service.impl.LienServiceImpl" />
+
+	<bean id="createReceiptUploadService" class="com.pennant.pff.receipt.service.impl.CreateReceiptUploadServiceImpl"
+		parent="aUploadService" />
+
+	<bean id="createReceiptUploadDataValidator"
+		class="com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator" />
+
+	<bean id="createReceiptUploadDAO" class="com.pennant.pff.receipt.dao.impl.CreateReceiptUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="receiptStatusUploadService" class="com.pennant.pff.receipt.service.impl.ReceiptStatusUploadServiceImpl"
+		parent="aUploadService" />
+
+	<bean id="receiptStatusUploadDAO" class="com.pennant.pff.receipt.dao.impl.ReceiptStatusUploadDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="receiptStatusUploadValidateRecord"
+		class="com.pennant.pff.receipt.validate.ReceiptStatusUploadValidateRecord" />
 </beans>

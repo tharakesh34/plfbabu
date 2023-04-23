@@ -46,6 +46,14 @@
 									value="${c:l('label_SelectLoanClosureEnquiryList_FinReference.value')}" />
 								<extendedcombobox id="finReference" />
 							</row>
+							<row id="closureTypeRow" spans="1,3">
+								<label id="label_SelectLoanClosureEnquiryList_closureType"
+									value="${c:l('label_SelectLoanClosureEnquiryList_closureType.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="closureType" width="190px" />
+								</hbox>
+							</row>
 							<row id="proceedButtonRow" spans="2,1,1">
 								<space />
 								<button id="btnProceed" style="float:right;"

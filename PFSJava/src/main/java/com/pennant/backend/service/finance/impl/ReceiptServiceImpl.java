@@ -131,7 +131,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
-import com.pennant.backend.model.applicationmaster.ClosureType;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -4049,13 +4048,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 							setError(schdData, "92021", "From Date cannot be greater than app date " + valueParm[0]);
 						}
 					}
-					ClosureType closureType = finReceiptHeaderDAO.getClosureType(fsi.getClosureType());
 					FinReceiptHeader rch = rd.getReceiptHeader();
-					if (closureType != null) {
+					if (fsi.getClosureType() != null) {
 						rd.setForeClosure(true);
 						rch.setClosureWithFullWaiver(true);
-						rch.setClosureTypeId(closureType.getId());
-						rch.setClosureTypeDesc(closureType.getDescription());
+						rch.setClosureType(fsi.getClosureType());
 					} else {
 						setError(schdData, "92021", "Invalid Closure Type Code " + fsi.getClosureType());
 					}
@@ -6268,6 +6265,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				rcd.setPartnerBankAc(partnerBank.getAccountNo());
 				rcd.setPartnerBankAcType(partnerBank.getAcType());
 			}
+		}
+
+		if (rch.getPartnerBankCode() == null || StringUtils.isBlank(rch.getPartnerBankCode())) {
+			rch.setPartnerBankCode("HDFC");
+			rch.setPartnerBankId(Long.parseLong("621"));
 		}
 		return rcd;
 	}

@@ -51,6 +51,7 @@ public class ReceiptDataValidator {
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 
 	public void validate(ReceiptUploadDetail rud) {
+
 		String reference = rud.getReference();
 
 		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
@@ -839,4 +840,5 @@ public class ReceiptDataValidator {
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
+
 }

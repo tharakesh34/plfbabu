@@ -23,7 +23,7 @@
 	<!-- ====================================================== -->
 
 	<bean id="indexCtrl" class="com.pennant.webui.index.IndexCtrl" parent="basisCtrl" scope="prototype">
-				<property name="userService" ref="userService" />
+		<property name="userService" ref="userService" />
 	</bean>
 
 	<bean id="welcomeCtrl" class="com.pennant.webui.index.WelcomeCtrl" scope="prototype">
@@ -2558,7 +2558,7 @@
 
 	<bean id="overdueChargeRecoveryListCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryListCtrl" parent="basisListCtrl"
-		scope="prototype"/>
+		scope="prototype" />
 
 	<bean id="overdueChargeRecoveryDialogCtrl"
 		class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryDialogCtrl" parent="basisCtrl"
@@ -6200,8 +6200,8 @@
 		class="com.pennant.webui.finance.financemain.SelectFinanceCancellationDialogCtrl" parent="basisCtrl" scope="prototype" />
 
 	<bean id="bulkFeeWaiverUploadListCtrl" class="com.pennant.pff.feewaiver.upload.list.BulkFeeWaiverUploadListCtrl"
-	parent="uploadList" />
-	
+		parent="uploadList" />
+
 	<bean id="lienUploadListCtrl" class="com.pennant.pff.lien.upload.list.LienUploadListCtrl" parent="uploadList" />
 
 	<bean id="selectLienEnquiryListCtrl" class="com.pennant.webui.lien.lienEnquiry.SelectLienEnquiryListCtrl"
@@ -6210,4 +6210,10 @@
 	<bean id="lienEnquiryDialogCtrl" class="com.pennant.webui.lien.lienEnquiry.LienEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+
+	<bean id="createReceiptUploadList" class="com.pennant.pff.receipt.web.CreateReceiptUploadListCtrl"
+		parent="uploadList" />
+
+	<bean id="receiptStatusUploadList" class="com.pennant.pff.receipt.web.ReceiptStatusUploadListCtrl"
+		parent="uploadList" />
 </beans>

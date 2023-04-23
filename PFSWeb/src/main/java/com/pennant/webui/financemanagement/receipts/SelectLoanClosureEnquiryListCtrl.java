@@ -1,12 +1,14 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -15,19 +17,23 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.ForeClosure;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 
@@ -48,6 +54,10 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	private transient String moduleType;
 	private boolean isMatured = false;
 	protected Label title;
+	protected Combobox closureType;
+	private String closureTypeValue;
+	private transient FinanceMainDAO financeMainDAO;
+	Date appDate = SysParamUtil.getAppDate();
 
 	/**
 	 * default constructor.<br>
@@ -82,6 +92,10 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 			finRefValue = (String) arguments.get("finReference");
 		}
 
+		if (arguments.containsKey("closureType")) {
+			closureTypeValue = (String) arguments.get("closureType");
+		}
+
 		try {
 			doCheckRights();
 			doSetFieldProperties();
@@ -110,6 +124,10 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.moduleType = getArgument("module");
 		if (StringUtils.equals(moduleType, "Matured")) {
 			isMatured = true;
+		}
+		if (StringUtils.isNotEmpty(closureTypeValue)) {
+			this.closureType.setValue(closureTypeValue);
+			this.closureType.setReadonly(true);
 		}
 
 		if (StringUtils.isNotEmpty(finRefValue)) {
@@ -182,6 +200,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		aruments.put("isWIF", false);
 		aruments.put("isModelWindow", isModelWindow);
 		aruments.put("isMatured", isMatured);
+		aruments.put("closureType", this.closureType.getValue());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -202,6 +221,10 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 		this.finReference.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_SelectLoanClosureEnquiryList_FinReference.value"), null, true, true));
+
+		this.closureType.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_SelectLoanClosureEnquiryList_ClosureType.value"), null, true, true));
+
 		logger.debug("Leaving");
 	}
 
@@ -211,6 +234,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 	private void doRemoveValidation() {
 		logger.debug("Entering");
 		this.finReference.setConstraint("");
+		this.closureType.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -230,6 +254,12 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 			wve.add(we);
 		}
 
+		try {
+			this.closureType.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
@@ -243,6 +273,29 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving");
 	}
 
+	public void onFulfill$finReference(Event event) {
+		int channelIdx = this.closureType.getSelectedIndex();
+		Date maturitydate = financeMainDAO.getMaturityDatebyFinID(ComponentUtil.getFinID(this.finReference));
+
+		if (maturitydate != null) {
+			this.closureType.setSelectedIndex(1);
+
+			String excludeFields = ",CLOSURE,SETTLEMENT,";
+			if (maturitydate.compareTo(appDate) <= 0) {
+				excludeFields = ",FORE-CLOSURE,CANCEL,SETTLEMENT,";
+			}
+
+			fillComboBox(this.closureType, "", ClosureType.getTypes(), excludeFields);
+
+			if (channelIdx > 0) {
+				this.closureType.setSelectedIndex(channelIdx);
+			}
+		} else {
+			this.closureType.setDisabled(false);
+			fillComboBox(this.closureType, "", ClosureType.getTypes());
+		}
+	}
+
 	public LoanClosureEnquiryDialogCtrl getLoanClosureEnquiryDialogCtrl() {
 		return loanClosureEnquiryDialogCtrl;
 	}
@@ -251,4 +304,8 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.loanClosureEnquiryDialogCtrl = loanClosureEnquiryDialogCtrl;
 	}
 
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
 }
