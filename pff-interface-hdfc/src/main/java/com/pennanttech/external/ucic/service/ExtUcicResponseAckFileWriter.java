@@ -19,7 +19,6 @@ import com.pennanttech.external.fileutil.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicResponseAckFileWriter extends TextFileUtil implements InterfaceConstants {
@@ -54,33 +53,22 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP
-			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			ExternalConfig dbServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
-			if (serverConfig == null) {
+			if (dbServerConfig == null) {
 				logger.debug("EXT_UCIC: DB Server config not found. So returning.");
 				return;
 			}
 
-			String remoteFilePath = serverConfig.getFileSftpLocation();
+			String remoteFilePath = dbServerConfig.getFileSftpLocation();
 
 			if (remoteFilePath == null || "".equals(remoteFilePath)) {
 				logger.debug("EXT_UCIC: RemoteFilePath in config not found. So returning.");
 				return;
 			}
 
-			FtpClient ftpClient = null;
-			String host = serverConfig.getHostName();
-			int port = serverConfig.getPort();
-			String accessKey = serverConfig.getAccessKey();
-			String secretKey = serverConfig.getSecretKey();
 			try {
-				ftpClient = new SftpClient(host, port, accessKey, secretKey);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.debug("Unable to connect to SFTP.");
-			}
-
-			try {
+				FtpClient ftpClient = getftpClientConnection(dbServerConfig);
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.");
@@ -88,26 +76,34 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 			}
 
 			if ("Y".equals(ucicAckConfig.getIsSftp())) {
-				// Now upload file to SFTP of client location as per configuration
-				File mainFile = new File(baseFilePath + File.separator + fileName);
-				ftpClient = getftpClientConnection(ucicAckConfig);
-				ftpClient.upload(mainFile, ucicAckConfig.getFileSftpLocation());
-
-				// Now upload complete file to SFTP of client location as per configuration
-				String completeFilePathWithName = writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
-				File completeFileToUpload = new File(completeFilePathWithName);
-				ftpClient = getftpClientConnection(ucicAckConfig);
-				ftpClient.upload(completeFileToUpload, ucicAckConfig.getFileSftpLocation());
-
-				fileBackup(ucicAckConfig, mainFile, completeFileToUpload);
+				uploadFilesToClientLocation(appDate, ucicAckConfig, ucicAckConfConfig, baseFilePath, fileName);
 
 			} else {
 				// Request file is already downloaded to location, so we are generating complete file for the request
 				// file
 				writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
 			}
+		} else {
+			logger.debug("Error In Executing SP_UCIC_WRITE_ACK_FILE Procedure");
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void uploadFilesToClientLocation(Date appDate, ExternalConfig ucicAckConfig,
+			ExternalConfig ucicAckConfConfig, String baseFilePath, String fileName) throws Exception, IOException {
+		FtpClient ftpClient;
+		// Now upload file to SFTP of client location as per configuration
+		File mainFile = new File(baseFilePath + File.separator + fileName);
+		ftpClient = getftpClientConnection(ucicAckConfig);
+		ftpClient.upload(mainFile, ucicAckConfig.getFileSftpLocation());
+
+		// Now upload complete file to SFTP of client location as per configuration
+		String completeFilePathWithName = writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
+		File completeFileToUpload = new File(completeFilePathWithName);
+		ftpClient = getftpClientConnection(ucicAckConfig);
+		ftpClient.upload(completeFileToUpload, ucicAckConfig.getFileSftpLocation());
+
+		fileBackup(ucicAckConfig, mainFile, completeFileToUpload);
 	}
 
 	private void fileBackup(ExternalConfig ucicAckConfig, File mainFile, File completeFileToUpload) throws IOException {

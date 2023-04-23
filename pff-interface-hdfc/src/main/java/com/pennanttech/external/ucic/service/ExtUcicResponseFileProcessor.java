@@ -26,7 +26,6 @@ import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicFile;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicResponseFileProcessor implements InterfaceConstants {
@@ -107,17 +106,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 				extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), INPROCESS, "", "");
 
 				// Connect to SFTP..
-				FtpClient ftpClient = null;
-				String host = ucicDBServerConfig.getHostName();
-				int port = ucicDBServerConfig.getPort();
-				String accessKey = ucicDBServerConfig.getAccessKey();
-				String secretKey = ucicDBServerConfig.getSecretKey();
-				try {
-					ftpClient = new SftpClient(host, port, accessKey, secretKey);
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.debug("Unable to connect to SFTP.");
-				}
+				FtpClient ftpClient = getftpClientConnection(ucicDBServerConfig);
 
 				// Upload the response file to DB Server to read by ORACLE Database
 				ftpClient.upload(file, remoteFilePath);

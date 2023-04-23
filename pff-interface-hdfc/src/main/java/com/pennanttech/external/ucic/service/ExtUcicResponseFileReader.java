@@ -23,11 +23,9 @@ import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
-import com.pennanttech.external.ucic.model.ExtUcicData;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtUcicResponseFileReader implements InterfaceConstants {
@@ -71,23 +69,14 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 
 		// Check if file is in SFTP location, then get the file.
 		if ("Y".equals(StringUtils.stripToEmpty(ucicRespConfig.getIsSftp()))) {
-			FtpClient ftpClient = null;
-			String host = ucicRespConfig.getHostName();
-			int port = ucicRespConfig.getPort();
-			String accessKey = ucicRespConfig.getAccessKey();
-			String secretKey = ucicRespConfig.getSecretKey();
-			try {
-				ftpClient = new SftpClient(host, port, accessKey, secretKey);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.debug("Unable to connect to SFTP.");
-			}
-			String remoteFilePath = ucicRespConfig.getFileSftpLocation();
 
+			String remoteFilePath = ucicRespConfig.getFileSftpLocation();
 			// Get list of files in SFTP.
-			List<String> fileNames = getFileNameList(remoteFilePath, host, port, accessKey, secretKey);
+			List<String> fileNames = getFileNameList(remoteFilePath, ucicRespConfig.getHostName(),
+					ucicRespConfig.getPort(), ucicRespConfig.getAccessKey(), ucicRespConfig.getSecretKey());
 
 			for (String fileName : fileNames) {
+				FtpClient ftpClient = getftpClientConnection(ucicRespConfig);
 				ftpClient.download(remoteFilePath, localFolderPath, fileName);
 			}
 		}
@@ -189,7 +178,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 
 			while (sc.hasNextLine()) {
 
-				ExtUcicData data = null;
+				/* ExtUcicData data = null; */
 				String lineData = sc.nextLine();
 
 				if (cnt == UCIC_RESP_NEGLECT_LINES) {// Consider record after 2 lines.

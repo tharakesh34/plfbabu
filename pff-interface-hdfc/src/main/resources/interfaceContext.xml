@@ -104,6 +104,7 @@
 
 	<bean id="extUcicResponseProcessor" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
+		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
 
 	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">

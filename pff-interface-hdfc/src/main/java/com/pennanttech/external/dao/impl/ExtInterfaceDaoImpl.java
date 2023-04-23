@@ -140,7 +140,7 @@ public class ExtInterfaceDaoImpl implements ExtInterfaceDao {
 			extConfig.setFileSftpLocation(rs.getString("SFTP_LOCATION"));
 			extConfig.setIsSftp(rs.getString("IS_SFTP"));
 			extConfig.setFileLocalBackupLocation(rs.getString("LOCAL_BACKUP_LOCATION"));
-			extConfig.setSftpBucketLocation(rs.getString("SFTP_BUCKET"));
+			// extConfig.setSftpBucketLocation(rs.getString("SFTP_BUCKET"));
 
 			list.add(extConfig);
 		});

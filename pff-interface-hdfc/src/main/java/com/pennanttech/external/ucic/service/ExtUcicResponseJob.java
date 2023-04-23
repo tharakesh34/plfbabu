@@ -28,7 +28,7 @@ public class ExtUcicResponseJob extends AbstractJob {
 					.getBean("extUcicResponseFolderReader", ExtUcicResponseFileReader.class);
 
 			ExtUcicResponseFileProcessor extUcicResponseFileExtractor = applicationContext
-					.getBean("extUcicResponseFileExtractor", ExtUcicResponseFileProcessor.class);
+					.getBean("extUcicResponseProcessor", ExtUcicResponseFileProcessor.class);
 
 			ExtUcicResponseAckFileWriter responseAckFileWriter = applicationContext
 					.getBean("extUcicResponseAckFileWriter", ExtUcicResponseAckFileWriter.class);
