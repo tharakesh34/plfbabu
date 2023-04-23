@@ -357,4 +357,170 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="019" author="goutham.ch">
+	   <createTable tableName="UCIC_CUSTOMERS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+	      <column name="CUSTID" type="int" >
+		  <constraints primaryKey="true" nullable="false" />
+		  </column>
+	      <column name="FINID" type="int" />
+	      <column name="CUSTCIF" type="VARCHAR(20)" />
+	      <column name="FINREFERENCE" type="VARCHAR(20)" >
+		    <constraints primaryKey="true" nullable="false" />
+		  </column>	  
+	      <column name="CREATION_DATE" type="datetime" />
+	      <column name="CUSTCOREBANK" type="VARCHAR(50)" />
+	      <column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
+	      <column name="CUSTCTGCODE" type="VARCHAR(20)" />
+	      <column name="CUSTOMER_TYPE" type="VARCHAR(20)" />
+	      <column name="LASTMNTON" type="datetime" />
+	      <column name="SUBCATEGORY" type="VARCHAR(50)" />
+	      <column name="CUSTSHRTNAME" type="VARCHAR(200)" />
+	      <column name="CUSTDOB" type="datetime" />
+	      <column name="CUSTISBLOCKED" type="VARCHAR(2)" />
+	      <column name="CLOSEDDATE" type="datetime" />
+	      <column name="CLOSINGSTATUS" type="VARCHAR(100)" />
+	      <column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
+	      <column name="ACCNUMBER" type="VARCHAR(50)" />
+	      <column name="COMPANYNAME" type="VARCHAR(100)" />
+	      <column name="EMAIL1" type="VARCHAR(100)" />
+	      <column name="EMAIL2" type="VARCHAR(100)" />
+	      <column name="EMAIL3" type="VARCHAR(100)" />
+	      <column name="MOBILE1" type="VARCHAR(20 CHAR)" />
+	      <column name="MOBILE2" type="VARCHAR(20 CHAR)" />
+	      <column name="MOBILE3" type="VARCHAR(20 CHAR)" />
+	      <column name="LANDLINE1" type="VARCHAR(50 CHAR)" />
+	      <column name="LANDLINE2" type="VARCHAR(50 CHAR)" />
+	      <column name="LANDLINE3" type="VARCHAR(50 CHAR)" />
+	      <column name="PAN" type="VARCHAR(100)" />
+	      <column name="AADHAAR" type="VARCHAR(100)" />
+	      <column name="VOTER_ID" type="VARCHAR(100)" />
+	      <column name="DRIVING_LICENCE" type="VARCHAR(100)" />
+	      <column name="PASSPORT" type="VARCHAR(100)" />
+	      <column name="ADDR1TYPE" type="VARCHAR(10)" />
+	      <column name="ADDR1LINE1" type="VARCHAR(150)" />
+	      <column name="ADDR1LINE2" type="VARCHAR(150)" />
+	      <column name="ADDR1LINE3" type="VARCHAR(150)" />
+	      <column name="ADDR1LINE4" type="VARCHAR(150)" />
+	      <column name="ADDR1CITY" type="VARCHAR(150)" />
+	      <column name="ADDR1STATE" type="VARCHAR(150)" />
+	      <column name="ADDR1PIN" type="VARCHAR(10)" />
+	      <column name="ADDR2TYPE" type="VARCHAR(10)" />
+	      <column name="ADDR2LINE1" type="VARCHAR(150)" />
+	      <column name="ADDR2LINE2" type="VARCHAR(150)" />
+	      <column name="ADDR2LINE3" type="VARCHAR(150)" />
+	      <column name="ADDR2LINE4" type="VARCHAR(150)" />
+	      <column name="ADDR2CITY" type="VARCHAR(150)" />
+	      <column name="ADDR2STATE" type="VARCHAR(150)" />
+	      <column name="ADDR2PIN" type="VARCHAR(10)" />
+	      <column name="ADDR3TYPE" type="VARCHAR(10)" />
+	      <column name="ADDR3LINE1" type="VARCHAR(150)" />
+	      <column name="ADDR3LINE2" type="VARCHAR(150)" />
+	      <column name="ADDR3LINE3" type="VARCHAR(150)" />
+	      <column name="ADDR3LINE4" type="VARCHAR(150)" />
+	      <column name="ADDR3CITY" type="VARCHAR(150)" />
+	      <column name="ADDR3STATE" type="VARCHAR(150)" />
+	      <column name="ADDR3PIN" type="VARCHAR(10)" />
+	      <column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
+	      <column name="FILE_STATUS" type="NUMBER(2)" />
+	      <column name="PROCESS_FLAG" type="NUMBER(2)" />
+	      <column name="RESP_FLAG" type="NUMBER(2)" />
+	      <column name="ERROR_CODE" type="VARCHAR(100)" />
+	      <column name="ERROR_DESC" type="VARCHAR(4000)" />
+	   </createTable>
+	</changeSet>
+
+	<changeSet id="020" author="goutham.ch">
+	   <createTable tableName="UCIC_CUSTOMERS_HISTORY">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+	      <column name="CUSTID" type="int" />
+	      <column name="CUSTCIF" type="VARCHAR(20)" />
+	      <column name="FINREFERENCE" type="VARCHAR(20)" />
+	      <column name="CREATION_DATE" type="datetime" />
+	      <column name="CUSTCOREBANK" type="VARCHAR(50)" />
+	      <column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
+	      <column name="CUSTCTGCODE" type="VARCHAR(20)" />
+	      <column name="CUSTOMER_TYPE" type="VARCHAR(20)" />
+	      <column name="SUBCATEGORY" type="VARCHAR(50)" />
+	      <column name="CUSTSHRTNAME" type="VARCHAR(200)" />
+	      <column name="CUSTDOB" type="datetime" />
+	      <column name="CUSTISBLOCKED" type="VARCHAR(2)" />
+	      <column name="CLOSEDDATE" type="datetime" />
+	      <column name="CLOSINGSTATUS" type="VARCHAR(100)" />
+	      <column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
+	      <column name="ACCNUMBER" type="VARCHAR(50)" />
+	      <column name="COMPANYNAME" type="VARCHAR(100)" />
+	      <column name="EMAIL1" type="VARCHAR(100)" />
+	      <column name="EMAIL2" type="VARCHAR(100)" />
+	      <column name="EMAIL3" type="VARCHAR(100)" />
+	      <column name="MOBILE1" type="VARCHAR(20 CHAR)" />
+	      <column name="MOBILE2" type="VARCHAR(20 CHAR)" />
+	      <column name="MOBILE3" type="VARCHAR(20 CHAR)" />
+	      <column name="LANDLINE1" type="VARCHAR(50 CHAR)" />
+	      <column name="LANDLINE2" type="VARCHAR(50 CHAR)" />
+	      <column name="LANDLINE3" type="VARCHAR(50 CHAR)" />
+	      <column name="PAN" type="VARCHAR(100)" />
+	      <column name="AADHAAR" type="VARCHAR(100)" />
+	      <column name="VOTER_ID" type="VARCHAR(100)" />
+	      <column name="DRIVING_LICENCE" type="VARCHAR(100)" />
+	      <column name="PASSPORT" type="VARCHAR(100)" />
+	      <column name="ADDR1TYPE" type="VARCHAR(10)" />
+	      <column name="ADDR1LINE1" type="VARCHAR(150)" />
+	      <column name="ADDR1LINE2" type="VARCHAR(150)" />
+	      <column name="ADDR1LINE3" type="VARCHAR(150)" />
+	      <column name="ADDR1LINE4" type="VARCHAR(150)" />
+	      <column name="ADDR1CITY" type="VARCHAR(150)" />
+	      <column name="ADDR1STATE" type="VARCHAR(150)" />
+	      <column name="ADDR1PIN" type="VARCHAR(10)" />
+	      <column name="ADDR2TYPE" type="VARCHAR(10)" />
+	      <column name="ADDR2LINE1" type="VARCHAR(150)" />
+	      <column name="ADDR2LINE2" type="VARCHAR(150)" />
+	      <column name="ADDR2LINE3" type="VARCHAR(150)" />
+	      <column name="ADDR2LINE4" type="VARCHAR(150)" />
+	      <column name="ADDR2CITY" type="VARCHAR(150)" />
+	      <column name="ADDR2STATE" type="VARCHAR(150)" />
+	      <column name="ADDR2PIN" type="VARCHAR(10)" />
+	      <column name="ADDR3TYPE" type="VARCHAR(10)" />
+	      <column name="ADDR3LINE1" type="VARCHAR(150)" />
+	      <column name="ADDR3LINE2" type="VARCHAR(150)" />
+	      <column name="ADDR3LINE3" type="VARCHAR(150)" />
+	      <column name="ADDR3LINE4" type="VARCHAR(150)" />
+	      <column name="ADDR3CITY" type="VARCHAR(150)" />
+	      <column name="ADDR3STATE" type="VARCHAR(150)" />
+	      <column name="ADDR3PIN" type="VARCHAR(10)" />
+	      <column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
+		  <column name="LASTMNTON" type="datetime" />
+		  <column name="LASTMNTON2" type="datetime" />
+		  <column name="PROCESS_DATE" type="datetime" />
+	   </createTable>
+	</changeSet>
+
+	<changeSet id="021" author="goutham.ch">
+		<createTable tableName="UCIC_RESP_FILES">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FILE_NAME" type="VARCHAR(2000)" />
+			<column name="STATUS" type="int" />
+			<column name="FILE_LOCATION" type="VARCHAR(2000)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="EXTRACTION" type="int" />
+			<column name="ERROR_CODE" type="VARCHAR(20)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="022" author="goutham.ch">
+		<createTable tableName="UCIC_CUSTOMERS_STATUS">
+			<column name="CUSTID" type="int" />
+			<column name="UCICID" type="VARCHAR(200)" />
+			<column name="STATUS" type="VARCHAR(20)" />
+			<column name="ERROR_DESC" type="VARCHAR(2000)" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>

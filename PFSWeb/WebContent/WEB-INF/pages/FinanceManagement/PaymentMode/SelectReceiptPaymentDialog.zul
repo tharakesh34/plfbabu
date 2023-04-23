@@ -89,7 +89,7 @@
 									</hbox>
 								</row>
 								
-								<row id="row_closureType" visible="false">
+								<row id="rowClosureType" visible="false">
 									<label id="label_ReceiptPayment_ClosureType" value="${c:l('label_ReceiptPayment_ClosureType.value')}"
 										style="padding-left:12px;" />
 									<hbox>
