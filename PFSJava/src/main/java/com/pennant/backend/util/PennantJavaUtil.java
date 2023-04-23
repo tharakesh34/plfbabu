@@ -3980,12 +3980,12 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("CreateReceiptUploadHeader",
 				new ModuleMapping("CreateReceiptUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_RECEIPTUPLOAD,
 						new String[] { "Id", "FileName" }, null, 600));
 
 		ModuleUtil.register("ReceiptStatusUploadHeader",
 				new ModuleMapping("ReceiptStatusUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_RECEIPTUPLOAD,
 						new String[] { "Id", "FileName" }, null, 600));
 
 		registerCustomModules();
