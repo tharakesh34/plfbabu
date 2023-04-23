@@ -1699,8 +1699,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
 			/*
-			 * details = processingDocumentDetailsList(details, TableType.TEMP_TAB.getSuffix(),
-			 * fd.getFinScheduleData().getFinanceMain(), rch.getReceiptPurpose(), serviceUID);
+			 * details = processingDocumentDetailsList(details,
+			 * TableType.TEMP_TAB.getSuffix(), fd.getFinScheduleData().getFinanceMain(),
+			 * rch.getReceiptPurpose(), serviceUID);
 			 */
 			auditDetails.addAll(details);
 		}
@@ -1822,7 +1823,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				return auditHeader;
 			}
 		}
-		// schedule pay effect on cheque/dd realization(if N schedule will effect while approve/if Y schedule will
+		// schedule pay effect on cheque/dd realization(if N schedule will effect while
+		// approve/if Y schedule will
 		// effect while realization)
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION)
 				&& SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)) {
@@ -2456,15 +2458,19 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	}
 
 	/**
-	 * doReversal method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using finReceiptHeaderDAO.delete with
-	 * parameters financeMain,"" b) NEW Add new record in to main table by using finReceiptHeaderDAO.save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by using finReceiptHeaderDAO.update with
-	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using finReceiptHeaderDAO.delete with
-	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doReversal method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or warning
+	 * message then return the auditHeader. 2) based on the Record type do following
+	 * actions a) DELETE Delete the record from the main table by using
+	 * finReceiptHeaderDAO.delete with parameters financeMain,"" b) NEW Add new
+	 * record in to main table by using finReceiptHeaderDAO.save with parameters
+	 * financeMain,"" c) EDIT Update record in the main table by using
+	 * finReceiptHeaderDAO.update with parameters financeMain,"" 3) Delete the
+	 * record from the workFlow table by using finReceiptHeaderDAO.delete with
+	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5)
+	 * Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -2571,10 +2577,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			// Save Document Details
 			/*
-			 * if (CollectionUtils.isNotEmpty(fd.getDocumentDetailsList())) { List<AuditDetail> details =
-			 * fd.getAuditDetailMap().get("DocumentDetails"); details = processingDocumentDetailsList(details, "",
-			 * schdData.getFinanceMain(), receiptHeader.getReceiptPurpose(), serviceUID); auditDetails.addAll(details);
-			 * documentDetailsDAO.deleteList(new ArrayList<DocumentDetails>(fd.getDocumentDetailsList()),
+			 * if (CollectionUtils.isNotEmpty(fd.getDocumentDetailsList())) {
+			 * List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
+			 * details = processingDocumentDetailsList(details, "",
+			 * schdData.getFinanceMain(), receiptHeader.getReceiptPurpose(), serviceUID);
+			 * auditDetails.addAll(details); documentDetailsDAO.deleteList(new
+			 * ArrayList<DocumentDetails>(fd.getDocumentDetailsList()),
 			 * TableType.TEMP_TAB.getSuffix()); }
 			 */
 
@@ -2822,10 +2830,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the
+	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
+	 * based on the record details. 4) Validate for any business validation. 5) for
+	 * any mismatch conditions Fetch the error details from
+	 * finReceiptHeaderDAO.getErrorDetail with Error ID and language as parameters.
+	 * 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -3159,7 +3169,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		// Finance Document Details
 		if (CollectionUtils.isNotEmpty(financeDetail.getDocumentDetailsList())) {
 			/*
-			 * auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+			 * auditDetailMap.put("DocumentDetails",
+			 * setDocumentDetailsAuditData(financeDetail, auditTranType, method));
 			 * 
 			 * auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 			 */
@@ -3323,9 +3334,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = schdData.getFinanceMain();
-		// FIXME: PV 16FEB2023. COMMENTED TO TEST LOANS CREATED WITH OD AND RECEIPT TAKEN BEFORE THE FIRST EOD
+		// FIXME: PV 16FEB2023. COMMENTED TO TEST LOANS CREATED WITH OD AND RECEIPT
+		// TAKEN BEFORE THE FIRST EOD
 		/*
-		 * if (CollectionUtils.isEmpty(overdueList)) { logger.debug(Literal.LEAVING); return overdueList; }
+		 * if (CollectionUtils.isEmpty(overdueList)) { logger.debug(Literal.LEAVING);
+		 * return overdueList; }
 		 */
 
 		List<FinanceRepayments> repayments = new ArrayList<>();
@@ -4669,7 +4682,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	}
 
 	/**
-	 * Set the Value date to receipt header to handle old dues adjustment through API in case of back dated dues.
+	 * Set the Value date to receipt header to handle old dues adjustment through
+	 * API in case of back dated dues.
 	 * 
 	 * <p>
 	 * Example:
@@ -4684,7 +4698,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	 * Value Date 7th
 	 * </p>
 	 * <p>
-	 * In this case system should adjust the dues without charges, so we are changing the value date from 7th to 5th
+	 * In this case system should adjust the dues without charges, so we are
+	 * changing the value date from 7th to 5th
 	 * </p>
 	 * 
 	 */
@@ -5248,10 +5263,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (size > 0) {
 			FinReceiptDetail rcd = rcdList.get(size - 1);
 			rch.setValueDate(rcd.getValueDate());
-			// PSD#165780 Setting realization date to Value date irrespective of receipt purpose
+			// PSD#165780 Setting realization date to Value date irrespective of receipt
+			// purpose
 			/*
-			 * if (finReceiptHeader.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) &&
-			 * finReceiptHeader.getRealizationDate() != null) {
+			 * if (finReceiptHeader.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE)
+			 * && finReceiptHeader.getRealizationDate() != null) {
 			 */
 			if (rch.getRealizationDate() != null) {
 				rch.setValueDate(rch.getRealizationDate());
@@ -5270,7 +5286,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					if (schdule != null) {
 						Date schDate = schdule.getSchDate();
 						if (!valueDate.after(schDate)) {
-							// Schedule Date should be less than or equal to App date to skip future Installments
+							// Schedule Date should be less than or equal to App date to skip future
+							// Installments
 							if (schDate.compareTo(appDate) <= 0) {
 								rch.setValueDate(schDate);
 							}
@@ -7121,13 +7138,18 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				break;
 
 				/*
-				 * if (receiptPurposeCtg == 2 && (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-				 * FinanceConstants.RECEIPT_MAKER) || StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-				 * FinanceConstants.RECEIPT_APPROVER))) { payable.setTotPaidNow(receiptData.getExcessAvailable()); }
-				 * else if (receiptPurposeCtg == 2 && (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-				 * FinanceConstants.CLOSURE_MAKER) || StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
-				 * FinanceConstants.CLOSURE_APPROVER))) { payable.setTotPaidNow(amount); } else {
-				 * payable.setTotPaidNow(amount); } break;
+				 * if (receiptPurposeCtg == 2 &&
+				 * (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.RECEIPT_MAKER) ||
+				 * StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.RECEIPT_APPROVER))) {
+				 * payable.setTotPaidNow(receiptData.getExcessAvailable()); } else if
+				 * (receiptPurposeCtg == 2 &&
+				 * (StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.CLOSURE_MAKER) ||
+				 * StringUtils.equals(receiptData.getReceiptHeader().getRoleCode(),
+				 * FinanceConstants.CLOSURE_APPROVER))) { payable.setTotPaidNow(amount); } else
+				 * { payable.setTotPaidNow(amount); } break;
 				 */
 			}
 		}
@@ -8753,6 +8775,36 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 		return odcList;
+	}
+
+	@Override
+	public FinReceiptData getDues(String finReference, Date valueDate, Date appDate, String event) {
+
+		FinReceiptData receiptData = getFinReceiptDataById(finReference, appDate, event, FinServiceEvent.RECEIPT, "");
+		receiptData.setEnquiry(true);
+
+		FinanceDetail fd = receiptData.getFinanceDetail();
+
+		if (fd == null) {
+			return receiptData;
+		}
+
+		fd.setFinFeeConfigList(null);
+		fd.setFinTypeFeesList(null);
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinServiceInstruction(new FinServiceInstruction());
+
+		rch.setFinType(schdData.getFinanceMain().getFinType());
+		rch.setReceiptPurpose(event);
+		rch.setReceiptDate(appDate);
+		rch.setValueDate(valueDate);
+		rch.setReceivedDate(valueDate);
+
+		receiptData = calcuateDues(receiptData);
+
+		return receiptData;
 	}
 
 	@Autowired

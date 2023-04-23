@@ -319,6 +319,7 @@ public class ImplementationConstants {
 		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
 		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
 		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
+		ALW_AUTO_CROSS_LOAN_KNOCKOFF = getValueAsBoolean("ALW_AUTO_CROSS_LOAN_KNOCKOFF", false);
 
 		setVerificationConstants();
 	}
@@ -732,6 +733,8 @@ public class ImplementationConstants {
 	 * Feature Extension to no mandate the expiry date
 	 */
 	public static boolean EXPIRY_DATE_MANDATORY;
+
+	public static boolean ALW_AUTO_CROSS_LOAN_KNOCKOFF;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

@@ -228,4 +228,12 @@
 	
 	<bean id="oTsQueueTasklet" class="com.pennant.backend.endofday.tasklet.OTSQueue" />
 	
+	<!-- Auto Cross Loan Knock Off -->
+	<bean id="excessKnockOffLoadingTaskLet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffLoading" />
+	
+	<bean id="excessKnockOffQueuingTaskLet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffQueuing" />
+	
+	<bean id="excessKnockOffTasklet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffTasklet" />
+	
+	
 </beans>

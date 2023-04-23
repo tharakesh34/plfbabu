@@ -39,7 +39,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -71,7 +70,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private ReceiptDataValidator receiptDataValidator;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentDetailDAO paymentDetailDAO;
-	private ReceiptCancellationService receiptCancellationService;
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -603,8 +601,4 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		this.paymentDetailDAO = paymentDetailDAO;
 	}
 
-	@Autowired
-	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
-		this.receiptCancellationService = receiptCancellationService;
-	}
 }

@@ -1,12 +1,15 @@
 package com.pennant.backend.dao.receipts;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 
 public interface CrossLoanKnockOffDAO {
 
-	long saveCrossLoanHeader(CrossLoanKnockOff crossLoanOffHeader, String tableType);
+	void saveCrossLoanHeader(List<CrossLoanKnockOff> ckoList, String tableType);
+
+	void saveCrossLoanHeader(CrossLoanKnockOff crossLoanOffHeader, String tableType);
 
 	void updateCrossLoanHeader(CrossLoanKnockOff crossLoanKnockOffHeader, String suffix);
 

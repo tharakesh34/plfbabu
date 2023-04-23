@@ -782,4 +782,12 @@
 	<bean id="beneficiaryDAO" class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl" parent="sequenceDao" />
 	
 	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="excessKnockOffService" class="com.pennanttech.pff.knockoff.service.impl.ExcessKnockOffServiceImpl" />
+	
+	<bean id="excessKnockOffDAO" class="com.pennanttech.pff.knockoff.dao.impl.ExcessKnockOffDAOImpl" parent="sequenceDao"/>
+	
+	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
+	
+	<bean name="autoKnockOffService" class="com.pennant.backend.service.applicationmaster.impl.AutoKnockOffServiceImpl"/>
 </beans>

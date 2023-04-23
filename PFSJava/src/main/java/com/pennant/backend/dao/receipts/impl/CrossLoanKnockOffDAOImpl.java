@@ -1,12 +1,16 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
@@ -26,7 +30,7 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 	}
 
 	@Override
-	public long saveCrossLoanHeader(CrossLoanKnockOff cko, String tableType) {
+	public void saveCrossLoanHeader(List<CrossLoanKnockOff> ckoList, String tableType) {
 		StringBuilder sql = new StringBuilder("Insert into Cross_Loan_KnockOff");
 		sql.append(tableType);
 		sql.append(" (Id, TransferID, KnockOffID, ValueDate, PostDate, Version");
@@ -34,37 +38,53 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		if (cko.getId() <= 0) {
-			cko.setId(getNextValue("SeqCross_Loan_KnockOff"));
-		}
-
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
-			ps.setLong(++index, cko.getId());
-			ps.setLong(++index, cko.getTransferID());
-			ps.setLong(++index, cko.getKnockOffId());
-			ps.setDate(++index, JdbcUtil.getDate(cko.getValueDate()));
-			ps.setDate(++index, JdbcUtil.getDate(cko.getPostDate()));
-			ps.setInt(++index, cko.getVersion());
-			ps.setLong(++index, cko.getCreatedBy());
-			ps.setTimestamp(++index, cko.getCreatedOn());
-			ps.setLong(++index, cko.getApprovedBy());
-			ps.setTimestamp(++index, cko.getApprovedOn());
-			ps.setLong(++index, cko.getLastMntBy());
-			ps.setTimestamp(++index, cko.getLastMntOn());
-			ps.setString(++index, cko.getRecordStatus());
-			ps.setString(++index, cko.getRoleCode());
-			ps.setString(++index, cko.getNextRoleCode());
-			ps.setString(++index, cko.getTaskId());
-			ps.setString(++index, cko.getNextTaskId());
-			ps.setString(++index, cko.getRecordType());
-			ps.setLong(++index, cko.getWorkflowId());
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				CrossLoanKnockOff cko = ckoList.get(i);
+				int index = 0;
+
+				if (cko.getId() <= 0) {
+					cko.setId(getNextValue("SeqCross_Loan_KnockOff"));
+				}
+
+				ps.setLong(++index, cko.getId());
+				ps.setLong(++index, cko.getTransferID());
+				ps.setLong(++index, cko.getKnockOffId());
+				ps.setDate(++index, JdbcUtil.getDate(cko.getValueDate()));
+				ps.setDate(++index, JdbcUtil.getDate(cko.getPostDate()));
+				ps.setInt(++index, cko.getVersion());
+				ps.setLong(++index, cko.getCreatedBy());
+				ps.setTimestamp(++index, cko.getCreatedOn());
+				ps.setLong(++index, cko.getApprovedBy());
+				ps.setTimestamp(++index, cko.getApprovedOn());
+				ps.setLong(++index, cko.getLastMntBy());
+				ps.setTimestamp(++index, cko.getLastMntOn());
+				ps.setString(++index, cko.getRecordStatus());
+				ps.setString(++index, cko.getRoleCode());
+				ps.setString(++index, cko.getNextRoleCode());
+				ps.setString(++index, cko.getTaskId());
+				ps.setString(++index, cko.getNextTaskId());
+				ps.setString(++index, cko.getRecordType());
+				ps.setLong(++index, cko.getWorkflowId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return ckoList.size();
+			}
 		});
+	}
 
-		return cko.getId();
+	@Override
+	public void saveCrossLoanHeader(CrossLoanKnockOff cko, String tableType) {
+		List<CrossLoanKnockOff> ckoList = new ArrayList<>();
+		ckoList.add(cko);
+
+		saveCrossLoanHeader(ckoList, tableType);
 	}
 
 	@Override
@@ -212,4 +232,5 @@ public class CrossLoanKnockOffDAOImpl extends SequenceDao<CrossLoanKnockOff> imp
 			return BigDecimal.ZERO;
 		}
 	}
+
 }

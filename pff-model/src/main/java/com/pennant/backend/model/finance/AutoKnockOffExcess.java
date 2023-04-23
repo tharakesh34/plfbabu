@@ -22,6 +22,7 @@ public class AutoKnockOffExcess implements Serializable {
 	private long payableID;
 	private String executionDay;
 	private String thresholdValue;
+	private boolean crossLoanAutoKnockOff;
 
 	private List<AutoKnockOffExcessDetails> excessDetails = new ArrayList<>();
 
@@ -123,5 +124,13 @@ public class AutoKnockOffExcess implements Serializable {
 
 	public void setThresholdValue(String thresholdValue) {
 		this.thresholdValue = thresholdValue;
+	}
+
+	public boolean isCrossLoanAutoKnockOff() {
+		return crossLoanAutoKnockOff;
+	}
+
+	public void setCrossLoanAutoKnockOff(boolean crossLoanAutoKnockOff) {
+		this.crossLoanAutoKnockOff = crossLoanAutoKnockOff;
 	}
 }

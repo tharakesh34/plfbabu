@@ -90,7 +90,8 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
+ * Service implementation for methods that depends on
+ * <b>FinancePurposeDetail</b>.<br>
  * 
  */
 public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implements FinFeeDetailService {
@@ -366,7 +367,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					fee.setFeeID(finFeeDetailDAO.save(fee, isWIF, tableType));
 				}
 
-				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
+				if (CollectionUtils.isNotEmpty(fee.getFinFeeScheduleDetailList())) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
 						finFeeSchDetail.setFeeID(fee.getFeeID());
 					}
@@ -378,7 +379,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetailDAO.update(fee, isWIF, tableType);
 
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
-				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
+				if (CollectionUtils.isNotEmpty(fee.getFinFeeScheduleDetailList())) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
 						finFeeSchDetail.setFeeID(fee.getFeeID());
 					}
@@ -829,7 +830,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			List<Long> feeIds = new ArrayList<Long>(1);
 
 			for (FinFeeDetail finFeeDetail : feeDetails) {
-				// If we Select VAS Fee Payment Mode as Cash or Cheque getting error "Fees not paid"
+				// If we Select VAS Fee Payment Mode as Cash or Cheque getting error "Fees not
+				// paid"
 				if (!AccountingEvent.VAS_FEE.equalsIgnoreCase(finFeeDetail.getFinEvent())) {
 					feeIds.add(finFeeDetail.getFeeID());
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
@@ -1354,7 +1356,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				// Remaining Fee
 				BigDecimal remainingAmountOriginal = fee.getActualAmountOriginal().subtract(fee.getPaidAmountOriginal())
 						.subtract(waivedAmount);
-				// taxSplit = GSTCalculator.getExclusiveGST(remainingAmountOriginal, taxPercentages);
+				// taxSplit = GSTCalculator.getExclusiveGST(remainingAmountOriginal,
+				// taxPercentages);
 				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
 				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
 				igstTax.setRemFeeTax(igstTax.getNetTax().subtract(igstTax.getPaidTax()));
@@ -1423,7 +1426,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				// Remaining Fee
 				BigDecimal remainingAmountOriginal = fee.getActualAmountOriginal().subtract(fee.getPaidAmountOriginal())
 						.subtract(waivedAmount);
-				// taxSplit = GSTCalculator.getInclusiveGST(remainingAmountOriginal, taxPercentages);
+				// taxSplit = GSTCalculator.getInclusiveGST(remainingAmountOriginal,
+				// taxPercentages);
 				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
 				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
 				igstTax.setRemFeeTax(igstTax.getNetTax().subtract(igstTax.getPaidTax()));

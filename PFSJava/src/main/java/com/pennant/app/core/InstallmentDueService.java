@@ -132,7 +132,8 @@ public class InstallmentDueService extends ServiceHelper {
 		aeEvent.setDataMap(dataMap);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
-		// Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time
+		// accounts update
 
 		EventProperties eventProperties = fm.getEventProperties();
 		aeEvent.setAppDate(eventProperties.getAppDate());
@@ -281,10 +282,12 @@ public class InstallmentDueService extends ServiceHelper {
 		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
 		/*
 		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { accountingID =
-		 * AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), AccountEventConstants.ACCEVENT_INSTDATE,
+		 * AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(),
+		 * AccountEventConstants.ACCEVENT_INSTDATE,
 		 * FinanceConstants.MODULEID_PROMOTION); } else { accountingID =
-		 * AccountingConfigCache.getCacheAccountSetID(main.getFinType(), AccountEventConstants.ACCEVENT_INSTDATE,
-		 * FinanceConstants.MODULEID_FINTYPE); }
+		 * AccountingConfigCache.getCacheAccountSetID(main.getFinType(),
+		 * AccountEventConstants.ACCEVENT_INSTDATE, FinanceConstants.MODULEID_FINTYPE);
+		 * }
 		 */
 
 		accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.INSTDATE,
@@ -308,9 +311,12 @@ public class InstallmentDueService extends ServiceHelper {
 			for (FinFeeDetail detail : totalFees) {
 				String feeTypeCode = detail.getFeeTypeCode();
 				List<FinFeeScheduleDetail> feeSchedules = detail.getFinFeeScheduleDetailList();
-				for (FinFeeScheduleDetail finFeeScheduleDetail : feeSchedules) {
-					finFeeScheduleDetail.setFeeTypeCode(feeTypeCode);
-					scheduleFees.add(finFeeScheduleDetail);
+
+				if (CollectionUtils.isNotEmpty(feeSchedules)) {
+					for (FinFeeScheduleDetail finFeeScheduleDetail : feeSchedules) {
+						finFeeScheduleDetail.setFeeTypeCode(feeTypeCode);
+						scheduleFees.add(finFeeScheduleDetail);
+					}
 				}
 			}
 		}

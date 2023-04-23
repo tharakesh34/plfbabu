@@ -13274,5 +13274,9 @@
 		
 	<bean id="miscellaneousPostingUploadValidateRecord"
 		class="com.pennant.pff.miscellaneouspostingupload.service.impl.MiscellaneousPostingUploadValidateRecord" />
+		
+	<bean id="excessKnockOffService" class="com.pennanttech.pff.knockoff.service.impl.ExcessKnockOffServiceImpl" />
+	
+	<bean id="excessKnockOffDAO" class="com.pennanttech.pff.knockoff.dao.impl.ExcessKnockOffDAOImpl"  parent="sequenceDao"/>
 
 </beans>

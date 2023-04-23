@@ -89,9 +89,30 @@
 			<partition step="oTSMaster" partitioner="otsPartition">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="excessKnockOffLoading" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="excessKnockOffLoading">
+			<tasklet ref="excessKnockOffLoadingTaskLet" />
+			<next on="*" to="excessKnockOffQueuing" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="excessKnockOffQueuing">
+			<tasklet ref="excessKnockOffQueuingTaskLet" />
+			<next on="*" to="excessKnockOffMaster" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="excessKnockOffMaster">
+			<partition step="excessKnockOff" partitioner="excessKnockOffPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
 			<next on="*" to="beforeAssetClassification" />
 			<fail on="FAILED" />
 		</step>
+		
 		<step id="beforeAssetClassification">
 			<tasklet ref="beforeAssetClassificationTasklet" />
 			<next on="*" to="assetClassificationQueue" />
@@ -287,6 +308,12 @@
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
+	
+	<step id="excessKnockOff" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="excessKnockOffTasklet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
 
 	<step id="assetClassification" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="assetClassificationTaskLet" allow-start-if-complete="true">
@@ -328,5 +355,7 @@
 	<bean id="ledgerDownloadPartition" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition" />
 	
 	 <bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
+	 
+	 <bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
 
 </beans>

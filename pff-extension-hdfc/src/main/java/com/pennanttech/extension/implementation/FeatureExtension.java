@@ -143,6 +143,8 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("AUTO_EOD_REQUIRED", true);
 
+		customConstants.put("ALW_AUTO_CROSS_LOAN_KNOCKOFF", true);
+
 		customerExtensions();
 
 		mandateExtensaions();

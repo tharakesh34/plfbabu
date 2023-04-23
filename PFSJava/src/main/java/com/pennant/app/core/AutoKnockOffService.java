@@ -52,7 +52,7 @@ public class AutoKnockOffService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void process(AutoKnockOffExcess knockOffData) {
+	public void process(AutoKnockOffExcess knockOffData) {
 		logger.debug(Literal.ENTERING);
 
 		List<AutoKnockOffExcessDetails> list = knockOffData.getExcessDetails();
@@ -143,8 +143,10 @@ public class AutoKnockOffService {
 			}
 		}
 
-		autoKnockOffDAO.updateExcessData(knockOffData);
-		autoKnockOffDAO.updateExcessDetails(knockOffData.getExcessDetails());
+		if (!knockOffData.isCrossLoanAutoKnockOff()) {
+			autoKnockOffDAO.updateExcessData(knockOffData);
+			autoKnockOffDAO.updateExcessDetails(knockOffData.getExcessDetails());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
