@@ -442,4 +442,6 @@ public interface FinanceMainDAO {
 	List<Long> getByCustShrtNameAndEMIAmount(String custShrtName, BigDecimal repayAmount);
 
 	void updateNPA(long finID, boolean undernpa);
+
+	Date getMaturityDatebyFinID(long finID);
 }

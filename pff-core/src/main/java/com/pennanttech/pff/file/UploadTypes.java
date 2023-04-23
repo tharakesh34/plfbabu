@@ -31,7 +31,11 @@ public enum UploadTypes {
 
 	FEE_WAIVER("Fee Wavier Upload Details"),
 
-	LIEN("LIEN Upload Details Screen");
+	LIEN("LIEN Upload Details Screen"),
+
+	CREATE_RECEIPT("Create Receipt Upload detail screen"),
+
+	RECEIPT_STATUS("RECEIPT STATUS Upload Details Screen");
 
 	private String description;
 

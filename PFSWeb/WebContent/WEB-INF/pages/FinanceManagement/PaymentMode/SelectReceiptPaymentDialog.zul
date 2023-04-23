@@ -88,6 +88,15 @@
 										<combobox id="subReceiptMode" width="190px" />
 									</hbox>
 								</row>
+								
+								<row id="row_closureType" visible="false">
+									<label id="label_ReceiptPayment_ClosureType" value="${c:l('label_ReceiptPayment_ClosureType.value')}"
+										style="padding-left:12px;" />
+									<hbox>
+									  <space spacing="2px" sclass="mandatory" />
+									  <combobox id="closureType" width="190px" />
+									</hbox>
+								</row>
 
 								<row id="row_ReceiptChannel" visible="false">
 									<label id="label_ReceiptPayment_ReceiptChannel" value="${c:l('label_ReceiptPayment_ReceiptChannel.value')}"

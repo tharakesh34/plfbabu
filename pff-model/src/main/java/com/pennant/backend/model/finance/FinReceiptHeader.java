@@ -1,4 +1,3 @@
-
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
@@ -195,8 +194,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private boolean finTDSApplicable;
 	private String sourceofFund;
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
-	private Long closureTypeId;
-	private String closureTypeDesc;
+	private String closureType;
 	private boolean writeoffLoan;
 	private boolean dedupCheckRequired = true;
 	private String presentmentType;
@@ -336,7 +334,6 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("presentmentSchDate");
 		excludeFields.add("documentDetails");
 		excludeFields.add("finTDSApplicable");
-		excludeFields.add("closureTypeDesc");
 		excludeFields.add("entityDesc");
 		excludeFields.add("receiptSourceAcType");
 		excludeFields.add("receiptSourceAcDesc");
@@ -535,8 +532,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setFinTDSApplicable(this.finTDSApplicable);
 		entity.setSourceofFund(this.sourceofFund);
 		entity.setTdsAmount(this.tdsAmount);
-		entity.setClosureTypeId(this.closureTypeId);
-		entity.setClosureTypeDesc(this.closureTypeDesc);
+		entity.setClosureType(this.closureType);
 		entity.setDedupCheckRequired(this.dedupCheckRequired);
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setReceiptSourceAcType(this.receiptSourceAcType);
@@ -1555,8 +1551,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	/*
 	 * public FinRepayHeader getRepayHeader() { return repayHeader; }
 	 * 
-	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader =
-	 * repayHeader; }
+	 * public void setRepayHeader(FinRepayHeader repayHeader) { this.repayHeader = repayHeader; }
 	 */
 
 	public String getCollectionAgentCode() {
@@ -1815,20 +1810,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		this.tdsAmount = tdsAmount;
 	}
 
-	public Long getClosureTypeId() {
-		return closureTypeId;
+	public String getClosureType() {
+		return closureType;
 	}
 
-	public void setClosureTypeId(Long closureTypeId) {
-		this.closureTypeId = closureTypeId;
-	}
-
-	public String getClosureTypeDesc() {
-		return closureTypeDesc;
-	}
-
-	public void setClosureTypeDesc(String closureTypeDesc) {
-		this.closureTypeDesc = closureTypeDesc;
+	public void setClosureType(String closureType) {
+		this.closureType = closureType;
 	}
 
 	public String getEntityDesc() {

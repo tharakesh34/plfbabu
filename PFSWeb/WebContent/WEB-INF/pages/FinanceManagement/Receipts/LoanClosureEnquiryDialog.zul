@@ -201,6 +201,13 @@
 														<decimalbox id="custPaid" width="180px" disabled="true" style="font-weight:bold;" />
 													</hbox>
 												</row>
+												<row>
+													<label value="${c:l('label_ReceiptDialog_closureType.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<combobox id="closureType" width="180px" readonly="true" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

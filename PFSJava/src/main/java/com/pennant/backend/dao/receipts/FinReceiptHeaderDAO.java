@@ -12,6 +12,7 @@ import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
+import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.pff.core.TableType;
 
 public interface FinReceiptHeaderDAO {
@@ -153,4 +154,14 @@ public interface FinReceiptHeaderDAO {
 	String getReceiptModeStatuByExcessId(long excessID);
 
 	Long getReceiptIdByChequeSerialNo(String chequeSerialNo);
+
+	boolean isReceiptExists(CreateReceiptUpload rud, String type);
+
+	boolean isOnlineExists(CreateReceiptUpload rud);
+
+	boolean isChequeExists(CreateReceiptUpload rud);
+
+	String getClosureTypeValue(Long finID, String receiptPurpose);
+
+	FinReceiptHeader getReceiptById(long receiptId, String type);
 }

@@ -214,6 +214,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected Label receiptTypeLabel;
 	protected Decimalbox remBalAfterAllocation;
 	protected Datebox receiptDate;
+	protected Combobox closureType;
 	protected Datebox interestTillDate;
 
 	protected Datebox LoanClosure_receiptDate;
@@ -354,6 +355,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		if (arguments.containsKey("finReference")) {
 			this.finReference.setValue((String) arguments.get("finReference"));
+		}
+
+		if (arguments.containsKey("closureType")) {
+			this.closureType.setValue((String) arguments.get("closureType"));
 		}
 
 		if (arguments.containsKey("enquiryModule")) {

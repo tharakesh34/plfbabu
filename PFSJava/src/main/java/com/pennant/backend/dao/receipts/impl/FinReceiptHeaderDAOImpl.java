@@ -60,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -111,7 +112,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate");
 		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate");
-		sql.append(", ClosureTypeId, SourceofFund, TdsAmount, EntityCode, BankCode");
+		sql.append(", ClosureType, SourceofFund, TdsAmount, EntityCode, BankCode");
 		sql.append(", ToState, FromState, FinType, CustBankId, ModuleType");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -190,7 +191,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getReceiptSource());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
-			ps.setObject(index++, rh.getClosureTypeId());
+			ps.setObject(index++, rh.getClosureType());
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
 			ps.setString(index++, rh.getEntityCode());
@@ -223,7 +224,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", WorkflowId = ?, FinDivision = ?, PostBranch = ?, ReasonCode = ?, CancelRemarks = ?");
 		sql.append(", KnockOffType = ?, RefWaiverAmt = ?, Source = ?, ValueDate = ?, TransactionRef = ?");
 		sql.append(", DepositDate = ?, PartnerBankId = ?, PrvReceiptPurpose = ?, ReceiptSource = ?");
-		sql.append(", RecAppDate = ?, ReceivedDate = ?, ExtReference = ?, ClosureTypeId = ?");
+		sql.append(", RecAppDate = ?, ReceivedDate = ?, ExtReference = ?, ClosureType = ?");
 		sql.append(", SourceofFund = ?, TdsAmount = ?, EntityCode = ?, CustBankId = ?");
 		sql.append(" Where ReceiptID = ?");
 
@@ -294,7 +295,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
 			ps.setString(index++, rh.getExtReference());
-			ps.setObject(index++, rh.getClosureTypeId());
+			ps.setObject(index++, rh.getClosureType());
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
 			ps.setString(index++, rh.getEntityCode());
@@ -1170,14 +1171,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt, ReasonCode, CancelRemarks");
 		sql.append(", RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate, PartnerBankId");
 		sql.append(", KnockOffType, PrvReceiptPurpose, ReceiptSource");
-		sql.append(", RecAppDate, ReceivedDate, ClosureTypeId, SourceofFund, TdsAmount");
+		sql.append(", RecAppDate, ReceivedDate, ClosureType, SourceofFund, TdsAmount");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, CustBankId");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
 			sql.append(", FinCcyDesc, FinBranchDesc, CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory");
 			sql.append(", NextRepayRvwDate, CollectionAgentCode, CollectionAgentDesc, PostBranchDesc");
-			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode, ClosureTypeDesc");
+			sql.append(", CashierBranchDesc, FinDivisionDesc, EntityCode");
 			sql.append(", CustAcctNumber, CustAcctHolderName, ScheduleMethod, PftDaysBasis");
 
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
@@ -1274,7 +1275,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setReceivedDate(rs.getDate("ReceivedDate"));
 			rh.setSourceofFund(rs.getString("SourceofFund"));
 			rh.setTdsAmount(rs.getBigDecimal("TdsAmount"));
-			rh.setClosureTypeId(JdbcUtil.getLong(rs.getObject("ClosureTypeId")));
+			rh.setClosureType(rs.getString("ClosureType"));
 			rh.setCustBankId(JdbcUtil.getLong(rs.getObject("CustBankId")));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -1297,7 +1298,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				rh.setCashierBranchDesc(rs.getString("CashierBranchDesc"));
 				rh.setFinDivisionDesc(rs.getString("FinDivisionDesc"));
 				rh.setEntityCode(rs.getString("EntityCode"));
-				rh.setClosureTypeDesc(rs.getString("ClosureTypeDesc"));
 				rh.setCustAcctNumber(rs.getString("CustAcctNumber"));
 				rh.setCustAcctHolderName(rs.getString("custAcctHolderName"));
 				rh.setScheduleMethod(rs.getString("ScheduleMethod"));
@@ -1513,6 +1513,30 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
+	public boolean isReceiptExists(CreateReceiptUpload rud, String type) {
+		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader");
+		sql.append(type);
+		sql.append(" rh Inner Join FinReceiptDetail").append(type);
+		sql.append(" rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rh.ReceiptMode = ? and rd.ChequeAcNo = ? and rh.TransactionRef = ?");
+		sql.append("and (rh.ReceiptModeStatus in ('A') or rh.ReceiptModeStatus is null)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return !(this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getChequeNumber());
+			ps.setString(index, rud.getTransactionRef());
+
+		}, (rs, roNum) -> {
+			return rs.getLong(1);
+		}).isEmpty());
+	}
+
+	@Override
 	public boolean isChequeExists(ReceiptUploadDetail rud) {
 		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
 		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
@@ -1548,7 +1572,75 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
+	public boolean isChequeExists(CreateReceiptUpload rud) {
+		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
+		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.BankCode = ? and rd.Status not in (?, ?) ");
+		sql.append(" Union All");
+		sql.append(" Select rh.ReceiptID From FinReceiptHeader_Temp rh");
+		sql.append(" Inner Join FinReceiptDetail_Temp rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.BankCode = ? and rd.Status not in (?, ?) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, rud.getBankCode());
+			ps.setString(index++, "B");
+			ps.setString(index++, "C");
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, rud.getBankCode());
+			ps.setString(index++, "B");
+			ps.setString(index, "C");
+		}, (rs, rowNum) -> {
+			return rs.getLong(1);
+		}).size() > 0;
+	}
+
+	@Override
 	public boolean isOnlineExists(ReceiptUploadDetail rud) {
+		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
+		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.Status not in (?, ?) ");
+		sql.append(" Union All");
+		sql.append(" Select rh.ReceiptID From FinReceiptHeader_Temp rh");
+		sql.append(" Inner Join FinReceiptDetail_Temp rd on rd.ReceiptID = rh.ReceiptID");
+		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
+		sql.append(" and rd.Status not in (?, ?) ");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, "B");
+			ps.setString(index++, "C");
+
+			ps.setString(index++, rud.getReference());
+			ps.setString(index++, rud.getReceiptMode());
+			ps.setString(index++, rud.getTransactionRef());
+			ps.setString(index++, "B");
+			ps.setString(index, "C");
+		}, (rs, rowNum) -> {
+			return rs.getLong(1);
+		}).size() > 0;
+	}
+
+	@Override
+	public boolean isOnlineExists(CreateReceiptUpload rud) {
 		StringBuilder sql = new StringBuilder("Select rh.ReceiptID From FinReceiptHeader rh");
 		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptID = rh.ReceiptID");
 		sql.append(" Where rh.Reference = ? and rd.PaymentType = ? and rh.TransactionRef = ?");
@@ -1707,6 +1799,46 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), String.class, excessID, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public String getClosureTypeValue(Long finID, String receiptPurpose) {
+		String sql = "Select ClosureType From FinReceiptHeader Where FiniD = ? and ReceiptPurpose = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, finID, receiptPurpose);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public FinReceiptHeader getReceiptById(long receiptId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Reference, ReceiptModeStatus, ReceiptMode, DepositDate");
+		sql.append(" From FinReceiptHeader");
+		sql.append(type);
+		sql.append(" Where ReceiptID = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinReceiptHeader rch = new FinReceiptHeader();
+
+				rch.setReference(rs.getString("Reference"));
+				rch.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+				rch.setReceiptMode(rs.getString("ReceiptMode"));
+				rch.setDepositDate(rs.getDate("DepositDate"));
+				return rch;
+			}, receiptId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
