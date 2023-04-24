@@ -19,7 +19,7 @@ public enum ExcessHead {
 
 	TEXCESS("T"),
 
-	SEXCESS("S");
+	SETTLEMENT("S");
 
 	private String code;
 
