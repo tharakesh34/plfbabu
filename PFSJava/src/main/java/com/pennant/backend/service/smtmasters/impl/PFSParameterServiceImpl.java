@@ -42,7 +42,6 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 
@@ -375,10 +374,6 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 			}
 		}
 
-		if (befPFSParameter != null) {
-			validateDPDStringParameters(auditDetail, pFSParameter, befPFSParameter);
-		}
-
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !pFSParameter.isWorkflow()) {
@@ -411,34 +406,6 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	@Override
 	public PFSParameter getParameter(String code) {
 		return getCachedEntity(code);
-	}
-
-	private void validateDPDStringParameters(AuditDetail ad, PFSParameter parameter, PFSParameter befImg) {
-		if (!SMTParameterConstants.DPD_STRING_LENGTH.equals(parameter.getSysParmCode())) {
-			return;
-		}
-
-		String[] valueParm = new String[2];
-		String[] errParm = new String[2];
-
-		int newDPDLength = Integer.parseInt(parameter.getSysParmValue());
-		int oldDPDLength = Integer.parseInt(befImg.getSysParmValue());
-
-		if (newDPDLength < oldDPDLength) {
-			valueParm[0] = parameter.getSysParmValue();
-			valueParm[1] = befImg.getSysParmValue();
-			errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmValue.value") + ":" + valueParm[0];
-			errParm[1] = ":" + valueParm[1];
-			ad.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30507", errParm, null));
-		}
-
-		if (newDPDLength > 2400) {
-			valueParm[0] = parameter.getSysParmValue();
-			valueParm[1] = String.valueOf(2400);
-			errParm[0] = PennantJavaUtil.getLabel("label_PFSParameterDialog_SysParmValue.value") + ":" + valueParm[0];
-			errParm[1] = ":" + valueParm[1];
-			ad.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "30558", errParm, null));
-		}
 	}
 
 }

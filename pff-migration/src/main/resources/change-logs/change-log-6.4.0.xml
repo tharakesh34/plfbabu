@@ -9285,4 +9285,13 @@
              ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1471.20" author="Mounika.M">
+		<sql>
+		    <![CDATA[
+		    	DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'DPD_STRING_LENGTH';
+		    ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

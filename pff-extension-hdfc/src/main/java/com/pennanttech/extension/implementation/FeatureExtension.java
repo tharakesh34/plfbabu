@@ -252,6 +252,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 	private void dpdExtensions() {
 		dpdExtensions.put("EXCLUDE_VD_PART_PAYMENT", true);
+		dpdExtensions.put("DPD_STRING_LENGTH", 5);
 	}
 
 	private void partnerBankExtensions() {
