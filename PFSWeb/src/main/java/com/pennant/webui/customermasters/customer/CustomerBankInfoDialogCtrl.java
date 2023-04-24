@@ -424,8 +424,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.addToBenficiary.setDisabled(true);
 		}
 
-		if (StringUtils.isNotBlank(this.customerBankInfo.getBankCode())) {
-			bankDetail = bankDetailService.getAccNoLengthByCode(this.customerBankInfo.getBankCode());
+		if (StringUtils.isNotBlank(this.bankName.getValue())) {
+			bankDetail = bankDetailService.getAccNoLengthByCode(this.bankName.getValue());
 			maxAccNoLength = bankDetail.getAccNoLength();
 			minAccNoLength = bankDetail.getMinAccNoLength();
 		}
@@ -3218,8 +3218,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		setValidationOn(true);
 		if (!this.accountNumber.isReadonly()) {
 			this.accountNumber.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"), null,
-							true, minAccNoLength, maxAccNoLength));
+					new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"),
+							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, minAccNoLength, maxAccNoLength));
 		}
 
 		if (!this.creditTranNo.isDisabled()) {
