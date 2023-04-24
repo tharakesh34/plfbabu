@@ -1125,7 +1125,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				ps.setBigDecimal(++index, fe.getUtilisedAmt());
 				ps.setBigDecimal(++index, fe.getReservedAmt());
 				ps.setBigDecimal(++index, fe.getBalanceAmt());
-				ps.setLong(++index, fe.getReceiptID());
+				ps.setObject(++index, fe.getReceiptID());
 				ps.setDate(++index, JdbcUtil.getDate(fe.getPostDate()));
 				ps.setDate(++index, JdbcUtil.getDate(fe.getValueDate()));
 			}
