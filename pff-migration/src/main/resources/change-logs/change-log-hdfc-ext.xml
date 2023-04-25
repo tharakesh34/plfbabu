@@ -340,22 +340,82 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="002.5" author="goutham.ch">
+	<changeSet id="002.5.1" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="BACKUP_LOCATION" type="varchar(2000)" />
+		</addColumn>	
+	</changeSet>
+	
+	<changeSet id="002.5.2" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="ACCESS_KEY" type="varchar(50)" />
+		</addColumn>	
+	</changeSet>
+	
+	<changeSet id="002.5.3" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SECRET_KEY" type="varchar(200)" />
+		</addColumn>	
+	</changeSet>
+	
+	<changeSet id="002.5.4" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="HOST_NAME" type="varchar(200)" />
+		</addColumn>	
+	</changeSet>
+			
+	<changeSet id="002.5.5" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="PORT" type="int" />
+		</addColumn>	
+	</changeSet>
+	
+	<changeSet id="002.5.6" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="PRIVATE_KEY" type="varchar(255)" />
+		</addColumn>	
+	</changeSet>
+	
+	<changeSet id="002.5.7" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SSE_ALGORITHM" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="002.5.8" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="PREFIX" type="varchar(100)" />
+		</addColumn>	
+	</changeSet>
+		
+		
+	<changeSet id="002.5.9" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SFTP_LOCATION" type="varchar(2000)" />
+		</addColumn>	
+	</changeSet>
+		
+		
+	<changeSet id="002.5.10" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="IS_SFTP" type="varchar(10)" />
+		</addColumn>	
+	</changeSet>
+	
+	
+	<changeSet id="002.5.11" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="LOCAL_BACKUP_LOCATION" type="varchar(2000)" />
+		</addColumn>	
+	</changeSet>
+	
+			
+	<changeSet id="002.5.12" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SFTP_BUCKET" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
+	
 	
 	<changeSet id="019" author="goutham.ch">
 	   <createTable tableName="UCIC_CUSTOMERS">
@@ -388,12 +448,12 @@
 	      <column name="EMAIL1" type="VARCHAR(100)" />
 	      <column name="EMAIL2" type="VARCHAR(100)" />
 	      <column name="EMAIL3" type="VARCHAR(100)" />
-	      <column name="MOBILE1" type="VARCHAR(20 CHAR)" />
-	      <column name="MOBILE2" type="VARCHAR(20 CHAR)" />
-	      <column name="MOBILE3" type="VARCHAR(20 CHAR)" />
-	      <column name="LANDLINE1" type="VARCHAR(50 CHAR)" />
-	      <column name="LANDLINE2" type="VARCHAR(50 CHAR)" />
-	      <column name="LANDLINE3" type="VARCHAR(50 CHAR)" />
+	      <column name="MOBILE1" type="VARCHAR(20)" />
+	      <column name="MOBILE2" type="VARCHAR(20)" />
+	      <column name="MOBILE3" type="VARCHAR(20)" />
+	      <column name="LANDLINE1" type="VARCHAR(50)" />
+	      <column name="LANDLINE2" type="VARCHAR(50)" />
+	      <column name="LANDLINE3" type="VARCHAR(50)" />
 	      <column name="PAN" type="VARCHAR(100)" />
 	      <column name="AADHAAR" type="VARCHAR(100)" />
 	      <column name="VOTER_ID" type="VARCHAR(100)" />
@@ -424,9 +484,9 @@
 	      <column name="ADDR3STATE" type="VARCHAR(150)" />
 	      <column name="ADDR3PIN" type="VARCHAR(10)" />
 	      <column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
-	      <column name="FILE_STATUS" type="NUMBER(2)" />
-	      <column name="PROCESS_FLAG" type="NUMBER(2)" />
-	      <column name="RESP_FLAG" type="NUMBER(2)" />
+	      <column name="FILE_STATUS" type="decimal(2)" />
+	      <column name="PROCESS_FLAG" type="decimal(2)" />
+	      <column name="RESP_FLAG" type="decimal(2)" />
 	      <column name="ERROR_CODE" type="VARCHAR(100)" />
 	      <column name="ERROR_DESC" type="VARCHAR(4000)" />
 	   </createTable>
@@ -457,12 +517,12 @@
 	      <column name="EMAIL1" type="VARCHAR(100)" />
 	      <column name="EMAIL2" type="VARCHAR(100)" />
 	      <column name="EMAIL3" type="VARCHAR(100)" />
-	      <column name="MOBILE1" type="VARCHAR(20 CHAR)" />
-	      <column name="MOBILE2" type="VARCHAR(20 CHAR)" />
-	      <column name="MOBILE3" type="VARCHAR(20 CHAR)" />
-	      <column name="LANDLINE1" type="VARCHAR(50 CHAR)" />
-	      <column name="LANDLINE2" type="VARCHAR(50 CHAR)" />
-	      <column name="LANDLINE3" type="VARCHAR(50 CHAR)" />
+	      <column name="MOBILE1" type="VARCHAR(20)" />
+	      <column name="MOBILE2" type="VARCHAR(20)" />
+	      <column name="MOBILE3" type="VARCHAR(20)" />
+	      <column name="LANDLINE1" type="VARCHAR(50)" />
+	      <column name="LANDLINE2" type="VARCHAR(50)" />
+	      <column name="LANDLINE3" type="VARCHAR(50)" />
 	      <column name="PAN" type="VARCHAR(100)" />
 	      <column name="AADHAAR" type="VARCHAR(100)" />
 	      <column name="VOTER_ID" type="VARCHAR(100)" />
