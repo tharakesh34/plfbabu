@@ -549,7 +549,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (maturitydate != null) {
 			this.rowClosureType.setVisible(true);
-			this.closureType.setSelectedIndex(1);
 
 			String excludeFields = ",CLOSURE,SETTLEMENT,";
 			if (maturitydate.compareTo(appDate) <= 0) {
@@ -557,6 +556,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 
 			fillComboBox(this.closureType, "", ClosureType.getTypes(), excludeFields);
+			this.closureType.setSelectedIndex(1);
 
 			if (channelIdx > 0) {
 				this.closureType.setSelectedIndex(channelIdx);

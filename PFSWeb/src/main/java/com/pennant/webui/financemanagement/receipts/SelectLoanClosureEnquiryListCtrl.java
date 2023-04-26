@@ -128,6 +128,8 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (StringUtils.isNotEmpty(closureTypeValue)) {
 			this.closureType.setValue(closureTypeValue);
 			this.closureType.setReadonly(true);
+		} else {
+			fillComboBox(this.closureType, "", ClosureType.getTypes());
 		}
 
 		if (StringUtils.isNotEmpty(finRefValue)) {
@@ -278,7 +280,6 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		Date maturitydate = financeMainDAO.getMaturityDatebyFinID(ComponentUtil.getFinID(this.finReference));
 
 		if (maturitydate != null) {
-			this.closureType.setSelectedIndex(1);
 
 			String excludeFields = ",CLOSURE,SETTLEMENT,";
 			if (maturitydate.compareTo(appDate) <= 0) {
@@ -286,6 +287,7 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 			}
 
 			fillComboBox(this.closureType, "", ClosureType.getTypes(), excludeFields);
+			this.closureType.setSelectedIndex(1);
 
 			if (channelIdx > 0) {
 				this.closureType.setSelectedIndex(channelIdx);

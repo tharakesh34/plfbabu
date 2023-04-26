@@ -1898,4 +1898,13 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return null;
 		}
 	}
+
+	@Override
+	public void updateClosureType(long receiptID, String closureType) {
+		String sql = "Update FinReceiptHeader Set closureType = ? Where ReceiptID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, closureType, receiptID);
+	}
 }

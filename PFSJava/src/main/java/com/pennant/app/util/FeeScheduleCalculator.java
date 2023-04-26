@@ -584,25 +584,26 @@ public class FeeScheduleCalculator {
 		// Loop through all Fees and set fees in installment schedules
 		for (int i = 0; i < feeDetails.size(); i++) {
 			List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(i).getFinFeeScheduleDetailList();
-			for (int j = 0; j < feeSchdDetails.size(); j++) {
-				feeSchdDetail = feeSchdDetails.get(j);
-				if (!rpySchdMap.containsKey(feeSchdDetail.getSchDate())) {
-					continue;
+			if (CollectionUtils.isNotEmpty(feeSchdDetails)) {
+				for (int j = 0; j < feeSchdDetails.size(); j++) {
+					feeSchdDetail = feeSchdDetails.get(j);
+					if (!rpySchdMap.containsKey(feeSchdDetail.getSchDate())) {
+						continue;
+					}
+
+					int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
+
+					if (schdIdx <= 0) {
+						schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
+					}
+
+					FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
+					curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
+					curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST())); // GST Fee Tax
 				}
-
-				int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
-
-				if (schdIdx <= 0) {
-					schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
-				}
-
-				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
-				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
-				curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST())); // GST Fee Tax
 			}
+
+			logger.debug("Leaving");
 		}
-
-		logger.debug("Leaving");
 	}
-
 }

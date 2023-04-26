@@ -111,6 +111,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1082,6 +1083,11 @@ public class RepaymentPostingsUtil {
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 					pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
+				}
+
+				if (fm.getClosureType() != null && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)
+						&& ClosureType.isCancel(fm.getClosureType())) {
+					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 				}
 
 				// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End

@@ -170,4 +170,6 @@ public interface FinReceiptHeaderDAO {
 	long getMaxReceiptIdFinRef(String finReference);
 
 	FinanceType getRepayHierarchy(FinanceMain fm);
+
+	void updateClosureType(long receiptID, String closureType);
 }

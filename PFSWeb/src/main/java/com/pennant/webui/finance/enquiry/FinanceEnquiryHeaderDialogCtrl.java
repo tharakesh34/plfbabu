@@ -73,6 +73,7 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -267,6 +268,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CreditApplicationReviewService creditApplicationReviewService;
 	@Autowired
 	private ManualAdviseDAO manualAdviseDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	/**
 	 * default constructor.<br>
@@ -348,29 +350,38 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceEnquiry enquiry = getFinanceEnquiry();
+		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 
 		this.finReference_header.setValue(enquiry.getFinReference());
 
 		this.setModule("LOAN");
 		this.finStatus_header.setValue(enquiry.getFinStatus());
 
-		if (enquiry.isFinIsActive()) {
-			this.finStatus_header.setValue("Active");
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+			this.finStatus_header.setValue(Labels.getLabel("label_Status_Cancelled"));
 		} else {
-			this.finStatus_header.setValue("Matured");
+			if (enquiry.isFinIsActive()) {
+				this.finStatus_header.setValue("Active");
+			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+				this.finStatus_header.setValue(Labels.getLabel("label_Closed"));
+			} else {
+				this.finStatus_header.setValue("Matured");
+			}
 		}
 
 		if (StringUtils.contains(enquiry.getRecordStatus(), "Reject") && !enquiry.isFinIsActive()) {
 			this.finStatus_header.setValue(Labels.getLabel("label_Rejected"));
 		}
 
-		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Normal");
 		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Cancelled");
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-			this.finStatus_Reason.setValue("Settled");
+			String closureType = finReceiptHeaderDAO.getClosureTypeValue(this.finID, FinServiceEvent.EARLYSETTLE);
+			if (closureType != null) {
+				this.finStatus_Reason.setValue(closureType);
+			}
 		}
 		if (enquiry.isWriteoffLoan()) {
 			this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
@@ -1559,6 +1570,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }

@@ -234,6 +234,7 @@ import com.pennant.pff.extension.ReceiptExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.lien.service.LienService;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -2114,6 +2115,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		isPresentProc = presentmentDetailDAO.isPresentmentInProcess(finID);
 
 		boolean finIsActive = fm.isFinIsActive();
+		fm.setClosureType(rch.getClosureType());
 		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose(),
 				isPresentProc);
 		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY
@@ -2139,6 +2141,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (fm.getClosedDate() == null) {
 				fm.setClosedDate(valueDate);
 			}
+		}
+
+		if (!fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY) {
+			finReceiptHeaderDAO.updateClosureType(receiptID, ClosureType.CLOSURE.name());
 		}
 
 		User logiedInUser = SessionUserDetails.getLogiedInUser();
@@ -8547,6 +8553,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
+		fm.setClosureType(rch.getClosureType());
 		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
 				isPresentProc);
 
@@ -8571,6 +8578,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (fm.getClosedDate() == null) {
 				fm.setClosedDate(valueDate);
 			}
+		}
+
+		String closuretype = rch.getClosureType();
+		if (ClosureType.isCancel(closuretype)) {
+			fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
 		}
 
 		financeMainDAO.updateFromReceipt(fm, TableType.MAIN_TAB);
