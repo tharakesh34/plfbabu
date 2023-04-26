@@ -13274,5 +13274,10 @@
 		
 	<bean id="miscellaneousPostingUploadValidateRecord"
 		class="com.pennant.pff.miscellaneouspostingupload.service.impl.MiscellaneousPostingUploadValidateRecord" />
-
+	
+	<bean id="branchChangeUploadService" class="com.pennant.pff.branchchange.service.impl.BranchChangeUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="branchChangeUploadDAO" class="com.pennanttech.pff.branchchange.dao.impl.BranchChangeUploadDAOImpl" parent="sequenceDao" />
+	
+	<bean id="branchMigrationDAO" class="com.pennanttech.pff.branchchange.dao.impl.BranchMigrationDAOImpl" parent="sequenceDao" />
 </beans>

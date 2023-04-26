@@ -25,6 +25,8 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +38,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -286,5 +289,30 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, eventCode) > 0;
+	}
+
+	@Override
+	public List<AccountType> getAccountTypes() {
+		StringBuilder sql = new StringBuilder("Select GroupCode, AcType, AcTypeDesc");
+		sql.append(" From RMTAccountTypes acct");
+		sql.append(" Inner Join AccountTypeGroup atg on atg.GroupId = acct.AcTypeGrpId");
+		sql.append(" Where atg.GroupCode in (?,?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+
+			ps.setString(1, "ASSET");
+			ps.setString(2, "LIABILITY");
+
+		}, (rs, rowNum) -> {
+			AccountType at = new AccountType();
+
+			at.setGroupCode(rs.getString("GroupCode"));
+			at.setAcType(rs.getString("AcType"));
+			at.setAcTypeDesc(rs.getString("AcTypeDesc"));
+
+			return at;
+		});
 	}
 }

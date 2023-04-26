@@ -1302,6 +1302,15 @@
 				zulNavigation="/WEB-INF/pages/MiscellaneousPostingUpload/MiscellaneousPostingUploadList.zul?stage=A"
 				rightName="menu_Item_MiscellaneousPostingUpload_Approver" />
 		</menu>
+		
+		<menu id="menu_Category_BulkBranchChangeUpload">
+			<menuItem id="menu_Item_BulkBranchChangeUpload_Maker"
+				zulNavigation="/WEB-INF/pages/BranchChangeUpload/BranchChangeUploadList.zul?stage=M"
+				rightName="menu_Item_BulkBranchChangeUpload_Maker" />
+			<menuItem id="menu_Item_BulkBranchChangeUpload_Approver"
+				zulNavigation="/WEB-INF/pages/BranchChangeUpload/BranchChangeUploadList.zul?stage=A"
+				rightName="menu_Item_BulkBranchChangeUpload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

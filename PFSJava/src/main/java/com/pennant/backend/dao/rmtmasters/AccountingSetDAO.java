@@ -25,6 +25,9 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
+import java.util.List;
+
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 
 public interface AccountingSetDAO {
@@ -47,4 +50,6 @@ public interface AccountingSetDAO {
 	AccountingSet getAccountingSetbyEventCode(AccountingSet accountingset, String type);
 
 	boolean isValidCategoryWiseEvents(String eventCode);
+
+	List<AccountType> getAccountTypes();
 }

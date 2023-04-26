@@ -43,6 +43,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -53,6 +54,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * Service implementation for methods that depends on <b>AccountingSet</b>.<br>
@@ -507,6 +509,7 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm1, null));
 		} else {
 			if (PennantConstants.RECORD_TYPE_NEW.equals(accountingSet.getRecordType())
+					&& !AccountingEvent.BRNCHG.equals(accountingSet.getEventCode())
 					&& !accountingSetDAO.isValidCategoryWiseEvents(accountingSet.getEventCode())) {
 				String[] errParm1 = new String[1];
 				errParm1[0] = PennantJavaUtil.getLabel("label_EventCode") + ":" + accountingSet.getEventCode();
@@ -851,6 +854,11 @@ public class AccountingSetServiceImpl extends GenericService<AccountingSet> impl
 			}
 			return feeList;
 		}
+	}
+
+	@Override
+	public List<AccountType> getAccountTypes() {
+		return accountingSetDAO.getAccountTypes();
 	}
 
 	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {

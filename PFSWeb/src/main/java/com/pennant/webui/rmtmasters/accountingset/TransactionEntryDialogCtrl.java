@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
@@ -1683,6 +1684,42 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 		amountCodesList = this.pagedListService.getBySearchObject(searchObj);
 
+		if (AccountingEvent.BRNCHG.equals(allowedevent)) {
+			List<AccountType> accounTypeList = accountingSetService.getAccountTypes();
+
+			for (AccountType accountType : accounTypeList) {
+				AmountCode ac = new AmountCode();
+
+				if (AccountingEvent.LIABILITY.equals(accountType.getGroupCode())) {
+					ac.setAmountCode("L_" + accountType.getAcType() + "_old_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+
+				ac = new AmountCode();
+
+				if (AccountingEvent.LIABILITY.equals(accountType.getGroupCode())) {
+					ac.setAmountCode("L_" + accountType.getAcType() + "_new_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+
+				if ("ASSET".equals(accountType.getGroupCode())) {
+					ac.setAmountCode("A_" + accountType.getAcType() + "_old_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+
+				ac = new AmountCode();
+
+				if ("ASSET".equals(accountType.getGroupCode())) {
+					ac.setAmountCode("A_" + accountType.getAcType() + "_new_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+			}
+		}
+
 		for (int i = 0; i < amountCodesList.size(); i++) {
 			Listitem item = new Listitem();
 			Listcell lc = new Listcell(amountCodesList.get(i).getAmountCode());
@@ -2448,6 +2485,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		return accountingSetService;
 	}
 
+	@Autowired
 	public void setAccountingSetService(AccountingSetService accountingSetService) {
 		this.accountingSetService = accountingSetService;
 	}
