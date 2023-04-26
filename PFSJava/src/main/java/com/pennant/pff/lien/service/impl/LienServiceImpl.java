@@ -16,6 +16,7 @@ import com.pennant.pff.lien.service.LienService;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 
 public class LienServiceImpl implements LienService {
 	private static Logger logger = LogManager.getLogger(LienServiceImpl.class);
@@ -43,6 +44,11 @@ public class LienServiceImpl implements LienService {
 			lh = getLienHeader(fm, fd);
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
+			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
+				lh.setLienID(fd.getLienHeader().getLienID());
+				lh.setLienReference(fd.getLienHeader().getLienReference());
+				lh.setId(fd.getLienHeader().getId());
+			}
 			headerID = lienHeaderDAO.save(lh);
 		} else {
 			headerID = lh.getId();

@@ -123,7 +123,7 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 	}
 
 	@Override
-	public void update(LienUpload lu, long headerID) {
+	public void update(LienUpload lu, long id) {
 
 		StringBuilder sql = new StringBuilder("Update LIEN_UPLOAD");
 		sql.append(" Set HeaderID = ?, LIENID = ?, SOURCE = ?, REFERENCE = ?,");
@@ -133,7 +133,7 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 		sql.append(" INTERFACESTATUS = ?,");
 		sql.append(" REMARKS = ?, STATUS = ?,");
 		sql.append(" PROGRESS = ?, ERRORCODE = ?, ERRORDESC = ?");
-		sql.append(" Where HEADERID = ?");
+		sql.append(" Where ID = ?");
 
 		if (lu.getLienID() <= 0) {
 			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
@@ -165,7 +165,7 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 			ps.setInt(index++, lu.getProgress());
 			ps.setString(index++, lu.getErrorCode());
 			ps.setString(index++, lu.getErrorDesc());
-			ps.setLong(index, headerID);
+			ps.setLong(index, id);
 
 		});
 

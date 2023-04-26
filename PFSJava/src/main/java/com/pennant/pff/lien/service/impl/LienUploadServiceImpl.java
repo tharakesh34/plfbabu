@@ -208,7 +208,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 				lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
 			}
 
-			lienUploadDAO.update(lienup, header.getId());
+			lienUploadDAO.update(lienup, lienup.getId());
 
 			String accNumber = lienup.getAccNumber();
 			LienHeader lienheader = lienHeaderDAO.getLienByAcc(accNumber);
@@ -227,6 +227,9 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 			Mandate mandate = new Mandate();
 			mandate.setAccNumber(lienup.getAccNumber());
 			fd.setMandate(mandate);
+			fd.getLienHeader().setLienID(lienup.getLienID());
+			fd.getLienHeader().setLienReference(lienup.getLienReference());
+			fd.getLienHeader().setId(lienup.getId());
 
 			lienService.save(fd);
 		}
