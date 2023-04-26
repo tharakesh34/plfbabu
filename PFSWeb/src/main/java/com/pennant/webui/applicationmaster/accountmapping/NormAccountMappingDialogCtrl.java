@@ -328,7 +328,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 
 		this.recordStatus.setValue(am.getRecordStatus());
 		this.gLDescription.setValue(am.getGLDescription());
-		this.accountTypeGroup.setValue(am.getAccountTypeDesc());
+		this.accountTypeGroup.setValue(am.getAccountTypeGroup());
 
 		logger.debug(Literal.LEAVING);
 	}

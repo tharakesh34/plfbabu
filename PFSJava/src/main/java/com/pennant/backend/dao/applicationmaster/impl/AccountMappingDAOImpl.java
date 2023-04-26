@@ -90,7 +90,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		sql.append(", RecordType, WorkflowId, FinType, CostCenterID, ProfitCenterID, AccountType");
 		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription, AccountTypeGroup");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		log(sql.toString());
 
