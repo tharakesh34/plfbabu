@@ -10141,6 +10141,15 @@
 		<column name="PresentmentRepayHry" type="varchar(50)" /> 
 		</addColumn> 
 	</changeSet> 
+	
+	<changeSet id="ST#730:TK#2762:10" author="Divya.A">
+		<sql>
+			<![CDATA[	
+				UPDATE RMTFINANCETYPES SET WRITEOFFREPAYHRY = RPYHIERARCHY, MATUREREPAYHRY = RPYHIERARCHY, PRESENTMENTREPAYHRY = RPYHIERARCHY;
+				UPDATE RMTFINANCETYPES_TEMP SET WRITEOFFREPAYHRY = RPYHIERARCHY, MATUREREPAYHRY = RPYHIERARCHY, PRESENTMENTREPAYHRY = RPYHIERARCHY;
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="ST#730TK#4755.01" author="Vijayakumar.k">
 		<createSequence sequenceName="SEQAUTO_WRITE_OFF_LOAN_TYPE" />
@@ -12325,6 +12334,37 @@
 			]]>
 		</sql>
 	</changeSet>
-</databaseChangeLog> 
+
+	<changeSet id="ST#1553.18" author="saikiran.n" dbms="oracle">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IX_CRSLN_QUE_CRBID ON CROSS_LOAN_KNOCKOFF_QUEUE(NLSSORT("COREBANKID",'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1553.18" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IX_CRSLN_QUE_CRBID ON CROSS_LOAN_KNOCKOFF_QUEUE(lower(COREBANKID));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1553.18" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IX_CRSLN_QUE_CRBID ON CROSS_LOAN_KNOCKOFF_QUEUE(COREBANKID);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1468.10" author="saikrishna.b">
+		<sql>
+			<![CDATA[	
+				INSERT INTO ACCOUNT_UPDATER (FROMID, TOID, PROCESSFLAG) VALUES(0, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 
