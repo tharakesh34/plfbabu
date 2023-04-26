@@ -179,11 +179,17 @@ public interface InterfaceConstants {
 		if (config.getFileSftpLocation() == null || "".equals(config.getFileSftpLocation())) {
 			return;
 		}
+
+		FtpClient ftpClient = null;
 		try {
-			FtpClient ftpClient = getftpClientConnection(config);
+			ftpClient = getftpClientConnection(config);
 			ftpClient.upload(new File(localFileWithPath), config.getFileSftpLocation());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//
+		} finally {
+			if (ftpClient != null) {
+				ftpClient.disconnect();
+			}
 		}
 	}
 }

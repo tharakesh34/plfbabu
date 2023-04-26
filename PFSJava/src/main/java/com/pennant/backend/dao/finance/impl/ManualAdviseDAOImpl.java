@@ -1848,7 +1848,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_CANCELLED);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
-			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setInt(index++, 0);
 		});
 	}
@@ -1874,7 +1874,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_CANCELLED);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
-			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setInt(index++, 0);
 		});
 	}

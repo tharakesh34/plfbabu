@@ -354,6 +354,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			String accessKey = externalRespConfig.getAccessKey();
 			String secretKey = externalRespConfig.getSecretKey();
 
+			FtpClient ftpClient = null;
 			try {
 				String remoteFilePath = externalRespConfig.getFileSftpLocation();
 
@@ -369,7 +370,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					return;
 				}
 
-				FtpClient ftpClient = getftpClientConnection(externalRespConfig);
+				ftpClient = getftpClientConnection(externalRespConfig);
 
 				// Get list of files in SFTP.
 				List<String> fileNames = getFileNameList(remoteFilePath, host, port, accessKey, secretKey);
@@ -383,6 +384,10 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);
+			} finally {
+				if (ftpClient != null) {
+					ftpClient.disconnect();
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -394,12 +399,18 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			logger.debug("EXT_PRMNT: No configuration found for Backup path, so returning.");
 			return;
 		}
+
+		FtpClient sftpClient = null;
 		try {
-			FtpClient sftpClient = getftpClientConnection(externalRespConfig);
+			sftpClient = getftpClientConnection(externalRespConfig);
 			sftpClient.upload(new File(localFolderPath + File.separator + fileName),
 					externalRespConfig.getFileBackupLocation());
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+			if (sftpClient != null) {
+				sftpClient.disconnect();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}

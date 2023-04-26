@@ -799,7 +799,19 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			return error;
 		}
 
+		ch.setNoOfCheques(fetchChequeSize(ch.getChequeDetailList()));
 		return validateChequeDetails(ch.getChequeDetailList());
+	}
+
+	private int fetchChequeSize(List<ChequeDetail> cheques) {
+		int chequeSize = 0;
+
+		for (ChequeDetail detail : cheques) {
+			if (InstrumentType.isPDC(detail.getChequeType())) {
+				chequeSize++;
+			}
+		}
+		return chequeSize;
 	}
 
 	@Override
@@ -1174,7 +1186,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 			return getError("90502", "NoOfCheques");
 		}
 
-		if (chequeSize != ch.getNoOfCheques()) {
+		if (spdcCount && chequeSize != ch.getNoOfCheques()) {
 			return getError("30540", "ChequeDetails ", " total no cheques");
 		}
 
