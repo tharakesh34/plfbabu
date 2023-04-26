@@ -39,7 +39,9 @@ public enum UploadTypes {
 
 	WRITE_OFF("WriteOff Upload Details Screen"),
 
-	REV_WRITE_OFF("Reverse WriteOff Upload Details Screen");
+	REV_WRITE_OFF("Reverse WriteOff Upload Details Screen"),
+
+	BRANCH_CHANGE("Branch Change Upload Details Screen");
 
 	private String description;
 

@@ -6239,4 +6239,6 @@
 		<property name="loanTypeWriteOffService" ref="loanTypeWriteOffService" />
 	</bean>
 	
+	<bean id="branchChangeUploadListCtrl" class="com.pennant.pff.branchchange.upload.list.BranchChangeUploadListCtrl"
+		parent="uploadList" />
 </beans>

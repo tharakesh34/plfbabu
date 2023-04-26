@@ -73,6 +73,7 @@ public class Accounts extends AbstractWorkflowEntity {
 	private String lovDescBranchCodeName;
 	private String lovDescAcHeadCode;
 	private String lovDescCcyNumber;
+	private String groupCode;
 
 	public Accounts() {
 		super();
@@ -81,6 +82,7 @@ public class Accounts extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("acNumber");
+		excludeFields.add("groupCode");
 		return excludeFields;
 	}
 
@@ -335,5 +337,13 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public void setAcNumber(String acNumber) {
 		this.acNumber = acNumber;
+	}
+
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public void setGroupCode(String groupCode) {
+		this.groupCode = groupCode;
 	}
 }

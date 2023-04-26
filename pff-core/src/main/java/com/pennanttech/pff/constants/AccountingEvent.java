@@ -136,7 +136,7 @@ public class AccountingEvent {
 
 	public static final String ADDDBS = "ADDDBS";
 	public static final String DEFAULT = "DEFAULT";
-	public static final String LIABILITY = "LIBILITY";
+	public static final String LIABILITY = "LIABILITY";
 	public static final String NOCISSUANCE = "NOCISU";
 	public static final String TIMELYCLOSURE = "TIMECLS";
 	public static final String BRANCH_CLOSE = "BRNCLOSE";
@@ -144,6 +144,8 @@ public class AccountingEvent {
 	public static final String ASSIGNMENT = "ASSIGN";
 	public static final String CHANGETDSAPPICABLE = "CHANGETDS";
 	public static final String CASHDISBTOCUST = "D2C";
+
+	public static final String BRNCHG = "BRNCHG";
 
 	public static boolean isDisbursementEvent(String eventCode) {
 		if (StringUtils.isEmpty(eventCode)) {

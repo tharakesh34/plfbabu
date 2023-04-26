@@ -5114,7 +5114,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" fm.FinID, fm.FinReference, fm.CustID, fm.FinCcy, fm.FinBranch, fm.FinType, fm.ScheduleMethod");
 		sql.append(", fm.ProfitDaysBasis, fm.GrcPeriodEndDate, fm.AllowGrcPeriod, fm.ProductCategory, fm.FinCategory");
 		sql.append(", cu.CustCIF, cu.CustShrtName, ClosingStatus");
-		sql.append(", ft.FinDivision");
+		sql.append(", ft.FinDivision, UnderSettlement, RcdMaintainSts");
 		sql.append(" From FinanceMain").append(type).append(" fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join Customers cu ON cu.CustID = fm.CustID");
@@ -5142,6 +5142,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
 				fm.setLovDescFinDivision(rs.getString("FinDivision"));
+				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 
 				return fm;
 			}, finID);
@@ -7110,13 +7112,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 1, repayAmount, customerName);
 	}
-	
+
 	@Override
 	public Date getMaturityDatebyFinID(long finID) {
 		String sql = "Select MaturityDate From FinanceMain Where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
-		
+
 		try {
 			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
 		} catch (EmptyResultDataAccessException e) {
