@@ -54,8 +54,10 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -1853,6 +1855,44 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, Long.class, chequeSerialNo, "B");
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public long getMaxReceiptIdFinRef(String finReference) {
+		String sql = "Select max(ReceiptId) From FinReceiptHeader Where Reference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finReference);
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
+	}
+
+	@Override
+	public FinanceType getRepayHierarchy(FinanceMain fm) {
+		String sql = "Select WriteOffRepayHry, NpaRpyHierarchy, MatureRepayHry, PresentmentRepayHry, RpyHierarchy From RMTFinanceTypes Where FinType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceType ft = new FinanceType();
+
+				ft.setWriteOffRepayHry(rs.getString("WriteOffRepayHry"));
+				ft.setNpaRpyHierarchy(rs.getString("NpaRpyHierarchy"));
+				ft.setMatureRepayHry(rs.getString("MatureRepayHry"));
+				ft.setPresentmentRepayHry(rs.getString("PresentmentRepayHry"));
+				ft.setRpyHierarchy(rs.getString("RpyHierarchy"));
+
+				return ft;
+			}, fm.getFinType());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

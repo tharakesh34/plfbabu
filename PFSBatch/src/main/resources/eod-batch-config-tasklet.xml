@@ -233,5 +233,8 @@
 	<bean id="excessKnockOffQueuingTaskLet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffQueuing" />
 	
 	<bean id="excessKnockOffTasklet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffTasklet" />
+
+	<bean id="autoWriteOffCalcQueueTasklet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcQueue" />
 	
+	<bean id="autoWriteOffClacTaskLet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffClacTaskLet" />
 </beans>

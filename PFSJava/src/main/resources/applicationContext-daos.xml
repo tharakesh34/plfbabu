@@ -13322,4 +13322,64 @@
 
 	<bean id="receiptStatusUploadValidateRecord"
 		class="com.pennant.pff.receipt.validate.ReceiptStatusUploadValidateRecord" />
+		
+	<bean id ="writeOffUploadValidateRecord" class = "com.pennant.pff.writeoffupload.service.impl.WriteOffUploadValidateRecord"/>
+	
+	<bean id="writeOffUploadDAO" class="com.pennant.pff.writeoffupload.dao.impl.WriteOffUploadDAOImpl" parent="sequenceDao" />
+
+	<bean id="writeOffUploadService" class="com.pennant.pff.writeoffupload.service.impl.WriteOffUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id ="revWriteOffUploadValidateRecord" class = "com.pennant.pff.revwriteoffupload.service.impl.RevWriteOffUploadValidateRecord"/>
+	
+	<bean id="revWriteOffUploadDAO" class="com.pennant.pff.revwriteoffupload.dao.impl.RevWriteOffUploadDAOImpl" parent="sequenceDao" />
+
+	<bean id="revWriteOffUploadService" class="com.pennant.pff.revwriteoffupload.service.impl.RevWriteOffUploadServiceImpl" parent="aUploadService" />
+	
+	<bean id="autoWriteOffDao" class="com.pennanttech.pff.autowriteoff.dao.impl.AutoWriteOffDAOImpl" parent="sequenceDao" />
+
+	<bean id="autoWriteOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="autoWriteOffServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="autoWriteOffServiceTarget" class="com.pennanttech.pff.autowriteoff.service.impl.AutoWriteOffServiceImpl" />
+	
+	<bean id="loanTypeWriteOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeWriteOffDAOImpl"
+		parent="basicDao" />
+
+	<bean id="loanTypeWriteOffService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="loanTypeWriteOffTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="getDocumentManImage*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="loanTypeWriteOffTarget"
+		class="com.pennant.backend.service.applicationmaster.impl.LoanTypeWriteOffServiceImpl"/>
 </beans>

@@ -229,12 +229,6 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			return;
 		}
 
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			MessageUtil.showMessage(Labels.getLabel("label_Writeoff_Loan"));
-			return;
-		}
-
 		Map<String, Object> arg = new HashMap<String, Object>();
 		if (StringUtils.equals(moduleDefiner, "holdDisbursement")) {
 			arg.put("holdDisbursement", holdDisbursement);

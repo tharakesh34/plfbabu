@@ -6216,4 +6216,27 @@
 
 	<bean id="receiptStatusUploadList" class="com.pennant.pff.receipt.web.ReceiptStatusUploadListCtrl"
 		parent="uploadList" />
+
+	<bean id="writeOffUploadList" class="com.pennant.pff.writeoff.upload.list.WriteOffUploadListCtrl" parent="uploadList" />
+	
+	<bean id="revWriteOffUploadList" class="com.pennant.pff.revwriteoff.upload.list.RevWriteOffUploadListCtrl" parent="uploadList" />
+
+	<bean id="loanTypeWriteOffListCtrl"
+		class="com.pennant.webui.applicationmaster.loantypewriteoff.LoanTypeWriteOffListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="loanTypeWriteOffService" ref="loanTypeWriteOffService" />
+	</bean>
+
+	<bean id="selectLoanTypeWriteOffDialogCtrl"
+		class="com.pennant.webui.applicationmaster.loantypewriteoff.SelectLoanTypeWriteOffDialog" parent="basisCtrl"
+		scope="prototype">
+		<property name="loanTypeWriteOffService" ref="loanTypeWriteOffService" />
+	</bean>
+
+	<bean id="loanTypeWriteOffDialogCtrl"
+		class="com.pennant.webui.applicationmaster.loantypewriteoff.LoanTypeWriteOffDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="loanTypeWriteOffService" ref="loanTypeWriteOffService" />
+	</bean>
+	
 </beans>

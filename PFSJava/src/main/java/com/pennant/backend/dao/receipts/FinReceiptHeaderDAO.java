@@ -10,8 +10,10 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAPIRequest;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.pff.core.TableType;
 
@@ -164,4 +166,8 @@ public interface FinReceiptHeaderDAO {
 	String getClosureTypeValue(Long finID, String receiptPurpose);
 
 	FinReceiptHeader getReceiptById(long receiptId, String type);
+
+	long getMaxReceiptIdFinRef(String finReference);
+
+	FinanceType getRepayHierarchy(FinanceMain fm);
 }

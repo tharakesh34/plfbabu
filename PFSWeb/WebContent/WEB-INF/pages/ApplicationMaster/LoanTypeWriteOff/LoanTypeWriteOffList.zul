@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="windowLoanTypeWriteOffList" apply="${loanTypeWriteOffListCtrl}" border="none" width="100%">
+			<div sclass="z-toolbar" style="padding:0px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button id="buttonSearch" label="${c:l('label_Filter')}"
+							autodisable="buttonSearch,print,buttonNew,btnRefresh,help"
+							tooltiptext="${c:l('button_LoanTypeWriteOffList_LoanTypeWriteOffSearch.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="buttonSearch,print,buttonNew,btnRefresh,help"
+							tooltiptext="${c:l('button_LoanTypeWriteOffList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="buttonNew" label="${c:l('label_New')}"
+							autodisable="buttonSearch,print,buttonNew,btnRefresh,help"
+							tooltiptext="${c:l('button_LoanTypeWriteOffList_NewLoanTypeWriteOff.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnRefresh" label="${c:l('label_Refresh')}"
+							autodisable="buttonSearch,print,buttonNew,btnRefresh,help" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+						<button id="help" label="${c:l('label_Help')}" visible="false"
+							autodisable="buttonSearch,print,buttonNew,btnRefresh,help" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+			<borderlayout id="borderLayoutLoanTypeWriteOffList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
+							<columns>
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+								<column width="15%" />
+								<column width="5%" />
+								<column width="30%" />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_LoanTypeWriteOffList_LoanType.value')}" />
+									<listbox id="soLoanType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<uppercasebox id="loanType" width="200px" maxlength="50" />
+									<label value="${c:l('label_LoanTypeWriteOffList_RecordType.value')}" />
+									<listbox width="43px" mold="select" rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
+								</row>
+								<row>
+								<label value="${c:l('label_AutoWriteOffList_RecordStatus.value')}" />
+									<listbox width="43px" mold="select" rows="1" />
+									<textbox id="recordStatus" width="100px" maxlength="50" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxLoanTypeWriteOff" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
+							<listhead sizable="true">
+								<listheader id="listheaderLoanType" label="${c:l('listheader_LoanType.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingLoanTypeWriteOffList" height="35px" />
+				</south>
+
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -35,7 +35,11 @@ public enum UploadTypes {
 
 	CREATE_RECEIPT("Create Receipt Upload detail screen"),
 
-	RECEIPT_STATUS("RECEIPT STATUS Upload Details Screen");
+	RECEIPT_STATUS("RECEIPT STATUS Upload Details Screen"),
+
+	WRITE_OFF("WriteOff Upload Details Screen"),
+
+	REV_WRITE_OFF("Reverse WriteOff Upload Details Screen");
 
 	private String description;
 

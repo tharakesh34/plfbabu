@@ -30,7 +30,6 @@ public class SchdUtil {
 	}
 
 	public static int getFutureInstalments(Date businessDate, List<FinanceScheduleDetail> schedules) {
-
 		return schedules.stream()
 				.filter(schd -> businessDate.compareTo(schd.getSchDate()) <= 0 && schd.isRepayOnSchDate())
 				.collect(Collectors.toList()).size();
@@ -147,4 +146,18 @@ public class SchdUtil {
 
 		return curPastDueDays;
 	}
+
+	public static BigDecimal principalBal(FinanceScheduleDetail schedule) {
+		return schedule.getPrincipalSchd().subtract(schedule.getSchdPriPaid())
+				.subtract(schedule.getWriteoffPrincipal());
+	}
+
+	public static BigDecimal profitBal(FinanceScheduleDetail schedule) {
+		return schedule.getProfitSchd().subtract(schedule.getSchdPftPaid()).subtract(schedule.getWriteoffProfit());
+	}
+
+	public static BigDecimal feeBal(FinanceScheduleDetail schedule) {
+		return schedule.getFeeSchd().subtract(schedule.getSchdFeePaid().subtract(schedule.getWriteoffSchFee()));
+	}
+
 }

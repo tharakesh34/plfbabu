@@ -4,7 +4,10 @@ import java.util.Date;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
@@ -61,4 +64,26 @@ public class FinanceUtil {
 		return !isValidDisbStatus(status);
 	}
 
+	public static String getRepayHierarchy(FinReceiptData rd, FinanceMain fm, FinanceType finType) {
+		FinReceiptHeader rch = rd.getReceiptHeader();
+		Date valueDate = rch.getValueDate();
+
+		if (fm.isWriteoffLoan()) {
+			return finType.getWriteOffRepayHry();
+		}
+
+		if (fm.isFinIsActive() && fm.getMaturityDate().compareTo(valueDate) <= 0) {
+			return finType.getMatureRepayHry();
+		}
+
+		if (rd.isPresentment()) {
+			return finType.getPresentmentRepayHry();
+		}
+
+		if (fm.isUnderNpa()) {
+			return finType.getNpaRpyHierarchy();
+		}
+
+		return finType.getRpyHierarchy();
+	}
 }

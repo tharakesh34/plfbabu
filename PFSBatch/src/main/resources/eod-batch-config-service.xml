@@ -780,8 +780,40 @@
 	<bean id="genderDAO" class="com.pennant.backend.dao.systemmasters.impl.GenderDAOImpl" parent="basicDao" />
 	
 	<bean id="beneficiaryDAO" class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl" parent="sequenceDao" />
-	
-	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
+
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao" />
+
+	<bean id="autoWriteOffService" class="com.pennanttech.pff.autowriteoff.service.impl.AutoWriteOffServiceImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
+		<property name="financeWriteoffService" ref="financeWriteoffService" />
+		<property name="loanTypeWriteOffDAO" ref="loanTypeWriteOffDAO" />
+		<property name="autoWriteOffDAO" ref="autoWriteOffDAO" />
+	</bean>
+
+	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
+		parent="basicDao" />
+
+	<!-- PSLDetail -->
+	<bean id="pSLDetailDAO" class="com.pennant.backend.dao.psl.impl.PSLDetailDAOImpl" parent="basicDao" />
+
+	<!--============ Finance Write off Details ============== -->
+	<bean name="financeWriteoffService" class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl">
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
+		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="feeDetailService" ref="feeDetailService" />
+	</bean>
 	
 	<bean id="excessKnockOffService" class="com.pennanttech.pff.knockoff.service.impl.ExcessKnockOffServiceImpl" />
 	
@@ -790,4 +822,19 @@
 	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl" parent="sequenceDao"/>
 	
 	<bean name="autoKnockOffService" class="com.pennant.backend.service.applicationmaster.impl.AutoKnockOffServiceImpl"/>
+
+	<bean name="feeDetailService" class="com.pennant.backend.service.fees.FeeDetailService">
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+	</bean>
+	
+	<bean id="financeWriteoffDAO" class="com.pennant.backend.dao.finance.impl.FinanceWriteoffDAOImpl"
+		parent="basicDao" />
+
+	<bean id="autoWriteOffDAO" class="com.pennanttech.pff.autowriteoff.dao.impl.AutoWriteOffDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="loanTypeWriteOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeWriteOffDAOImpl"
+		parent="basicDao" />
 </beans>

@@ -31,6 +31,42 @@ public enum ExcessHead {
 		return code;
 	}
 
+	private static boolean isEqual(ExcessHead excessHead, ExcessHead type) {
+		return type == null ? false : type == excessHead;
+	}
+
+	public static boolean isExcess(String amountType) {
+		return isEqual(EXCESS, getHead(amountType));
+	}
+
+	public static boolean isEmiInAdv(String amountType) {
+		return isEqual(EMIINADV, getHead(amountType));
+	}
+
+	public static boolean isAdvEmi(String amountType) {
+		return isEqual(ADVEMI, getHead(amountType));
+	}
+
+	public static boolean isAdvInt(String amountType) {
+		return isEqual(ADVINT, getHead(amountType));
+	}
+
+	public static boolean isCashclt(String amountType) {
+		return isEqual(CASHCLT, getHead(amountType));
+	}
+
+	public static boolean isDsf(String amountType) {
+		return isEqual(DSF, getHead(amountType));
+	}
+
+	public static boolean isTExcess(String amountType) {
+		return isEqual(TEXCESS, getHead(amountType));
+	}
+
+	public static boolean isSettlement(String amountType) {
+		return isEqual(SETTLEMENT, getHead(amountType));
+	}
+
 	public static ExcessHead getHead(String code) {
 		List<ExcessHead> list = Arrays.asList(ExcessHead.values());
 

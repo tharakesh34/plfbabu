@@ -83,9 +83,11 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -104,8 +106,8 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
-import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.payment.model.LoanPayment;
 import com.pennanttech.pff.payment.service.LoanPaymentService;
@@ -146,13 +148,11 @@ public class RepaymentProcessUtil {
 	private OverdrafLoanService overdrafLoanService;
 	private AccrualService accrualService;
 	private LoanPaymentService loanPaymentService;
+	private AdvancePaymentService advancePaymentService;
 
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
-
 	private ReceiptCalculator receiptCalculator;
-	private AssetClassificationService assetClassificationService;
-	private AdvancePaymentService advancePaymentService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -751,7 +751,8 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		extMap.putAll(prepareMovementMap(movements));
+		String bounceComponent = feeTypeDAO.getTaxComponent(Allocation.BOUNCE);
+		extMap.putAll(ManualAdviceUtil.prepareMovementMap(payableAdvMovements, bounceComponent));
 
 		BigDecimal adjustedToReceipt = BigDecimal.ZERO;
 		adjustedToReceipt = rch.getTotalPastDues().getPaidAmount();
@@ -1268,148 +1269,6 @@ public class RepaymentProcessUtil {
 			}
 		}
 		return toExcess;
-	}
-
-	private Map<String, BigDecimal> prepareMovementMap(List<ManualAdviseMovements> movements) {
-		Map<String, BigDecimal> movementMap = new HashMap<>();
-
-		addAmountToMap(movementMap, "bounceChargePaid", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_CGST_P", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_IGST_P", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_SGST_P", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_UGST_P", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_CESS_P", BigDecimal.ZERO);
-
-		addAmountToMap(movementMap, "bounceChargeWaived", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_CGST_W", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_IGST_W", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_SGST_W", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_UGST_W", BigDecimal.ZERO);
-		addAmountToMap(movementMap, "bounceCharge_CESS_W", BigDecimal.ZERO);
-
-		String bounceComponent = feeTypeDAO.getTaxComponent(Allocation.BOUNCE);
-
-		for (ManualAdviseMovements movement : movements) {
-			TaxHeader taxHeader = movement.getTaxHeader();
-
-			Taxes cgstTax = new Taxes();
-			Taxes sgstTax = new Taxes();
-			Taxes igstTax = new Taxes();
-			Taxes ugstTax = new Taxes();
-			Taxes cessTax = new Taxes();
-
-			List<Taxes> taxDetails = taxHeader.getTaxDetails();
-
-			if (CollectionUtils.isNotEmpty(taxDetails)) {
-				for (Taxes taxes : taxDetails) {
-					switch (taxes.getTaxType()) {
-					case RuleConstants.CODE_CGST:
-						cgstTax = taxes;
-						break;
-					case RuleConstants.CODE_SGST:
-						sgstTax = taxes;
-						break;
-					case RuleConstants.CODE_IGST:
-						igstTax = taxes;
-						break;
-					case RuleConstants.CODE_UGST:
-						ugstTax = taxes;
-						break;
-					case RuleConstants.CODE_CESS:
-						cessTax = taxes;
-						break;
-
-					default:
-						break;
-					}
-				}
-			}
-
-			BigDecimal cgstPaid = cgstTax.getPaidTax();
-			BigDecimal sgstPaid = sgstTax.getPaidTax();
-			BigDecimal igstPaid = igstTax.getPaidTax();
-			BigDecimal ugstPaid = ugstTax.getPaidTax();
-			BigDecimal cessPaid = cessTax.getPaidTax();
-
-			BigDecimal cgstWaived = cgstTax.getWaivedTax();
-			BigDecimal sgstWaived = sgstTax.getWaivedTax();
-			BigDecimal igstWaived = igstTax.getWaivedTax();
-			BigDecimal ugstWaived = ugstTax.getWaivedTax();
-			BigDecimal cessWaived = cessTax.getWaivedTax();
-
-			BigDecimal paidAmt = movement.getPaidAmount();
-			BigDecimal waivedAmt = movement.getWaivedAmount();
-			BigDecimal tdsPaid = movement.getTdsPaid();
-
-			BigDecimal totalPaidGST = CalculationUtil.getTotalPaidGST(movement);
-			BigDecimal totalWaivedGST = CalculationUtil.getTotalWaivedGST(movement);
-
-			String feeTypeCode = movement.getFeeTypeCode();
-			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
-
-			if (StringUtils.isEmpty(feeTypeCode) || Allocation.BOUNCE.equals(feeTypeCode)) {
-
-				if (taxComponent == null) {
-					taxComponent = bounceComponent;
-				}
-				if (bounceComponent == null) {
-					continue;
-				}
-
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-					addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
-					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
-				} else {
-					addAmountToMap(movementMap, "bounceChargePaid", paidAmt.add(totalPaidGST));
-					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt.add(totalWaivedGST));
-				}
-
-				addAmountToMap(movementMap, "bounceCharge" + "_CGST_P", cgstPaid);
-				addAmountToMap(movementMap, "bounceCharge" + "_SGST_P", sgstPaid);
-				addAmountToMap(movementMap, "bounceCharge" + "_IGST_P", igstPaid);
-				addAmountToMap(movementMap, "bounceCharge" + "_UGST_P", ugstPaid);
-				addAmountToMap(movementMap, "bounceCharge" + "_CESS_P", cessPaid);
-
-				addAmountToMap(movementMap, "bounceCharge" + "_CGST_W", cgstWaived);
-				addAmountToMap(movementMap, "bounceCharge" + "_SGST_W", sgstWaived);
-				addAmountToMap(movementMap, "bounceCharge" + "_IGST_W", igstWaived);
-				addAmountToMap(movementMap, "bounceCharge" + "_UGST_W", ugstWaived);
-				addAmountToMap(movementMap, "bounceCharge" + "_CESS_W", cessWaived);
-
-				addAmountToMap(movementMap, "bounceCharge" + "_TDS_P", tdsPaid);
-
-			} else {
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
-					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
-				} else {
-					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt.add(totalPaidGST));
-					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt.add(totalWaivedGST));
-				}
-			}
-
-			addAmountToMap(movementMap, feeTypeCode + "_CGST_P", cgstPaid);
-			addAmountToMap(movementMap, feeTypeCode + "_SGST_P", sgstPaid);
-			addAmountToMap(movementMap, feeTypeCode + "_IGST_P", igstPaid);
-			addAmountToMap(movementMap, feeTypeCode + "_UGST_P", ugstPaid);
-			addAmountToMap(movementMap, feeTypeCode + "_CESS_P", cessPaid);
-
-			addAmountToMap(movementMap, feeTypeCode + "_CGST_W", cgstWaived);
-			addAmountToMap(movementMap, feeTypeCode + "_SGST_W", sgstWaived);
-			addAmountToMap(movementMap, feeTypeCode + "_IGST_W", igstWaived);
-			addAmountToMap(movementMap, feeTypeCode + "_UGST_W", ugstWaived);
-			addAmountToMap(movementMap, feeTypeCode + "_CESS_W", cessWaived);
-
-			addAmountToMap(movementMap, feeTypeCode + "_TDS_P", tdsPaid);
-		}
-
-		return movementMap;
-	}
-
-	private void addAmountToMap(Map<String, BigDecimal> movementMap, String feeCode, BigDecimal amount) {
-		BigDecimal amt = movementMap.computeIfAbsent(feeCode, code -> BigDecimal.ZERO);
-
-		movementMap.put(feeCode, amt.add(amount));
 	}
 
 	private Map<String, BigDecimal> prepareFeeRulesMap(Map<String, BigDecimal> dataMap,
@@ -2687,7 +2546,9 @@ public class RepaymentProcessUtil {
 		FinScheduleData fsd = fd.getFinScheduleData();
 		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
 		FinanceMain fm = fsd.getFinanceMain();
-		String repayHierarchy = assetClassificationService.getNpaRepayHierarchy(fm.getFinID());
+
+		FinanceType finType = finReceiptHeaderDAO.getRepayHierarchy(fm);
+		String repayHierarchy = FinanceUtil.getRepayHierarchy(rd, fm, finType);
 
 		List<FinDueData> duesList = new ArrayList<>();
 
@@ -2702,10 +2563,6 @@ public class RepaymentProcessUtil {
 		duesList = duesList.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
 				.collect(Collectors.toList());
 
-		if ("".equals(repayHierarchy)) {
-			repayHierarchy = fsd.getFinanceType().getRpyHierarchy();
-		}
-
 		setFinDueDataByHierarchy(duesList, repayHierarchy);
 
 		duesList = sortDueDetailsByRelHierarchy(duesList);
@@ -2719,6 +2576,10 @@ public class RepaymentProcessUtil {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		FinScheduleData fsd = rd.getFinanceDetail().getFinScheduleData();
 		List<FinanceScheduleDetail> schdDtls = fsd.getFinanceScheduleDetails();
+		FinanceMain fm = fsd.getFinanceMain();
+
+		FinanceType finType = finReceiptHeaderDAO.getRepayHierarchy(fm);
+		String repayHierarchy = FinanceUtil.getRepayHierarchy(rd, fm, finType);
 
 		List<FinDueData> dueDataDtls = addAllocations(rd, valueDate, rch, schdDtls);
 
@@ -2730,7 +2591,7 @@ public class RepaymentProcessUtil {
 		dueDataDtls = dueDataDtls.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
 				.collect(Collectors.toList());
 
-		setFinDueDataByHierarchy(dueDataDtls, fsd.getFinanceType().getRpyHierarchy());
+		setFinDueDataByHierarchy(dueDataDtls, repayHierarchy);
 
 		dueDataDtls = sortDueDetailsByRelHierarchy(dueDataDtls);
 		rd.setDueDataList(dueDataDtls);
@@ -3026,11 +2887,6 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
-	}
-
-	@Autowired
-	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
-		this.assetClassificationService = assetClassificationService;
 	}
 
 }

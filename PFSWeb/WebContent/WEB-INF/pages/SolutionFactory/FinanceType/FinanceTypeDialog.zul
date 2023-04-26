@@ -236,12 +236,11 @@
 												<label id="label_FinanceTypeDialog_TDSType"
 													value="${c:l('label_FinanceTypeDialog_TDSType.value')}" />
 												<hbox>
-													<combobox
-														id="cbTdsType" width="180px" readonly="true"
+													<combobox id="cbTdsType" width="180px" readonly="true"
 														visible="false" />
 												</hbox>
 											</row>
-											
+
 											<row>
 												<label id="label_FinanceTypeDialog_tDSAllowToModify"
 													value="${c:l('label_FinanceTypeDialog_tDSAllowToModify.value')}" visible="false" />
@@ -965,20 +964,6 @@
 													<checkbox id="finPftUnChanged" />
 												</hbox>
 											</row>
-											<row>
-												<label id="label_FinanceTypeDialog_RepayHierarchy"
-													value="${c:l('label_FinanceTypeDialog_RepayHierarchy.value')}" />
-												<hbox>
-													<space id="space_rpyHierarchy" spacing="2px" sclass="mandatory" />
-													<uppercasebox id="rpyHierarchy" width="200px" />
-												</hbox>
-												<label id="label_FinanceTypeDialog_NPARepayHierarchy"
-													value="${c:l('label_FinanceTypeDialog_NPARepayHierarchy.value')}" />
-												<hbox>
-													<space id="space_npaRpyHierarchy" spacing="2px" sclass="mandatory" />
-													<uppercasebox id="npaRpyHierarchy" width="200px" />
-												</hbox>
-											</row>
 											<row visible="true">
 												<label id="label_FinanceTypeDialog_AlwBpiTreatment"
 													value="${c:l('label_FinanceTypeDialog_AlwBpiTreatment.value')}" />
@@ -1162,7 +1147,58 @@
 										</rows>
 									</grid>
 								</groupbox>
+								<groupbox id="repaymentHierarchy">
+									<caption label="${c:l('label_FinanceTypeDialog_repaymentHierarchy.value')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label id='label_FinanceTypeDialog_Written_Off_Loans'
+													value="${c:l('label_FinanceTypeDialog_Written_Off_Loans.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_writeOffRepayHry" sclass="mandatory" />
+													<uppercasebox id="writeOffRepayHry" width="200px"/>
+												</hbox>
+												<label id='label_FinanceTypeDialog_NPA_Loans'
+													value="${c:l('label_FinanceTypeDialog_NPA_Loans.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_npaRpyHierarchy"  sclass="mandatory" />
+													<uppercasebox id="npaRpyHierarchy" width="200px" />
+												</hbox>
+											</row>
+											<row>
+												<label id='label_FinanceTypeDialog_Matured_Loans'
+													value="${c:l('label_FinanceTypeDialog_Matured_Loans.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_matureRepayHry" sclass="mandatory" />
+													<uppercasebox id="matureRepayHry" width="200px" />
+												</hbox>
+												<label id='label_FinanceTypeDialog_PresentmentReceipts'
+													value="${c:l('label_FinanceTypeDialog_PresentmentReceipts.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_presentmentRepayHry"
+														sclass="mandatory" />
+													<uppercasebox id="presentmentRepayHry" width="200px" />
+												</hbox>
+											</row>
+											<row>
+												<label id='label_FinanceTypeDialog_RegularLoans'
+													value="${c:l('label_FinanceTypeDialog_RegularLoans.value')}" />
+												<hbox>
+													<space spacing="2px" id="space_rpyHierarchy"  sclass="mandatory" />
+													<uppercasebox id="rpyHierarchy" width="200px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
 								<groupbox id="advIntAndEMIReq" visible="false">
+
 									<caption label="${c:l('label_FinanceTypeDialog_EMI_AdvanceInterest')}" />
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
@@ -1247,8 +1283,7 @@
 									</grid>
 								</groupbox>
 								<groupbox id="gb_subventionReq" visible="false">
-									<caption
-										label="${c:l('label_FinanceTypeDialog_Subvention')}" />
+									<caption label="${c:l('label_FinanceTypeDialog_Subvention')}" />
 									<grid sclass="GridLayoutNoBorder">
 										<columns>
 											<column width="300px" />
@@ -1262,16 +1297,14 @@
 													value="${c:l('label_FinanceTypeDialog_SubventionRequired.value')}" />
 												<hbox>
 													<space id="space_subventionReq" spacing="2px" />
-													<checkbox
-														id="subventionReq" />
+													<checkbox id="subventionReq" />
 												</hbox>
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
 								<groupbox>
-									<caption
-										label="${c:l('label_FinanceTypeDialog_AutoRefunds')}" />
+									<caption label="${c:l('label_FinanceTypeDialog_AutoRefunds')}" />
 									<grid sclass="GridLayoutNoBorder">
 										<columns>
 											<column width="300px" />
@@ -1281,19 +1314,16 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													value="${c:l('label_FinanceTypeDialog_AllowAutoRefunds.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_AllowAutoRefunds.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="allowAutoRefund" />
 												</hbox>
 											</row>
 											<row id="rowAutoRefundLimits" visible="false">
-												<label
-													value="${c:l('label_FinanceTypeDialog_MinAutoRefunds.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MinAutoRefunds.value')}" />
 												<currencyBox id="minAutoRefund" />
-												<label
-													value="${c:l('label_FinanceTypeDialog_MaxAutoRefunds.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MaxAutoRefunds.value')}" />
 												<currencyBox id="maxAutoRefund" />
 											</row>
 										</rows>
@@ -1446,12 +1476,14 @@
 												</hbox>
 											</row>
 											<row id="row_ODCollection" visible="false">
-												<label id="label_FinanceTypeDialog_CollecChrgcode" value="${c:l('label_FinanceTypeDialog_CollecChrgcode.value')}" />
+												<label id="label_FinanceTypeDialog_CollecChrgcode"
+													value="${c:l('label_FinanceTypeDialog_CollecChrgcode.value')}" />
 												<hbox>
 													<space id="space_collecChrgCode" spacing="2px" />
 													<extendedcombobox id="collecChrgCode" readonly="true" />
 												</hbox>
-												<label id="label_FinanceTypeDialog_CollectionAmt" value="${c:l('label_FinanceTypeDialog_CollectionAmt.value')}" />
+												<label id="label_FinanceTypeDialog_CollectionAmt"
+													value="${c:l('label_FinanceTypeDialog_CollectionAmt.value')}" />
 												<hbox>
 													<space id="space_collectionAmt" spacing="2px" />
 													<decimalbox id="collectionAmt" width="120px" readonly="true" />
@@ -1743,12 +1775,14 @@
 										</columns>
 										<rows>
 											<row visible="true">
-												<label value="${c:l('label_FinanceTypeDialog_FinTypeRegProvRule.value')}" />
+												<label
+													value="${c:l('label_FinanceTypeDialog_FinTypeRegProvRule.value')}" />
 												<hbox>
 													<space id="space_RegProvRule" spacing="2px" />
 													<combobox id="regProvRule" disabled="false" />
 												</hbox>
-												<label value="${c:l('label_FinanceTypeDialog_FinTypeIntProvRule.value')}" />
+												<label
+													value="${c:l('label_FinanceTypeDialog_FinTypeIntProvRule.value')}" />
 												<hbox>
 													<space id="space_IntProvRule" spacing="2px" />
 													<combobox id="intProvRule" disabled="false" />
@@ -1856,14 +1890,12 @@
 										</columns>
 										<rows>
 											<row>
-												<label 
-													value="${c:l('label_FinanceTypeDialog_MaxPartPymtCal.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MaxPartPymtCal.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<combobox id="maxFPPCalType" readonly="true" width="200px" />
 												</hbox>
-												<label 
-													value="${c:l('label_FinanceTypeDialog_MaxPartPymt.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MaxPartPymt.value')}" />
 												<hbox>
 													<currencyBox id="maxFPPAmount" visible="false" />
 													<space id="spacePercentage" spacing="2px" sclass="mandatory"
@@ -1872,8 +1904,7 @@
 												</hbox>
 											</row>
 											<row id="rowMaxFPPCalOn" visible="false">
-												<label
-													value="${c:l('label_FinanceTypeDialog_MaxPartPymtCalOn.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MaxPartPymtCalOn.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="maxFPPCalOn" readonly="true" width="200px" />
@@ -1916,8 +1947,7 @@
 													<space spacing="1px" />
 													<combobox id="minPPCalType" readonly="true" width="200px" />
 												</hbox>
-												<label 
-													value="${c:l('label_FinanceTypeDialog_MinPPAmtPerc.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MinPPAmtPerc.value')}" />
 												<hbox>
 													<currencyBox id="minPPAmount" visible="false" />
 													<space id="spaceMinPPPercentage" spacing="2px" sclass="mandatory"
@@ -1940,8 +1970,7 @@
 													<space spacing="1px" />
 													<combobox id="maxPPCalType" width="200px" readonly="true" />
 												</hbox>
-												<label 
-													value="${c:l('label_FinanceTypeDialog_MaxPPAmtPerc.value')}" />
+												<label value="${c:l('label_FinanceTypeDialog_MaxPPAmtPerc.value')}" />
 												<hbox>
 													<currencyBox id="maxPPAmount" visible="false" />
 													<space id="spaceMaxPPPercentage" spacing="2px" sclass="mandatory"

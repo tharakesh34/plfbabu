@@ -3884,7 +3884,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 	private boolean isTerminationEvent(FinServiceInstruction fsi) {
 		return RequestSource.EOD.equals(fsi.getRequestSource())
-				&& ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose());
+				&& (ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose())
+						|| ReceiptPurpose.SCHDRPY.equals(fsi.getReceiptPurpose()));
 	}
 
 	private void validateChequeOrDD(FinScheduleData schdData, String bankCode, Date valueDate,
@@ -7448,7 +7449,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		List<Long> receiptIdList = new ArrayList<>();
 
-		if (!ImplementationConstants.RECEIPT_DUPLICATE_CHECK_STOP) {
+		if (!ImplementationConstants.RECEIPT_DUPLICATE_CHECK_STOP && !isAutoWriteOff(fsi)) {
 			receiptIdList = finReceiptHeaderDAO.isDedupReceiptExists(fsi);
 		}
 
@@ -7476,6 +7477,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		errors.add(new ErrorDetail("21005", message.toString(), valueParm));
 
 		return errors;
+	}
+
+	private boolean isAutoWriteOff(FinServiceInstruction fsi) {
+		return RequestSource.EOD.equals(fsi.getRequestSource())
+				&& ReceiptPurpose.SCHDRPY.equals(fsi.getReceiptPurpose());
 	}
 
 	@Override

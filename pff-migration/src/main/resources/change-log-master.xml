@@ -49,4 +49,5 @@
 	<include file="change-logs/change-log-meta-data.xml" />
 	<include file="change-logs/change-log-hdfc_day_0.xml" />
 	<include file="change-logs/change-log-6.4.0.xml"/>
+
 </databaseChangeLog>

@@ -11240,4 +11240,1994 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#730:TK#2762:01" author="Divya.A"> 
+		<addColumn tableName="RMTFinanceTypes"> 
+		<column name="WriteOffRepayHry" type="varchar(50)" /> 
+		</addColumn> 
+	</changeSet> 
+
+	<changeSet id="ST#730:TK#2762:03" author="Divya.A"> 
+		<addColumn tableName="RMTFinanceTypes"> 
+		<column name="MatureRepayHry" type="varchar(50)" /> 
+		</addColumn> 
+	</changeSet> 
+ 
+	<changeSet id="ST#730:TK#2762:04" author="Divya.A"> 
+		<addColumn tableName="RMTFinanceTypes"> 
+		<column name="PresentmentRepayHry" type="varchar(50)" /> 
+		</addColumn> 
+	</changeSet> 
+ 
+	<changeSet id="ST#730:TK#2762:06" author="Divya.A"> 
+		<addColumn tableName="RMTFinanceTypes_Temp"> 
+		<column name="WriteOffRepayHry" type="varchar(50)" /> 
+		</addColumn> 
+	</changeSet> 
+	 
+	<changeSet id="ST#730:TK#2762:08" author="Divya.A"> 
+		<addColumn tableName="RMTFinanceTypes_Temp"> 
+		<column name="MatureRepayHry" type="varchar(50)" /> 
+		</addColumn> 
+	</changeSet> 
+	 
+	<changeSet id="ST#730:TK#2762:09" author="Divya.A"> 
+		<addColumn tableName="RMTFinanceTypes_Temp"> 
+		<column name="PresentmentRepayHry" type="varchar(50)" /> 
+		</addColumn> 
+	</changeSet> 
+
+	<changeSet id="ST#730:TK#2762:11_pre" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#730:TK#2762:11" author="Divya.A"> 
+		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true"> 
+			<![CDATA[ 
+				SELECT T1.FINTYPE,
+				    T1.FINCATEGORY,
+				    T1.FINTYPEDESC,
+				    T1.FINCCY,
+				    T1.FINDAYSCALTYPE,
+				    T1.FINISGENREF,
+				    T1.FINMAXAMOUNT,
+				    T1.FINMINAMOUNT,
+				    T1.FINDFTSTMTFRQ,
+				    T1.FINISALWMD,
+				    T1.FINSCHDMTHD,
+				    T1.FINISALWGRACE,
+				    T1.FINHISTRETENSION,
+				    T1.EQUALREPAYMENT,
+				    T1.FINRATETYPE,
+				    T1.FINBASERATE,
+				    T1.FINSPLRATE,
+				    T1.FININTRATE,
+				    T1.FINMINRATE,
+				    T1.FINMAXRATE,
+				    T1.FINDFTINTFRQ,
+				    T1.FINISINTCPZ,
+				    T1.FINCPZFRQ,
+				    T1.FINISRVWALW,
+				    T1.FINRVWFRQ,
+				    T1.FINGRCRATETYPE,
+				    T1.FINGRCBASERATE,
+				    T1.FINGRCSPLRATE,
+				    T1.FINGRCINTRATE,
+				    T1.FINGRCMINRATE,
+				    T1.FINGRCMAXRATE,
+				    T1.FINGRCDFTINTFRQ,
+				    T1.FINGRCISINTCPZ,
+				    T1.FINGRCCPZFRQ,
+				    T1.FINGRCISRVWALW,
+				    T1.FINGRCRVWFRQ,
+				    T1.FINMINTERM,
+				    T1.FINMAXTERM,
+				    T1.FINDFTTERMS,
+				    T1.FINRPYFRQ,
+				    T1.FINREPAYMETHOD,
+				    T1.FINISALWPARTIALRPY,
+				    T1.FINISALWDIFFERMENT,
+				    T1.FINMAXDIFFERMENT,
+				    T1.FINISALWEARLYRPY,
+				    T1.FINISALWEARLYSETTLE,
+				    T1.FINODRPYTRIES,
+				    T1.FINEARLYPAYRULE,
+				    T1.FINEARLYSETTLERULE,
+				    T1.FINISACTIVE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.STEPFINANCE,
+				    T1.STEPPINGMANDATORY,
+				    T1.ALWMANUALSTEPS,
+				    T1.ALWDSTEPPOLICIES,
+				    T1.DFTSTEPPOLICY,
+				    T1.FINISDWPAYREQUIRED,
+				    T1.FINRVWRATEAPPLFOR,
+				    T1.FINALWRATECHANGEANYDATE,
+				    T1.FINISINTCPZATGRCEND,
+				    T1.FINELGRULECODE,
+				    T1.LIMITELGRULECODE,
+				    T1.FINSCHCALCODEONRVW,
+				    T1.ALWPLANDEFERMENT,
+				    T1.PLANDEFERCOUNT,
+				    T1.FINASSETTYPE,
+				    T1.FINISALWGRCREPAY,
+				    T1.FINGRCSCHDMTHD,
+				    T1.FINGRCMARGIN,
+				    T1.FINMARGIN,
+				    T1.FINSCHEDULEON,
+				    T1.FINGRCSCHEDULEON,
+				    T1.FINCOMMITMENTREQ,
+				    T1.FINCOLLATERALREQ,
+				    T1.OVERRIDELIMIT,
+				    T1.LIMITREQUIRED,
+				    T1.FINCOMMITMENTOVRRIDE,
+				    T1.FINCOLLATERALOVRRIDE,
+				    T1.FINPFTUNCHANGED,
+				    T1.APPLYODPENALTY,
+				    T1.ODINCGRCDAYS,
+				    T1.ODCHARGETYPE,
+				    T1.ODGRACEDAYS,
+				    T1.ODCHARGECALON,
+				    T1.ODCHARGEAMTORPERC,
+				    T1.ODALLOWWAIVER,
+				    T1.ODMAXWAIVERPERC,
+				    T1.FINDIVISION,
+				    T48.DIVISIONCODEDESC LOVDESCFINDIVISIONNAME,
+				    T48.ENTITYCODE LOVDESCENTITYCODE,
+				    T1.PRODUCT,
+				    T1.STARTDATE,
+				    T1.ENDDATE,
+				    T1.REMARKS,
+				    T1.ALWEARLYPAYMETHODS,
+				    T1.PASTDUEPFTCALMTHD,
+				    T1.PASTDUEPFTMARGIN,
+				    T1.DOWNPAYRULE,
+				    T59.RULECODE DOWNPAYRULECODE,
+				    T59.RULECODEDESC DOWNPAYRULEDESC,
+				    T1.FINSUSPTRIGGER,
+				    T1.FINSUSPREMARKS,
+				    T1.ALWMULTIPARTYDISB,
+				    T1.COLLATERALTYPE,
+				    T1.TDSAPPLICABLE,
+				    T1.MANUALSCHEDULE,
+				    T1.APPLYGRCPRICING,
+				    T1.GRCPRICINGMETHOD,
+				    T1.APPLYRPYPRICING,
+				    T1.RPYPRICINGMETHOD,
+				    T1.RPYHIERARCHY,
+				    T67.RULECODE GRCPRICINGMETHODDESC,
+				    T68.RULECODE RPYPRICINGMETHODDESC,
+				    T1.DROPLINEOD,
+				    T1.DROPPINGMETHOD,
+				    T1.RATECHGANYDAY,
+				    T1.FINREPAYPFTONFRQ,
+				    T1.ALWBPI,
+				    T1.BPITREATMENT,
+				    T1.PFTDUESCHON,
+				    T1.PLANEMIHALW,
+				    T1.PLANEMIHMETHOD,
+				    T1.PLANEMIHMAXPERYEAR,
+				    T1.PLANEMIHMAX,
+				    T1.PLANEMIHLOCKPERIOD,
+				    T1.PLANEMICPZ,
+				    T1.UNPLANEMIHLOCKPERIOD,
+				    T1.UNPLANEMICPZ,
+				    T1.REAGECPZ,
+				    T1.FDDLOCKPERIOD,
+				    T1.ALWDRPYMETHODS,
+				    T1.MAXUNPLANNEDEMI,
+				    T1.MAXREAGEHOLIDAYS,
+				    T1.ROUNDINGMODE,
+				    T1.ROUNDINGTARGET,
+				    T1.FREQUENCYDAYS,
+				    T1.QUICKDISB,
+				    T1.ALWREAGE,
+				    T1.ALWUNPLANEMIHOLIDAY,
+				    T1.ALWMAXDISBCHECKREQ,
+				    T1.FINTYPEDESC LOVDESCPROMOFINTYPEDESC,
+				    T1.PROFITCENTERID,
+				    T69.PROFITCENTERCODE,
+				    T69.PROFITCENTERDESC,
+				    T1.PRODUCTCATEGORY,
+				    T2.PRODUCTDESC FINCATEGORYDESC,
+				    T1.DEVELOPERFINANCE,
+				    T1.COSTOFFUNDS,
+				    T1.CHEQUECAPTUREREQ,
+				    T1.FINLTVCHECK,
+				    T1.PARTIALLYSECURED,
+				    T1.ALWADVEMI,
+				    T1.ADVEMIMINTERMS,
+				    T1.ADVEMIMAXTERMS,
+				    T1.ADVEMIDFTTERMS,
+				    T1.ADVEMISCHDMTHD,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.ELIGIBILITYMETHODS,
+				    T1.ALWHYBRIDRATE,
+				    T1.FIXEDRATETENOR,
+				    T1.ODMINCAPAMOUNT,
+				    T1.ODRULECODE,
+				    T1.ALWZEROINTACC,
+				    T1.AUTOREJECTIONDAYS,
+				    T1.TAXNOMAND,
+				    T1.PUTCALLREQUIRED,
+				    T1.GRCADVINTERSETREQ,
+				    T1.GRCADVTYPE,
+				    T1.GRCADVMINTERMS,
+				    T1.GRCADVMAXTERMS,
+				    T1.GRCADVDEFAULTTERMS,
+				    T1.ADVINTERSETREQ,
+				    T1.ADVTYPE,
+				    T1.ADVMINTERMS,
+				    T1.ADVMAXTERMS,
+				    T1.ADVDEFAULTTERMS,
+				    T1.ADVSTAGE,
+				    T1.DSFREQ,
+				    T1.CASHCOLLATERALREQ,
+				    T1.TDSALLOWTOMODIFY,
+				    T1.TDSAPPLICABLETO,
+				    T1.ALWVAN,
+				    T1.VANALLOCATIONMETHOD,
+				    T1.ALLOWDRAWINGPOWER,
+				    T1.ALLOWREVOLVING,
+				    T1.ALWSANCTIONAMT,
+				    T1.ALWSANCTIONAMTOVERRIDE,
+				    T1.SANBSDSCHDLE,
+				    T1.FINISRATERVWATGRCEND,
+				    T1.SCHDONPMTCAL,
+				    T1.AUTOAPPROVE,
+				    T1.ALWPLANNEDEMIINGRC,
+				    T1.OCRREQUIRED,
+				    T1.ALLOWEDOCRS,
+				    T1.DEFAULTOCR,
+				    T1.ALLOWEDLOANPURPOSES,
+				    T1.SPECIFICLOANPURPOSES,
+				    T1.GRCADJREQ,
+				    T1.GRCPERIODAFTRFULLDISB,
+				    T1.AUTOINCRGRCENDDATE,
+				    T1.GRCAUTOINCRMONTHS,
+				    T1.MAXAUTOINCRALLOWED,
+				    T1.THRLDTOMAINTAINGRCPRD,
+				    T1.ALWLOANSPLIT,
+				    T1.SPLITLOANTYPE,
+				    T1.INSTBASEDSCHD,
+				    T1.TDSTYPE,
+				    T1.CALCOFSTEPS,
+				    T1.STEPSAPPLIEDFOR,
+				    T1.SUBVENTIONREQ,
+					T1.OVERDRAFTTXNCHRGREQ,
+					T1.OVERDRAFTTXNCHRGFEETYPE,
+					T1.OVERDRAFTEXTGRACEDAYS,
+					T1.OVERDRAFTCOLCHRGFEETYPE,
+					T1.OVERDRAFTCOLAMT,
+					T1.REGPROVRULE,
+					T1.INTPROVRULE,
+					T1.CLOSURETHRESHOLDLIMIT,
+					T1.MAXFPPCALTYPE,
+					T1.MAXFPPAMOUNT,
+					T1.MAXFPPPER,
+					T1.MAXFPPCALON,
+					T1.PPLOCKINPERIOD,
+					T1.ESLOCKINPERIOD,
+					T1.MINPPCALTYPE,
+					T1.MINPPAMOUNT,
+					T1.MINPPPERCENTAGE,
+					T1.MINPPCALON,
+					T1.MAXPPCALTYPE,
+					T1.MAXPPAMOUNT,
+					T1.MAXPPPERCENTAGE,
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND,
+					T1.NPARPYHIERARCHY,
+					T1.ALLOWCANCELFIN,
+					T1.WRITEOFFREPAYHRY, 
+					T1.MATUREREPAYHRY, 
+					T1.PRESENTMENTREPAYHRY
+				FROM RMTFINANCETYPES T1
+			    LEFT JOIN BMTPRODUCT T2 ON T1.FINCATEGORY = T2.PRODUCTCODE
+			    LEFT JOIN SMTDIVISIONDETAIL T48 ON T1.FINDIVISION = T48.DIVISIONCODE
+			    LEFT JOIN RULES T59 ON T1.DOWNPAYRULE = T59.RULEID
+			    LEFT JOIN RULES T67 ON T1.GRCPRICINGMETHOD = T67.RULEID
+			    LEFT JOIN RULES T68 ON T1.RPYPRICINGMETHOD = T68.RULEID
+			    LEFT JOIN PROFITCENTERS T69 ON T69.PROFITCENTERID = T1.PROFITCENTERID
+			]]> 
+		</createView> 
+	</changeSet> 
+	
+	<changeSet id="ST#730:TK#2762:11_post" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
+		 	]]>
+		</sql>
+	</changeSet>
+		 
+	<changeSet id="ST#730:TK#2762:12_pre" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
+		 	]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#730:TK#2762:12" author="Divya.A"> 
+		<createView viewName="rmtfinancetypes_view" replaceIfExists="true"> 
+			<![CDATA[ 
+				SELECT T1.FINTYPE,
+				    T1.FINCATEGORY,
+				    T1.FINTYPEDESC,
+				    T1.FINCCY,
+				    T1.FINDAYSCALTYPE,
+				    T1.FINISGENREF,
+				    T1.FINMAXAMOUNT,
+				    T1.FINMINAMOUNT,
+				    T1.FINDFTSTMTFRQ,
+				    T1.FINISALWMD,
+				    T1.FINSCHDMTHD,
+				    T1.FINISALWGRACE,
+				    T1.FINHISTRETENSION,
+				    T1.EQUALREPAYMENT,
+				    T1.FINRATETYPE,
+				    T1.FINBASERATE,
+				    T1.FINSPLRATE,
+				    T1.FININTRATE,
+				    T1.FINMINRATE,
+				    T1.FINMAXRATE,
+				    T1.FINDFTINTFRQ,
+				    T1.FINISINTCPZ,
+				    T1.FINCPZFRQ,
+				    T1.FINISRVWALW,
+				    T1.FINRVWFRQ,
+				    T1.FINGRCRATETYPE,
+				    T1.FINGRCBASERATE,
+				    T1.FINGRCSPLRATE,
+				    T1.FINGRCINTRATE,
+				    T1.FINGRCMINRATE,
+				    T1.FINGRCMAXRATE,
+				    T1.FINGRCDFTINTFRQ,
+				    T1.FINGRCISINTCPZ,
+				    T1.FINGRCCPZFRQ,
+				    T1.FINGRCISRVWALW,
+				    T1.FINGRCRVWFRQ,
+				    T1.FINMINTERM,
+				    T1.FINMAXTERM,
+				    T1.FINDFTTERMS,
+				    T1.FINRPYFRQ,
+				    T1.FINREPAYMETHOD,
+				    T1.FINISALWPARTIALRPY,
+				    T1.FINISALWDIFFERMENT,
+				    T1.FINMAXDIFFERMENT,
+				    T1.FINISALWEARLYRPY,
+				    T1.FINISALWEARLYSETTLE,
+				    T1.FINODRPYTRIES,
+				    T1.FINEARLYPAYRULE,
+				    T1.FINEARLYSETTLERULE,
+				    T1.FINISACTIVE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.STEPFINANCE,
+				    T1.STEPPINGMANDATORY,
+				    T1.ALWMANUALSTEPS,
+				    T1.ALWDSTEPPOLICIES,
+				    T1.DFTSTEPPOLICY,
+				    T1.FINISDWPAYREQUIRED,
+				    T1.FINRVWRATEAPPLFOR,
+				    T1.FINALWRATECHANGEANYDATE,
+				    T1.FINISINTCPZATGRCEND,
+				    T1.FINELGRULECODE,
+				    T1.LIMITELGRULECODE,
+				    T1.FINSCHCALCODEONRVW,
+				    T1.ALWPLANDEFERMENT,
+				    T1.PLANDEFERCOUNT,
+				    T1.FINASSETTYPE,
+				    T1.FINISALWGRCREPAY,
+				    T1.FINGRCSCHDMTHD,
+				    T1.FINGRCMARGIN,
+				    T1.FINMARGIN,
+				    T1.FINSCHEDULEON,
+				    T1.FINGRCSCHEDULEON,
+				    T1.FINCOMMITMENTREQ,
+				    T1.FINCOLLATERALREQ,
+				    T1.OVERRIDELIMIT,
+				    T1.LIMITREQUIRED,
+				    T1.FINCOMMITMENTOVRRIDE,
+				    T1.FINCOLLATERALOVRRIDE,
+				    T1.FINPFTUNCHANGED,
+				    T1.APPLYODPENALTY,
+				    T1.ODINCGRCDAYS,
+				    T1.ODCHARGETYPE,
+				    T1.ODGRACEDAYS,
+				    T1.ODCHARGECALON,
+				    T1.ODCHARGEAMTORPERC,
+				    T1.ODALLOWWAIVER,
+				    T1.ODMAXWAIVERPERC,
+				    T1.FINDIVISION,
+				    T48.DIVISIONCODEDESC LOVDESCFINDIVISIONNAME,
+				    T48.ENTITYCODE LOVDESCENTITYCODE,
+				    T1.PRODUCT,
+				    T1.STARTDATE,
+				    T1.ENDDATE,
+				    T1.FINTYPEDESC LOVDESCPROMOFINTYPEDESC,
+				    T1.REMARKS,
+				    T1.ALWEARLYPAYMETHODS,
+				    T1.PASTDUEPFTCALMTHD,
+				    T1.PASTDUEPFTMARGIN,
+				    T1.DOWNPAYRULE,
+				    T59.RULECODE DOWNPAYRULECODE,
+				    T59.RULECODEDESC DOWNPAYRULEDESC,
+				    T1.FINSUSPTRIGGER,
+				    T1.FINSUSPREMARKS,
+				    T1.ALWMULTIPARTYDISB,
+				    T1.COLLATERALTYPE,
+				    T1.TDSAPPLICABLE,
+				    T1.MANUALSCHEDULE,
+				    T1.APPLYGRCPRICING,
+				    T1.GRCPRICINGMETHOD,
+				    T1.APPLYRPYPRICING,
+				    T1.RPYPRICINGMETHOD,
+				    T1.RPYHIERARCHY,
+				    T67.RULECODE GRCPRICINGMETHODDESC,
+				    T68.RULECODE RPYPRICINGMETHODDESC,
+				    T1.DROPLINEOD,
+				    T1.DROPPINGMETHOD,
+				    T1.RATECHGANYDAY,
+				    T1.FINREPAYPFTONFRQ,
+				    T1.ALWBPI,
+				    T1.BPITREATMENT,
+				    T1.PFTDUESCHON,
+				    T1.PLANEMIHALW,
+				    T1.PLANEMIHMETHOD,
+				    T1.PLANEMIHMAXPERYEAR,
+				    T1.PLANEMIHMAX,
+				    T1.PLANEMIHLOCKPERIOD,
+				    T1.PLANEMICPZ,
+				    T1.UNPLANEMIHLOCKPERIOD,
+				    T1.UNPLANEMICPZ,
+				    T1.REAGECPZ,
+				    T1.FDDLOCKPERIOD,
+				    T1.ALWDRPYMETHODS,
+				    T1.MAXUNPLANNEDEMI,
+				    T1.MAXREAGEHOLIDAYS,
+				    T1.ROUNDINGMODE,
+				    T1.ROUNDINGTARGET,
+				    T1.FREQUENCYDAYS,
+				    T1.QUICKDISB,
+				    T1.ALWMAXDISBCHECKREQ,
+				    T1.ALWREAGE,
+				    T1.ALWUNPLANEMIHOLIDAY,
+				    T1.PROFITCENTERID,
+				    T69.PROFITCENTERCODE,
+				    T69.PROFITCENTERDESC,
+				    T1.PRODUCTCATEGORY,
+				    T2.PRODUCTDESC FINCATEGORYDESC,
+				    T1.DEVELOPERFINANCE,
+				    T1.COSTOFFUNDS,
+				    T1.CHEQUECAPTUREREQ,
+				    T1.FINLTVCHECK,
+				    T1.PARTIALLYSECURED,
+				    T1.ALWADVEMI,
+				    T1.ADVEMIMINTERMS,
+				    T1.ADVEMIMAXTERMS,
+				    T1.ADVEMIDFTTERMS,
+				    T1.ADVEMISCHDMTHD,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.ELIGIBILITYMETHODS,
+				    T1.ALWHYBRIDRATE,
+				    T1.FIXEDRATETENOR,
+				    T1.ODMINCAPAMOUNT,
+				    T1.ODRULECODE,
+				    T1.ALWZEROINTACC,
+				    T1.AUTOREJECTIONDAYS,
+				    T1.TAXNOMAND,
+				    T1.PUTCALLREQUIRED,
+				    T1.GRCADVINTERSETREQ,
+				    T1.GRCADVTYPE,
+				    T1.GRCADVMINTERMS,
+				    T1.GRCADVMAXTERMS,
+				    T1.GRCADVDEFAULTTERMS,
+				    T1.ADVINTERSETREQ,
+				    T1.ADVTYPE,
+				    T1.ADVMINTERMS,
+				    T1.ADVMAXTERMS,
+				    T1.ADVDEFAULTTERMS,
+				    T1.ADVSTAGE,
+				    T1.DSFREQ,
+				    T1.CASHCOLLATERALREQ,
+				    T1.TDSALLOWTOMODIFY,
+				    T1.TDSAPPLICABLETO,
+				    T1.ALWVAN,
+				    T1.VANALLOCATIONMETHOD,
+				    T1.ALLOWDRAWINGPOWER,
+				    T1.ALLOWREVOLVING,
+				    T1.ALWSANCTIONAMT,
+				    T1.ALWSANCTIONAMTOVERRIDE,
+				    T1.SANBSDSCHDLE,
+				    T1.FINISRATERVWATGRCEND,
+				    T1.SCHDONPMTCAL,
+				    T1.AUTOAPPROVE,
+				    T1.OCRREQUIRED,
+				    T1.ALLOWEDOCRS,
+				    T1.DEFAULTOCR,
+				    T1.ALLOWEDLOANPURPOSES,
+				    T1.SPECIFICLOANPURPOSES,
+				    T1.ALWPLANNEDEMIINGRC,
+				    T1.GRCADJREQ,
+				    T1.GRCPERIODAFTRFULLDISB,
+				    T1.AUTOINCRGRCENDDATE,
+				    T1.GRCAUTOINCRMONTHS,
+				    T1.MAXAUTOINCRALLOWED,
+				    T1.THRLDTOMAINTAINGRCPRD,
+				    T1.ALWLOANSPLIT,
+				    T1.SPLITLOANTYPE,
+				    T1.INSTBASEDSCHD,
+				    T1.TDSTYPE,
+				    T1.CALCOFSTEPS,
+				    T1.STEPSAPPLIEDFOR,
+				    T1.SUBVENTIONREQ,
+					T1.OVERDRAFTTXNCHRGREQ,
+					T1.OVERDRAFTTXNCHRGFEETYPE,
+					T1.OVERDRAFTEXTGRACEDAYS,
+					T1.OVERDRAFTCOLCHRGFEETYPE,
+					T1.OVERDRAFTCOLAMT,
+					T1.REGPROVRULE,
+					T1.INTPROVRULE,
+					T1.CLOSURETHRESHOLDLIMIT,
+					T1.MAXFPPCALTYPE,
+					T1.MAXFPPAMOUNT,
+					T1.MAXFPPPER,
+					T1.MAXFPPCALON,
+					T1.PPLOCKINPERIOD,
+					T1.ESLOCKINPERIOD,
+					T1.MINPPCALTYPE,
+					T1.MINPPAMOUNT,
+					T1.MINPPPERCENTAGE,
+					T1.MINPPCALON,
+					T1.MAXPPCALTYPE,
+					T1.MAXPPAMOUNT,
+					T1.MAXPPPERCENTAGE,
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND,
+					T1.NPARPYHIERARCHY,
+					T1.ALLOWCANCELFIN,
+					T1.WRITEOFFREPAYHRY, 
+					T1.MATUREREPAYHRY, 
+					T1.PRESENTMENTREPAYHRY
+				FROM RMTFINANCETYPES_TEMP T1
+				LEFT JOIN BMTPRODUCT T2 ON T1.FINCATEGORY = T2.PRODUCTCODE
+				LEFT JOIN SMTDIVISIONDETAIL T48 ON T1.FINDIVISION = T48.DIVISIONCODE
+				LEFT JOIN RULES T59 ON T1.DOWNPAYRULE = T59.RULEID
+				LEFT JOIN RULES T67 ON T1.GRCPRICINGMETHOD = T67.RULEID
+				LEFT JOIN RULES T68 ON T1.RPYPRICINGMETHOD = T68.RULEID
+				LEFT JOIN PROFITCENTERS T69 ON T69.PROFITCENTERID = T1.PROFITCENTERID
+				UNION ALL
+				SELECT T1.FINTYPE,
+				    T1.FINCATEGORY,
+				    T1.FINTYPEDESC,
+				    T1.FINCCY,
+				    T1.FINDAYSCALTYPE,
+				    T1.FINISGENREF,
+				    T1.FINMAXAMOUNT,
+				    T1.FINMINAMOUNT,
+				    T1.FINDFTSTMTFRQ,
+				    T1.FINISALWMD,
+				    T1.FINSCHDMTHD,
+				    T1.FINISALWGRACE,
+				    T1.FINHISTRETENSION,
+				    T1.EQUALREPAYMENT,
+				    T1.FINRATETYPE,
+				    T1.FINBASERATE,
+				    T1.FINSPLRATE,
+				    T1.FININTRATE,
+				    T1.FINMINRATE,
+				    T1.FINMAXRATE,
+				    T1.FINDFTINTFRQ,
+				    T1.FINISINTCPZ,
+				    T1.FINCPZFRQ,
+				    T1.FINISRVWALW,
+				    T1.FINRVWFRQ,
+				    T1.FINGRCRATETYPE,
+				    T1.FINGRCBASERATE,
+				    T1.FINGRCSPLRATE,
+				    T1.FINGRCINTRATE,
+				    T1.FINGRCMINRATE,
+				    T1.FINGRCMAXRATE,
+				    T1.FINGRCDFTINTFRQ,
+				    T1.FINGRCISINTCPZ,
+				    T1.FINGRCCPZFRQ,
+				    T1.FINGRCISRVWALW,
+				    T1.FINGRCRVWFRQ,
+				    T1.FINMINTERM,
+				    T1.FINMAXTERM,
+				    T1.FINDFTTERMS,
+				    T1.FINRPYFRQ,
+				    T1.FINREPAYMETHOD,
+				    T1.FINISALWPARTIALRPY,
+				    T1.FINISALWDIFFERMENT,
+				    T1.FINMAXDIFFERMENT,
+				    T1.FINISALWEARLYRPY,
+				    T1.FINISALWEARLYSETTLE,
+				    T1.FINODRPYTRIES,
+				    T1.FINEARLYPAYRULE,
+				    T1.FINEARLYSETTLERULE,
+				    T1.FINISACTIVE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.RECORDSTATUS,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.STEPFINANCE,
+				    T1.STEPPINGMANDATORY,
+				    T1.ALWMANUALSTEPS,
+				    T1.ALWDSTEPPOLICIES,
+				    T1.DFTSTEPPOLICY,
+				    T1.FINISDWPAYREQUIRED,
+				    T1.FINRVWRATEAPPLFOR,
+				    T1.FINALWRATECHANGEANYDATE,
+				    T1.FINISINTCPZATGRCEND,
+				    T1.FINELGRULECODE,
+				    T1.LIMITELGRULECODE,
+				    T1.FINSCHCALCODEONRVW,
+				    T1.ALWPLANDEFERMENT,
+				    T1.PLANDEFERCOUNT,
+				    T1.FINASSETTYPE,
+				    T1.FINISALWGRCREPAY,
+				    T1.FINGRCSCHDMTHD,
+				    T1.FINGRCMARGIN,
+				    T1.FINMARGIN,
+				    T1.FINSCHEDULEON,
+				    T1.FINGRCSCHEDULEON,
+				    T1.FINCOMMITMENTREQ,
+				    T1.FINCOLLATERALREQ,
+				    T1.OVERRIDELIMIT,
+				    T1.LIMITREQUIRED,
+				    T1.FINCOMMITMENTOVRRIDE,
+				    T1.FINCOLLATERALOVRRIDE,
+				    T1.FINPFTUNCHANGED,
+				    T1.APPLYODPENALTY,
+				    T1.ODINCGRCDAYS,
+				    T1.ODCHARGETYPE,
+				    T1.ODGRACEDAYS,
+				    T1.ODCHARGECALON,
+				    T1.ODCHARGEAMTORPERC,
+				    T1.ODALLOWWAIVER,
+				    T1.ODMAXWAIVERPERC,
+				    T1.FINDIVISION,
+				    T48.DIVISIONCODEDESC LOVDESCFINDIVISIONNAME,
+				    T48.ENTITYCODE LOVDESCENTITYCODE,
+				    T1.PRODUCT,
+				    T1.STARTDATE,
+				    T1.ENDDATE,
+				    T1.FINTYPEDESC LOVDESCPROMOFINTYPEDESC,
+				    T1.REMARKS,
+				    T1.ALWEARLYPAYMETHODS,
+				    T1.PASTDUEPFTCALMTHD,
+				    T1.PASTDUEPFTMARGIN,
+				    T1.DOWNPAYRULE,
+				    T59.RULECODE DOWNPAYRULECODE,
+				    T59.RULECODEDESC DOWNPAYRULEDESC,
+				    T1.FINSUSPTRIGGER,
+				    T1.FINSUSPREMARKS,
+				    T1.ALWMULTIPARTYDISB,
+				    T1.COLLATERALTYPE,
+				    T1.TDSAPPLICABLE,
+				    T1.MANUALSCHEDULE,
+				    T1.APPLYGRCPRICING,
+				    T1.GRCPRICINGMETHOD,
+				    T1.APPLYRPYPRICING,
+				    T1.RPYPRICINGMETHOD,
+				    T1.RPYHIERARCHY,
+				    T67.RULECODE GRCPRICINGMETHODDESC,
+				    T68.RULECODE RPYPRICINGMETHODDESC,
+				    T1.DROPLINEOD,
+				    T1.DROPPINGMETHOD,
+				    T1.RATECHGANYDAY,
+				    T1.FINREPAYPFTONFRQ,
+				    T1.ALWBPI,
+				    T1.BPITREATMENT,
+				    T1.PFTDUESCHON,
+				    T1.PLANEMIHALW,
+				    T1.PLANEMIHMETHOD,
+				    T1.PLANEMIHMAXPERYEAR,
+				    T1.PLANEMIHMAX,
+				    T1.PLANEMIHLOCKPERIOD,
+				    T1.PLANEMICPZ,
+				    T1.UNPLANEMIHLOCKPERIOD,
+				    T1.UNPLANEMICPZ,
+				    T1.REAGECPZ,
+				    T1.FDDLOCKPERIOD,
+				    T1.ALWDRPYMETHODS,
+				    T1.MAXUNPLANNEDEMI,
+				    T1.MAXREAGEHOLIDAYS,
+				    T1.ROUNDINGMODE,
+				    T1.ROUNDINGTARGET,
+				    T1.FREQUENCYDAYS,
+				    T1.QUICKDISB,
+				    T1.ALWMAXDISBCHECKREQ,
+				    T1.ALWREAGE,
+				    T1.ALWUNPLANEMIHOLIDAY,
+				    T1.PROFITCENTERID,
+				    T69.PROFITCENTERCODE,
+				    T69.PROFITCENTERDESC,
+				    T1.PRODUCTCATEGORY,
+				    T2.PRODUCTDESC FINCATEGORYDESC,
+				    T1.DEVELOPERFINANCE,
+				    T1.COSTOFFUNDS,
+				    T1.CHEQUECAPTUREREQ,
+				    T1.FINLTVCHECK,
+				    T1.PARTIALLYSECURED,
+				    T1.ALWADVEMI,
+				    T1.ADVEMIMINTERMS,
+				    T1.ADVEMIMAXTERMS,
+				    T1.ADVEMIDFTTERMS,
+				    T1.ADVEMISCHDMTHD,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.ELIGIBILITYMETHODS,
+				    T1.ALWHYBRIDRATE,
+				    T1.FIXEDRATETENOR,
+				    T1.ODMINCAPAMOUNT,
+				    T1.ODRULECODE,
+				    T1.ALWZEROINTACC,
+				    T1.AUTOREJECTIONDAYS,
+				    T1.TAXNOMAND,
+				    T1.PUTCALLREQUIRED,
+				    T1.GRCADVINTERSETREQ,
+				    T1.GRCADVTYPE,
+				    T1.GRCADVMINTERMS,
+				    T1.GRCADVMAXTERMS,
+				    T1.GRCADVDEFAULTTERMS,
+				    T1.ADVINTERSETREQ,
+				    T1.ADVTYPE,
+				    T1.ADVMINTERMS,
+				    T1.ADVMAXTERMS,
+				    T1.ADVDEFAULTTERMS,
+				    T1.ADVSTAGE,
+				    T1.DSFREQ,
+				    T1.CASHCOLLATERALREQ,
+				    T1.TDSALLOWTOMODIFY,
+				    T1.TDSAPPLICABLETO,
+				    T1.ALWVAN,
+				    T1.VANALLOCATIONMETHOD,
+				    T1.ALLOWDRAWINGPOWER,
+				    T1.ALLOWREVOLVING,
+				    T1.ALWSANCTIONAMT,
+				    T1.ALWSANCTIONAMTOVERRIDE,
+				    T1.SANBSDSCHDLE,
+				    T1.FINISRATERVWATGRCEND,
+				    T1.SCHDONPMTCAL,
+				    T1.AUTOAPPROVE,
+				    T1.OCRREQUIRED,
+				    T1.ALLOWEDOCRS,
+				    T1.DEFAULTOCR,
+				    T1.ALLOWEDLOANPURPOSES,
+				    T1.SPECIFICLOANPURPOSES,
+				    T1.ALWPLANNEDEMIINGRC,
+				    T1.GRCADJREQ,
+				    T1.GRCPERIODAFTRFULLDISB,
+				    T1.AUTOINCRGRCENDDATE,
+				    T1.GRCAUTOINCRMONTHS,
+				    T1.MAXAUTOINCRALLOWED,
+				    T1.THRLDTOMAINTAINGRCPRD,
+				    T1.ALWLOANSPLIT,
+				    T1.SPLITLOANTYPE,
+				    T1.INSTBASEDSCHD,
+				    T1.TDSTYPE,
+				    T1.CALCOFSTEPS,
+				    T1.STEPSAPPLIEDFOR,
+				    T1.SUBVENTIONREQ,
+					T1.OVERDRAFTTXNCHRGREQ,
+					T1.OVERDRAFTTXNCHRGFEETYPE,
+					T1.OVERDRAFTEXTGRACEDAYS,
+					T1.OVERDRAFTCOLCHRGFEETYPE,
+					T1.OVERDRAFTCOLAMT,
+					T1.REGPROVRULE,
+					T1.INTPROVRULE,
+					T1.CLOSURETHRESHOLDLIMIT,
+					T1.MAXFPPCALTYPE,
+					T1.MAXFPPAMOUNT,
+					T1.MAXFPPPER,
+					T1.MAXFPPCALON,
+					T1.PPLOCKINPERIOD,
+					T1.ESLOCKINPERIOD,
+					T1.MINPPCALTYPE,
+					T1.MINPPAMOUNT,
+					T1.MINPPPERCENTAGE,
+					T1.MINPPCALON,
+					T1.MAXPPCALTYPE,
+					T1.MAXPPAMOUNT,
+					T1.MAXPPPERCENTAGE,
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND,
+					T1.NPARPYHIERARCHY,
+					T1.ALLOWCANCELFIN,
+					T1.WRITEOFFREPAYHRY, 
+					T1.MATUREREPAYHRY, 
+					T1.PRESENTMENTREPAYHRY 
+					FROM RMTFINANCETYPES T1
+					LEFT JOIN BMTPRODUCT T2 ON T1.FINCATEGORY = T2.PRODUCTCODE
+					LEFT JOIN SMTDIVISIONDETAIL T48 ON T1.FINDIVISION = T48.DIVISIONCODE
+					LEFT JOIN RULES T59 ON T1.DOWNPAYRULE = T59.RULEID
+					LEFT JOIN RULES T67 ON T1.GRCPRICINGMETHOD = T67.RULEID
+					LEFT JOIN RULES T68 ON T1.RPYPRICINGMETHOD = T68.RULEID
+					LEFT JOIN PROFITCENTERS T69 ON T69.PROFITCENTERID = T1.PROFITCENTERID
+					WHERE NOT EXISTS (SELECT 1 FROM RMTFINANCETYPES_TEMP WHERE RMTFINANCETYPES_TEMP.FINTYPE = T1.FINTYPE)
+		 	]]> 
+		</createView> 
+	</changeSet> 
+		 
+	<changeSet id="ST#730:TK#2762:12_post" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
+		 	]]>
+		</sql>
+	</changeSet>
+		
+	 <changeSet id="ST#730:TK#2762:13_pre" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
+		 	]]>
+		</sql>
+	 </changeSet>
+		
+	 <changeSet id="ST#730:TK#2762:13" author="Divya.A"> 
+		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true"> 
+			<![CDATA[ 
+				SELECT T1.FINTYPE,
+				    T1.FINCATEGORY,
+				    T1.FINTYPEDESC,
+				    T1.FINCCY,
+				    T1.FINDAYSCALTYPE,
+				    T1.FINISGENREF,
+				    T1.FINMAXAMOUNT,
+				    T1.FINMINAMOUNT,
+				    T1.FINISALWMD,
+				    T1.FINSCHDMTHD,
+				    T1.FINISALWGRACE,
+				    T1.EQUALREPAYMENT,
+				    T1.FINRATETYPE,
+				    T1.FINBASERATE,
+				    T1.FINSPLRATE,
+				    T1.FININTRATE,
+				    T1.FINMINRATE,
+				    T1.FINMAXRATE,
+				    T1.FINDFTINTFRQ,
+				    T1.FINISINTCPZ,
+				    T1.FINCPZFRQ,
+				    T1.FINISRVWALW,
+				    T1.FINRVWFRQ,
+				    T1.FINGRCRATETYPE,
+				    T1.FINGRCBASERATE,
+				    T1.FINGRCSPLRATE,
+				    T1.FINGRCINTRATE,
+				    T1.FINGRCMINRATE,
+				    T1.FINGRCMAXRATE,
+				    T1.FINGRCDFTINTFRQ,
+				    T1.FINGRCISINTCPZ,
+				    T1.FINGRCCPZFRQ,
+				    T1.FINGRCISRVWALW,
+				    T1.FINGRCRVWFRQ,
+				    T1.FINMINTERM,
+				    T1.FINMAXTERM,
+				    T1.FINDFTTERMS,
+				    T1.FINRPYFRQ,
+				    T1.FINREPAYMETHOD,
+				    T1.FINISALWDIFFERMENT,
+				    T1.FINMAXDIFFERMENT,
+				    T1.FINISACTIVE,
+				    T1.STEPFINANCE,
+				    T1.STEPPINGMANDATORY,
+				    T1.ALWMANUALSTEPS,
+				    T1.ALWDSTEPPOLICIES,
+				    T1.DFTSTEPPOLICY,
+				    T1.FINISDWPAYREQUIRED,
+				    T1.FINRVWRATEAPPLFOR,
+				    T1.FINALWRATECHANGEANYDATE,
+				    T1.FINISINTCPZATGRCEND,
+				    T1.FINSCHCALCODEONRVW,
+				    T1.ALWPLANDEFERMENT,
+				    T1.PLANDEFERCOUNT,
+				    T1.FINISALWGRCREPAY,
+				    T1.FINGRCSCHDMTHD,
+				    T1.FINGRCMARGIN,
+				    T1.FINMARGIN,
+				    T1.FINCOMMITMENTREQ,
+				    T1.FINCOLLATERALREQ,
+				    T1.OVERRIDELIMIT,
+				    T1.LIMITREQUIRED,
+				    T1.FINCOMMITMENTOVRRIDE,
+				    T1.FINCOLLATERALOVRRIDE,
+				    T1.FINREPAYPFTONFRQ,
+				    T1.FINPFTUNCHANGED,
+				    T1.APPLYODPENALTY,
+				    T1.ODINCGRCDAYS,
+				    T1.ODCHARGETYPE,
+				    T1.ODGRACEDAYS,
+				    T1.ODCHARGECALON,
+				    T1.ODCHARGEAMTORPERC,
+				    T1.ODALLOWWAIVER,
+				    T1.ODMAXWAIVERPERC,
+				    T1.FINDIVISION,
+				    T3.DIVISIONCODEDESC LOVDESCFINDIVISIONNAME,
+				    T1.PRODUCT,
+				    T1.STARTDATE,
+				    T1.ENDDATE,
+				    T1.FINTYPEDESC LOVDESCPROMOFINTYPEDESC,
+				    T1.REMARKS,
+				    T4.POLICYDESC LOVDESCDFTSTEPPOLICYNAME,
+				    T1.PASTDUEPFTCALMTHD,
+				    T1.PASTDUEPFTMARGIN,
+				    T1.DOWNPAYRULE,
+				    T1.ALWMULTIPARTYDISB,
+				    T1.COLLATERALTYPE,
+				    T1.TDSAPPLICABLE,
+				    T5.RULECODE DOWNPAYRULECODE,
+				    T5.RULECODEDESC DOWNPAYRULEDESC,
+				    T1.APPLYGRCPRICING,
+				    T1.APPLYRPYPRICING,
+				    T6.RULECODE GRCPRICINGMETHODDESC,
+				    T7.RULECODE RPYPRICINGMETHODDESC,
+				    T1.DROPLINEOD,
+				    T1.DROPPINGMETHOD,
+				    T1.RATECHGANYDAY,
+				    T4.STEPTYPE DFTSTEPPOLICYTYPE,
+				    T1.MANUALSCHEDULE,
+				    T1.ALWBPI,
+				    T1.BPITREATMENT,
+				    T1.PFTDUESCHON,
+				    T1.PLANEMIHALW,
+				    T1.PLANEMIHMETHOD,
+				    T1.PLANEMIHMAXPERYEAR,
+				    T1.PLANEMIHMAX,
+				    T1.PLANEMIHLOCKPERIOD,
+				    T1.PLANEMICPZ,
+				    T1.UNPLANEMIHLOCKPERIOD,
+				    T1.UNPLANEMICPZ,
+				    T1.REAGECPZ,
+				    T1.FDDLOCKPERIOD,
+				    T1.ALWDRPYMETHODS,
+				    T1.MAXUNPLANNEDEMI,
+				    T1.MAXREAGEHOLIDAYS,
+				    T1.ROUNDINGMODE,
+				    T1.ROUNDINGTARGET,
+				    T1.FREQUENCYDAYS,
+				    T1.QUICKDISB,
+				    T1.ALWREAGE,
+				    T1.ALWUNPLANEMIHOLIDAY,
+				    T1.ALWMAXDISBCHECKREQ,
+				    T1.PRODUCTCATEGORY,
+				    T1.RPYHIERARCHY,
+				    T1.DEVELOPERFINANCE,
+				    T3.ENTITYCODE LOVDESCENTITYCODE,
+				    T8.ENTITYDESC LOVDESCENTITYDESC,
+				    T1.COSTOFFUNDS,
+				    T1.CHEQUECAPTUREREQ,
+				    T1.FINLTVCHECK,
+				    T1.PARTIALLYSECURED,
+				    T1.ALWADVEMI,
+				    T1.ADVEMIMINTERMS,
+				    T1.ADVEMIMAXTERMS,
+				    T1.ADVEMIDFTTERMS,
+				    T1.ADVEMISCHDMTHD,
+				    T1.BPIPFTDAYSBASIS,
+				    T1.ELIGIBILITYMETHODS,
+				    T1.ALWHYBRIDRATE,
+				    T1.FIXEDRATETENOR,
+				    T1.ODMINCAPAMOUNT,
+				    T1.ODRULECODE,
+				    T1.ALWZEROINTACC,
+				    T1.FINISALWPARTIALRPY,
+				    T1.AUTOREJECTIONDAYS,
+				    T1.TAXNOMAND,
+				    T1.PUTCALLREQUIRED,
+				    T1.GRCADVINTERSETREQ,
+				    T1.GRCADVTYPE,
+				    T1.GRCADVMINTERMS,
+				    T1.GRCADVMAXTERMS,
+				    T1.GRCADVDEFAULTTERMS,
+				    T1.ADVINTERSETREQ,
+				    T1.ADVTYPE,
+				    T1.ADVMINTERMS,
+				    T1.ADVMAXTERMS,
+				    T1.ADVDEFAULTTERMS,
+				    T1.ADVSTAGE,
+				    T1.DSFREQ,
+				    T1.CASHCOLLATERALREQ,
+				    T1.ALWEARLYPAYMETHODS,
+				    T1.FINSCHEDULEON,
+				    T1.TDSALLOWTOMODIFY,
+				    T1.TDSAPPLICABLETO,
+				    T1.ALWVAN,
+				    T1.VANALLOCATIONMETHOD,
+				    T1.ALLOWDRAWINGPOWER,
+				    T1.ALLOWREVOLVING,
+				    T1.ALWSANCTIONAMT,
+				    T1.ALWSANCTIONAMTOVERRIDE,
+				    T1.SANBSDSCHDLE,
+				    T1.FINISRATERVWATGRCEND,
+				    T1.SCHDONPMTCAL,
+				    T1.AUTOAPPROVE,
+				    T1.OCRREQUIRED,
+				    T1.ALLOWEDOCRS,
+				    T1.DEFAULTOCR,
+				    T1.ALLOWEDLOANPURPOSES,
+				    T1.SPECIFICLOANPURPOSES,
+				    T1.ALWPLANNEDEMIINGRC,
+				    T1.GRCADJREQ,
+				    T1.GRCPERIODAFTRFULLDISB,
+				    T1.AUTOINCRGRCENDDATE,
+				    T1.GRCAUTOINCRMONTHS,
+				    T1.MAXAUTOINCRALLOWED,
+				    T1.THRLDTOMAINTAINGRCPRD,
+				    T1.ALWLOANSPLIT,
+				    T1.SPLITLOANTYPE,
+				    T1.INSTBASEDSCHD,
+				    T1.TDSTYPE,
+				    T1.CALCOFSTEPS,
+				    T1.STEPSAPPLIEDFOR,
+				    T1.SUBVENTIONREQ,
+					T1.OVERDRAFTTXNCHRGREQ,
+					T1.OVERDRAFTTXNCHRGFEETYPE,
+					T1.OVERDRAFTEXTGRACEDAYS,
+					T1.OVERDRAFTCOLCHRGFEETYPE,
+					T1.OVERDRAFTCOLAMT,
+					T1.REGPROVRULE,
+					T1.INTPROVRULE,
+					T1.CLOSURETHRESHOLDLIMIT,
+					T1.MAXFPPCALTYPE,
+					T1.MAXFPPAMOUNT,
+					T1.MAXFPPPER,
+					T1.MAXFPPCALON,
+					T1.PPLOCKINPERIOD,
+					T1.ESLOCKINPERIOD,
+					T1.MINPPCALTYPE,
+					T1.MINPPAMOUNT,
+					T1.MINPPPERCENTAGE,
+					T1.MINPPCALON,
+					T1.MAXPPCALTYPE,
+					T1.MAXPPAMOUNT,
+					T1.MAXPPPERCENTAGE,
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND,
+					T1.NPARPYHIERARCHY,
+					T1.ALLOWCANCELFIN,
+					T1.WRITEOFFREPAYHRY, 
+					T1.MATUREREPAYHRY, 
+					T1.PRESENTMENTREPAYHRY 
+				FROM RMTFINANCETYPES T1
+				INNER JOIN SMTDIVISIONDETAIL T3 ON T1.FINDIVISION = T3.DIVISIONCODE
+				LEFT JOIN STEPPOLICYHEADER T4 ON T1.DFTSTEPPOLICY = T4.POLICYCODE
+				LEFT JOIN RULES T5 ON T1.DOWNPAYRULE = T5.RULEID
+				LEFT JOIN RULES T6 ON T1.GRCPRICINGMETHOD = T6.RULEID
+				LEFT JOIN RULES T7 ON T1.RPYPRICINGMETHOD = T7.RULEID
+				LEFT JOIN ENTITY T8 ON T3.ENTITYCODE = T8.ENTITYCODE
+			]]> 
+		</createView> 
+	</changeSet> 
+		
+	<changeSet id="ST#730:TK#2762:13_post" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
+		 	]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="ST#730:TK#2762:14_pre" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aeview');
+			]]>
+		</sql>
+	</changeSet>
+			
+	<changeSet id="ST#730:TK#2762:14" author="Divya.A"> 
+		<createView viewName="rmtfinancetypes_aeview" replaceIfExists="true"> 
+			<![CDATA[ 
+				SELECT T1.FINTYPE,
+				    '' FINDEFFREQ,
+				    T1.FINCCY,
+				    T1.FINCATEGORY,
+				    T1.DEVELOPERFINANCE,
+				    T1.PARTIALLYSECURED,
+				    T1.INSTBASEDSCHD,
+				    T1.TDSTYPE,
+				    T1.SUBVENTIONREQ,
+					T1.CLOSURETHRESHOLDLIMIT,
+					T1.MAXFPPCALTYPE,
+					T1.MAXFPPAMOUNT,
+					T1.MAXFPPPER,
+					T1.MAXFPPCALON,
+					T1.PPLOCKINPERIOD,
+					T1.ESLOCKINPERIOD,
+					T1.MINPPCALTYPE,
+					T1.MINPPAMOUNT,
+					T1.MINPPPERCENTAGE,
+					T1.MINPPCALON,
+					T1.MAXPPCALTYPE,
+					T1.MAXPPAMOUNT,
+					T1.MAXPPPERCENTAGE,
+					T1.MAXPPCALON,
+					T1.ALLOWAUTOREFUND, 
+					T1.MAXAUTOREFUND, 
+					T1.MINAUTOREFUND,
+					T1.NPARPYHIERARCHY,
+					T1.ALLOWCANCELFIN,
+					T1.WRITEOFFREPAYHRY, 
+					T1.MATUREREPAYHRY, 
+					T1.PRESENTMENTREPAYHRY
+				FROM RMTFINANCETYPES T1
+			]]> 
+		</createView> 
+	</changeSet> 
+		
+	<changeSet id="ST#730:TK#2762:14_post" author="Divya.A" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aeview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.01" author="Vijayakumar.k">
+		<createSequence sequenceName="SEQAUTO_WRITE_OFF_LOAN_TYPE" />
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.02" author="Vijayakumar.k">
+		<comment>New Table: AUTO_WRITE_OFF_LOANTYPES_TEMP</comment>
+		<createTable tableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PSLCODE" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDDAYS" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.03" author="Vijayakumar.k">
+		<addPrimaryKey tableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP" columnNames="ID"
+			constraintName="PK_AUTO_WRITEOF_ID" />
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.04" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_AUTO_WRITE_LT"
+			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FINTYPE" baseTableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP"
+			baseColumnNames="LoanType" />
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.05" author="Vijayakumar.k">
+		<addUniqueConstraint tableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP" columnNames="LoanType, PSLCODE"
+			constraintName="UK_FK_AUTO_WRITE_LT_PSL" />
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.06" author="Vijayakumar.k">
+		<comment>New Table: AUTO_WRITE_OFF_LOAN_TYPE</comment>
+		<createTable tableName="AUTO_WRITE_OFF_LOAN_TYPE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PSLCODE" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDDAYS" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.07" author="Vijayakumar.k">
+		<addPrimaryKey tableName="AUTO_WRITE_OFF_LOAN_TYPE" columnNames="ID" constraintName="PK_AUTO_WRITE_ID" />
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.08" author="Vijayakumar.k">
+		<addForeignKeyConstraint constraintName="FK_AUTO_WRITE_PSLCODE_LT"
+			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FINTYPE" baseTableName="AUTO_WRITE_OFF_LOAN_TYPE"
+			baseColumnNames="LoanType" />
+	</changeSet>
+	<changeSet id="ST#730TK#4755.09" author="Vijayakumar.k">
+		<addUniqueConstraint tableName="AUTO_WRITE_OFF_LOAN_TYPE" columnNames="LoanType,PSLCODE"
+			constraintName="UK_FK_AUTO_WRITE_PSLCODE_LT" />
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.10_pre" author="Vijayakumar.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'auto_write_off_loan_type_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.10" author="Vijayakumar.k">
+		<createView viewName="AUTO_WRITE_OFF_LOAN_TYPE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.LOANTYPE,
+					T1.PSLCODE,
+					T1.DPDDAYS,
+					T2.FINCATEGORY,
+					T2.FINTYPEDESC,
+					T3.DESCRIPTION PSLCODEDESC,
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID, 
+	      			T1.RECORDTYPE,
+	      			T1.WORKFLOWID
+		  		FROM AUTO_WRITE_OFF_LOAN_TYPE_TEMP T1
+		  		INNER JOIN RMTFINANCETYPES T2 ON T2.FINTYPE = T1.LOANTYPE
+				INNER JOIN PSLCATEGORY T3 ON T3.CODE = T1.PSLCODE
+		  		UNION ALL
+		  		SELECT T1.ID,
+					T1.LOANTYPE,
+					T1.PSLCODE,
+					T1.DPDDAYS,
+					T2.FINCATEGORY,
+					T2.FINTYPEDESC,
+					T3.DESCRIPTION PSLCODEDESC,
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID, 
+	      			T1.RECORDTYPE,
+	      			T1.WORKFLOWID
+		  		FROM AUTO_WRITE_OFF_LOAN_TYPE T1
+		  		INNER JOIN RMTFINANCETYPES T2 ON T2.FINTYPE = T1.LOANTYPE
+				INNER JOIN PSLCATEGORY T3 ON T3.CODE = T1.PSLCODE
+		  		WHERE NOT EXISTS (SELECT 1 FROM AUTO_WRITEOFF_LOANTYPES_TEMP WHERE ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.10_post" author="Vijayakumar.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'auto_write_off_loan_type_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.11_pre" author="Vijayakumar.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'auto_write_off_loan_type_lview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.11" author="Vijayakumar.k">
+		<createView viewName="AUTO_WRITE_OFF_LOAN_TYPE_LVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.LOANTYPE,
+					T1.PSLCODE,
+					T1.DPDDAYS,
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID, 
+	      			T1.RECORDTYPE,
+	      			T1.WORKFLOWID
+	      		FROM AUTO_WRITE_OFF_LOAN_TYPE_TEMP T1
+		  		WHERE T1.ID IN (SELECT MAX(ID) FROM AUTO_WRITEOFF_LOANTYPES_TEMP GROUP BY LOANTYPE)
+		  		UNION ALL
+		  		SELECT T1.ID,
+					T1.LOANTYPE,
+					T1.PSLCODE,
+					T1.DPDDAYS,
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID, 
+	      			T1.RECORDTYPE,
+	      			T1.WORKFLOWID
+		  		FROM AUTO_WRITE_OFF_LOAN_TYPE T1
+		  		WHERE T1.ID IN (SELECT MAX(ID) FROM AUTO_WRITEOFF_LOANTYPES GROUP BY LOANTYPE)
+				AND NOT EXISTS (SELECT 1 FROM AUTO_WRITEOFF_LOANTYPES_TEMP 
+				WHERE ID IN (SELECT MAX(ID) FROM AUTO_WRITEOFF_LOANTYPES_TEMP GROUP BY LOANTYPE) AND LOANTYPE = T1.LOANTYPE)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.11_post" author="Vijayakumar.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'auto_write_off_loan_type_lview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.12_pre" author="Vijayakumar.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'auto_write_off_loan_type_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.12" author="Vijayakumar.k">
+		<createView viewName="AUTO_WRITE_OFF_LOAN_TYPE_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.LOANTYPE,
+					T1.PSLCODE,
+					T1.DPDDAYS,
+					T2.FINCATEGORY,
+					T2.FINTYPEDESC,
+					T3.DESCRIPTION PSLCODEDESC,
+					T1.VERSION,
+					T1.CREATEDBY,
+					T1.CREATEDON,
+					T1.APPROVEDBY,
+					T1.APPROVEDON,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID, 
+	      			T1.RECORDTYPE,
+	      			T1.WORKFLOWID
+				FROM AUTO_WRITE_OFF_LOAN_TYPE T1
+		  		INNER JOIN RMTFINANCETYPES T2 ON T2.FINTYPE = T1.LOANTYPE	
+				INNER JOIN PSLCATEGORY T3 ON T3.CODE = T1.PSLCODE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.12_post" author="Vijayakumar.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'auto_write_off_loan_type_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#730TK#4755.13" author="Vijayakumar.k">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER', 		'Role for auto WRITEOFF maker',		NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOAN_TYPE_AUTO_WRITE_OFF_APPROVER', 	'Role for auto WRITEOFF approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER', 'WF Maker Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOAN_TYPE_AUTO_WRITE_OFF_APPROVER', 'WF Approver Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_LoanTypeWriteOff',					'MENU',						0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeWriteOffDialog_btnNew',		'LoanTypeWriteOffDialog',	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeWriteOffDialog_btnEdit',		'LoanTypeWriteOffDialog',	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeWriteOffDialog_btnDelete',		'LoanTypeWriteOffDialog',	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeWriteOffDialog_btnSave',		'LoanTypeWriteOffDialog',	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeWriteOffDialog_btnPSLCode',	'LoanTypeWriteOffDialog',	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeWriteOffDialog_LoanType',				'LoanTypeWriteOffDialog',	0,	1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeWriteOffDialog_LoanType'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeWriteOffDialog_btnNew'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeWriteOffDialog_btnEdit'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeWriteOffDialog_btnDelete'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeWriteOffDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeWriteOff'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeWriteOffDialog_btnPSLCode'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_APPROVER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeWriteOFFDialog_btnSave'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_APPROVER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeWriteOff'),1,0,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),    0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_TYPE_AUTO_WRITE_OFF_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#730TK#475516.14" author="Vijayakumar.k">
+		<createTable tableName="AUTO_WRITE_OFF_CALC_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="ThreadID" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#730TK#475516.15_post" author="Vijayakumar.k" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE AUTO_WRITE_OFF_CALC_QUEUE ADD CONSTRAINT DF_AUTO_WRITE_OFF_CALC_Q_THREADID DEFAULT 0 FOR THREADID;
+				ALTER TABLE AUTO_WRITE_OFF_CALC_QUEUE ADD CONSTRAINT DF_AUTO_WRITE_OFF_CALC_Q_PROGRESS DEFAULT 0 FOR PROGRESS;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#730TK#475516.16_post" author="Vijayakumar.k" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadID" tableName="AUTO_WRITE_OFF_CALC_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="AUTO_WRITE_OFF_CALC_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#730TK#475516.17" author="Vijayakumar.k">
+		<addPrimaryKey tableName="AUTO_WRITE_OFF_CALC_QUEUE" columnNames="Id" constraintName="pf_auto_write_off_calc_queue"/>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#475516.18" author="Vijayakumar.k">
+		<createIndex tableName="AUTO_WRITE_OFF_CALC_QUEUE" indexName="idx_aw_queue_tid">
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#730TK#475516.19" author="Vijayakumar.k">
+		<createIndex tableName="AUTO_WRITE_OFF_CALC_QUEUE" indexName="idx_aw_queue_id_progress">
+			<column name="ID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#730TK#475516.20" author="Vijayakumar.k">
+		<createIndex tableName="AUTO_WRITE_OFF_CALC_QUEUE" indexName="idx_aw_queue_fid_progress">
+			<column name="FinID" type="bigint" />
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#730TK#475516.21" author="Vijayakumar.k">
+		<createIndex tableName="AUTO_WRITE_OFF_CALC_QUEUE" indexName="idx_aw_queue_progress">
+			<column name="Progress" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#730TK#475516.22" author="Vijayakumar.k">
+		<createIndex tableName="AUTO_WRITE_OFF_CALC_QUEUE" indexName="idx_aw_queue_id_threadid">
+			<column name="ID" type="bigint" />
+			<column name="ThreadID" type="int" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="ST#730TK#475516.23" author="Vijayakumar.k">
+		<createIndex tableName="AUTO_WRITE_OFF_CALC_QUEUE" indexName="idx_aw_queue_fid">
+			<column name="FinId" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#730TK#475516.24" author="Vijayakumar.k">
+		<createTable tableName="AUTO_WRITE_OFF_LOANS_LOG">
+			<column name="ID" type="bigint" autoIncrement="true"/>
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="Code" type="varchar(10)"/>
+			<column name="errorMsg" type="varchar(2000)"/>
+			<column name="executionDate" type="datetime" />
+			<column name="status" type="varchar(2)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#475516.24.1" author="Vijayakumar.k">
+		<addPrimaryKey tableName="AUTO_WRITE_OFF_LOANS_LOG" columnNames="Id" constraintName="pf_auto_write_off_loans_log"/>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#475516.25" author="Vijayakumar.K">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE='AWL_000';
+				DELETE FROM ERRORDETAILS WHERE CODE = 'AWL_001';
+				DELETE FROM ERRORDETAILS WHERE CODE='AWL_002';
+				DELETE FROM ERRORDETAILS WHERE CODE='AWL_003';
+				DELETE FROM ERRORDETAILS WHERE CODE='AWL_004';
+				
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('AWL_000', 'EN', 'E', 'Loan has writeoffed.', 																	'', 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES('AWL_001',  'EN', 'E', 'ThereLoan has does not the PSL category', 												'', 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('AWL_002', 'EN', 'E', 'Loan type PSL Categories not available in the Loan type Write off Master.', 				'', 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('AWL_003', 'EN', 'E', 'Loan type PSL Categories or DPD Days are not match with the Loan type Write off Master.', '', 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('AWL_004', 'EN', 'E', 'Loan dues are adjusted against Excess or Payables.', 										'', 'Approved', NULL, NULL, NULL, NULL, NULL, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="TK#4750.1" author="sampath.d">
+		<createTable tableName="WRITE_OFF_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Remarks" type="varchar(50)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#4750.2" author="sampath.d">
+		<addPrimaryKey tableName="WRITE_OFF_UPLOAD" columnNames="Id" constraintName="PK_WRITEOFF_UPLOAD" />
+	</changeSet>
+
+	<changeSet id="TK#4750.5" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'WRITEOFF_UPLOAD', 'Write Off Upload File.', 12, 'WriteOffUpload', null, null, ',', 0, 1, null, 'ROW:{Loan Reference No,Remarks}', null, 'C', '/opt/pff/hdfc/writeoff/upload', 'WriteOffUpload_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD'), 'WRITEOFF_UPLOAD', 1, 'HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD')), 'HEADERID',0, 'N', NULL, NULL, '${HEADER_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'M');								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD')), 'FINREFERENCE',0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_UPLOAD')), 'REMARKS',0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#4750.6" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'WRITEOFF_TEMPLATE', 'WriteOff template download', 3, 'WriteOff', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Remarks}',  '', 'A', '/opt/pff/hdfc/writeoff/template', 'WriteOffUpload_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_TEMPLATE'), 'WRITEOFF_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_TEMPLATE')), 'FINREFERENCE',0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_TEMPLATE')), 'REMARKS',0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#4750.7" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='WRITEOFF_DOWNLOAD';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'WRITEOFF_DOWNLOAD', 'write off download', 3, 'writeoff', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Remarks,Upload Status,Failure Reason,Maker ID,Approver ID,Upload Date,Approver Date}',  '', 'A', '/opt/pff/hdfc/writeoff/download', 'WriteOffUpload_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD'), 'WRITEOFF_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 10, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'FINREFERENCE',0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'REMARKS',0,'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'STATUS',0,'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'ErrorDesc',0,'N', NULL, NULL, NULL, NULL, '7', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'CREATEDBY',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'APPROVEDBY',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'CREATEDON',	     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'WRITEOFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'WRITEOFF_DOWNLOAD')), 'APPROVEDON',0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#4750.8" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_APPROVER');
+
+				DELETE FROM SECROLES WHERE ROLECD = 'WRITEOFF_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'WRITEOFF_UPLOAD_APPROVER';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_APPROVER');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='WRITEOFF_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='WRITEOFF_UPLOAD_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_WriteOffUpload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_WriteOffUpload_Approver';
+
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_WriteOffUpload_Maker', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_WriteOffUpload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'WRITEOFF_UPLOAD_MAKER', 'WF Maker for Write Off Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'WRITEOFF_UPLOAD_APPROVER', 'WF Approver for Write Off Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_WriteOffUpload_Maker'),    1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_WriteOffUpload_Approver'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'WRITEOFF_UPLOAD_MAKER', 'Maker role from Write Off Upload', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'WRITEOFF_UPLOAD_APPROVER', 'Approver role from Write Off Upload',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'WRITEOFF_UPLOAD_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'WRITEOFF_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'WRITEOFF_UPLOAD_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#4753.1" author="sampath.d">
+		<createTable tableName="REV_WRITE_OFF_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Remarks" type="varchar(50)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="TK#4753.2" author="sampath.d">
+		<addPrimaryKey tableName="REV_WRITE_OFF_UPLOAD" columnNames="Id" constraintName="PK_REV_WRITE_OFF_UPLOAD" />
+	</changeSet>
+	
+	<changeSet id="TK#4753.3" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'REV_WRITE_OFF_UPLOAD', 'Reverse Write Off Upload File.', 12, 'RevWriteOffUpload', null, null, ',', 0, 1, null, 'ROW:{Loan Reference No,Remarks}', null, 'C', '/opt/pff/hdfc/revwriteoff/upload', 'RevWriteOffUpload_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD'), 'REV_WRITE_OFF_UPLOAD', 1, 'HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD')), 'HEADERID',     0, 'N', NULL, NULL, '${HEADER_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'M');								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD')), 'FINREFERENCE', 0, 'N', NULL, NULL, NULL, 		  NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_UPLOAD')), 'REMARKS',      0, 'N', NULL, NULL, NULL, 		  NULL, '1', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#4753.4" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'REV_WRITE_OFF_TEMPLATE', 'Reverse WriteOff template download', 3, 'RevWriteOff', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Remarks}',  '', 'A', '/opt/pff/hdfc/revwriteoff/template', 'RevWriteOffUpload_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_TEMPLATE'), 'REV_WRITE_OFF_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 2, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_TEMPLATE')), 'FINREFERENCE',0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_TEMPLATE')), 'REMARKS',0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="TK#4753.5" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_DOWNLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_DOWNLOAD';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'REV_WRITE_OFF_DOWNLOAD', 'write off download', 3, 'RevWriteOff', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference No,Remarks,Upload Status,Failure Reason,Maker ID,Approver ID,Upload Date,Approver Date}',  '', 'A', '/opt/pff/hdfc/revwriteoff/download', 'RevWriteOffUpload_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD'), 'REV_WRITE_OFF_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 10, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'FINREFERENCE',	0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'REMARKS',		0,'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'STATUS',		0,'N', NULL, NULL, NULL, NULL, '6', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'ErrorDesc',	0,'N', NULL, NULL, NULL, NULL, '7', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'CREATEDBY',	0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'APPROVEDBY',	0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'CREATEDON',	0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'REV_WRITE_OFF_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'REV_WRITE_OFF_DOWNLOAD')), 'APPROVEDON',	0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#4753.6" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_APPROVER');
+
+				DELETE FROM SECROLES WHERE ROLECD = 'REV_WRITE_OFF_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'REV_WRITE_OFF_UPLOAD_APPROVER';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_APPROVER');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='REV_WRITE_OFF_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='REV_WRITE_OFF_UPLOAD_APPROVER';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_RevWriteOffUpload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_RevWriteOffUpload_Approver';
+
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_RevWriteOffUpload_Maker', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_RevWriteOffUpload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REV_WRITE_OFF_UPLOAD_MAKER', 'WF Maker for Write Off Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REV_WRITE_OFF_UPLOAD_APPROVER', 'WF Approver for Write Off Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RevWriteOffUpload_Maker'),    1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_RevWriteOffUpload_Approver'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'REV_WRITE_OFF_UPLOAD_MAKER', 'Maker role from Write Off Upload', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'REV_WRITE_OFF_UPLOAD_APPROVER', 'Approver role from Write Off Upload',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'REV_WRITE_OFF_UPLOAD_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REV_WRITE_OFF_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'WRITEOFF_UPLOAD_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="TK#4753.7" author="sampath.d">
+		<createTable tableName="FIN_WRITE_OFF_DETAIL_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="WriteOffDate" type="datetime" />
+			<column name="SeqNo" type="decimal(10,0)" />
+			<column name="WrittenOffPri" type="decimal(18,0)" />
+			<column name="WrittenOffPft" type="decimal(18,0)" />
+			<column name="CurOdPri" type="decimal(18,0)" />
+			<column name="CurOdPft" type="decimal(18,0)" />
+			<column name="UnPaidSchdPri" type="decimal(18,0)" />
+			<column name="UnPaidSchdPft" type="decimal(18,0)" />
+			<column name="PenaltyAmount" type="decimal(18,0)" />
+			<column name="ProvisionedAmount" type="decimal(18,0)" />
+			<column name="WriteOffPrincipal" type="decimal(18,0)" />
+			<column name="WriteOffProfit" type="decimal(18,0)" />
+			<column name="AdjAmount" type="decimal(18,0)" />
+			<column name="Remarks" type="varchar(200)" />
+			<column name="WrittenOffAcc" type="varchar(50)" />
+			<column name="WrittenOffSchFee" type="decimal(18,0)" />
+			<column name="UnPaidSchFee" type="decimal(18,0)" />
+			<column name="WriteOffSchFee" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#4753.8" author="sampath.d">
+		<addPrimaryKey tableName="FIN_WRITE_OFF_DETAIL_LOG" columnNames="Id" constraintName="PK_FINWRITEOFFDETAIL_LOG" />
+	</changeSet>
+	
+	<changeSet id="TK#4750.3" author="sampath.d">
+		<createTable tableName="WRITE_OFF_UPLOAD_LOG">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Remarks" type="varchar(50)" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="Event" type="varchar(20)" />
+			<column name="ReceiptId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="TK#4750.4" author="sampath.d">
+		<addPrimaryKey tableName="WRITE_OFF_UPLOAD_LOG" columnNames="Id"
+			constraintName="PK_HWRITEOFF_UPLOAD_LOG" />
+	</changeSet>
+	
+	<changeSet id="TK#4753.9" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAEEVENTS WHERE AEEVENTCODE = 'REVWRITE';
+				
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'REVWRITE';
+				
+				DELETE FROM CATEGORYWISEEVENTS WHERE AEEVENTCODE= 'REVWRITE' AND CATEGORYCODE= 'C';
+				DELETE FROM CATEGORYWISEEVENTS WHERE AEEVENTCODE= 'REVWRITE' AND CATEGORYCODE= 'F';
+				
+				INSERT INTO BMTAEEVENTS(AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('REVWRITE', 'Reverse WriteOff accounting', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 1);
+	
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_accrue',      		'Accrued Interest',											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_accrueS',				'Accrued Interest in suspense', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_accrueTsfd',			'Accrued Amount Transferred', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_amz',					'Amortized interest', 										1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_amzNRM',				'Amortized interest in normal period', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_amzPD',				'Amortized interest in pastdue period', 					1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_amzS',				'Amortized interest in suspended period', 					1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_cpzChg',				'Capitalization Changed now', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_cpzCur',				'Capitalization amount in current period', 					1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_cpzNxt',				'Capitalzie on next schedule date', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_cpzPrv',				'Capitalzie on previous schedule date', 					1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_cpzTot',				'Total Capitalization amount', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dAccrue',				'Accrued Interest From previous Accrual Date', 				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dAccrueS',			'Accrued Interest in Suspense From previous Accrual Date',  1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dAmz',				'Amortized Interest From previous Amz Date', 				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dAmzNRM',				'Amortized Interest in Normal From previous Amz Date', 		1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dAmzPD',				'Amortized Interest in PD From previous Amz Date', 			1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dAmzS',				'Amortized Interest in Suspense From previous Amz Date', 	1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_emiInAdvance',		'EMI in advance amount for payment/receipt', 				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_excessAmt',			'Excess amount for payment/receipt', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_FeeChargeAmt',		'Total Fee and Charges paid/scheduled now', 				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_incrCostPay', 		'Increased Cost Paid', 										1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_InsPay',				'Insurance amount paid', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_insRefund',			'Insurance amount refunded', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_InsuranceAmt',		'Insurance amount scheduled', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_payableAdvise',		'Payable advise amount for payment/receipt', 				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_penalty',				'Penalty Amount', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_penaltyDue',			'Penalty Due', 												1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_penaltyPaid',			'Penalty Paid', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_penaltyWaived',		'Penalty Waived', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pft',					'Total Interest', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pftAB',				'Total Interest Due for the loan', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pftAP',				'Total Interest Paid for the loan', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pri',					'Total Principal', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_priAB',				'Total Principal Due for the loan', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_priAP',				'Total Principal Paid for the loan', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_provAmt',				'Calculated/Derived Provision Amount', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_provDue',				'Provision Due Amount', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_prvAccrueTsfd',		'Accrue Transferred as of previous month', 					1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_rebate',				'Rebate Amount', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_refund',				'Refund Amount', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_rpPft',				'Total Repay Interest now (P)', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_rpPri',				'Total Repay Principal now (P)', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_rpTot',				'Total Repay now (P+I)', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_suplRentPay',			'Suplementary Rent', 										1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_suspNow',				'Interest Suspended Now',		 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_suspRls',				'Interest Released from Suspense Now', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_waiver',				'Waiver Amount', 											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_totalREVWRITE',		'Total Wriiten-Off Amount', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dLPIAmz',				'Amortized Late Payment Interest', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dLPPAmz',				'Amortized Late Payment Penalty', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dGSTLPIAmz',			'Amortized Late Payment Interest GST', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_dGSTLPPAmz',			'Amortized Late Payment Penalty GST', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pftS',				'Total Interest as per schedule till today',				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pftSB',				'Total Interest due as per schedule till today',			1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_priSB',				'Total Principal due as per schedule till today',			1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_odPri',				'OverDue Principal',										1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_odPft',				'OverDue Profit',											1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_prvMntAmz',			'Previous Month Amortized interest',						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_priPaidWO',			'Total Principal Paid during Write Off Stage',				1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'ae_pftPaidWO',			'Total Interest Collected during Write Off Stage',			1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceChargePaid',		'Bounce charges Paid', 										1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceChargeWaived',		'Bounce charges Waived', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CESS_AF',	'Bounce charge CESS AF Waived', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CESS_N', 	'Bounce charge CESS NET Waived', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CESS_P', 	'Bounce charge CESS PAID Waived', 							1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CESS_SCH',	'Bounce charge CESS SCHEDULE Waived', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CESS_W',	'Bounce charge CESS WAIVER Waived', 						1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CGST_P',	'Bounce charge CGST paid', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_IGST_P',	'Bounce charge IGST paid', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_SGST_P',	'Bounce charge SGST paid', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_UGST_P',	'Bounce charge UGST paid', 									1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_UGST_W',	'Bounce charge UGST Waived', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_CGST_W',	'Bounce charge CGST Waived', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_IGST_W',	'Bounce charge IGST Waived', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+                INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT, ALLOWEDRIA, AMOUNTCODE, AMOUNTCODEDESC, AMOUNTCODEISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('REVWRITE', 0, 'bounceCharge_SGST_W',	'Bounce charge SGST Waived', 								1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO CATEGORYWISEEVENTS (AEEVENTCODE, CATEGORYCODE, ACTIVE, MANDATORY, SEQORDER) VALUES ('REVWRITE', 'C', 1, 0, (SELECT MAX(SEQORDER)+1 FROM CATEGORYWISEEVENTS WHERE CATEGORYCODE = 'C'));
+				INSERT INTO CATEGORYWISEEVENTS (AEEVENTCODE, CATEGORYCODE, ACTIVE, MANDATORY, SEQORDER) VALUES ('REVWRITE', 'F', 1, 0, (SELECT MAX(SEQORDER)+1 FROM CATEGORYWISEEVENTS WHERE CATEGORYCODE = 'F'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

@@ -253,6 +253,7 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinTypeKnockOff;
+import com.pennant.backend.model.finance.FinTypeWriteOff;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -1047,6 +1048,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("TransactionCode", TransactionCode.class,
 						new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, transactionCodes_WF,
 						new String[] { "TranCode", "TranDesc" }, new Object[][] { { "TranIsActive", "0", 1 } }, 300));
+
+		ModuleUtil.register("FinTypeWriteOff",
+				new ModuleMapping("FinTypeWriteOff", FinTypeWriteOff.class,
+						new String[] { "Auto_Write_Off_Loan_Type", "Auto_Write_Off_Loan_Type_View" }, masterWF,
+						new String[] { "LoanType" }, null, 300));
 
 		ModuleUtil.register("AutoKnockOff",
 				new ModuleMapping("AutoKnockOff", AutoKnockOff.class,
@@ -3823,6 +3829,16 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("HoldRefundUploadHeader",
 				new ModuleMapping("HoldRefundUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("WriteOffUploadHeader",
+				new ModuleMapping("WriteOffUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("RevWriteOffUploadHeader",
+				new ModuleMapping("RevWriteOffUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 

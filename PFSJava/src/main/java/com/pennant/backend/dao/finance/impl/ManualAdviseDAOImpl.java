@@ -2507,4 +2507,49 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		jdbcOperations.update(sql, PennantConstants.MANUALADVISE_CANCEL, finID);
 	}
+
+	@Override
+	public List<ManualAdviseMovements> getAdvisePaidAmount(long receiptId, String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fe.FeeTypeCode, mad.PaidAmount, mad.WaivedAmount");
+		sql.append(", mad.PaidCgst, mad.PaidSgst, mad.PaidUgst, mad.PaidIgst, mad.PaidCess");
+		sql.append(", mad.WaivedCgst, mad.WaivedSgst, mad.WaivedUgst, mad.WaivedIgst, mad.WaivedCess");
+		sql.append(", mad.TdsPaid, fe.TaxComponent");
+		sql.append(" From ManualAdviseMovements mad");
+		sql.append(" Inner Join ManualAdvise ma on ma.AdviseID = mad.AdviseID");
+		sql.append(" Inner Join FeeTypes fe on fe.FeeTypeID = ma.FeeTypeID");
+		sql.append(" Where mad.ReceiptID > ? and mad.ReceiptID <= (Select max(ReceiptID)");
+		sql.append(" from FinReceiptHeader Where Reference = ?)");
+		sql.append(" and ma.FinReference = ? and mad.Status is null");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, receiptId);
+			ps.setString(++index, finReference);
+			ps.setString(++index, finReference);
+		}, (rs, rowNum) -> {
+			ManualAdviseMovements mam = new ManualAdviseMovements();
+
+			mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			mam.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			mam.setPaidCGST(rs.getBigDecimal("PaidCgst"));
+			mam.setPaidSGST(rs.getBigDecimal("PaidSgst"));
+			mam.setPaidIGST(rs.getBigDecimal("PaidIgst"));
+			mam.setPaidUGST(rs.getBigDecimal("PaidUgst"));
+			mam.setPaidCESS(rs.getBigDecimal("PaidCess"));
+			mam.setWaivedCGST(rs.getBigDecimal("WaivedCgst"));
+			mam.setWaivedSGST(rs.getBigDecimal("WaivedSgst"));
+			mam.setWaivedUGST(rs.getBigDecimal("WaivedUgst"));
+			mam.setWaivedIGST(rs.getBigDecimal("WaivedIgst"));
+			mam.setWaivedCESS(rs.getBigDecimal("WaivedCess"));
+			mam.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+			mam.setTaxComponent(rs.getString("TaxComponent"));
+
+			return mam;
+		});
+	}
 }

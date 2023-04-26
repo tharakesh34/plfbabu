@@ -1389,4 +1389,22 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return null;
 		}
 	}
+
+	@Override
+	public void updateWriteOffDetail(long finID) {
+		String sql = "Update FinScheduleDetails Set WriteOffPrincipal = ?, WriteOffProfit = ?, WriteOffSchFee = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			ps.setBigDecimal(1, BigDecimal.ZERO);
+			ps.setBigDecimal(2, BigDecimal.ZERO);
+			ps.setBigDecimal(3, BigDecimal.ZERO);
+			ps.setLong(4, finID);
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
 }

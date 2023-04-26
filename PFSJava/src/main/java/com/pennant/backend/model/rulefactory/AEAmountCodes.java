@@ -263,6 +263,8 @@ public class AEAmountCodes implements Serializable {
 	private String npaSubClass;
 	private BigDecimal instRTot = BigDecimal.ZERO;
 	private BigDecimal pftRB = BigDecimal.ZERO;
+	private BigDecimal priPaidWO = BigDecimal.ZERO;
+	private BigDecimal pftPaidWO = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
@@ -475,6 +477,8 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_npaSubClass", this.npaSubClass);
 		map.put("ae_pftRB", this.pftRB);
 		map.put("ae_instRTot", this.instRTot);
+		map.put("ae_priPaidWO", this.priPaidWO);
+		map.put("ae_pftPaidWO", this.pftPaidWO);
 
 		return map;
 	}
@@ -2085,6 +2089,22 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPftRB(BigDecimal pftRB) {
 		this.pftRB = pftRB;
+	}
+
+	public BigDecimal getPriPaidWO() {
+		return priPaidWO;
+	}
+
+	public void setPriPaidWO(BigDecimal priPaidWO) {
+		this.priPaidWO = priPaidWO;
+	}
+
+	public BigDecimal getPftPaidWO() {
+		return pftPaidWO;
+	}
+
+	public void setPftPaidWO(BigDecimal pftPaidWO) {
+		this.pftPaidWO = pftPaidWO;
 	}
 
 }

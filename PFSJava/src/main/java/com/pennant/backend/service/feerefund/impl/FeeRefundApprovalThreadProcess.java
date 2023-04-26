@@ -47,6 +47,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
 import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennant.pff.payment.model.PaymentHeader;
@@ -168,7 +169,7 @@ public class FeeRefundApprovalThreadProcess {
 		ma.setAdviseID(manualAdviseService.getNewAdviseID());
 		ma.setFinReference(finreference);
 		ma.setFinID(finID);
-		ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		ma.setAdviseType(AdviseType.PAYABLE.id());
 		ma.setAdviseAmount(frd.getRefundAmount());
 		ma.setBalanceAmt(BigDecimal.ZERO);
 		ma.setHoldDue(false);
@@ -243,7 +244,7 @@ public class FeeRefundApprovalThreadProcess {
 			ph.setPaymentAmount(frd.getRefundAmount());
 			pd.setReferenceId(frd.getPayableID());
 			pd.setAvailableAmount(frd.getRefundAmount());
-			pd.setAmountType(String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE));
+			pd.setAmountType(String.valueOf(AdviseType.PAYABLE.id()));
 			pd.setFeeTypeCode(payableFeeType.getFeeTypeCode());
 			pd.setFeeTypeDesc(payableFeeType.getFeeTypeDesc());
 			pd.setRecordType(PennantConstants.RCD_ADD);

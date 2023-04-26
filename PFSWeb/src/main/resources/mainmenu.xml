@@ -372,6 +372,10 @@
 			<menuItem id="menu_Item_AutoKnockoff"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/AutoKnockOff/AutoKnockOffList.zul"
 				rightName="menu_Item_AutoKnockOff" />
+				
+			<menuItem id="menu_Item_LoanTypeWriteOff"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/LoanTypeWriteOff/LoanTypeWriteOffList.zul"
+				rightName="menu_Item_LoanTypeWriteOff" />
 
 			<menuItem id="menu_Item_PANLetterMapping"
 				zulNavigation="/WEB-INF/pages/SystemMaster/PANMapping/CustTypePANMappingList.zul"
@@ -1336,6 +1340,23 @@
 				zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=A" rightName="menu_Item_LienUpload_Approver" />
 		</menu>
 
+		<menu id="menu_Category_WriteOffUpload">
+			<menuItem id="menu_Item_WriteOffUpload_Maker"
+				zulNavigation="/WEB-INF/pages/WriteOffUpload/WriteOffUploadList.zul?stage=M"
+				rightName="menu_Item_WriteOffUpload_Maker" />
+			<menuItem id="menu_Item_WriteOffUpload_Approver"
+				zulNavigation="/WEB-INF/pages/WriteOffUpload/WriteOffUploadList.zul?stage=A"
+				rightName="menu_Item_WriteOffUpload_Approver" />
+		</menu>
+		
+		<menu id="menu_Category_RevWriteOffUpload">
+			<menuItem id="menu_Item_RevWriteOffUpload_Maker"
+				zulNavigation="/WEB-INF/pages/RevWriteOffUpload/RevWriteOffUploadList.zul?stage=M"
+				rightName="menu_Item_RevWriteOffUpload_Maker" />
+			<menuItem id="menu_Item_RevWriteOffUpload_Approver"
+				zulNavigation="/WEB-INF/pages/RevWriteOffUpload/RevWriteOffUploadList.zul?stage=A"
+				rightName="menu_Item_RevWriteOffUpload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

@@ -1169,4 +1169,19 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return BigDecimal.ZERO;
 		}
 	}
+
+	@Override
+	public List<FinExcessAmount> getExcessList(long finID) {
+		StringBuilder sql = getExcessAmountSqlQuery();
+		sql.append(" Where FinID = ?  and BalanceAmt > ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setLong(++index, finID);
+			ps.setBigDecimal(++index, BigDecimal.ZERO);
+		}, new ExcessAmountRowMapper());
+	}
 }

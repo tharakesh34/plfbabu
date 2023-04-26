@@ -248,4 +248,65 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="ST#730:TK#2762:01" author="Divya.A" >
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="WriteOffRepayHry" type="varchar(50)"  />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#730:TK#2762:02" author="Divya.A">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="MatureRepayHry" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#730:TK#2762:03" author="Divya.A">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="PresentmentRepayHry" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#730TK#4755.01" author="Vijaayakumar.k">
+		<createTable tableName="ADTAUTO_WRITE_OFF_LOAN_TYPE">
+			<column name="AUDITID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ID" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="PSLCODE" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LoanType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DPDDAYS" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>

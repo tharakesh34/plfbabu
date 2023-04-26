@@ -43,6 +43,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -243,7 +244,7 @@ public class PaymentInstructionController extends ExtendedTestClass {
 		Map<String, BigDecimal> taxPercMap = GSTCalculator.getTaxPercentages(ph.getFinID());
 
 		for (PaymentDetail detail : paymentDetails) {
-			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
+			if (!String.valueOf(AdviseType.PAYABLE.id()).equals(detail.getAmountType())) {
 				continue;
 			}
 
@@ -389,7 +390,7 @@ public class PaymentInstructionController extends ExtendedTestClass {
 				}
 
 				String paymentType = pd.getPaymentType();
-				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(calPD.getAmountType())) {
+				if (String.valueOf(AdviseType.PAYABLE.id()).equals(calPD.getAmountType())) {
 					if (calPD.getFeeTypeCode().equals(pd.getFeeTypeCode())) {
 						continue;
 					}
@@ -550,7 +551,7 @@ public class PaymentInstructionController extends ExtendedTestClass {
 	private void processPDAmount(PaymentHeader ph) {
 		for (PaymentDetail pdetails : ph.getCalPaymentDetailList()) {
 			for (PaymentDetail pd : ph.getPaymentDetailList()) {
-				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(pdetails.getAmountType())) {
+				if (String.valueOf(AdviseType.PAYABLE.id()).equals(pdetails.getAmountType())) {
 					if (pdetails.getFeeTypeCode().equals(pd.getAmountType())) {
 						pdetails.setAmount(pd.getAmount());
 					}
