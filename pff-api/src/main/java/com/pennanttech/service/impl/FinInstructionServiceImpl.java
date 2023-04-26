@@ -146,6 +146,7 @@ import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.model.external.collection.CollectionAPIDetail;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
@@ -1401,7 +1402,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		BigDecimal amount = BigDecimal.ZERO;
 
-		if (ReceiptPurpose.SCHDRPY.equals(receiptPurpose) || ReceiptPurpose.SCHDRPY.equals(receiptPurpose)) {
+		if (AllocationType.MANUAL.equals(fsi.getAllocationType()) && ReceiptPurpose.SCHDRPY.equals(receiptPurpose)
+				|| ReceiptPurpose.SCHDRPY.equals(receiptPurpose)) {
 			for (UploadAlloctionDetail al : fsi.getUploadAllocationDetails()) {
 				amount = amount.add(al.getPaidAmount().add(al.getWaivedAmount()));
 			}
