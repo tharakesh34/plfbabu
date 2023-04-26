@@ -142,20 +142,23 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, curPriority).forEach(ph -> updateAsLow(ph));
+		if (veryHigh == detail.getPhoneTypePriority()) {
+			customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, curPriority).forEach(ph -> updateAsLow(ph));
+		}
+
 		deleteExisting(phoneExis);
 		create(phone);
 	}
 
 	private void proessNSPTandSP(CustomerKycDetail detail, CustomerPhoneNumber phone) {
-		if (Integer.valueOf(PennantConstants.KYC_PRIORITY_LOW) == phone.getPhoneTypePriority()) {
-			return;
-		}
+		Integer veryHigh = Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH);
 
 		Long custID = detail.getReferenceID();
 		int priority = detail.getPhoneTypePriority();
 
-		customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, priority).forEach(ph -> updateAsLow(ph));
+		if (veryHigh == detail.getPhoneTypePriority()) {
+			customerPhoneNumberDAO.getCustomerPhoneNumberByID(custID, priority).forEach(ph -> updateAsLow(ph));
+		}
 		create(phone);
 	}
 

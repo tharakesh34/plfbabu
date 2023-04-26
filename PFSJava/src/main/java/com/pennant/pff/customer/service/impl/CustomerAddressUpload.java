@@ -249,17 +249,21 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		customerAddresDAO.getCustomerAddresById(custID, curPriority).forEach(ad -> updateAsLow(ad));
+		if (highPriority == detail.getCustAddrPriority()) {
+			customerAddresDAO.getCustomerAddresById(custID, curPriority).forEach(ad -> updateAsLow(ad));
+		}
+
 		deleteExisting(addrExis);
 		create(ca);
 	}
 
 	private void processNSAandSP(CustomerAddres address, Long custID, int curPriority) {
-		if (Integer.valueOf(PennantConstants.KYC_PRIORITY_LOW) == address.getCustAddrPriority()) {
-			return;
+		Integer highPriority = Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH);
+
+		if (highPriority == address.getCustAddrPriority()) {
+			customerAddresDAO.getCustomerAddresById(custID, curPriority).forEach(ad -> updateAsLow(ad));
 		}
 
-		customerAddresDAO.getCustomerAddresById(custID, curPriority).forEach(ad -> updateAsLow(ad));
 		create(address);
 	}
 

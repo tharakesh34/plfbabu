@@ -123,6 +123,7 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 
 	private void processSEandNSP(CustomerKycDetail detail, CustomerEMail ce, CustomerEMail emailExis) {
 		Long custID = detail.getReferenceID();
+		Integer highPriority = Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH);
 
 		if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == emailExis.getCustEMailPriority()
 				&& Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) != ce.getCustEMailPriority()) {
@@ -134,19 +135,21 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
-		customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority()).forEach(em -> updateAsLow(em));
+		if (highPriority == detail.getCustEMailPriority()) {
+			customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority()).forEach(em -> updateAsLow(em));
+		}
+
 		deleteExisting(emailExis);
 		create(ce);
 	}
 
 	private void processNSEandSP(CustomerKycDetail detail, CustomerEMail email) {
+		Integer highPriority = Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH);
 		Long custID = detail.getReferenceID();
 
-		if (Integer.valueOf(PennantConstants.KYC_PRIORITY_LOW) == email.getCustEMailPriority()) {
-			return;
+		if (highPriority == detail.getCustEMailPriority()) {
+			customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority()).forEach(em -> updateAsLow(em));
 		}
-
-		customerEMailDAO.getCustomerEMailById(custID, detail.getCustEMailPriority()).forEach(em -> updateAsLow(em));
 		create(email);
 	}
 
