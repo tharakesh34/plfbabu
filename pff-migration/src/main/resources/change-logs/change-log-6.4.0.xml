@@ -13230,4 +13230,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1471.21" author="Mounika.M">
+		<sql>
+		    <![CDATA[
+		    	DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'DPD_STRING_CALCULATION_ON';
+		    ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

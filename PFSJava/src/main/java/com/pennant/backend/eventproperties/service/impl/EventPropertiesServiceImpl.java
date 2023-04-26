@@ -150,7 +150,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		ep.setAutoRefundByCheque(SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE));
 
 		ep.setAllowOTSOnEOD(SysParamUtil.isAllowed(SMTParameterConstants.ALW_OTS_ON_EOD));
-		ep.setDpdStringCal(SysParamUtil.getValueAsInt(SMTParameterConstants.DPD_STRING_CALCULATION_ON));
+		ep.setDpdStringCal(DPDExtension.DPD_STRING_CALCULATION_ON);
 		ep.setDpdStringLength(DPDExtension.DPD_STRING_LENGTH);
 
 		ep.setParameterLoaded(true);

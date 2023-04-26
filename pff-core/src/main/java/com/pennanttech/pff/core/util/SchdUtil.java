@@ -122,21 +122,19 @@ public class SchdUtil {
 		return !isEMICleared(schd);
 	}
 
-	public static int getPastDueDays(List<FinanceScheduleDetail> schedules, Date eodDate, int pastDueDays) {
+	public static int getPastDueDays(List<FinanceScheduleDetail> schedules, Date eodDate) {
 		int curPastDueDays = 0;
-		Date fromDate = eodDate;
+		Date fromDate = DateUtil.addDays(eodDate, 1);
 
 		schedules = sort(schedules, true);
 
 		for (FinanceScheduleDetail curSchd : schedules) {
 			Date schDate = curSchd.getSchDate();
-			int duedays = pastDueDays;
+			int duedays = 0;
 
 			if (eodDate.compareTo(schDate) > 0) {
-				if (pastDueDays == 0) {
-					duedays = DateUtil.getDaysBetween(fromDate, schDate);
-					fromDate = schDate;
-				}
+				duedays = DateUtil.getDaysBetween(fromDate, schDate);
+				fromDate = schDate;
 
 				if (isEMINotCleared(curSchd)) {
 					curPastDueDays = curPastDueDays + duedays;

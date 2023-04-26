@@ -448,6 +448,5 @@ public class SMTParameterConstants {
 	public static final String RECEIPTS_SHOW_ACCOUNTING_TAB = "RECEIPTS_SHOW_ACCOUNTING_TAB";
 	public static final String OTS_THREAD_COUNT = "OTS_THREAD_COUNT";
 	public static final String ALW_CREDIT_EDIT_DATA_STAGES = "ALW_CREDIT_EDIT_DATA_STAGES";
-	public static final String DPD_STRING_CALCULATION_ON = "DPD_STRING_CALCULATION_ON";
 	public static final String MAINTAIN_CANFIN_BACK_DATE = "MAINTAIN_CANFIN_BACK_DATE";
 }

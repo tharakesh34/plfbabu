@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.FrequencyUtil;
@@ -53,7 +54,7 @@ public class DPDStringCalculator {
 			List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 			FinanceProfitDetail fpd = finEODEvent.getFinProfitDetail();
 
-			String dpdString = getDpdString(monthEnd, eodDate, fm, schedules);
+			String dpdString = getDpdString(monthEnd, eodDate, fm, schedules, fpd.getCurODDays());
 			fpd.setCurDPDString(deriveDPDString(dpdStringLength, fpd.getCurDPDString(), dpdString));
 
 			logger.info("DPD Calculation is proccessed for the Loan {} and Calculated DPD String is {}",
@@ -82,16 +83,40 @@ public class DPDStringCalculator {
 	}
 
 	private static String getDpdString(boolean monthEnd, Date eodDate, FinanceMain fm,
-			List<FinanceScheduleDetail> schedules) {
+			List<FinanceScheduleDetail> schedules, int curduedays) {
 		if (monthEnd) {
-			return getDueBucket(SchdUtil.getPastDueDays(schedules, eodDate, 1));
+			if (curduedays == 0) {
+				return null;
+			}
+			return getDueBucket((int) Math.ceil((curduedays / 30.0)));
 		}
+
+		String frqCode = fm.getRepayFrq().substring(0, 1);
 
 		int frequencyDay = FrequencyUtil.getIntFrequencyDay(fm.getRepayFrq());
 		int dueDay = DateUtil.getDay(fm.getEventProperties().getBusinessDate());
 
+		if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode) || FrequencyCodeTypes.FRQ_WEEKLY.equals(frqCode)
+				|| FrequencyCodeTypes.FRQ_FORTNIGHTLY.equals(frqCode)
+				|| FrequencyCodeTypes.FRQ_BIWEEKLY.equals(frqCode)) {
+			if (schedules.stream()
+					.anyMatch(s -> s.getSchDate().compareTo(fm.getEventProperties().getBusinessDate()) == 0)) {
+				frequencyDay = dueDay;
+			}
+		}
+
 		if (frequencyDay == dueDay) {
-			return getDueBucket((int) Math.ceil((SchdUtil.getPastDueDays(schedules, eodDate, 0) / 30.0)));
+			int pastDueDays = 0;
+			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
+				if (curduedays == 0) {
+					return null;
+				}
+				pastDueDays = curduedays;
+			} else {
+				pastDueDays = SchdUtil.getPastDueDays(schedules, eodDate);
+			}
+
+			return getDueBucket((int) Math.ceil((pastDueDays / 30.0)));
 		}
 
 		return null;
