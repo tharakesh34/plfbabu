@@ -13,7 +13,13 @@ public enum MiscellaneousPostingUploadError {
 
 	MP06("  Value Date should greater than or equal to Loan StartDate."),
 
-	ML07(" Value Date should lesser than or equal to Loan MaturityDate.");
+	ML07(" Value Date should lesser than or equal to Loan MaturityDate."),
+
+	MP08(" Batch Name is invalid.Allowed Characters are [a-z A-Z 0-9]."),
+
+	MP09(" TxnAmount should be Mandatory."),
+
+	MP010(" TxnAmount should be greater than zero.");
 
 	private String description;
 

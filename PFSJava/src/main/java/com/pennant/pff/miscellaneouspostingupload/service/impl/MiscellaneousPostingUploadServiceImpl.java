@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.pff.miscellaneouspostingupload.dao.MiscellaneousPostingUploadDAO;
@@ -72,9 +74,17 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		Long finID = financeMainDAO.getFinID(reference);
 		detail.setReferenceID(finID);
+		BigDecimal txnamt = detail.getTxnAmount();
 
 		if (StringUtils.isNotBlank(reference) && finID == null) {
 			setError(detail, MiscellaneousPostingUploadError.MP02);
+			return;
+		}
+
+		String batchnameregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM);
+		if (StringUtils.isNotBlank(detail.getBatchName())
+				&& !Pattern.compile(batchnameregex).matcher(detail.getBatchName()).matches()) {
+			setError(detail, MiscellaneousPostingUploadError.MP08);
 			return;
 		}
 
@@ -93,6 +103,16 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		if (!accountMappingDAO.isValidAccount(detail.getDebitGL())) {
 			setError(detail, MiscellaneousPostingUploadError.MP05);
+			return;
+		}
+
+		if (txnamt == null) {
+			setError(detail, MiscellaneousPostingUploadError.MP09);
+			return;
+		}
+
+		if (BigDecimal.ZERO.compareTo(txnamt) >= 0) {
+			setError(detail, MiscellaneousPostingUploadError.MP010);
 			return;
 		}
 	}
