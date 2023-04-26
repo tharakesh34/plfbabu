@@ -31,6 +31,7 @@ import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennanttech.pff.core.TableType;
 
 public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
@@ -95,4 +96,8 @@ public interface PartnerBankDAO extends BasicCrudDao<PartnerBank> {
 	boolean getPartnerBankbyBankBranch(String bankCode);
 
 	long getpartnerbankid(String partnerbankCode, String entity);
+
+	List<FinTypePartnerBank> getpartnerbankCode(String loanType, String receiptmode);
+
+	int getValidPartnerBank(String loanType, String receiptmode, long partnerbankid);
 }

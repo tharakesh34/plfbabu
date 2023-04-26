@@ -38,6 +38,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 		sql.append(", ChequeNumber, BankCode, ChequeAccountNumber, TransactionRef, ReceiptModeStatus, DepositDate");
 		sql.append(", RealizationDate, InstrumentDate, PanNumber, ExternalRef, ReceivedFrom, BounceDate");
 		sql.append(", BounceReason, BounceRemarks, PartnerBankCode, Status, Progress, ErrorCode, ErrorDesc");
+		sql.append(", PartnerBankCode, ClosureType, Reason, ReceiptID");
 		sql.append(" From CREATE_RECEIPT_UPLOAD");
 		sql.append(" Where HeaderId = ?");
 
@@ -80,6 +81,10 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 			receipt.setProgress(rs.getInt("Progress"));
 			receipt.setErrorCode(rs.getString("ErrorCode"));
 			receipt.setErrorDesc(rs.getString("ErrorDesc"));
+			receipt.setPartnerBankCode(rs.getString("PartnerBankCode"));
+			receipt.setClosureType(rs.getString("ClosureType"));
+			receipt.setReason(rs.getString("Reason"));
+			receipt.setReceiptID(rs.getLong("ReceiptID"));
 
 			return receipt;
 		}, headerID);
@@ -257,14 +262,14 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 		sql.append(" From Create_Receipt_Upload ");
 		sql.append(" Where HeaderID in (");
 		sql.append(" Select ID From File_Upload_Header");
-		sql.append(" Where FileName not in (?) and Progress in (?, ?, ?, ?)) and Reference = ? and Status = ?");
+		sql.append(" Where FileName not in (?) and Reference = ? and Progress in (?, ?, ?, ?)) and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getString(1), fileName,
 					finReference, Status.IN_PROCESS.getValue(), Status.DOWNLOADED.getValue(),
-					Status.IMPORTED.getValue(), Status.IMPORT_IN_PROCESS.getValue());
+					Status.IMPORTED.getValue(), Status.IMPORT_IN_PROCESS.getValue(), "S");
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -50,6 +50,7 @@ public class CreateReceiptUpload extends UploadDetails {
 	private String partnerBankCode;
 	private Long finID;
 	private List<CreateReceiptUpload> allocations = new ArrayList<>();
+	private List<CreateReceiptUpload> waivedallocations = new ArrayList<>();
 	private BigDecimal amount;
 	private Long feeId;
 	private String closureType;
@@ -377,6 +378,14 @@ public class CreateReceiptUpload extends UploadDetails {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public List<CreateReceiptUpload> getWaivedallocations() {
+		return waivedallocations;
+	}
+
+	public void setWaivedallocations(List<CreateReceiptUpload> waivedallocations) {
+		this.waivedallocations = waivedallocations;
 	}
 
 }

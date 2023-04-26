@@ -672,8 +672,13 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		long partnerBankId = rh.getPartnerBankId();
 		String transactionRef = rh.getTransactionRef();
 
-		return jdbcOperations.queryForObject(sql, Long.class, finID, FinServiceEvent.SCHDRPY, receiptMode,
-				partnerBankId, transactionRef, RepayConstants.PAYSTATUS_APPROVED);
+		try {
+			return jdbcOperations.queryForObject(sql, Long.class, finID, FinServiceEvent.SCHDRPY, receiptMode,
+					partnerBankId, transactionRef, RepayConstants.PAYSTATUS_APPROVED);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 
 	@Override

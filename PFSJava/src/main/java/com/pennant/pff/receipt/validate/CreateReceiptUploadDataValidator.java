@@ -20,17 +20,27 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
+import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
+import com.pennant.backend.dao.applicationmaster.RejectDetailDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.model.applicationmaster.BankDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -53,6 +63,10 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 	private FinanceMainDAO financeMainDAO;
 	private ReceiptService receiptService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private PartnerBankDAO partnerBankDAO;
+	private BounceReasonDAO bounceReasonDAO;
+	private RejectDetailDAO rejectDetailDAO;
+	private BankDetailDAO bankDetailDAO;
 
 	public CreateReceiptUploadDataValidator() {
 		super();
@@ -88,7 +102,7 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 		for (Cell cell : headerRow) {
 			rowCell = row.getCell(readColumn);
 
-			if (cell.getColumnIndex() > 28) {
+			if (cell.getColumnIndex() > 27) {
 				break;
 			}
 
@@ -184,24 +198,18 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 				cru.setReceivedFrom(rowCell.toString());
 				break;
 			case 24:
-				String instrumentDate = rowCell.toString();
-				if (instrumentDate != null) {
-					cru.setInstrumentDate(DateUtil.parse(instrumentDate, DateFormat.LONG_DATE.getPattern()));
-				}
-				break;
-			case 25:
 				String bounceDate = rowCell.toString();
 				if (bounceDate != null) {
 					cru.setBounceDate(DateUtil.getDate(bounceDate));
 				}
 				break;
-			case 26:
+			case 25:
 				cru.setBounceReason(rowCell.toString());
 				break;
-			case 27:
+			case 26:
 				cru.setBounceRemarks(rowCell.toString());
 				break;
-			case 28:
+			case 27:
 				cru.setPartnerBankCode(rowCell.toString());
 				break;
 
@@ -287,7 +295,14 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 		prepareKeys(rud);
 
 		String reference = rud.getReference();
-		rud.setReferenceID(financeMainDAO.getFinIDByFinReference(reference, "", false));
+		FinanceMain fm = financeMainDAO.getFinanceDetailsForService1(reference, "", false);
+
+		if (fm == null) {
+			setError(rud, "NO DATA FOUND WITH  SPECIFIED REFERENCE");
+			return;
+		}
+
+		rud.setReferenceID(fm.getFinID());
 
 		isFileExists(rud);
 
@@ -384,8 +399,13 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 			return;
 		}
 
-		if (!(DateUtil.compare(valueDate, appDate) == 0)) {
-			setError(rud, "[VALUEDATE] Should match APPLICATIONDATE");
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+			setError(rud, "[BACKDATED] RECEIPTS are not allowed");
+			return;
+		}
+
+		if (valueDate.compareTo(appDate) > 0) {
+			setError(rud, "[FUTUREDATE] RECEIPTS are not allowed");
 			return;
 		}
 
@@ -480,6 +500,11 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 				setError(rud, "[CLOSURETYPE] is Mandatory if “Receipt Purpose” is captured as “ES");
 				return;
 			}
+
+			if (!(ClosureType.isClosure(closureType) || ClosureType.isCancel(closureType))) {
+				setError(rud, "Values other than CANCEL/CLOSURE in [CLOSURETYPE] ");
+				return;
+			}
 		}
 
 		String status = StringUtils.upperCase(rud.getReceiptModeStatus());
@@ -505,9 +530,16 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 			return;
 		}
 
+		String bankcode = rud.getBankCode();
+
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 			if (favourNumber.length() > 6) {
 				setError(rud, "[FAVOURNUMBER] with length more than 6");
+				return;
+			}
+
+			if (StringUtils.isBlank(rud.getChequeNumber())) {
+				setError(rud, "[CHEQUEACNO] is Mandatory");
 				return;
 			}
 
@@ -516,6 +548,17 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 					setError(rud, "[CHEQUEACNO] with length more than 50");
 					return;
 				}
+			}
+
+			if (StringUtils.isBlank(bankcode)) {
+				setError(rud, "[BANKCODE] is Mandatory");
+				return;
+			}
+
+			BankDetail bd = bankDetailDAO.getBankDetailById(bankcode, "");
+			if (bd == null) {
+				setError(rud, "[BANKCODE] is Invalid , Enter Valid BankCode");
+				return;
 			}
 		}
 
@@ -664,17 +707,21 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 			}
 
 			if (RepayConstants.PAYSTATUS_BOUNCE.equals(modeStatus)) {
-				/*
-				 * if (bounceReasonDAO.getBounceCodeCount(bReason) == 0) { setError(rud,
-				 * "[BOUNCE/CANCEl REASON] Should be Valid "); return; }
-				 */
+
+				if (bounceReasonDAO.getBounceCodeCount(bReason) == 0) {
+					setError(rud, "[BOUNCE/CANCEl REASON] Should be Valid ");
+					return;
+				}
+
 			}
 
 			if (RepayConstants.PAYSTATUS_CANCEL.equals(modeStatus)) {
-				/*
-				 * if (rejectDetailDAO.getRejectCodeCount(bReason) == 0) { setError(rud,
-				 * "[BOUNCE/CANCEl REASON] Should be Valid "); return; }
-				 */
+
+				if (rejectDetailDAO.getRejectCodeCount(bReason) == 0) {
+					setError(rud, "[BOUNCE/CANCEl REASON] Should be Valid ");
+					return;
+				}
+
 			}
 
 		} else {
@@ -687,6 +734,30 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 		if (StringUtils.isNotBlank(bCRemarks)) {
 			if (bCRemarks.length() > 50) {
 				setError(rud, "[BOUNCE/CANCEl REMARKS] Should not be greater than 50 Chnaracters ");
+				return;
+			}
+		}
+
+		if (StringUtils.isBlank(rud.getPartnerBankCode())) {
+			List<FinTypePartnerBank> ftb = partnerBankDAO.getpartnerbankCode(fm.getFinType(), receiptMode);
+
+			if (ftb.size() > 1) {
+				setError(rud, "[PARTNERBANKCODE] is mandatory ");
+				return;
+			}
+
+			for (FinTypePartnerBank ftpb : ftb) {
+				String partnerbankCode = partnerBankDAO.getPartnerBankCodeById(ftpb.getPartnerBankID());
+				rud.setPartnerBankCode(partnerbankCode);
+			}
+
+		}
+
+		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
+			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
+			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), receiptMode, pb.getPartnerBankId());
+			if (pb == null || partnerbankid == 0) {
+				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;
 			}
 		}
@@ -904,6 +975,26 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 	@Autowired
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
+	@Autowired
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	@Autowired
+	public void setRejectDetailDAO(RejectDetailDAO rejectDetailDAO) {
+		this.rejectDetailDAO = rejectDetailDAO;
+	}
+
+	@Autowired
+	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
+		this.bankDetailDAO = bankDetailDAO;
 	}
 
 }

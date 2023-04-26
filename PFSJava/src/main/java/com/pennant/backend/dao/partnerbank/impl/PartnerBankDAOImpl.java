@@ -46,6 +46,7 @@ import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -642,4 +643,32 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		}
 		return 0;
 	}
+
+	@Override
+	public List<FinTypePartnerBank> getpartnerbankCode(String loanType, String receiptmode) {
+		String sql = "Select PartnerBankID From FINTYPEPARTNERBANKS Where FinType = ? and PaymentMode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, loanType);
+			ps.setString(2, receiptmode);
+		}, (rs, rownum) -> {
+			FinTypePartnerBank ftpb = new FinTypePartnerBank();
+
+			ftpb.setPartnerBankID(rs.getLong("PartnerBankID"));
+
+			return ftpb;
+		});
+	}
+
+	@Override
+	public int getValidPartnerBank(String loanType, String receiptmode, long partnerBankId) {
+		String sql = "SELECT COUNT(PartnerBankID) From FINTYPEPARTNERBANKS Where FinType = ? and PaymentMode = ? and PartnerbankId = ? ";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, loanType, receiptmode, partnerBankId);
+	}
+
 }

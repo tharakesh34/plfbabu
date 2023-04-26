@@ -1810,7 +1810,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceDetailsForService1(String finReference, String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, GrcPeriodEndDate, MaturityDate");
-		sql.append(", AllowGrcPeriod, RepayFrq, FinStartDate, CustID");
+		sql.append(", AllowGrcPeriod, RepayFrq, FinStartDate, CustID, FinType");
 
 		if (isWIF) {
 			sql.append(" From WIFFinanceMain");
@@ -1834,6 +1834,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setRepayFrq(rs.getString("RepayFrq"));
 				fm.setFinStartDate(rs.getDate("FinStartDate"));
 				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinType(rs.getString("FinType"));
 
 				return fm;
 

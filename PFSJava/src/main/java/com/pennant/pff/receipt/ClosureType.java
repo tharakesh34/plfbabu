@@ -36,6 +36,10 @@ public enum ClosureType {
 		return isEqual(CANCEL, getType(closureType));
 	}
 
+	public static boolean isClosure(String closureType) {
+		return isEqual(CLOSURE, getType(closureType));
+	}
+
 	private static boolean isEqual(ClosureType closureType, ClosureType type) {
 		return type == null ? false : type == closureType;
 	}

@@ -4773,12 +4773,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (!this.odMinAmount.isDisabled()) {
 			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
-				if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
-					this.odMinAmount.setConstraint(new PTDecimalValidator(
-							Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+				if (this.odMinAmount.getValue() != null) {
+					if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						this.odMinAmount.setConstraint(new PTDecimalValidator(
+								Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+					}
 				}
 			}
 		}
+
 		if (!this.profitCenter.isReadonly()) {
 			this.profitCenter.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinanceTypeDialog_ProfitCenter.value"), null, true, true));

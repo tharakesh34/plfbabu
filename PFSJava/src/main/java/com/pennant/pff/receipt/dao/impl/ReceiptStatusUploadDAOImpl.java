@@ -23,7 +23,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ID, HeaderId, ReceiptId, StatusRM, RealizationDate ");
 		sql.append(", BounceDate, BorCReason, BorCRemarks");
-		sql.append(" From ReceiptStatus_UPLOAD");
+		sql.append(" From Receipt_Status_UPLOAD");
 		sql.append(" Where HeaderId = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -46,7 +46,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 
 	@Override
 	public void update(List<ReceiptStatusUpload> details) {
-		String sql = "Update ReceiptStatus_UPLOAD set FinID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update Receipt_Status_UPLOAD set FinID = ?, Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -75,7 +75,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 
 	@Override
 	public void update(List<Long> headerIdList, String errCode, String errDesc, int progress) {
-		String sql = "Update ReceiptStatus_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
+		String sql = "Update Receipt_Status_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -109,7 +109,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 		sql.append(" , rs.BorCRemarks, rs.Status, rs.ErrorCode, rs.ErrorDesc");
 		sql.append(", uh.CreatedOn, su1.UsrLogin CreatedName, uh.ApprovedOn");
 		sql.append(", su2.UsrLogin ApprovedName");
-		sql.append(" From ReceiptStatus_UPLOAD rs");
+		sql.append(" From Receipt_Status_UPLOAD rs");
 		sql.append(" Inner Join File_Upload_Header uh on uh.Id = rs.HeaderId");
 		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");
 		sql.append(" Left Join SecUsers su2 on su2.UsrID = uh.ApprovedBy");

@@ -1,8 +1,11 @@
 package com.pennant.pff.receipt.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +22,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -32,6 +36,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(CreateReceiptUploadServiceImpl.class);
@@ -157,26 +163,55 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		rud.setReceiptMode(reaceipt.getReceiptMode());
 		rud.setSubReceiptMode(reaceipt.getSubReceiptMode());
 		// rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
-		rud.setReceiptPurpose("SP");
+		rud.setReceiptPurpose(reaceipt.getReceiptPurpose());
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
+		rud.setDepositDate(reaceipt.getDepositDate());
+		rud.setBankCode(reaceipt.getBankCode());
+		rud.setEffectSchdMethod(reaceipt.getEffectSchdMethod());
+		String receiptMode = reaceipt.getReceiptMode();
+		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
+			rud.setTransactionRef(reaceipt.getChequeNumber());
+			rud.setFavourNumber(reaceipt.getChequeNumber());
+		}
 
 		List<UploadAlloctionDetail> list = new ArrayList<>();
 
+		Map<String, BigDecimal> waivedAmounts = new HashMap<>();
 		for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
-			UploadAlloctionDetail uad = new UploadAlloctionDetail();
+			if (alloc.getCode().contains("_W")) {
+				String code = alloc.getCode().split("_")[0];
 
-			uad.setRootId(String.valueOf(alloc.getFeeId()));
-			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
-			uad.setReferenceCode(alloc.getCode());
-			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
-			uad.setPaidAmount(alloc.getAmount());
+				waivedAmounts.put(code, alloc.getAmount());
+			}
+		}
 
-			list.add(uad);
+		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType())) {
+			for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
+				UploadAlloctionDetail uad = new UploadAlloctionDetail();
 
+				uad.setRootId(String.valueOf(alloc.getFeeId()));
+				uad.setAllocationType(Allocation.getCode(alloc.getCode()));
+				uad.setReferenceCode(alloc.getCode());
+				uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
+				uad.setPaidAmount(alloc.getAmount());
+				if (waivedAmounts.get(alloc.getCode()) != null) {
+					uad.setWaivedAmount(waivedAmounts.get(alloc.getCode()));
+				}
+
+				list.add(uad);
+			}
 		}
 
 		rud.setListAllocationDetails(list);
+
+		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType()) && list != null) {
+			if (!(reaceipt.getReceiptAmount().equals(getSumOfAllocations(list)))) {
+				reaceipt.setProgress(EodConstants.PROGRESS_FAILED);
+				reaceipt.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+				return;
+			}
+		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
 
@@ -185,6 +220,9 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		fsi.setLoggedInUser(reaceipt.getUserDetails());
 		fsi.setKnockOffReceipt(true);
+		if (FinanceConstants.EARLYSETTLEMENT.equals(reaceipt.getReceiptPurpose())) {
+			fsi.setClosureType(reaceipt.getClosureType());
+		}
 
 		FinanceDetail fd = receiptService.receiptTransaction(fsi);
 
@@ -224,6 +262,15 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 				transactionManager.rollback(txStatus);
 			}
 		}
+	}
+
+	private BigDecimal getSumOfAllocations(List<UploadAlloctionDetail> list) {
+		BigDecimal sum = BigDecimal.ZERO;
+		for (UploadAlloctionDetail cru : list) {
+			sum = sum.add(cru.getPaidAmount());
+		}
+
+		return sum;
 	}
 
 	@Override
