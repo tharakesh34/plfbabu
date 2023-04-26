@@ -18,7 +18,7 @@ public class ExcessKnockOff extends AbstractWorkflowEntity {
 	private String finType;
 	private long referenceID;
 	private String amountType;
-	private BigDecimal BalanceAmt = BigDecimal.ZERO;
+	private BigDecimal balanceAmt = BigDecimal.ZERO;
 	private String executionDay;
 	private String thresholdValue;
 	private BigDecimal totalUtilizedAmnt = BigDecimal.ZERO;
@@ -95,11 +95,11 @@ public class ExcessKnockOff extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getBalanceAmt() {
-		return BalanceAmt;
+		return balanceAmt;
 	}
 
 	public void setBalanceAmt(BigDecimal balanceAmt) {
-		BalanceAmt = balanceAmt;
+		this.balanceAmt = balanceAmt;
 	}
 
 	public String getExecutionDay() {

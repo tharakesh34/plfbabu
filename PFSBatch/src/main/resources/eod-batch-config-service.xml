@@ -792,7 +792,6 @@
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="receiptService" ref="receiptService" />
 		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="financeWriteoffService" ref="financeWriteoffService" />

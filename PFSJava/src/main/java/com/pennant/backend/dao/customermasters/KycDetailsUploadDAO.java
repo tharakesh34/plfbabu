@@ -21,4 +21,6 @@ public interface KycDetailsUploadDAO {
 	boolean isInMaintanance(String custCif);
 
 	boolean isInLoanQueue(long custId);
+
+	boolean isInReceiptQueue(long custId);
 }

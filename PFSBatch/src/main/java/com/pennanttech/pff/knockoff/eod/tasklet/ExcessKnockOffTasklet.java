@@ -22,14 +22,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.core.AutoKnockOffService;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
-import com.pennant.backend.dao.receipts.CrossLoanTransferDAO;
-import com.pennant.backend.model.autoknockoff.AutoKnockOffExcessDetails;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
-import com.pennant.backend.model.finance.AutoKnockOffExcess;
-import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
@@ -37,7 +31,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
-import com.pennanttech.pff.knockoff.ExcessKnockOffUtil;
 import com.pennanttech.pff.knockoff.model.ExcessKnockOff;
 import com.pennanttech.pff.knockoff.service.ExcessKnockOffService;
 
@@ -47,9 +40,6 @@ public class ExcessKnockOffTasklet implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private ExcessKnockOffService excessKnockOffService;
-	private AutoKnockOffService autoKnockOffService;
-	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
-	private CrossLoanTransferDAO crossLoanTransferDAO;
 
 	private static final String QUEUE_QUERY = "Select CustID, CoreBankId From Cross_Loan_KnockOff_Queue Where ThreadID = ? and Progress= ?";
 
@@ -110,8 +100,7 @@ public class ExcessKnockOffTasklet implements Tasklet {
 		while ((customerCoreBank = itemReader.read()) != null) {
 			excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_IN_PROCESS);
 			List<ExcessKnockOff> ekflist = excessKnockOffService.loadData(customerCoreBank);
-			ekflist.forEach(
-					l1 -> l1.setExcessKnockOffDetails(excessKnockOffService.getStageDataByID(l1.getId())));
+			ekflist.forEach(l1 -> l1.setExcessKnockOffDetails(excessKnockOffService.getStageDataByID(l1.getId())));
 
 			if (CollectionUtils.isEmpty(ekflist)) {
 				continue;
@@ -130,24 +119,27 @@ public class ExcessKnockOffTasklet implements Tasklet {
 
 					List<FinanceMain> fmList = excessKnockOffService.getLoansbyCustId(custID, coreBankId, finID);
 
-					try {
-						txStatus = transactionManager.getTransaction(txDef);
-						processCrossKnockOff(ekf, fmList);
-					} catch (Exception e) {
-						if (txStatus != null) {
-							transactionManager.rollback(txStatus);
+					txStatus = transactionManager.getTransaction(txDef);
+
+					for (FinanceMain fm : fmList) {
+						if (ekf.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0) {
+							break;
 						}
-						throw e;
-					} finally {
-						txStatus = null;
+
+						excessKnockOffService.process(ekf, fm);
 					}
 				}
 
 				excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_SUCCESS);
 
-				StepUtil.CROSS_LOAN_KNOCKOFF.setProcessedRecords(processedCount.incrementAndGet());
+				transactionManager.commit(txStatus);
 
+				StepUtil.CROSS_LOAN_KNOCKOFF.setProcessedRecords(processedCount.incrementAndGet());
 			} catch (Exception e) {
+				if (txStatus != null) {
+					transactionManager.rollback(txStatus);
+				}
+
 				StepUtil.CROSS_LOAN_KNOCKOFF.setFailedRecords(failedCount.incrementAndGet());
 
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
@@ -157,6 +149,8 @@ public class ExcessKnockOffTasklet implements Tasklet {
 				logger.info(FAILED_MSG, strSysDate);
 
 				excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_FAILED);
+			} finally {
+				txStatus = null;
 			}
 		}
 
@@ -183,38 +177,8 @@ public class ExcessKnockOffTasklet implements Tasklet {
 				break;
 			}
 
-			AutoKnockOffExcess ake = ExcessKnockOffUtil.getExcessKnockOff(ekf, fm);
-			ake.setCrossLoanAutoKnockOff(true);
-
-			ekf.getExcessKnockOffDetails()
-					.forEach(ekod -> ake.getExcessDetails().add(ExcessKnockOffUtil.getKnockOffDetails(ekod)));
-
-			autoKnockOffService.process(ake);
-
-			List<AutoKnockOffExcessDetails> excessDetails = ake.getExcessDetails();
-			List<CrossLoanKnockOff> clkoList = new ArrayList<>();
-
-			for (AutoKnockOffExcessDetails ako : excessDetails) {
-				if (ako.getReceiptID() > 0) {
-					CrossLoanKnockOff clko = ExcessKnockOffUtil.getCrossLoanKnockOff(ako, ekf, fm);
-					clko.setCrossLoanTransfer(ExcessKnockOffUtil.getCrossLoanTransfer(ako, ekf, fm));
-					clko.getCrossLoanTransfer().setReceiptId(ako.getReceiptID());
-					clko.setReceiptID(ako.getReceiptID());
-					clko.setValueDate(clko.getCrossLoanTransfer().getValueDate());
-					clko.setTransferID(crossLoanTransferDAO.save(clko.getCrossLoanTransfer(), ""));
-					clkoList.add(clko);
-				}
-			}
-
-			if (CollectionUtils.isNotEmpty(clkoList)) {
-				crossLoanKnockOffDAO.saveCrossLoanHeader(clkoList, "");
-			}
-
-			ekf.setBalanceAmt(ekf.getBalanceAmt().subtract(ake.getTotalUtilizedAmnt()));
+			excessKnockOffService.process(ekf, fm);
 		}
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Autowired
@@ -230,21 +194,6 @@ public class ExcessKnockOffTasklet implements Tasklet {
 	@Autowired
 	public void setExcessKnockOffService(ExcessKnockOffService excessKnockOffService) {
 		this.excessKnockOffService = excessKnockOffService;
-	}
-
-	@Autowired
-	public void setAutoKnockOffService(AutoKnockOffService autoKnockOffService) {
-		this.autoKnockOffService = autoKnockOffService;
-	}
-
-	@Autowired
-	public void setCrossLoanKnockOffDAO(CrossLoanKnockOffDAO crossLoanKnockOffDAO) {
-		this.crossLoanKnockOffDAO = crossLoanKnockOffDAO;
-	}
-
-	@Autowired
-	public void setCrossLoanTransferDAO(CrossLoanTransferDAO crossLoanTransferDAO) {
-		this.crossLoanTransferDAO = crossLoanTransferDAO;
 	}
 
 }

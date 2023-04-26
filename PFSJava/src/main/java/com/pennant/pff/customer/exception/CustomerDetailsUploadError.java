@@ -13,6 +13,8 @@ public enum CustomerDetailsUploadError {
 
 	CUST_MNTS_02("Selected CIF is In Loan Queue : "),
 
+	CUST_MNTS_03("Receipt is under maintenance for selected Loan : "),
+
 	KYC_ADD_01("CustCif should not be empty."),
 
 	KYC_ADD_02("FinReference is not valid."),

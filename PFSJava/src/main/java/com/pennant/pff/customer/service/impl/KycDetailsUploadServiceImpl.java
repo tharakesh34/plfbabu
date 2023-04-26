@@ -239,6 +239,11 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		if (kycDetailsUploadDAO.isInReceiptQueue(custId)) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, reference);
+			return;
+		}
+
 		detail.setReferenceID(custId);
 
 		FinanceMain fm = financeMainDAO.getFinanceMain(detail.getFinReference(), header.getEntityCode());

@@ -256,7 +256,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" clk.Id, fm.CustId, clk.CoreBankId, fm.FinId, fm.FinReference");
-		sql.append(", fm.FinType, clk.ReferenceID, clk.AmountType, clk.BalanceAmt");
+		sql.append(", fm.FinType, clk.ReferenceID, clk.AmountType, clk.BalanceAmt, clk.ValueDate");
 		sql.append(" From Cross_Loan_KnockOff_Stage clk");
 		sql.append(" Inner Join FinanceMain fm on fm.FinId = clk.FinId");
 
@@ -284,9 +284,10 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 			eko.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 			eko.setFinReference(rs.getString("FinReference"));
 			eko.setFinType(rs.getString("FinType"));
-			eko.setReferenceID(JdbcUtil.getLong(rs.getObject("CustId")));
+			eko.setReferenceID(JdbcUtil.getLong(rs.getObject("ReferenceID")));
 			eko.setAmountType(rs.getString("AmountType"));
 			eko.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			eko.setValueDate(rs.getDate("ValueDate"));
 
 			return eko;
 		});

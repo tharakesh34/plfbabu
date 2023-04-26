@@ -242,6 +242,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			bps = new BatchProcessStatus();
 			bps.setName("PLF_EOD");
 			bps = bpsService.getBatchStatus(bps);
+			if (bps == null) {
+				bps = new BatchProcessStatus();
+			}
 		}
 
 		if (eodConfig != null && eodConfig.isEnableAutoEod()) {

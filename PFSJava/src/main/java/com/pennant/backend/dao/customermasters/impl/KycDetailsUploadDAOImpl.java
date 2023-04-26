@@ -182,6 +182,18 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 	}
 
 	@Override
+	public boolean isInReceiptQueue(long custId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Count(Reference) From FinReceiptHeader_Temp fr");
+		sql.append(" Inner Join FinanceMain fm on fm.Finreference = fr.Reference");
+		sql.append(" Where fm.CustId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, custId) > 0;
+	}
+
+	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" bcd.CustCif, bcd.FinReference, bcd.CustAddrType, bcd.CustAddrPriority");

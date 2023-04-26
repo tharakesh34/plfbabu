@@ -30,4 +30,5 @@ public interface ExcessKnockOffService {
 
 	List<FinanceMain> getLoansbyCustId(long custId, String coreBankId, long finID);
 
+	void process(ExcessKnockOff ekf, FinanceMain fm);
 }

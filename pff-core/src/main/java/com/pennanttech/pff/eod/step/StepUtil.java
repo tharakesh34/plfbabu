@@ -11,7 +11,7 @@ public class StepUtil {
 		collectionDataDownLoad, collectionNotification, loadCollateralRevaluationData, collateralRevaluation,
 		endOfMonthDecider, retailcibil, corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess,
 		notifyLoanClosureDetailsToEFS, customerDataPreperation, masterDataPreparation, prepareAmortizationQueue,
-		financeHoldRelease, autoRefundExecution, autoWriteOffCalc
+		financeHoldRelease, autoRefundExecution, autoWriteOffCalc, excessKnockOff, excessKnockOffLoading
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
