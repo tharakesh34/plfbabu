@@ -148,7 +148,7 @@ public class FinTypePartnerbankMappingListCtrl extends GFCBaseListCtrl<FinTypePa
 			if (StringUtils.isNotEmpty(id) && !id.equals("branchOrCluster")) {
 				this.searchObject.addFilterEqual("CLUSTERID", Long.valueOf(id));
 			} else {
-				this.searchObject.addFilterNotEqual("CLUSTERID", "");
+				this.searchObject.addFilterNotEqual("CLUSTERID", 0);
 			}
 
 		}
