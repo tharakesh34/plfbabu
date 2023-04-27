@@ -1402,8 +1402,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		BigDecimal amount = BigDecimal.ZERO;
 
-		if (AllocationType.MANUAL.equals(fsi.getAllocationType()) && ReceiptPurpose.SCHDRPY.equals(receiptPurpose)
-				|| ReceiptPurpose.SCHDRPY.equals(receiptPurpose)) {
+		if (AllocationType.MANUAL.equals(fsi.getAllocationType()) && ReceiptPurpose.SCHDRPY.equals(receiptPurpose)) {
 			for (UploadAlloctionDetail al : fsi.getUploadAllocationDetails()) {
 				amount = amount.add(al.getPaidAmount().add(al.getWaivedAmount()));
 			}
