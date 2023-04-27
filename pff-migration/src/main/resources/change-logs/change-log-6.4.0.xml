@@ -12366,5 +12366,29 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1553.19" author="saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IDX_FOC_FID_SHD_CT ON FIN_OVERDUE_CHARGES(FINID,SCHDATE,lower(CHARGETYPE));
+   			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1553.19" author="saikiran.n" dbms="oracle">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IDX_FOC_FID_SHD_CT ON FIN_OVERDUE_CHARGES(FINID,SCHDATE,NLSSORT("CHARGETYPE",'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1553.19" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				CREATE INDEX IDX_FOC_FID_SHD_CT ON FIN_OVERDUE_CHARGES(FINID,SCHDATE,CHARGETYPE);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 
