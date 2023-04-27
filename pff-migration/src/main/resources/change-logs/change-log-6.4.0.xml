@@ -10191,18 +10191,18 @@
 
 	<changeSet id="ST#730TK#4755.03" author="Vijayakumar.k">
 		<addPrimaryKey tableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP" columnNames="ID"
-			constraintName="PK_AUTO_WRITEOF_ID" />
+			constraintName="PK_AUTO_WRITEOF_TEMP_ID" />
 	</changeSet>
 
 	<changeSet id="ST#730TK#4755.04" author="Vijayakumar.k">
-		<addForeignKeyConstraint constraintName="FK_AUTO_WRITE_LT"
+		<addForeignKeyConstraint constraintName="FK_AUTO_WRITE_TEMP_LT"
 			referencedTableName="RMTFINANCETYPES" referencedColumnNames="FINTYPE" baseTableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP"
 			baseColumnNames="LoanType" />
 	</changeSet>
 
 	<changeSet id="ST#730TK#4755.05" author="Vijayakumar.k">
 		<addUniqueConstraint tableName="AUTO_WRITE_OFF_LOAN_TYPE_TEMP" columnNames="LoanType, PSLCODE"
-			constraintName="UK_FK_AUTO_WRITE_LT_PSL" />
+			constraintName="UK_AUTO_WRITE_TEMP_LT_PSL" />
 	</changeSet>
 
 	<changeSet id="ST#730TK#4755.06" author="Vijayakumar.k">
@@ -10497,22 +10497,22 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="ST#730TK#475516.15_post" author="Vijayakumar.k" dbms="mssql">
+	<changeSet id="ST#730TK#475516.15" author="Vijayakumar.k" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE AUTO_WRITE_OFF_CALC_QUEUE ADD CONSTRAINT DF_AUTO_WRITE_OFF_CALC_Q_THREADID DEFAULT 0 FOR THREADID;
-				ALTER TABLE AUTO_WRITE_OFF_CALC_QUEUE ADD CONSTRAINT DF_AUTO_WRITE_OFF_CALC_Q_PROGRESS DEFAULT 0 FOR PROGRESS;
+				ALTER TABLE AUTO_WRITE_OFF_CALC_QUEUE ADD CONSTRAINT DF_AUTO_WRI_OFF_CAL_Q_THREADID DEFAULT 0 FOR THREADID;
+				ALTER TABLE AUTO_WRITE_OFF_CALC_QUEUE ADD CONSTRAINT DF_AUTO_WRI_OFF_CAL_Q_PROGRESS DEFAULT 0 FOR PROGRESS;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#730TK#475516.16_post" author="Vijayakumar.k" dbms="postgresql, oracle">
+	<changeSet id="ST#730TK#475516.16" author="Vijayakumar.k" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ThreadID" tableName="AUTO_WRITE_OFF_CALC_QUEUE" defaultValue="0" />
 		<addDefaultValue columnName="Progress" tableName="AUTO_WRITE_OFF_CALC_QUEUE" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="ST#730TK#475516.17" author="Vijayakumar.k">
-		<addPrimaryKey tableName="AUTO_WRITE_OFF_CALC_QUEUE" columnNames="Id" constraintName="pf_auto_write_off_calc_queue"/>
+		<addPrimaryKey tableName="AUTO_WRITE_OFF_CALC_QUEUE" columnNames="Id" constraintName="PK_auto_write_off_calc_queue"/>
 	</changeSet>
 	
 	<changeSet id="ST#730TK#475516.18" author="Vijayakumar.k">
@@ -10563,7 +10563,7 @@
 	</changeSet>
 	
 	<changeSet id="ST#730TK#475516.24.1" author="Vijayakumar.k">
-		<addPrimaryKey tableName="AUTO_WRITE_OFF_LOANS_LOG" columnNames="Id" constraintName="pf_auto_write_off_loans_log"/>
+		<addPrimaryKey tableName="AUTO_WRITE_OFF_LOANS_LOG" columnNames="Id" constraintName="PK_auto_wri_off_loans_log_ID"/>
 	</changeSet>
 	
 	<changeSet id="ST#730TK#475516.25" author="Vijayakumar.K">
@@ -10602,7 +10602,7 @@
 	</changeSet>
 
 	<changeSet id="TK#4750.2" author="sampath.d">
-		<addPrimaryKey tableName="WRITE_OFF_UPLOAD" columnNames="Id" constraintName="PK_WRITEOFF_UPLOAD" />
+		<addPrimaryKey tableName="WRITE_OFF_UPLOAD" columnNames="Id" constraintName="PK_WRITEOFF_UPLOAD_ID" />
 	</changeSet>
 
 	<changeSet id="TK#4750.5" author="sampath.d">
@@ -10738,7 +10738,7 @@
 	</changeSet>
 
 	<changeSet id="TK#4753.2" author="sampath.d">
-		<addPrimaryKey tableName="REV_WRITE_OFF_UPLOAD" columnNames="Id" constraintName="PK_REV_WRITE_OFF_UPLOAD" />
+		<addPrimaryKey tableName="REV_WRITE_OFF_UPLOAD" columnNames="Id" constraintName="PK_REV_WRITE_OFF_UPLOAD_ID" />
 	</changeSet>
 	
 	<changeSet id="TK#4753.3" author="sampath.d">
@@ -10885,7 +10885,7 @@
 	</changeSet>
 	
 	<changeSet id="TK#4753.8" author="sampath.d">
-		<addPrimaryKey tableName="FIN_WRITE_OFF_DETAIL_LOG" columnNames="Id" constraintName="PK_FINWRITEOFFDETAIL_LOG" />
+		<addPrimaryKey tableName="FIN_WRITE_OFF_DETAIL_LOG" columnNames="Id" constraintName="PK_FINWRITEOFFDETAIL_LOG_ID" />
 	</changeSet>
 	
 	<changeSet id="TK#4750.3" author="sampath.d">
@@ -10907,7 +10907,7 @@
 	
 	<changeSet id="TK#4750.4" author="sampath.d">
 		<addPrimaryKey tableName="WRITE_OFF_UPLOAD_LOG" columnNames="Id"
-			constraintName="PK_HWRITEOFF_UPLOAD_LOG" />
+			constraintName="PK_HWRITEOFF_UPLOAD_LOG_ID" />
 	</changeSet>
 	
 	<changeSet id="TK#4753.9" author="sampath.d">
