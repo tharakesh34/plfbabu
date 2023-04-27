@@ -128,11 +128,11 @@ public class ExcessKnockOffTasklet implements Tasklet {
 
 						excessKnockOffService.process(ekf, fm);
 					}
+
+					transactionManager.commit(txStatus);
 				}
 
 				excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_SUCCESS);
-
-				transactionManager.commit(txStatus);
 
 				StepUtil.CROSS_LOAN_KNOCKOFF.setProcessedRecords(processedCount.incrementAndGet());
 			} catch (Exception e) {
