@@ -240,7 +240,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		if (kycDetailsUploadDAO.isInReceiptQueue(custId)) {
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, reference);
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, detail.getFinReference());
 			return;
 		}
 
