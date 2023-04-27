@@ -127,10 +127,12 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 					int sucessRecords = 0;
 					int failRecords = 0;
 
+					FinanceMain fm = null;
+
 					for (String finReference : References) {
 						List<LienUpload> lienUploads = lienUploadsMap.get(finReference);
 
-						FinanceMain fm = financeMainDAO.getFinanceMain(finReference, header.getEntityCode());
+						fm = financeMainDAO.getFinanceMain(finReference, header.getEntityCode());
 
 						if (fm != null && !fm.isFinIsActive()) {
 							for (LienUpload lienUpload : lienUploads) {
@@ -140,11 +142,18 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 							}
 
 							continue;
+						} else {
+							fm = new FinanceMain();
+							fm.setFinReference(finReference);
+							fm.setFinSourceID(RequestSource.UPLOAD.name());
 						}
 
 						fm.setAppDate(appDate);
 						header.setAppDate(appDate);
-						lienUploads.forEach(lu -> lu.setFinanceMain(fm));
+
+						for (LienUpload lu : lienUploads) {
+							lu.setFinanceMain(fm);
+						}
 
 						process(header, lienUploads);
 
@@ -223,13 +232,15 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 			fm.setFinSourceID(RequestSource.UPLOAD.name());
 
 			FinanceDetail fd = new FinanceDetail();
+			LienHeader lienhead = new LienHeader();
 			fd.getFinScheduleData().setFinanceMain(fm);
 			Mandate mandate = new Mandate();
 			mandate.setAccNumber(lienup.getAccNumber());
 			fd.setMandate(mandate);
-			fd.getLienHeader().setLienID(lienup.getLienID());
-			fd.getLienHeader().setLienReference(lienup.getLienReference());
-			fd.getLienHeader().setId(lienup.getId());
+			lienhead.setLienID(lienup.getLienID());
+			lienhead.setLienReference(lienup.getLienReference());
+			lienhead.setId(lienup.getId());
+			fd.setLienHeader(lienhead);
 
 			lienService.save(fd);
 		}

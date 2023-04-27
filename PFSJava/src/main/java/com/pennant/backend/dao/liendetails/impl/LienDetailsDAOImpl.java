@@ -32,13 +32,12 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
 		}
 
-		lu.setiD((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
 		StringBuilder sql = new StringBuilder("Insert Into Lien_Details");
-		sql.append(" ( ID, LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
+		sql.append(" (LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn)");
-		sql.append(" values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -46,7 +45,6 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setLong(++index, lu.getiD());
 				ps.setLong(++index, lu.getLienID());
 				ps.setLong(++index, lu.getHeaderID());
 				ps.setString(++index, lu.getReference());
