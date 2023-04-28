@@ -3029,6 +3029,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
 			this.row_odMinAmount.setVisible(true);
 		}
+
+		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));
+	}
+
+	public void onchangeODCharges(String val) {
+		fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), ",INST,");
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), ",");
+		}
 	}
 
 	public void onCheck$oDAllowWaiver(Event event) {
