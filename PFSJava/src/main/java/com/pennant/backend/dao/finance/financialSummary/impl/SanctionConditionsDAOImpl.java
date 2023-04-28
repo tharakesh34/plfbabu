@@ -54,7 +54,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 	public List<SanctionConditions> getSanctionConditions(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t2.FinID, t2.FinReference, t1.Version");
-		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.Remarks, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
 		sql.append(" From Sanction_Conditions_Temp t1");
 		sql.append(" Left Join FinanceMain_Temp t2 on t2.FinID =  t1.FinID");
@@ -62,7 +62,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 		sql.append(" Union All");
 		sql.append(" Select");
 		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t2.FinID, t2.FinReference, t1.Version");
-		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.Remarks, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
 		sql.append(" From Sanction_Conditions t1");
 		sql.append(" Left Join FinanceMain t2 on t2.FinID =  t1.FinID");
@@ -83,6 +83,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 			sc.setSeqNo(rs.getLong("SeqNo"));
 			sc.setSanctionCondition(rs.getString("SanctionCondition"));
 			sc.setStatus(rs.getString("Status"));
+			sc.setRemarks(rs.getString("Remarks"));
 			sc.setFinID(rs.getLong("FinID"));
 			sc.setFinReference(rs.getString("FinReference"));
 			sc.setVersion(rs.getInt("Version"));
@@ -134,10 +135,10 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 
 		StringBuilder sql = new StringBuilder("Insert Into SANCTION_CONDITIONS");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (Id, SeqNo, SanctionCondition, Status, FinID, FinReference");
+		sql.append(" (Id, SeqNo, SanctionCondition, Status, FinID, FinReference, Remarks");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -151,6 +152,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 				ps.setString(index++, sc.getStatus());
 				ps.setLong(index++, sc.getFinID());
 				ps.setString(index++, sc.getFinReference());
+				ps.setString(index++, sc.getRemarks());
 				ps.setInt(index++, sc.getVersion());
 				ps.setLong(index++, sc.getLastMntBy());
 				ps.setTimestamp(index++, sc.getLastMntOn());
@@ -173,7 +175,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 	public void update(SanctionConditions sc, String type) {
 		StringBuilder sql = new StringBuilder("Update Sanction_Conditions");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set SanctionCondition = ?, Status = ?");
+		sql.append(" Set SanctionCondition = ?, Status = ?, Remarks=?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where Id = ? and FinID = ?");
@@ -189,6 +191,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 
 			ps.setString(index++, sc.getSanctionCondition());
 			ps.setString(index++, sc.getStatus());
+			ps.setString(index++, sc.getRemarks());
 			ps.setInt(index++, sc.getVersion());
 			ps.setLong(index++, sc.getLastMntBy());
 			ps.setTimestamp(index++, sc.getLastMntOn());

@@ -309,4 +309,46 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#58_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtsanction_conditions');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#58.1" author="rahul.r">
+		<addColumn tableName="adtsanction_conditions">
+			<column name="remarks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#58.2" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE ADTSANCTION_CONDITIONS  SET REMARKS =(SELECT C.STATUS FROM ADTSANCTION_CONDITIONS C  WHERE ADTSANCTION_CONDITIONS.ID=C.ID);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#58.3" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE ADTSANCTION_CONDITIONS  SET STATUS = null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#58.4" author="rahul.r">
+		<modifyDataType tableName="adtsanction_conditions" columnName="status" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="ST#58_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'adtsanction_conditions');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

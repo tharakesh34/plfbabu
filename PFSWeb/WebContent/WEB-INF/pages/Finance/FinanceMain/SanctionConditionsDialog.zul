@@ -59,10 +59,13 @@
 								<textbox id="sanctionCondition" maxlength="1000" width="400px" multiline="true" rows="5" />
 							</row>
 							<row visible="true">
-								<label id="label_SanctionConditionsDialog_Status" value="${c:l('label_SanctionConditionsDialog_Status.value')}" />
-								<textbox id="status" maxlength="1000" width="400px" multiline="true" rows="5" />
+								<label id="label_SanctionConditionsDialog_Remarks" value="${c:l('label_SanctionConditionsDialog_Remarks.value')}" />
+								<textbox id="remarks" maxlength="1000" width="400px" multiline="true" rows="5" />
 							</row>
-
+							<row visible="true">
+								<label id="label_SanctionConditionsDialog_Status" value="${c:l('label_SanctionConditionsDialog_Status.value')}" />
+								<combobox id="status" />
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

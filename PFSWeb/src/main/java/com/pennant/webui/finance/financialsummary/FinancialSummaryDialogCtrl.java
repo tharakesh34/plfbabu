@@ -948,6 +948,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				lc.setParent(item);
 				lc = new Listcell(sanctionConditions.getStatus());
 				lc.setParent(item);
+				lc = new Listcell(sanctionConditions.getRemarks());
+				lc.setParent(item);
 				item.setAttribute("data", sanctionConditions);
 				ComponentsCtrl.applyForward(item,
 						"onDoubleClick=onFinancialSummarySanctionConditionsItemDoubleClicked");
