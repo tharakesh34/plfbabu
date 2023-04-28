@@ -243,6 +243,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -6334,6 +6335,15 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		FinanceMain fm = schdData.getFinanceMain();
 		fm.setUserDetails(userDetails);
+
+		if (DateUtil.compare(fm.getFinStartDate(), fsi.getValueDate()) > 0) {
+			setError(schdData, "30507",
+					"Received Date: "
+							.concat(DateUtil.format(fsi.getValueDate(), DateFormat.FULL_DATE.getPattern()).toString()),
+					"Loan StartDate: ".concat(fm.getFinStartDate().toString()));
+			logger.info(Literal.LEAVING);
+			return fd;
+		}
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 			logger.info(Literal.LEAVING);

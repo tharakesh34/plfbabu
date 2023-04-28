@@ -1161,8 +1161,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 							PennantConstants.defaultCCYDecPos, true, false, 0));
 		}
 		if (!this.valueDate.isDisabled()) {
-			this.valueDate.setConstraint(new PTDateValidator(
-					Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"), true, null, null, true));
+			this.valueDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_ManualAdviseDialog_ValueDate.value"),
+							true, financeMain.getFinStartDate(), SysParamUtil.getAppDate(), true));
 		}
 
 		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module) && !this.reason.isReadonly()) {

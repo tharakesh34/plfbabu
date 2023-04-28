@@ -348,7 +348,11 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				continue;
 			}
 
-			if (prvSchd != null && !isPrvShcdAdded) {
+			int frq = Integer.parseInt(this.repayFrq.getFrqDayValue());
+
+			int curDay = DateUtil.getDay(SysParamUtil.getAppDate());
+
+			if (prvSchd != null && !isPrvShcdAdded && frq > curDay) {
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 				comboitem.setValue(prvSchd.getSchDate());
@@ -564,6 +568,9 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.nextGrcRepayDate.setText("");
 		this.nextRepayDate.setText("");
 		this.grcPeriodEndDate.setText("");
+
+		List<FinanceScheduleDetail> schdDetails = finScheduleData.getFinanceScheduleDetails();
+		fillSchFromDates(schdDetails);
 
 		doSetRecalType(this.repayFrq.getValue(), this.cbFrqFromDate.getSelectedItem().getValue());
 	}

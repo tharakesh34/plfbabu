@@ -5621,6 +5621,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_EMIInAdvance")));
 			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_TEXCESS,
 					Labels.getLabel("label_RecceiptDialog_ExcessType_TEXCESS")));
+			excessTransferHead.add(new ValueLabel(RepayConstants.EXCESSADJUSTTO_SETTLEMENT,
+					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
 		}
 		return excessTransferHead;
 	}

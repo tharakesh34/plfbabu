@@ -205,7 +205,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getAmount() {
-		return amount;
+		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
 	public void setAmount(BigDecimal amount) {
