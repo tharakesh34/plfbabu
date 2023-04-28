@@ -827,12 +827,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 					Labels.getLabel("label_FeeTypeDialog_PayableLinkTo.value")));
 		}
 
-		if (!this.incomeOrExpenseAcType.isReadonly() && this.incomeOrExpenseAcTypeRow.isVisible()) {
+		String feeTypeCode = this.feeTypeCode.getValue();
+
+		if (isSingleFeeTypeRequired(feeTypeCode) && !this.incomeOrExpenseAcType.isReadonly()
+				&& this.incomeOrExpenseAcTypeRow.isVisible()) {
 			this.incomeOrExpenseAcType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"), null, true, true));
 		}
 
-		if (!this.waiverOrRefundAcType.isReadonly() && this.incomeOrExpenseAcTypeRow.isVisible()) {
+		if (isSingleFeeTypeRequired(feeTypeCode) && !this.waiverOrRefundAcType.isReadonly()
+				&& this.incomeOrExpenseAcTypeRow.isVisible()) {
 			this.waiverOrRefundAcType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FeeTypeDialog_WaiverOrRefundAcType.value"), null, true, true));
 		}
@@ -982,6 +986,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.dueAccSet.setReadonly(false);
 			this.payableLinkTo.setDisabled(false);
 			this.receivableType.setReadonly(false);
+			this.refundableFee.setDisabled(true);
 			if (this.refundableFee.isChecked()
 					&& StringUtils.equals(Labels.getLabel("label_TransEntry_Payable"), this.adviseType.getValue())
 					&& !isReadOnly("FeeTypeDialog_AllowAutoRefund")) {
@@ -1028,7 +1033,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.payableLinkTo.setValue(null);
 			this.receivableType.setValue(null);
 			this.payableLinkToRow.setVisible(false);
-			this.refundableFee.setDisabled(false);
+			this.refundableFee.setDisabled(true);
 
 			this.labelIncomeOrExpenseAcType
 					.setValue(Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"));
@@ -1064,6 +1069,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.allowAutoRefund.setChecked(false);
 			this.refundableFee.setDisabled(true);
 			this.refundableFee.setChecked(false);
+			this.payableLinkToRow.setVisible(false);
 
 			this.labelIncomeOrExpenseAcType
 					.setValue(Labels.getLabel("label_FeeTypeDialog_IncomeOrExpenseAcType.value"));
@@ -1452,6 +1458,26 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeeType.getBefImage(), aFeeType);
 		return new AuditHeader(String.valueOf(aFeeType.getFeeTypeID()), null, null, null, auditDetail,
 				aFeeType.getUserDetails(), getOverideMap());
+	}
+
+	private boolean isSingleFeeTypeRequired(String feeTypeCode) {
+		boolean alwvalidation = true;
+
+		if (feeTypeCode.equals(pftInvFeeCode) || feeTypeCode.equals(priInvFeeCode)
+				|| feeTypeCode.equals(restructFeeCode)) {
+			return alwvalidation = false;
+		} else {
+			switch (feeTypeCode) {
+			case Allocation.BOUNCE:
+			case Allocation.ODC:
+			case Allocation.PFT:
+				return alwvalidation = false;
+			default:
+				break;
+			}
+		}
+
+		return alwvalidation;
 	}
 
 	public FeeType getFeeType() {

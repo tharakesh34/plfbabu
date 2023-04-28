@@ -1327,7 +1327,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 				odcAmount.setId(movement.getChargeId());
 				updatedODAmt.add(odcAmount);
 			}
-			
+
 			finODCAmountDAO.updateReversals(updatedODAmt);
 			finODCAmountDAO.updateMovenantStatus(rch.getReceiptID(), rch.getReceiptModeStatus());
 		}
@@ -1584,7 +1584,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		// Status Updation
 		repaymentPostingsUtil.updateStatus(fm, valueDate, schdData.getFinanceScheduleDetails(), pftDetail,
-				finEodEvent.getFinODDetails(), null, false);
+				finEodEvent.getFinODDetails(), null);
 
 		// Overdue Details Updation after Recalculation with Current
 		// Data

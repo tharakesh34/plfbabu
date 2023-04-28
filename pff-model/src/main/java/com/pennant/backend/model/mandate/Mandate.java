@@ -204,6 +204,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String strSwapIsActive;
 	private Date schdDate;
 	private int instalmentNo;
+	private String strSecurityMandate;
 
 	private ErrorDetail error;
 
@@ -1105,6 +1106,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setInstalmentNo(int instalmentNo) {
 		this.instalmentNo = instalmentNo;
+	}
+
+	public String getStrSecurityMandate() {
+		return strSecurityMandate;
+	}
+
+	public void setStrSecurityMandate(String strSecurityMandate) {
+		this.strSecurityMandate = strSecurityMandate;
 	}
 
 }

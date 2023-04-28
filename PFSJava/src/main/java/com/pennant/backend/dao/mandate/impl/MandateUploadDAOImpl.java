@@ -82,7 +82,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			mndts.seteMandateReferenceNo(rs.getString("EMandateReferenceNo"));
 			mndts.setSwapEffectiveDate(rs.getTimestamp("SwapEffectiveDate"));
 			mndts.setHoldReason(rs.getString("HoldReason"));
-			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
+			mndts.setStrSecurityMandate(rs.getString("SecurityMandate"));
 			mndts.setEmployerID(JdbcUtil.getLong(rs.getObject("EmployerID")));
 			mndts.setEmployeeNo(rs.getString("EmployeeNo"));
 			mndts.setIFSC(rs.getString("Ifsc"));
@@ -161,7 +161,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 		sql.append(", mu.OpenMandate, mu.StartDate, mu.ExpiryDate, mu.PartnerBankID, mu.MandateRef");
 		sql.append(", mu.ExternalMandate, mu.SwapIsActive, mu.SwapEffectiveDate, mu.EmandateSource");
 		sql.append(", mu.EmandateReferenceNo, mu.EmployerID, mu.EmployeeNo, mu.MandateStatus, mu.Reason");
-		sql.append(", uh.CreatedOn, uh.ApprovedOn, mu.Status, mu.ErrorCode, mu.ErrorDesc");
+		sql.append(", mu.SecurityMandate, uh.CreatedOn, uh.ApprovedOn, mu.Status, mu.ErrorCode, mu.ErrorDesc");
 		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From Mandates_Upload mu");
 		sql.append(" Inner Join File_Upload_Header uh on uh.ID = mu.HeaderID");

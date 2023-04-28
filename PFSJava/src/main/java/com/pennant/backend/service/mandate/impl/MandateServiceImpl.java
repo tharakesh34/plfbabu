@@ -1541,6 +1541,16 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			return error;
 		}
 
+		if (!InstrumentType.isDAS(mandate.getMandateType()) && mandate.isSwapIsActive()) {
+			if (mandate.getSwapEffectiveDate() == null) {
+				return getError("90502", "SwapEffectiveDate");
+			}
+
+			if (mandate.getSwapEffectiveDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
+				return getError("SI001", "SwapEffectiveDate", SysParamUtil.getAppDate().toString());
+			}
+		}
+
 		if (InstrumentType.isSI(mandate.getMandateType())) {
 			String dftBankCode = SysParamUtil.getValueAsString(SMTParameterConstants.BANK_CODE);
 			if (!StringUtils.equalsIgnoreCase(dftBankCode, bankBranch.getBankCode())) {
@@ -2450,6 +2460,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			break;
 		case SI:
 			setAccountDetails(mandate, mndt);
+			setMandateSwapDetails(mandate, mndt);
 			break;
 		case DAS:
 			setDASDetails(mandate, mndt);
