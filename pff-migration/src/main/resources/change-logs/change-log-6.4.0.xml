@@ -12456,5 +12456,23 @@
 			]]>
 		</sql>
 	</changeSet>
+	  <changeSet id="TK#4750.2_pre" author="Sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'WRITE_OFF_UPLOAD');
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="TK#4750.3" author="Sravanthi.g">
+		<modifyDataType tableName="WRITE_OFF_UPLOAD" columnName="Remarks" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="TK#4750_4_post" author="Sravanthi.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'WRITE_OFF_UPLOAD');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

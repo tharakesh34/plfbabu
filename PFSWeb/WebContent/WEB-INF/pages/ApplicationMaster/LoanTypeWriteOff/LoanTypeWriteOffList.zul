@@ -52,14 +52,14 @@
 									<label value="${c:l('label_LoanTypeWriteOffList_LoanType.value')}" />
 									<listbox id="soLoanType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<uppercasebox id="loanType" width="200px" maxlength="50" />
-									<label value="${c:l('label_LoanTypeWriteOffList_RecordType.value')}" />
-									<listbox width="43px" mold="select" rows="1" />
-									<listbox id="recordType" width="100px" mold="select" />
 								</row>
-								<row>
-								<label value="${c:l('label_AutoWriteOffList_RecordStatus.value')}" />
-									<listbox width="43px" mold="select" rows="1" />
+								<row id="row_AlwWorkflow">
+									<label value="${c:l('label_AutoWriteOffList_RecordStatus.value')}" />
+									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label value="${c:l('label_LoanTypeWriteOffList_RecordType.value')}" />
+									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
