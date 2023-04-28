@@ -23,7 +23,7 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_108("Excess type should be 'E'(Excess Amount) OR 'A'(EMI in advance) OR Payable Advise."),
 
-	MKOU_109("Insufficent Balance in Excess Type"),
+	MKOU_109("Insufficient Balance in Excess Type"),
 
 	MKOU_1010("Receipt amount should be less than or equal to balance amount."),
 
