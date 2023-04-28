@@ -229,7 +229,6 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		fillComboBox(this.cancelType, "", LoanCancelationUtil.getLoancancelTypes());
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
-
 		// Field visibility & Naming for FinAsset value and finCurrent asset value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
@@ -671,6 +670,11 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if (!this.cancelType.isDisabled()) {
 			this.cancelType.setConstraint(new StaticListValidator(LoanCancelationUtil.getLoancancelTypes(),
 					Labels.getLabel("label_FinanceMainDialog_CancelType.value")));
+		}
+
+		if (!this.cancelRemarks.isReadonly()) {
+			this.cancelRemarks.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceMainDialog_cancelRemarks.value"), null, false, 200));
 		}
 		logger.debug(Literal.LEAVING);
 	}
