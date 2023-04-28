@@ -172,7 +172,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinScheduleData);
-
+			repayFrq.getFrqDayCombobox().getChildren().get(0).detach();
 			setDialog(DialogType.MODAL);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
