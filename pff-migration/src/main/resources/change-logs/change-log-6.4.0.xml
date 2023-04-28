@@ -12390,5 +12390,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#225034" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE = 'ADVEMI01';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('ADVEMI01', 'EN', 'E', '{0} should greater than/equal to {1} and less than/equal to {2}', '', 'Approved', null, null, null, null, null, 0, CURRENT_TIMESTAMP, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 
