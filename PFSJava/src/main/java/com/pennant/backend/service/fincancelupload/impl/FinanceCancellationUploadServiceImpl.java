@@ -19,6 +19,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.loancancel.FinanceCancellationUploadDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -40,6 +41,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 
 public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
@@ -70,6 +72,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 		detail.setHeaderId(header.getId());
 
 		String reference = detail.getReference();
+		String cancelType = detail.getCancelType();
 
 		if (StringUtils.isBlank(reference)) {
 			setError(detail, FinCancelUploadError.LANCLUP001);
@@ -90,6 +93,13 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 
 		if (fm.getRcdMaintainSts() != null && !FinServiceEvent.CANCELFIN.equals(fm.getRcdMaintainSts())) {
 			setError(detail, FinCancelUploadError.LANCLUP004);
+			return;
+		}
+
+		List<ValueLabel> type = LoanCancelationUtil.getLoancancelTypes();
+
+		if (type.stream().noneMatch(c -> c.getValue().equals(cancelType))) {
+			setError(detail, FinCancelUploadError.LANCLUP019);
 			return;
 		}
 
@@ -380,4 +390,10 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
+	@Autowired
+	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
+		this.financeCancelValidator = financeCancelValidator;
+	}
+
 }
