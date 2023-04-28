@@ -107,11 +107,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (txnamt == null) {
-			setError(detail, MiscellaneousPostingUploadError.MP09);
-			return;
-		}
-
 		if (BigDecimal.ZERO.compareTo(txnamt) >= 0) {
 			setError(detail, MiscellaneousPostingUploadError.MP010);
 			return;
@@ -224,8 +219,12 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 			mpu.setId(mpus.getId());
 			mpu.setUserDetails(mpus.getUserDetails());
 
-			String returncode = mpus.getBatchName().concat("$").concat(mpus.getBatchPurpose()).concat("$")
-					.concat(mpus.getReference());
+			if (mpus.getBatchPurpose() == null) {
+				mpus.setBatchPurpose("");
+			}
+
+			String returncode = mpus.getBatchName().concat("$").concat(mpus.getReference()).concat("$")
+					.concat(mpus.getBatchPurpose());
 
 			if (map.containsKey(returncode)) {
 				newList = map.get(returncode);

@@ -2143,7 +2143,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (!fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY) {
+		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY) {
 			finReceiptHeaderDAO.updateClosureType(receiptID, ClosureType.CLOSURE.name());
 		}
 

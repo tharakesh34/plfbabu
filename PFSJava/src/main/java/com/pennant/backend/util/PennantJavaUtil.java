@@ -3504,7 +3504,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("EarlySettlementReason",
 				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
 						new String[] { "Id", "Code", "ReasonCategoryCode", "Description" },
-						new Object[][] { { "ReasonTypeCode", "0", "FCREASON" } }, 600));
+						new Object[][] { { "ReasonTypeCode", "0", "LOANCANCEL" } }, 600));
 		ModuleUtil.register("CustomerBankInfoAccntNumbers",
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,

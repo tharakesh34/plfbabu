@@ -145,6 +145,11 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 		String groupCode = accountTypeDAO.getGroupCodeByAccType(acctype);
 
 		detail.setAccountTypeGroup(groupCode);
+
+		if (detail.getOpenedDate().compareTo(header.getAppDate()) > 0) {
+			setError(detail, HostGLMappingUploadError.HGL10);
+			return;
+		}
 	}
 
 	@Override
@@ -315,7 +320,6 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void uploadProcess() {
 		uploadProcess(UploadTypes.HOST_GL.name(), hostGLMappingUploadValidateRecord, this, "HostGLMappingUploadHeader");
-
 	}
 
 	@Autowired
