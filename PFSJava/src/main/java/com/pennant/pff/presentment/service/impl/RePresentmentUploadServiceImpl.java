@@ -28,6 +28,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(RePresentmentUploadServiceImpl.class);
@@ -257,6 +258,11 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.RE_PRESENTMENT.name(), representmentUploadValidateRecord, this, "RepresentUploadHeader");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return representmentUploadDAO.getSqlQuery();
 	}
@@ -302,5 +308,4 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			RepresentmentUploadValidateRecord representmentUploadValidateRecord) {
 		this.representmentUploadValidateRecord = representmentUploadValidateRecord;
 	}
-
 }

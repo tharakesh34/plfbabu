@@ -37,8 +37,8 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 			rsu.setStatusRM(rs.getString("StatusRM"));
 			rsu.setRealizationDate(rs.getDate("RealizationDate"));
 			rsu.setBounceDate(rs.getDate("BounceDate"));
-			rsu.setBorcReason(rs.getString("BorCReason"));
-			rsu.setBorcRemarks(rs.getString("BorCRemarks"));
+			rsu.setBounceReason(rs.getString("BorCReason"));
+			rsu.setBounceRemarks(rs.getString("BorCRemarks"));
 
 			return rsu;
 		}, headerID);

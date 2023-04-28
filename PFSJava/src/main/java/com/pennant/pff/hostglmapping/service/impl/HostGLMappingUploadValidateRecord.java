@@ -1,13 +1,14 @@
 
 package com.pennant.pff.hostglmapping.service.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.hostglmapping.upload.HostGLMappingUpload;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -25,33 +26,22 @@ public class HostGLMappingUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+		HostGLMappingUpload details = (HostGLMappingUpload) ObjectUtil.valueAsObject(record, HostGLMappingUpload.class);
 
-		if (headerID == null) {
-			return;
-		}
+		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
 
-		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		HostGLMappingUpload details = new HostGLMappingUpload();
-		details.setHeaderId(headerID);
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHostGLCode(ObjectUtil.valueAsString(record.getValue("HOSTGLCODE")));
-		details.setAccountType(ObjectUtil.valueAsString(record.getValue("ACCOUNTTYPE")));
-		details.setLoanType(ObjectUtil.valueAsString(record.getValue("LOANTYPE")));
-		details.setCostCentreCode(ObjectUtil.valueAsString(record.getValue("COSTCENTRECODE")));
-		details.setProfitCentreCode(ObjectUtil.valueAsString(record.getValue("PROFITCENTRECODE")));
-		details.setOpenedDate(ObjectUtil.valueAsDate(record.getValue("OPENEDDATE")));
-		details.setAllowManualEntries(ObjectUtil.valueAsString(record.getValue("ALLOWMANUALENTRIES")));
-		details.setGLDescription(ObjectUtil.valueAsString(record.getValue("GLDESCRIPTION")));
+		details.setHeaderId(header.getId());
+		details.setAppDate(header.getAppDate());
 
 		hostglmappingUploadService.doValidate(header, details);
 
-		if (details.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", details.getErrorCode());
-			record.addValue("ERRORDESC", details.getErrorDesc());
-		}
+		hostglmappingUploadService.updateProcess(header, details, record);
 
 		logger.debug(Literal.LEAVING);
 	}
+
 }

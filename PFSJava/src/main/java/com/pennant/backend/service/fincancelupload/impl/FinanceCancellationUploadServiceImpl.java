@@ -38,6 +38,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -54,6 +55,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceCancelValidator financeCancelValidator;
+	private ValidateRecord financeCancellationUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -361,6 +363,13 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 		detail.setErrorDesc(financeCancelValidator.getOverrideDescription(error, detail.getFm()));
 	}
 
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.LOAN_CANCEL.name(), financeCancellationUploadValidateRecord, this,
+				"LoanCancelUploadHeader");
+
+	}
+
 	@Autowired
 	public void setFinanceCancellationUploadDAO(FinanceCancellationUploadDAO financeCancellationUploadDAO) {
 		this.financeCancellationUploadDAO = financeCancellationUploadDAO;
@@ -394,6 +403,16 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
 		this.financeCancelValidator = financeCancelValidator;
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return financeCancellationUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setFinanceCancellationUploadValidateRecord(ValidateRecord financeCancellationUploadValidateRecord) {
+		this.financeCancellationUploadValidateRecord = financeCancellationUploadValidateRecord;
 	}
 
 }

@@ -369,6 +369,12 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 		return revWriteOffUploadDAO.getSqlQuery();
 	}
 
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.REV_WRITE_OFF.name(), revWriteOffUploadValidateRecord, this,
+				"RevWriteOffUploadHeader");
+	}
+
 	private void setError(RevWriteOffUploadDetail detail, WriteOffUploadError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());

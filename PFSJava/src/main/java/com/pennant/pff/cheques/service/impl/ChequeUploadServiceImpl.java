@@ -40,6 +40,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class ChequeUploadServiceImpl extends AUploadServiceImpl {
@@ -372,6 +373,11 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 			detail.setErrorDesc("");
 		}
 
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.CHEQUE.name(), chequeUploadValidateRecord, this, "ChequeUpload");
 	}
 
 	private int fetchChequeSize(List<ChequeDetail> cheques) {

@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(BulkFeeWaiverUploadServiceImpl.class);
@@ -223,11 +224,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 		return bulkFeeWaiverUploadDAO.getSqlQuery();
 	}
 
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return bulkFeeWaiverUploadValidateRecord;
-	}
-
 	private FeeWaiverHeader prepare(BulkFeeWaiverUpload detail) {
 		FeeWaiverHeader fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(prepareFWH(detail));
 
@@ -379,14 +375,24 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 		detail.setErrorDesc(error.description());
 	}
 
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.FEE_WAIVER.name(), bulkFeeWaiverUploadValidateRecord, this,
+				"BulkFeeWaiverUploadHeader");
+	}
+
 	@Autowired
 	public void setBulkFeeWaiverUploadDAO(BulkFeeWaiverUploadDAO feeWaiverUploadDAO) {
 		this.bulkFeeWaiverUploadDAO = feeWaiverUploadDAO;
 	}
 
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return bulkFeeWaiverUploadValidateRecord;
+	}
+
 	@Autowired
-	public void setBulkFeeWaiverUploadValidateRecord(
-			BulkFeeWaiverUploadValidateRecord bulkFeeWaiverUploadValidateRecord) {
+	public void setBulkFeeWaiverUploadValidateRecord(ValidateRecord bulkFeeWaiverUploadValidateRecord) {
 		this.bulkFeeWaiverUploadValidateRecord = bulkFeeWaiverUploadValidateRecord;
 	}
 

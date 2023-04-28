@@ -9965,7 +9965,7 @@
 		<addPrimaryKey tableName="RECEIPT_STATUS_UPLOAD" columnNames="Id"
 			constraintName="PK_RECEIPT_STATUS_UPLOAD_ID" />
 	</changeSet>
-
+	
 	<changeSet id="ST#1554.24" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -12459,7 +12459,7 @@
 	  <changeSet id="TK#4750.2_pre" author="Sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'WRITE_OFF_UPLOAD');
+				select deps_save_and_drop_dependencies ('plf', 'write_off_upload');
 			]]>
 		</sql>
 	</changeSet>
@@ -12471,8 +12471,17 @@
 	<changeSet id="TK#4750_4_post" author="Sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'WRITE_OFF_UPLOAD');
+				select deps_restore_dependencies ('plf', 'write_off_upload');
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#1554.23.1" author="ramya.v">
+		<renameColumn tableName="RECEIPT_STATUS_UPLOAD" oldColumnName="BorCReason" newColumnName="BounceReason"/>
+	</changeSet>
+	
+	<changeSet id="ST#1554.23.1" author="ramya.v">
+		<renameColumn tableName="RECEIPT_STATUS_UPLOAD" oldColumnName="BorCRemarks" newColumnName="BounceRemarks"/>
+	</changeSet>
+	
 </databaseChangeLog> 

@@ -31,7 +31,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 	private ManualKnockOffUploadDAO manualKnockOffUploadDAO;
 	@Autowired
-	private UploadService manualKnockOffUploadServiceImpl;
+	private UploadService manualKnockOffUploadService;
 
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
@@ -156,7 +156,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		manualKnockOffUploadDAO.saveAllocations(allocations);
 		mku.setAllocations(allocations);
 
-		manualKnockOffUploadServiceImpl.doValidate(header, mku);
+		manualKnockOffUploadService.doValidate(header, mku);
 
 		if (mku.getProgress() == EodConstants.PROGRESS_FAILED) {
 			record.addValue("ERRORCODE", mku.getErrorCode());

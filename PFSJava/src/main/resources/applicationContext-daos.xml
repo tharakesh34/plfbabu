@@ -13152,7 +13152,7 @@
 	<bean id="excessTransferUploadDAO" class="com.pennant.pff.excess.dao.impl.ExcessTransferUploadDAOImpl"
 		parent="sequenceDao" />
 
-	<bean id="manualKnockOffUploadServiceImpl"
+	<bean id="manualKnockOffUploadService"
 		class="com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadServiceImpl" parent="aUploadService" />
 
 	<bean id="manualKnockOffUploadDAO" class="com.pennant.pff.manualknockoff.dao.impl.ManualKnockOffUploadDAOImpl"
@@ -13294,7 +13294,7 @@
 	<bean id="bulkFeeWaiverUploadValidateRecord"
 		class="com.pennant.pff.bulkfeewaiverupload.service.impl.BulkFeeWaiverUploadValidateRecord" />
 
-	<bean id="lienUploadServiceImpl" class="com.pennant.pff.lien.service.impl.LienUploadServiceImpl"
+	<bean id="lienUploadService" class="com.pennant.pff.lien.service.impl.LienUploadServiceImpl"
 		parent="aUploadService" />
 
 	<bean id="lienUploadDAO" class="com.pennant.pff.lien.dao.impl.LienUploadDAOImpl" parent="sequenceDao" />

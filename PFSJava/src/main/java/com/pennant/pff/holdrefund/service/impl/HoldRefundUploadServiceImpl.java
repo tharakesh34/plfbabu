@@ -25,6 +25,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(HoldRefundUploadServiceImpl.class);
@@ -250,6 +251,10 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 		detail.setErrorDesc("");
 	}
 
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.HOLD_REFUND.name(), holdRefundUploadValidateRecord, this, "HoldRefundUploadHeader");
+	}
+
 	@Override
 	public String getSqlQuery() {
 		return holdRefundUploadDAO.getSqlQuery();
@@ -290,5 +295,4 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	public void setLovFieldDetailDAO(LovFieldDetailDAO lovFieldDetailDAO) {
 		this.lovFieldDetailDAO = lovFieldDetailDAO;
 	}
-
 }

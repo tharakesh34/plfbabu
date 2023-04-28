@@ -1,11 +1,12 @@
 package com.pennant.pff.excess.service.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.excess.model.ExcessTransferUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -24,27 +25,21 @@ public class ExcessTransferUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+		ExcessTransferUpload transfer = (ExcessTransferUpload) ObjectUtil.valueAsObject(record,
+				ExcessTransferUpload.class);
 
-		if (headerID == null) {
-			return;
-		}
+		transfer.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
 
-		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		ExcessTransferUpload detail = new ExcessTransferUpload();
-		detail.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		detail.setHeaderId(headerID);
-		detail.setTransferFromType(ObjectUtil.valueAsString(record.getValue("TRANSFERFROMTYPE")));
-		detail.setTransferToType(ObjectUtil.valueAsString(record.getValue("TRANSFERTOTYPE")));
-		detail.setTransferAmount(ObjectUtil.valueAsBigDecimal(record.getValue("TRANSFERAMOUNT")));
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		excessTransferUploadService.doValidate(header, detail);
+		transfer.setHeaderId(header.getId());
+		transfer.setAppDate(header.getAppDate());
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		excessTransferUploadService.doValidate(header, transfer);
+
+		excessTransferUploadService.updateProcess(header, transfer, record, "C", "R");
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.revwriteoffupload.model.RevWriteOffUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -33,7 +32,7 @@ public class RevWriteOffUploadValidateRecord implements ValidateRecord {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = ObjectUtil.valueAsString(record.getValue("FINREFERENCE"));
+		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
 		boolean recordExist = revWriteOffUploadService.isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -43,14 +42,11 @@ public class RevWriteOffUploadValidateRecord implements ValidateRecord {
 		RevWriteOffUploadDetail detail = new RevWriteOffUploadDetail();
 		detail.setHeaderId(headerID);
 		detail.setReference(finReference);
-		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
+		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("remarks")));
 
 		revWriteOffUploadService.doValidate(header, detail);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		revWriteOffUploadService.updateProcess(header, detail, record);
 
 		logger.debug(Literal.LEAVING);
 	}

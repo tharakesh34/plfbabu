@@ -3,8 +3,11 @@ package com.pennant.pff.upload.service;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -48,4 +51,15 @@ public interface UploadService {
 	void updateFailRecords(int sucessRecords, int faildrecords, long headerId);
 
 	boolean isInProgress(Long headerID, Object... args);
+
+	void uploadProcess();
+
+	void uploadProcess(String type, ProcessRecord processRecord, UploadService uploadService, String moduleCode);
+
+	void uploadProcess(String type, ValidateRecord validateRecord, UploadService uploadService, String moduleCode);
+
+	void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record,
+			String successStatus, String failureStatus);
+
+	void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record);
 }

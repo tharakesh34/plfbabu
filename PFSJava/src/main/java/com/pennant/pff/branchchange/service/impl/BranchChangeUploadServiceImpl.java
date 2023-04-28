@@ -30,8 +30,10 @@ import com.pennant.pff.branchchange.dao.BranchMigrationDAO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(BranchChangeUploadServiceImpl.class);
@@ -40,6 +42,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	private BranchDAO branchDAO;
 	private BranchMigrationDAO branchMigrationDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private ValidateRecord branchChangeUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -283,6 +286,13 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 		postingsPreparationUtil.saveAccountingEOD(aeEvent.getReturnDataSet());
 	}
 
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.BRANCH_CHANGE.name(), branchChangeUploadValidateRecord, this,
+				"BranchChangeUploadHeader");
+
+	}
+
 	private void setError(BranchChangeUpload detail, BranchChangeUploadError error) {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
@@ -313,4 +323,15 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return branchChangeUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setBranchChangeUploadValidateRecord(ValidateRecord branchChangeUploadValidateRecord) {
+		this.branchChangeUploadValidateRecord = branchChangeUploadValidateRecord;
+	}
+
 }

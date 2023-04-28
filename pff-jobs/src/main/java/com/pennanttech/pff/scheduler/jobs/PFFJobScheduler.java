@@ -16,7 +16,28 @@ import com.pennant.backend.service.finance.covenant.impl.CovenantAlerts;
 import com.pennant.backend.service.finance.covenant.impl.PutCallAlerts;
 import com.pennant.backend.service.finance.lmsservicelog.impl.LMSServiceLogAlerts;
 import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
+import com.pennant.backend.service.fincancelupload.impl.FinanceCancellationUploadJob;
+import com.pennant.backend.upload.job.CrossLoanKnockOffJob;
+import com.pennant.backend.upload.job.FeeWaiverUploadJob;
+import com.pennant.backend.upload.job.PaymentInstJob;
+import com.pennant.pff.branchchange.upload.job.BranchChangeUploadJob;
+import com.pennant.pff.cheques.upload.job.ChequeUploadJob;
+import com.pennant.pff.customer.upload.job.KycDetailUploadJob;
+import com.pennant.pff.excess.upload.job.ExcessTransferUploadJob;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.holdrefund.upload.job.HoldRefundJob;
+import com.pennant.pff.hostglmapping.upload.job.HostGLMappingUploadJob;
+import com.pennant.pff.lien.upload.job.LienUploadJob;
+import com.pennant.pff.lpp.upload.job.LPPUploadJob;
+import com.pennant.pff.mandate.upload.job.MandateUploadJob;
+import com.pennant.pff.manualknockoff.upload.job.ManualKnockOffJob;
+import com.pennant.pff.presentment.upload.job.FateCorrectionJob;
+import com.pennant.pff.presentment.upload.job.RepresentmentJob;
+import com.pennant.pff.receipt.upload.job.CreateReceiptUploadJob;
+import com.pennant.pff.receipt.upload.job.ReceiptStatusUploadJob;
+import com.pennant.pff.revwriteoffupload.upload.job.RevWriteOffUploadJob;
+import com.pennant.pff.upload.service.UploadService;
+import com.pennant.pff.writeoffupload.upload.job.WriteOffUploadJob;
 import com.pennanttech.pennapps.core.job.JobDataAccess;
 import com.pennanttech.pennapps.core.job.scheduler.JobData;
 import com.pennanttech.pennapps.core.job.scheduler.JobScheduler;
@@ -70,7 +91,27 @@ public class PFFJobScheduler extends JobScheduler {
 	private MandateProcesses mandateProcesses;
 	private PmayProcess pmayProcess;
 	private SecurityUserService securityUserService;
-
+	private UploadService excessTransferUploadService;
+	private UploadService holdRefundUploadService;
+	private UploadService rePresentmentUploadService;
+	private UploadService mandateUploadService;
+	private UploadService fateCorrectionUploadService;
+	private UploadService paymentInstructionUploadService;
+	private UploadService lPPUploadService;
+	private UploadService crossLoanKnockOffUploadService;
+	private UploadService manualKnockOffUploadService;
+	private UploadService chequeUploadService;
+	private UploadService kycDetailsUploadService;
+	private UploadService hostglmappingUploadService;
+	private UploadService miscellaneouspostingUploadService;
+	private UploadService financeCancellationUploadService;
+	private UploadService feeWaiverUploadService;
+	private UploadService lienUploadService;
+	private UploadService createReceiptUploadService;
+	private UploadService receiptStatusUploadService;
+	private UploadService writeOffUploadService;
+	private UploadService revWriteOffUploadService;
+	private UploadService branchChangeUploadService;
 	@Autowired(required = false)
 	private JobSchedulerExtension jobSchedulerExtension;
 
@@ -362,6 +403,115 @@ public class PFFJobScheduler extends JobScheduler {
 		}
 
 		/**
+		 * 29. UPLOAD_RESPONSE_JOB
+		 */
+
+		args = new JobDataMap();
+		args.put("excessTransferUploadService", excessTransferUploadService);
+		jobData = new JobData("EXCESS_TRANSFER_JOB", ExcessTransferUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("holdRefundUploadService", holdRefundUploadService);
+		jobData = new JobData("HOLD_REFUND_JOB", HoldRefundJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("rePresentmentUploadService", rePresentmentUploadService);
+		jobData = new JobData("REPRESENTMENT_JOB", RepresentmentJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("mandateUploadService", mandateUploadService);
+		jobData = new JobData("MANDATE_JOB", MandateUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("fateCorrectionUploadService", fateCorrectionUploadService);
+		jobData = new JobData("FATE_CORRECTION_JOB", FateCorrectionJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("paymentInstructionUploadService", paymentInstructionUploadService);
+		jobData = new JobData("PAY_INS_JOB", PaymentInstJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("lPPUploadService", lPPUploadService);
+		jobData = new JobData("LPP_JOB", LPPUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("crossLoanKnockOffUploadService", crossLoanKnockOffUploadService);
+		jobData = new JobData("CROSSLOAN_KNOCKOFF_JOB", CrossLoanKnockOffJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("manualKnockOffUploadService", manualKnockOffUploadService);
+		jobData = new JobData("MANUAL_KNOCKOFF_JOB", ManualKnockOffJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("chequeUploadService", chequeUploadService);
+		jobData = new JobData("CHEQUE_JOB", ChequeUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("kycDetailsUploadService", kycDetailsUploadService);
+		jobData = new JobData("KYC_DETAILS_JOB", KycDetailUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("hostglmappingUploadService", hostglmappingUploadService);
+		jobData = new JobData("HOST_GL_DETAILS_JOB", HostGLMappingUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("miscellaneouspostingUploadService", miscellaneouspostingUploadService);
+		jobData = new JobData("MIS_POST_DETAILS_JOB", HostGLMappingUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("financeCancellationUploadService", financeCancellationUploadService);
+		jobData = new JobData("FIN_CAN_DETAILS_JOB", FinanceCancellationUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("feeWaiverUploadService", feeWaiverUploadService);
+		jobData = new JobData("WAIVER_DETAILS_JOB", FeeWaiverUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("lienUploadService", lienUploadService);
+		jobData = new JobData("LIEN_DETAILS_JOB", LienUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("createReceiptUploadService", createReceiptUploadService);
+		jobData = new JobData("CREATE_RECEIPT_DETAILS_JOB", CreateReceiptUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("receiptStatusUploadService", receiptStatusUploadService);
+		jobData = new JobData("RECEIPT_STATUS_DETAILS_JOB", ReceiptStatusUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("writeOffUploadService", writeOffUploadService);
+		jobData = new JobData("WRITE_OFF_DETAILS_JOB", WriteOffUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("revWriteOffUploadService", revWriteOffUploadService);
+		jobData = new JobData("RE_WRITE_OFF_DETAILS_JOB", RevWriteOffUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("branchChangeUploadService", branchChangeUploadService);
+		jobData = new JobData("BRANCH_DETAILS_JOB", BranchChangeUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		/**
 		 * For client specific jobs
 		 */
 		if (jobSchedulerExtension != null) {
@@ -502,7 +652,114 @@ public class PFFJobScheduler extends JobScheduler {
 		this.pmayProcess = pmayProcess;
 	}
 
+	@Autowired
 	public void setSecurityUserService(SecurityUserService securityUserService) {
 		this.securityUserService = securityUserService;
 	}
+
+	@Autowired
+	public void setExcessTransferUploadService(UploadService excessTransferUploadService) {
+		this.excessTransferUploadService = excessTransferUploadService;
+	}
+
+	@Autowired
+	public void setHoldRefundUploadService(UploadService holdRefundUploadService) {
+		this.holdRefundUploadService = holdRefundUploadService;
+	}
+
+	@Autowired
+	public void setRePresentmentUploadService(UploadService rePresentmentUploadService) {
+		this.rePresentmentUploadService = rePresentmentUploadService;
+	}
+
+	@Autowired
+	public void setMandateUploadService(UploadService mandateUploadService) {
+		this.mandateUploadService = mandateUploadService;
+	}
+
+	@Autowired
+	public void setFateCorrectionUploadService(UploadService fateCorrectionUploadService) {
+		this.fateCorrectionUploadService = fateCorrectionUploadService;
+	}
+
+	@Autowired
+	public void setPaymentInstructionUploadService(UploadService paymentInstructionUploadService) {
+		this.paymentInstructionUploadService = paymentInstructionUploadService;
+	}
+
+	@Autowired
+	public void setLPPUploadService(UploadService lPPUploadService) {
+		this.lPPUploadService = lPPUploadService;
+	}
+
+	@Autowired
+	public void setCrossLoanKnockOffUploadService(UploadService crossLoanKnockOffUploadService) {
+		this.crossLoanKnockOffUploadService = crossLoanKnockOffUploadService;
+	}
+
+	@Autowired
+	public void setManualKnockOffUploadService(UploadService manualKnockOffUploadService) {
+		this.manualKnockOffUploadService = manualKnockOffUploadService;
+	}
+
+	@Autowired
+	public void setChequeUploadService(UploadService chequeUploadService) {
+		this.chequeUploadService = chequeUploadService;
+	}
+
+	@Autowired
+	public void setKycDetailsUploadService(UploadService kycDetailsUploadService) {
+		this.kycDetailsUploadService = kycDetailsUploadService;
+	}
+
+	@Autowired
+	public void setHostglmappingUploadService(UploadService hostglmappingUploadService) {
+		this.hostglmappingUploadService = hostglmappingUploadService;
+	}
+
+	@Autowired
+	public void setMiscellaneouspostingUploadService(UploadService miscellaneouspostingUploadService) {
+		this.miscellaneouspostingUploadService = miscellaneouspostingUploadService;
+	}
+
+	@Autowired
+	public void setFinanceCancellationUploadService(UploadService financeCancellationUploadService) {
+		this.financeCancellationUploadService = financeCancellationUploadService;
+	}
+
+	@Autowired
+	public void setFeeWaiverUploadService(UploadService feeWaiverUploadService) {
+		this.feeWaiverUploadService = feeWaiverUploadService;
+	}
+
+	@Autowired
+	public void setLienUploadService(UploadService lienUploadService) {
+		this.lienUploadService = lienUploadService;
+	}
+
+	@Autowired
+	public void setCreateReceiptUploadService(UploadService createReceiptUploadService) {
+		this.createReceiptUploadService = createReceiptUploadService;
+	}
+
+	@Autowired
+	public void setReceiptStatusUploadService(UploadService receiptStatusUploadService) {
+		this.receiptStatusUploadService = receiptStatusUploadService;
+	}
+
+	@Autowired
+	public void setWriteOffUploadService(UploadService writeOffUploadService) {
+		this.writeOffUploadService = writeOffUploadService;
+	}
+
+	@Autowired
+	public void setRevWriteOffUploadService(UploadService revWriteOffUploadService) {
+		this.revWriteOffUploadService = revWriteOffUploadService;
+	}
+
+	@Autowired
+	public void setBranchChangeUploadService(UploadService branchChangeUploadService) {
+		this.branchChangeUploadService = branchChangeUploadService;
+	}
+
 }

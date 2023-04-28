@@ -34,6 +34,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(ExcessTransferUploadServiceImpl.class);
@@ -57,6 +58,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		String reference = detail.getReference();
+		detail.setReference(reference);
 
 		logger.info("Validating the Data for the reference {}", reference);
 
@@ -77,7 +79,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		detail.setReference(reference);
 		detail.setReferenceID(fm.getFinID());
 
 		String transferFrom = detail.getTransferFromType();
@@ -307,6 +308,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.EXCESS_TRANSFER.name(), excessTransferUploadValidateRecord, this,
+				"ExcessTransferUpload");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return excessTransferUploadDAO.getSqlQuery();
 	}
@@ -341,5 +348,4 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			ExcessTransferUploadValidateRecord excessTransferUploadValidateRecord) {
 		this.excessTransferUploadValidateRecord = excessTransferUploadValidateRecord;
 	}
-
 }

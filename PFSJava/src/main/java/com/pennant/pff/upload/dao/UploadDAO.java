@@ -41,4 +41,6 @@ public interface UploadDAO {
 	boolean isValidateApprove(long id, int status);
 
 	void updateFailRecords(int sucessRecords, int failedrecords, long headerId);
+
+	List<FileUploadHeader> loadData(String type);
 }

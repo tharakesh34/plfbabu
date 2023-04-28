@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UploadDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 

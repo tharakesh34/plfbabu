@@ -29,11 +29,13 @@ import com.pennant.pff.lien.dao.LienUploadDAO;
 import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.model.lien.LienUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class LienUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(LienUploadServiceImpl.class);
@@ -43,6 +45,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	private LienDetailsDAO lienDetailsDAO;
 	private LienHeaderDAO lienHeaderDAO;
 	private LienService lienService;
+	private ValidateRecord lienUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -273,6 +276,12 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.LIEN.name(), lienUploadValidateRecord, this, "Lien");
+
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return lienUploadDAO.getSqlQuery();
 	}
@@ -306,6 +315,16 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setLienService(LienService lienService) {
 		this.lienService = lienService;
+	}
+
+	@Override
+	public ValidateRecord getValidateRecord() {
+		return lienUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setLienUploadValidateRecord(ValidateRecord lienUploadValidateRecord) {
+		this.lienUploadValidateRecord = lienUploadValidateRecord;
 	}
 
 }

@@ -1,17 +1,17 @@
 package com.pennant.pff.lpp.service.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.lpp.upload.LPPUpload;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
-import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennapps.core.util.ObjectUtil;
 
@@ -21,45 +21,24 @@ public class LppUploadValidateRecord implements ValidateRecord {
 	@Autowired
 	private UploadService lPPUploadService;
 
-	protected DataEngineStatus executionStatus;
-
-	public void setExecutionStatus(DataEngineStatus executionStatus) {
-		this.executionStatus = executionStatus;
-	}
-
 	@Override
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+		LPPUpload lppUpload = (LPPUpload) ObjectUtil.valueAsObject(record, LPPUpload.class);
 
-		if (headerID == null) {
-			return;
-		}
+		lppUpload.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
 
-		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		LPPUpload details = new LPPUpload();
-		details.setHeaderId(headerID);
-		details.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		details.setApplyToExistingLoans(ObjectUtil.valueAsString(record.getValue("APPLYTOEXISTINGLOANS")));
-		details.setLoanType(ObjectUtil.valueAsString(record.getValue("LOANTYPE")));
-		details.setApplyOverDue(ObjectUtil.valueAsString(record.getValue("APPLYOVERDUE")));
-		details.setPenaltyType(ObjectUtil.valueAsString(record.getValue("PENALTYTYPE")));
-		details.setIncludeGraceDays(ObjectUtil.valueAsString(record.getValue("INCLUDEGRACEDAYS")));
-		details.setGraceDays(ObjectUtil.valueAsInt(record.getValue("GRACEDAYS")));
-		details.setCalculatedOn(ObjectUtil.valueAsString(record.getValue("CALCULATEDON")));
-		details.setAmountOrPercent(ObjectUtil.valueAsBigDecimal(record.getValue("AMOUNTORPERCENT")));
-		details.setAllowWaiver(ObjectUtil.valueAsString(record.getValue("ALLOWWAIVER")));
-		details.setMaxWaiver(ObjectUtil.valueAsBigDecimal(record.getValue("MAXWAIVER")));
-		details.setODMinAmount(ObjectUtil.valueAsBigDecimal(record.getValue("ODMinAmount")));
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
 
-		lPPUploadService.doValidate(header, details);
+		lppUpload.setHeaderId(header.getId());
+		lppUpload.setAppDate(header.getAppDate());
 
-		if (details.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", details.getErrorCode());
-			record.addValue("ERRORDESC", details.getErrorDesc());
-		}
+		lPPUploadService.doValidate(header, lppUpload);
+
+		lPPUploadService.updateProcess(header, lppUpload, record);
 
 		logger.debug(Literal.LEAVING);
 	}

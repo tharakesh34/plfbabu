@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennant.pff.writeoffupload.model.WriteOffUploadDetail;
@@ -47,10 +46,7 @@ public class WriteOffUploadValidateRecord implements ValidateRecord {
 
 		writeOffUploadService.doValidate(header, detail);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		writeOffUploadService.updateProcess(header, detail, record);
 
 		logger.debug(Literal.LEAVING);
 	}

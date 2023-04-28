@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.bulkfeewaiverupload.dao.BulkFeeWaiverUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -24,6 +23,7 @@ public class BulkFeeWaiverUploadValidateRecord implements ValidateRecord {
 
 	@Autowired
 	private UploadService bulkFeeWaiverUploadService;
+	@Autowired
 	private BulkFeeWaiverUploadDAO bulkFeeWaiverUploadDAO;
 
 	@Override
@@ -42,27 +42,19 @@ public class BulkFeeWaiverUploadValidateRecord implements ValidateRecord {
 
 		bfee.setHeaderId(headerID);
 		bfee.setAppDate(SysParamUtil.getAppDate());
-		bfee.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		bfee.setFeeTypeCode(ObjectUtil.valueAsString(record.getValue("FEETYPECODE")));
-		bfee.setWaivedAmount(ObjectUtil.valueAsBigDecimal(record.getValue("WAIVEDAMOUNT")));
+		bfee.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		bfee.setFeeTypeCode(ObjectUtil.valueAsString(record.getValue("feeTypeCode")));
+		bfee.setWaivedAmount(ObjectUtil.valueAsBigDecimal(record.getValue("waivedAmount")));
 
 		bulkFeeWaiverUploadService.doValidate(header, bfee);
 
-		if (bfee.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", bfee.getErrorCode());
-			record.addValue("ERRORDESC", bfee.getErrorDesc());
-			List<BulkFeeWaiverUpload> details = new ArrayList<>();
-			details.add(bfee);
+		bulkFeeWaiverUploadService.updateProcess(header, bfee, record);
+		List<BulkFeeWaiverUpload> details = new ArrayList<>();
+		details.add(bfee);
 
-			bulkFeeWaiverUploadDAO.update(details);
-		}
+		bulkFeeWaiverUploadDAO.update(details);
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	@Autowired
-	public void setBulkFeeWaiverUploadDAO(BulkFeeWaiverUploadDAO feeWaiverUploadDAO) {
-		this.bulkFeeWaiverUploadDAO = feeWaiverUploadDAO;
 	}
 
 }

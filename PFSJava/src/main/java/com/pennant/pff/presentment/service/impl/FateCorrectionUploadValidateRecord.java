@@ -1,11 +1,12 @@
 package com.pennant.pff.presentment.service.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -24,30 +25,23 @@ public class FateCorrectionUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+		PresentmentRespUpload presentment = (PresentmentRespUpload) ObjectUtil.valueAsObject(record,
+				PresentmentRespUpload.class);
 
-		if (headerID == null) {
-			return;
-		}
+		presentment.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
 
-		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		PresentmentRespUpload detail = new PresentmentRespUpload();
-		detail.setHeaderId(headerID);
-		detail.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		detail.setClearingDate(ObjectUtil.valueAsDate(record.getValue("CLEARING_DATE")));
-		detail.setClearingStatus(ObjectUtil.valueAsString(record.getValue("CLEARING_STATUS")));
-		detail.setFateCorrection(ObjectUtil.valueAsString(record.getValue("FATECORRECTION")));
-		detail.setBounceCode(ObjectUtil.valueAsString(record.getValue("BOUNCE_CODE")));
-		detail.setBounceRemarks(ObjectUtil.valueAsString(record.getValue("BOUNCE_REMARKS")));
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
 
-		fateCorrectionUploadService.doValidate(header, detail);
+		presentment.setHeaderId(header.getId());
+		presentment.setAppDate(header.getAppDate());
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		fateCorrectionUploadService.doValidate(header, presentment);
+
+		fateCorrectionUploadService.updateProcess(header, presentment, record);
 
 		logger.debug(Literal.LEAVING);
 	}
+
 }

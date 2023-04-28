@@ -10,6 +10,13 @@ import java.util.Map;
 
 import org.apache.commons.lang3.SerializationUtils;
 
+import org.json.JSONObject;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pennanttech.pennapps.core.AppException;
+
 public class ObjectUtil {
 	private ObjectUtil() {
 		super();
@@ -91,4 +98,17 @@ public class ObjectUtil {
 		return (object != null) ? (object instanceof Date ? (Date) object : defaultValue) : defaultValue;
 	}
 
+	public static <T> Object valueAsObject(MapSqlParameterSource parameter, T object) {
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		JSONObject jsonObject = new JSONObject(parameter);
+
+		JSONObject json = (JSONObject) jsonObject.get("values");
+
+		try {
+			return objectMapper.readValue(json.toString(), (Class<T>) object);
+		} catch (JsonProcessingException e) {
+			throw new AppException(e.getMessage());
+		}
+	}
 }

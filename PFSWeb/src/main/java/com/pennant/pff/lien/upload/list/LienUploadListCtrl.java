@@ -13,8 +13,8 @@ public class LienUploadListCtrl extends AUploadListCtrl {
 
 	protected Window window;
 
-	protected LienUploadListCtrl(@Autowired UploadService lienUploadServiceImpl) {
-		super(lienUploadServiceImpl, UploadTypes.LIEN);
+	protected LienUploadListCtrl(@Autowired UploadService lienUploadService) {
+		super(lienUploadService, UploadTypes.LIEN);
 	}
 
 	@Override

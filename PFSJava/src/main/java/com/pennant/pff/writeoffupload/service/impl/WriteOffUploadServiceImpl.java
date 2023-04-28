@@ -466,6 +466,11 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 		return writeOffUploadValidateRecord;
 	}
 
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.WRITE_OFF.name(), writeOffUploadValidateRecord, this, "WriteOffUploadHeader");
+	}
+
 	@Autowired
 	public void setWriteOffUploadDAO(WriteOffUploadDAO writeOffUploadDAO) {
 		this.writeOffUploadDAO = writeOffUploadDAO;

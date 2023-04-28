@@ -11,8 +11,8 @@ public class ReceiptStatusUpload extends UploadDetails {
 	private String statusRM;
 	private Date realizationDate;
 	private Date bounceDate;
-	private String borcReason;
-	private String borcRemarks;
+	private String bounceReason;
+	private String bounceRemarks;
 
 	public ReceiptStatusUpload() {
 		super();
@@ -50,20 +50,20 @@ public class ReceiptStatusUpload extends UploadDetails {
 		this.bounceDate = bounceDate;
 	}
 
-	public String getBorcReason() {
-		return borcReason;
+	public String getBounceReason() {
+		return bounceReason;
 	}
 
-	public void setBorcReason(String borcReason) {
-		this.borcReason = borcReason;
+	public void setBounceReason(String bounceReason) {
+		this.bounceReason = bounceReason;
 	}
 
-	public String getBorcRemarks() {
-		return borcRemarks;
+	public String getBounceRemarks() {
+		return bounceRemarks;
 	}
 
-	public void setBorcRemarks(String borcRemarks) {
-		this.borcRemarks = borcRemarks;
+	public void setBounceRemarks(String bounceRemarks) {
+		this.bounceRemarks = bounceRemarks;
 	}
 
 }

@@ -42,6 +42,7 @@ import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
@@ -374,6 +375,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.MANUAL_KNOCKOFF.name(), manualKnockOffUploadProcessRecord, this, "ManualKnockOff");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return manualKnockOffUploadDAO.getSqlQuery();
 	}
@@ -447,5 +453,4 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
-
 }

@@ -50,6 +50,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.upload.ReceiptStatusUploadError;
 
 public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
@@ -194,8 +195,8 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 			}
 		}
 
-		String borCReason = detail.getBorcReason();
-		String borCRemarks = detail.getBorcRemarks();
+		String borCReason = detail.getBounceReason();
+		String borCRemarks = detail.getBounceRemarks();
 
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(status) || RepayConstants.PAYSTATUS_CANCEL.equals(status)) {
 			if (StringUtils.isBlank(borCReason)) {
@@ -343,7 +344,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 			frh.setBounceDate(detail.getBounceDate());
 		}
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(detail.getStatusRM())) {
-			frh.setCancelReason(detail.getBorcReason());
+			frh.setCancelReason(detail.getBounceReason());
 		}
 
 		fd.setFinID(frh.getFinID());
@@ -423,6 +424,12 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 				transactionManager.rollback(txStatus);
 			}
 		}
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.RECEIPT_STATUS.name(), receiptStatusUploadValidateRecord, this,
+				"ReceiptStatusUploadHeader");
 	}
 
 	@Override

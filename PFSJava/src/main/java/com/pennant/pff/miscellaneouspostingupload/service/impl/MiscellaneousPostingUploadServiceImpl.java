@@ -43,6 +43,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(MiscellaneousPostingUploadServiceImpl.class);
@@ -419,6 +420,13 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
 		detail.setErrorDesc(error.description());
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.MISCELLANEOUS_POSTING.name(), miscellaneousPostingUploadValidateRecord, this,
+				"MiscellaneousPostingUploadHeader");
+
 	}
 
 	@Autowired

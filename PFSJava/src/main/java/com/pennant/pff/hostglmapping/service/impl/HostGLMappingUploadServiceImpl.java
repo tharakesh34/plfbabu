@@ -36,6 +36,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(HostGLMappingUploadServiceImpl.class);
@@ -311,6 +312,12 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 		detail.setErrorDesc(error.description());
 	}
 
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.HOST_GL.name(), hostGLMappingUploadValidateRecord, this, "HostGLMappingUploadHeader");
+
+	}
+
 	@Autowired
 	public void setHostGLMappingUploadDAO(HostGLMappingUploadDAO hostGLMappingUploadDAO) {
 		this.hostGLMappingUploadDAO = hostGLMappingUploadDAO;
@@ -351,4 +358,5 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 			HostGLMappingUploadValidateRecord hostGLMappingUploadValidateRecord) {
 		this.hostGLMappingUploadValidateRecord = hostGLMappingUploadValidateRecord;
 	}
+
 }
