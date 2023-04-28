@@ -948,4 +948,9 @@ public class PennantConstants {
 	public static final int FEE_REFUND_APPROVAL_SUCCESS = 1;
 	public static final int FEE_REFUND_APPROVAL_HOLD = 2;
 	public static final int FEE_REFUND_APPROVAL_DOWNLOADED = 3;
+
+	// Sanction Status
+	public static final String SANCTION_PENDING = "Pending";
+	public static final String SANCTION_RECEIVED = "Received";
+	public static final String SANCTION_CLOSED = "Closed";
 }

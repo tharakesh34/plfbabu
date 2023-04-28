@@ -12399,5 +12399,62 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#58_pre" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'sanction_conditions');
+				select deps_save_and_drop_dependencies ('plf', 'sanction_conditions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#58.1" author="rahul.r">
+		<addColumn tableName="sanction_conditions">
+			<column name="remarks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#58.2" author="rahul.r">
+		<addColumn tableName="sanction_conditions_temp">
+			<column name="remarks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="ST#58.3" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE SANCTION_CONDITIONS  SET REMARKS =(SELECT C.STATUS FROM SANCTION_CONDITIONS C  WHERE SANCTION_CONDITIONS.ID=C.ID);
+				UPDATE SANCTION_CONDITIONS_TEMP  SET REMARKS =(SELECT C.STATUS FROM SANCTION_CONDITIONS_TEMP C  WHERE SANCTION_CONDITIONS_TEMP.ID=C.ID);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#58.4" author="rahul.r">
+		<sql>
+			<![CDATA[
+				UPDATE SANCTION_CONDITIONS  SET STATUS = null;
+				UPDATE SANCTION_CONDITIONS_TEMP  SET STATUS = null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#58.5" author="rahul.r">
+		<modifyDataType tableName="sanction_conditions" columnName="status" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="ST#58.6" author="rahul.r">
+		<modifyDataType tableName="sanction_conditions_temp" columnName="status" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="ST#58_post" author="rahul.r" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'sanction_conditions');
+				select deps_restore_dependencies ('plf', 'sanction_conditions_temp');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog> 

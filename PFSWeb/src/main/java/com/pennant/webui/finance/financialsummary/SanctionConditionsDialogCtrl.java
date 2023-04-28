@@ -38,6 +38,7 @@ import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -49,6 +50,7 @@ import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.service.finance.financialsummary.SanctionConditionsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -67,7 +69,8 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	protected Window window_sanctionConditionsDialog; // autowired
 
 	protected Textbox sanctionCondition; // autowired
-	protected Textbox status; // autowiredc
+	protected Textbox remarks; // autowiredc
+	protected Combobox status;
 
 	private SanctionConditions sanctionConditions; // overhanded per param
 
@@ -188,7 +191,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		this.sanctionCondition.setMaxlength(500);
-		this.status.setMaxlength(40);
+		this.remarks.setMaxlength(40);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -309,10 +312,13 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 
 		if (isNewRecord()) {
 			this.sanctionCondition.setValue("");
-			this.status.setValue("");
+			this.remarks.setValue("");
+			fillComboBox(this.status, "", PennantStaticListUtil.getSanctionStatusList(), "");
 		} else {
 			this.sanctionCondition.setValue(sanctionConditions.getSanctionCondition());
-			this.status.setValue(sanctionConditions.getStatus());
+			this.remarks.setValue(sanctionConditions.getRemarks());
+			fillComboBox(this.status, sanctionConditions.getStatus(), PennantStaticListUtil.getSanctionStatusList(),
+					"");
 		}
 
 		logger.debug("Leaving");
@@ -334,10 +340,16 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 			wve.add(we);
 		}
 		try {
-			sanctionConditions.setStatus(this.status.getValue());
+			sanctionConditions.setRemarks(this.remarks.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			sanctionConditions.setStatus(this.status.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		setSanctionConditions(sanctionConditions);
 		logger.debug("Leaving");
 	}
@@ -397,6 +409,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	private void doCheckEnquiry() {
 		if ("ENQ".equals(this.moduleType)) {
 			this.sanctionCondition.setReadonly(true);
+			this.remarks.setDisabled(true);
 			this.status.setDisabled(true);
 			this.btnSave.setVisible(false);
 			this.btnDelete.setVisible(false);
@@ -478,6 +491,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 		logger.debug("Entering");
 
 		this.sanctionCondition.setDisabled(isReadOnly("CustomerPhoneNumberDialog_phonePriority"));
+		this.remarks.setReadonly(isReadOnly("CustomerPhoneNumberDialog_phoneCustID"));
 		this.status.setReadonly(isReadOnly("CustomerPhoneNumberDialog_phoneCustID"));
 
 		if (isWorkFlowEnabled()) {
@@ -523,6 +537,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 	public void doReadOnly() {
 		logger.debug("Entering");
 		this.sanctionCondition.setReadonly(true);
+		this.remarks.setReadonly(true);
 		this.status.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
@@ -545,6 +560,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 		logger.debug("Entering");
 		// remove validation, if there are a save before
 		this.sanctionCondition.setValue("");
+		this.remarks.setValue("");
 		this.status.setValue("");
 		logger.debug("Leaving");
 	}

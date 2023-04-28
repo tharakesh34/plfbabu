@@ -371,6 +371,7 @@ public class PennantStaticListUtil {
 	private static List<String> allowedExcessTypeList;
 	private static List<ValueLabel> enqSettlementStatus;
 	private static List<ValueLabel> excessTransferHead;
+	private static List<ValueLabel> sanctionStatusList;
 
 	/**
 	 * Gets the list of applications.
@@ -5626,5 +5627,18 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
 		}
 		return excessTransferHead;
+	}
+
+	public static List<ValueLabel> getSanctionStatusList() {
+		if (sanctionStatusList == null) {
+			sanctionStatusList = new ArrayList<ValueLabel>(2);
+			sanctionStatusList.add(new ValueLabel(PennantConstants.SANCTION_PENDING,
+					Labels.getLabel("label_Sanction_Status_Pending")));
+			sanctionStatusList.add(new ValueLabel(PennantConstants.SANCTION_RECEIVED,
+					Labels.getLabel("label_Sanction_Status_Received")));
+			sanctionStatusList.add(
+					new ValueLabel(PennantConstants.SANCTION_CLOSED, Labels.getLabel("label_Sanction_Status_Closed")));
+		}
+		return sanctionStatusList;
 	}
 }
