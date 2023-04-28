@@ -7671,6 +7671,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			this.advType.setSelectedIndex(0);
 			this.advType.setDisabled(true);
+			this.advType.setErrorMessage("");
 		}
 
 		doChangeAdvTypes();

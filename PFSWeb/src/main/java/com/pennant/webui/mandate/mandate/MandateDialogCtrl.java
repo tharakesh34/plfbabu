@@ -766,6 +766,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		} else {
 			this.swapEffectiveDate.setReadonly(true);
+			this.swapEffectiveDate.setConstraint("");
 			this.swapEffectiveDate.setValue(null);
 			this.swapEffectiveDate.setDisabled(true);
 		}
@@ -2375,7 +2376,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void onFulfill$micr(Event event) {
 		Object dataObject = this.micr.getObject();
 
-		if (dataObject == null || dataObject instanceof String) {
+		if (StringUtils.isEmpty(this.micr.getValue()) || dataObject == null || dataObject instanceof String) {
 			this.bank.setValue("");
 			this.city.setValue("");
 			this.micr.setValue("");
