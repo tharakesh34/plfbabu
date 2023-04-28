@@ -322,6 +322,7 @@ public class ImplementationConstants {
 		ALLOW_CANCEL_LOAN_AFTER_PAYMENTS = getValueAsBoolean("ALLOW_CANCEL_LOAN_AFTER_PAYMENTS", false);
 		ALLOW_LIEN = getValueAsBoolean("ALLOW_LIEN", false);
 		ALW_AUTO_CROSS_LOAN_KNOCKOFF = getValueAsBoolean("ALW_AUTO_CROSS_LOAN_KNOCKOFF", false);
+		FEE_ODC_DISABLE = getValueAsBoolean("FEE_ODC_DISABLE", false);
 
 		setVerificationConstants();
 	}
@@ -531,6 +532,7 @@ public class ImplementationConstants {
 	public static boolean LOAN_PURPOSE_MANDATORY;
 	public static boolean GUARANTOR_EMAIL_MANDATORY;
 	public static boolean ALLOW_IMD_WITHOUT_REALIZED;
+	public static boolean FEE_ODC_DISABLE;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

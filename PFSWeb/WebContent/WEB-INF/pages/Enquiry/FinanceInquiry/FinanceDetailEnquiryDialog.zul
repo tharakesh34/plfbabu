@@ -1206,11 +1206,11 @@
 												</hbox>
 											</row>
 											<row id="row_odMinAmount" visible="false">
-												<label value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" visible="false"/>
+												<label value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
 												<hbox>
-													<space spacing="2px" visible="false"/>
+													<space spacing="2px" />
 													<decimalbox id="odMinAmount" width="120px" maxlength="15"
-															readonly="true" visible="false"/>
+															readonly="true" />
 												</hbox>
 											</row>
 											<row visible="true">

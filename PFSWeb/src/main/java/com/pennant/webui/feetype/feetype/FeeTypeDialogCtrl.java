@@ -580,7 +580,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			}
 		}
 
-		if (Allocation.ODC.equals(this.feeTypeCode.getValue())) {
+		if (Allocation.ODC.equals(this.feeTypeCode.getValue()) && FeeExtension.FEE_ODC_DISABLE) {
 			this.feeTypeDesc.setReadonly(true);
 			this.amortzReq.setDisabled(true);
 			this.tdsReq.setDisabled(true);

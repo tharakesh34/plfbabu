@@ -19966,6 +19966,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.row_odMinAmount.setVisible(true);
 				this.odMinAmount.setReadonly(false);
 			}
+
+			fillComboBox(this.oDChargeCalOn, getComboboxValue(this.oDChargeCalOn),
+					PennantStaticListUtil.getODCCalculatedOn(), ",INST,");
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				fillComboBox(this.oDChargeCalOn, getComboboxValue(this.oDChargeCalOn),
+						PennantStaticListUtil.getODCCalculatedOn());
+			}
+
 		}
 		logger.debug(Literal.LEAVING);
 	}

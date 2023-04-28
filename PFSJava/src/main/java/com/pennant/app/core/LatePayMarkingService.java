@@ -690,8 +690,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		finOD.setFinMaxODAmt(finOD.getFinMaxODPft().add(finOD.getFinMaxODPri()).add(finOD.getMaxOverdraftTxnChrg()));
 
 		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
-
-		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
 		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
 		// worked.
 

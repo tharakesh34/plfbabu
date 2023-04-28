@@ -3004,6 +3004,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		if (changeAction) {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
+			this.odMinAmount.setValue(BigDecimal.ZERO);
 		}
 		this.space_oDChargeAmtOrPerc.setSclass("mandatory");
 		readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeCalOn"), this.oDChargeCalOn);
@@ -3028,6 +3029,12 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.row_odMinAmount.setVisible(false);
 		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
 			this.row_odMinAmount.setVisible(true);
+		}
+
+		this.oDIncGrcDays.setDisabled(false);
+		if (!getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_DUE_DAYS)
+				&& !getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_EFF_DUE_DAYS)) {
+			this.oDIncGrcDays.setDisabled(true);
 		}
 
 		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));

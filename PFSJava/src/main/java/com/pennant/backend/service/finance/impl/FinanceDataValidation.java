@@ -179,6 +179,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 import com.pennanttech.pff.staticlist.AppStaticList;
@@ -1438,6 +1439,14 @@ public class FinanceDataValidation {
 				valueParm[1] = FinanceConstants.ODCALON_STOT + "," + FinanceConstants.ODCALON_SPFT + ","
 						+ FinanceConstants.ODCALON_SPRI;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90317", valueParm)));
+			}
+			
+			if (!FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+				if (FinanceConstants.ODCALON_INST.equals(odChargeCalOn)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = " odChargeCalOn INST is allowed only when odChargeType is P or M ";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
+				}
 			}
 		}
 	}
@@ -6568,8 +6577,7 @@ public class FinanceDataValidation {
 							}
 						}
 						if (custEmpFromDate != null) {
-							int custMonthsofExp = DateUtil.getMonthsBetween(custEmpFromDate,
-									SysParamUtil.getAppDate());
+							int custMonthsofExp = DateUtil.getMonthsBetween(custEmpFromDate, SysParamUtil.getAppDate());
 							custYearOfExp = BigDecimal.valueOf(custMonthsofExp).divide(BigDecimal.valueOf(12), 2,
 									RoundingMode.CEILING);
 						}

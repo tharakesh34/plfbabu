@@ -248,6 +248,7 @@ public class FeatureExtension implements IFeatureExtension {
 	private void feeExtensions() {
 		feeExtensions.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
 		feeExtensions.put("ALLOW_SINGLE_FEE_CONFIG", true);
+		feeExtensions.put("FEE_ODC_DISABLE", true);
 	}
 
 	private void dpdExtensions() {

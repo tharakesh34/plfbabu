@@ -726,10 +726,10 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_FinanceMainDialog_ODChargeCalOn" value="${c:l('label_FinanceMainDialog_ODChargeCalOn.value')}" />
+													<label id="label_FinanceMainDialog_ODChargeType" value="${c:l('label_FinanceMainDialog_ODChargeType.value')}" />
 													<hbox>
-														<space id="space_oDChargeCalOn" spacing="2px" sclass="mandatory" />
-														<combobox id="oDChargeCalOn" width="200px" readonly="true" />
+														<space id="space_oDChargeType" spacing="2px" sclass="mandatory" />
+														<combobox id="oDChargeType" width="200px" readonly="true" />
 													</hbox>
 													<label id="label_FinanceMainDialog_GraceDays" value="${c:l('label_FinanceMainDialog_ODGraceDays.value')}" />
 													<hbox>
@@ -738,10 +738,10 @@
 													</hbox>
 												</row>
 												<row visible="true">
-													<label id="label_FinanceMainDialog_ODChargeType" value="${c:l('label_FinanceMainDialog_ODChargeType.value')}" />
+													<label id="label_FinanceMainDialog_ODChargeCalOn" value="${c:l('label_FinanceMainDialog_ODChargeCalOn.value')}" />
 													<hbox>
-														<space id="space_oDChargeType" spacing="2px" sclass="mandatory" />
-														<combobox id="oDChargeType" width="200px" readonly="true" />
+														<space id="space_oDChargeCalOn" spacing="2px" sclass="mandatory" />
+														<combobox id="oDChargeCalOn" width="200px" readonly="true" />
 													</hbox>
 													<label id="label_FinanceMainDialog_ODChargeAmtOrPerc" value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
 													<hbox>
