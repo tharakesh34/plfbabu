@@ -2368,7 +2368,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void onFulfill$micr(Event event) {
 		Object dataObject = this.micr.getObject();
 
-		if (dataObject == null || dataObject instanceof String) {
+		if (StringUtils.isEmpty(this.micr.getValue()) || dataObject == null || dataObject instanceof String) {
 			this.bank.setValue("");
 			this.city.setValue("");
 			this.micr.setValue("");
