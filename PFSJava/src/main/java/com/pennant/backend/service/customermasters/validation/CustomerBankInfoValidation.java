@@ -133,7 +133,7 @@ public class CustomerBankInfoValidation {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 		}
 
-		if (customerBankInfo.getBankBranchID() == null) {
+		if (customerBankInfo.isAddToBenficiary() && customerBankInfo.getBankBranchID() == null) {
 			String[] valParm = new String[2];
 			valParm[0] = "IFSC Code";
 			valParm[1] = customerBankInfo.getiFSC();
