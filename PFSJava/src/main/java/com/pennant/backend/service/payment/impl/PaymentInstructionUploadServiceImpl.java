@@ -49,6 +49,7 @@ import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(PaymentInstructionUploadServiceImpl.class);
@@ -564,6 +565,12 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setProgress(EodConstants.PROGRESS_FAILED);
 		detail.setErrorCode(error.name());
 		detail.setErrorDesc(error.description());
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.PAYINS_REFUND.name(), paymentInstructionUploadValidateRecord, this,
+				"PaymentInstructionUploadHeader");
 	}
 
 	@Autowired

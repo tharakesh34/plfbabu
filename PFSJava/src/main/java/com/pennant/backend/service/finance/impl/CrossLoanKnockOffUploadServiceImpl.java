@@ -51,6 +51,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 
@@ -591,6 +592,12 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.CROSS_LOAN_KNOCKOFF.name(), crossLoanKnockOffUploadProcessRecord, this,
+				"CrossLoanKnockOffUploadHeader");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return crossLoanKnockoffUploadDAO.getSqlQuery();
 	}
@@ -640,5 +647,4 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
-
 }

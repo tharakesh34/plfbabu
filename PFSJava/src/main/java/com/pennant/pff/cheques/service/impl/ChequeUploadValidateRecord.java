@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.pdc.upload.ChequeUpload;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -34,31 +33,27 @@ public class ChequeUploadValidateRecord implements ValidateRecord {
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
 		ChequeUpload detail = new ChequeUpload();
-		detail.setHeaderId(headerID);
 
-		detail.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		detail.setAction(ObjectUtil.valueAsString(record.getValue("ACTION")));
+		detail.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		detail.setAction(ObjectUtil.valueAsString(record.getValue("action")));
 
 		ChequeDetail cd = new ChequeDetail();
 
-		cd.setChequeType(ObjectUtil.valueAsString(record.getValue("CHEQUETYPE")));
-		cd.setChequeSerialNumber(ObjectUtil.valueAsString(record.getValue("CHEQUESERIALNO")));
-		cd.setAccountType(ObjectUtil.valueAsString(record.getValue("ACCOUNTTYPE")));
-		cd.setAccHolderName(ObjectUtil.valueAsString(record.getValue("ACCHOLDERNAME")));
-		cd.setAccountNo(ObjectUtil.valueAsString(record.getValue("ACCOUNTNO")));
-		cd.setIfsc(ObjectUtil.valueAsString(record.getValue("IFSCCODE")));
-		cd.setMicr(ObjectUtil.valueAsString(record.getValue("MICR")));
-		cd.setAmount(ObjectUtil.valueAsBigDecimal(record.getValue("AMOUNT")));
-		cd.setChequeDate(ObjectUtil.valueAsDate(record.getValue("CHEQUEDATE")));
+		cd.setChequeType(ObjectUtil.valueAsString(record.getValue("chequeType")));
+		cd.setChequeSerialNumber(ObjectUtil.valueAsString(record.getValue("chequeSerialNo")));
+		cd.setAccountType(ObjectUtil.valueAsString(record.getValue("accountType")));
+		cd.setAccHolderName(ObjectUtil.valueAsString(record.getValue("accHolderName")));
+		cd.setAccountNo(ObjectUtil.valueAsString(record.getValue("accountNo")));
+		cd.setIfsc(ObjectUtil.valueAsString(record.getValue("ifsc")));
+		cd.setMicr(ObjectUtil.valueAsString(record.getValue("micr")));
+		cd.setAmount(ObjectUtil.valueAsBigDecimal(record.getValue("amount")));
+		cd.setChequeDate(ObjectUtil.valueAsDate(record.getValue("chequeDate")));
 
 		detail.setChequeDetail(cd);
 
 		chequeUploadService.doValidate(header, detail);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		chequeUploadService.updateProcess(header, detail, record);
 	}
 
 }

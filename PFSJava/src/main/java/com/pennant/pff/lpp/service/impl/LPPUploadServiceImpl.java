@@ -35,6 +35,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(LPPUploadServiceImpl.class);
@@ -425,6 +426,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
 		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
 				afinanceDetail.getUserDetails(), new HashMap<>());
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.LPP.name(), lppUploadValidateRecord, this, "LPPUploadHeader");
 	}
 
 	@Override

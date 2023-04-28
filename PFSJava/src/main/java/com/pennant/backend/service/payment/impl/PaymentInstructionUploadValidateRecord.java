@@ -1,12 +1,13 @@
 package com.pennant.backend.service.payment.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.payment.PaymentInstUploadDetail;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -24,30 +25,23 @@ public class PaymentInstructionUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+		PaymentInstUploadDetail paymentDetail = (PaymentInstUploadDetail) ObjectUtil.valueAsObject(record,
+				PaymentInstUploadDetail.class);
 
-		if (headerID == null) {
-			return;
-		}
+		paymentDetail.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
 
-		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		PaymentInstUploadDetail detail = new PaymentInstUploadDetail();
-		detail.setHeaderId(headerID);
-		detail.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		detail.setExcessType(ObjectUtil.valueAsString(record.getValue("EXCESSTYPE")));
-		detail.setFeeType(ObjectUtil.valueAsString(record.getValue("FEETYPE")));
-		detail.setPayAmount(ObjectUtil.valueAsBigDecimal(record.getValue("PAYAMOUNT")));
-		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
-		detail.setOverRide(ObjectUtil.valueAsString(record.getValue("OVERRIDEOVERDUE")));
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
 
-		paymentInstructionUploadService.doValidate(header, detail);
+		paymentDetail.setHeaderId(header.getId());
+		paymentDetail.setAppDate(header.getAppDate());
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		paymentInstructionUploadService.doValidate(header, paymentDetail);
+
+		paymentInstructionUploadService.updateProcess(header, paymentDetail, record);
 
 		logger.debug(Literal.LEAVING);
 	}
+
 }

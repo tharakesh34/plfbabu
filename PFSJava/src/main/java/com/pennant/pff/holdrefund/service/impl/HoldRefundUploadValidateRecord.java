@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.holdrefund.model.HoldRefundUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -33,7 +32,7 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = ObjectUtil.valueAsString(record.getValue("FINREFERENCE"));
+		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
 		boolean recordExist = holdRefundUploadService.isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -43,18 +42,12 @@ public class HoldRefundUploadValidateRecord implements ValidateRecord {
 		HoldRefundUploadDetail detail = new HoldRefundUploadDetail();
 		detail.setHeaderId(headerID);
 		detail.setReference(finReference);
-		detail.setHoldStatus(ObjectUtil.valueAsString(record.getValue("HOLDSTATUS")));
-		detail.setReason(ObjectUtil.valueAsString(record.getValue("REASON")));
-		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
+		detail.setHoldStatus(ObjectUtil.valueAsString(record.getValue("holdStatus")));
+		detail.setReason(ObjectUtil.valueAsString(record.getValue("reason")));
+		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("remarks")));
 
 		holdRefundUploadService.doValidate(header, detail);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
-
-		logger.debug(Literal.LEAVING);
+		holdRefundUploadService.updateProcess(header, detail, record);
 	}
-
 }

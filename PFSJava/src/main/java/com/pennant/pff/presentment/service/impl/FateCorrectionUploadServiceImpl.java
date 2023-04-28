@@ -24,6 +24,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.model.presentment.PresentmentRespUpload;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
 public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
@@ -231,6 +232,11 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.FATE_CORRECTION.name(), fateCorrectionUploadValidateRecord, this, "FateCorrection");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return presentmentRespUploadDAO.getSqlQuery();
 	}
@@ -255,5 +261,4 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 			FateCorrectionUploadValidateRecord fateCorrectionUploadValidateRecord) {
 		this.fateCorrectionUploadValidateRecord = fateCorrectionUploadValidateRecord;
 	}
-
 }

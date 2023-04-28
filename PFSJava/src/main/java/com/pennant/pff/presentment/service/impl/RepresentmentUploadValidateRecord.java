@@ -1,13 +1,12 @@
 package com.pennant.pff.presentment.service.impl;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -26,29 +25,23 @@ public class RepresentmentUploadValidateRecord implements ValidateRecord {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
+		RePresentmentUploadDetail representment = (RePresentmentUploadDetail) ObjectUtil.valueAsObject(record,
+				RePresentmentUploadDetail.class);
 
-		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+		representment.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
 
-		if (headerID == null) {
-			return;
-		}
+		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
 
-		RePresentmentUploadDetail detail = new RePresentmentUploadDetail();
-		detail.setHeaderId(headerID);
-		detail.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
-		detail.setDueDate(ObjectUtil.valueAsDate(record.getValue("DUEDATE")));
-		detail.setAcBounce(acBounce);
+		representment.setHeaderId(header.getId());
+		representment.setAppDate(header.getAppDate());
 
-		rePresentmentUploadService.doValidate(header, detail);
+		rePresentmentUploadService.doValidate(header, representment);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		rePresentmentUploadService.updateProcess(header, representment, record);
 
 		logger.debug(Literal.LEAVING);
 	}
+
 }

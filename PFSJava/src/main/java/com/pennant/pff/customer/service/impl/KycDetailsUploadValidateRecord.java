@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.holdrefund.service.impl.HoldRefundUploadValidateRecord;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
@@ -34,7 +33,9 @@ public class KycDetailsUploadValidateRecord implements ValidateRecord {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String custCif = ObjectUtil.valueAsString(record.getValue("CUSTCIF"));
+		String custCif = ObjectUtil.valueAsString(record.getValue("custCif"));
+
+		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
 
 		boolean recordExist = kycDetailsUploadService.isInProgress(headerID, custCif);
 
@@ -44,41 +45,33 @@ public class KycDetailsUploadValidateRecord implements ValidateRecord {
 
 		CustomerKycDetail detail = new CustomerKycDetail();
 		detail.setHeaderId(headerID);
-		detail.setFinReference(valueOf(record, "FINREFERENCE"));
+		detail.setFinReference(finReference);
 		detail.setReference(custCif);
-		detail.setCustAddrType(valueOf(record, "CUSTADDRTYPE"));
-		detail.setCustAddrPriority(ObjectUtil.valueAsInt(record.getValue("CUSTADDRPRIORITY")));
-		detail.setCustAddrLine3(valueOf(record, "CUSTADDRLINE3"));
-		detail.setCustAddrHNbr(valueOf(record, "CUSTADDRHNBR"));
-		detail.setCustFlatNbr(valueOf(record, "CUSTFLATNBR"));
-		detail.setCustAddrStreet(valueOf(record, "CUSTADDRSTREET"));
-		detail.setCustAddrLine1(valueOf(record, "CUSTADDRLINE1"));
-		detail.setCustAddrLine2(valueOf(record, "CUSTADDRLINE2"));
-		detail.setCustAddrCity(valueOf(record, "CUSTADDRCITY"));
-		detail.setCustAddrLine4(valueOf(record, "CUSTADDRLINE4"));
-		detail.setCustDistrict(valueOf(record, "CUSTDISTRICT"));
-		detail.setCustAddrProvince(valueOf(record, "CUSTADDRPROVINCE"));
-		detail.setCustAddrCountry(valueOf(record, "CUSTADDRCOUNTRY"));
-		detail.setCustAddrZIP(valueOf(record, "CUSTADDRZIP"));
-		detail.setPhoneTypeCode(valueOf(record, "PHONETYPECODE"));
-		detail.setPhoneNumber(valueOf(record, "PHONENUMBER"));
-		detail.setPhoneTypePriority(ObjectUtil.valueAsInt(record.getValue("PHONETYPEPRIORITY")));
-		detail.setCustEMailTypeCode(valueOf(record, "CUSTEMAILTYPECODE"));
-		detail.setCustEMail(valueOf(record, "CUSTEMAIL"));
-		detail.setCustEMailPriority(ObjectUtil.valueAsInt(record.getValue("CUSTEMAILPRIORITY")));
+		detail.setCustAddrType(ObjectUtil.valueAsString(record.getValue("custAddrType")));
+		detail.setCustAddrPriority(ObjectUtil.valueAsInt(record.getValue("custAddrPriority")));
+		detail.setCustAddrLine3(ObjectUtil.valueAsString(record.getValue("custAddrLine3")));
+		detail.setCustAddrHNbr(ObjectUtil.valueAsString(record.getValue("custAddrHNbr")));
+		detail.setCustFlatNbr(ObjectUtil.valueAsString(record.getValue("custFlatNbr")));
+		detail.setCustAddrStreet(ObjectUtil.valueAsString(record.getValue("custAddrStreet")));
+		detail.setCustAddrLine1(ObjectUtil.valueAsString(record.getValue("custAddrLine1")));
+		detail.setCustAddrLine2(ObjectUtil.valueAsString(record.getValue("custAddrLine2")));
+		detail.setCustAddrCity(ObjectUtil.valueAsString(record.getValue("custAddrCity")));
+		detail.setCustAddrLine4(ObjectUtil.valueAsString(record.getValue("custAddrLine4")));
+		detail.setCustDistrict(ObjectUtil.valueAsString(record.getValue("custDistrict")));
+		detail.setCustAddrProvince(ObjectUtil.valueAsString(record.getValue("custAddrProvince")));
+		detail.setCustAddrCountry(ObjectUtil.valueAsString(record.getValue("custAddrCountry")));
+		detail.setCustAddrZIP(ObjectUtil.valueAsString(record.getValue("custAddrZIP")));
+		detail.setPhoneTypeCode(ObjectUtil.valueAsString(record.getValue("phoneTypeCode")));
+		detail.setPhoneNumber(ObjectUtil.valueAsString(record.getValue("phoneNumber")));
+		detail.setPhoneTypePriority(ObjectUtil.valueAsInt(record.getValue("phoneTypePriority")));
+		detail.setCustEMailTypeCode(ObjectUtil.valueAsString(record.getValue("custEMailTypeCode")));
+		detail.setCustEMail(ObjectUtil.valueAsString(record.getValue("custEMail")));
+		detail.setCustEMailPriority(ObjectUtil.valueAsInt(record.getValue("custEMailPriority")));
 
 		kycDetailsUploadService.doValidate(header, detail);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		kycDetailsUploadService.updateProcess(header, detail, record);
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	private String valueOf(MapSqlParameterSource record, String value) {
-		return ObjectUtil.valueAsString(record.getValue(value));
-	}
-
 }

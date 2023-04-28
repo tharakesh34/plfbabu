@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateUpload;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -35,46 +34,41 @@ public class MandateUploadValidateRecord implements ValidateRecord {
 
 		MandateUpload detail = new MandateUpload();
 
-		detail.setHeaderId(headerID);
-		detail.setReference(ObjectUtil.valueAsString(record.getValue("ORGREFERENCE")));
+		detail.setReference(ObjectUtil.valueAsString(record.getValue("orgReference")));
 
 		Mandate mndts = new Mandate();
 
-		mndts.setCustCIF(ObjectUtil.valueAsString(record.getValue("CUSTCIF")));
-		mndts.setMandateRef(ObjectUtil.valueAsString(record.getValue("MANDATEREF")));
-		mndts.setMandateType(ObjectUtil.valueAsString(record.getValue("MANDATETYPE")));
-		mndts.setAccNumber(ObjectUtil.valueAsString(record.getValue("ACCNUMBER")));
-		mndts.setAccHolderName(ObjectUtil.valueAsString(record.getValue("ACCHOLDERNAME")));
-		mndts.setJointAccHolderName(ObjectUtil.valueAsString(record.getValue("JOINTACCHOLDERNAME")));
-		mndts.setAccType(ObjectUtil.valueAsString(record.getValue("ACCTYPE")));
-		mndts.setStrOpenMandate(ObjectUtil.valueAsString(record.getValue("OPENMANDATE")));
-		mndts.setStartDate(ObjectUtil.valueAsDate(record.getValue("STARTDATE")));
-		mndts.setExpiryDate(ObjectUtil.valueAsDate(record.getValue("EXPIRYDATE")));
-		mndts.setMaxLimit(ObjectUtil.valueAsBigDecimal(record.getValue("MAXLIMIT")));
-		mndts.setPeriodicity(ObjectUtil.valueAsString(record.getValue("PERIODICITY")));
-		mndts.setStatus(ObjectUtil.valueAsString(record.getValue("MANDATESTATUS")));
-		mndts.setReason(ObjectUtil.valueAsString(record.getValue("REASON")));
-		mndts.setStrSwapIsActive(ObjectUtil.valueAsString(record.getValue("SWAPISACTIVE")));
-		mndts.setEntityCode(ObjectUtil.valueAsString(record.getValue("ENTITYCODE")));
-		mndts.setPartnerBankId(ObjectUtil.valueAsLong(record.getValue("PARTNERBANKID")));
-		mndts.seteMandateSource(ObjectUtil.valueAsString(record.getValue("EMANDATESOURCE")));
-		mndts.seteMandateReferenceNo(ObjectUtil.valueAsString(record.getValue("EMANDATEREFERENCENO")));
-		mndts.setSwapEffectiveDate(ObjectUtil.valueAsDate(record.getValue("SWAPEFFECTIVEDATE")));
-		mndts.setEmployerID(ObjectUtil.valueAsLong(record.getValue("EMPLOYERID")));
-		mndts.setEmployeeNo(ObjectUtil.valueAsString(record.getValue("EMPLOYEENO")));
-		mndts.setIFSC(ObjectUtil.valueAsString(record.getValue("IFSC")));
-		mndts.setMICR(ObjectUtil.valueAsString(record.getValue("MICR")));
-		mndts.setStrExternalMandate(ObjectUtil.valueAsString(record.getValue("EXTERNALMANDATE")));
-		mndts.setStrSecurityMandate(ObjectUtil.valueAsString(record.getValue("SECURITYMANDATE")));
-
+		mndts.setCustCIF(ObjectUtil.valueAsString(record.getValue("custCIF")));
+		mndts.setMandateRef(ObjectUtil.valueAsString(record.getValue("mandateRef")));
+		mndts.setMandateType(ObjectUtil.valueAsString(record.getValue("mandateType")));
+		mndts.setAccNumber(ObjectUtil.valueAsString(record.getValue("accNumber")));
+		mndts.setAccHolderName(ObjectUtil.valueAsString(record.getValue("accHolderName")));
+		mndts.setJointAccHolderName(ObjectUtil.valueAsString(record.getValue("jointAccHolderName")));
+		mndts.setAccType(ObjectUtil.valueAsString(record.getValue("accType")));
+		mndts.setStrOpenMandate(ObjectUtil.valueAsString(record.getValue("openMandate")));
+		mndts.setStartDate(ObjectUtil.valueAsDate(record.getValue("startDate")));
+		mndts.setExpiryDate(ObjectUtil.valueAsDate(record.getValue("expiryDate")));
+		mndts.setMaxLimit(ObjectUtil.valueAsBigDecimal(record.getValue("maxLimit")));
+		mndts.setPeriodicity(ObjectUtil.valueAsString(record.getValue("periodicity")));
+		mndts.setStatus(ObjectUtil.valueAsString(record.getValue("mandateStatus")));
+		mndts.setReason(ObjectUtil.valueAsString(record.getValue("reason")));
+		mndts.setStrSwapIsActive(ObjectUtil.valueAsString(record.getValue("swapIsActive")));
+		mndts.setEntityCode(ObjectUtil.valueAsString(record.getValue("entityCode")));
+		mndts.setPartnerBankId(ObjectUtil.valueAsLong(record.getValue("partnerBankId")));
+		mndts.seteMandateSource(ObjectUtil.valueAsString(record.getValue("eMandateSource")));
+		mndts.seteMandateReferenceNo(ObjectUtil.valueAsString(record.getValue("eMandateReferenceNo")));
+		mndts.setSwapEffectiveDate(ObjectUtil.valueAsDate(record.getValue("swapEffectiveDate")));
+		mndts.setEmployerID(ObjectUtil.valueAsLong(record.getValue("employerID")));
+		mndts.setEmployeeNo(ObjectUtil.valueAsString(record.getValue("employeeNo")));
+		mndts.setIFSC(ObjectUtil.valueAsString(record.getValue("iFSC")));
+		mndts.setMICR(ObjectUtil.valueAsString(record.getValue("mICR")));
+		mndts.setStrExternalMandate(ObjectUtil.valueAsString(record.getValue("externalMandate")));
+		mndts.setStrSecurityMandate(ObjectUtil.valueAsString(record.getValue("securityMandate")));
 		detail.setMandate(mndts);
 
 		mandateUploadService.doValidate(header, detail);
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
-		}
+		mandateUploadService.updateProcess(header, detail, record);
 
 		logger.debug(Literal.LEAVING);
 	}

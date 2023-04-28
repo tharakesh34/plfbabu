@@ -13156,7 +13156,7 @@
 	<bean id="excessTransferUploadDAO"
 		class="com.pennant.pff.excess.dao.impl.ExcessTransferUploadDAOImpl" parent="sequenceDao" />
 
-	<bean id="manualKnockOffUploadServiceImpl" class="com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadServiceImpl" parent="aUploadService" />
+	<bean id="manualKnockOffUploadService" class="com.pennant.pff.manualknockoff.service.impl.ManualKnockOffUploadServiceImpl" parent="aUploadService" />
 	
 	<bean id="manualKnockOffUploadDAO" class="com.pennant.pff.manualknockoff.dao.impl.ManualKnockOffUploadDAOImpl" parent="sequenceDao" />
 	

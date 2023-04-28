@@ -30,6 +30,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.file.UploadTypes;
 
 public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(KycDetailsUploadServiceImpl.class);
@@ -40,7 +41,6 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	@Autowired
 	private CustomerDAO customerDAO;
-	@Autowired
 	private ValidateRecord kycDetailsUploadValidateRecord;
 	@Autowired
 	private GuarantorDetailDAO guarantorDetailDAO;
@@ -354,6 +354,12 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.CUSTOMER_KYC_DETAILS.name(), kycDetailsUploadValidateRecord, this,
+				"KycDetailsUploadHeader");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return kycDetailsUploadDAO.getSqlQuery();
 	}
@@ -361,6 +367,11 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public ValidateRecord getValidateRecord() {
 		return kycDetailsUploadValidateRecord;
+	}
+
+	@Autowired
+	public void setKycDetailsUploadValidateRecord(ValidateRecord kycDetailsUploadValidateRecord) {
+		this.kycDetailsUploadValidateRecord = kycDetailsUploadValidateRecord;
 	}
 
 	protected void setError(CustomerKycDetail detail, String code, String... parms) {
