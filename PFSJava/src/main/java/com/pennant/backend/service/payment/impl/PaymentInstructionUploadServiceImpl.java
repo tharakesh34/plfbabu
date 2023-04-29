@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -45,11 +47,13 @@ import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.paymentupload.exception.PaymentUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(PaymentInstructionUploadServiceImpl.class);
@@ -65,7 +69,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private RefundBeneficiary refundBeneficiary;
-	private ValidateRecord paymentInstructionUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -301,11 +304,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public String getSqlQuery() {
 		return paymentInstructionUploadDAO.getSqlQuery();
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return paymentInstructionUploadValidateRecord;
 	}
 
 	private void processRefund(long headerID) {
@@ -569,8 +567,30 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.PAYINS_REFUND.name(), paymentInstructionUploadValidateRecord, this,
-				"PaymentInstructionUploadHeader");
+		uploadProcess(UploadTypes.PAYINS_REFUND.name(), this, "PaymentInstructionUploadHeader");
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		PaymentInstUploadDetail paymentDetail = (PaymentInstUploadDetail) ObjectUtil.valueAsObject(record,
+				PaymentInstUploadDetail.class);
+
+		paymentDetail.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+
+		paymentDetail.setHeaderId(header.getId());
+		paymentDetail.setAppDate(header.getAppDate());
+
+		doValidate(header, paymentDetail);
+
+		updateProcess(header, paymentDetail, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -626,12 +646,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setRefundBeneficiary(RefundBeneficiary refundBeneficiary) {
 		this.refundBeneficiary = refundBeneficiary;
-	}
-
-	@Autowired
-	public void setPaymentInstructionUploadValidateRecord(
-			PaymentInstructionUploadValidateRecord paymentInstructionUploadValidateRecord) {
-		this.paymentInstructionUploadValidateRecord = paymentInstructionUploadValidateRecord;
 	}
 
 }

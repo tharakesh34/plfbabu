@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -36,19 +37,19 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.bulkfeewaiverupload.dao.BulkFeeWaiverUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.bulkfeewaiverupload.BulkFeeWaiverUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(BulkFeeWaiverUploadServiceImpl.class);
 
 	private BulkFeeWaiverUploadDAO bulkFeeWaiverUploadDAO;
-	private ValidateRecord bulkFeeWaiverUploadValidateRecord;
 	private FinanceMainDAO financeMainDAO;
 	private FeeWaiverUploadHeaderService feeWaiverUploadHeaderService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
@@ -377,23 +378,44 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.FEE_WAIVER.name(), bulkFeeWaiverUploadValidateRecord, this,
-				"BulkFeeWaiverUploadHeader");
+		uploadProcess(UploadTypes.FEE_WAIVER.name(), this, "BulkFeeWaiverUploadHeader");
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		BulkFeeWaiverUpload bfee = new BulkFeeWaiverUpload();
+
+		bfee.setHeaderId(headerID);
+		bfee.setAppDate(SysParamUtil.getAppDate());
+		bfee.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		bfee.setFeeTypeCode(ObjectUtil.valueAsString(record.getValue("feeTypeCode")));
+		bfee.setWaivedAmount(ObjectUtil.valueAsBigDecimal(record.getValue("waivedAmount")));
+
+		doValidate(header, bfee);
+
+		updateProcess(header, bfee, record);
+
+		List<BulkFeeWaiverUpload> details = new ArrayList<>();
+		details.add(bfee);
+
+		bulkFeeWaiverUploadDAO.update(details);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
 	public void setBulkFeeWaiverUploadDAO(BulkFeeWaiverUploadDAO feeWaiverUploadDAO) {
 		this.bulkFeeWaiverUploadDAO = feeWaiverUploadDAO;
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return bulkFeeWaiverUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setBulkFeeWaiverUploadValidateRecord(ValidateRecord bulkFeeWaiverUploadValidateRecord) {
-		this.bulkFeeWaiverUploadValidateRecord = bulkFeeWaiverUploadValidateRecord;
 	}
 
 	@Autowired

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -39,11 +40,14 @@ import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.pff.miscellaneouspostingupload.dao.MiscellaneousPostingUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(MiscellaneousPostingUploadServiceImpl.class);
@@ -53,7 +57,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	private AccountMappingDAO accountMappingDAO;
 	private JVPostingService jVPostingService;
 	private JVPostingDAO jVPostingDAO;
-	private MiscellaneousPostingUploadValidateRecord miscellaneousPostingUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -423,8 +426,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.MISCELLANEOUS_POSTING.name(), miscellaneousPostingUploadValidateRecord, this,
-				"MiscellaneousPostingUploadHeader");
+		uploadProcess(UploadTypes.MISCELLANEOUS_POSTING.name(), this, "MiscellaneousPostingUploadHeader");
 
 	}
 
@@ -449,14 +451,26 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public MiscellaneousPostingUploadValidateRecord getValidateRecord() {
-		return miscellaneousPostingUploadValidateRecord;
-	}
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
 
-	@Autowired
-	public void setMiscellaneousPostingUploadValidateRecord(
-			MiscellaneousPostingUploadValidateRecord miscellaneousPostingUploadValidateRecord) {
-		this.miscellaneousPostingUploadValidateRecord = miscellaneousPostingUploadValidateRecord;
+		MiscellaneousPostingUpload details = (MiscellaneousPostingUpload) ObjectUtil.valueAsObject(record,
+				MiscellaneousPostingUpload.class);
+
+		details.setReference(ObjectUtil.valueAsString(record.getValue("reference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		details.setHeaderId(header.getId());
+		details.setAppDate(header.getAppDate());
+
+		doValidate(header, details);
+
+		updateProcess(header, details, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired

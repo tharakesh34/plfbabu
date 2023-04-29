@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -35,13 +36,15 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(ChequeUploadServiceImpl.class);
@@ -52,7 +55,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
-	private ValidateRecord chequeUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -320,11 +322,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		return chequeUploadDAO.getSqlQuery();
 	}
 
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return chequeUploadValidateRecord;
-	}
-
 	private void process(ChequeHeader header, List<ChequeUpload> uploads) {
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData data = new FinScheduleData();
@@ -377,7 +374,43 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.CHEQUE.name(), chequeUploadValidateRecord, this, "ChequeUpload");
+		uploadProcess(UploadTypes.CHEQUE.name(), this, "ChequeUpload");
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		ChequeUpload detail = new ChequeUpload();
+
+		detail.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		detail.setAction(ObjectUtil.valueAsString(record.getValue("action")));
+
+		ChequeDetail cd = new ChequeDetail();
+
+		cd.setChequeType(ObjectUtil.valueAsString(record.getValue("chequeType")));
+		cd.setChequeSerialNumber(ObjectUtil.valueAsString(record.getValue("chequeSerialNo")));
+		cd.setAccountType(ObjectUtil.valueAsString(record.getValue("accountType")));
+		cd.setAccHolderName(ObjectUtil.valueAsString(record.getValue("accHolderName")));
+		cd.setAccountNo(ObjectUtil.valueAsString(record.getValue("accountNo")));
+		cd.setIfsc(ObjectUtil.valueAsString(record.getValue("ifsc")));
+		cd.setMicr(ObjectUtil.valueAsString(record.getValue("micr")));
+		cd.setAmount(ObjectUtil.valueAsBigDecimal(record.getValue("amount")));
+		cd.setChequeDate(ObjectUtil.valueAsDate(record.getValue("chequeDate")));
+
+		detail.setChequeDetail(cd);
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, record);
 	}
 
 	private int fetchChequeSize(List<ChequeDetail> cheques) {
@@ -431,11 +464,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
-	}
-
-	@Autowired
-	public void setChequeUploadValidateRecord(ChequeUploadValidateRecord chequeUploadValidateRecord) {
-		this.chequeUploadValidateRecord = chequeUploadValidateRecord;
 	}
 
 }

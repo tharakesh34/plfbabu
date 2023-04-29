@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -38,6 +39,7 @@ import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -387,6 +389,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public ProcessRecord getProcessRecord() {
 		return manualKnockOffUploadProcessRecord;
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		// Implemented for process record.
 	}
 
 	private BigDecimal getEmiAmount(List<ManualKnockOffUpload> allocations) {

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -29,13 +30,15 @@ import com.pennant.pff.lien.dao.LienUploadDAO;
 import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.model.lien.LienUpload;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LienUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(LienUploadServiceImpl.class);
@@ -45,7 +48,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	private LienDetailsDAO lienDetailsDAO;
 	private LienHeaderDAO lienHeaderDAO;
 	private LienService lienService;
-	private ValidateRecord lienUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -277,13 +279,35 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.LIEN.name(), lienUploadValidateRecord, this, "Lien");
+		uploadProcess(UploadTypes.LIEN.name(), this, "Lien");
 
 	}
 
 	@Override
 	public String getSqlQuery() {
 		return lienUploadDAO.getSqlQuery();
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		LienUpload details = (LienUpload) ObjectUtil.valueAsObject(record, LienUpload.class);
+
+		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		details.setHeaderId(header.getId());
+		details.setAppDate(header.getAppDate());
+
+		doValidate(header, details);
+
+		updateProcess(header, details, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(LienUpload detail, LienUploadError error) {
@@ -315,16 +339,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setLienService(LienService lienService) {
 		this.lienService = lienService;
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return lienUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setLienUploadValidateRecord(ValidateRecord lienUploadValidateRecord) {
-		this.lienUploadValidateRecord = lienUploadValidateRecord;
 	}
 
 }

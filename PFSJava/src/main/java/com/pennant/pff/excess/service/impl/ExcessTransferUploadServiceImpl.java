@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -31,10 +33,12 @@ import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.excess.service.ExcessTransferService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(ExcessTransferUploadServiceImpl.class);
@@ -43,7 +47,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ExcessTransferService excessTransferService;
-	private ValidateRecord excessTransferUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -309,8 +312,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.EXCESS_TRANSFER.name(), excessTransferUploadValidateRecord, this,
-				"ExcessTransferUpload");
+		uploadProcess(UploadTypes.EXCESS_TRANSFER.name(), this, "ExcessTransferUpload");
 	}
 
 	@Override
@@ -319,8 +321,26 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return excessTransferUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		ExcessTransferUpload transfer = (ExcessTransferUpload) ObjectUtil.valueAsObject(record,
+				ExcessTransferUpload.class);
+
+		transfer.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		transfer.setHeaderId(header.getId());
+		transfer.setAppDate(header.getAppDate());
+
+		doValidate(header, transfer);
+
+		updateProcess(header, transfer, record, "C", "R");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -343,9 +363,4 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 		this.excessTransferService = excessTransferService;
 	}
 
-	@Autowired
-	public void setExcessTransferUploadValidateRecord(
-			ExcessTransferUploadValidateRecord excessTransferUploadValidateRecord) {
-		this.excessTransferUploadValidateRecord = excessTransferUploadValidateRecord;
-	}
 }

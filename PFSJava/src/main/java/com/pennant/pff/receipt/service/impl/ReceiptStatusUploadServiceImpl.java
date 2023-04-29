@@ -3,12 +3,14 @@ package com.pennant.pff.receipt.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -47,11 +49,13 @@ import com.pennant.pff.receipt.dao.ReceiptStatusUploadDAO;
 import com.pennant.pff.receipt.model.ReceiptStatusUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.upload.ReceiptStatusUploadError;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(ReceiptStatusUploadServiceImpl.class);
@@ -62,7 +66,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 	private BounceReasonDAO bounceReasonDAO;
 	private RejectDetailDAO rejectDetailDAO;
 	private ReceiptService receiptService;
-	private ValidateRecord receiptStatusUploadValidateRecord;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceTypeDAO financeTypeDAO;
@@ -428,13 +431,34 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.RECEIPT_STATUS.name(), receiptStatusUploadValidateRecord, this,
-				"ReceiptStatusUploadHeader");
+		uploadProcess(UploadTypes.RECEIPT_STATUS.name(), this, "ReceiptStatusUploadHeader");
 	}
 
 	@Override
 	public String getSqlQuery() {
 		return receiptStatusUploadDAO.getSqlQuery();
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		ReceiptStatusUpload details = (ReceiptStatusUpload) ObjectUtil.valueAsObject(record, ReceiptStatusUpload.class);
+
+		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		details.setHeaderId(header.getId());
+		details.setAppDate(header.getAppDate());
+
+		doValidate(header, details);
+
+		updateProcess(header, details, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -470,16 +494,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return receiptStatusUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setReceiptStatusUploadValidateRecord(ValidateRecord receiptStatusUploadValidateRecord) {
-		this.receiptStatusUploadValidateRecord = receiptStatusUploadValidateRecord;
 	}
 
 	@Autowired

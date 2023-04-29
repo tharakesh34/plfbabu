@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -23,9 +24,11 @@ import com.pennant.pff.holdrefund.model.HoldRefundUploadDetail;
 import com.pennant.pff.paymentupload.exception.PaymentUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(HoldRefundUploadServiceImpl.class);
@@ -33,7 +36,6 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;
-	private ValidateRecord holdRefundUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -252,7 +254,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.HOLD_REFUND.name(), holdRefundUploadValidateRecord, this, "HoldRefundUploadHeader");
+		uploadProcess(UploadTypes.HOLD_REFUND.name(), this, "HoldRefundUploadHeader");
 	}
 
 	@Override
@@ -272,13 +274,34 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return holdRefundUploadValidateRecord;
-	}
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
 
-	@Autowired
-	public void setHoldRefundUploadValidateRecord(HoldRefundUploadValidateRecord holdRefundUploadValidateRecord) {
-		this.holdRefundUploadValidateRecord = holdRefundUploadValidateRecord;
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
+		boolean recordExist = isInProgress(headerID, finReference);
+
+		if (recordExist) {
+			throw new AppException("Record is already initiated, unable to proceed.");
+		}
+
+		HoldRefundUploadDetail detail = new HoldRefundUploadDetail();
+		detail.setHeaderId(headerID);
+		detail.setReference(finReference);
+		detail.setHoldStatus(ObjectUtil.valueAsString(record.getValue("holdStatus")));
+		detail.setReason(ObjectUtil.valueAsString(record.getValue("reason")));
+		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("remarks")));
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, record);
 	}
 
 	@Autowired

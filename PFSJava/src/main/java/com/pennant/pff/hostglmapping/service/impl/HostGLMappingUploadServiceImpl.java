@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -33,10 +35,13 @@ import com.pennant.pff.accounting.TransactionType;
 import com.pennant.pff.hostglmapping.dao.HostGLMappingUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(HostGLMappingUploadServiceImpl.class);
@@ -47,7 +52,6 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	private CostCenterDAO costCenterDAO;
 	private ProfitCenterDAO profitCenterDAO;
 	private AccountMappingService accountMappingService;
-	private HostGLMappingUploadValidateRecord hostGLMappingUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -303,12 +307,33 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 				transactionManager.rollback(txStatus);
 			}
 		}
-
 	}
 
 	@Override
 	public String getSqlQuery() {
 		return hostGLMappingUploadDAO.getSqlQuery();
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		HostGLMappingUpload details = (HostGLMappingUpload) ObjectUtil.valueAsObject(record, HostGLMappingUpload.class);
+
+		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		details.setHeaderId(header.getId());
+		details.setAppDate(header.getAppDate());
+
+		doValidate(header, details);
+
+		updateProcess(header, details, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(HostGLMappingUpload detail, HostGLMappingUploadError error) {
@@ -319,7 +344,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.HOST_GL.name(), hostGLMappingUploadValidateRecord, this, "HostGLMappingUploadHeader");
+		uploadProcess(UploadTypes.HOST_GL.name(), this, "HostGLMappingUploadHeader");
 	}
 
 	@Autowired
@@ -350,17 +375,6 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setAccountMappingService(AccountMappingService accountMappingService) {
 		this.accountMappingService = accountMappingService;
-	}
-
-	@Override
-	public HostGLMappingUploadValidateRecord getValidateRecord() {
-		return hostGLMappingUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setHostGLMappingUploadValidateRecord(
-			HostGLMappingUploadValidateRecord hostGLMappingUploadValidateRecord) {
-		this.hostGLMappingUploadValidateRecord = hostGLMappingUploadValidateRecord;
 	}
 
 }

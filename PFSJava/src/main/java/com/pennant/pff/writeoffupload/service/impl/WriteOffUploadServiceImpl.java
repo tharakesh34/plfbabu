@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -41,18 +42,19 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennant.pff.writeoffupload.dao.WriteOffUploadDAO;
 import com.pennant.pff.writeoffupload.exception.WriteOffUploadError;
 import com.pennant.pff.writeoffupload.model.WriteOffUploadDetail;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(WriteOffUploadServiceImpl.class);
 
 	private WriteOffUploadDAO writeOffUploadDAO;
 	private FinanceMainDAO financeMainDAO;
-	private ValidateRecord writeOffUploadValidateRecord;
 	private FinanceWriteoffService financeWriteoffService;
 	private ReceiptService receiptService;
 	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
@@ -462,23 +464,44 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return writeOffUploadValidateRecord;
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.WRITE_OFF.name(), this, "WriteOffUploadHeader");
 	}
 
 	@Override
-	public void uploadProcess() {
-		uploadProcess(UploadTypes.WRITE_OFF.name(), writeOffUploadValidateRecord, this, "WriteOffUploadHeader");
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		String finReference = ObjectUtil.valueAsString(record.getValue("FINREFERENCE"));
+		boolean recordExist = isInProgress(headerID, finReference);
+
+		if (recordExist) {
+			throw new AppException("Record is already initiated, unable to proceed.");
+		}
+
+		WriteOffUploadDetail detail = new WriteOffUploadDetail();
+		detail.setHeaderId(headerID);
+		detail.setReference(finReference);
+		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
 	public void setWriteOffUploadDAO(WriteOffUploadDAO writeOffUploadDAO) {
 		this.writeOffUploadDAO = writeOffUploadDAO;
-	}
-
-	@Autowired
-	public void setWriteOffUploadValidateRecord(ValidateRecord writeOffUploadValidateRecord) {
-		this.writeOffUploadValidateRecord = writeOffUploadValidateRecord;
 	}
 
 	@Autowired

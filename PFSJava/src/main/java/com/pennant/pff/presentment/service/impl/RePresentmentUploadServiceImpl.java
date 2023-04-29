@@ -2,12 +2,14 @@ package com.pennant.pff.presentment.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -25,10 +27,12 @@ import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennant.pff.presentment.service.ExtractionService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(RePresentmentUploadServiceImpl.class);
@@ -38,7 +42,6 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private ValidateRecord representmentUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -259,7 +262,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.RE_PRESENTMENT.name(), representmentUploadValidateRecord, this, "RepresentUploadHeader");
+		uploadProcess(UploadTypes.RE_PRESENTMENT.name(), this, "RepresentUploadHeader");
 	}
 
 	@Override
@@ -268,8 +271,26 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return representmentUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		RePresentmentUploadDetail representment = (RePresentmentUploadDetail) ObjectUtil.valueAsObject(record,
+				RePresentmentUploadDetail.class);
+
+		representment.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+
+		representment.setHeaderId(header.getId());
+		representment.setAppDate(header.getAppDate());
+
+		doValidate(header, representment);
+
+		updateProcess(header, representment, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {
@@ -303,9 +324,4 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	@Autowired
-	public void setRepresentmentUploadValidateRecord(
-			RepresentmentUploadValidateRecord representmentUploadValidateRecord) {
-		this.representmentUploadValidateRecord = representmentUploadValidateRecord;
-	}
 }

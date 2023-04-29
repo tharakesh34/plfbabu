@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -33,9 +35,12 @@ import com.pennant.pff.lpp.PenaltyTypes;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(LPPUploadServiceImpl.class);
@@ -43,7 +48,6 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMaintenanceService financeMaintenanceService;
-	private LppUploadValidateRecord lppUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -448,12 +452,34 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.LPP.name(), lppUploadValidateRecord, this, "LPPUploadHeader");
+		uploadProcess(UploadTypes.LPP.name(), this, "LPPUploadHeader");
 	}
 
 	@Override
 	public String getSqlQuery() {
 		return lppUploadDAO.getSqlQuery();
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		LPPUpload lppUpload = (LPPUpload) ObjectUtil.valueAsObject(record, LPPUpload.class);
+
+		lppUpload.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+
+		lppUpload.setHeaderId(header.getId());
+		lppUpload.setAppDate(header.getAppDate());
+
+		doValidate(header, lppUpload);
+
+		updateProcess(header, lppUpload, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -469,16 +495,6 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMaintenanceService(FinanceMaintenanceService financeMaintenanceService) {
 		this.financeMaintenanceService = financeMaintenanceService;
-	}
-
-	@Override
-	public LppUploadValidateRecord getValidateRecord() {
-		return lppUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setLppUploadValidateRecord(LppUploadValidateRecord lppUploadValidateRecord) {
-		this.lppUploadValidateRecord = lppUploadValidateRecord;
 	}
 
 }

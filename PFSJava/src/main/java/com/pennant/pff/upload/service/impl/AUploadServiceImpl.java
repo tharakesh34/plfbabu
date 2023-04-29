@@ -37,7 +37,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 import com.pennanttech.pff.file.UploadStatus;
 
-public abstract class AUploadServiceImpl implements UploadService {
+public abstract class AUploadServiceImpl implements UploadService, ValidateRecord {
 	protected static final Logger logger = LogManager.getLogger(AUploadServiceImpl.class);
 
 	private UploadDAO uploadDAO;
@@ -138,17 +138,16 @@ public abstract class AUploadServiceImpl implements UploadService {
 	@Override
 	public void uploadProcess(String type, ProcessRecord processRecord, UploadService uploadService,
 			String moduleCode) {
-		uploadProcess(type, processRecord, null, uploadService, moduleCode);
+		uploadProcess1(type, processRecord, uploadService, moduleCode);
 	}
 
 	@Override
-	public void uploadProcess(String type, ValidateRecord validateRecord, UploadService uploadService,
-			String moduleCode) {
-		uploadProcess(type, null, validateRecord, uploadService, moduleCode);
+	public void uploadProcess(String type, UploadService uploadService, String moduleCode) {
+		uploadProcess1(type, null, uploadService, moduleCode);
 	}
 
-	private void uploadProcess(String type, ProcessRecord processRecord, ValidateRecord validateRecord,
-			UploadService uploadService, String moduleCode) {
+	private void uploadProcess1(String type, ProcessRecord processRecord, UploadService uploadService,
+			String moduleCode) {
 		logger.info("{} Upload job is started...", type.toUpperCase());
 
 		List<FileUploadHeader> loadData = uploadDAO.loadData(type);
@@ -179,7 +178,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 			logger.info(INFO_LOG, initaitedList.size(), type.toUpperCase());
 			new Thread(() -> {
 				String jobName = type.toUpperCase().concat("_PROCESS_JOB");
-				processJob(processRecord, validateRecord, jobName, initaitedList, appDate, uploadService, moduleCode);
+				processJob(processRecord, jobName, initaitedList, appDate, uploadService, moduleCode);
 			}).start();
 		}
 
@@ -187,7 +186,7 @@ public abstract class AUploadServiceImpl implements UploadService {
 			logger.info(INFO_LOG, approvalList.size(), type.toUpperCase());
 			new Thread(() -> {
 				String jobName = type.toUpperCase().concat("_APPROVER_JOB");
-				processJob(processRecord, validateRecord, jobName, approvalList, appDate, uploadService, moduleCode);
+				processJob(processRecord, jobName, approvalList, appDate, uploadService, moduleCode);
 			}).start();
 
 		}
@@ -195,8 +194,8 @@ public abstract class AUploadServiceImpl implements UploadService {
 		logger.info(String.format("%s is completed...", type.toUpperCase()));
 	}
 
-	private void processJob(ProcessRecord processRecord, ValidateRecord validateRecord, String jobName,
-			List<FileUploadHeader> loadData, Date appDate, UploadService uploadService, String moduleCode) {
+	private void processJob(ProcessRecord processRecord, String jobName, List<FileUploadHeader> loadData, Date appDate,
+			UploadService uploadService, String moduleCode) {
 
 		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor(jobName);
 		CountDownLatch latch = new CountDownLatch(1);
@@ -206,7 +205,9 @@ public abstract class AUploadServiceImpl implements UploadService {
 		threadProcess.setLatch(latch);
 		threadProcess.setHeaderList(loadData);
 		threadProcess.setAppDate(appDate);
-		threadProcess.setValidateRecord(validateRecord);
+		if (processRecord == null) {
+			threadProcess.setValidateRecord(this);
+		}
 		threadProcess.setProcessRecord(processRecord);
 		threadProcess.setUploadService(uploadService);
 		threadProcess.setJobName(jobName);
@@ -344,6 +345,8 @@ public abstract class AUploadServiceImpl implements UploadService {
 	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record) {
 		updateProcess(header, detail, record, "S", "F");
 	}
+
+	public abstract void doValidate(FileUploadHeader header, Object object);
 
 	private WorkFlowDetails getWorkflow(String moduleCode) {
 		return uploadDAO.getWorkFlow(moduleCode);

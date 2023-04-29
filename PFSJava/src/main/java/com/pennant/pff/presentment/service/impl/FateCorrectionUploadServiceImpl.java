@@ -2,12 +2,14 @@ package com.pennant.pff.presentment.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -21,18 +23,19 @@ import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.presentment.PresentmentRespUpload;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(FateCorrectionUploadServiceImpl.class);
 
 	private PresentmentRespUploadDAO presentmentRespUploadDAO;
 	private FinanceMainDAO financeMainDAO;
-	private ValidateRecord fateCorrectionUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -233,7 +236,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.FATE_CORRECTION.name(), fateCorrectionUploadValidateRecord, this, "FateCorrection");
+		uploadProcess(UploadTypes.FATE_CORRECTION.name(), this, "FateCorrection");
 	}
 
 	@Override
@@ -242,8 +245,26 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return fateCorrectionUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		PresentmentRespUpload presentment = (PresentmentRespUpload) ObjectUtil.valueAsObject(record,
+				PresentmentRespUpload.class);
+
+		presentment.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+
+		presentment.setHeaderId(header.getId());
+		presentment.setAppDate(header.getAppDate());
+
+		doValidate(header, presentment);
+
+		updateProcess(header, presentment, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -256,9 +277,4 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	@Autowired
-	public void setFateCorrectionUploadValidateRecord(
-			FateCorrectionUploadValidateRecord fateCorrectionUploadValidateRecord) {
-		this.fateCorrectionUploadValidateRecord = fateCorrectionUploadValidateRecord;
-	}
 }

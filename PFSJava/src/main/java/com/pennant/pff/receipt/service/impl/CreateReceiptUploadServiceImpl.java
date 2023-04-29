@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -32,6 +33,7 @@ import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.RequestSource;
@@ -278,6 +280,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	public void uploadProcess() {
 		uploadProcess(UploadTypes.CREATE_RECEIPT.name(), createReceiptUploadDataValidator, this,
 				"CreateReceiptUploadHeader");
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		// Implemented in process record.
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -25,12 +26,13 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.customer.exception.CustomerDetailsUploadError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(KycDetailsUploadServiceImpl.class);
@@ -41,7 +43,6 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	@Autowired
 	private CustomerDAO customerDAO;
-	private ValidateRecord kycDetailsUploadValidateRecord;
 	@Autowired
 	private GuarantorDetailDAO guarantorDetailDAO;
 	@Autowired
@@ -408,8 +409,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.CUSTOMER_KYC_DETAILS.name(), kycDetailsUploadValidateRecord, this,
-				"KycDetailsUploadHeader");
+		uploadProcess(UploadTypes.CUSTOMER_KYC_DETAILS.name(), this, "KycDetailsUploadHeader");
 	}
 
 	@Override
@@ -418,13 +418,57 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return kycDetailsUploadValidateRecord;
-	}
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
 
-	@Autowired
-	public void setKycDetailsUploadValidateRecord(ValidateRecord kycDetailsUploadValidateRecord) {
-		this.kycDetailsUploadValidateRecord = kycDetailsUploadValidateRecord;
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		String custCif = ObjectUtil.valueAsString(record.getValue("custCif"));
+
+		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
+
+		boolean recordExist = isInProgress(headerID, custCif);
+
+		if (recordExist) {
+			throw new AppException("Record is already initiated, unable to proceed.");
+		}
+
+		CustomerKycDetail detail = new CustomerKycDetail();
+		detail.setHeaderId(headerID);
+		detail.setFinReference(finReference);
+
+		detail.setCustAddrType(ObjectUtil.valueAsString(record.getValue("custAddrType")));
+		detail.setCustAddrPriority(ObjectUtil.valueAsInt(record.getValue("custAddrPriority")));
+		detail.setCustAddrLine3(ObjectUtil.valueAsString(record.getValue("custAddrLine3")));
+		detail.setCustAddrHNbr(ObjectUtil.valueAsString(record.getValue("custAddrHNbr")));
+		detail.setCustFlatNbr(ObjectUtil.valueAsString(record.getValue("custFlatNbr")));
+		detail.setCustAddrStreet(ObjectUtil.valueAsString(record.getValue("custAddrStreet")));
+		detail.setCustAddrLine1(ObjectUtil.valueAsString(record.getValue("custAddrLine1")));
+		detail.setCustAddrLine2(ObjectUtil.valueAsString(record.getValue("custAddrLine2")));
+		detail.setCustAddrCity(ObjectUtil.valueAsString(record.getValue("custAddrCity")));
+		detail.setCustAddrLine4(ObjectUtil.valueAsString(record.getValue("custAddrLine4")));
+		detail.setCustDistrict(ObjectUtil.valueAsString(record.getValue("custDistrict")));
+		detail.setCustAddrProvince(ObjectUtil.valueAsString(record.getValue("custAddrProvince")));
+		detail.setCustAddrCountry(ObjectUtil.valueAsString(record.getValue("custAddrCountry")));
+		detail.setCustAddrZIP(ObjectUtil.valueAsString(record.getValue("custAddrZIP")));
+		detail.setPhoneTypeCode(ObjectUtil.valueAsString(record.getValue("phoneTypeCode")));
+		detail.setPhoneNumber(ObjectUtil.valueAsString(record.getValue("phoneNumber")));
+		detail.setPhoneTypePriority(ObjectUtil.valueAsInt(record.getValue("phoneTypePriority")));
+		detail.setCustEMailTypeCode(ObjectUtil.valueAsString(record.getValue("custEMailTypeCode")));
+		detail.setCustEMail(ObjectUtil.valueAsString(record.getValue("custEMail")));
+		detail.setCustEMailPriority(ObjectUtil.valueAsInt(record.getValue("custEMailPriority")));
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected void setError(CustomerKycDetail detail, String code, String... parms) {

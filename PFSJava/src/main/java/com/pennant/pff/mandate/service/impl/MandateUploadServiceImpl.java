@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -21,19 +22,19 @@ import com.pennant.pff.excess.MandateUploadError;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(MandateUploadServiceImpl.class);
 
 	private MandateUploadDAO mandateUploadDAO;
 	private MandateService mandateService;
-	private ValidateRecord mandateUploadValidateRecord;
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -250,7 +251,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.MANDATES.name(), mandateUploadValidateRecord, this, "MandateUploadHeader");
+		uploadProcess(UploadTypes.MANDATES.name(), this, "MandateUploadHeader");
 	}
 
 	@Override
@@ -259,8 +260,56 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return mandateUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		MandateUpload detail = new MandateUpload();
+
+		detail.setReference(ObjectUtil.valueAsString(record.getValue("orgReference")));
+
+		Mandate mndts = new Mandate();
+
+		mndts.setCustCIF(ObjectUtil.valueAsString(record.getValue("custCIF")));
+		mndts.setMandateRef(ObjectUtil.valueAsString(record.getValue("mandateRef")));
+		mndts.setMandateType(ObjectUtil.valueAsString(record.getValue("mandateType")));
+		mndts.setAccNumber(ObjectUtil.valueAsString(record.getValue("accNumber")));
+		mndts.setAccHolderName(ObjectUtil.valueAsString(record.getValue("accHolderName")));
+		mndts.setJointAccHolderName(ObjectUtil.valueAsString(record.getValue("jointAccHolderName")));
+		mndts.setAccType(ObjectUtil.valueAsString(record.getValue("accType")));
+		mndts.setStrOpenMandate(ObjectUtil.valueAsString(record.getValue("openMandate")));
+		mndts.setStartDate(ObjectUtil.valueAsDate(record.getValue("startDate")));
+		mndts.setExpiryDate(ObjectUtil.valueAsDate(record.getValue("expiryDate")));
+		mndts.setMaxLimit(ObjectUtil.valueAsBigDecimal(record.getValue("maxLimit")));
+		mndts.setPeriodicity(ObjectUtil.valueAsString(record.getValue("periodicity")));
+		mndts.setStatus(ObjectUtil.valueAsString(record.getValue("mandateStatus")));
+		mndts.setReason(ObjectUtil.valueAsString(record.getValue("reason")));
+		mndts.setStrSwapIsActive(ObjectUtil.valueAsString(record.getValue("swapIsActive")));
+		mndts.setEntityCode(ObjectUtil.valueAsString(record.getValue("entityCode")));
+		mndts.setPartnerBankId(ObjectUtil.valueAsLong(record.getValue("partnerBankId")));
+		mndts.seteMandateSource(ObjectUtil.valueAsString(record.getValue("eMandateSource")));
+		mndts.seteMandateReferenceNo(ObjectUtil.valueAsString(record.getValue("eMandateReferenceNo")));
+		mndts.setSwapEffectiveDate(ObjectUtil.valueAsDate(record.getValue("swapEffectiveDate")));
+		mndts.setEmployerID(ObjectUtil.valueAsLong(record.getValue("employerID")));
+		mndts.setEmployeeNo(ObjectUtil.valueAsString(record.getValue("employeeNo")));
+		mndts.setIFSC(ObjectUtil.valueAsString(record.getValue("iFSC")));
+		mndts.setMICR(ObjectUtil.valueAsString(record.getValue("mICR")));
+		mndts.setStrExternalMandate(ObjectUtil.valueAsString(record.getValue("externalMandate")));
+		mndts.setStrSecurityMandate(ObjectUtil.valueAsString(record.getValue("securityMandate")));
+		detail.setMandate(mndts);
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -271,11 +320,6 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setMandateService(MandateService mandateService) {
 		this.mandateService = mandateService;
-	}
-
-	@Autowired
-	public void setMandateUploadValidateRecord(MandateUploadValidateRecord mandateUploadValidateRecord) {
-		this.mandateUploadValidateRecord = mandateUploadValidateRecord;
 	}
 
 }

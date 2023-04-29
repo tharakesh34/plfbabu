@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -30,10 +31,12 @@ import com.pennant.pff.branchchange.dao.BranchMigrationDAO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(BranchChangeUploadServiceImpl.class);
@@ -42,7 +45,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	private BranchDAO branchDAO;
 	private BranchMigrationDAO branchMigrationDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private ValidateRecord branchChangeUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -288,9 +290,29 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.BRANCH_CHANGE.name(), branchChangeUploadValidateRecord, this,
-				"BranchChangeUploadHeader");
+		uploadProcess(UploadTypes.BRANCH_CHANGE.name(), this, "BranchChangeUploadHeader");
+	}
 
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		BranchChangeUpload details = (BranchChangeUpload) ObjectUtil.valueAsObject(record, BranchChangeUpload.class);
+
+		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		details.setHeaderId(header.getId());
+		details.setAppDate(header.getAppDate());
+
+		doValidate(header, details);
+
+		updateProcess(header, details, record);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(BranchChangeUpload detail, BranchChangeUploadError error) {
@@ -322,16 +344,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return branchChangeUploadValidateRecord;
-	}
-
-	@Autowired
-	public void setBranchChangeUploadValidateRecord(ValidateRecord branchChangeUploadValidateRecord) {
-		this.branchChangeUploadValidateRecord = branchChangeUploadValidateRecord;
 	}
 
 }
