@@ -141,4 +141,10 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosure> implement
 		return jdbcOperations.queryForObject(sql, Integer.class, reference) > 0;
 	}
 
+	@Override
+	public long save(LoanClosure cu) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

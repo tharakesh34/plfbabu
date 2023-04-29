@@ -20,4 +20,6 @@ public interface LoanClosureUploadDAO {
 
 	boolean isInMaintanance(String reference);
 
+	long save(LoanClosure cu);
+
 }

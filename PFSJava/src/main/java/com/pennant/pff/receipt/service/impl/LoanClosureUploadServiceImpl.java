@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -25,11 +26,11 @@ import com.pennant.pff.receipt.dao.LoanClosureUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
-import com.pennanttech.pff.file.UploadTypes;
 
 public class LoanClosureUploadServiceImpl extends AUploadServiceImpl {
 	private static final Logger logger = LogManager.getLogger(KycDetailsUploadServiceImpl.class);
@@ -304,8 +305,10 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.CUSTOMER_KYC_DETAILS.name(), loanClosureUploadValidateRecord, this,
-				"KycDetailsUploadHeader");
+		/*
+		 * uploadProcess(UploadTypes.CUSTOMER_KYC_DETAILS.name(), loanClosureUploadValidateRecord, this,
+		 * "KycDetailsUploadHeader");
+		 */
 	}
 
 	@Override
@@ -345,6 +348,12 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setLoanClosureUploadValidateRecord(ValidateRecord loanClosureUploadValidateRecord) {
 		this.loanClosureUploadValidateRecord = loanClosureUploadValidateRecord;
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 
 }

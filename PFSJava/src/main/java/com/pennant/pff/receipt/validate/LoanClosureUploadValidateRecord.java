@@ -94,31 +94,31 @@ public class LoanClosureUploadValidateRecord implements ProcessRecord {
 				break;
 			case 5:
 				String interestAmt = rowCell.toString();
-				if (strAmount != null) {
+				if (interestAmt != null) {
 					cu.setInterest_W(PennantApplicationUtil.unFormateAmount(interestAmt, 2));
 				}
 				break;
 			case 6:
 				String bounceAmt = rowCell.toString();
-				if (strAmount != null) {
+				if (bounceAmt != null) {
 					cu.setBounce_W(PennantApplicationUtil.unFormateAmount(bounceAmt, 2));
 				}
 				break;
 			case 7:
 				String lppAmt = rowCell.toString();
-				if (strAmount != null) {
+				if (lppAmt != null) {
 					cu.setLpp_W(PennantApplicationUtil.unFormateAmount(lppAmt, 2));
 				}
 				break;
 			case 8:
 				String futIntAmt = rowCell.toString();
-				if (strAmount != null) {
+				if (futIntAmt != null) {
 					cu.setFtInterest_W(PennantApplicationUtil.unFormateAmount(futIntAmt, 2));
 				}
 				break;
 			case 9:
 				String futPriAmt = rowCell.toString();
-				if (strAmount != null) {
+				if (futPriAmt != null) {
 					cu.setFtPrincipal_W(PennantApplicationUtil.unFormateAmount(futPriAmt, 2));
 				}
 				break;
@@ -183,13 +183,13 @@ public class LoanClosureUploadValidateRecord implements ProcessRecord {
 			}
 		}
 
-		validate(cu, header);
+		// validate(cu, header);
 
 		if (cu.getProgress() == EodConstants.PROGRESS_FAILED) {
 			record.addValue("ERRORCODE", cu.getErrorCode());
 			record.addValue("ERRORDESC", cu.getErrorDesc());
 
-			List<CreateReceiptUpload> details = new ArrayList<>();
+			List<LoanClosure> details = new ArrayList<>();
 			details.add(cu);
 
 			loanClosureUploadDAO.update(details);
