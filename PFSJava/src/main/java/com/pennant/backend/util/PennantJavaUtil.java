@@ -826,9 +826,8 @@ public class PennantJavaUtil {
 						new Object[][] { { "SubSectorIsActive", "0", 1 } }, 400));
 
 		/*
-		 * ModuleUtil.register("PurposeDetail", new ModuleMapping("PurposeDetail",
-		 * PurposeDetail.class, new String[] { "PurposeDetails" }, masterWF, new
-		 * String[] { "PurposeCode", "purposeDesc" }, null, 400));
+		 * ModuleUtil.register("PurposeDetail", new ModuleMapping("PurposeDetail", PurposeDetail.class, new String[] {
+		 * "PurposeDetails" }, masterWF, new String[] { "PurposeCode", "purposeDesc" }, null, 400));
 		 */
 
 		ModuleUtil.register("SubSegment",
@@ -2446,9 +2445,8 @@ public class PennantJavaUtil {
 						new Object[][] { { "Active", "0", 1 } }, 300));
 
 		/*
-		 * ModuleUtil.register("LimitLine", new ModuleMapping("Rule", Rule.class, new
-		 * String[] { "Rules", "Rules_AView" }, masterWF, new String[] { "RuleId",
-		 * "RuleCode", "RuleCodeDesc" }, new String[][] { { "RuleModule", "0",
+		 * ModuleUtil.register("LimitLine", new ModuleMapping("Rule", Rule.class, new String[] { "Rules", "Rules_AView"
+		 * }, masterWF, new String[] { "RuleId", "RuleCode", "RuleCodeDesc" }, new String[][] { { "RuleModule", "0",
 		 * RuleConstants.MODULE_LMTLINE } }, 400));
 		 */
 
@@ -2723,9 +2721,8 @@ public class PennantJavaUtil {
 		/* RMT Lov Filed Details */
 		// Two modules are there ,Need to check it. FIXME:
 		/*
-		 * ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose",
-		 * LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" }, masterWF ,
-		 * new String[] { "FieldCodeValue", "ValueDesc" }, new String[][] { {
+		 * ModuleUtil.register("LoanPurpose", new ModuleMapping("LoanPurpose", LovFieldDetail.class, new String[] {
+		 * "RMTLovFieldDetail_AView" }, masterWF , new String[] { "FieldCodeValue", "ValueDesc" }, new String[][] { {
 		 * "FieldCode", "0", "PUR_LOAN" } }, 300));
 		 */
 
@@ -3121,8 +3118,7 @@ public class PennantJavaUtil {
 						new String[] { "Id", "Code", "Name", "ClusterType" }, null, 600));
 
 		// FIX ME
-		// It's temporary fix related to workflow once workflow related issue fixed. we
-		// required to change the workflow
+		// It's temporary fix related to workflow once workflow related issue fixed. we required to change the workflow
 		// msterWF TO bUSINESS_VERTICAL
 
 		ModuleUtil.register("BusinessVertical",
@@ -4012,11 +4008,6 @@ public class PennantJavaUtil {
 				new ModuleMapping("BranchChangeUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
-
-		ModuleUtil.register("LoanClosureUploadHeader",
-				new ModuleMapping("LoanClosureUploadHeader", FileUploadHeader.class,
-						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
-						new String[] { "Id", "FileName" }, null, 600));
 
 		registerCustomModules();
 	}

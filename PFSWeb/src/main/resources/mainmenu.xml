@@ -931,15 +931,6 @@
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER"
 				rightName="menu_Item_CancelCrossLoanKnockoffApprover" />
 		</menu>
-		
-		<menu id="menu_Item_Loan_Closure_Upload">
-			<menuItem id="menu_Item_Loan_Closure_Upload_Maker"
-				zulNavigation="/WEB-INF/pages/Receipts/LoanClosureUploadList.zul?stage=M"
-				rightName="menu_Item_Loan_Closure_Upload_Maker" />
-			<menuItem id="menu_Item_Loan_Closure_Upload_Approver"
-				zulNavigation="/WEB-INF/pages/Receipts/LoanClosureUploadList.zul?stage=A"
-				rightName="menu_Item_Loan_Closure_Upload_Approver" />
-		</menu>
 
 		<menu id="menu_Category_NonLanReceipts">
 			<menuItem id="menu_Item_NonLanReceiptMaker"

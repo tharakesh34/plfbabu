@@ -13,7 +13,7 @@
 		<client.code>hdfc</client.code>
 		<pff.version>6.4.0-HDFC_R1-SNAPSHOT</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>11</jdk.version>
+		<jdk.version>17</jdk.version>
 		<spring.version>5.3.25</spring.version>
 		<spring.security.version>5.8.2</spring.security.version>
 		<spring.batch.version>4.3.8</spring.batch.version>
@@ -865,6 +865,13 @@
 					<artifactId>bcmail-jdk14</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<!-- Miscellaneous -->
+		<dependency>
+			<groupId>uk.com.robust-it</groupId>
+			<artifactId>cloning</artifactId>
+			<version>1.9.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
