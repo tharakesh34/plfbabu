@@ -13356,5 +13356,14 @@
 
 	<bean id="branchMigrationDAO" class="com.pennanttech.pff.branchchange.dao.impl.BranchMigrationDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="loanClosureUploadValidateRecord"
+		class="com.pennant.pff.receipt.service.impl.LoanClosureUploadValidateRecord" />
+
+	<bean id="loanClosureUploadService" class="com.pennant.pff.receipt.service.impl.LoanClosureUploadServiceImpl"
+		parent="aUploadService" />
+
+	<bean id="loanClosureUploadDAO" class="com.pennant.pff.receipt.dao.impl.LoanClosureUploadDAOImpl"
+		parent="sequenceDao" />
 
 </beans>
