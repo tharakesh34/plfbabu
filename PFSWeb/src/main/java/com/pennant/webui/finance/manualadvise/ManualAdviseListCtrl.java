@@ -37,6 +37,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -84,7 +85,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 	protected Combobox adviseType; // autowired
 	protected Textbox finReference; // autowired
 	protected Textbox feeTypeID;
-	protected Textbox adviseID;// autowired
+	protected Longbox adviseID;// autowired
 
 	protected Listbox sortOperator_AdviseType;
 	protected Listbox sortOperator_FinReference;
@@ -177,7 +178,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType,
 				Operators.SIMPLE_NUMARIC);
 		registerField("adviseID", listheader_AdviseId, SortOrder.NONE, adviseID, sortOperator_AdviseID,
-				Operators.SIMPLE_NUMARIC);
+				Operators.NUMERIC);
 		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);

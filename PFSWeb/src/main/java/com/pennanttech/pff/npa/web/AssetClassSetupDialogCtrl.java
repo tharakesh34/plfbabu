@@ -401,12 +401,12 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		if (!this.code.isReadonly()) {
 			this.code.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Code.value"),
-							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 		if (!this.description.isReadonly()) {
 			this.description.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Description.value"),
-							PennantRegularExpressions.REGEX_ALPHA_SPACE, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -588,9 +588,10 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 		if (object != null) {
 			Filter[] codeFilter = new Filter[1];
-			codeFilter[0] = Filter.equalTo("AssetClassId", object.getId());
+			codeFilter[0] = Filter.equalTo("Id", object.getId());
 			assetSubClassCode.setFilters(codeFilter);
 		} else {
+			assetSubClassCode.setFilters(null);
 			assetSubClassCode.setValue(null);
 		}
 

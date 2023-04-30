@@ -44,7 +44,8 @@ public class LienServiceImpl implements LienService {
 			lh = getLienHeader(fm, fd);
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
-			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
+			if (fm.getFinSourceID().equals(RequestSource.UI.name())
+					|| fm.getFinSourceID().equals(RequestSource.API.name())) {
 				lh.setLienID(fd.getLienHeader().getLienID());
 				lh.setLienReference(fd.getLienHeader().getLienReference());
 				lh.setId(fd.getLienHeader().getId());

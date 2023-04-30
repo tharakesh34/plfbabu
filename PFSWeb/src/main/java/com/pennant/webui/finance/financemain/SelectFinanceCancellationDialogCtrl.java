@@ -250,9 +250,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 
 		String maintainSts = StringUtils.trimToEmpty(fm.getRcdMaintainSts());
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
-			String[] errParm = new String[1];
-			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + fm.getFinReference();
-			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("41005", errParm)).getError());
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + maintainSts));
 			return;
 		}
 

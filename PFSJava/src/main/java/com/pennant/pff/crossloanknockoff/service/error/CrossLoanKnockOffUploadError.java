@@ -47,7 +47,7 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_021("AdviseId is mandatory if Excess Type is P(Payable)"),
 
-	CLKU_022("Either pricipal or interest amount should be given or only emi");
+	CLKU_022("Either principal or interest amount should be given or only emi");
 
 	private String description;
 

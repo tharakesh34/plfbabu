@@ -65,7 +65,7 @@
 									<textbox id="feeTypeID" width="171px" maxlength="19" />
 									<label id="label_ManualAdviseList_AdviseID" value="${c:l('label_ManualAdviseList_AdviseID.value')}" />
 									<listbox id="sortOperator_AdviseID" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="adviseID" width="171px" maxlength="19" />
+									<longbox id="adviseID" width="171px" maxlength="19" />
 								</row>
 
 								<row>

@@ -231,10 +231,9 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 				lienup.setLienID(lienheader.getLienID());
 				lienup.setLienReference(lienheader.getLienReference());
 			}
-			lienup.setSource(RequestSource.UPLOAD.name());
 
 			FinanceMain fm = lienup.getFinanceMain();
-			fm.setFinSourceID(RequestSource.UPLOAD.name());
+			fm.setFinSourceID(lienup.getSource());
 
 			FinanceDetail fd = new FinanceDetail();
 			LienHeader lienhead = new LienHeader();

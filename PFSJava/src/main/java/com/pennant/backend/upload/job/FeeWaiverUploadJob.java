@@ -21,7 +21,7 @@ public class FeeWaiverUploadJob extends AbstractJob {
 
 	private UploadService getUploadService(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (UploadService) jobDataMap.get("feeWaiverUploadService");
+		return (UploadService) jobDataMap.get("bulkFeeWaiverUploadService");
 	}
 
 }

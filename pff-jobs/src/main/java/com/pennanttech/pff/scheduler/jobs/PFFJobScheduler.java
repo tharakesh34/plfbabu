@@ -105,7 +105,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService hostglmappingUploadService;
 	private UploadService miscellaneouspostingUploadService;
 	private UploadService financeCancellationUploadService;
-	private UploadService feeWaiverUploadService;
+	private UploadService bulkFeeWaiverUploadService;
 	private UploadService lienUploadService;
 	private UploadService createReceiptUploadService;
 	private UploadService receiptStatusUploadService;
@@ -477,7 +477,7 @@ public class PFFJobScheduler extends JobScheduler {
 		jobDataList.add(jobData);
 
 		args = new JobDataMap();
-		args.put("feeWaiverUploadService", feeWaiverUploadService);
+		args.put("bulkFeeWaiverUploadService", bulkFeeWaiverUploadService);
 		jobData = new JobData("WAIVER_DETAILS_JOB", FeeWaiverUploadJob.class, args);
 		jobDataList.add(jobData);
 
@@ -728,8 +728,8 @@ public class PFFJobScheduler extends JobScheduler {
 	}
 
 	@Autowired
-	public void setFeeWaiverUploadService(UploadService feeWaiverUploadService) {
-		this.feeWaiverUploadService = feeWaiverUploadService;
+	public void setBulkFeeWaiverUploadService(UploadService bulkFeeWaiverUploadService) {
+		this.bulkFeeWaiverUploadService = bulkFeeWaiverUploadService;
 	}
 
 	@Autowired
