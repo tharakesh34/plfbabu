@@ -51,6 +51,7 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -438,6 +439,24 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			for (Verification verification : oldVerifications) {
 				for (CollateralAssignment collateral : collaterals) {
 					if (StringUtils.equals(verification.getReferenceFor(), collateral.getCollateralRef())) {
+						for (CollateralSetup csp : financeDetails.getCollaterals()) {
+							if (StringUtils.equals(csp.getCollateralRef(), collateral.getCollateralRef())) {
+								if (CollectionUtils.isNotEmpty(csp.getExtendedFieldRenderList())) {
+									ExtendedFieldRender eh = csp.getExtendedFieldRenderList().get(0);
+									if (eh.getMapValues().containsKey("costofproperty")) {
+										BigDecimal cop = (BigDecimal) csp.getExtendedFieldRenderList().get(0)
+												.getMapValues().get("costofproperty");
+										verification.setValueForCOP(cop);
+									}
+
+									if (eh.getMapValues().containsKey("trscntype")) {
+										String tp = (String) csp.getExtendedFieldRenderList().get(0).getMapValues()
+												.get("trscntype");
+										verification.setCollTranType(StringUtils.trimToEmpty(tp));
+									}
+								}
+							}
+						}
 						tempOldVerifications.add(verification);
 					}
 				}
