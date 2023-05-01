@@ -327,13 +327,13 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 	}
 
 	@Override
-	public boolean isValidAccount(String account) {
-		String sql = "Select count(Account) From AccountMapping Where Account = ?";
+	public boolean isValidAccount(String account, String trantypeBoth, String trantypeDebit, String status) {
+		String sql = "Select count(Account) From AccountMapping Where Account = ? and AllowedManualEntry in(?,?) and status = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return jdbcOperations.queryForObject(sql, Integer.class, account) > 0;
+			return jdbcOperations.queryForObject(sql, Integer.class, account, trantypeBoth, trantypeDebit, status) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return false;

@@ -36,6 +36,7 @@ import com.pennant.backend.service.others.JVPostingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.accounting.HostAccountStatus;
 import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.pff.miscellaneouspostingupload.dao.MiscellaneousPostingUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -71,6 +72,8 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		String reference = detail.getReference();
+		Date valueDate = detail.getValueDate();
+		Date appdate = header.getAppDate();
 
 		logger.info("Validating the Data for the reference {}", reference);
 
@@ -100,12 +103,22 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (!accountMappingDAO.isValidAccount(detail.getCreditGL())) {
+		if (valueDate == null) {
+			validateValueDate(detail, valueDate, appdate);
+		}
+
+		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+			return;
+		}
+
+		if (!accountMappingDAO.isValidAccount(detail.getCreditGL(), AccountConstants.TRANTYPE_BOTH,
+				AccountConstants.TRANTYPE_DEBIT, HostAccountStatus.OPEN.code())) {
 			setError(detail, MiscellaneousPostingUploadError.MP04);
 			return;
 		}
 
-		if (!accountMappingDAO.isValidAccount(detail.getDebitGL())) {
+		if (!accountMappingDAO.isValidAccount(detail.getCreditGL(), AccountConstants.TRANTYPE_BOTH,
+				AccountConstants.TRANTYPE_CREDIT, HostAccountStatus.OPEN.code())) {
 			setError(detail, MiscellaneousPostingUploadError.MP05);
 			return;
 		}
@@ -114,6 +127,21 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 			setError(detail, MiscellaneousPostingUploadError.MP010);
 			return;
 		}
+	}
+
+	private void validateValueDate(MiscellaneousPostingUpload detail, Date valueDate, Date appdate) {
+		FinanceMain fm = financeMainDAO.getFinanceMain(detail.getReference(), TableType.MAIN_TAB);
+
+		if (fm.getFinStartDate().compareTo(detail.getValueDate()) > 0) {
+			setError(detail, MiscellaneousPostingUploadError.MP06);
+			return;
+		}
+
+		if (valueDate.compareTo(appdate) > 0) {
+			setError(detail, MiscellaneousPostingUploadError.ML07);
+			return;
+		}
+
 	}
 
 	@Override

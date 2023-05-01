@@ -924,6 +924,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			this.postingDate.setValue(aJVPostingEntry.getPostingDate());
 			this.valueDate.setValue(aJVPostingEntry.getValueDate());
 		}
+		if (aJVPostingEntry.getValueDate() != null) {
+			this.valueDate.setValue(aJVPostingEntry.getValueDate());
+		}
 		this.txnReference.setValue((int) aJVPostingEntry.getTxnReference());
 		this.narrLine1.setValue(aJVPostingEntry.getNarrLine1());
 		this.narrLine2.setValue(aJVPostingEntry.getNarrLine2());

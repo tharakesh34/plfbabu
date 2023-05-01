@@ -1,25 +1,25 @@
 package com.pennant.pff.miscellaneouspostingupload.service.impl;
 
 public enum MiscellaneousPostingUploadError {
-	MP01(" FinReference is Mandatory. "),
+	MP01("Loan Reference is Mandatory. "),
 
-	MP02(" FinReference is not valid. "),
+	MP02("Loan Reference is not valid. "),
 
-	MP03(" FinReference is not in active."),
+	MP03("Loan Reference is not in active."),
 
-	MP04(" Credit GL is not valid."),
+	MP04("Credit GL is not valid."),
 
-	MP05(" Debit GL is not valid."),
+	MP05("Debit GL is not valid."),
 
-	MP06("  Value Date should greater than or equal to Loan StartDate."),
+	MP06("Value Date should greater than or equal to Loan StartDate."),
 
-	ML07(" Value Date should lesser than or equal to Loan MaturityDate."),
+	ML07("Future Date is not allowed."),
 
-	MP08(" Batch Name is invalid.Allowed Characters are [a-z A-Z 0-9]."),
+	MP08("Batch Name is invalid.Allowed Characters are [a-z A-Z 0-9]."),
 
-	MP09(" TxnAmount should be Mandatory."),
+	MP09("TxnAmount should be Mandatory."),
 
-	MP010(" TxnAmount should be greater than zero.");
+	MP010("TxnAmount should be greater than zero.");
 
 	private String description;
 

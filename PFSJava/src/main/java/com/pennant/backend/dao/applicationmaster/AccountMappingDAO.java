@@ -47,5 +47,5 @@ public interface AccountMappingDAO extends BasicCrudDao<AccountMapping> {
 
 	String getAccountMappingByAccount(String account);
 
-	boolean isValidAccount(String account);
+	boolean isValidAccount(String account, String trantypeBoth, String trantypeDebit, String status);
 }
