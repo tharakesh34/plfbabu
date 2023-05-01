@@ -12464,7 +12464,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="TK#4750.2_pre" author="Sravanthi.g" dbms="postgresql">
+	<changeSet id="TK#4750.3_pre" author="Sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'write_off_upload');
@@ -12476,7 +12476,7 @@
 		<modifyDataType tableName="WRITE_OFF_UPLOAD" columnName="Remarks" newDataType="varchar(100)" />
 	</changeSet>
 
-	<changeSet id="TK#4750_4_post" author="Sravanthi.g" dbms="postgresql">
+	<changeSet id="TK#4750.3_post" author="Sravanthi.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'write_off_upload');
@@ -12493,7 +12493,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#1528.1_pre" author="Sravani.S">
+	<changeSet id="ST#1528.0" author="Sravani.S">
 		<renameTable newTableName="FILE_UPLOAD_HEADER_BKP" oldTableName="FILE_UPLOAD_HEADER" />
 	</changeSet>
 
@@ -12537,7 +12537,7 @@
 	</changeSet>
 
 	<changeSet id="ST#1528.2" author="Sravani.S">
-		<addPrimaryKey tableName="FILE_UPLOAD_HEADER" columnNames="Id" constraintName="PK_FILE_UPLOAD_HEADER" />
+		<addPrimaryKey tableName="FILE_UPLOAD_HEADER" columnNames="Id" constraintName="PK_FILE_UPLOAD_HEADER_ID" />
 	</changeSet>
 
 	<changeSet id="ST#1528.3" author="Sravani.S">
@@ -12551,6 +12551,11 @@
 				INSERT INTO FILE_UPLOAD_HEADER (ENTITYCODE, TYPE, FILENAME, TOTALRECORDS, SUCCESSRECORDS, FAILURERECORDS, PROGRESS, REMARKS, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, VERSION, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) SELECT ENTITYCODE, TYPE, FILENAME, TOTALRECORDS, SUCCESSRECORDS, FAILURERECORDS, PROGRESS, REMARKS, CREATEDBY, CREATEDON, APPROVEDBY, APPROVEDON, LASTMNTBY, LASTMNTON, VERSION, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID FROM FILE_UPLOAD_HEADER_BKP;
 		 	]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1528.3.0" author="Sravani.S">
+		<dropForeignKeyConstraint baseTableName="LIEN_UPLOAD"
+			constraintName="fk_lien_upload_headerid" />
 	</changeSet>
 
 	<changeSet id="ST#1528.3.2" author="Sravani.S">
