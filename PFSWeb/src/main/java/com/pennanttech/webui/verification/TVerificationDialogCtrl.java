@@ -41,10 +41,10 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.healthmarketscience.sqlbuilder.CreateTableQuery.TableType;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -61,6 +61,7 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.verification.tv.TVInitiationListCtrl;
+import com.pennanttech.dataengine.constants.ValueLabel;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -79,7 +80,6 @@ import com.pennanttech.pennapps.pff.verification.service.TechnicalVerificationSe
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.TableType;
 
 @Component(value = "tVerificationDialogCtrl")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -438,6 +438,25 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			for (Verification verification : oldVerifications) {
 				for (CollateralAssignment collateral : collaterals) {
 					if (StringUtils.equals(verification.getReferenceFor(), collateral.getCollateralRef())) {
+						for (CollateralSetup csp : financeDetails.getCollaterals()) {
+							if (StringUtils.equals(csp.getCollateralRef(), collateral.getCollateralRef())) {
+								if (CollectionUtils.isNotEmpty(csp.getExtendedFieldRenderList())) {
+									ExtendedFieldRender eh = csp.getExtendedFieldRenderList().get(0);
+									if (eh.getMapValues().containsKey("costofproperty")) {
+										BigDecimal cop = (BigDecimal) csp.getExtendedFieldRenderList().get(0)
+												.getMapValues().get("costofproperty");
+										verification.setValueForCOP(cop);
+									}
+
+									if (eh.getMapValues().containsKey("trscntype")) {
+										String tp = (String) csp.getExtendedFieldRenderList().get(0).getMapValues()
+												.get("trscntype");
+										verification.setCollTranType(StringUtils.trimToEmpty(tp));
+									}
+								}
+							}
+						}
+
 						tempOldVerifications.add(verification);
 					}
 				}

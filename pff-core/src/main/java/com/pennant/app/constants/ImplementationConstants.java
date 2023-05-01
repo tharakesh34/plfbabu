@@ -141,6 +141,7 @@ public class ImplementationConstants {
 		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean("GENERATECIBIL_BTN_MANDATORY", false);
 		ALLOW_ALL_SERV_RCDS = getValueAsBoolean("ALLOW_ALL_SERV_RCDS", false);
 		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean("TV_FINALVAL_AMOUNT_VALD", false);
+		TV_FINALVAL_COP_AMOUNT_VALD = getValueAsBoolean("TV_FINALVAL_COP_AMOUNT_VALD", false);
 		CUST_ADDR_AUTO_FILL = getValueAsBoolean("CUST_ADDR_AUTO_FILL", true);
 		SHOW_CUST_EMP_DETAILS = getValueAsBoolean("SHOW_CUST_EMP_DETAILS", true);
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean("SHOW_CUST_SHARE_HOLDER_DETAILS", true);
@@ -423,6 +424,7 @@ public class ImplementationConstants {
 	public static boolean COAPP_PANNUMBER_NON_MANDATORY;
 	public static boolean GENERATECIBIL_BTN_MANDATORY;
 	public static boolean TV_FINALVAL_AMOUNT_VALD;
+	public static boolean TV_FINALVAL_COP_AMOUNT_VALD;
 
 	// FIXME>>HL >>
 	public static boolean ALLOW_LOAN_SPLIT;
