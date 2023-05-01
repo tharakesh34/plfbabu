@@ -24,6 +24,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -31,7 +32,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennanttech.dataengine.constants.ValueLabel;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.VerificationCategory;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -159,8 +159,6 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 					verifi.setFinalValAsPerPE(verification.getFinalValAsPerPE());
 					verifi.setFinalValDecision(verification.getFinalValDecision());
 					verifi.setFinalValRemarks(verification.getFinalValRemarks());
-					verifi.setValueForCOP(verification.getValueForCOP());
-					verifi.setCollTranType(verification.getCollateralType());
 				}
 			}
 		}
@@ -328,20 +326,6 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				}
 			}
-
-			Verification verification = null;
-			for (Verification verifi : verificationList) {
-				if (verifi.getReferenceFor().equals(getComboboxValue(this.finalValuationCollateral))) {
-					verification = verifi;
-				}
-			}
-
-			if (ImplementationConstants.TV_FINALVAL_COP_AMOUNT_VALD
-					&& "PRIMARY".equals(verification.getCollTranType())) {
-				verificationAmountsList.add(PennantApplicationUtil
-						.unFormateAmount(this.valuationAsPerCOP.getValidateValue(), PennantConstants.defaultCCYDecPos));
-			}
-
 			this.finalValuationAmount.setAttribute("minValue", BigDecimal.ZERO);
 			if (CollectionUtils.isNotEmpty(verificationAmountsList)) {
 				if (StringUtils.isBlank(this.finalValRemarks.getValue())) {
