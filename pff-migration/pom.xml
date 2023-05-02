@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<liquibase.version>3.5.3</liquibase.version>
 		<liquibase.ext.version>1.3.0</liquibase.ext.version>
+		<jdk.version>17</jdk.version>
 	</properties>
 
 	<repositories>
