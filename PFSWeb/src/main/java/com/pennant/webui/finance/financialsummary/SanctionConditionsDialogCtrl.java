@@ -164,6 +164,10 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 				workflow = this.sanctionConditions.isWorkflow();
 			}
 
+			if (arguments.containsKey("isEnquiry")) {
+				this.enqiryModule = (boolean) arguments.get("isEnquiry");
+			}
+
 			doLoadWorkFlow(this.sanctionConditions.isWorkflow(), this.sanctionConditions.getWorkflowId(),
 					this.sanctionConditions.getNextTaskId());
 			/* set components visible dependent of the users rights */
@@ -213,11 +217,21 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities("CustomerPhoneNumberDialog", userRole);
 
-		this.btnNew.setVisible(true);
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerPhoneNumberDialog_btnEdit"));
-		this.btnDelete.setVisible(true);
-		this.btnSave.setVisible(true);
-		this.btnCancel.setVisible(false);
+		if (this.enqiryModule) {
+			this.btnNew.setVisible(false);
+			this.btnEdit.setVisible(false);
+			this.btnDelete.setVisible(false);
+			this.btnSave.setVisible(false);
+			this.btnCancel.setVisible(false);
+			this.status.setDisabled(true);
+		} else {
+			this.btnNew.setVisible(true);
+			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerPhoneNumberDialog_btnEdit"));
+			this.btnDelete.setVisible(true);
+			this.btnSave.setVisible(true);
+			this.btnCancel.setVisible(false);
+		}
+
 		logger.debug("Leaving");
 	}
 

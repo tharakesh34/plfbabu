@@ -1407,6 +1407,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("newRecord", "true");
 		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("roleCode", getRole());
+		map.put("isEnquiry", this.enqiryModule);
 
 		if (getFinanceMainDialogCtrl() != null) {
 			map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());
