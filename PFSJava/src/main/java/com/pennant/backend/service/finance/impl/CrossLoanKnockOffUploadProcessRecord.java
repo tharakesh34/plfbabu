@@ -59,117 +59,129 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 		int readColumn = 0;
 
 		Cell rowCell = null;
+		try {
+			for (Cell cell : headerRow) {
+				rowCell = row.getCell(readColumn);
 
-		for (Cell cell : headerRow) {
-			rowCell = row.getCell(readColumn);
-
-			if (cell.getColumnIndex() > 5) {
-				break;
-			}
-
-			readColumn = cell.getColumnIndex() + 1;
-			if (rowCell == null) {
-				continue;
-			}
-
-			switch (cell.getColumnIndex()) {
-			case 0:
-				clku.setFromFinReference(rowCell.toString());
-				break;
-			case 1:
-				clku.setToFinReference(rowCell.toString());
-				break;
-			case 2:
-				clku.setExcessType(rowCell.toString());
-				break;
-			case 3:
-				String strAmount = rowCell.toString();
-				if (strAmount != null) {
-					clku.setExcessAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+				if (cell.getColumnIndex() > 5) {
+					break;
 				}
-				break;
-			case 4:
-				clku.setAllocationType(rowCell.toString());
-				break;
 
-			case 5:
-				clku.setFeeTypeCode(rowCell.toString());
-				break;
-			default:
-				break;
+				readColumn = cell.getColumnIndex() + 1;
+				if (rowCell == null) {
+					continue;
+				}
+
+				switch (cell.getColumnIndex()) {
+				case 0:
+					clku.setFromFinReference(rowCell.toString());
+					break;
+				case 1:
+					clku.setToFinReference(rowCell.toString());
+					break;
+				case 2:
+					clku.setExcessType(rowCell.toString());
+					break;
+				case 3:
+					String strAmount = rowCell.toString();
+					if (strAmount != null) {
+						clku.setExcessAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+					}
+					break;
+				case 4:
+					clku.setAllocationType(rowCell.toString());
+					break;
+
+				case 5:
+					clku.setFeeTypeCode(rowCell.toString());
+					break;
+				default:
+					break;
+				}
 			}
-		}
 
-		if (StringUtils.isEmpty(clku.getAllocationType())) {
-			clku.setAllocationType(AllocationType.AUTO);
-		}
+			if (StringUtils.isEmpty(clku.getAllocationType())) {
+				clku.setAllocationType(AllocationType.AUTO);
+			}
 
-		long uploadID = crossLoanKnockOffUploadDAO.save(clku);
+			long uploadID = crossLoanKnockOffUploadDAO.save(clku);
 
-		List<CrossLoanKnockoffUpload> allocations = new ArrayList<>();
+			List<CrossLoanKnockoffUpload> allocations = new ArrayList<>();
 
-		int index = 0;
-		for (Cell cell : headerRow) {
+			int index = 0;
+			for (Cell cell : headerRow) {
 
-			if (index < readColumn) {
+				if (index < readColumn) {
+					index++;
+					continue;
+				}
+
+				CrossLoanKnockoffUpload alloc = new CrossLoanKnockoffUpload();
+
+				String allocationType = cell.toString();
+
+				if (allocationType == null) {
+					break;
+				}
+
+				alloc.setId(uploadID);
+				alloc.setHeaderId(headerID);
+				alloc.setCode(allocationType.toUpperCase());
+
+				rowCell = row.getCell(index);
+
+				if (rowCell != null) {
+
+					String strAmount = rowCell.toString();
+
+					if (StringUtils.isNotEmpty(strAmount)) {
+						BigDecimal str = BigDecimal.ZERO;
+
+						try {
+							str = new BigDecimal(strAmount);
+						} catch (NumberFormatException e) {
+							throw new AppException("Invalid amount");
+						}
+
+						if (str.compareTo(BigDecimal.ZERO) > 0) {
+							alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+							allocations.add(alloc);
+						}
+					}
+				}
 				index++;
-				continue;
-			}
 
-			CrossLoanKnockoffUpload alloc = new CrossLoanKnockoffUpload();
-
-			String allocationType = cell.toString();
-
-			if (allocationType == null) {
-				break;
-			}
-
-			alloc.setId(uploadID);
-			alloc.setHeaderId(headerID);
-			alloc.setCode(allocationType.toUpperCase());
-
-			rowCell = row.getCell(index);
-
-			if (rowCell != null) {
-
-				String strAmount = rowCell.toString();
-
-				if (StringUtils.isNotEmpty(strAmount)) {
-					BigDecimal str = BigDecimal.ZERO;
-
-					try {
-						str = new BigDecimal(strAmount);
-					} catch (NumberFormatException e) {
-						throw new AppException("Invalid amount");
-					}
-
-					if (str.compareTo(BigDecimal.ZERO) > 0) {
-						alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
-						allocations.add(alloc);
-					}
+				if (index == 23) {
+					throw new AppException("Fee Types are exceeded the limit");
 				}
 			}
-			index++;
 
-			if (index == 23) {
-				throw new AppException("Fee Types are exceeded the limit");
+			crossLoanKnockOffUploadDAO.saveAllocations(allocations);
+
+			crossLoanKnockOffUploadService.doValidate(header, clku);
+
+			if (clku.getProgress() == EodConstants.PROGRESS_FAILED) {
+				record.addValue("ERRORCODE", clku.getErrorCode());
+				record.addValue("ERRORDESC", clku.getErrorDesc());
+
+				List<CrossLoanKnockoffUpload> details = new ArrayList<>();
+				details.add(clku);
+
+				crossLoanKnockOffUploadDAO.update(details);
 			}
+
+		} catch (AppException e) {
+			header.setFailureRecords(header.getFailureRecords() + 1);
+			clku.setStatus("F");
+			clku.setProgress(EodConstants.PROGRESS_FAILED);
+
+			record.addValue("ERRORCODE", "9999");
+			record.addValue("ERRORDESC", e.getMessage());
+
+			record.addValue("STATUS", clku.getStatus());
+			record.addValue("PROGRESS", clku.getProgress());
+
 		}
-
-		crossLoanKnockOffUploadDAO.saveAllocations(allocations);
-
-		crossLoanKnockOffUploadService.doValidate(header, clku);
-
-		if (clku.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", clku.getErrorCode());
-			record.addValue("ERRORDESC", clku.getErrorDesc());
-
-			List<CrossLoanKnockoffUpload> details = new ArrayList<>();
-			details.add(clku);
-
-			crossLoanKnockOffUploadDAO.update(details);
-		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

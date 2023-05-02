@@ -98,194 +98,212 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 		int readColumn = 0;
 
 		Cell rowCell = null;
+		try {
 
-		for (Cell cell : headerRow) {
-			rowCell = row.getCell(readColumn);
+			for (Cell cell : headerRow) {
+				rowCell = row.getCell(readColumn);
 
-			if (cell.getColumnIndex() > 27) {
-				break;
+				if (cell.getColumnIndex() > 27) {
+					break;
+				}
+
+				readColumn = cell.getColumnIndex() + 1;
+				if (rowCell == null) {
+					continue;
+				}
+
+				switch (cell.getColumnIndex()) {
+				case 0:
+					cru.setReference(rowCell.toString());
+					break;
+				case 1:
+					cru.setReceiptPurpose(rowCell.toString());
+					break;
+				case 2:
+					cru.setExcessAdjustTo(rowCell.toString());
+					break;
+				case 3:
+					cru.setAllocationType(rowCell.toString());
+					break;
+
+				case 4:
+					String strAmount = rowCell.toString();
+					if (strAmount != null) {
+						cru.setReceiptAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+					}
+					break;
+				case 5:
+					String valueDate = rowCell.toString();
+					if (valueDate != null) {
+						cru.setValueDate(DateUtil.parse(valueDate, DateFormat.LONG_DATE.getPattern()));
+					}
+					break;
+				case 6:
+					cru.setReceiptMode(rowCell.toString());
+					break;
+				case 7:
+					cru.setSubReceiptMode(rowCell.toString());
+					break;
+				case 8:
+					cru.setReceiptChannel(rowCell.toString());
+					break;
+				case 9:
+					cru.setEffectSchdMethod(rowCell.toString());
+					break;
+				case 10:
+					cru.setClosureType(rowCell.toString());
+					break;
+				case 11:
+					cru.setReason(rowCell.toString());
+					break;
+				case 12:
+					cru.setRemarks(rowCell.toString());
+					break;
+				case 13:
+					cru.setReceiptID(Long.parseLong(rowCell.toString()));
+					break;
+				case 14:
+					cru.setChequeNumber(rowCell.toString());
+					break;
+				case 15:
+					cru.setReceiptModeStatus(rowCell.toString());
+					break;
+				case 16:
+					cru.setBankCode(rowCell.toString());
+					break;
+				case 17:
+					cru.setChequeAccountNumber(rowCell.toString());
+					break;
+				case 18:
+					cru.setPaymentRef(rowCell.toString());
+					break;
+				case 19:
+					String depositDate = rowCell.toString();
+					if (depositDate != null) {
+						cru.setDepositDate(DateUtil.parse(depositDate, DateFormat.LONG_DATE.getPattern()));
+					}
+					break;
+				case 20:
+					String realizeDate = rowCell.toString();
+					if (realizeDate != null) {
+						cru.setRealizationDate(DateUtil.parse(realizeDate, DateFormat.LONG_DATE.getPattern()));
+					}
+					break;
+				case 21:
+					cru.setTransactionRef(rowCell.toString());
+					break;
+				case 22:
+					cru.setPanNumber(rowCell.toString());
+					break;
+				case 23:
+					cru.setReceivedFrom(rowCell.toString());
+					break;
+				case 24:
+					String bounceDate = rowCell.toString();
+					if (bounceDate != null) {
+						cru.setBounceDate(DateUtil.getDate(bounceDate));
+					}
+					break;
+				case 25:
+					cru.setBounceReason(rowCell.toString());
+					break;
+				case 26:
+					cru.setBounceRemarks(rowCell.toString());
+					break;
+				case 27:
+					cru.setPartnerBankCode(rowCell.toString());
+					break;
+
+				default:
+					break;
+				}
 			}
 
-			readColumn = cell.getColumnIndex() + 1;
-			if (rowCell == null) {
-				continue;
+			if (StringUtils.isEmpty(cru.getAllocationType())) {
+				cru.setAllocationType(AllocationType.AUTO);
 			}
 
-			switch (cell.getColumnIndex()) {
-			case 0:
-				cru.setReference(rowCell.toString());
-				break;
-			case 1:
-				cru.setReceiptPurpose(rowCell.toString());
-				break;
-			case 2:
-				cru.setExcessAdjustTo(rowCell.toString());
-				break;
-			case 3:
-				cru.setAllocationType(rowCell.toString());
-				break;
+			long uploadID = createReceiptUploadDAO.save(cru);
 
-			case 4:
-				String strAmount = rowCell.toString();
-				if (strAmount != null) {
-					cru.setReceiptAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+			List<CreateReceiptUpload> allocations = new ArrayList<>();
+
+			int index = 0;
+			for (Cell cell : headerRow) {
+
+				if (index < readColumn) {
+					index++;
+					continue;
 				}
-				break;
-			case 5:
-				String valueDate = rowCell.toString();
-				if (valueDate != null) {
-					cru.setValueDate(DateUtil.parse(valueDate, DateFormat.LONG_DATE.getPattern()));
+
+				CreateReceiptUpload alloc = new CreateReceiptUpload();
+
+				String allocationType = cell.toString();
+
+				if (allocationType == null) {
+					break;
 				}
-				break;
-			case 6:
-				cru.setReceiptMode(rowCell.toString());
-				break;
-			case 7:
-				cru.setSubReceiptMode(rowCell.toString());
-				break;
-			case 8:
-				cru.setReceiptChannel(rowCell.toString());
-				break;
-			case 9:
-				cru.setEffectSchdMethod(rowCell.toString());
-				break;
-			case 10:
-				cru.setClosureType(rowCell.toString());
-				break;
-			case 11:
-				cru.setReason(rowCell.toString());
-				break;
-			case 12:
-				cru.setRemarks(rowCell.toString());
-				break;
-			case 13:
-				cru.setReceiptID(Long.parseLong(rowCell.toString()));
-				break;
-			case 14:
-				cru.setChequeNumber(rowCell.toString());
-				break;
-			case 15:
-				cru.setReceiptModeStatus(rowCell.toString());
-				break;
-			case 16:
-				cru.setBankCode(rowCell.toString());
-				break;
-			case 17:
-				cru.setChequeAccountNumber(rowCell.toString());
-				break;
-			case 18:
-				cru.setPaymentRef(rowCell.toString());
-				break;
-			case 19:
-				String depositDate = rowCell.toString();
-				if (depositDate != null) {
-					cru.setDepositDate(DateUtil.parse(depositDate, DateFormat.LONG_DATE.getPattern()));
+
+				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
+						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
+						|| "Status".equals(allocationType)) {
+					continue;
 				}
-				break;
-			case 20:
-				String realizeDate = rowCell.toString();
-				if (realizeDate != null) {
-					cru.setRealizationDate(DateUtil.parse(realizeDate, DateFormat.LONG_DATE.getPattern()));
+
+				alloc.setId(uploadID);
+				alloc.setHeaderId(headerID);
+				alloc.setCode(allocationType.toUpperCase());
+
+				rowCell = row.getCell(index);
+
+				if (rowCell != null) {
+
+					String strAmount = rowCell.toString();
+
+					if (StringUtils.isNotEmpty(strAmount)) {
+						BigDecimal str = BigDecimal.ZERO;
+
+						try {
+							str = new BigDecimal(strAmount);
+						} catch (NumberFormatException e) {
+							throw new AppException("Invalid amount");
+						}
+
+						if (str.compareTo(BigDecimal.ZERO) > 0) {
+							alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+							allocations.add(alloc);
+						}
+					}
 				}
-				break;
-			case 21:
-				cru.setTransactionRef(rowCell.toString());
-				break;
-			case 22:
-				cru.setPanNumber(rowCell.toString());
-				break;
-			case 23:
-				cru.setReceivedFrom(rowCell.toString());
-				break;
-			case 24:
-				String bounceDate = rowCell.toString();
-				if (bounceDate != null) {
-					cru.setBounceDate(DateUtil.getDate(bounceDate));
-				}
-				break;
-			case 25:
-				cru.setBounceReason(rowCell.toString());
-				break;
-			case 26:
-				cru.setBounceRemarks(rowCell.toString());
-				break;
-			case 27:
-				cru.setPartnerBankCode(rowCell.toString());
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		if (StringUtils.isEmpty(cru.getAllocationType())) {
-			cru.setAllocationType(AllocationType.AUTO);
-		}
-
-		long uploadID = createReceiptUploadDAO.save(cru);
-
-		List<CreateReceiptUpload> allocations = new ArrayList<>();
-
-		int index = 0;
-		for (Cell cell : headerRow) {
-
-			if (index < readColumn) {
 				index++;
-				continue;
-			}
 
-			CreateReceiptUpload alloc = new CreateReceiptUpload();
-
-			String allocationType = cell.toString();
-
-			if (allocationType == null) {
-				break;
-			}
-
-			alloc.setId(uploadID);
-			alloc.setHeaderId(headerID);
-			alloc.setCode(allocationType.toUpperCase());
-
-			rowCell = row.getCell(index);
-
-			if (rowCell != null) {
-
-				String strAmount = rowCell.toString();
-
-				if (StringUtils.isNotEmpty(strAmount)) {
-					BigDecimal str = BigDecimal.ZERO;
-
-					try {
-						str = new BigDecimal(strAmount);
-					} catch (NumberFormatException e) {
-						throw new AppException("Invalid amount");
-					}
-
-					if (str.compareTo(BigDecimal.ZERO) > 0) {
-						alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
-						allocations.add(alloc);
-					}
+				if (index == 23) {
+					throw new AppException("Fee Types are exceeded the limit");
 				}
 			}
-			index++;
 
-			if (index == 23) {
-				throw new AppException("Fee Types are exceeded the limit");
+			createReceiptUploadDAO.saveAllocations(allocations);
+
+			validate(cru, header);
+
+			if (cru.getProgress() == EodConstants.PROGRESS_FAILED) {
+				record.addValue("ERRORCODE", cru.getErrorCode());
+				record.addValue("ERRORDESC", cru.getErrorDesc());
+
+				List<CreateReceiptUpload> details = new ArrayList<>();
+				details.add(cru);
+
+				createReceiptUploadDAO.update(details);
 			}
-		}
+		} catch (AppException e) {
+			header.setFailureRecords(header.getFailureRecords() + 1);
+			cru.setStatus("F");
+			cru.setProgress(EodConstants.PROGRESS_FAILED);
 
-		createReceiptUploadDAO.saveAllocations(allocations);
+			record.addValue("ERRORCODE", "9999");
+			record.addValue("ERRORDESC", e.getMessage());
 
-		validate(cru, header);
-
-		if (cru.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", cru.getErrorCode());
-			record.addValue("ERRORDESC", cru.getErrorDesc());
-
-			List<CreateReceiptUpload> details = new ArrayList<>();
-			details.add(cru);
-
-			createReceiptUploadDAO.update(details);
+			record.addValue("STATUS", cru.getStatus());
+			record.addValue("PROGRESS", cru.getProgress());
 		}
 
 		logger.debug(Literal.LEAVING);
