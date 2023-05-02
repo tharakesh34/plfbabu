@@ -18,9 +18,7 @@ public enum ClosureType {
 
 	TOP_UP("TOPUP"),
 
-	CANCEL("CANCEL"),
-
-	SETTLEMENT("SETTLEMENT");
+	CANCEL("CANCEL");
 
 	private String code;
 
@@ -67,7 +65,6 @@ public enum ClosureType {
 			closureTypes.add(new ValueLabel(RE_POSSESSION.code(), Labels.getLabel("label_ClosureType_Repossession")));
 			closureTypes.add(new ValueLabel(TOP_UP.code(), Labels.getLabel("label_ClosureType_TopUp")));
 			closureTypes.add(new ValueLabel(CANCEL.code(), Labels.getLabel("label_ClosureType_Cancel")));
-			closureTypes.add(new ValueLabel(SETTLEMENT.code(), Labels.getLabel("label_ClosureType_Settlement")));
 		}
 
 		return closureTypes;
