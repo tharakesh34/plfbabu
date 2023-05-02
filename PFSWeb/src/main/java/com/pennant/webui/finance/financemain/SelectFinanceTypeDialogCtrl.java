@@ -24,6 +24,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1166,6 +1167,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		fm.setBusinessVertical(user.getBusinessVertical());
 		fm.setBusinessVerticalCode(user.getBusinessVerticalCode());
 		fm.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
+		fm.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		fm.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 
 		showDetailView(fd);
 		return true;

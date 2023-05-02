@@ -862,6 +862,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean underNpa;
 	private String custCoreBank;
 	private String closureType;
+	private long createdBy;
+	private Timestamp createdOn;
+	private long approvedBy;
+	private Timestamp approvedOn;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1611,6 +1615,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setCpzPosIntact(this.cpzPosIntact);
 		entity.setModuleDefiner(this.moduleDefiner);
 		entity.setUnderNpa(this.underNpa);
+		entity.setCreatedBy(this.createdBy);
+		entity.setCreatedOn(this.createdOn);
+		entity.setApprovedBy(this.approvedBy);
+		entity.setApprovedOn(this.approvedOn);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5646,4 +5654,35 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.closureType = closureType;
 	}
 
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
 }

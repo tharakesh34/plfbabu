@@ -27,6 +27,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -126,6 +127,10 @@ public class FinanceEnquiry implements Serializable {
 	private boolean finOcrRequired;
 	private String loanStsDesc;
 	private String recordStatus;
+	private long createdBy;
+	private Timestamp createdOn;
+	private long approvedBy;
+	private Timestamp approvedOn;
 	// Loan Closed Date
 	private Date closedDate;
 	private boolean writeoffLoan;
@@ -828,6 +833,38 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setRecordStatus(String recordStatus) {
 		this.recordStatus = recordStatus;
+	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
 	}
 
 	public Date getClosedDate() {

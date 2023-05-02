@@ -1593,6 +1593,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		processDateDiff(this.empFrom.getValue(), this.exp);
 
 		this.recordStatus.setValue(aCustomer.getRecordStatus());
+
+		if (customerDetails.isNewRecord()) {
+			aCustomer.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+			aCustomer.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -4527,6 +4533,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				}
 			} else {
 				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aCustomer.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+					aCustomer.setApprovedBy(getUserWorkspace().getLoggedInUser().getUserId());
 					auditHeader = getCustomerDetailsService().doApprove(auditHeader);
 					if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;

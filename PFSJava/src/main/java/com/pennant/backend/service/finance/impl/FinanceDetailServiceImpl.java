@@ -3936,6 +3936,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			fm.setNextTaskId("");
 			fm.setNextUserId(null);
 			fm.setWorkflowId(0);
+			fm.setCreatedBy(fm.getCreatedBy());
+			fm.setCreatedOn(fm.getCreatedOn());
+			fm.setApprovedBy(fm.getLastMntBy());
+			fm.setApprovedOn(fm.getLastMntOn());
 
 			// Resetting Maturity Terms & Summary details rendering in case of
 			// Reduce maturity cases

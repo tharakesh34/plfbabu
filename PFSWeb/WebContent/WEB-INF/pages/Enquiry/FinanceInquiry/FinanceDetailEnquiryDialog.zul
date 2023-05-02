@@ -418,6 +418,30 @@
 													<textbox id="reasonForBlock" width="170px" />
 												</hbox>
 											</row>
+											<row>
+												<label value="${c:l('label_FinanceMainDialog_CreatedOn.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<datebox id="createdOn" width="171px" format="dd/MM/yyyy" />
+												</hbox>
+												<label value="${c:l('label_FinanceMainDialog_CreatedBy.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="createdBy" width="170px" />
+												</hbox>
+											</row>
+											<row>
+												<label value="${c:l('label_FinanceMainDialog_ApprovedOn.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<datebox id="approvedOn" width="171px" format="dd/MM/yyyy" />
+												</hbox>
+												<label value="${c:l('label_FinanceMainDialog_ApprovedBy.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="approvedBy" width="170px" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

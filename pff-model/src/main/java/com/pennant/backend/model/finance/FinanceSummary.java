@@ -231,6 +231,9 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private BigDecimal overDueEMI;
 
+	private String createdName;
+	private String approvedName;
+
 	public FinanceSummary() {
 		super();
 	}
@@ -1234,6 +1237,22 @@ public class FinanceSummary implements Serializable {
 
 	public void setOverDueEMI(BigDecimal overDueEMI) {
 		this.overDueEMI = overDueEMI;
+	}
+
+	public String getCreatedName() {
+		return this.createdName;
+	}
+
+	public void setCreatedName(String createdName) {
+		this.createdName = createdName;
+	}
+
+	public String getApprovedName() {
+		return this.approvedName;
+	}
+
+	public void setApprovedName(String approvedName) {
+		this.approvedName = approvedName;
 	}
 
 }

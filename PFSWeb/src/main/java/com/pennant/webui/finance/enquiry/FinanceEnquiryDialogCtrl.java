@@ -360,6 +360,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox profitDaysBasis_graph;
 	protected Textbox finBranch_graph;
 	protected Textbox custCIF_graph;
+
+	protected Datebox createdOn;
+	protected Textbox createdBy;
+	protected Datebox approvedOn;
+	protected Textbox approvedBy;
+
 	// not auto wired variables
 	private FinScheduleData finScheduleData; // over handed per parameters
 	private FinanceDetail financeDetail;
@@ -1668,6 +1674,15 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
 		this.parentLoanReference.setValue(aFinanceMain.getParentRef());
 
+		this.createdBy.setValue(
+				(finSummary != null && this.finSummary.getCreatedName() != null) ? this.finSummary.getCreatedName()
+						: "");
+		this.createdOn.setValue(aFinanceMain.getCreatedOn());
+		this.approvedBy.setValue(
+				(finSummary != null && this.finSummary.getCreatedName() != null) ? this.finSummary.getCreatedName()
+						: "");
+		this.approvedOn.setValue(aFinanceMain.getApprovedOn());
+
 		logger.debug("Leaving");
 	}
 
@@ -2222,6 +2237,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dftBpiTreatment.setDisabled(true);
 		this.blockRefunds.setReadonly(true);
 		this.reasonForBlock.setReadonly(true);
+		this.createdBy.setReadonly(true);
+		this.createdOn.setDisabled(true);
+		this.approvedBy.setReadonly(true);
+		this.approvedOn.setDisabled(true);
+
 	}
 
 	/** ========================================================= */

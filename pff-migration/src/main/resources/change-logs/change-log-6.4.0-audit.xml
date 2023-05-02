@@ -351,4 +351,52 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#4875.21" author="Poojitha.m">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4875.22" author="Poojitha.m">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4875.23" author="Poojitha.m">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4875.24" author="Poojitha.m">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4876.101" author="Poojitha.m">
+		<addColumn tableName="AdtCustomers">
+			<column name="CreatedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4876.102" author="Poojitha.m">
+		<addColumn tableName="AdtCustomers">
+			<column name="CreatedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4876.103" author="Poojitha.m">
+		<addColumn tableName="AdtCustomers">
+			<column name="ApprovedBy" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#4876.104" author="Poojitha.m">
+		<addColumn tableName="AdtCustomers">
+			<column name="ApprovedOn" type="datetime" />
+		</addColumn>
+	</changeSet> 
+	
 </databaseChangeLog>
