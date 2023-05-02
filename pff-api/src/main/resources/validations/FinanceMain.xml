@@ -50,7 +50,8 @@
 				</groups>
 			</constraint>
 		</field> -->
-		<field name="validateMain">
+		
+		<!-- <field name="validateMain">
 			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
 				<message>90242%%downPayBank</message>
 				<groups>
@@ -250,6 +251,6 @@
 					}
 				</element>
 			</constraint>
-		</field>
+		</field> -->
 	</bean>
 </constraint-mappings>
