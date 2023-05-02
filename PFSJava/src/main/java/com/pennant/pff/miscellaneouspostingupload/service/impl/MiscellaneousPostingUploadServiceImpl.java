@@ -284,10 +284,10 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 				String postingDivision = financeMainDAO.getLovDescFinDivisionByReference(mpus.getReference());
 				FinanceMain fm = financeMainDAO.getEntityByRef(mpus.getReference());
 				mpus.setBatchReference(batchReference);
-				jVPostingEntryList.add(getJV(mpus, mpus.getDebitGL(), AccountConstants.TRANCODE_DEBIT,
-						AccountConstants.TRANTYPE_DEBIT));
 				jVPostingEntryList.add(getJV(mpus, mpus.getCreditGL(), AccountConstants.TRANCODE_CREDIT,
 						AccountConstants.TRANTYPE_CREDIT));
+				jVPostingEntryList.add(getJV(mpus, mpus.getDebitGL(), AccountConstants.TRANCODE_DEBIT,
+						AccountConstants.TRANTYPE_DEBIT));
 
 				if (newRecord == 0) {
 					jVPosting.setJVPostingEntrysList(jVPostingEntryList);
