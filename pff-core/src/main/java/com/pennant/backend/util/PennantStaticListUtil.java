@@ -1333,6 +1333,8 @@ public class PennantStaticListUtil {
 			if (ImplementationConstants.ALLOW_PROVISION) {
 				enquiryTypes.add(new ValueLabel("PROVSNENQ", Labels.getLabel("label_ProvisionEnquiry")));
 			}
+
+			enquiryTypes.add(new ValueLabel("FINSUM", Labels.getLabel("label_FinancialSummary")));
 		}
 		return enquiryTypes;
 	}
