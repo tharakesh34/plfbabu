@@ -498,6 +498,11 @@
 			<artifactId>js</artifactId>
 			<version>20.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>20.0.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

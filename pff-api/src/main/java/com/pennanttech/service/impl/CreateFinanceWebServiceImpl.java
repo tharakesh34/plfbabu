@@ -71,7 +71,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.pff.api.controller.AbstractController;
-import com.pennant.validation.CreateFinanceGroup;
 import com.pennant.validation.CreateFinanceWithCollateral;
 import com.pennant.validation.CreateFinancewithWIFGroup;
 import com.pennant.validation.ValidationUtility;
@@ -158,8 +157,7 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 
 		fm.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
-		// do Basic mandatory validations using hibernate validator
-		validationUtility.validate(fd, CreateFinanceGroup.class);
+		financeDataValidation.doBasicMandatoryValidations(fd);
 
 		if (!CollectionUtils.isEmpty(fd.getCollaterals())) {
 			for (CollateralSetup setup : fd.getCollaterals()) {

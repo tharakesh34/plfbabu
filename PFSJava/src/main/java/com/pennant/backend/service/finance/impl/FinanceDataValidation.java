@@ -168,6 +168,8 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
@@ -1440,7 +1442,7 @@ public class FinanceDataValidation {
 						+ FinanceConstants.ODCALON_SPRI;
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90317", valueParm)));
 			}
-			
+
 			if (!FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
 				if (FinanceConstants.ODCALON_INST.equals(odChargeCalOn)) {
 					String[] valueParm = new String[2];
@@ -8367,6 +8369,53 @@ public class FinanceDataValidation {
 			covenant.setGraceDueDate(null);
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * All the java script validations moved from FinanceMain.xml to below method.
+	 * 
+	 * @param fd
+	 */
+	public void doBasicMandatoryValidations(FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		List<ErrorDetail> errors = new ArrayList<>();
+
+		validateBigDecimal(fm.getDownPayBank(), "DownPayBank", errors);
+		validateBigDecimal(fm.getDownPaySupl(), "DownPaySupl", errors);
+		validateBigDecimal(fm.getGrcPftRate(), "GrcPftRate", errors);
+		validateBigDecimal(fm.getGrcMargin(), "GrcMargin", errors);
+		validateBigDecimal(fm.getGrcMinRate(), "GrcMinRate", errors);
+		validateBigDecimal(fm.getGrcMaxRate(), "GrcMaxRate", errors);
+		validateBigDecimal(fm.getGrcMaxAmount(), "GrcMaxAmount", errors);
+		validateBigDecimal(fm.getReqRepayAmount(), "ReqRepayAmount", errors);
+		validateBigDecimal(fm.getRepayProfitRate(), "RepayProfitRate", errors);
+		validateBigDecimal(fm.getRpyMinRate(), "RpyMinRate", errors);
+		validateBigDecimal(fm.getRpyMaxRate(), "RpyMaxRate", errors);
+		validateBigDecimal(fm.getFinAssetValue(), "FinAssetValue", errors);
+
+		ServiceExceptionDetails exceptions[] = new ServiceExceptionDetails[errors.size()];
+
+		int errorCount = 0;
+		for (ErrorDetail error : errors) {
+			ServiceExceptionDetails exception = new ServiceExceptionDetails();
+
+			exception.setFaultCode(error.getCode());
+			exception.setFaultMessage(error.getError());
+
+			exceptions[errorCount++] = exception;
+		}
+
+		throw new ServiceException(exceptions);
+	}
+
+	private void validateBigDecimal(BigDecimal amount, String field, List<ErrorDetail> errors) {
+		if (amount == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = field;
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90242", valueParm)));
+		}
 	}
 
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
