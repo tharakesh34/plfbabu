@@ -4640,21 +4640,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		Date appDate = fm.getAppDate();
 
-		Date maturityDate = fm.getMaturityDate();
-		boolean normalLoanClosure = fsi.isNormalLoanClosure();
-		boolean foreClosure = rd.isForeClosure();
-
 		if (rcd.getReceivedDate().compareTo(appDate) > 0) {
 			setError(schdData, "RU0006", DateUtil.formatToLongDate(appDate));
 			return;
 		}
 
-		ReceiptPurpose receiptPurpose = fsi.getReceiptPurpose();
-
-		if (ReceiptPurpose.SCHDRPY != receiptPurpose && maturityDate.compareTo(appDate) < 0 && !normalLoanClosure
-				&& !foreClosure) {
-			setError(schdData, "RU0000", receiptPurpose.code());
-		}
 	}
 
 	private void validateValueDate(FinReceiptData rd) {
