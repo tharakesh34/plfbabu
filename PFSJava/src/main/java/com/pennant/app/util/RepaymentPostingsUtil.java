@@ -1073,12 +1073,15 @@ public class RepaymentPostingsUtil {
 			if (overDraft && DateUtil.compare(appDate, fm.getMaturityDate()) < 0) {
 				fullyPaid = false;
 			}
-
+			boolean oldFinActive = fm.isFinIsActive();
 			if (fullyPaid) {
 				pftDetail.setSvnAcrCalReq(false);
 				fm.setFinIsActive(false);
 				fm.setClosedDate(FinanceUtil.deriveClosedDate(fm));
-				fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+
+				if (oldFinActive) {
+					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+				}
 
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
