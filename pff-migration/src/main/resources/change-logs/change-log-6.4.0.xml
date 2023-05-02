@@ -13488,4 +13488,96 @@
 			]]>
 		</sql>
 	</changeSet>
+<changeSet id="ST#1528.40" author="Sravani.S">
+		<addColumn tableName="BRANCH_CHANGE_UPLOAD">
+			<column name="RecordSeq" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1528.40.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE BRANCH_CHANGE_UPLOAD SET RECORDSEQ = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1528.40.2" author="Sravani.S">
+		<addNotNullConstraint tableName="BRANCH_CHANGE_UPLOAD" columnName="RecordSeq"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ST#1528.40.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE BRANCH_CHANGE_UPLOAD ADD CONSTRAINT DF_BC_U_RECORDSEQ DEFAULT 0 FOR RECORDSEQ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1528.40.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="BRANCH_CHANGE_UPLOAD" columnName="RecordSeq" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1528.41" author="Sravani.S">
+		<addColumn tableName="CREATE_RECEIPT_UPLOAD">
+			<column name="RecordSeq" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1528.41.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE CREATE_RECEIPT_UPLOAD SET RECORDSEQ = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1528.41.2" author="Sravani.S">
+		<addNotNullConstraint tableName="CREATE_RECEIPT_UPLOAD" columnName="RecordSeq"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ST#1528.41.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE CREATE_RECEIPT_UPLOAD ADD CONSTRAINT DF_CR_U_RECORDSEQ DEFAULT 0 FOR RECORDSEQ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1528.41.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="CREATE_RECEIPT_UPLOAD" columnName="RecordSeq" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1528.42" author="Sravani.S">
+		<addColumn tableName="LOAN_CANCEL_UPLOADS">
+			<column name="RecordSeq" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1528.42.1" author="Sravani.S">
+		<sql>
+			<![CDATA[	
+				UPDATE LOAN_CANCEL_UPLOADS SET RECORDSEQ = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1528.42.2" author="Sravani.S">
+		<addNotNullConstraint tableName="LOAN_CANCEL_UPLOADS" columnName="RecordSeq"
+			columnDataType="bigint" />
+	</changeSet>
+
+	<changeSet id="ST#1528.42.3" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_CANCEL_UPLOADS ADD CONSTRAINT DF_LC_U_RECORDSEQ DEFAULT 0 FOR RECORDSEQ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1528.42.3" author="Sravani.S" dbms="postgresql, oracle">
+		<addDefaultValue tableName="LOAN_CANCEL_UPLOADS" columnName="RecordSeq" defaultValue="0" />
+	</changeSet>
 </databaseChangeLog> 
