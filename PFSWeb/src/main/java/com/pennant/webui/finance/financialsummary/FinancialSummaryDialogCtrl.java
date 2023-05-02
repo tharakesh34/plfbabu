@@ -129,6 +129,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(FinancialSummaryDialogCtrl.class);
 	protected Window window_financialSummaryDialog;
+	protected Groupbox basicGb;
+
 	private Textbox custCif;
 	private Textbox lanNo;
 	private Datebox businessDate;
@@ -347,6 +349,10 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			}
 
+			if (arguments.containsKey("isEnquiry")) {
+				this.enqiryModule = (boolean) arguments.get("isEnquiry");
+			}
+
 			if (isWorkFlowEnabled()) {
 				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
@@ -394,9 +400,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		doWriteBeanToComponents(financeDetail);
 		doReadOnly();
 
+		if (this.enqiryModule) {
+			this.basicGb.setVisible(false);
+		}
+		this.window.setHeight(this.borderLayoutHeight - 120 + "px");
+
 		try {
-			getFinanceMainDialogCtrl().getClass().getMethod("setFinancialSummaryDialogCtrl", this.getClass())
-					.invoke(getFinanceMainDialogCtrl(), this);
+			if (getFinanceMainDialogCtrl() != null) {
+				getFinanceMainDialogCtrl().getClass().getMethod("setFinancialSummaryDialogCtrl", this.getClass())
+						.invoke(getFinanceMainDialogCtrl(), this);
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -464,7 +477,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (cetGroupBoxesVisibility.contains("gb_sanctionConditionsDetails")) {
 			issanctionConditionsDetailsVisible = true;
-			imgSanctionConditions.setStyle("display:block");
+			if (!this.enqiryModule) {
+				imgSanctionConditions.setStyle("display:block");
+			}
 			gb_sanctionConditionsDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_risksAndMitigants")) {
@@ -1326,6 +1341,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
+		if (this.enqiryModule) {
+			this.btnNew_NewSanctionConditions.setVisible(false);
+		}
 
 		// Customer related List Buttons
 		/*

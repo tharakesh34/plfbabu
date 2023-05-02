@@ -70,6 +70,7 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -78,6 +79,8 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -269,6 +272,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	@Autowired
+	private SanctionConditionsDAO sanctionConditionsDAO;
 
 	/**
 	 * default constructor.<br>
@@ -971,6 +976,21 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				path = "/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul";
 
 			}
+		} else if ("FINSUM".equals(this.enquiryType)) {
+			FinanceDetail fd = new FinanceDetail();
+			CustomerDetails cd = new CustomerDetails();
+			Customer cs = new Customer();
+			FinanceMain fm = this.financeMainDAO.getFinanceMain(this.finID);
+
+			cs.setCustCIF(fm.getCustCIF());
+			cd.setCustomer(cs);
+			fd.setCustomerDetails(cd);
+			fd.getFinScheduleData().setFinanceMain(fm);
+			fd.setSanctionDetailsList(this.sanctionConditionsDAO.getSanctionConditions(this.finID));
+			map.put("financeDetail", fd);
+			map.put("isEnquiry", true);
+			map.put("basicDetailgrid", this.grid_BasicDetails);
+			path = "/WEB-INF/pages/Finance/FinanceMain/FinancialSummaryDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {

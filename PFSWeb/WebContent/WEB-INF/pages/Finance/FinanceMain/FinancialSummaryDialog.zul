@@ -7,8 +7,7 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 
-	<window id="window_financialSummaryDialog" style="border:none;" apply="${financialSummaryDialogCtrl}" width="100%"
-		height="100%" sizable="false">
+	<window id="window_financialSummaryDialog" style="border:none;" apply="${financialSummaryDialogCtrl}" width="100%" sizable="false">
 		<style>
 			.banner { position: fixed; left: 15px!important; top: 127px!important; min-height: 500px; max-height:
 			1000px; border:none; }
@@ -63,7 +62,7 @@
 			</west>
 			<center border="none">
 				<div width="100%" height="100%">
-					<groupbox style="padding:0px 25px 0px 15px;">
+					<groupbox id="basicGb" style="padding:0px 25px 0px 15px;">
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
 								<column width="125px" />
