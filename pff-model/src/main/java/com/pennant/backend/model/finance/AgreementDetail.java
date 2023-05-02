@@ -8422,6 +8422,7 @@ public class AgreementDetail {
 	}
 
 	private List<ActivityDetail> activityDetails;
+	private List<ActivityDetail> customActivityDetails;
 
 	public List<ActivityDetail> getActivityDetails() {
 		return activityDetails;
@@ -8429,6 +8430,14 @@ public class AgreementDetail {
 
 	public void setActivityDetails(List<ActivityDetail> activityDetails) {
 		this.activityDetails = activityDetails;
+	}
+
+	public List<ActivityDetail> getCustomActivityDetails() {
+		return customActivityDetails;
+	}
+
+	public void setCustomActivityDetails(List<ActivityDetail> customActivityDetails) {
+		this.customActivityDetails = customActivityDetails;
 	}
 
 	public class ActivityDetail {

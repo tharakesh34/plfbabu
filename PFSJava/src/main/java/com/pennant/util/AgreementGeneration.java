@@ -1020,6 +1020,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (CollectionUtils.isEmpty(agreement.getActivityDetails())) {
 				agreement.setActivityDetails(new ArrayList<>());
 			}
+			if (CollectionUtils.isEmpty(agreement.getCustomActivityDetails())) {
+				agreement.setCustomActivityDetails(new ArrayList<>());
+			}
 			if (null != detail.getFinScheduleData() && null != financeMain && null != financeMain.getFinReference()) {
 
 				String loanRef = financeMain.getFinReference();
@@ -1042,16 +1045,17 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							activityDetail.setActivityUser(StringUtils.trimToEmpty(activity.getUserLogin()));
 							if (StringUtils.isNotEmpty(includeRoles)) {
 								String roleCode = StringUtils.trimToEmpty(activity.getRoleCode());
-								if (roleCode.contains("-")) {
-									if (includeRoles.contains(roleCode.split("-")[1])) {
-										agreement.getActivityDetails().add(activityDetail);
+								if (roleCode.contains("_")) {
+									if (includeRoles.contains(roleCode.split("_")[1])) {
+										agreement.getCustomActivityDetails().add(activityDetail);
 									}
 								} else if (includeRoles.contains(roleCode)) {
-									agreement.getActivityDetails().add(activityDetail);
+									agreement.getCustomActivityDetails().add(activityDetail);
 								}
 							} else {
-								agreement.getActivityDetails().add(activityDetail);
+								agreement.getCustomActivityDetails().add(activityDetail);
 							}
+							agreement.getActivityDetails().add(activityDetail);
 						}
 					}
 				}
@@ -1059,6 +1063,11 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 			if (CollectionUtils.isEmpty(agreement.getActivityDetails())) {
 				agreement.setActivityDetails(new ArrayList<>());
 				agreement.getActivityDetails().add(agreement.new ActivityDetail());
+			}
+
+			if (CollectionUtils.isEmpty(agreement.getCustomActivityDetails())) {
+				agreement.setCustomActivityDetails(new ArrayList<>());
+				agreement.getCustomActivityDetails().add(agreement.new ActivityDetail());
 			}
 
 			// Extended Details
