@@ -124,6 +124,12 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
+				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
+						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
+						|| "Status".equals(allocationType)) {
+					continue;
+				}
+
 				alloc.setId(uploadID);
 				alloc.setHeaderId(headerID);
 				alloc.setCode(allocationType.toUpperCase());
