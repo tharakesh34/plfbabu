@@ -4,7 +4,7 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-migration</artifactId>
-	<version>6.4.0-HDFC_R1.2</version>
+	<version>6.4.0-HDFC_R1.3</version>
 	<packaging>jar</packaging>
 
 	<name>pff-migration</name>
