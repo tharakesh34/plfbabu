@@ -324,6 +324,7 @@ public class ImplementationConstants {
 		ALLOW_LIEN = getValueAsBoolean("ALLOW_LIEN", false);
 		ALW_AUTO_CROSS_LOAN_KNOCKOFF = getValueAsBoolean("ALW_AUTO_CROSS_LOAN_KNOCKOFF", false);
 		FEE_ODC_DISABLE = getValueAsBoolean("FEE_ODC_DISABLE", false);
+		AGR_ACTVITY_INCL_ROLES = getValueAsString("AGR_ACTVITY_INCL_ROLES", "");
 
 		setVerificationConstants();
 	}
@@ -742,6 +743,7 @@ public class ImplementationConstants {
 	public static boolean EXPIRY_DATE_MANDATORY;
 	public static boolean ALLOW_LIEN;
 	public static boolean ALW_AUTO_CROSS_LOAN_KNOCKOFF;
+	public static String AGR_ACTVITY_INCL_ROLES;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

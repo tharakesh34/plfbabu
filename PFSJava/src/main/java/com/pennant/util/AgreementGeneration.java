@@ -1025,6 +1025,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				String loanRef = financeMain.getFinReference();
 				List<Activity> activities = getActivityLogService().getActivities("FinanceMain", loanRef);
 				if (aggModuleDetails.contains(PennantConstants.AGG_ACTIVIT) && CollectionUtils.isNotEmpty(activities)) {
+					String includeRoles = ImplementationConstants.AGR_ACTVITY_INCL_ROLES;
 					for (Activity activity : activities) {
 						if (null != activity) {
 							ActivityDetail activityDetail = agreement.new ActivityDetail();
@@ -1039,7 +1040,18 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 							}
 							activityDetail.setActivity(StringUtils.trimToEmpty(activity.getRecordStatus()));
 							activityDetail.setActivityUser(StringUtils.trimToEmpty(activity.getUserLogin()));
-							agreement.getActivityDetails().add(activityDetail);
+							if (StringUtils.isNotEmpty(includeRoles)) {
+								String roleCode = StringUtils.trimToEmpty(activity.getRoleCode());
+								if (roleCode.contains("-")) {
+									if (includeRoles.contains(roleCode.split("-")[1])) {
+										agreement.getActivityDetails().add(activityDetail);
+									}
+								} else if (includeRoles.contains(roleCode)) {
+									agreement.getActivityDetails().add(activityDetail);
+								}
+							} else {
+								agreement.getActivityDetails().add(activityDetail);
+							}
 						}
 					}
 				}
