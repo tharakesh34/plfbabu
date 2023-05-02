@@ -674,7 +674,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		if (!this.cancelRemarks.isReadonly()) {
 			this.cancelRemarks.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinanceMainDialog_cancelRemarks.value"), null, false, 200));
+					Labels.getLabel("label_FinanceMainDialog_cancelRemarks.value"), null, 1, 200));
 		}
 		logger.debug(Literal.LEAVING);
 	}
