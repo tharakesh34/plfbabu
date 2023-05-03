@@ -71,30 +71,10 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	/**
-	 * @return the accountMappingDAO
-	 */
-	public AccountMappingDAO getAccountMappingDAO() {
-		return accountMappingDAO;
-	}
-
-	/**
-	 * @param accountMappingDAO the accountMappingDAO to set
-	 */
 	public void setAccountMappingDAO(AccountMappingDAO accountMappingDAO) {
 		this.accountMappingDAO = accountMappingDAO;
 	}
@@ -131,11 +111,11 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		if (accountMapping.isNewRecord()) {
 			accountMapping.setCreatedBy(accountMapping.getUserDetails().getUserId());
 			accountMapping.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-			accountMapping.setAccount(getAccountMappingDAO().save(accountMapping, tableType));
+			accountMapping.setAccount(accountMappingDAO.save(accountMapping, tableType));
 			auditHeader.getAuditDetail().setModelData(accountMapping);
 			auditHeader.setAuditReference(accountMapping.getAccount());
 		} else {
-			getAccountMappingDAO().update(accountMapping, tableType);
+			accountMappingDAO.update(accountMapping, tableType);
 		}
 
 		if (accountMapping.getAccountMappingList() != null && accountMapping.getAccountMappingList().size() > 0) {
@@ -145,7 +125,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		}
 
 		auditHeader.setAuditDetails(auditDetailsList);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -212,13 +192,13 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 					accountMapping.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
 				if (saveRecord) {
-					getAccountMappingDAO().save(accountMapping, tableType);
+					accountMappingDAO.save(accountMapping, tableType);
 				}
 				if (updateRecord) {
-					getAccountMappingDAO().update(accountMapping, tableType);
+					accountMappingDAO.update(accountMapping, tableType);
 				}
 				if (deleteRecord) {
-					getAccountMappingDAO().delete(accountMapping, tableType);
+					accountMappingDAO.delete(accountMapping, tableType);
 				}
 				if (approveRec) {
 					accountMapping.setRecordType(rcdType);
@@ -226,9 +206,9 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 				}
 			} else {
 				if (accountMapping.isNewRecord()) {
-					getAccountMappingDAO().save(accountMapping, tableType);
+					accountMappingDAO.save(accountMapping, tableType);
 				} else {
-					getAccountMappingDAO().update(accountMapping, tableType);
+					accountMappingDAO.update(accountMapping, tableType);
 				}
 			}
 			auditDetails.get(i).setModelData(accountMapping);
@@ -259,9 +239,9 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		}
 
 		AccountMapping accountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
-		getAccountMappingDAO().delete(accountMapping, TableType.MAIN_TAB);
+		accountMappingDAO.delete(accountMapping, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -275,7 +255,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 */
 	@Override
 	public AccountMapping getAccountMapping(String account) {
-		return getAccountMappingDAO().getAccountMapping(account, "_View");
+		return accountMappingDAO.getAccountMapping(account, "_View");
 	}
 
 	/**
@@ -286,7 +266,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 	 * @return AccountMapping
 	 */
 	public AccountMapping getApprovedAccountMapping(String account) {
-		return getAccountMappingDAO().getAccountMapping(account, "_AView");
+		return accountMappingDAO.getAccountMapping(account, "_AView");
 	}
 
 	/**
@@ -319,7 +299,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		BeanUtils.copyProperties((AccountMapping) auditHeader.getAuditDetail().getModelData(), accountMapping);
 
 		if (!RequestSource.UPLOAD.equals(accountMapping.getRequestSource())) {
-			getAccountMappingDAO().delete(accountMapping, TableType.TEMP_TAB);
+			accountMappingDAO.delete(accountMapping, TableType.TEMP_TAB);
 		}
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(accountMapping.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -328,7 +308,7 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 
 		if (accountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getAccountMappingDAO().delete(accountMapping, TableType.MAIN_TAB);
+			accountMappingDAO.delete(accountMapping, TableType.MAIN_TAB);
 		} else {
 			accountMapping.setRoleCode("");
 			accountMapping.setNextRoleCode("");
@@ -341,21 +321,21 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 				accountMapping.setRecordType("");
 				accountMapping.setApprovedBy(accountMapping.getUserDetails().getUserId());
 				accountMapping.setApprovedOn(new Timestamp(System.currentTimeMillis()));
-				getAccountMappingDAO().save(accountMapping, TableType.MAIN_TAB);
+				accountMappingDAO.save(accountMapping, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				accountMapping.setRecordType("");
-				getAccountMappingDAO().update(accountMapping, TableType.MAIN_TAB);
+				accountMappingDAO.update(accountMapping, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(accountMapping);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -384,9 +364,9 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		AccountMapping accountMapping = (AccountMapping) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAccountMappingDAO().delete(accountMapping, TableType.TEMP_TAB);
+		accountMappingDAO.delete(accountMapping, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -590,9 +570,9 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 
 		AccountMapping tempAccountMapping = null;
 		if (accountMapping.isWorkflow()) {
-			tempAccountMapping = getAccountMappingDAO().getAccountMapping(accountMapping.getId(), "_Temp");
+			tempAccountMapping = accountMappingDAO.getAccountMapping(accountMapping.getId(), "_Temp");
 		}
-		AccountMapping befAccountMapping = getAccountMappingDAO().getAccountMapping(accountMapping.getId(), "");
+		AccountMapping befAccountMapping = accountMappingDAO.getAccountMapping(accountMapping.getId(), "");
 
 		AccountMapping oldAccountMapping = accountMapping.getBefImage();
 
@@ -664,6 +644,11 @@ public class AccountMappingServiceImpl extends GenericService<AccountMapping> im
 		}
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	@Override
+	public boolean isExistingHostAccount(String hostAccount) {
+		return accountMappingDAO.isExistingHostAccount(hostAccount, "_View");
 	}
 
 	public TransactionEntryDAO getTransactionEntryDAO() {

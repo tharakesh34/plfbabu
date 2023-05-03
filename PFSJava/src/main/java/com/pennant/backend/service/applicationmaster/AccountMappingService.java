@@ -51,4 +51,6 @@ public interface AccountMappingService {
 	Map<String, Rule> getSubheadRules(List<String> subHeadRules);
 
 	void save(List<AccountMapping> accountMappingList, String finType);
+
+	boolean isExistingHostAccount(String hostAccount);
 }

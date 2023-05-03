@@ -340,4 +340,16 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		}
 
 	}
+
+	@Override
+	public boolean isExistingHostAccount(String hostAccount, String type) {
+		StringBuilder sql = new StringBuilder("Select count(HostAccount) From AccountMapping");
+		sql.append(type);
+		sql.append(" Where HostAccount = ?");
+
+		logger.debug(sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, hostAccount) > 0;
+
+	}
 }

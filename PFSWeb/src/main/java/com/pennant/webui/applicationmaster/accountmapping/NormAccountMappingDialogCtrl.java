@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -312,6 +313,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		if (HostAccountStatus.isClose(am.getStatus())) {
 			this.spaceClosedDate.setSclass(PennantConstants.mandateSclass);
 			this.closedDate.setValue(am.getClosedDate());
+			this.closedDate.setDisabled(true);
 		}
 
 		if (StringUtils.isEmpty(am.getAllowedManualEntry())) {
@@ -351,7 +353,15 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 			wve.add(we);
 		}
 		try {
-			accountMapping.setHostAccount(this.hostAccount.getValue());
+			String hostAccount = this.hostAccount.getValue();
+			boolean isExistingHostAccount = accountMappingService.isExistingHostAccount(hostAccount);
+
+			if (isExistingHostAccount && accountMapping.isNewRecord()) {
+				throw new WrongValueException(this.hostAccount,
+						Labels.getLabel("DATA_ALREADY_EXISTS", new String[] { Labels.getLabel("label_HostAccount") }));
+			}
+
+			accountMapping.setHostAccount(hostAccount);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -509,7 +519,7 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		if (!this.gLDescription.isReadonly()) {
 			this.gLDescription.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_NormAccountMappingDialog_GLDescription.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM));
+							PennantRegularExpressions.REGEX_DESCRIPTION));
 		}
 
 		if (!this.accountTypeGroup.isReadonly()) {
@@ -992,5 +1002,4 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	public void setAccountMappingService(AccountMappingService accountMappingService) {
 		this.accountMappingService = accountMappingService;
 	}
-
 }
