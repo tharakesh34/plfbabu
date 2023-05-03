@@ -3918,8 +3918,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
 				if (this.odMinAmount.getValue() == null) {
-					throw new WrongValueException(this.odMinAmount, Labels.getLabel("MUST_BE_ENTERED",
-							new String[] { Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value") }));
+					aFinanceType.setOdMinAmount(BigDecimal.ZERO);
 				}
 				aFinanceType.setOdMinAmount(CurrencyUtil.unFormat(this.odMinAmount.getValue(), format));
 			}
