@@ -243,17 +243,19 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		AssetClassSetupHeader assetClassSetupHeader = (AssetClassSetupHeader) auditDetail.getModelData();
+		AssetClassSetupHeader ach = (AssetClassSetupHeader) auditDetail.getModelData();
 
-		String recordType = assetClassSetupHeader.getRecordType();
-		String entityCode = assetClassSetupHeader.getEntityCode();
-		boolean newRecord = assetClassSetupHeader.isNewRecord();
+		String recordType = ach.getRecordType();
+		String entityCode = ach.getEntityCode();
+		boolean newRecord = ach.isNewRecord();
 
 		if (newRecord && PennantConstants.RECORD_TYPE_NEW.equals(recordType)) {
-			if (newRecord && assetClassSetupDAO.isAssetEntityCodeExists(entityCode, TableType.VIEW)) {
-				String[] parameters = new String[1];
+			if (newRecord && assetClassSetupDAO.isAssetEntityCodeExists(entityCode, ach.getCode(), TableType.VIEW)) {
+				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entityCode;
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				parameters[1] = PennantJavaUtil.getLabel("label_AssetClassSetupDialog_AssetClassSetupCode") + ": "
+						+ ach.getCode();
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, null));
 			}
 		}
 

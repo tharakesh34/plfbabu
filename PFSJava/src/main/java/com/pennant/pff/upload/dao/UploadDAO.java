@@ -13,7 +13,7 @@ public interface UploadDAO {
 
 	long saveHeader(FileUploadHeader header);
 
-	int update(FileUploadHeader header, TableType tableType);
+	int update(FileUploadHeader header);
 
 	void updateProgress(long headerID, int status);
 
@@ -43,4 +43,6 @@ public interface UploadDAO {
 	void updateFailRecords(int sucessRecords, int failedrecords, long headerId);
 
 	List<FileUploadHeader> loadData(String type);
+
+	void updateProgress(List<FileUploadHeader> headers, int status);
 }

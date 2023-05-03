@@ -35,7 +35,16 @@ public class UploadProcessJob implements Runnable {
 
 	private void processesThread() {
 		if (jobName.equals(headerList.get(0).getType().toUpperCase().concat("_APPROVER_JOB"))) {
-			uploadService.doApprove(headerList);
+			try {
+				uploadService.doApprove(headerList);
+			} catch (Exception e) {
+				logger.warn("Approval Job failed.", e.getMessage());
+			}
+
+			for (FileUploadHeader header : headerList) {
+				ProcessJobHandler handler = new ProcessJobHandler(header.getType().concat("_UPLOAD"), dataSource);
+				handler.processJobFile(header);
+			}
 		} else {
 			for (FileUploadHeader header : headerList) {
 				logger.info(String.format("Process is initiated for the File %s", header.getFileName()));

@@ -124,7 +124,8 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
 						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
-						|| "Status".equals(allocationType)) {
+						|| "Status".equals(allocationType) || "ErrorCode".equals(allocationType)
+						|| "ErrorDesc".equals(allocationType)) {
 					continue;
 				}
 
@@ -186,6 +187,8 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			record.addValue("STATUS", mku.getStatus());
 			record.addValue("PROGRESS", mku.getProgress());
 		}
+
+		manualKnockOffUploadService.updateProcess(header, mku, record);
 
 		logger.debug(Literal.LEAVING);
 	}

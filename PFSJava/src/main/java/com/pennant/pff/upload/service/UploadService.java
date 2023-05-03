@@ -19,6 +19,8 @@ public interface UploadService {
 
 	long saveHeader(FileUploadHeader header, TableType type);
 
+	void update(FileUploadHeader uploadHeader);
+
 	void doValidate(FileUploadHeader header, Object detail);
 
 	List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
@@ -26,7 +28,7 @@ public interface UploadService {
 
 	List<Entity> getEntities();
 
-	void update(FileUploadHeader uploadHeader);
+	void updateHeader(FileUploadHeader uploadHeader);
 
 	void updateHeader(List<FileUploadHeader> uploadHeaders, boolean isApprove);
 

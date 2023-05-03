@@ -13,7 +13,7 @@ public interface AssetClassSetupDAO extends BasicCrudDao<AssetClassSetupHeader> 
 
 	boolean isDuplicateKey(long id, String entityCode, TableType tableType);
 
-	boolean isAssetEntityCodeExists(String entityCode, TableType type);
+	boolean isAssetEntityCodeExists(String entityCode, String code, TableType type);
 
 	void updateDetail(AssetClassSetupDetail assetClassSetUpDetail, String type);
 

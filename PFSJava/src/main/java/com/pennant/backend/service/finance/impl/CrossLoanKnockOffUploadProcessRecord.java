@@ -126,7 +126,8 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 
 				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
 						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
-						|| "Status".equals(allocationType)) {
+						|| "Status".equals(allocationType) || "ErrorCode".equals(allocationType)
+						|| "ErrorDesc".equals(allocationType)) {
 					continue;
 				}
 
@@ -186,8 +187,10 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 
 			record.addValue("STATUS", clku.getStatus());
 			record.addValue("PROGRESS", clku.getProgress());
-
 		}
+
+		crossLoanKnockOffUploadService.updateProcess(header, clku, record);
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -130,8 +130,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
+					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus txStatus = null;
 
 			for (FileUploadHeader header : headers) {

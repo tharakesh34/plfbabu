@@ -1033,7 +1033,11 @@ public class FileUploadList extends Window implements Serializable {
 		for (FileUploadHeader header : selectedHeaders) {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			uploadService.updateInProcessStatus(header.getId(), UploadStatus.APPROVE.status());
+			header.setApprovedBy(this.userId);
+			header.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+			header.setProgress(UploadStatus.APPROVE.status());
+			uploadService.update(header);
+
 			headers.add(header);
 		}
 

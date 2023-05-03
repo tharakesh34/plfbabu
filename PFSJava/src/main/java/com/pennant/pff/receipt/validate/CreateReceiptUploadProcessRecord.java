@@ -44,6 +44,7 @@ import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -55,8 +56,8 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
-public class CreateReceiptUploadDataValidator implements ProcessRecord {
-	private static final Logger logger = LogManager.getLogger(CreateReceiptUploadDataValidator.class);
+public class CreateReceiptUploadProcessRecord implements ProcessRecord {
+	private static final Logger logger = LogManager.getLogger(CreateReceiptUploadProcessRecord.class);
 
 	private CreateReceiptUploadDAO createReceiptUploadDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
@@ -68,7 +69,10 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 	private RejectDetailDAO rejectDetailDAO;
 	private BankDetailDAO bankDetailDAO;
 
-	public CreateReceiptUploadDataValidator() {
+	@Autowired
+	private UploadService createReceiptUploadService;
+
+	public CreateReceiptUploadProcessRecord() {
 		super();
 	}
 
@@ -245,7 +249,8 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 
 				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
 						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
-						|| "Status".equals(allocationType)) {
+						|| "Status".equals(allocationType) || "ErrorCode".equals(allocationType)
+						|| "ErrorDesc".equals(allocationType)) {
 					continue;
 				}
 
@@ -305,6 +310,8 @@ public class CreateReceiptUploadDataValidator implements ProcessRecord {
 			record.addValue("STATUS", cru.getStatus());
 			record.addValue("PROGRESS", cru.getProgress());
 		}
+
+		createReceiptUploadService.updateProcess(header, cru, record);
 
 		logger.debug(Literal.LEAVING);
 	}

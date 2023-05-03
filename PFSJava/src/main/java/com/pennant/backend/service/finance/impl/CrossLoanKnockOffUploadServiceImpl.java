@@ -51,6 +51,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -182,7 +183,15 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 						}
 					}
 
-					clk.setUserDetails(header.getUserDetails());
+					LoggedInUser userDetails = header.getUserDetails();
+
+					if (userDetails == null) {
+						userDetails = new LoggedInUser();
+						userDetails.setLoginUsrID(header.getApprovedBy());
+						userDetails.setUserName(header.getApprovedByName());
+					}
+
+					clk.setUserDetails(userDetails);
 
 					if (clk.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						AuditHeader ah = getAuditHeader(getCrossLoanKnockOffBean(clk, fromFm, toFm),

@@ -21,7 +21,7 @@ public class HostGLMappingUploadJob extends AbstractJob {
 
 	private UploadService getUploadService(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (UploadService) jobDataMap.get("hostglmappingUploadService");
+		return (UploadService) jobDataMap.get("hostGLMappingUploadService");
 	}
 
 }

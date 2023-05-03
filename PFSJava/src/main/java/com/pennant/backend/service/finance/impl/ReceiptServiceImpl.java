@@ -4640,7 +4640,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		Date appDate = fm.getAppDate();
 
-		if (rcd.getReceivedDate().compareTo(appDate) > 0) {
+		if (DateUtil.compare(rcd.getReceivedDate(), appDate) > 0) {
 			setError(schdData, "RU0006", DateUtil.formatToLongDate(appDate));
 			return;
 		}

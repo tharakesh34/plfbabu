@@ -73,6 +73,11 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 	}
 
 	@Override
+	public void update(FileUploadHeader uploadHeader) {
+		this.uploadDAO.update(uploadHeader);
+	}
+
+	@Override
 	public List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
 			Date toDate, String type, String stage, String usrLogin) {
 		return uploadDAO.getHeaderData(roleCodes, entityCode, id, fromDate, toDate, type, stage, usrLogin);
@@ -89,7 +94,7 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 	}
 
 	@Override
-	public void update(FileUploadHeader uploadHeader) {
+	public void updateHeader(FileUploadHeader uploadHeader) {
 		this.uploadDAO.updateHeader(uploadHeader);
 	}
 
@@ -111,8 +116,6 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 
 			if (isApprove) {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				header.setApprovedBy(header.getLastMntBy());
-				header.setApprovedOn(header.getLastMntOn());
 				header.setProgress(Status.APPROVED.getValue());
 			} else {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
@@ -156,6 +159,8 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 			logger.debug(String.format("There is no records to process the %s.", type.toUpperCase()));
 			return;
 		}
+
+		uploadDAO.updateProgress(loadData, UploadStatus.IN_PROCESS.status());
 
 		setWorkflowDetails(loadData, moduleCode);
 

@@ -205,15 +205,16 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 	}
 
 	@Override
-	public boolean isAssetEntityCodeExists(String entityCode, TableType type) {
+	public boolean isAssetEntityCodeExists(String entityCode, String code, TableType type) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Count(entityCode) From ASSET_CLASS_SETUP_HEADER");
 		sql.append(type.getSuffix());
-		sql.append(" Where EntityCode = ? and Active = ?");
+		sql.append(" Where EntityCode = ? and Code = ? and Active = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), entityCode, 1) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), entityCode, code,
+				1) > 0;
 	}
 
 	private List<AssetClassSetupDetail> getDetails(long setupID) {

@@ -13234,7 +13234,7 @@
 	<bean id="customerEmailUpload" class="com.pennant.pff.customer.service.impl.CustomerEmailUpload"
 		parent="kycDetailsUploadService" />
 
-	<bean id="hostglmappingUploadService"
+	<bean id="hostGLMappingUploadService"
 		class="com.pennant.pff.hostglmapping.service.impl.HostGLMappingUploadServiceImpl" parent="aUploadService" />
 
 	<bean id="hostglmappingUploadDAO" class="com.pennanttech.pff.hostglmapping.dao.impl.HostGLMappingUploadDAOImpl"
@@ -13275,8 +13275,8 @@
 	<bean id="createReceiptUploadService" class="com.pennant.pff.receipt.service.impl.CreateReceiptUploadServiceImpl"
 		parent="aUploadService" />
 
-	<bean id="createReceiptUploadDataValidator"
-		class="com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator" />
+	<bean id="createReceiptUploadProcessRecord"
+		class="com.pennant.pff.receipt.validate.CreateReceiptUploadProcessRecord" />
 
 	<bean id="createReceiptUploadDAO" class="com.pennant.pff.receipt.dao.impl.CreateReceiptUploadDAOImpl"
 		parent="sequenceDao" />

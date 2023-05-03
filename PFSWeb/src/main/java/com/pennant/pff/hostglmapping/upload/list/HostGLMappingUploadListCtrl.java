@@ -12,8 +12,8 @@ public class HostGLMappingUploadListCtrl extends AUploadListCtrl {
 	private static final long serialVersionUID = -256791887358524752L;
 	protected Window window;
 
-	protected HostGLMappingUploadListCtrl(@Autowired UploadService hostglmappingUploadService) {
-		super(hostglmappingUploadService, UploadTypes.HOST_GL);
+	protected HostGLMappingUploadListCtrl(@Autowired UploadService hostGLMappingUploadService) {
+		super(hostGLMappingUploadService, UploadTypes.HOST_GL);
 	}
 
 	@Override

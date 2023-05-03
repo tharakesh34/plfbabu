@@ -17,7 +17,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -43,6 +45,8 @@ import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -60,6 +64,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private ReceiptService receiptService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	protected FinanceRepaymentsDAO financeRepaymentsDAO;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -236,7 +242,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 					if (fc.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						txStatus = transactionManager.getTransaction(txDef);
 
-						createReceipt(fc, header.getEntityCode());
+						try {
+							createReceipt(fc, header);
+						} catch (AppException e) {
+							fc.setProgress(EodConstants.PROGRESS_FAILED);
+							fc.setErrorCode("9999");
+							fc.setErrorDesc(e.getMessage());
+						}
 
 						transactionManager.commit(txStatus);
 					}
@@ -290,15 +302,18 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void createReceipt(ManualKnockOffUpload fc, String entityCode) {
+	private void createReceipt(ManualKnockOffUpload fc, FileUploadHeader header) {
+		String entityCode = header.getEntityCode();
+
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+		Date receiptDt = fillValueDate(fc);
 
 		rud.setReference(fc.getReference());
 		rud.setFinID(fc.getReferenceID());
 		rud.setAllocationType(fc.getAllocationType());
-		rud.setValueDate(fc.getAppDate());
-		rud.setRealizationDate(fc.getAppDate());
-		rud.setReceivedDate(fc.getAppDate());
+		rud.setValueDate(receiptDt);
+		rud.setRealizationDate(receiptDt);
+		rud.setReceivedDate(receiptDt);
 		rud.setReceiptAmount(fc.getReceiptAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
@@ -326,7 +341,15 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
-		fsi.setLoggedInUser(fc.getUserDetails());
+		LoggedInUser userDetails = fc.getUserDetails();
+
+		if (userDetails == null) {
+			userDetails = new LoggedInUser();
+			userDetails.setLoginUsrID(header.getApprovedBy());
+			userDetails.setUserName(header.getApprovedByName());
+		}
+
+		fsi.setLoggedInUser(userDetails);
 		fsi.setKnockOffReceipt(true);
 		fsi.setReceiptDetail(null);
 
@@ -425,6 +448,25 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		return true;
 	}
 
+	private Date fillValueDate(ManualKnockOffUpload fc) {
+		Date receiptDt = fc.getAppDate();
+
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(fc.getReferenceID(), receiptDt);
+			if (DateUtil.compare(receiptDt, schDate) < 0) {
+				receiptDt = schDate;
+			}
+		}
+
+		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(fc.getReferenceID());
+		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
+			receiptDt = maxReceiptDt;
+		}
+
+		return receiptDt;
+
+	}
+
 	@Autowired
 	public void setManualKnockOffUploadDAO(ManualKnockOffUploadDAO manualKnockOffUploadDAO) {
 		this.manualKnockOffUploadDAO = manualKnockOffUploadDAO;
@@ -459,5 +501,15 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
+		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 }

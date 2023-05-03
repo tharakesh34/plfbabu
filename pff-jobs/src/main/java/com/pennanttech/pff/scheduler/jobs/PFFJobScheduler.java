@@ -102,7 +102,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService manualKnockOffUploadService;
 	private UploadService chequeUploadService;
 	private UploadService kycDetailsUploadService;
-	private UploadService hostglmappingUploadService;
+	private UploadService hostGLMappingUploadService;
 	private UploadService miscellaneouspostingUploadService;
 	private UploadService financeCancellationUploadService;
 	private UploadService bulkFeeWaiverUploadService;
@@ -462,7 +462,7 @@ public class PFFJobScheduler extends JobScheduler {
 		jobDataList.add(jobData);
 
 		args = new JobDataMap();
-		args.put("hostglmappingUploadService", hostglmappingUploadService);
+		args.put("hostGLMappingUploadService", hostGLMappingUploadService);
 		jobData = new JobData("HOST_GL_DETAILS_JOB", HostGLMappingUploadJob.class, args);
 		jobDataList.add(jobData);
 
@@ -713,8 +713,8 @@ public class PFFJobScheduler extends JobScheduler {
 	}
 
 	@Autowired
-	public void setHostglmappingUploadService(UploadService hostglmappingUploadService) {
-		this.hostglmappingUploadService = hostglmappingUploadService;
+	public void setHostGLMappingUploadService(UploadService hostGLMappingUploadService) {
+		this.hostGLMappingUploadService = hostGLMappingUploadService;
 	}
 
 	@Autowired

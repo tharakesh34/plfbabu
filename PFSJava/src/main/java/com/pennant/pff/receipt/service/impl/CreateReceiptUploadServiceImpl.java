@@ -30,12 +30,13 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
-import com.pennant.pff.receipt.validate.CreateReceiptUploadDataValidator;
+import com.pennant.pff.receipt.validate.CreateReceiptUploadProcessRecord;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -47,7 +48,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 
 	private ReceiptService receiptService;
 	private CreateReceiptUploadDAO createReceiptUploadDAO;
-	private CreateReceiptUploadDataValidator createReceiptUploadDataValidator;
+	private CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord;
 
 	public CreateReceiptUploadServiceImpl() {
 		super();
@@ -65,8 +66,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 			throw new AppException("Invalid Data transferred...");
 		}
 
-		createReceiptUploadDataValidator.validate(detail, header);
-		createReceiptUploadDataValidator.validateAllocations(detail);
+		createReceiptUploadProcessRecord.validate(detail, header);
+		createReceiptUploadProcessRecord.validateAllocations(detail);
 	}
 
 	@Override
@@ -97,7 +98,13 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 					if (receipt.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						txStatus = transactionManager.getTransaction(txDef);
 
-						createReceipt(receipt, header.getEntityCode());
+						try {
+							createReceipt(receipt, header);
+						} catch (AppException e) {
+							receipt.setProgress(EodConstants.PROGRESS_FAILED);
+							receipt.setErrorCode("9999");
+							receipt.setErrorDesc(e.getMessage());
+						}
 
 						transactionManager.commit(txStatus);
 					}
@@ -151,13 +158,14 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		}).start();
 	}
 
-	private void createReceipt(CreateReceiptUpload reaceipt, String entityCode) {
+	private void createReceipt(CreateReceiptUpload reaceipt, FileUploadHeader header) {
+		String entityCode = header.getEntityCode();
+
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
 
 		rud.setReference(reaceipt.getReference());
 		rud.setFinID(reaceipt.getReferenceID());
 		rud.setAllocationType(reaceipt.getAllocationType());
-
 		rud.setValueDate(reaceipt.getAppDate());
 		rud.setRealizationDate(reaceipt.getAppDate());
 		rud.setReceivedDate(reaceipt.getAppDate());
@@ -165,7 +173,6 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		rud.setReceiptMode(reaceipt.getReceiptMode());
 		rud.setSubReceiptMode(reaceipt.getSubReceiptMode());
-		// rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
 		rud.setReceiptPurpose(reaceipt.getReceiptPurpose());
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
@@ -221,7 +228,16 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
-		fsi.setLoggedInUser(reaceipt.getUserDetails());
+		LoggedInUser userDetails = reaceipt.getUserDetails();
+
+		if (userDetails == null) {
+			userDetails = new LoggedInUser();
+			userDetails.setLoginUsrID(header.getApprovedBy());
+			userDetails.setUserName(header.getApprovedByName());
+		}
+
+		fsi.setLoggedInUser(userDetails);
+
 		fsi.setKnockOffReceipt(true);
 		if (FinanceConstants.EARLYSETTLEMENT.equals(reaceipt.getReceiptPurpose())) {
 			fsi.setClosureType(reaceipt.getClosureType());
@@ -278,7 +294,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.CREATE_RECEIPT.name(), createReceiptUploadDataValidator, this,
+		uploadProcess(UploadTypes.CREATE_RECEIPT.name(), createReceiptUploadProcessRecord, this,
 				"CreateReceiptUploadHeader");
 	}
 
@@ -288,8 +304,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public CreateReceiptUploadDataValidator getProcessRecord() {
-		return createReceiptUploadDataValidator;
+	public CreateReceiptUploadProcessRecord getProcessRecord() {
+		return createReceiptUploadProcessRecord;
 	}
 
 	@Override
@@ -308,8 +324,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Autowired
-	public void setCreateReceiptUploadDataValidator(CreateReceiptUploadDataValidator createReceiptUploadDataValidator) {
-		this.createReceiptUploadDataValidator = createReceiptUploadDataValidator;
+	public void setCreateReceiptUploadProcessRecord(CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord) {
+		this.createReceiptUploadProcessRecord = createReceiptUploadProcessRecord;
 	}
-
 }

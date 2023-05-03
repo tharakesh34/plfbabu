@@ -582,16 +582,15 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		Clients.clearWrongValue(assestClassCode);
 		AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
 
-		hbox = (Hbox) getComponent(listitem, 3);
+		hbox = (Hbox) getComponent(listitem, 4);
 		ExtendedCombobox assetSubClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assetSubClassCode);
 
 		if (object != null) {
 			Filter[] codeFilter = new Filter[1];
-			codeFilter[0] = Filter.equalTo("Id", object.getId());
+			codeFilter[0] = Filter.equalTo("AssetClassId", object.getId());
 			assetSubClassCode.setFilters(codeFilter);
 		} else {
-			assetSubClassCode.setFilters(null);
 			assetSubClassCode.setValue(null);
 		}
 
