@@ -6180,4 +6180,10 @@
 	
 	<bean id="miscellaneousPostingUploadListCtrl" class="com.pennant.pff.miscellaneousposting.upload.list.MiscellaneousPostingUploadListCtrl"
 	parent="uploadList" />
+	
+	<bean id="serviceBranchListCtrl"
+		class = "com.pennant.pff.service.branch.webui.ServiceBranchListCtrl" parent="basisListCtrl" scope="prototype"/>
+		
+	<bean id="serviceBranchDialogCtrl"
+	class="com.pennant.pff.service.branch.webui.ServiceBranchDialogCtrl" parent="basisCtrl" scope="prototype" />
 </beans>

@@ -99,6 +99,8 @@
 			<menuItem id="menu_Item_Designation"
 				zulNavigation="/WEB-INF/pages/SystemMaster/Designation/DesignationList.zul"
 				rightName="menuItem_SystemMaster_Designation" />
+			<menuItem id="menuItem_Customer_Service_Branch" zulNavigation="/WEB-INF/pages/ServiceBranch/ServiceBranchList.zul"
+				rightName="menuItem_Customer_Service_Branch" />
 		</menu>
 		<menu id="menu_Category_SegmentationMasters">
 			<menuItem id="menu_Item_CustomerType"

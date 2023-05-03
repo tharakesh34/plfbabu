@@ -450,6 +450,8 @@ import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
+import com.pennant.pff.service.branch.model.ServiceBranch;
+import com.pennant.pff.service.branch.model.ServiceBranchesLoanType;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.model.SettlementSchedule;
 import com.pennant.pff.settlement.model.SettlementTypeDetail;
@@ -3958,6 +3960,16 @@ public class PennantJavaUtil {
 				new ModuleMapping("MiscellaneousPostingUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("ServiceBranch",
+				new ModuleMapping("ServiceBranch", ServiceBranch.class,
+						new String[] { "Service_Branches", "Service_Branches" }, masterWF,
+						new String[] { "Id", "Code" }, null, 300));
+
+		ModuleUtil.register("ServiceBranchesLoanType",
+				new ModuleMapping("ServiceBranchesLoanType", ServiceBranchesLoanType.class,
+						new String[] { "Service_Branches_LoanType", "Service_Branches_LoanType" }, masterWF,
+						new String[] { "Id", "FinType", "Branch" }, null, 300));
 
 		registerCustomModules();
 	}

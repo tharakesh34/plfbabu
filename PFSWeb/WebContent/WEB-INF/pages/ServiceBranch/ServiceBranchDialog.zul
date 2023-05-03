@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="windowServiceBranchDialog" border="normal" width="100%" height="100%" sizable="false"
+		apply="${serviceBranchDialogCtrl}">
+
+		<borderlayout>
+			<north>
+				<div sclass="z-toolbar" style="padding:0">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" />
+							<button id="btnPrint" label="${c:l('label_Print')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label id="windowTitle" value="${c:l('window_CustomerServiceBranchDialog.title')}"
+								sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								sclass="z-toolbarbutton" />
+							<button id="btnClose" label="${c:l('btnClose.label')}"
+								tooltiptext="${c:l('btnClose.tooltiptext')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="false">
+				<vlayout>
+					<groupbox sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_Code.value')}" sclass="mandatory" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<uppercasebox id="code" maxlength="8" width="120px" />
+									</hbox>
+									<label value="${c:l('label_ServiceBranchDialog_Description.value')}"
+										sclass="mandatory" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="description" maxlength="50" width="300px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_HouseNum.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="ofcOrHouseNum" width="200px" />
+									</hbox>
+									<label value="${c:l('label_ServiceBranchDialog_FlatNum.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="flatNum" width="200px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_Street.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="street" width="200px" />
+									</hbox>
+									<label value="${c:l('label_ServiceBranchDialog_AddrLine1.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="addrLine1" maxlength="50" width="200px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_AddrLine2.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="addrLine2" maxlength="50" width="200px" />
+									</hbox>
+									<label value="${c:l('label_ServiceBranchDialog_PoBox.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="pOBox" maxlength="8" width="200px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_Country.value')}" />
+									<extendedcombobox id="country" />
+									<label value="${c:l('label_ServiceBranchDialog_Province/State.value')}" />
+									<extendedcombobox id="cpProvince" />
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_City.value')}" />
+									<extendedcombobox id="city" />
+									<label value="${c:l('label_ServiceBranchDialog_Pincode.value')}" />
+									<extendedcombobox id="pinCode" />
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranchDialog_FolderPath.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="folderPath" width="200px" />
+									</hbox>
+									<label value="${c:l('label_ServiceBranchDialog_Active.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="active" checked="false" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox sclass="gb-dialog">
+							<div sclass="z-toolbar" height="auto">
+								<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+									<toolbar align="start" sclass="toolbar-start" width="300px">
+										<label value="${c:l('window_CustomerServiceBranchDialogLoanType.title')}"
+											sclass="label-heading" />
+									</toolbar>
+									<toolbar align="center" sclass="toolbar-center"/>
+									<toolbar align="end" sclass="toolbar-end">
+										<label value="${c:l('label_ServiceBranchDialogFile.value')}" />
+										<space spacing="2px" />
+										<textbox id="file" maxlength="8" width="320px" readonly="true" />
+										<button id="btnUploadLoanTypeBranch" label="${c:l('lable_upload')}"
+											tooltiptext="${c:l('button_LoanTypeList_UploadLoanType.tooltiptext')}" sclass="z-toolbarbutton"
+											autodisable="btnNewLoanTypeBranch,btnUploadLoanTypeBranch,btnImportLoanTypeBranch" upload="true" />
+										<button id="btnImportLoanTypeBranch" label="${c:l('lable_import')}"
+											tooltiptext="${c:l('button_LoanTypeList_ImportLoanType.tooltiptext')}" sclass="z-toolbarbutton"
+											autodisable="btnNewLoanTypeBranch,btnUploadLoanTypeBranch,btnImportLoanTypeBranch" />
+										<button id="btnNewLoanTypeBranch" label="${c:l('label_New')}"
+											tooltiptext="${c:l('button_LoanTypeList_NewLoanType.tooltiptext')}" sclass="z-toolbarbutton"
+											autodisable="btnNewLoanTypeBranch,btnUploadLoanTypeBranch,btnImportLoanTypeBranch" />
+									</toolbar>
+									<space width="2px" />
+								</hbox>
+							</div>
+							<listbox id="listBoxLoanTypes" multiple="true" style="border:none,overflow:scroll" width="100%" 
+								span="true" emptyMessage="${c:l('listbox.emptyMessage')}" height = "150px">
+								<listhead sizable="true">
+									<listheader
+										label="${c:l('label_ServiceBranchDialogLoanType.value')}" width="20%" sort="false" hflex="min" />
+									<listheader
+										label="${c:l('label_ServiceBranchDialogBranch.value')}" width="20%" sort="false" hflex="min" />
+									<listheader
+										label="${c:l('label_ServiceBranchList_RecordStatus.value')}" width="20%" hflex="min" />
+									<listheader
+										label="${c:l('label_ServiceBranchList_RecordType.value')}" width="20%" hflex="min" />
+									<listheader width="20%" sort="auto" hflex="min" />
+								</listhead>
+							</listbox>
+					</groupbox>
+				</vlayout>
+			</center>
+			<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
+							sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+			</south>
+		</borderlayout>
+	</window>
+</zk>
