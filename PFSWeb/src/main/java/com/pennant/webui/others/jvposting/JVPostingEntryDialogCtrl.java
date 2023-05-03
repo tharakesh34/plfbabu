@@ -72,6 +72,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.HostAccountStatus;
 import com.pennant.pff.accounting.TransactionType;
 import com.pennant.util.ErrorControl;
@@ -907,9 +908,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	public void doWriteBeanToComponents(JVPostingEntry aJVPostingEntry) {
 		logger.debug("Entering");
 		doFillBatchDetails();
-		this.account.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getAccount()));
 
+		String hostAccount = AccountingConfigCache.getAccountMapping(aJVPostingEntry.getAccount());
+		this.account.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getAccount()));
+		this.account.setDescription(hostAccount);
+
+		String debitHostAccount = AccountingConfigCache.getAccountMapping(aJVPostingEntry.getDebitAccount());
 		this.debitAccount.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getDebitAccount()));
+		this.debitAccount.setDescription(debitHostAccount);
 
 		this.accountName.setValue(aJVPostingEntry.getAccountName());
 		this.label_AccountCurrency.setValue(aJVPostingEntry.getAccCCy());
