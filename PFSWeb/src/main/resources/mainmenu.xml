@@ -2174,6 +2174,8 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_ReceiptclearancestsRpt" />
 			<menuItem id="menu_Item_TotalDisbReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_TotalDisbReport" />
+			<menuItem id="menu_Item_SanctionConditionsReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_SanctionConditionsReport" />
 		</menu>
 		<menuItem id="menu_Item_MiscellaneouspostUploadStsrpt"
 			zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
