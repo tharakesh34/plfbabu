@@ -79,6 +79,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -412,7 +413,7 @@ public class RuleDialogCtrl extends GFCBaseCtrl<Rule> {
 		this.ruleEvent.setValueColumn("AEEventCode");
 		this.ruleEvent.setDescColumn("AEEventCodeDesc");
 		this.ruleEvent.setValidateColumns(new String[] { "AEEventCode" });
-		this.ruleEvent.setList(PennantAppUtil.fetchAccountingEvents());
+		this.ruleEvent.setList(AccountingEngine.getEvents());
 		this.ruleEvent.getTextbox().setDisabled(true);
 
 		String module = this.rule.getRuleModule();

@@ -24,6 +24,8 @@
  */
 package com.pennant.backend.dao.bmtmasters;
 
+import java.util.List;
+
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 
 /**
@@ -43,4 +45,6 @@ public interface AccountEngineEventDAO {
 	void delete(AccountEngineEvent accountEngineEvent, String type);
 
 	String save(AccountEngineEvent accountEngineEvent, String type);
+
+	List<AccountEngineEvent> getAccountEngineEvents();
 }

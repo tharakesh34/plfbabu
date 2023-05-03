@@ -11859,6 +11859,7 @@
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+		<property name="accountEngineEventDAO" ref="accountEngineEventDAO" />
 	</bean>
 	<!-- Accounting Engine End -->
 
@@ -13356,5 +13357,8 @@
 
 	<bean id="branchMigrationDAO" class="com.pennanttech.pff.branchchange.dao.impl.BranchMigrationDAOImpl"
 		parent="sequenceDao" />
+
+	<bean id="accountEngineEventDAO" class="com.pennant.backend.dao.bmtmasters.impl.AccountEngineEventDAOImpl"
+		parent="basicDao" />
 
 </beans>

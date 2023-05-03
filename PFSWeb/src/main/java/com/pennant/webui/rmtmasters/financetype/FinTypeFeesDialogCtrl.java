@@ -61,9 +61,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -429,9 +429,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		if (isOriginationFee) {
 			calOnExcludeFields = calOnExcludeFields + PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL + ",";
 			if (isOverdraft) {
-				this.finEvent.setList(PennantAppUtil.getOverdraftOrgAccountingEvents());
+				this.finEvent.setList(AccountingEngine.getOverDraftEvents());
 			} else {
-				this.finEvent.setList(PennantAppUtil.getOriginationAccountingEvents());
+				this.finEvent.setList(AccountingEngine.getOrginationEvents());
 			}
 		} else {
 			if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountingEvent.REPAY)
@@ -439,7 +439,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 					|| StringUtils.equals(aFinTypeFees.getFinEvent(), AccountingEvent.EARLYSTL)) {
 				calOnExcludeFields = "";
 			}
-			this.finEvent.setList(PennantAppUtil.getServicingAccountingEvents());
+			this.finEvent.setList(AccountingEngine.getServicingEvents());
 		}
 
 		if (!StringUtils.equals(aFinTypeFees.getFinEvent(), AccountingEvent.EARLYSTL)) {

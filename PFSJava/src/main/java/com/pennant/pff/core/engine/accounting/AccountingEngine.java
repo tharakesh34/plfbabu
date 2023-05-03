@@ -2,15 +2,19 @@ package com.pennant.pff.core.engine.accounting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.backend.dao.bmtmasters.AccountEngineEventDAO;
 import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
@@ -32,6 +36,7 @@ public class AccountingEngine {
 	private static PostingsDAO postingsDAO;
 	private static AccountEngineExecution engineExecution;
 	private static FinStageAccountingLogDAO finStageAccountingLogDAO;
+	private static AccountEngineEventDAO accountEngineEventDAO;
 
 	public static List<ReturnDataSet> execute(String accEvent, PostingDTO postingDTO) {
 		List<ReturnDataSet> transactions = new ArrayList<>();
@@ -212,6 +217,68 @@ public class AccountingEngine {
 		return accountSetID;
 	}
 
+	public static List<AccountEngineEvent> getEvents() {
+		List<AccountEngineEvent> list = accountEngineEventDAO.getAccountEngineEvents();
+
+		List<AccountEngineEvent> tempList = list
+				.stream().filter(aeEvent -> aeEvent.getAEEventCode().endsWith("_S")
+						|| aeEvent.getAEEventCode().endsWith("_N") || aeEvent.getAEEventCode().endsWith("_W"))
+				.collect(Collectors.toList());
+
+		list.removeAll(tempList);
+
+		return list;
+	}
+
+	public static List<AccountEngineEvent> getServicingEvents() {
+		List<AccountEngineEvent> list = getEvents();
+
+		List<AccountEngineEvent> tempList = list.stream()
+				.filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSP))
+				.collect(Collectors.toList());
+
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			tempList = list.stream().filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSF))
+					.collect(Collectors.toList());
+		}
+
+		list.removeAll(tempList);
+
+		return list;
+	}
+
+	public static List<AccountEngineEvent> getOrginationEvents() {
+		List<AccountEngineEvent> list = new ArrayList<>();
+		List<AccountEngineEvent> tempList = getEvents();
+
+		for (AccountEngineEvent aevent : tempList) {
+			if (aevent.getAEEventCode().equals(AccountingEvent.ADDDBSP)) {
+				list.add(aevent);
+			}
+
+			if (ImplementationConstants.ALLOW_ADDDBSF) {
+				if (aevent.getAEEventCode().equals(AccountingEvent.ADDDBSN) || aevent.equals(AccountingEvent.ADDDBSF)) {
+					list.add(aevent);
+				}
+			}
+		}
+
+		return list;
+	}
+
+	public static List<AccountEngineEvent> getOverDraftEvents() {
+		List<AccountEngineEvent> list = new ArrayList<>();
+		List<AccountEngineEvent> tempList = getEvents();
+
+		for (AccountEngineEvent aevent : tempList) {
+			if (aevent.getAEEventCode().equals(AccountingEvent.CMTDISB)) {
+				list.add(aevent);
+			}
+		}
+
+		return list;
+	}
+
 	private static PostingEvent getPostingEvent(String eventName) {
 		return factory.getAccountingEventEvent(eventName);
 	}
@@ -230,6 +297,10 @@ public class AccountingEngine {
 
 	public static void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
 		AccountingEngine.finStageAccountingLogDAO = finStageAccountingLogDAO;
+	}
+
+	public static void setAccountEngineEventDAO(AccountEngineEventDAO accountEngineEventDAO) {
+		AccountingEngine.accountEngineEventDAO = accountEngineEventDAO;
 	}
 
 }
