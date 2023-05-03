@@ -40,7 +40,7 @@ public enum FinCancelUploadError {
 
 	LANCLUP017("Loan is not eligible for cancellation, as cancellation not allowed in loan type"),
 
-	LANCLUP018("Loan Start Date should after %s only allowed for cancellelation."),
+	LANCLUP018("Loan Start Date before %s are not allowed for cancellation."),
 
 	LANCLUP019("InValid Data, For Cancel Type : only C and CR are Allowed");
 
