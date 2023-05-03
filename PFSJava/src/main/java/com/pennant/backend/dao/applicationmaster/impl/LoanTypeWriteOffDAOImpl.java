@@ -113,7 +113,7 @@ public class LoanTypeWriteOffDAOImpl extends SequenceDao<FinTypeWriteOff> implem
 			ps.setInt(++index, kCodeMapping.getVersion());
 			ps.setLong(++index, kCodeMapping.getCreatedBy());
 			ps.setTimestamp(++index, kCodeMapping.getCreatedOn());
-			ps.setLong(++index, kCodeMapping.getApprovedBy());
+			ps.setObject(++index, kCodeMapping.getApprovedBy());
 			ps.setTimestamp(++index, kCodeMapping.getApprovedOn());
 			ps.setLong(++index, kCodeMapping.getLastMntBy());
 			ps.setTimestamp(++index, kCodeMapping.getLastMntOn());

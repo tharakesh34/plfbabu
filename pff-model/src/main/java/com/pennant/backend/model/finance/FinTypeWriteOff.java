@@ -42,10 +42,10 @@ public class FinTypeWriteOff extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 
 		excludeFields.add("auditDetailMap");
-		excludeFields.add("loanTypeKonckOffMapping");
 		excludeFields.add("pslCodeDesc");
 		excludeFields.add("finTypeDesc");
 		excludeFields.add("keyvalue");
+		excludeFields.add("loanTypeWriteOffMapping");
 
 		return excludeFields;
 	}
