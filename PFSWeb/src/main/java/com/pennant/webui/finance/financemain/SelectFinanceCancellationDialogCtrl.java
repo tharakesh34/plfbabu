@@ -190,10 +190,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		if (!doFieldValidation()) {
-			logger.debug(Literal.LEAVING.concat(event.toString()));
-			return;
-		}
+		doFieldValidation();
 
 		Object dataObject = this.finReference.getObject();
 
@@ -339,7 +336,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		return customer;
 	}
 
-	private boolean doFieldValidation() {
+	private void doFieldValidation() {
 		logger.debug(Literal.ENTERING);
 
 		this.finReference.setErrorMessage("");
@@ -361,11 +358,11 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
 			}
+
 			throw new WrongValuesException(wvea);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return true;
 	}
 
 	private void validateFinReference(Event event, boolean b) {
@@ -378,20 +375,20 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 
 		Object dataObject = this.finReference.getObject();
 
-		Filter[] filters = new Filter[2];
+		Filter[] filters = new Filter[3];
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_NOT_EQUAL);
-		filters[1] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
+		filters[2] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
 		this.finReference.setFilters(filters);
 
 		if (!StringUtils.isEmpty(this.custCIF.getValue())) {
 			long custID = this.customerDAO.getCustIDByCIF(this.custCIF.getValue());
 
-			filters = new Filter[3];
+			filters = new Filter[4];
 			filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 			filters[1] = new Filter("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY, Filter.OP_NOT_EQUAL);
 			filters[2] = new Filter("CustId", custID, Filter.OP_EQUAL);
-			filters[1] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
+			filters[3] = new Filter("AllowCancelFin", 1, Filter.OP_EQUAL);
 			this.finReference.setFilters(filters);
 		}
 
