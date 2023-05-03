@@ -7326,10 +7326,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		if (StringUtils.isNotEmpty(fm.getAdvType()) && PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
+		if (StringUtils.isNotEmpty(fm.getAdvType()) && PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())
+				&& CollectionUtils.isNotEmpty(fd.getFinScheduleData().getFinFeeDetailList())
+				&& CollectionUtils.isNotEmpty(fd.getAdvancePaymentsList())) {
 			int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
 			BigDecimal actualAmbnt = BigDecimal.ZERO;
-			BigDecimal netfinamnt = fm.getFinAmount();
+			BigDecimal netfinamnt = BigDecimal.ZERO;
 			BigDecimal disbAmount = BigDecimal.ZERO;
 
 			if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
