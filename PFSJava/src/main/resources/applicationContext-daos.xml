@@ -13297,4 +13297,27 @@
 	
 	<bean id="serviceBranchDAO" class="com.pennant.pff.service.branch.dao.impl.ServiceBranchDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="generateLetterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="generateLetterServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="generateLetterServiceTarget" class="com.pennant.pff.generate.letter.service.impl.GenerateLetterServiceImpl"/>
+	
+	<bean id="generateLetterDAO" class="com.pennant.pff.generate.letter.dao.impl.GenerateLetterDAOImpl"
+		parent="sequenceDao" />
 </beans>

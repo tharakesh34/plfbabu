@@ -444,6 +444,7 @@ import com.pennant.backend.model.tds.receivables.TdsReceivablesTxn;
 import com.pennant.backend.model.vasproduct.VASProductCategory;
 import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennant.pff.excess.model.FinExcessTransfer;
+import com.pennant.pff.generate.letter.model.GenerateLetter;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.payment.model.PaymentDetail;
@@ -3970,6 +3971,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("ServiceBranchesLoanType", ServiceBranchesLoanType.class,
 						new String[] { "Service_Branches_LoanType", "Service_Branches_LoanType" }, masterWF,
 						new String[] { "Id", "FinType", "Branch" }, null, 300));
+
+		ModuleUtil.register("GenerateLetter",
+				new ModuleMapping("GenerateLetter", GenerateLetter.class,
+						new String[] { "Letter_Generate_Manual", "Letter_Generate_Manual" }, masterWF,
+						new String[] { "Id", "FinID" }, null, 300));
 
 		registerCustomModules();
 	}

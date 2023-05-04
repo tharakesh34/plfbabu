@@ -6186,4 +6186,13 @@
 		
 	<bean id="serviceBranchDialogCtrl"
 	class="com.pennant.pff.service.branch.webui.ServiceBranchDialogCtrl" parent="basisCtrl" scope="prototype" />
+	
+	<bean id="generateLetterDialogCtrl"
+	class="com.pennant.pff.generate.letter.webui.GenerateLetterDialogCtrl" parent="basisCtrl" scope="prototype" />
+	
+	<bean id="generateLetterListCtrl"
+	class="com.pennant.pff.generate.letter.webui.GenerateLetterListCtrl" parent="basisCtrl" scope="prototype" />
+	
+	<bean id="selectGenerateLetterCtrl"
+	class="com.pennant.pff.generate.letter.webui.SelectGenerateLetterCtrl" parent="basisCtrl" scope="prototype" />
 </beans>

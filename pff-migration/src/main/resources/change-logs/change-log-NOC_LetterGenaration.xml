@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Mounika.M" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.1" author="Mounika.M">
+		<createTable tableName="LETTER_GENERATION">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequestType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LetterType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgreementTemplate" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeId" type="bigint"/>
+			<column name="ModeOfTransfer" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTemplate" type="bigint"/>
+			<column name="Generated" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="GeneratedDate" type="datetime"/>
+			<column name="GeneratedOn" type="datetime"/>
+			<column name="GeneratedBy" type="bigint"/>
+			<column name="AdviseID" type="bigint"/>
+			<column name="TrackingID" type="bigint"/>
+			<column name="Status" type="char(1)"/>
+			<column name="Remarks" type="varchar(1000)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1561.2" author="Mounika.M">
+		<addPrimaryKey tableName="LETTER_GENERATION" columnNames="ID" constraintName="PK_LETTER_GENERATION_ID"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.3" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LG_FM_FinID" referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="Letter_Generation" referencedColumnNames="FinID"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.4" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LG_BMTAD_AgreeTemp" referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="Letter_Generation" referencedColumnNames="AggId"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.6" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LG_Template_ET" referencedTableName="Templates" baseColumnNames="EmailTemplate" baseTableName="Letter_Generation" referencedColumnNames="TemplateID"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.7" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LG_MA_AdviseID" referencedTableName="ManualAdvise" baseColumnNames="AdviseID" baseTableName="Letter_Generation" referencedColumnNames="AdviseID"/>
+	</changeSet>
+	
+	<!-- <changeSet id="ST#1561.8.1" author="Mounika.M">
+		<createIndex tableName="LETTER_GENERATION" indexName="idx_Ltr_Gen_finid">
+			<column name="FinID"></column>
+		</createIndex>
+	</changeSet> -->
+	
+	<changeSet id="ST#1561.9" author="Mounika.M">
+		<addDefaultValue columnName="Generated" tableName="Letter_Generation" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.10" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LETTER_GENERATION ADD CONSTRAINT DF_LG_GENERATED DEFAULT 0 FOR GENERATED;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.11" author="Mounika.M">
+		<createTable tableName="LETTER_GENERATION_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequestType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LetterType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgreementTemplate" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeTypeId" type="bigint"/>
+			<column name="ModeOfTransfer" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTemplate" type="bigint"/>
+			<column name="Generated" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="GeneratedDate" type="datetime"/>
+			<column name="GeneratedOn" type="datetime"/>
+			<column name="GeneratedBy" type="bigint"/>
+			<column name="AdviseID" type="bigint"/>
+			<column name="TrackingID" type="bigint"/>
+			<column name="Status" type="char(1)"/>
+			<column name="Remarks" type="varchar(1000)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1561.12" author="Mounika.M">
+		<addPrimaryKey tableName="LETTER_GENERATION_STAGE" columnNames="ID" constraintName="PK_LETTER_GENERATION_STAGE_ID"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.13" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LGS_FM_FinID" referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="FinID"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.14" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LGS_AT_AGT" referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="AggId"/>
+	</changeSet>
+		
+	<changeSet id="ST#1561.16" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LGS_TEMPLATE_ET" referencedTableName="Templates" baseColumnNames="EmailTemplate" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="TemplateID"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.17" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_MA_AdviseID" referencedTableName="ManualAdvise" baseColumnNames="AdviseID" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="AdviseID"/>
+	</changeSet>
+	
+	<!-- <changeSet id="ST#1561.18" author="Mounika.M">
+		<createIndex tableName="LETTER_GENERATION_STAGE" indexName="idx_LGS_finid">
+			<column name="FinID"></column>
+		</createIndex>
+	</changeSet> -->
+	
+	<changeSet id="ST#1561.19" author="Mounika.M">
+		<addDefaultValue columnName="Generated" tableName="LETTER_GENERATION_STAGE" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.20" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LETTER_GENERATION_STAGE ADD CONSTRAINT DF_LG_GENERATED DEFAULT 0 FOR GENERATED;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#15956.21.3" author="Mounika.M">
+		<comment>Rights for Customer Service Branch</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_VIEW');
+				
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW');
+				
+				DELETE FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_VIEW';
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW');
+				
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW');
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW';
+				
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'menuItem_Generate_Letter');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnNew');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_SearchDialog');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnEdit');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnSave');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnDelete');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnProceed');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnDownLoad');
+			
+				
+				DELETE FROM SECRIGHTS WHERE RightName = 'menuItem_Generate_Letter';            
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnNew';        
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_SearchDialog';  
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnEdit';       
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnSave';       
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnDelete';     
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnProceed';    
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_GenerateLetter_btnDownLoad';   
+				
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Generate_Letter',              'MENU', 						0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_btnNew',          'GenerateLetterList',    0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_SearchDialog',      'GenerateLetterList',    0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_btnEdit',         'GenerateLetterDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_btnSave',         'GenerateLetterDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_btnDelete',       'GenerateLetterDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_btnProceed',      'GenerateLetterDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_GenerateLetter_btnDownLoad',     'GenerateLetterDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GENERATE_LETTER_MAKER',     'GENERATE LETTER MAKER',  	1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GENERATE_LETTER_APPROVER', 	'GENERATE LETTER  APPROVER', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GENERATE_LETTER_VIEW', 		'GENERATE LETTER  VIEW',  	1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_Generate_Letter'),           	   1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnNew'),       	   1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_SearchDialog'),     1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnEdit'),      	   1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnSave'),      	   1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnDelete'),        1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnProceed'),       1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnDownLoad'),  	   1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_Generate_Letter'),      1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_GenerateLetter_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_Generate_Letter'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'GENERATE_LETTER_MAKER',    'Maker role for Genarate Letter',    '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'GENERATE_LETTER_APPROVER', 'Approver role for Genarate Letter', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'GENERATE_LETTER_VIEW',     'View role for Genarate Letter',	 '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		  		
+		  		INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW'), 	 (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'GENERATE_LETTER_VIEW'),     0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'GENERATE_LETTER_VIEW'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#15956.22" author="Mounika.M">
+		<createSequence sequenceName="SEQ_Letter_Generate_Manual" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" />
+	</changeSet>
+	
+	<changeSet id="ST#15956.23" author="Mounika.M">
+		<createTable tableName="LETTER_GENERATE_MANUAL">
+			<column name="ID" type="bigint" autoIncrement="true"></column>
+			<column name="LetterType" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#15956.24" author="Mounika.M">
+		<addPrimaryKey tableName="LETTER_GENERATE_MANUAL" columnNames="ID" constraintName="PK_LETTER_GENERATE_MANUAL_ID"/>
+	</changeSet>
+	
+	<changeSet id="ST#15956.25" author="Mounika.M">
+		<createTable tableName="LETTER_GENERATE_MANUAL_TEMP">
+			<column name="ID" type="bigint" autoIncrement="true"></column>
+			<column name="LetterType" type="varchar(8)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#15956.26" author="Mounika.M">
+		<addPrimaryKey tableName="LETTER_GENERATE_MANUAL_TEMP" columnNames="ID" constraintName="PK_LETTER_GEN_MANU_TEMP_ID"/>
+	</changeSet>
+	
+</databaseChangeLog> 
