@@ -7666,6 +7666,8 @@ public class FinanceDataValidation {
 			case "OTC":
 				aOTC = true;
 				break;
+			default:
+				break;
 			}
 
 			boolean isPdd = StringUtils.equals("Y", covenant.getStrPdd());
@@ -8341,32 +8343,32 @@ public class FinanceDataValidation {
 			frequencyDate = DateUtil.addMonths(frequencyDate, 6);
 		} else if ("A".equals(strFrequencyType)) {
 			frequencyDate = DateUtil.addMonths(frequencyDate, 12);
-		} else if ("O".equals(strFrequencyType)) {
-			if (covenant != null && !covenant.isAlertsRequired()) {
-				frequencyDate = null;
-			}
+		} else if ("O".equals(strFrequencyType) && covenant != null && !covenant.isAlertsRequired()) {
+			frequencyDate = null;
 		}
 
-		if (frequencyDate != null) {
-			if ("O".equals(strFrequencyType) && covenant.isAlertsRequired()) {
-				covenant.setNextFrequencyDate(covenant.getReceivableDate());
+		if (covenant != null) {
+			if (frequencyDate != null) {
+				if ("O".equals(strFrequencyType) && covenant.isAlertsRequired()) {
+					covenant.setNextFrequencyDate(covenant.getReceivableDate());
+				} else {
+					covenant.setNextFrequencyDate(frequencyDate);
+				}
+
+				Date covenantNextFrequencyDate = covenant.getNextFrequencyDate();
+
+				int covenantGraceDays = 0;
+				if (covenant.getlGraceDays() != null) {
+					covenantGraceDays = aCovenant.getGraceDays();
+				}
+
+				if (covenantNextFrequencyDate != null) {
+					covenant.setGraceDueDate(DateUtil.addDays(covenantNextFrequencyDate, covenantGraceDays));
+				}
 			} else {
-				covenant.setNextFrequencyDate(frequencyDate);
+				covenant.setNextFrequencyDate(null);
+				covenant.setGraceDueDate(null);
 			}
-
-			Date covenantNextFrequencyDate = covenant.getNextFrequencyDate();
-
-			int covenantGraceDays = 0;
-			if (covenant.getlGraceDays() != null) {
-				covenantGraceDays = aCovenant.getGraceDays();
-			}
-
-			if (covenantNextFrequencyDate != null) {
-				covenant.setGraceDueDate(DateUtil.addDays(covenantNextFrequencyDate, covenantGraceDays));
-			}
-		} else {
-			covenant.setNextFrequencyDate(null);
-			covenant.setGraceDueDate(null);
 		}
 		logger.debug(Literal.LEAVING);
 	}

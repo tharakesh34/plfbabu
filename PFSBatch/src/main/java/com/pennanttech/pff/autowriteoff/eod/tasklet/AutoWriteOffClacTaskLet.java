@@ -18,6 +18,7 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -50,8 +51,8 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 	private static final String EXCEPTION_MSG = "Auto WriteOff failed on {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String ERROR_LOG = "Cause {}\nMessage {}\nLocalizedMessage {}\nStackTrace {}";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	protected static AtomicLong processedCount = new AtomicLong(0);
+	protected static AtomicLong failedCount = new AtomicLong(0);
 
 	public AutoWriteOffClacTaskLet() {
 		super();
@@ -92,7 +93,7 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 		itemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
 		List<Exception> exceptions = new ArrayList<>(1);
