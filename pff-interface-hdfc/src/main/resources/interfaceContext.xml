@@ -137,7 +137,7 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalAPIHook"
+	<bean id="bankAccountValidationService"
 		class="com.pennanttech.external.api.casavalidation.service.CasaAccountValidationService">
 		<property name="extApiDao" ref="extApiDao" />
 	</bean>

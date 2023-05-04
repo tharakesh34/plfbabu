@@ -1400,7 +1400,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doSetReadOnly() {
 		readOnlyComponent(true, this.useExisting);
 		readOnlyComponent(true, this.mandateRef);
-		readOnlyComponent(true, this.btnPennyDropResult);
+		readOnlyComponent(isReadOnly("button_MandateDialog_btnPennyDropResult"), this.btnPennyDropResult);
 		readOnlyComponent(true, this.custID);
 		readOnlyComponent(true, this.entityCode);
 		readOnlyComponent(true, this.finReference);
