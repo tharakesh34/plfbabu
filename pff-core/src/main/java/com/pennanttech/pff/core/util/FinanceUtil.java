@@ -68,6 +68,10 @@ public class FinanceUtil {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		Date valueDate = rch.getValueDate();
 
+		if (fm.isUnderNpa()) {
+			return finType.getNpaRpyHierarchy();
+		}
+
 		if (fm.isWriteoffLoan()) {
 			return finType.getWriteOffRepayHry();
 		}
@@ -78,10 +82,6 @@ public class FinanceUtil {
 
 		if (rd.isPresentment()) {
 			return finType.getPresentmentRepayHry();
-		}
-
-		if (fm.isUnderNpa()) {
-			return finType.getNpaRpyHierarchy();
 		}
 
 		return finType.getRpyHierarchy();
