@@ -143,7 +143,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		this.entityCode.setValueColumn("entityCode");
 		this.entityCode.setDescColumn("entityDesc");
 		this.entityCode.setValidateColumns(new String[] { "entityCode" });
-		this.code.setMaxlength(8);
+		this.code.setMaxlength(10);
 		this.description.setMaxlength(50);
 
 		logger.debug(Literal.LEAVING);
@@ -401,7 +401,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		if (!this.code.isReadonly()) {
 			this.code.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Code.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
 		}
 		if (!this.description.isReadonly()) {
 			this.description.setConstraint(
