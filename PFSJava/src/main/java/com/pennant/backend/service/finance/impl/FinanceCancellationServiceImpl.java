@@ -53,6 +53,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -73,6 +74,7 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -136,6 +138,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinChequeHeaderService finChequeHeaderService;
 	private FinODDetailsDAO finODDetailsDAO;
 	private LienService lienService;
+	private FeeCalculator feeCalculator;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -494,9 +497,15 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			for (FinReceiptDetail rd : receiptDetailList) {
 				FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
 
+				FinReceiptData frd = feeCalculator
+						.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
+				serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
+
 				FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
-				if (detail.getReturnStatus() != null) {
-					throw new AppException("AppException", detail.getReturnStatus().getReturnText());
+				FinScheduleData schd = detail.getFinScheduleData();
+				if (CollectionUtils.isNotEmpty(schd.getErrorDetails())) {
+					ErrorDetail error = schd.getErrorDetails().get(0);
+					throw new AppException(error.getMessage());
 				}
 			}
 		}
@@ -1155,5 +1164,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	@Autowired
 	public void setLienService(LienService lienService) {
 		this.lienService = lienService;
+	}
+
+	@Autowired
+	public void setFeeCalculator(FeeCalculator feeCalculator) {
+		this.feeCalculator = feeCalculator;
 	}
 }

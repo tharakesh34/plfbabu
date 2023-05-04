@@ -5836,7 +5836,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setReceiptDetails(newRecDtls);
 	}
 
-	private FinReceiptData prepareFinReceiptData(FinServiceInstruction fsi, FinanceDetail fd) {
+	@Override
+	public FinReceiptData prepareFinReceiptData(FinServiceInstruction fsi, FinanceDetail fd) {
 		logger.info(Literal.ENTERING);
 
 		FinReceiptData rd = new FinReceiptData();
@@ -6588,9 +6589,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		FinanceMain fm = schdData.getFinanceMain();
 		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 
-		List<ErrorDetail> errors = schdData.getErrorDetails();
-
-		if (CollectionUtils.isNotEmpty(errors)) {
+		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 			logger.info(Literal.LEAVING);
 			return;
 		}
@@ -6621,7 +6620,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			break;
 		}
 
-		if (CollectionUtils.isNotEmpty(errors)) {
+		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 			logger.info(Literal.LEAVING);
 			return;
 		}

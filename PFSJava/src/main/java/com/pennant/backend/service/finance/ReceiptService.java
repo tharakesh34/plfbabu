@@ -157,4 +157,6 @@ public interface ReceiptService {
 	List<OverdueChargeRecovery> prepareODCRecovery(Long finID);
 
 	FinReceiptData getDues(String finReference, Date valueDate, Date appDate, String event);
+
+	FinReceiptData prepareFinReceiptData(FinServiceInstruction fsi, FinanceDetail fd);
 }
