@@ -16116,4 +16116,20 @@
 			]]>
 		</sql>
 	</changeSet> 
+	
+	<changeSet id="PSD#223989" author="sailkrishna.b">
+		<sql>
+			 <![CDATA[
+	       			DELETE  FROM CategoryWiseEvents where AeEventCode='ADVDUE' and CategoryCode ='C';
+					DELETE  FROM CategoryWiseEvents where AeEventCode='ADVDUE' and CategoryCode ='F';
+					DELETE  FROM CategoryWiseEvents where AeEventCode='ADVDUE' and CategoryCode ='O';
+					DELETE  FROM CategoryWiseEvents where AeEventCode='ADVDUE' and CategoryCode ='S';
+			    
+					INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('ADVDUE', 'C', 1, 0, (select max(SeqOrder)+1 from CategoryWiseEvents));
+					INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('ADVDUE', 'F', 1, 0, (select max(SeqOrder)+2 from CategoryWiseEvents));
+					INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('ADVDUE', 'O', 1, 0, (select max(SeqOrder)+3 from CategoryWiseEvents));
+					INSERT INTO CategoryWiseEvents (AEEventCode, CategoryCode, Active, Mandatory, SeqOrder) VALUES ('ADVDUE', 'S', 1, 0, (select max(SeqOrder)+4 from CategoryWiseEvents));
+			    ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

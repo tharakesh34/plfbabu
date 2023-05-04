@@ -3,7 +3,6 @@ package com.pennanttech.pff.core.util;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -22,17 +21,16 @@ public class SchdUtil {
 	public static List<FinanceScheduleDetail> sort(List<FinanceScheduleDetail> schedules, boolean desc) {
 		if (desc) {
 			return schedules.stream().sorted((schd1, schd2) -> schd2.getSchDate().compareTo(schd1.getSchDate()))
-					.collect(Collectors.toList());
+					.toList();
 		}
 
-		return schedules.stream().sorted((schd1, schd2) -> schd1.getSchDate().compareTo(schd2.getSchDate()))
-				.collect(Collectors.toList());
+		return schedules.stream().sorted((schd1, schd2) -> schd1.getSchDate().compareTo(schd2.getSchDate())).toList();
 	}
 
 	public static int getFutureInstalments(Date businessDate, List<FinanceScheduleDetail> schedules) {
 		return schedules.stream()
-				.filter(schd -> businessDate.compareTo(schd.getSchDate()) <= 0 && schd.isRepayOnSchDate())
-				.collect(Collectors.toList()).size();
+				.filter(schd -> businessDate.compareTo(schd.getSchDate()) <= 0 && schd.isRepayOnSchDate()).toList()
+				.size();
 
 	}
 
@@ -54,7 +52,7 @@ public class SchdUtil {
 	}
 
 	public static BigDecimal getTotalPrincipalSchd(List<FinanceScheduleDetail> schedules) {
-		return schedules.stream().filter(schd -> schd.isRepayOnSchDate()).collect(Collectors.toList()).stream()
+		return schedules.stream().filter(schd -> schd.isRepayOnSchDate()).toList().stream()
 				.map(FinanceScheduleDetail::getPrincipalSchd).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 	}
@@ -90,8 +88,7 @@ public class SchdUtil {
 
 	public static BigDecimal getOverDueEMI(Date businessDate, List<FinanceScheduleDetail> schedules) {
 		List<FinanceScheduleDetail> list = schedules.stream()
-				.filter(schd -> businessDate.compareTo(schd.getSchDate()) >= 0 && schd.isRepayOnSchDate())
-				.collect(Collectors.toList());
+				.filter(schd -> businessDate.compareTo(schd.getSchDate()) >= 0 && schd.isRepayOnSchDate()).toList();
 
 		BigDecimal overDueEMI = list.stream()
 				.map(schd -> (schd.getProfitSchd().add(schd.getPrincipalSchd())
@@ -111,11 +108,7 @@ public class SchdUtil {
 
 		BigDecimal balanceAmount = schdAmount.subtract(paidAmount);
 
-		if (balanceAmount.compareTo(BigDecimal.ZERO) <= 0) {
-			return true;
-		}
-
-		return false;
+		return balanceAmount.compareTo(BigDecimal.ZERO) <= 0;
 	}
 
 	public static boolean isEMINotCleared(FinanceScheduleDetail schd) {
