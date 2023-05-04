@@ -1398,11 +1398,21 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
+		if (AllocationType.MANUAL.equals(fsi.getAllocationType())
+				&& CollectionUtils.isEmpty(fsi.getUploadAllocationDetails())) {
+			String[] param = new String[1];
+			param[0] = "Allocation Details";
+			schdData.setErrorDetail(ErrorUtil.getError("90502", param));
+			setReturnStatus(fd);
+			return fd;
+		}
+
 		FinReceiptDetail rd = fsi.getReceiptDetail();
 
 		BigDecimal amount = BigDecimal.ZERO;
 
-		if (AllocationType.MANUAL.equals(fsi.getAllocationType()) && ReceiptPurpose.SCHDRPY.equals(receiptPurpose)) {
+		if (AllocationType.MANUAL.equals(fsi.getAllocationType())
+				&& (ReceiptPurpose.SCHDRPY.equals(receiptPurpose) || ReceiptPurpose.EARLYRPY.equals(receiptPurpose))) {
 			for (UploadAlloctionDetail al : fsi.getUploadAllocationDetails()) {
 				amount = amount.add(al.getPaidAmount().add(al.getWaivedAmount()));
 			}

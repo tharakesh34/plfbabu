@@ -466,6 +466,35 @@ public class FinanceDataDefaulting {
 				return;
 			}
 		}
+
+		if (StringUtils.isNotEmpty(fm.getAdvType())) {
+			int minTerms = financeType.getAdvMinTerms();
+			int maxTerms = financeType.getAdvMaxTerms();
+			int advTerms = fm.getAdvTerms();
+
+			if (advTerms < minTerms || advTerms > maxTerms) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "AdvTerms: ".concat(String.valueOf(advTerms));
+				valueParm[1] = "MinTerms: ".concat(String.valueOf(minTerms));
+				valueParm[2] = "MaxTerms: ".concat(String.valueOf(maxTerms));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("ADVEMI01", valueParm)));
+				schdData.setErrorDetails(errorDetails);
+
+				return;
+			}
+
+			if (advTerms > fm.getNumberOfTerms()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "AdvTerms: ".concat(String.valueOf(advTerms));
+				valueParm[1] = "NumberOfTerms: ".concat(String.valueOf(fm.getNumberOfTerms()));
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+				schdData.setErrorDetails(errorDetails);
+
+				return;
+			}
+
+		}
+
 	}
 
 	private List<ErrorDetail> validatePromotionData(FinanceDetail fd) {

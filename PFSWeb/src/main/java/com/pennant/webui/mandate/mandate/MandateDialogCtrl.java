@@ -766,6 +766,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 		} else {
 			this.swapEffectiveDate.setReadonly(true);
+			this.swapEffectiveDate.setConstraint("");
 			this.swapEffectiveDate.setValue(null);
 			this.swapEffectiveDate.setDisabled(true);
 		}
@@ -998,6 +999,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		if (instrumentType == InstrumentType.SI) {
 
+			if (fromLoan) {
+				this.mandateSwapGroupbox.setVisible(false);
+			} else {
+				this.mandateSwapGroupbox.setVisible(true);
+			}
+
 			this.accDetailsGroupbox.setVisible(true);
 
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
@@ -1006,6 +1013,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
+			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
+			readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
 
 			String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
 			Filter[] filters = new Filter[1];
@@ -1576,6 +1585,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 
 		this.employeeNo.setValue(aMandate.getEmployeeNo());
+		this.externalMandate.setChecked(aMandate.isExternalMandate());
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1915,6 +1925,12 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			wve.add(we);
 		}
 
+		try {
+			aMandate.setExternalMandate(this.externalMandate.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		List<ErrorDetail> errors = mandateService.doValidations(aMandate);
 
 		for (ErrorDetail error : errors) {
@@ -2041,6 +2057,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			aMandate.setInputDate(this.inputDate.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		if (this.swapEffectiveDate.getValue() != null) {
+			if (this.swapEffectiveDate.getValue().compareTo(SysParamUtil.getAppDate()) <= 0) {
+				throw new WrongValueException(this.swapEffectiveDate,
+						Labels.getLabel("DATE_ALLOWED_AFTER",
+								new String[] { Labels.getLabel("label_MandateDialog_SwapEffectiveDate.value"),
+										DateUtility.formatToShortDate(SysParamUtil.getAppDate()) }));
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2252,6 +2277,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			doSetDasValidation(validate);
 		}
 
+		if (this.mandateSwapGroupbox.isVisible()) {
+			doSetSwapValidation(validate);
+		}
+
 	}
 
 	private void doRemoveValidation() {
@@ -2347,7 +2376,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void onFulfill$micr(Event event) {
 		Object dataObject = this.micr.getObject();
 
-		if (dataObject == null || dataObject instanceof String) {
+		if (StringUtils.isEmpty(this.micr.getValue()) || dataObject == null || dataObject instanceof String) {
 			this.bank.setValue("");
 			this.city.setValue("");
 			this.micr.setValue("");
@@ -3036,6 +3065,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.listBoxMandateFinExposure.appendChild(item);
 
 			}
+		}
+	}
+
+	private void doSetSwapValidation(boolean validate) {
+		if (this.swapMandate.isChecked() && this.swapEffectiveDate.getValue() == null) {
+			this.swapEffectiveDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_MandateDialog_SwapEffectiveDate.value"), true));
 		}
 	}
 

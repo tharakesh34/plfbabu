@@ -2113,8 +2113,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		isPresentProc = presentmentDetailDAO.isPresentmentInProcess(finID);
 
 		boolean finIsActive = fm.isFinIsActive();
-		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose(),
-				isPresentProc);
+		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose());
 		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY
 				&& (RepayConstants.PAYSTATUS_DEPOSITED.equals(rmStatus))) {
 
@@ -8473,8 +8472,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
-				isPresentProc);
+		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose());
 
 		String closingStatus = fm.getClosingStatus();
 		if (isLoanActiveBef && !fm.isFinIsActive() && (FinServiceEvent.SCHDRPY.equals(receiptPurpose))

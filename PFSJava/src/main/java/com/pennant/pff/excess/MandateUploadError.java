@@ -28,7 +28,15 @@ public enum MandateUploadError {
 
 	MANUP_014("Invalid Data, possible Values are T or F for swap Mandate"),
 
-	MANUP_015("Invalid Data, possible Values are T or F for external Mandate");
+	MANUP_015("Invalid Data, possible Values are T or F for external Mandate"),
+
+	MANUP_016("For Security Mandate SI and DAS is not allowed"),
+
+	MANUP_017("Invalid Data, possible Values are T or F for Security Mandate"),
+
+	MANUP_018("SwapEffectiveDate is mandatory"),
+
+	MANUP_019("SwapEffectiveDate should be after application Date");
 
 	private String description;
 
