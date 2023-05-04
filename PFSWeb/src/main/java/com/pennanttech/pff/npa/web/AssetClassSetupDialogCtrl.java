@@ -532,7 +532,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		listcell = new Listcell();
 		hbox = new Hbox();
 		ExtendedCombobox assetSubClassCode = new ExtendedCombobox();
-		assetSubClassCode.setWidth("100px");
+		assetSubClassCode.setWidth("170px");
 		assetSubClassCode.setModuleName("AssetSubClassCode");
 		assetSubClassCode.setValueColumn("Code");
 		assetSubClassCode.setDescColumn("Description");

@@ -9,6 +9,7 @@ import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
 public class FinanceUtil {
@@ -49,15 +50,10 @@ public class FinanceUtil {
 			return false;
 		}
 
-		switch (status) {
-		case DisbursementConstants.STATUS_REVERSED:
-		case DisbursementConstants.STATUS_REJECTED:
-		case DisbursementConstants.STATUS_APPROVED:
-		case DisbursementConstants.STATUS_CANCEL:
-			return true;
-		default:
-			return false;
-		}
+		return DisbursementConstants.STATUS_REVERSED.equals(status)
+				|| DisbursementConstants.STATUS_REJECTED.equals(status)
+				|| DisbursementConstants.STATUS_APPROVED.equals(status)
+				|| DisbursementConstants.STATUS_CANCEL.equals(status);
 	}
 
 	public static boolean isInValidDisbStatus(String status) {
@@ -68,22 +64,60 @@ public class FinanceUtil {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		Date valueDate = rch.getValueDate();
 
+		String rpyHierarchy = null;
+
+		String loanType = "[" + fm.getFinType() + "]";
+
 		if (fm.isUnderNpa()) {
-			return finType.getNpaRpyHierarchy();
+			rpyHierarchy = finType.getNpaRpyHierarchy();
+
+			if (rpyHierarchy == null) {
+				throw new AppException(
+						"Repayment Hierarchy for [NPA Loans] not configured for the Loan Type " + loanType);
+			}
+
+			return rpyHierarchy;
 		}
 
 		if (fm.isWriteoffLoan()) {
-			return finType.getWriteOffRepayHry();
+			rpyHierarchy = finType.getWriteOffRepayHry();
+
+			if (rpyHierarchy == null) {
+				throw new AppException(
+						"Repayment Hierarchy for [Write-Off] Loans' not configured for the Loan Type " + loanType);
+			}
+
+			return rpyHierarchy;
 		}
 
 		if (fm.isFinIsActive() && fm.getMaturityDate().compareTo(valueDate) <= 0) {
-			return finType.getMatureRepayHry();
+			rpyHierarchy = finType.getMatureRepayHry();
+
+			if (rpyHierarchy == null) {
+				throw new AppException(
+						"Repayment Hierarchy for [Matured Loans] not configured for the Loan Type " + loanType);
+			}
+
+			return rpyHierarchy;
 		}
 
 		if (rd.isPresentment()) {
-			return finType.getPresentmentRepayHry();
+			rpyHierarchy = finType.getPresentmentRepayHry();
+
+			if (rpyHierarchy == null) {
+				throw new AppException(
+						"Repayment Hierarchy for [Presentment Receipts] not configured for the Loan Type " + loanType);
+			}
+
+			return rpyHierarchy;
 		}
 
-		return finType.getRpyHierarchy();
+		rpyHierarchy = finType.getRpyHierarchy();
+
+		if (rpyHierarchy == null) {
+			throw new AppException("Repayment Hierarchy not configured for the Loan Type " + loanType);
+		}
+
+		return rpyHierarchy;
 	}
 }

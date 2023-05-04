@@ -73,8 +73,6 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT", true);
 
-		customConstants.put("ALLOW_AUTO_GRACE_EXT", true);
-
 		customConstants.put("ALLOW_LOAN_DOWNSIZING", true);
 
 		customConstants.put("ALLOW_RESTRUCTURING", true);

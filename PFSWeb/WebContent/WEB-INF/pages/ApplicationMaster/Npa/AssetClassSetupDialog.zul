@@ -97,15 +97,15 @@
 								multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}" ca:data-scrollable="true">
 								<listhead id="listHeadAssetClassSetup" sizable="true">
 									<listheader id="listheader_NPADPD" align="left"
-										label="${c:l('listheader_AssetClassSetupDialog_NPADPD.label')}" sort="false" width="80px" />
+										label="${c:l('listheader_AssetClassSetupDialog_NPADPD.label')}" sort="false" hflex="min" />
 								 <listheader id="listheader_NPAAge" align="left"
-										label="${c:l('listheader_AssetClassSetupDialog_NPAAge.label')}" sort="false" width="110px" />
+										label="${c:l('listheader_AssetClassSetupDialog_NPAAge.label')}" sort="false"  hflex="min" />
 									<listheader id="listheader_AssestClassification" align="left"
-										label="${c:l('listheader_AssetClassSetupDialog_AssestClassification.label')}" sort="false" width="140px" />
+										label="${c:l('listheader_AssetClassSetupDialog_AssestClassification.label')}" sort="false" hflex="min" />
 									<listheader id="listheader_AssestSubClassification" align="left"
-										label="${c:l('listheader_AssetClassSetupDialog_AssestSubClassification.label')}" sort="false" width="140px" />
+										label="${c:l('listheader_AssetClassSetupDialog_AssestSubClassification.label')}" sort="false" hflex="min" />
 									<listheader id="listheader_NPAStage" align="left"
-										label="${c:l('listheader_AssetClassSetupDialog_NPAStage.label')}" sort="false" width="110px" />
+										label="${c:l('listheader_AssetClassSetupDialog_NPAStage.label')}" sort="false" hflex="min" />
 								</listhead>
 							</listbox>
 						</groupbox>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
@@ -17,6 +18,7 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -42,8 +44,8 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 
 	private static final String QUEUE_QUERY = "Select FinID From Asset_Classification_Queue Where ThreadID = ? and Progress = ?";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	protected static AtomicLong processedCount = new AtomicLong(0);
+	protected static AtomicLong failedCount = new AtomicLong(0);
 
 	private static final String START_MSG = "Effective Asset Classification started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Effective Asset Classification failed on {} for the FinReference {}";
@@ -88,7 +90,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		itemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
 		List<Exception> exceptions = new ArrayList<>(1);
@@ -176,7 +178,8 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 	}
 
 	private boolean isClassficationChange(AssetClassification a1, AssetClassification a2) {
-		return a1.getNpaClassID() != a2.getNpaClassID() || a1.getEffNpaClassID() != a2.getEffNpaClassID();
+		return !Objects.equals(a1.getNpaClassID(), a2.getNpaClassID())
+				|| !Objects.equals(a1.getEffNpaClassID(), a2.getEffNpaClassID());
 	}
 
 	@Autowired
