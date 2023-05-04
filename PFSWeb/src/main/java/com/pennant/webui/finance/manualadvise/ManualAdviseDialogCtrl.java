@@ -1172,7 +1172,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 							true, financeMain.getFinStartDate(), SysParamUtil.getAppDate(), true));
 		}
 
-		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module) && !this.reason.isReadonly()) {
+		if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module) && this.reason.getValue().isEmpty()) {
 			this.reason.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ManualAdviseDialog_Reason.value"), null, true));
 		}
