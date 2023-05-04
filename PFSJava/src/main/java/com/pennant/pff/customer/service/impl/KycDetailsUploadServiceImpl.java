@@ -190,7 +190,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public boolean isInProgress(Long headerID, Object... args) {
-		return kycDetailsUploadDAO.isInProgress((String) args[0], headerID);
+		return kycDetailsUploadDAO.isInProgress(headerID, (String) args[0]);
 	}
 
 	@Override

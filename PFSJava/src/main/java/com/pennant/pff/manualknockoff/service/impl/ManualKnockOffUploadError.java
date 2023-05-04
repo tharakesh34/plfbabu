@@ -33,7 +33,11 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_1013("FeeTypeCode is Mandatory when excess type is Payable"),
 
-	MKOU_1014("Either principal or interest amount should be given or only emi");
+	MKOU_1014("Either principal or interest amount should be given or only emi"),
+
+	MKOU_1015("Other Receipt is inprogress"),
+
+	MKOU_1016("Record is already initiated by other process, unable to proceed.");
 
 	private String description;
 

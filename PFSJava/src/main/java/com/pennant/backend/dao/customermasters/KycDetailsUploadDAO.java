@@ -16,7 +16,7 @@ public interface KycDetailsUploadDAO {
 
 	void update(CustomerKycDetail detail);
 
-	boolean isInProgress(String custCif, long headerID);
+	boolean isInProgress(long headerID, String custCif);
 
 	boolean isInMaintanance(String custCif);
 

@@ -150,7 +150,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 	}
 
 	@Override
-	public boolean isInProgress(String custCif, long headerID) {
+	public boolean isInProgress(long headerID, String custCif) {
 		StringBuilder sql = new StringBuilder("Select Count(custCif)");
 		sql.append(" From Customer_Kyc_Details_Upload bcd");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = bcd.HeaderID");
@@ -189,7 +189,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		sql.append(" Where fm.CustId = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
-		
+
 		return jdbcOperations.queryForObject(sql.toString(), Integer.class, custId) > 0;
 	}
 

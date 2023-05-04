@@ -19,4 +19,6 @@ public interface ManualKnockOffUploadDAO {
 	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
 
 	String getSqlQuery();
+
+	boolean isInProgress(long headerID, String reference);
 }

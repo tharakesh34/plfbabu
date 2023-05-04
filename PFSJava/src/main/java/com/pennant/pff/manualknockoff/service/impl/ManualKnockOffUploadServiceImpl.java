@@ -22,6 +22,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -66,6 +67,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private ManualAdviseDAO manualAdviseDAO;
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
+	private FinReceiptHeaderDAOImpl finReceiptHeaderDAOImpl;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -103,6 +105,16 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		detail.setReferenceID(fm.getFinID());
 		if (detail.getAllocationType() == null) {
 			setError(detail, ManualKnockOffUploadError.MKOU_104);
+			return;
+		}
+
+		if (finReceiptHeaderDAOImpl.isReceiptExists(reference, "_Temp")) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1015);
+			return;
+		}
+
+		if (manualKnockOffUploadDAO.isInProgress(header.getId(), reference)) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1016);
 			return;
 		}
 
@@ -412,6 +424,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public ProcessRecord getProcessRecord() {
 		return manualKnockOffUploadProcessRecord;
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return manualKnockOffUploadDAO.isInProgress(headerID, (String) args[0]);
 	}
 
 	@Override

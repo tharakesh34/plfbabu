@@ -18,6 +18,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.file.UploadStatus;
 
 public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUpload> implements ManualKnockOffUploadDAO {
 
@@ -219,6 +220,19 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
+	}
+
+	@Override
+	public boolean isInProgress(long headerID, String reference) {
+		StringBuilder sql = new StringBuilder("Select Count(ID)");
+		sql.append(" From MANUAL_KNOCKOFF_UPLOAD mku");
+		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = mku.HeaderID");
+		sql.append(" Where mku.Reference = ? and uh.Id <> ? and uh.progress not in (?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, reference, headerID,
+				UploadStatus.APPROVED.status(), UploadStatus.FAILED.status(), UploadStatus.REJECTED.status()) > 0;
 	}
 
 }
