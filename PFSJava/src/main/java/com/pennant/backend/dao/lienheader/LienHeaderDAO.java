@@ -12,8 +12,8 @@ public interface LienHeaderDAO {
 
 	LienHeader getLienByAcc(String accnumber);
 
-	int getCountReference(String AccNumber);
+	int getCountReference(String accNumber);
 
-	LienHeader getLienByReference(String finreference);
+	LienHeader getLienByReference(String finreference, String accNum);
 
 }

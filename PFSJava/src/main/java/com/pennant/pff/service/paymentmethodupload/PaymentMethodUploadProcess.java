@@ -18,12 +18,15 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.PaymentMethodUploadDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -32,6 +35,7 @@ import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
@@ -56,6 +60,8 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	private MandateService mandateService;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeHeaderService chequeHeaderService;
+	private LienService lienService;
+	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * Process
@@ -370,6 +376,21 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			txStatus = this.transactionManager.getTransaction(txDef);
 
+			FinanceDetail fd = new FinanceDetail();
+			FinanceMain fm = financeMainDAO.getFinanceMainForLien(changePayment.getFinID());
+
+			fd.getFinScheduleData().setFinanceMain(fm);
+			fd.getFinScheduleData().getFinanceMain().setBefImage(fm);
+			fd.setMandate(mandateService.getMandate(fd.getFinScheduleData().getFinanceMain().getMandateID()));
+
+			if (ImplementationConstants.ALLOW_LIEN) {
+				if (InstrumentType.isSI(changePayment.getFinRepayMethod())) {
+					lienService.save(fd);
+				} else {
+					lienService.update(fd);
+				}
+			}
+
 			paymentMethodUploadDAO.updateFinRepaymethod(changePayment);
 			paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
 
@@ -491,4 +512,13 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 		this.chequeHeaderService = chequeHeaderService;
 	}
 
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
 }

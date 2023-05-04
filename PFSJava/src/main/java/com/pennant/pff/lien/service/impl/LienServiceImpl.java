@@ -10,6 +10,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.lien.service.LienService;
@@ -23,6 +24,7 @@ public class LienServiceImpl implements LienService {
 
 	private LienHeaderDAO lienHeaderDAO;
 	private LienDetailsDAO lienDetailsDAO;
+	private MandateDAO mandateDAO;
 
 	public LienServiceImpl() {
 		super();
@@ -44,15 +46,28 @@ public class LienServiceImpl implements LienService {
 			lh = getLienHeader(fm, fd);
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
-			if (fm.getFinSourceID().equals(RequestSource.UI.name())
-					|| fm.getFinSourceID().equals(RequestSource.API.name())) {
+
+			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
 				lh.setLienID(fd.getLienHeader().getLienID());
 				lh.setLienReference(fd.getLienHeader().getLienReference());
 				lh.setId(fd.getLienHeader().getId());
 			}
+
 			headerID = lienHeaderDAO.save(lh);
 		} else {
 			headerID = lh.getId();
+			lh.setLienStatus(false);
+			lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+			lienHeaderDAO.update(lh);
+
+			LienDetails lu = getLienDetails(lh, fm);
+
+			lu.setLienStatus(false);
+			lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+			lu.setDemarkingDate(fm.getClosedDate());
+			lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
+
+			lienDetailsDAO.update(lu);
 		}
 
 		LienDetails lu = getLienDetails(lh, fm);
@@ -73,7 +88,9 @@ public class LienServiceImpl implements LienService {
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
-		LienHeader lienheader = lienHeaderDAO.getLienByReference(fm.getFinReference());
+		String accNum = mandateDAO.getMandateNumber(fm.getBefImage().getMandateID());
+
+		LienHeader lienheader = lienHeaderDAO.getLienByReference(fm.getFinReference(), accNum);
 
 		if (lienheader == null) {
 			logger.debug(Literal.LEAVING);
@@ -110,7 +127,9 @@ public class LienServiceImpl implements LienService {
 	private LienHeader getLienHeader(FinanceMain fm, FinanceDetail fd) {
 		LienHeader lh = new LienHeader();
 
-		lh.setSource(fm.getFinSourceID());
+		if (!RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
+			lh.setSource("PLF");
+		}
 		lh.setReference(fm.getFinReference());
 		lh.setMarkingDate(fm.getFinStartDate());
 		lh.setDemarkingDate(fm.getClosedDate());
@@ -159,6 +178,11 @@ public class LienServiceImpl implements LienService {
 	@Autowired
 	public void setLienDetailsDAO(LienDetailsDAO lienDetailsDAO) {
 		this.lienDetailsDAO = lienDetailsDAO;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
 	}
 
 }

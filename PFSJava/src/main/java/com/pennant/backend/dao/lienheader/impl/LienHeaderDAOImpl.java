@@ -104,22 +104,22 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	}
 
 	@Override
-	public int getCountReference(String AccNumber) {
+	public int getCountReference(String accNumber) {
 		String sql = "Select Count(ID) From Lien_Header Where AccNumber = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, AccNumber);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, accNumber);
 	}
 
 	@Override
-	public LienHeader getLienByReference(String finreference) {
+	public LienHeader getLienByReference(String finreference, String accNum) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate,");
 		sql.append(" lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus, lh.InterfaceStatus");
 		sql.append(" From Lien_Header lh");
 		sql.append(" Inner Join Lien_Details ld ON lh.LienID = ld.LienID");
-		sql.append(" Where ld.Reference = ?");
+		sql.append(" Where ld.Reference = ? and lh.AccNumber = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -139,7 +139,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
 				return lu;
 
-			}, finreference);
+			}, finreference, accNum);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

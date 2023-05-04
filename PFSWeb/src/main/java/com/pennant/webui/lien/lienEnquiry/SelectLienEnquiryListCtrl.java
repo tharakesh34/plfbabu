@@ -104,9 +104,10 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 
 	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING);
-
-		doShowDialogPage(this.finReference.getValue(), this.accNumber.getValue());
-		doClear();
+		doClearMessage();
+		doSetValidation();
+		doWriteComponentsToBean(finRefValue, accountNumber);
+		doShowDialogPage(this.finRefValue, this.accountNumber);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -155,10 +156,13 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
+		doClearMessage();
+		doRemoveValidation();
+
 		this.finReference.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_SelectLienEnquiryList_finReference.value"), null, false, true));
+				Labels.getLabel("label_SelectLienEnquiryList_finReference.value"), null, true, true));
 		this.accNumber.setConstraint(
-				new PTStringValidator(Labels.getLabel("label_SelectLienEnquiryList_accNum.value"), null, false, true));
+				new PTStringValidator(Labels.getLabel("label_SelectLienEnquiryList_accNum.value"), null, true, false));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -174,12 +178,19 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 
 	public void doWriteComponentsToBean(String finRefValue, String accountNumber) {
 		logger.debug(Literal.ENTERING);
-		doSetValidation();
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			this.finRefValue = this.finReference.getValidatedValue();
-			this.accountNumber = this.accNumber.getValue();
+			if (!this.finReference.isReadonly())
+				this.finRefValue = this.finReference.getValidatedValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!this.accNumber.isReadonly())
+				this.accountNumber = this.accNumber.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -203,6 +214,8 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		this.accNumber.setDisabled(true);
 		this.finReference.setButtonDisabled(false);
 		this.accNumber.setValue("");
+		this.accNumber.setConstraint("");
+		this.accNumber.setReadonly(true);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -210,11 +223,16 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 	public void onCheck$accountNumber(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
+		doClearMessage();
+		doRemoveValidation();
+
 		this.finReference.getButton().setDisabled(true);
 		this.finReference.getTextbox().setReadonly(true);
+		this.accNumber.setReadonly(false);
 
 		this.accNumber.setDisabled(false);
 		this.finReference.setValue("");
+		this.finReference.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -231,13 +249,14 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		this.finRefValue = this.finReference.getValue();
 	}
 
-	private void doClear() {
-		logger.debug(Literal.ENTERING);
+	@Override
+	protected void doClearMessage() {
+		logger.debug("Entering");
 
-		this.finReference.setValue("");
-		this.accNumber.setValue("");
+		this.finReference.setErrorMessage("");
+		this.accNumber.setErrorMessage("");
 
-		logger.debug(Literal.LEAVING);
+		logger.debug("Leaving");
 	}
 
 	@Autowired

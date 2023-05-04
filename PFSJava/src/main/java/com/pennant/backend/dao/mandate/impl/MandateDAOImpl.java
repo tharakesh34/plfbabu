@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 
@@ -1221,6 +1222,20 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, mandateId, mandatetype, reference);
+	}
+
+	@Override
+	public String getMandateNumber(long mandateId) {
+		String sql = "Select AccNumber From Mandates Where MandateId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try{
+			return jdbcOperations.queryForObject(sql, String.class, mandateId);
+		}catch(EmptyResultDataAccessException e){
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 }

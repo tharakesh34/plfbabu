@@ -233,7 +233,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			FinanceMain fm = lienup.getFinanceMain();
-			fm.setFinSourceID(lienup.getSource());
+			fm.setFinSourceID(RequestSource.UPLOAD.name());
 
 			FinanceDetail fd = new FinanceDetail();
 			LienHeader lienhead = new LienHeader();
@@ -244,6 +244,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 			lienhead.setLienID(lienup.getLienID());
 			lienhead.setLienReference(lienup.getLienReference());
 			lienhead.setId(lienup.getId());
+			lienhead.setSource(lienup.getSource());
 			fd.setLienHeader(lienhead);
 
 			lienService.save(fd);

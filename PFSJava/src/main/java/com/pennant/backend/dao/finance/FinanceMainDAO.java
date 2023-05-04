@@ -444,4 +444,6 @@ public interface FinanceMainDAO {
 	void updateNPA(long finID, boolean undernpa);
 
 	Date getMaturityDatebyFinID(long finID);
+
+	FinanceMain getFinanceMainForLien(long finID);
 }

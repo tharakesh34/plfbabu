@@ -938,6 +938,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			linkedTranId = aeEvent.getLinkedTranId();
 		}
 
+		if (ImplementationConstants.ALLOW_LIEN) {
+			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
+				lienService.save(fd);
+			} else {
+				lienService.update(fd);
+			}
+		}
+
 		fm.setRcdMaintainSts("");
 		fm.setRoleCode("");
 		fm.setNextRoleCode("");
@@ -1239,14 +1247,6 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (extendedDetails != null && extendedDetails.size() > 0) {
 			extendedFieldDetailsService.delete(fd.getExtendedFieldHeader(), fd.getExtendedFieldRender().getReference(),
 					fd.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails);
-		}
-
-		if (ImplementationConstants.ALLOW_LIEN) {
-			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
-				lienService.save(fd);
-			} else {
-				lienService.update(fd);
-			}
 		}
 
 		logger.debug(Literal.LEAVING);

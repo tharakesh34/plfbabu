@@ -7332,4 +7332,35 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
+	@Override
+	public FinanceMain getFinanceMainForLien(long finId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, ClosingStatus, FinRepayMethod");
+		sql.append(", FinSourceID, FinStartDate, MandateID, ClosedDate");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+				fm.setFinSourceID(rs.getString("FinSourceID"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setMandateID(JdbcUtil.getLong(rs.getObject("MandateID")));
+				fm.setClosedDate(rs.getDate("ClosedDate"));
+
+				return fm;
+
+			}, finId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }
