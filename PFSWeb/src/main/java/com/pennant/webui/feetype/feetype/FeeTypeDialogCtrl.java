@@ -60,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
@@ -437,8 +438,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setDescColumn("AccountSetCodeName");
 		this.dueAccSet.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.dueAccSet.setMandatoryStyle(true);
-		this.dueAccSet.setWhereClause("AccountSetCode not like '%#_W' ESCAPE '#' and AccountSetCode "
-				+ "not like '%#_N' ESCAPE '#' and AccountSetCode not like '%#_S' ESCAPE '#'");
+		this.dueAccSet.setList(AccountingEngine.getAccountingSetEvents());
 		this.dueAccRow.setVisible(dueCreationReq);
 		this.tdsRow.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 

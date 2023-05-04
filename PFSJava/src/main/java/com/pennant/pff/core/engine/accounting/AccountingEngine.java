@@ -19,6 +19,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
@@ -275,6 +276,17 @@ public class AccountingEngine {
 				list.add(aevent);
 			}
 		}
+
+		return list;
+	}
+
+	public static List<AccountingSet> getAccountingSetEvents() {
+		List<AccountingSet> list = accountEngineEventDAO.getAccountSetEvents();
+
+		List<AccountingSet> tempList = list.stream().filter(as -> as.getEventCode().endsWith("_S")
+				|| as.getEventCode().endsWith("_N") || as.getEventCode().endsWith("_W")).collect(Collectors.toList());
+
+		list.removeAll(tempList);
 
 		return list;
 	}

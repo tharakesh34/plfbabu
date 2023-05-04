@@ -35,6 +35,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import com.pennant.backend.dao.bmtmasters.AccountEngineEventDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -213,6 +214,23 @@ public class AccountEngineEventDAOImpl extends BasicDao<AccountEngineEvent> impl
 
 			return aeEvent;
 		}, 1);
+	}
 
+	@Override
+	public List<AccountingSet> getAccountSetEvents() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select EventCode, AccountSetCode, AccountSetCodeName");
+		sql.append(" From RMTAccountingSet");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			AccountingSet as = new AccountingSet();
+
+			as.setEventCode(rs.getString("EventCode"));
+			as.setAccountSetCode(rs.getString("AccountSetCode"));
+			as.setAccountSetCodeName(rs.getString("AccountSetCodeName"));
+
+			return as;
+		});
 	}
 }

@@ -27,6 +27,7 @@ package com.pennant.backend.dao.bmtmasters;
 import java.util.List;
 
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
 
 /**
  * DAO methods declaration for the <b>AccountEngineEvent model</b> class.<br>
@@ -47,4 +48,6 @@ public interface AccountEngineEventDAO {
 	String save(AccountEngineEvent accountEngineEvent, String type);
 
 	List<AccountEngineEvent> getAccountEngineEvents();
+
+	List<AccountingSet> getAccountSetEvents();
 }
