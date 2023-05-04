@@ -3634,6 +3634,11 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		partPayAmount = getPartPaymentAmount(receiptData);
 		remainingBal = partPayAmount.subtract(rch.getTotalFees().getPaidAmount());
+
+		if (remainingBal.compareTo(BigDecimal.ZERO) <= 0) {
+			remainingBal = BigDecimal.ZERO;
+		}
+
 		rch.setPartPayAmount(remainingBal);
 		rch.setBalAmount(remainingBal);
 
