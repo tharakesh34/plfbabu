@@ -42,7 +42,7 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 	private AutoWriteOffService autoWriteOffService;
 	private FeeTypeDAO feeTypeDAO;
 
-	private static final String QUEUE_QUERY = "Select FinID From AutoWriteOff_Calc_Queue Where ThreadID = ? and Progress = ?";
+	private static final String QUEUE_QUERY = "Select FinID From Auto_Write_Off_Calc_Queue Where ThreadID = ? and Progress = ?";
 
 	private static final String START_MSG = "Auto WriteOff started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Auto WriteOff failed on {} for the FinReference {}";
