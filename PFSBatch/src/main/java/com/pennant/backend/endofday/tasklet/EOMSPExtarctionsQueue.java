@@ -9,13 +9,13 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.pennanttech.external.ExtExtractionHook;
+import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class EOMSPExtarctionsQueue implements Tasklet {
 
 	private static Logger logger = LogManager.getLogger(EOMSPExtarctionsQueue.class);
-	private ExtExtractionHook extExtractionHook;
+	private EODExtractionsHook extExtractionHook;
 
 	public EOMSPExtarctionsQueue() {
 		super();
@@ -26,8 +26,7 @@ public class EOMSPExtarctionsQueue implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		if (extExtractionHook != null) {
-			extExtractionHook.processBaselOneSP();
-			extExtractionHook.processAlmSP();
+			extExtractionHook.processEOMSP();
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -36,7 +35,7 @@ public class EOMSPExtarctionsQueue implements Tasklet {
 
 	@Autowired(required = false)
 	@Qualifier(value = "extExtractionHook")
-	public void setExtExtractionHook(ExtExtractionHook extExtractionHook) {
+	public void setExtExtractionHook(EODExtractionsHook extExtractionHook) {
 		this.extExtractionHook = extExtractionHook;
 	}
 

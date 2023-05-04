@@ -44,7 +44,7 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.ExtExtractionService">
+	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 		<property name="extExtractionDao" ref="extExtractionDao" />
 		<property name="extUcicExtractData" ref="extUcicExtractData" />

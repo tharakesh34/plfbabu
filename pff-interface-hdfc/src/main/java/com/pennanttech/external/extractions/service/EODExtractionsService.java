@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.io.Files;
 import com.pennant.app.util.SysParamUtil;
-import com.pennanttech.external.ExtExtractionHook;
+import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
@@ -26,21 +26,19 @@ import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtExtractionService implements ExtExtractionHook, InterfaceConstants {
+public class EODExtractionsService implements EODExtractionsHook, InterfaceConstants {
 
-	private static final Logger logger = LogManager.getLogger(ExtExtractionService.class);
+	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 	private ExternalConfig finconGLConfig;
 	private ExtExtractionDao extExtractionDao;
 	private ExtInterfaceDao extInterfaceDao;
 	private ExtUcicDataExtractor extUcicExtractData;
 	private ExtUcicRequestFile extUcicRequestFile;
 
-	@Override
-	public void processUcicRequest() {
+	private void processUcicRequest() {
 		logger.debug(Literal.ENTERING);
 		String custDataExtrctstatus = null;
 		try {
-
 			if (extUcicExtractData != null) {
 				custDataExtrctstatus = extUcicExtractData.extractCustomerData();
 			}
@@ -60,26 +58,7 @@ public class ExtExtractionService implements ExtExtractionHook, InterfaceConstan
 		logger.debug(Literal.LEAVING);
 	}
 
-	@Override
-	public void processBaselOneSP() {
-		extExtractionDao.executeSp(SP_BASEL_ONE);
-
-	}
-
-	@Override
-	public void processAlmSP() {
-		extExtractionDao.executeSp(SP_ALM_REPORT);
-
-	}
-
-	@Override
-	public void processFinconSP() {
-		extExtractionDao.executeSp(SP_FINCON_GL);
-
-	}
-
-	@Override
-	public void processFinconFileSP() {
+	private void processFinconFileSP() {
 		List<ExternalConfig> configList = extInterfaceDao.getExternalConfig();
 
 		finconGLConfig = getDataFromList(configList, CONFIG_FINCONGL);
@@ -186,6 +165,21 @@ public class ExtExtractionService implements ExtExtractionHook, InterfaceConstan
 	@Qualifier(value = "extUcicRequestFile")
 	public void setExtUcicRequestFile(ExtUcicRequestFile extUcicRequestFile) {
 		this.extUcicRequestFile = extUcicRequestFile;
+	}
+
+	@Override
+	public void processEODSP() {
+		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL);
+		if (finconSPStatus != null && "SUCCESS".equals(finconSPStatus)) {
+			processFinconFileSP();
+		}
+		processUcicRequest();
+	}
+
+	@Override
+	public void processEOMSP() {
+		extExtractionDao.executeSp(SP_BASEL_ONE);
+		extExtractionDao.executeSp(SP_ALM_REPORT);
 	}
 
 }
