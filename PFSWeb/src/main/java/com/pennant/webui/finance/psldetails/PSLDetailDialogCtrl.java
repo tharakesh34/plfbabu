@@ -1089,10 +1089,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.weakerSection.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_WeakerSection.value"), null, true));
 		}
-		if (this.row_LandHolding.isVisible() && this.landHolding.isVisible()) {
-			this.landHolding.setConstraint(new StaticListValidator(listLandHolding,
-					Labels.getLabel("label_PSLDetailDialog_LandHolding.value")));
-		}
+
 		if (this.row_LandHolding.isVisible() && this.landArea.isVisible()
 				&& "Y".equals(landHolding.getSelectedItem().getValue())) {
 			this.landArea.setConstraint(
@@ -1122,6 +1119,11 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		if (this.row_EndUse.isVisible() && this.endUse.isVisible()) {
 			this.endUse.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_EndUse.value"), null, true));
+		}
+
+		if (this.row_LandHolding.isVisible() && this.landHolding.isVisible()) {
+			this.landHolding.setConstraint(new StaticListValidator(listLandHolding,
+					Labels.getLabel("label_PSLDetailDialog_LandHolding.value")));
 		}
 
 		logger.debug(Literal.LEAVING);
