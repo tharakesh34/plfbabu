@@ -13,6 +13,26 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
         
        <import resource="extensionContext.xml" />
+	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl">
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+
+	<bean id="extUcicExtractData" class="com.pennanttech.external.ucic.service.ExtUcicDataExtractor">
+		<property name="extUcicDao" ref="extUcicDao" />
+	</bean>
+
+	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
+		<property name="extUcicDao" ref="extUcicDao" />
+		<property name="extInterfaceDao" ref="extInterfaceDao" />
+	</bean>
 
 	<bean id="extractDataDAO" class="com.pennanttech.pff.external.piramal.ExtractDataDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
@@ -24,8 +44,11 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
-		<property name="extDataSource" ref="extDataSource" />
+	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.ExtExtractionService">
+		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extExtractionDao" ref="extExtractionDao" />
+		<property name="extUcicExtractData" ref="extUcicExtractData" />
+		<property name="extUcicRequestFile" ref="extUcicRequestFile" />
 	</bean>
 
 	<bean id="extStageDao" class="com.pennanttech.external.dao.impl.ExtStagingDaoImpl">
@@ -58,6 +81,6 @@
 		<property name="extPdcService" ref="extPdcService" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
 	</bean>
-	
+
 	<bean id="appDateChangeServiceHook" class="com.pennant.pff.eod.extension.AppDateChangeServiceHookImpl" />
 </beans>

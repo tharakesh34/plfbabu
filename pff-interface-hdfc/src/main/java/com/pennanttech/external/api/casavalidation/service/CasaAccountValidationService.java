@@ -90,7 +90,7 @@ public class CasaAccountValidationService implements BankAccountValidationServic
 						.equals(resp.getRespData().getCustDetails().getCasaAcc().getAccDtls().getAccountStatus())) {
 					bankAccValidations.setReason(accStat[1]);
 
-					if (accStat[2].equals("Y")) {
+					if ("Y".equals(accStat[2])) {
 						return true;
 					}
 				}

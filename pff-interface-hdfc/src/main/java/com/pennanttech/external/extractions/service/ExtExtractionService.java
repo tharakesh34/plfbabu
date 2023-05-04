@@ -1,100 +1,102 @@
 package com.pennanttech.external.extractions.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.google.common.io.Files;
 import com.pennant.app.util.SysParamUtil;
-import com.pennanttech.external.config.ApplicationContextProvider;
+import com.pennanttech.external.ExtExtractionHook;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
+import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
+import com.pennanttech.external.ucic.service.ExtUcicRequestFile;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtExtractionService implements InterfaceConstants, ExtractionConstants {
+public class ExtExtractionService implements ExtExtractionHook, InterfaceConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtExtractionService.class);
-
+	private ExternalConfig finconGLConfig;
 	private ExtExtractionDao extExtractionDao;
 	private ExtInterfaceDao extInterfaceDao;
+	private ExtUcicDataExtractor extUcicExtractData;
+	private ExtUcicRequestFile extUcicRequestFile;
 
-	private ExternalConfig extractionConfig;
-
-	private ApplicationContext applicationContext;
-
-	public ExtExtractionService() {
-		applicationContext = ApplicationContextProvider.getApplicationContext();
-		extExtractionDao = applicationContext.getBean(ExtExtractionDao.class);
-		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
-	}
-
-	public String procesExtraction(String extractName) {
+	@Override
+	public void processUcicRequest() {
 		logger.debug(Literal.ENTERING);
+		String custDataExtrctstatus = null;
+		try {
 
-		if (extractName == null || "".equals(extractName)) {
-			logger.debug("Ext_Warning: Configuration received as NULL/EMPTY for Extraction. So returning.");
-			return "Error";
+			if (extUcicExtractData != null) {
+				custDataExtrctstatus = extUcicExtractData.extractCustomerData();
+			}
+			if (custDataExtrctstatus.equals("SUCCESS")) {
+				Date appDate = SysParamUtil.getAppDate();
+				if (extUcicRequestFile != null) {
+					extUcicRequestFile.processUcicRequestFile(appDate);
+				}
+			} else {
+				logger.debug("Customers data extraction Unsuccessful :" + custDataExtrctstatus);
+			}
+
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 		}
-
-		String spName = "";
-		if (extractName.equals(CONFIG_FINCON_GL)) {
-			spName = EXTRACT_FINCON_GL_SP;
-		} else if (extractName.equals(CONFIG_ALM)) {
-			spName = EXTRACT_ALM_SP;
-		} else if (extractName.equals(CONFIG_RPMS)) {
-			spName = EXTRACT_RPMS_SP;
-		} else if (extractName.equals(CONFIG_BASEL_ONE)) {
-			spName = EXTRACT_BASEL_ONE_SP;
-		} else if (extractName.equals(CONFIG_BASEL_TWO)) {
-			spName = EXTRACT_BASEL_TWO_SP;
-		}
-
-		if ("".equals(spName)) {
-			logger.debug("Ext_Warning: SP name not found for Extraction. So returning.");
-			return "Error";
-		}
-
-		String status = extExtractionDao.executeExtractionSp(spName);
 
 		logger.debug(Literal.LEAVING);
+	}
 
-		return status;
+	@Override
+	public void processBaselOneSP() {
+		extExtractionDao.executeSp(SP_BASEL_ONE);
 
 	}
 
-	public void processRequestFile(String extractName) {
-		logger.debug(Literal.ENTERING);
+	@Override
+	public void processAlmSP() {
+		extExtractionDao.executeSp(SP_ALM_REPORT);
 
+	}
+
+	@Override
+	public void processFinconSP() {
+		extExtractionDao.executeSp(SP_FINCON_GL);
+
+	}
+
+	@Override
+	public void processFinconFileSP() {
+		List<ExternalConfig> configList = extInterfaceDao.getExternalConfig();
+
+		finconGLConfig = getDataFromList(configList, CONFIG_FINCONGL);
+
+		long fileSeq = extExtractionDao.getSeqNumber(SEQ_FINCON_GL);
+
+		String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
 		Date appDate = SysParamUtil.getAppDate();
+		String fileName = finconGLConfig.getFilePrepend()
+				+ new SimpleDateFormat(finconGLConfig.getDateFormat()).format(appDate) + fileSeqName
+				+ finconGLConfig.getFileExtension();
 
-		if (appDate == null) {
-			logger.debug("Ext_Warning: App Date null. So returning.");
-			return;
-		}
-
-		// Get main configuration for External Interfaces
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
-
-		extractionConfig = getDataFromList(mainConfig, extractName);
-
-		String fileName = extractionConfig.getFilePrepend()
-				+ new SimpleDateFormat(extractionConfig.getDateFormat()).format(appDate)
-				+ extractionConfig.getFileExtension();
-
-		String status = extExtractionDao.executeRequestFileSp(fileName);
+		String status = extExtractionDao.executeSp(SP_FINCON_WRITE_FILE, fileName);
 
 		if ("SUCCESS".equals(status)) {
 
-			String baseFilePath = App.getResourcePath(extractionConfig.getFileLocation());
+			String baseFilePath = App.getResourcePath(finconGLConfig.getFileLocation());
 
 			if (baseFilePath == null || "".equals(baseFilePath)) {
 				logger.debug("Ext_Warning: Local file path not found for config. So returning.");
@@ -102,18 +104,18 @@ public class ExtExtractionService implements InterfaceConstants, ExtractionConst
 			}
 
 			// Fetch request file from DB Server location to local and the upload it in client SFTP
-			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			ExternalConfig dbServerConfig = getDataFromList(configList, "PLF_DB_SERVER");
 
-			if (serverConfig == null) {
+			if (dbServerConfig == null) {
 				logger.debug("Ext_Warning: DB Server config not found. So returning.");
 				return;
 			}
 
 			FtpClient ftpClient = null;
-			String host = serverConfig.getHostName();
-			int port = serverConfig.getPort();
-			String accessKey = serverConfig.getAccessKey();
-			String secretKey = serverConfig.getSecretKey();
+			String host = dbServerConfig.getHostName();
+			int port = dbServerConfig.getPort();
+			String accessKey = dbServerConfig.getAccessKey();
+			String secretKey = dbServerConfig.getSecretKey();
 			try {
 				ftpClient = new SftpClient(host, port, accessKey, secretKey);
 			} catch (Exception e) {
@@ -121,7 +123,7 @@ public class ExtExtractionService implements InterfaceConstants, ExtractionConst
 				return;
 			}
 			// Now get remote file to local base location using SERVER config
-			String remoteFilePath = serverConfig.getFileSftpLocation();
+			String remoteFilePath = dbServerConfig.getFileSftpLocation();
 			try {
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
@@ -129,26 +131,61 @@ public class ExtExtractionService implements InterfaceConstants, ExtractionConst
 				return;
 			}
 
-			if ("Y".equals(extractionConfig.getIsSftp())) {
+			if ("Y".equals(finconGLConfig.getIsSftp())) {
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
-				ftpClient.upload(mainFile, extractionConfig.getFileSftpLocation());
+				ftpClient.upload(mainFile, finconGLConfig.getFileSftpLocation());
+				fileBackup(finconGLConfig, mainFile);
 				mainFile.delete();
 			}
 		}
+	}
+
+	private void fileBackup(ExternalConfig finconGLconf, File mainFile) {
+		logger.debug(Literal.ENTERING);
+
+		String localBkpLocation = finconGLconf.getFileLocalBackupLocation();
+		if (localBkpLocation == null || "".equals(localBkpLocation)) {
+			logger.debug("EXT_FINCONGL: Local backup location not configured, so returning.");
+			return;
+		}
+
+		String localBackupLocation = App.getResourcePath(finconGLconf.getFileLocalBackupLocation());
+
+		File mainFileBkp = new File(localBackupLocation + File.separator + mainFile.getName());
+
+		try {
+			Files.copy(mainFile, mainFileBkp);
+		} catch (IOException e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug("EXT_FINCONGL:MainFile  backup Successful");
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Autowired(required = false)
+	@Qualifier(value = "extExtractionDao")
 	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
 		this.extExtractionDao = extExtractionDao;
 	}
 
+	@Autowired(required = false)
+	@Qualifier(value = "extInterfaceDao")
 	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
 		this.extInterfaceDao = extInterfaceDao;
 	}
 
-	public void setExtractionConfig(ExternalConfig extractionConfig) {
-		this.extractionConfig = extractionConfig;
+	@Autowired(required = false)
+	@Qualifier(value = "extUcicExtractData")
+	public void setExtUcicExtractData(ExtUcicDataExtractor extUcicExtractData) {
+		this.extUcicExtractData = extUcicExtractData;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "extUcicRequestFile")
+	public void setExtUcicRequestFile(ExtUcicRequestFile extUcicRequestFile) {
+		this.extUcicRequestFile = extUcicRequestFile;
 	}
 
 }

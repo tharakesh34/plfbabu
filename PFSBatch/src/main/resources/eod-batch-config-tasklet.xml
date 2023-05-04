@@ -14,6 +14,11 @@
 	<!-- prepareCustomerQueue -->
 	<bean id="prepareCustomerQueueTaskLet" class="com.pennant.backend.endofday.tasklet.PrepareCustomerQueue" />
 
+	<!-- SPEXTRACTIONS -->
+	<bean id="spExtractionQueueTaskLet" class="com.pennant.backend.endofday.tasklet.EODSPExtarctionsQueue"/>
+
+	<bean id="baselExtarctionsTasklet" class="com.pennant.backend.endofday.tasklet.EOMSPExtarctionsQueue"/>
+	
 	<!-- MicroEOD -->
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD" />
 

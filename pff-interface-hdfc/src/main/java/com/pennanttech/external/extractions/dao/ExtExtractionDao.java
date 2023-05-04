@@ -1,8 +1,11 @@
 package com.pennanttech.external.extractions.dao;
 
 public interface ExtExtractionDao {
-	public String executeExtractionSp(String spName);
 
-	public String executeRequestFileSp(String fileName);
+	long getSeqNumber(String tableName);
+
+	public String executeSp(String spName);
+
+	public String executeSp(String spName, String fileName);
 
 }

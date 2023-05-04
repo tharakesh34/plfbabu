@@ -3,10 +3,23 @@ package com.pennanttech.external.constants;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 
@@ -34,6 +47,7 @@ public interface InterfaceConstants {
 	String CONFIG_UCIC_ACK = "UCIC_ACK";
 	String CONFIG_UCIC_ACK_CONF = "UCIC_ACK_CONF";
 	String CONFIG_PLF_DB_SERVER = "PLF_DB_SERVER";
+	String CONFIG_FINCONGL = "FINCONGL";
 
 	String CONFIG_BASEL_ONE = "BASEL1";
 	String CONFIG_BASEL_TWO = "BASEL2";
@@ -41,12 +55,18 @@ public interface InterfaceConstants {
 	String CONFIG_ALM = "ALM";
 	String CONFIG_RPMS = "RPMS";
 
+	String SP_BASEL_ONE = "SP_EXT_BASEL_ONE";
+	String SP_ALM_REPORT = "SP_ALM_REPORT";
+	String SP_FINCON_GL = "SP_FINCON_GL";
+	String SP_FINCON_WRITE_FILE = "SP_FINCON_WRITE_FILE";
+
 	String CONFIG_UCIC_WEEKLY_FILE = "UCIC_WEEKLY";
 
 	String CONFIG_SI_RESP = "SI_RESP";
 	String CONFIG_IPDC_RESP = "IPDC_RESP";
 	String CONFIG_NACH_RESP = "NACH_RESP";
 	String CONFIG_LIEN_RESP = "SILIEN_RESP";
+	String SEQ_FINCON_GL = "SEQ_FINCON_GL";
 
 	String SIHOLD = "SIHOLD";
 
@@ -191,5 +211,60 @@ public interface InterfaceConstants {
 				ftpClient.disconnect();
 			}
 		}
+	}
+
+	default List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
+			String secretKey) {
+		Session session = null;
+		Channel channel = null;
+		ChannelSftp channelSftp = null;
+		JSch jsch = new JSch();
+		try {
+			session = jsch.getSession(accessKey, hostName, port);
+			session.setPassword(secretKey);
+			java.util.Properties config = new java.util.Properties();
+			config.put("StrictHostKeyChecking", "no");
+			session.setConfig(config);
+			session.connect();
+			channel = session.openChannel("sftp");
+			channel.connect();
+		} catch (JSchException e1) {
+			e1.printStackTrace();
+		}
+		channelSftp = (ChannelSftp) channel;
+		LsEntry entry = null;
+		List<String> fileNames = new ArrayList<String>();
+		Vector filelist = null;
+		try {
+			filelist = ((ChannelSftp) channel).ls(pathname);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage());
+		}
+		for (int i = 0; i < filelist.size(); i++) {
+			entry = (LsEntry) filelist.get(i);
+			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
+					&& !entry.getFilename().startsWith(".")) {
+				fileNames.add(entry.getFilename());
+			}
+		}
+		return fileNames;
+	}
+
+	default List<String> fetchRespFiles(ExternalConfig reqConfig) {
+		List<String> respFileNames = new ArrayList<String>();
+		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
+		if (reqFolderPath != null && !"".equals(reqFolderPath)) {
+			File reqDirPath = new File(reqFolderPath);
+			if (reqDirPath.isDirectory()) {
+				// Fetch the list of request files from configured folder
+				File filesList[] = reqDirPath.listFiles();
+				if (filesList != null && filesList.length > 0) {
+					for (File file : filesList) {
+						respFileNames.add(file.getName());
+					}
+				}
+			}
+		}
+		return respFileNames;
 	}
 }

@@ -60,9 +60,16 @@
 			<partition step="microEOD" partitioner="partitioningMaster">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="SPExtractions" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="SPExtractions">
+			<tasklet ref="spExtractionQueueTaskLet" />
 			<next on="*" to="autoKnockOffDataBackUp" />
 			<fail on="FAILED" />
 		</step>
+		
 		<step id="autoKnockOffDataBackUp">
 			<tasklet ref="autoKnockOffDataBackUpTasklet" />
 			<next on="*" to="notifyLoanClosureDetailsToEFS" />
@@ -307,6 +314,11 @@
 		</step>
 		<step id="corporatecibil">
 			<tasklet ref="corporatecibilTaskLet" />
+			<next on="*" to="baselExtarctions" />
+			<fail on="FAILED" />	
+		</step>
+			<step id="baselExtarctions">
+			<tasklet ref="baselExtarctionsTasklet" />	
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>

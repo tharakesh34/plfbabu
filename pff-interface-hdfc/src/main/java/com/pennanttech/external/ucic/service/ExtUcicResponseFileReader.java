@@ -4,19 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Vector;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.config.InterfaceErrorCode;
@@ -24,7 +16,6 @@ import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -152,24 +143,6 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<String> fetchRespFiles(ExternalConfig reqConfig) {
-		List<String> respFileNames = new ArrayList<String>();
-		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
-		if (reqFolderPath != null && !"".equals(reqFolderPath)) {
-			File reqDirPath = new File(reqFolderPath);
-			if (reqDirPath.isDirectory()) {
-				// Fetch the list of request files from configured folder
-				File filesList[] = reqDirPath.listFiles();
-				if (filesList != null && filesList.length > 0) {
-					for (File file : filesList) {
-						respFileNames.add(file.getName());
-					}
-				}
-			}
-		}
-		return respFileNames;
-	}
-
 	private List<String> prepareDataFromFile(File file) {
 		logger.debug(Literal.ENTERING);
 		int cnt = 0;
@@ -237,43 +210,6 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		}
 		logger.debug(Literal.LEAVING);
 		return returnVal1 && returnVal2;
-	}
-
-	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
-			String secretKey) {
-		Session session = null;
-		Channel channel = null;
-		ChannelSftp channelSftp = null;
-		JSch jsch = new JSch();
-		try {
-			session = jsch.getSession(accessKey, hostName, port);
-			session.setPassword(secretKey);
-			java.util.Properties config = new java.util.Properties();
-			config.put("StrictHostKeyChecking", "no");
-			session.setConfig(config);
-			session.connect();
-			channel = session.openChannel("sftp");
-			channel.connect();
-		} catch (JSchException e1) {
-			logger.info(Literal.EXCEPTION, e1);
-		}
-		channelSftp = (ChannelSftp) channel;
-		LsEntry entry = null;
-		List<String> fileName = new ArrayList<String>();
-		Vector filelist = null;
-		try {
-			filelist = ((ChannelSftp) channel).ls(pathname);
-		} catch (Exception e) {
-			throw new AppException(e.getMessage());
-		}
-		for (int i = 0; i < filelist.size(); i++) {
-			entry = (LsEntry) filelist.get(i);
-			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
-					&& !entry.getFilename().startsWith(".")) {
-				fileName.add(entry.getFilename());
-			}
-		}
-		return fileName;
 	}
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
