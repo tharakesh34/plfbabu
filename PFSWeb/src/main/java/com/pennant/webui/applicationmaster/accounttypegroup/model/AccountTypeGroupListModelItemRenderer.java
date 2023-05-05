@@ -15,7 +15,7 @@ public class AccountTypeGroupListModelItemRenderer implements ListitemRenderer<A
 	private static final long serialVersionUID = 1277410242979825193L;
 
 	public AccountTypeGroupListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

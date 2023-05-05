@@ -47,7 +47,7 @@ public class AccountsListModelItemRenderer implements ListitemRenderer<Accounts>
 	private static final long serialVersionUID = -1770311750492286100L;
 
 	public AccountsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class AccountTypeListModelItemRenderer implements ListitemRenderer<Accoun
 	private static final long serialVersionUID = 4843791737029589915L;
 
 	public AccountTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

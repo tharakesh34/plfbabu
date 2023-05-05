@@ -12,6 +12,7 @@ public class AccountDetail {
 
 	@JsonCreator
 	public AccountDetail() {
+	    super();
 	}
 
 	@XmlElement(name = "element")
