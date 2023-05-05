@@ -142,7 +142,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		Map<String, Object> aruments = new HashMap<>();
 		aruments.put("lien", lien);
 		aruments.put("enquiryModule", true);
-		aruments.put("header", !finReference.isEmpty());
+		aruments.put("header", !StringUtils.isEmpty(finReference));
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/LienEnquiry/LienEnquiryDialog.zul", null, aruments);
@@ -182,14 +182,14 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (!this.finReference.isReadonly())
+			if (!this.finReference.isButtonDisabled())
 				this.finRefValue = this.finReference.getValidatedValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			if (!this.accNumber.isReadonly())
+			if (!this.accNumber.isDisabled())
 				this.accountNumber = this.accNumber.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);

@@ -182,7 +182,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ld.LienID, ld.HeaderID, ld.Reference, ld.Source, ld.Marking, ld.MarkingDate, ld.MarkingReason,");
 		sql.append(" ld.DeMarking, ld.DemarkingReason, ld.DemarkingDate, ld.LienReference, ld.LienStatus,");
-		sql.append(" lh.AccNumber ");
+		sql.append(" lh.AccNumber, lh.InterfaceStatus ");
 		sql.append(" From Lien_Details ld ");
 		sql.append(" Left Join Lien_Header lh on ld.LienReference = lh.LienReference ");
 		if (!StringUtils.isEmpty(reference)) {
@@ -211,6 +211,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setAccountNumber(rs.getString("AccNumber"));
+				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
 				return lu;
 			}, key);
 		} catch (EmptyResultDataAccessException e) {

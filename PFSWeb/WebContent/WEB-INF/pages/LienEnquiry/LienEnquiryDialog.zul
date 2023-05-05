@@ -69,6 +69,8 @@
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_LienDialog_LienStatus.label')}"
 													align="right" sort="false" hflex="min" />
+												<listheader label="${c:l('listheader_LienDialog_InterfaceStatus.label')}"
+													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_LienDialog_RemovalDate.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_LienDialog_LienType.label')}"

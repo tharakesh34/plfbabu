@@ -14,6 +14,7 @@ import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.lien.service.LienService;
+import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -56,18 +57,21 @@ public class LienServiceImpl implements LienService {
 			headerID = lienHeaderDAO.save(lh);
 		} else {
 			headerID = lh.getId();
-			lh.setLienStatus(false);
-			lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-			lienHeaderDAO.update(lh);
+			if (!(fm.getFinRepayMethod().equals(fm.getBefImage().getFinRepayMethod())
+					&& InstrumentType.isSI(fm.getFinRepayMethod()))) {
+				lh.setLienStatus(false);
+				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+				lienHeaderDAO.update(lh);
 
-			LienDetails lu = getLienDetails(lh, fm);
+				LienDetails lu = getLienDetails(lh, fm);
 
-			lu.setLienStatus(false);
-			lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-			lu.setDemarkingDate(fm.getClosedDate());
-			lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
+				lu.setLienStatus(false);
+				lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+				lu.setDemarkingDate(fm.getClosedDate());
+				lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
 
-			lienDetailsDAO.update(lu);
+				lienDetailsDAO.update(lu);
+			}
 		}
 
 		LienDetails lu = getLienDetails(lh, fm);
@@ -88,7 +92,12 @@ public class LienServiceImpl implements LienService {
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
-		String accNum = mandateDAO.getMandateNumber(fm.getBefImage().getMandateID());
+		FinanceMain fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
+		if (fmBef.getMandateID() == null) {
+			return;
+		}
+
+		String accNum = mandateDAO.getMandateNumber(fmBef.getMandateID());
 
 		LienHeader lienheader = lienHeaderDAO.getLienByReference(fm.getFinReference(), accNum);
 
@@ -118,6 +127,8 @@ public class LienServiceImpl implements LienService {
 		if (isAllInActive) {
 			lienheader.setLienStatus(false);
 			lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+			lienheader.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+			lienheader.setDemarkingDate(fm.getClosedDate());
 			lienHeaderDAO.update(lienheader);
 		}
 
@@ -150,7 +161,9 @@ public class LienServiceImpl implements LienService {
 
 		ld.setLienID(lh.getLienID());
 		ld.setLienReference(lh.getLienReference());
-		ld.setSource(fm.getFinSourceID());
+		if (!RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
+			ld.setSource("PLF");
+		}
 		ld.setReference(fm.getFinReference());
 		ld.setMarkingDate(fm.getFinStartDate());
 		ld.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
