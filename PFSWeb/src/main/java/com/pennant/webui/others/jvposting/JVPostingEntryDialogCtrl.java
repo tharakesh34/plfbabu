@@ -1601,6 +1601,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			this.account.setValue(accountMapping.getAccount(), accountMapping.getHostAccount());
 			getJVPostingEntry().setAcType(accountMapping.getAccountType());
 			getJVPostingEntry().setAccountName(accountMapping.getAccountTypeDesc());
+			this.accountName.setValue(accountMapping.getAccountTypeDesc());
 		}
 		logger.debug("Leaving");
 
