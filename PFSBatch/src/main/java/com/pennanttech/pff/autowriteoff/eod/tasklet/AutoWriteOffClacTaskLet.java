@@ -28,6 +28,7 @@ import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.autowriteoff.model.AutoWriteOffLoan;
@@ -82,9 +83,7 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
-		itemReader.setRowMapper((rs, rowNum) -> {
-			return rs.getLong("FinID");
-		});
+		itemReader.setRowMapper((rs, rowNum) -> JdbcUtil.getLong(rs.getObject("FinID")));
 		itemReader.setPreparedStatementSetter(ps -> {
 			ps.setLong(1, threadId);
 			ps.setInt(2, EodConstants.PROGRESS_WAIT);
@@ -97,9 +96,9 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 		TransactionStatus txStatus = null;
 
 		List<Exception> exceptions = new ArrayList<>(1);
-		long finID = 0;
+		Long finID;
 
-		while ((finID = itemReader.read()) != 0) {
+		while ((finID = itemReader.read()) != null) {
 			try {
 				txStatus = transactionManager.getTransaction(txDef);
 
