@@ -64,6 +64,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -890,7 +891,7 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 		if (!this.verificationCategory.isDisabled()) {
 			this.verificationCategory.setConstraint(
-					new PTListValidator(Labels.getLabel("label_LVInitiationDialog_VerificationCategory.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_LVInitiationDialog_VerificationCategory.value"),
 							PennantStaticListUtil.getLegalVerificationCategories(), true));
 		}
 

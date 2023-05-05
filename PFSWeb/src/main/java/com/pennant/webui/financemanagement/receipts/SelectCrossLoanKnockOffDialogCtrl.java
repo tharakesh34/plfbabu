@@ -34,6 +34,7 @@ import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
@@ -1095,7 +1096,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 				PennantRegularExpressions.REGEX_NUMERIC, true));
 
 		this.knockOffFrom
-				.setConstraint(new PTListValidator(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
+				.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
 						PennantStaticListUtil.getKnockOffFromVlaues(), true));
 
 	}

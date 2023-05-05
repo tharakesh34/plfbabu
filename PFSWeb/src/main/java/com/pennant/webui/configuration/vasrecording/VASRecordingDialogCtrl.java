@@ -93,6 +93,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1400,7 +1401,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		if (!this.medicalStatus.isDisabled()) {
 			this.medicalStatus.setConstraint(
-					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_MedicalStatus.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_VASConfigurationDialog_MedicalStatus.value"),
 							PennantStaticListUtil.getMedicalStatusList(), this.medicalApplicable.isChecked()));
 		}
 

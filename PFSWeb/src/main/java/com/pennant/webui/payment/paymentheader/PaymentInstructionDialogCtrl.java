@@ -28,6 +28,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -618,7 +619,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		if (!this.paymentType.isDisabled()) {
 			this.paymentType
-					.setConstraint(new PTListValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),
+					.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),
 							PennantStaticListUtil.getPaymentTypesWithIST(), true));
 		}
 
