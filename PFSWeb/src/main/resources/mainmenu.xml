@@ -1307,6 +1307,14 @@
 				zulNavigation="/WEB-INF/pages/MiscellaneousPostingUpload/MiscellaneousPostingUploadList.zul?stage=A"
 				rightName="menu_Item_MiscellaneousPostingUpload_Approver" />
 		</menu>
+		<menu id="menu_Category_BlockAutoGenerateLetterUpload">
+			<menuItem id="menu_Item_BlockAutoGenerateLetterUpload_Maker"
+				zulNavigation="/WEB-INF/pages/BlockAutoLetterGenerateUpload/BlockAutoGenLetterUploadList.zul?stage=M"
+				rightName="menu_Item_BlockAutoGenerateLetterUpload_Maker" />
+			<menuItem id="menu_Item_BlockAutoGenerateLetterUpload_Approver"
+				zulNavigation="/WEB-INF/pages/BlockAutoLetterGenerateUpload/BlockAutoGenLetterUploadList.zul?stage=A"
+				rightName="menu_Item_BlockAutoGenerateLetterUpload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

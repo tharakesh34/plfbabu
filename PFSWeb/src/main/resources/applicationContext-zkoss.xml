@@ -6195,4 +6195,8 @@
 	
 	<bean id="selectGenerateLetterCtrl"
 	class="com.pennant.pff.generate.letter.webui.SelectGenerateLetterCtrl" parent="basisCtrl" scope="prototype" />
+	
+	<bean id="blockAutoGenLetterUploadListCtrl" class="com.pennant.pff.blockautolettergenerate.upload.list.BlockAutoGenLetterUploadListCtrl"
+	parent="uploadList" />
+	
 </beans>

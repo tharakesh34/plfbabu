@@ -25,7 +25,9 @@ public enum UploadTypes {
 
 	HOST_GL("Host GL Mapping Upload Details Screen"),
 
-	MISCELLANEOUS_POSTING("Miscellaneous Posting Upload Details Screen");
+	MISCELLANEOUS_POSTING("Miscellaneous Posting Upload Details Screen"),
+
+	BLOCK_AUTO_GEN_LTR("Block Auto Letter Generate Upload Details Screen");
 
 	private String description;
 

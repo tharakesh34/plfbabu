@@ -3977,6 +3977,11 @@ public class PennantJavaUtil {
 						new String[] { "Letter_Generate_Manual", "Letter_Generate_Manual" }, masterWF,
 						new String[] { "Id", "FinID" }, null, 300));
 
+		ModuleUtil.register("BlockAutoGenLetterUploadHeader",
+				new ModuleMapping("BlockAutoGenLetterUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
 		registerCustomModules();
 	}
 

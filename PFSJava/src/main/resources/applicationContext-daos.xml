@@ -13320,4 +13320,13 @@
 	
 	<bean id="generateLetterDAO" class="com.pennant.pff.generate.letter.dao.impl.GenerateLetterDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="blockAutoGenLetterUploadService"
+		class="com.pennant.pff.blockautolettergenerate.service.impl.BlockAutoGenLetterUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="blockAutoGenLetterUploadDAO" class="com.pennanttech.pff.blockautolettergenerate.dao.impl.BlockAutoGenLetterUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="blockAutoGenLetterUploadValidateRecord"
+		class="com.pennant.pff.blockautolettergenerate.service.impl.BlockAutoGenLetterUploadValidateRecord" />
 </beans>
