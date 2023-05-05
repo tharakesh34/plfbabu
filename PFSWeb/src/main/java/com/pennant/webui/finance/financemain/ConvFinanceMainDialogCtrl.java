@@ -304,7 +304,7 @@ public class ConvFinanceMainDialogCtrl extends FinanceMainBaseCtrl {
 		logger.debug("Entering " + event.toString());
 
 		try {
-			doClose();
+			doClose(this.btnSave.isVisible());
 		} catch (final WrongValuesException e) {
 			logger.error("Exception: ", e);
 			throw e;
