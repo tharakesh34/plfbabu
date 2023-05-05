@@ -13329,4 +13329,13 @@
 		
 	<bean id="blockAutoGenLetterUploadValidateRecord"
 		class="com.pennant.pff.blockautolettergenerate.service.impl.BlockAutoGenLetterUploadValidateRecord" />
+		
+	<bean id="bulkGenerateLetterUploadService"
+		class="com.pennant.pff.noc.service.impl.BulkGenerateLetterUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="bulkGenerateLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.BulkGenerateLetterUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="bulkGenerateLetterUploadValidateRecord"
+		class="com.pennant.pff.noc.service.impl.BulkGenerateLetterUploadValidateRecord" />
 </beans>

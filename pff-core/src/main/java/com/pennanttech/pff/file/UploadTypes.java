@@ -27,7 +27,9 @@ public enum UploadTypes {
 
 	MISCELLANEOUS_POSTING("Miscellaneous Posting Upload Details Screen"),
 
-	BLOCK_AUTO_GEN_LTR("Block Auto Letter Generate Upload Details Screen");
+	BLOCK_AUTO_GEN_LTR("Block Auto Letter Generate Upload Details Screen"),
+
+	GENERATE_LETTER("GenerateLetter Upload Details Screen");
 
 	private String description;
 

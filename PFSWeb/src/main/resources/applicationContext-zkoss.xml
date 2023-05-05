@@ -6199,4 +6199,7 @@
 	<bean id="blockAutoGenLetterUploadListCtrl" class="com.pennant.pff.blockautolettergenerate.upload.list.BlockAutoGenLetterUploadListCtrl"
 	parent="uploadList" />
 	
+	<bean id="bulkGenerateLetterUploadListCtrl" class="com.pennant.pff.noc.upload.list.BulkGenerateLetterUploadListCtrl"
+	parent="uploadList" />
+	
 </beans>

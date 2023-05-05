@@ -1315,6 +1315,14 @@
 				zulNavigation="/WEB-INF/pages/BlockAutoLetterGenerateUpload/BlockAutoGenLetterUploadList.zul?stage=A"
 				rightName="menu_Item_BlockAutoGenerateLetterUpload_Approver" />
 		</menu>
+		<menu id="menu_Category_BulkGenerateLetterUpload">
+			<menuItem id="menu_Item_BulkGenerateLetterUpload_Maker"
+				zulNavigation="/WEB-INF/pages/NOCBulkGenerateLetter/BulkGenerateLetterUploadList.zul?stage=M"
+				rightName="menu_Item_Generate_Letter_Upload_Maker" />
+			<menuItem id="menu_Item_BulkGenerateLetterUpload_Approver"
+				zulNavigation="/WEB-INF/pages/NOCBulkGenerateLetter/BulkGenerateLetterUploadList.zul?stage=A"
+				rightName="menu_Item_Generate_Letter_Upload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">
