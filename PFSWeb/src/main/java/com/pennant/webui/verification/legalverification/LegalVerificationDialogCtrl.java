@@ -1021,7 +1021,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 					PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_AGENT_MANDATORY));
 		}
 		if (!this.recommendations.isDisabled()) {
-			this.recommendations.setConstraint(new PTListValidator(
+			this.recommendations.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalVerificationDialog_Recommendations.value"), LVStatus.getList(), true));
 		}
 		if (!this.reason.isReadonly()) {

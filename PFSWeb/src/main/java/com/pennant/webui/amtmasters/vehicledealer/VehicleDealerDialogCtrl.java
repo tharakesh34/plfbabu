@@ -1299,11 +1299,11 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 		if (!this.paymentMode.isDisabled() && !"N".equals(this.commisionPaid.getSelectedItem().getValue().toString())
 				&& !this.commisionPaid.getSelectedItem().getValue().equals(PennantConstants.List_Select)) {
-			this.paymentMode.setConstraint(new PTListValidator(
+			this.paymentMode.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_VehicleDealerDialog_PaymentMode.value"), paymentModes, true));
 		}
 		if (!this.commisionPaid.isDisabled()) {
-			this.commisionPaid.setConstraint(new PTListValidator(
+			this.commisionPaid.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_VehicleDealerDialog_CommisionPaidAt.value"), commisionPaidList, true));
 		}
 		if (!module.equals("DSA")) {

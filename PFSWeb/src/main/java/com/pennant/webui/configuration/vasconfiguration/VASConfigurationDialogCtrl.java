@@ -1592,14 +1592,14 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		// Allow Fee types
 		if (!this.allowFeeType.isDisabled()) {
 			this.allowFeeType.setConstraint(
-					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"),
 							PennantStaticListUtil.getVasAllowFeeTypes(), true));
 		}
 
 		// Allow Mode Of Payments
 		if (!this.modeOfPayment.isDisabled()) {
 			this.modeOfPayment.setConstraint(
-					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"),
 							PennantStaticListUtil.getVasModeOfPayments(), true));
 		}
 

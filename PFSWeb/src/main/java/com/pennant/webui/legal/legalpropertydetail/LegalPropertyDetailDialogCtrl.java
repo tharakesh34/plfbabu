@@ -752,38 +752,38 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 
 		if (!this.isUrbanLandCeiling.isDisabled()) {
-			this.isUrbanLandCeiling.setConstraint(new PTListValidator(
+			this.isUrbanLandCeiling.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsUrbanLandCeiling.value"), yesNoList, true));
 		}
 		if (!this.isMinorshareInvolved.isDisabled()) {
-			this.isMinorshareInvolved.setConstraint(new PTListValidator(
+			this.isMinorshareInvolved.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsMinorshareInvolved.value"), yesNoList, true));
 		}
 		if (!this.isPropertyIsGramanatham.isDisabled()) {
-			this.isPropertyIsGramanatham.setConstraint(new PTListValidator(
+			this.isPropertyIsGramanatham.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyIsGramanatham.value"), yesNoList, true));
 		}
 
 		if (!this.isPropertyReleased.isDisabled()) {
-			this.isPropertyReleased.setConstraint(new PTListValidator(
+			this.isPropertyReleased.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyReleased.value"), yesNoList, true));
 		}
 		if (!this.isPropOriginalsAvailable.isDisabled()) {
-			this.isPropOriginalsAvailable.setConstraint(new PTListValidator(
+			this.isPropOriginalsAvailable.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyOriginalsAvailable.value"), yesNoList,
 					true));
 		}
 		if (!this.isPropertyIsAgricultural.isDisabled()) {
-			this.isPropertyIsAgricultural.setConstraint(new PTListValidator(
+			this.isPropertyIsAgricultural.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyIsAgricultural.value"), yesNoList,
 					true));
 		}
 		if (!this.isNOCObtainedFromLPA.isDisabled()) {
-			this.isNOCObtainedFromLPA.setConstraint(new PTListValidator(
+			this.isNOCObtainedFromLPA.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsNOCobtainedfromLPA.value"), yesNoList, true));
 		}
 		if (!this.isAnyMortgagePending.isDisabled()) {
-			this.isAnyMortgagePending.setConstraint(new PTListValidator(
+			this.isAnyMortgagePending.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsAnyMortgagePending.value"), yesNoList, true));
 		}
 
