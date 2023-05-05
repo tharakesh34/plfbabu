@@ -989,6 +989,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.assetClassSetup.setValidateColumns(new String[] { "Code" });
 		this.assetClassSetup.setMandatoryStyle(true);
 
+		Filter[] assetFilters = new Filter[1];
+		assetFilters[0] = new Filter("EntityCode", getFinanceType().getLovDescEntityCode(), Filter.OP_EQUAL);
+		this.assetClassSetup.setFilters(assetFilters);
+
 		Filter[] assetClassSetupFilters = new Filter[1];
 		assetClassSetupFilters[0] = new Filter("EntityCode", 1, Filter.OP_EQUAL);
 		this.finDivision.setFilters(assetClassSetupFilters);
@@ -6074,6 +6078,22 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.minAutoRefund.setFormat(PennantApplicationUtil.getAmountFormate(format));
 				this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(format));
 
+			}
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onFulfill$assetClassSetup(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		Object dataObject = finDivision.getObject();
+		if (dataObject instanceof String) {
+			this.assetClassSetup.setValue(dataObject.toString());
+			this.assetClassSetup.setDescription("");
+		} else {
+			AssetClassSetupHeader details = (AssetClassSetupHeader) dataObject;
+			if (details != null) {
+				this.assetClassSetup.setValue(details.getCode());
+				this.assetClassSetup.setDescription(details.getDescription());
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
