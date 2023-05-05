@@ -34,6 +34,7 @@ import com.pennant.pff.manualknockoff.upload.job.ManualKnockOffJob;
 import com.pennant.pff.presentment.upload.job.FateCorrectionJob;
 import com.pennant.pff.presentment.upload.job.RepresentmentJob;
 import com.pennant.pff.receipt.upload.job.CreateReceiptUploadJob;
+import com.pennant.pff.receipt.upload.job.LoanClosureUploadJob;
 import com.pennant.pff.receipt.upload.job.ReceiptStatusUploadJob;
 import com.pennant.pff.revwriteoffupload.upload.job.RevWriteOffUploadJob;
 import com.pennant.pff.upload.service.UploadService;
@@ -112,6 +113,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService writeOffUploadService;
 	private UploadService revWriteOffUploadService;
 	private UploadService branchChangeUploadService;
+	private UploadService loanClosureUploadService;
 	@Autowired(required = false)
 	private JobSchedulerExtension jobSchedulerExtension;
 
@@ -511,6 +513,11 @@ public class PFFJobScheduler extends JobScheduler {
 		jobData = new JobData("BRANCH_DETAILS_JOB", BranchChangeUploadJob.class, args);
 		jobDataList.add(jobData);
 
+		args = new JobDataMap();
+		args.put("loanClosureUploadService", loanClosureUploadService);
+		jobData = new JobData("LOAN_CLOSURE_JOB", LoanClosureUploadJob.class, args);
+		jobDataList.add(jobData);
+
 		/**
 		 * For client specific jobs
 		 */
@@ -760,6 +767,11 @@ public class PFFJobScheduler extends JobScheduler {
 	@Autowired
 	public void setBranchChangeUploadService(UploadService branchChangeUploadService) {
 		this.branchChangeUploadService = branchChangeUploadService;
+	}
+
+	@Autowired
+	public void setLoanClosureUploadService(UploadService loanClosureUploadService) {
+		this.loanClosureUploadService = loanClosureUploadService;
 	}
 
 }
