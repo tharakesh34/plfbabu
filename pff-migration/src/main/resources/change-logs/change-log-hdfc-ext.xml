@@ -677,7 +677,7 @@
 			<column name="ACCRUED_INTERESTNUMBER" type="bigint" />
 			<column name="BANKNUMBER" type="VARCHAR(50)" />
 			<column name="BRANCH" type="VARCHAR(50)" />
-			<column name="COMP_FREQ" type="bitint" />
+			<column name="COMP_FREQ" type="bigint" />
 			<column name="COMP_FREQ_INCR" type="bigint" />
 			<column name="CURRENCY_CODE" type="VARCHAR(13)" />
 			<column name="CURRENT_BALANCE" type="bigint" />
@@ -705,7 +705,7 @@
 			<column name="CUSTOMERNAME" type="VARCHAR(50)" />
 			<column name="PRETAXIRR" type="bigint" />
 			<column name="SCHEMEID" type="bigint" />
-			<column name="PROFESSIONCODE" type="VARCHAR2(24)" />
+			<column name="PROFESSIONCODE" type="VARCHAR(24)" />
 			<column name="BROKERID" type="bigint" />
 			<column name="PSLCTGID" type="bigint" />
 			<column name="NPA_STAGEID" type="VARCHAR(8)" />
