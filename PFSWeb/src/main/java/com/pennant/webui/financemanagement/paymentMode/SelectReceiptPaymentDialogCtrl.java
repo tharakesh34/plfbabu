@@ -78,6 +78,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -784,7 +785,14 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					.getErrorDetail(receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().get(0)));
 			return;
 		}
-		receiptData = receiptService.calcuateDues(receiptData);
+
+		try {
+			receiptData = receiptService.calcuateDues(receiptData);
+		} catch (AppException e) {
+			MessageUtil.showError(e.getMessage());
+			return;
+		}
+
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
 		BigDecimal totalBounces = rch.getTotalBounces().getTotalDue();
@@ -1358,8 +1366,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		try {
 			if (this.rowClosureType.isVisible() && "#".equals(getComboboxValue(this.closureType))) {
-					throw new WrongValueException(this.closureType, Labels.getLabel("STATIC_INVALID",
-							new String[] { Labels.getLabel("label_ReceiptPayment_ClosureType.value") }));
+				throw new WrongValueException(this.closureType, Labels.getLabel("STATIC_INVALID",
+						new String[] { Labels.getLabel("label_ReceiptPayment_ClosureType.value") }));
 			}
 
 		} catch (WrongValueException we) {
