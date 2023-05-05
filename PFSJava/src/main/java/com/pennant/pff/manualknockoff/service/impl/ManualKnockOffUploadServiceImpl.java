@@ -22,7 +22,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
-import com.pennant.backend.dao.receipts.impl.FinReceiptHeaderDAOImpl;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -67,7 +67,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private ManualAdviseDAO manualAdviseDAO;
 	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	protected FinanceRepaymentsDAO financeRepaymentsDAO;
-	private FinReceiptHeaderDAOImpl finReceiptHeaderDAOImpl;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -108,7 +108,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (finReceiptHeaderDAOImpl.isReceiptExists(reference, "_Temp")) {
+		if (finReceiptHeaderDAO.isReceiptExists(reference, "_Temp")) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1015);
 			return;
 		}
@@ -531,4 +531,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
 }

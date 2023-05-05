@@ -20,10 +20,12 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 	@Override
 	public List<ExcessTransferUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select HeaderId, Id, FinID, FinReference, RecordSeq");
-		sql.append(", TransferFromType, TransferToType");
-		sql.append(", TransferAmount, Status, Progress, ErrorCode, ErrorDesc");
-		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD");
+		StringBuilder sql = new StringBuilder("Select eu.HeaderId, eu.Id, eu.FinID, eu.FinReference, eu.RecordSeq");
+		sql.append(", eu.TransferFromType, eu.TransferToType");
+		sql.append(", eu.TransferAmount, eu.Status, eu.Progress, eu.ErrorCode, eu.ErrorDesc");
+		sql.append(", fh.CreatedOn, fh.CreatedBy, fh.ApprovedOn, fh.ApprovedBy");
+		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD eu");
+		sql.append(" Inner Join File_Upload_Header fh on fh.ID = eu.HeaderID");
 		sql.append(" Where HeaderId = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -43,6 +45,11 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 			rpud.setProgress(rs.getInt("Progress"));
 			rpud.setErrorCode(rs.getString("ErrorCode"));
 			rpud.setErrorDesc(rs.getString("ErrorDesc"));
+			rpud.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			rpud.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
+			rpud.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			rpud.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+
 			return rpud;
 		});
 	}

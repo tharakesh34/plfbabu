@@ -227,10 +227,10 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 
 	@Override
 	public boolean isInProgress(long headerID, String reference) {
-		StringBuilder sql = new StringBuilder("Select Count(ID)");
+		StringBuilder sql = new StringBuilder("Select Count(mku.ID)");
 		sql.append(" From MANUAL_KNOCKOFF_UPLOAD mku");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = mku.HeaderID");
-		sql.append(" Where mku.Reference = ? and uh.Id <> ? and uh.progress not in (?, ?, ?)");
+		sql.append(" Where mku.FinReference = ? and uh.Id <> ? and uh.progress not in (?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
