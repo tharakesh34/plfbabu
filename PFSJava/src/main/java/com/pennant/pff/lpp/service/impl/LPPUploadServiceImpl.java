@@ -37,6 +37,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
@@ -79,7 +80,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 						detail.setErrorCode("");
 						detail.setErrorDesc("");
 						detail.setUserDetails(header.getUserDetails());
-						setFinODPenaltyRateDate(detail);
+						setFinODPenaltyRateDate(detail, header);
 					}
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -117,7 +118,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 					transactionManager.commit(txStatus);
 				} catch (Exception e) {
-					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+					logger.error(Literal.EXCEPTION, e);
 
 					if (txStatus != null) {
 						transactionManager.rollback(txStatus);
@@ -130,7 +131,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		}).start();
 	}
 
-	private void setFinODPenaltyRateDate(LPPUpload detail) {
+	private void setFinODPenaltyRateDate(LPPUpload detail, FileUploadHeader header) {
 		FinODPenaltyRate pr = new FinODPenaltyRate();
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = new FinScheduleData();
@@ -177,7 +178,15 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		fm.setUserDetails(detail.getUserDetails());
+		LoggedInUser userDetails = detail.getUserDetails();
+
+		if (userDetails == null) {
+			userDetails = new LoggedInUser();
+			userDetails.setLoginUsrID(header.getApprovedBy());
+			userDetails.setUserName(header.getApprovedByName());
+		}
+
+		fm.setUserDetails(userDetails);
 		fm.setNewRecord(false);
 		fm.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 		fm.setVersion(fm.getVersion() + 1);
@@ -219,7 +228,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
@@ -472,7 +481,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
 		lppUpload.setHeaderId(header.getId());
 		lppUpload.setAppDate(header.getAppDate());

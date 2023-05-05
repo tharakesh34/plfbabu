@@ -44,5 +44,37 @@
 
 	<!-- <changeSet id="3.0" author="murthy.y"> <sql> <![CDATA[ Alter sequence SeqProspectCustomer restart start with 1000000001; 
 		]]> </sql> </changeSet> -->
+		
+	<changeSet id="4.0" author="gopal.p">
+		<comment>UPLOAD PATH value need to change as per client configuration</comment>
+		<sql>
+			<![CDATA[
+				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '\\pennantsrv02\File_Sharing\Projects\HDFC\Uploads' WHERE NAME in (
+					  'RE_PRESENTMENT_UPLOAD'
+					, 'HOLD_REFUND_UPLOAD'
+					, 'PAYINS_REFUND_UPLOAD'
+					, 'MANDATES_UPLOAD'
+					, 'FATE_CORRECTION_UPLOAD'
+					, 'CHEQUE_UPLOAD'
+					, 'LPP_UPLOAD'
+					, 'EXCESS_TRANSFER_UPLOAD'
+					, 'MANUAL_KNOCKOFF_UPLOAD'
+					, 'CROSS_LOAN_KNOCKOFF_UPLOAD'
+					, 'CUSTOMER_KYC_DETAILS_UPLOAD'
+					, 'HOST_GL_UPLOAD'
+					, 'MISCELLANEOUS_POSTING_UPLOAD'
+					, 'LOAN_CANCEL_UPLOAD'
+					, 'FEE_WAIVER_UPLOAD'
+					, 'LIEN_UPLOAD'
+					, 'CREATE_RECEIPT_UPLOAD'
+					, 'RECEIPT_STATUS_UPLOAD'
+					, 'WRITE_OFF_UPLOAD'
+					, 'REV_WRITE_OFF_UPLOAD'
+					, 'BRANCH_CHANGE_UPLOAD'
+					);
+			]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>

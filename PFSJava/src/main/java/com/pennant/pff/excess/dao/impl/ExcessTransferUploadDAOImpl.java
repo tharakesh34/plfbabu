@@ -29,29 +29,38 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 		sql.append(" Where HeaderId = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
+		try {
+			return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
+				ExcessTransferUpload rpud = new ExcessTransferUpload();
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
-			ExcessTransferUpload rpud = new ExcessTransferUpload();
+				rpud.setHeaderId(rs.getLong("HeaderId"));
+				rpud.setId(rs.getLong("Id"));
+				rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
+				rpud.setReference(rs.getString("FinReference"));
+				rpud.setRecordSeq(rs.getLong("RecordSeq"));
+				rpud.setTransferFromType(rs.getString("TransferFromType"));
+				rpud.setTransferToType(rs.getString("TransferToType"));
+				rpud.setTransferAmount(rs.getBigDecimal("TransferAmount"));
+				rpud.setStatus(rs.getString("Status"));
+				rpud.setProgress(rs.getInt("Progress"));
 
-			rpud.setHeaderId(rs.getLong("HeaderId"));
-			rpud.setId(rs.getLong("Id"));
-			rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
-			rpud.setReference(rs.getString("FinReference"));
-			rpud.setRecordSeq(rs.getLong("RecordSeq"));
-			rpud.setTransferFromType(rs.getString("TransferFromType"));
-			rpud.setTransferToType(rs.getString("TransferToType"));
-			rpud.setTransferAmount(rs.getBigDecimal("TransferAmount"));
-			rpud.setStatus(rs.getString("Status"));
-			rpud.setProgress(rs.getInt("Progress"));
-			rpud.setErrorCode(rs.getString("ErrorCode"));
-			rpud.setErrorDesc(rs.getString("ErrorDesc"));
-			rpud.setCreatedOn(rs.getTimestamp("CreatedOn"));
-			rpud.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
-			rpud.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-			rpud.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+				try {
+					rpud.setErrorCode(rs.getString("ErrorCode"));
+					rpud.setErrorDesc(rs.getString("ErrorDesc"));
+					rpud.setCreatedOn(rs.getTimestamp("CreatedOn"));
+					rpud.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
+					rpud.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+					rpud.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
-			return rpud;
-		});
+				return rpud;
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

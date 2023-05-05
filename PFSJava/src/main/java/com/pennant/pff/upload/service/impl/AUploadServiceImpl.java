@@ -47,7 +47,6 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 	private DataEngineConfig dataEngineConfig;
 	private DataSource dataSource;
 
-	protected static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 	protected static final String INFO_LOG = "{} records to process the {}_PROCESS_JOB.";
 	protected static final String ERR_CODE = "9999";
 	protected static final String ERR_DESC = "User rejected the record";

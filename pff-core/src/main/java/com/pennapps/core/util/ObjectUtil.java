@@ -14,7 +14,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pennant.pff.databind.JsonMapperUtil;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class ObjectUtil {
 	private ObjectUtil() {
@@ -98,7 +100,7 @@ public class ObjectUtil {
 	}
 
 	public static <T> Object valueAsObject(MapSqlParameterSource parameter, T object) {
-		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = JsonMapperUtil.objectMapper(DateFormat.LONG_DATE.getPattern());
 
 		JSONObject jsonObject = new JSONObject(parameter);
 
