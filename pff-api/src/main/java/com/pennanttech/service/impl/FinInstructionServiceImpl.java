@@ -135,6 +135,7 @@ import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
 import com.pennant.validation.UpfrontFeesGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
@@ -237,6 +238,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String eventCode = AccountingEvent.RATCHG;
 
 		validationUtility.validate(fsi, AddRateChangeGroup.class);
+		doBasicMandatoryValidations(fsi);
 
 		fd = validateInstruction(fsi, eventCode);
 
@@ -998,14 +1000,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String eventCode = AccountingEvent.SCDCHG;
 
 		validationUtility.validate(fsi, ReSchedulingGroup.class);
+		doBasicMandatoryValidations(fsi);
 
 		fd = validateInstruction(fsi, eventCode);
 
 		if (fd != null) {
 			return fd;
 		}
-
-		validationUtility.validate(fsi, ReSchedulingGroup.class);
 
 		AuditDetail auditDetail = reScheduleService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -3451,6 +3452,51 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	private void doBasicMandatoryValidations(FinServiceInstruction fsi) {
+		List<ServiceExceptionDetails> exceptions = new ArrayList<>();
+
+		BigDecimal actualRate = fsi.getActualRate();
+
+		ServiceExceptionDetails error = new ServiceExceptionDetails();
+		boolean negActualRate = actualRate == null || actualRate.compareTo(BigDecimal.ZERO) < 0;
+
+		if ((!negActualRate && StringUtils.isNotEmpty(fsi.getBaseRate()))
+				|| (negActualRate && StringUtils.isEmpty(fsi.getBaseRate()))) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("Either actualRate / baseRate are mandatory");
+
+			exceptions.add(error);
+		}
+
+		if (negActualRate) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("actualRate should be Positive");
+
+			exceptions.add(error);
+		}
+
+		if (StringUtils.isNotEmpty(fsi.getSplRate()) && StringUtils.isEmpty(fsi.getBaseRate())) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("baseRate is mandatory for splRate"); // Error message is changed.
+
+			exceptions.add(error);
+		}
+
+		BigDecimal margin = fsi.getMargin();
+
+		if (margin != null && margin.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isEmpty(fsi.getBaseRate())) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("margin is mandatory for baseRate");
+
+			exceptions.add(error);
+
+		}
+
+		if (CollectionUtils.isNotEmpty(exceptions)) {
+			throw new ServiceException((ServiceExceptionDetails[]) exceptions.toArray());
+		}
 	}
 
 	private WSReturnStatus getError(String code, String... parm) {

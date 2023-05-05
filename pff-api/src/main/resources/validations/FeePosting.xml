@@ -33,38 +33,5 @@
 				<element name="max">3</element>
 			</constraint>
 		</field>
-
-		<field name="validateFeePostings">
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%PartnerBankId</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-				</groups>
-
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.partnerBankId !=null &amp;&amp; _this.partnerBankId != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>90242%%amount</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-				</groups>
-
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.postingAmount !=null &amp;&amp; _this.postingAmount != "") {
-					true;
-					} else {
-					false
-					}
-				</element>
-			</constraint>
-		</field>
 	</bean>
 </constraint-mappings>

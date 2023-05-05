@@ -98,15 +98,6 @@
 				<element name="value">999999999999999999999</element>
 			</constraint>
 		</field>
-		<!-- <field name="validateLimitTransactionDetail"> <constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> 
-			<message>cif and customerGroup are mutually exclusive</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> 
-			</groups> <element name="lang">javascript</element> <element name="script"> if (_this.custCIF != null &amp;&amp; _this.custCIF 
-			!= "" ){ if(_this.custGrpCode != null &amp;&amp; _this.custGrpCode != "" ){ false; } else { true } } else if(_this.custGrpCode 
-			!= null &amp;&amp; _this.custGrpCode != "" ){ if(_this.custCIF != null &amp;&amp; _this.custCIF != "" ){ false } else { true 
-			} } </element> </constraint> </field> -->
-
-
-
 	</bean>
 </constraint-mappings>
 		

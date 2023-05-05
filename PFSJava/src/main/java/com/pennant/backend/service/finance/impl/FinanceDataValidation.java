@@ -8384,6 +8384,10 @@ public class FinanceDataValidation {
 
 		List<ErrorDetail> errors = new ArrayList<>();
 
+		if (StringUtils.isEmpty(fm.getFinType())) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90126")));
+		}
+
 		validateBigDecimal(fm.getDownPayBank(), "DownPayBank", errors);
 		validateBigDecimal(fm.getDownPaySupl(), "DownPaySupl", errors);
 		validateBigDecimal(fm.getGrcPftRate(), "GrcPftRate", errors);
@@ -8409,7 +8413,9 @@ public class FinanceDataValidation {
 			exceptions[errorCount++] = exception;
 		}
 
-		throw new ServiceException(exceptions);
+		if (exceptions.length > 0) {
+			throw new ServiceException(exceptions);
+		}
 	}
 
 	private void validateBigDecimal(BigDecimal amount, String field, List<ErrorDetail> errors) {

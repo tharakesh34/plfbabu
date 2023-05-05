@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
@@ -71,10 +72,12 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.pff.api.controller.AbstractController;
+import com.pennant.validation.CreateFinanceGroup;
 import com.pennant.validation.CreateFinanceWithCollateral;
 import com.pennant.validation.CreateFinancewithWIFGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.controller.CreateFinanceController;
@@ -156,6 +159,9 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		String productCategory = fm.getProductCategory();
 
 		fm.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+
+		// do Basic mandatory validations using hibernate validator
+		validationUtility.validate(fd, CreateFinanceGroup.class);
 
 		financeDataValidation.doBasicMandatoryValidations(fd);
 
@@ -413,6 +419,7 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		logger.debug(Literal.ENTERING);
 
 		validationUtility.validate(fd, CreateFinancewithWIFGroup.class);
+
 		String[] logFields = getLogFields(fd);
 		APIErrorHandlerService.logKeyFields(logFields);
 
@@ -429,6 +436,20 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 				valueParm[0] = "financeDetail";
 				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 				return fd;
+			}
+
+			if (StringUtils.isEmpty(fm.getFinType())) {
+				ErrorDetail error = ErrorUtil.getErrorDetail(new ErrorDetail("90126"));
+
+				ServiceExceptionDetails exceptions[] = new ServiceExceptionDetails[1];
+				ServiceExceptionDetails exception = new ServiceExceptionDetails();
+
+				exception.setFaultCode(error.getCode());
+				exception.setFaultMessage(error.getError());
+
+				exceptions[0] = exception;
+
+				throw new ServiceException(exceptions);
 			}
 
 			String custCIF = fm.getLovDescCustCIF();

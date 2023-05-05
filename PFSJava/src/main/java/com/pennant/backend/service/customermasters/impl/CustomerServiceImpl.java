@@ -548,9 +548,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 			auditDetail
 					.setErrorDetail(validateMasterCode("RMTCurrencies", "CcyCode", customerDetails.getCustBaseCcy()));
 		}
-		if (customerDetails.getPrimaryRelationOfficer() != 0) {
-			auditDetail.setErrorDetail(
-					validateMasterCode("AMTVehicleDealer", "DealerId", customerDetails.getPrimaryRelationOfficer()));
+		Long primaryRelationOfficer = customerDetails.getPrimaryRelationOfficer();
+
+		if (primaryRelationOfficer != null && primaryRelationOfficer > 0) {
+			auditDetail.setErrorDetail(validateMasterCode("AMTVehicleDealer", "DealerId", primaryRelationOfficer));
 		}
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -716,8 +717,7 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 					String[] valueParm = new String[2];
 					valueParm[0] = "employment startDate:"
 							+ DateUtil.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
-					valueParm[1] = "Cust DOB:"
-							+ DateUtil.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+					valueParm[1] = "Cust DOB:" + DateUtil.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -730,8 +730,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 				if (custDocDetails.getCustDocIssuedOn() != null) {
 					if (custDocDetails.getCustDocIssuedOn().before(customer.getCustDOB())) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "CustDocIssuedOn:" + DateUtil.format(custDocDetails.getCustDocIssuedOn(),
-								PennantConstants.XMLDateFormat);
+						valueParm[0] = "CustDocIssuedOn:"
+								+ DateUtil.format(custDocDetails.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "Cust DOB:"
 								+ DateUtil.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");

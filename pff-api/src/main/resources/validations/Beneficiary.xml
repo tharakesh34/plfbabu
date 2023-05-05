@@ -99,45 +99,6 @@
 				<element name="max">50</element>
 			</constraint>
 		</field>
-
-
-		<!-- <field name="accHolderName">
-			<constraint annotation="org.hibernate.validator.constraints.NotBlank">
-				<message>acHolderName is Mandatory</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-			</constraint>
-			<constraint annotation="org.hibernate.validator.constraints.Length">
-				<message>acHolderName should have maximum 50 characters</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="max">50</element>
-			</constraint>
-			<constraint annotation="jakarta.validation.constraints.Pattern">
-				<message>accHolderName invalid. Allowed Characters are [a-z A-Z 0-9
-					Space and special characters are &amp; ( ) - .]
-					and must starts
-					with [a-z A-Z].
-				</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
-			</constraint>
-		</field> -->
-
-
-		<!-- <field name="phoneCountryCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> <message>phoneCountryCode 
-			should have maximum 3 characters</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
-			</groups> <element name="max">3</element> </constraint> </field> <field name="phoneAreaCode"> <constraint annotation="org.hibernate.validator.constraints.Length"> 
-			<message>phoneAreaCode should have maximum 3 characters</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> 
-			<value>com.pennant.validation.UpdateValidationGroup</value> </groups> <element name="max">3</element> </constraint> </field> -->
-
 		<field name="phoneNumber">
 			<constraint annotation="org.hibernate.validator.constraints.Length">
 				<message>phoneNumber should have maximum 10 characters</message>
@@ -156,43 +117,6 @@
 				<element name="min">10</element>
 			</constraint>
 		</field>
-		<field name="validateBeneficiary">
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>specify any one of BankCode and BranchName Or ifsc code </message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-				</groups>
-
-				<element name="lang">javascript</element>
-				<element name="script">
-					if ((_this.iFSC != null ) &amp;&amp;
-					(_this.iFSC != "")) {
-					true;
-					} else if (((_this.bankCode !=
-					null)
-					&amp;&amp; (_this.bankCode != "")) &amp;&amp; ((_this.branchCode !=
-					null)
-					&amp;&amp; (_this.branchCode != "")))
-					{
-					true;
-					} else {
-					false;
-					}
-				</element>
-			</constraint>
-			<!-- <constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> <message>phoneAreaCode is Applicable only 
-				if phoneCountryCode specified</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
-				</groups> <element name="lang">javascript</element> <element name="script"> if(_this.phoneCountryCode != null &amp;&amp; 
-				_this.phoneCountryCode != "") { if(_this.phoneAreaCode != null &amp;&amp; _this.phoneAreaCode != ""){ true; }else{ false; 
-				} }else{ if(_this.phoneAreaCode != null &amp;&amp; _this.phoneAreaCode != ""){ false; }else{ true; } } </element> </constraint> 
-				<constraint annotation="org.hibernate.validator.constraints.ScriptAssert"> <message>phoneNumber is Applicable only if phoneCountryCode 
-				specified</message> <groups> <value>com.pennant.validation.SaveValidationGroup</value> <value>com.pennant.validation.UpdateValidationGroup</value> 
-				</groups> <element name="lang">javascript</element> <element name="script"> if(_this.phoneCountryCode != null &amp;&amp; 
-				_this.phoneCountryCode != "") { if(_this.phoneNumber != null &amp;&amp; _this.phoneNumber != ""){ true; }else{ false; } }else{ 
-				if(_this.phoneNumber != null &amp;&amp; _this.phoneNumber != ""){ false; }else{ true; } } </element> </constraint> -->
-		</field>
-
 	</bean>
 </constraint-mappings>
 	

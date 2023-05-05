@@ -1252,8 +1252,9 @@ public class CustomerController extends GenericService<Object> {
 		} else {
 			curCustomer.setCustBaseCcy(prvCustomer.getCustBaseCcy());
 		}
-		if (customerDetails.getPrimaryRelationOfficer() != 0) {
-			curCustomer.setCustRO1(customerDetails.getPrimaryRelationOfficer());
+		Long primaryRelationOfficer = customerDetails.getPrimaryRelationOfficer();
+		if (primaryRelationOfficer != null && primaryRelationOfficer > 0) {
+			curCustomer.setCustRO1(primaryRelationOfficer);
 		} else {
 			curCustomer.setCustRO1(prvCustomer.getCustRO1());
 		}
@@ -2302,7 +2303,7 @@ public class CustomerController extends GenericService<Object> {
 	public void setBankBranchService(BankBranchService bankBranchService) {
 		this.bankBranchService = bankBranchService;
 	}
-	
+
 	@Autowired
 	public void setCustomerGroupDAO(CustomerGroupDAO customerGroupDAO) {
 		this.customerGroupDAO = customerGroupDAO;

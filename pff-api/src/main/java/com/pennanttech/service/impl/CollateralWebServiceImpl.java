@@ -1,5 +1,8 @@
 package com.pennanttech.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.collateral.CoOwnerDetail;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennant.backend.model.customermasters.Customer;
@@ -19,6 +23,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.CollateralController;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -74,6 +79,8 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 
 		// bean validations
 		validationUtility.validate(collateralSetup, SaveValidationGroup.class);
+		doBasicMandatoryValidations(collateralSetup.getCoOwnerDetailList());
+
 		CollateralSetup response = null;
 		try {
 			// bussiness validations
@@ -127,6 +134,8 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(collateralSetup, UpdateValidationGroup.class);
+		doBasicMandatoryValidations(collateralSetup.getCoOwnerDetailList());
+
 		WSReturnStatus response = null;
 		try {
 			// bussiness validations
@@ -238,11 +247,11 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		String[] logFields = new String[2];
 		logFields[0] = collateralSetup.getDepositorCif();
 		logFields[1] = collateralSetup.getCollateralType();
-	
+
 		APIErrorHandlerService.logKeyFields(logFields);
 
 		validationUtility.validate(collateralSetup, UpdateValidationGroup.class);
-		
+
 		WSReturnStatus response = null;
 		try {
 			CollateralSetup collateral = collateralSetupService
@@ -322,6 +331,33 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 		logger.debug("Leaving");
 		return response;
+	}
+
+	private void doBasicMandatoryValidations(List<CoOwnerDetail> coOwnerDetail) {
+		List<ServiceExceptionDetails> exceptions = new ArrayList<>();
+
+		coOwnerDetail.stream().forEach(cd -> {
+			ServiceExceptionDetails error = new ServiceExceptionDetails();
+			if ((cd.isBankCustomer() && StringUtils.isEmpty(cd.getCoOwnerCIF()))
+					|| (!cd.isBankCustomer() && StringUtils.isNotEmpty(cd.getCoOwnerCIF()))) {
+				error.setFaultCode("9009");
+				error.setFaultMessage("cif is Applicable for CoOwnerBankCustomer");
+
+				exceptions.add(error);
+			}
+
+			if ((cd.isBankCustomer() && StringUtils.isNotEmpty(cd.getCoOwnerCIFName()))
+					|| (!cd.isBankCustomer() && StringUtils.isEmpty(cd.getCoOwnerCIFName()))) {
+				error.setFaultCode("9009");
+				error.setFaultMessage("name is Applicable  for non bank customer");
+
+				exceptions.add(error);
+			}
+		});
+
+		if (CollectionUtils.isNotEmpty(exceptions)) {
+			throw new ServiceException((ServiceExceptionDetails[]) exceptions.toArray());
+		}
 	}
 
 	@Autowired
