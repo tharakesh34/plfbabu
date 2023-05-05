@@ -441,7 +441,6 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 					}
 				} else if ("CAM".equals(data.getLovDescCodelov())) {
 					if (getFinanceMainDialogCtrl() != null) {
-						@SuppressWarnings("unchecked")
 						CreditReviewData creditReviewData = (CreditReviewData) getFinanceMainDialogCtrl().getClass()
 								.getMethod("getUpdateCreditReviewMap").invoke(financeMainDialogCtrl);
 
