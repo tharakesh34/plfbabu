@@ -529,7 +529,7 @@ public class ErrorDetailDialogCtrl extends GFCBaseCtrl<ErrorDetail> {
 		}
 		// Error Severity
 		if (!this.errorSeverity.isDisabled()) {
-			this.errorSeverity.setConstraint(new PTListValidator(
+			this.errorSeverity.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_ErrorDetailDialog_ErrorSeverity.value"), listErrorSeverity, true));
 		}
 		// Error Message

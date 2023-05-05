@@ -440,7 +440,7 @@ public class LegalECDetailDialogCtrl extends GFCBaseCtrl<LegalECDetail> {
 
 		if (!this.ecType.isDisabled() && this.gb_ecAdditinalDetails.isVisible()) {
 			this.ecType.setConstraint(
-					new PTListValidator(Labels.getLabel("label_LegalECDetailDialog_EcType.value"), listEcTypes, true));
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_LegalECDetailDialog_EcType.value"), listEcTypes, true));
 		}
 
 		logger.debug(Literal.LEAVING);

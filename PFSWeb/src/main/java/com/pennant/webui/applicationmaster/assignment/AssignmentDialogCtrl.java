@@ -618,7 +618,7 @@ public class AssignmentDialogCtrl extends GFCBaseCtrl<Assignment> {
 					Labels.getLabel("label_AssignmentDialog_SharingPercentage.value"), 9, true, false, 0, 100));
 		}
 		if (!this.opexFeeType.isDisabled()) {
-			this.opexFeeType.setConstraint(new PTListValidator(
+			this.opexFeeType.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_AssignmentDialog_OpexFeeType.value"), listOpexFeeType, true));
 		}
 

@@ -147,8 +147,8 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	 */
 	private void doSetValidations() {
 		this.processMonth.setConstraint(
-				new PTListValidator(Labels.getLabel("label_DataExtractionList_Month.value"), months, true));
-		this.configName.setConstraint(new PTListValidator(Labels.getLabel("label_DataExtractionList_ProcessName.value"),
+				new PTListValidator<Property>(Labels.getLabel("label_DataExtractionList_Month.value"), months, true));
+		this.configName.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_DataExtractionList_ProcessName.value"),
 				configNamesList, true));
 	}
 

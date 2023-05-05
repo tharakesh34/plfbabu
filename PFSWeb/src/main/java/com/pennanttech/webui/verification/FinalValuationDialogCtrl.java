@@ -190,7 +190,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		if (!this.finalValuationCollateral.isDisabled()) {
 			this.finalValuationCollateral.setConstraint(
-					new PTListValidator(Labels.getLabel("label_FinalValuationDialog_FinalValuationCollaterals.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_FinalValuationDialog_FinalValuationCollaterals.value"),
 							collateralRefList, true));
 		}
 		if (this.finalValuationAmount.isVisible() && !this.finalValuationAmount.isReadonly()) {
@@ -198,7 +198,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 					Labels.getLabel("label_FinalValuationDialog_FinalValuationAmount.value"), 2, true, false));
 		}
 		if (!this.decisionOnVal.isDisabled()) {
-			this.decisionOnVal.setConstraint(new PTListValidator(
+			this.decisionOnVal.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_FinalValuationDialog_DecisiononValuation.value"), decisionOnValList, true));
 		}
 		logger.debug(Literal.LEAVING);

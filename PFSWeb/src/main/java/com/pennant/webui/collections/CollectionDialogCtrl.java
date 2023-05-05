@@ -297,7 +297,7 @@ public class CollectionDialogCtrl extends GFCBaseCtrl<Collection> {
 	private void doSetValidations() {
 		logger.debug(Literal.ENTERING);
 
-		this.interfaceName.setConstraint(new PTListValidator(
+		this.interfaceName.setConstraint(new PTListValidator<ValueLabel>(
 				Labels.getLabel("label_CollectionDialog_InterfaceName.value"), this.collectionTablesList, true));
 
 		logger.debug("Leaving");
