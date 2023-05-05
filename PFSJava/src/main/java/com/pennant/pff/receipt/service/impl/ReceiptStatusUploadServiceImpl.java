@@ -274,7 +274,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 						detail.setErrorDesc("");
 						detail.setUserDetails(header.getUserDetails());
 
-						setFinReceiptDetail(detail);
+						updateReceipt(detail);
 					}
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -282,6 +282,8 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 					} else {
 						sucessRecords++;
 					}
+
+					header.getUploadDetails().add(detail);
 				}
 
 				try {
@@ -323,7 +325,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 		}).start();
 	}
 
-	private void setFinReceiptDetail(ReceiptStatusUpload detail) {
+	private void updateReceipt(ReceiptStatusUpload detail) {
 		FinReceiptData fd = new FinReceiptData();
 		AuditHeader auditHeader = null;
 

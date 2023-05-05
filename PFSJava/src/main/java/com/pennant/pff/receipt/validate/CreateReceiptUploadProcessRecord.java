@@ -96,8 +96,10 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+		Long recordSeq = (Long) record.getValue("RecordSeq");
 
 		cru.setHeaderId(headerID);
+		cru.setRecordSeq(recordSeq);
 
 		int readColumn = 0;
 

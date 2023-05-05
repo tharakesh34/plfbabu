@@ -51,8 +51,11 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		if (headerID == null) {
 			return;
 		}
+		
+		Long recordSeq = (Long) record.getValue("RecordSeq");
 
 		mku.setHeaderId(headerID);
+		mku.setRecordSeq(recordSeq);
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 

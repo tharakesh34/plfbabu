@@ -75,6 +75,8 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 					} else {
 						sucessRecords++;
 					}
+
+					header.getUploadDetails().add(detail);
 				}
 
 				try {

@@ -199,6 +199,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						} else {
 							sucessRecords++;
 						}
+
+						header.getUploadDetails().add(chequeUpload);
 					}
 
 					chequeUploadDAO.update(chequeUploads);

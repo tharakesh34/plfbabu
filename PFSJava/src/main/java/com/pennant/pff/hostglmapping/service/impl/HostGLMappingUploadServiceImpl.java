@@ -188,7 +188,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 						detail.setUserDetails(header.getUserDetails());
 						detail.setCreatedOn(header.getCreatedOn());
 						detail.setCreatedBy(header.getCreatedBy());
-						setAccountMapping(detail);
+						process(detail);
 					}
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -196,6 +196,8 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 					} else {
 						sucessRecords++;
 					}
+
+					header.getUploadDetails().add(detail);
 				}
 
 				try {
@@ -238,7 +240,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void setAccountMapping(HostGLMappingUpload detail) {
+	private void process(HostGLMappingUpload detail) {
 		AccountMapping ac = new AccountMapping();
 		AuditHeader auditHeader = null;
 

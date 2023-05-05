@@ -49,7 +49,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
 		BranchChangeUpload detail = null;
-		boolean isFinActive = false;
 
 		if (object instanceof BranchChangeUpload) {
 			detail = (BranchChangeUpload) object;
@@ -156,6 +155,8 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 
 						doBranchChange(referenceID, bcu.getOldBranch(), branchCode, appDate);
 					}
+
+					header.getUploadDetails().add(bcu);
 
 					if (bcu.getProgress() == EodConstants.PROGRESS_FAILED) {
 						failRecords++;

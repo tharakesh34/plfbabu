@@ -146,6 +146,8 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 						transactionManager.commit(txStatus);
 					}
 
+					header.getUploadDetails().add(detail);
+
 					if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
 						failRecords++;
 					} else {

@@ -27,7 +27,7 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 
 	@Override
 	public List<LienUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HEADERID,");
+		StringBuilder sql = new StringBuilder("Select ID, HEADERID, RECORDSEQ");
 		sql.append(" LIENID, SOURCE, REFERENCE, ACCNUMBER, MARKING, MARKINGDATE, MARKINGREASON,");
 		sql.append(" DEMARKING, DEMARKINGREASON, DEMARKINGDATE, LIENREFERENCE, LIENSTATUS, INTERFACESTATUS,");
 		sql.append(" REMARKS, STATUS, ACTION,");
@@ -44,6 +44,7 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 
 			lu.setId(rs.getLong("ID"));
 			lu.setHeaderId(rs.getLong("HEADERID"));
+			lu.setRecordSeq(rs.getLong("RECORDSEQ"));
 			lu.setLienID(rs.getLong("LIENID"));
 			lu.setSource(rs.getString("SOURCE"));
 			lu.setReference(rs.getString("REFERENCE"));

@@ -73,6 +73,8 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 					}
 					// insertion for logging purpose
 					holdRefundUploadDAO.saveLog(detail, header);
+
+					header.getUploadDetails().add(detail);
 				}
 
 				try {

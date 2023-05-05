@@ -24,7 +24,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 	@Override
 	public List<RePresentmentUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, DueDate, Progress, ErrorCode, ErrorDesc From REPRESENT_UPLOADS Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, DueDate, Progress, ErrorCode, ErrorDesc From REPRESENT_UPLOADS Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -35,6 +35,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			rpud.setId(rs.getLong("Id"));
 			rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			rpud.setReference(rs.getString("FinReference"));
+			rpud.setRecordSeq(rs.getLong("RecordSeq"));
 			rpud.setDueDate(rs.getDate("DueDate"));
 			rpud.setProgress(rs.getInt("Progress"));
 			rpud.setErrorCode(rs.getString("ErrorCode"));

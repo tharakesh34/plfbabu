@@ -18,7 +18,7 @@ public class BranchChangeUploadDAOImpl extends SequenceDao<BranchChangeUpload> i
 	@Override
 	public List<BranchChangeUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select ID, HeaderId");
-		sql.append(", FinReference, BranchCode, Remarks, FinID");
+		sql.append(", FinID, FinReference, RecordSeq, BranchCode, Remarks");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From BRANCH_CHANGE_UPLOAD");
 		sql.append(" Where HeaderId = ?");
@@ -32,6 +32,7 @@ public class BranchChangeUploadDAOImpl extends SequenceDao<BranchChangeUpload> i
 			bc.setHeaderId(rs.getLong("HeaderId"));
 			bc.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			bc.setReference(rs.getString("FinReference"));
+			bc.setRecordSeq(rs.getLong("RecordSeq"));
 			bc.setBranchCode(rs.getString("BranchCode"));
 			bc.setRemarks(rs.getString("Remarks"));
 			bc.setProgress(rs.getInt("Progress"));

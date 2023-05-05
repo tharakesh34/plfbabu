@@ -29,7 +29,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 
 	@Override
 	public List<PresentmentRespUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select Id, Header_Id");
+		StringBuilder sql = new StringBuilder("Select Id, Header_Id, RecordSeq");
 		sql.append(", FinId, FinReference, Presentment_Reference, Host_Reference, Instalment_No, Amount_Cleared");
 		sql.append(", Clearing_Date, Clearing_Status, Bounce_Code, Bounce_Remarks, Reason_Code, Bank_Code");
 		sql.append(", Bank_Name, Branch_Code, Branch_Name, Partner_Bank_Code, Partner_Bank_Name, Bank_Address");
@@ -48,6 +48,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 
 			fc.setId(rs.getLong("Id"));
 			fc.setHeaderId(rs.getLong("Header_Id"));
+			fc.setRecordSeq(rs.getLong("RecordSeq"));
 			fc.setReferenceID(rs.getLong("FinId"));
 			fc.setReference(rs.getString("FinReference"));
 			fc.setPresentmentReference(rs.getString("Presentment_Reference"));

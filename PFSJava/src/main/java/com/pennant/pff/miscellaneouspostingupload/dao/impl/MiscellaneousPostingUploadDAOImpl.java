@@ -18,7 +18,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 
 	@Override
 	public List<MiscellaneousPostingUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HeaderId, BatchName");
+		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq, BatchName");
 		sql.append(", BatchPurpose, Reference, FinID, BatchReference, DebitGL, CreditGL");
 		sql.append(", TxnAmount, ValueDate, NarrLine1, NarrLine2, NarrLine3, NarrLine4");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
@@ -32,6 +32,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 
 			mp.setId(rs.getLong("ID"));
 			mp.setHeaderId(rs.getLong("HeaderId"));
+			mp.setRecordSeq(rs.getLong("RecordSeq"));
 			mp.setBatchName(rs.getString("BatchName"));
 			mp.setBatchPurpose(rs.getString("BatchPurpose"));
 			mp.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));

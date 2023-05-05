@@ -211,6 +211,8 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl {
 						transactionManager.commit(txStatus);
 					}
 
+					header.getUploadDetails().add(clk);
+
 					if (clk.getProgress() == EodConstants.PROGRESS_FAILED) {
 						failRecords++;
 					} else {

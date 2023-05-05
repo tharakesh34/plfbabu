@@ -61,7 +61,7 @@ public class FinanceCancellationUploadDAOImpl extends SequenceDao<FinCancelUploa
 
 	@Override
 	public List<FinCancelUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, CancelType, Reason, Remarks, Progress, Status, ErrorCode, ErrorDesc From LOAN_CANCEL_UPLOADS Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, CancelType, Reason, Remarks, Progress, Status, ErrorCode, ErrorDesc From LOAN_CANCEL_UPLOADS Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -72,6 +72,7 @@ public class FinanceCancellationUploadDAOImpl extends SequenceDao<FinCancelUploa
 			fcud.setId(rs.getLong("Id"));
 			fcud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			fcud.setReference(rs.getString("FinReference"));
+			fcud.setRecordSeq(rs.getLong("RecordSeq"));
 			fcud.setCancelType(rs.getString("CancelType"));
 			fcud.setReason(rs.getString("Reason"));
 			fcud.setRemarks(rs.getString("Remarks"));

@@ -29,7 +29,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public List<ManualKnockOffUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select Id, HeaderId");
-		sql.append(", FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode");
+		sql.append(", FinID, FinReference, RecordSeq, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From MANUAL_KNOCKOFF_UPLOAD");
 		sql.append(" Where HeaderId = ?");
@@ -45,6 +45,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 			fc.setHeaderId(rs.getLong("HeaderId"));
 			fc.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			fc.setReference(rs.getString("FinReference"));
+			fc.setRecordSeq(rs.getLong("RecordSeq"));
 			fc.setExcessType(rs.getString("ExcessType"));
 			fc.setAllocationType(rs.getString("AllocationType"));
 			fc.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
@@ -82,8 +83,9 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public long save(ManualKnockOffUpload mk) {
 		StringBuilder sql = new StringBuilder("Insert into MANUAL_KNOCKOFF_UPLOAD");
-		sql.append(" (HeaderId, FinID, FinReference, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" (HeaderId, FinID, FinReference, RecordSeq, ExcessType");
+		sql.append(", AllocationType, ReceiptAmount, FeeTypeCode)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -100,6 +102,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 					ps.setLong(++index, mk.getHeaderId());
 					ps.setObject(++index, mk.getReferenceID());
 					ps.setString(++index, mk.getReference());
+					ps.setLong(++index, mk.getRecordSeq());
 					ps.setString(++index, mk.getExcessType());
 					ps.setString(++index, mk.getAllocationType());
 					ps.setBigDecimal(++index, mk.getReceiptAmount());

@@ -109,6 +109,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 						transactionManager.commit(txStatus);
 					}
 
+					header.getUploadDetails().add(receipt);
+
 					if (receipt.getProgress() == EodConstants.PROGRESS_FAILED) {
 						failRecords++;
 					} else {

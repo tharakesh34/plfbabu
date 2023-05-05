@@ -108,6 +108,15 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 					}
 				}
 
+				logger.info("WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
+
+				// Method for Processing Writeoff Loan
+				processWriteOffLoan(header, details, appDate);
+
+				logger.info("WriteOff Upload Process is Completed for the Header ID {}", header.getId());
+
+				header.getUploadDetails().addAll(details);
+
 				try {
 
 					header.setSuccessRecords(sucessRecords);
@@ -146,12 +155,6 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 					txStatus = null;
 				}
 
-				logger.info("WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
-
-				// Method for Processing Writeoff Loan
-				processWriteOffLoan(header, details, appDate);
-
-				logger.info("WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 			}
 		}).start();
 

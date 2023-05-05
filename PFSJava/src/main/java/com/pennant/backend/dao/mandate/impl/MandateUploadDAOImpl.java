@@ -18,8 +18,8 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 
 	@Override
 	public List<MandateUpload> loadRecordData(long headerID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, HeaderID, MandateID, CustID, CustCIF, MandateRef, MandateType, BankBranchID, AccNumber");
+		StringBuilder sql = new StringBuilder("Select Id, HeaderID");
+		sql.append(", MandateID, RecordSeq, CustID, CustCIF, MandateRef, MandateType, BankBranchID, AccNumber");
 		sql.append(", AccHolderName, JointAccHolderName, AccType, OpenMandate, StartDate, ExpiryDate, MaxLimit");
 		sql.append(", Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, MandateStatus, ApprovalID, InputDate");
 		sql.append(", Active, Reason, MandateCcy, OrgReference, ExternalRef, DocumentName, DocumentRef, BarCodeNumber");
@@ -37,6 +37,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			upload.setId(rs.getLong("ID"));
 			upload.setHeaderId(rs.getLong("HeaderID"));
 			upload.setReferenceID(JdbcUtil.getLong(rs.getObject("MandateID")));
+			upload.setRecordSeq(rs.getLong("RecordSeq"));
 			upload.setReference(rs.getString("OrgReference"));
 			upload.setProgress(rs.getInt("Progress"));
 			upload.setStatus(rs.getString("Status"));

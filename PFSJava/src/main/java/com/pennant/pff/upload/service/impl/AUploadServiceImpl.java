@@ -27,6 +27,7 @@ import com.pennant.pff.upload.job.UploadProcessJob;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.ProcessJobHandler;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -36,6 +37,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
 import com.pennanttech.pff.file.UploadStatus;
+import com.pennanttech.pff.file.UploadTypes;
 
 public abstract class AUploadServiceImpl implements UploadService, ValidateRecord {
 	protected static final Logger logger = LogManager.getLogger(AUploadServiceImpl.class);
@@ -102,7 +104,12 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 	public void updateHeader(List<FileUploadHeader> uploadHeaders, boolean isApprove) {
 		prepareHeader(uploadHeaders, isApprove);
 
-		this.uploadDAO.updateHeader(uploadHeaders);
+		for (FileUploadHeader header : uploadHeaders) {
+			header.getUploadDetails().forEach(detail -> updateProcess(header, detail, null));
+
+			ProcessJobHandler handler = new ProcessJobHandler(header.getType().concat("_UPLOAD"), dataSource);
+			handler.processJobFile(header);
+		}
 	}
 
 	private void prepareHeader(List<FileUploadHeader> uploadHeaders, boolean isApprove) {
@@ -116,14 +123,14 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 
 			if (isApprove) {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				header.setProgress(Status.APPROVED.getValue());
+				header.setProgress(UploadStatus.APPROVED.status());
 			} else {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
 				header.setFailureRecords(header.getTotalRecords());
 				header.setSuccessRecords(0);
 				header.setApprovedBy(null);
 				header.setApprovedOn(null);
-				header.setProgress(Status.REJECTED.getValue());
+				header.setProgress(UploadStatus.REJECTED.status());
 			}
 		}
 	}
@@ -330,8 +337,11 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 			String successStatus, String failureStatus) {
 
 		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", detail.getErrorCode());
-			record.addValue("ERRORDESC", detail.getErrorDesc());
+			if (record != null) {
+				record.addValue("ERRORCODE", detail.getErrorCode());
+				record.addValue("ERRORDESC", detail.getErrorDesc());
+			}
+
 			header.setFailureRecords(header.getFailureRecords() + 1);
 			detail.setStatus(failureStatus);
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
@@ -341,9 +351,15 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 			detail.setStatus(successStatus);
 			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		}
-		record.addValue("STATUS", detail.getStatus());
-		record.addValue("PROGRESS", detail.getProgress());
 
+		if (UploadTypes.EXCESS_TRANSFER.name().equals(header.getType())) {
+			detail.setStatus(detail.getProgress() == EodConstants.PROGRESS_FAILED ? "R" : "C");
+		}
+
+		if (record != null) {
+			record.addValue("STATUS", detail.getStatus());
+			record.addValue("PROGRESS", detail.getProgress());
+		}
 	}
 
 	@Override

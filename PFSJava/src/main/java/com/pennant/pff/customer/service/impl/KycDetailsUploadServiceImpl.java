@@ -84,6 +84,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 						detail.setUserDetails(header.getUserDetails());
 						detail.setSource(RequestSource.UPLOAD.name());
+						header.getUploadDetails().add(detail);
 
 						if (detail.getCustAddrPriority() != 0) {
 							customerAddressUpload.process(detail);
@@ -442,6 +443,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 		CustomerKycDetail detail = new CustomerKycDetail();
 		detail.setHeaderId(headerID);
 		detail.setFinReference(finReference);
+		detail.setReference(custCif);
 
 		detail.setCustAddrType(ObjectUtil.valueAsString(record.getValue("custAddrType")));
 		detail.setCustAddrPriority(ObjectUtil.valueAsInt(record.getValue("custAddrPriority")));

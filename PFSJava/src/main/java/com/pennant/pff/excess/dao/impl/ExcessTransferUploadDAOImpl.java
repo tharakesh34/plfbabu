@@ -20,7 +20,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 	@Override
 	public List<ExcessTransferUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select HeaderId, Id, FinID, FinReference");
+		StringBuilder sql = new StringBuilder("Select HeaderId, Id, FinID, FinReference, RecordSeq");
 		sql.append(", TransferFromType, TransferToType");
 		sql.append(", TransferAmount, Status, Progress, ErrorCode, ErrorDesc");
 		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD");
@@ -35,6 +35,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 			rpud.setId(rs.getLong("Id"));
 			rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			rpud.setReference(rs.getString("FinReference"));
+			rpud.setRecordSeq(rs.getLong("RecordSeq"));
 			rpud.setTransferFromType(rs.getString("TransferFromType"));
 			rpud.setTransferToType(rs.getString("TransferToType"));
 			rpud.setTransferAmount(rs.getBigDecimal("TransferAmount"));

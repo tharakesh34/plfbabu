@@ -35,7 +35,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 	@Override
 	public List<HoldRefundUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, HoldStatus, Reason, Remarks, Progress, ErrorCode, ErrorDesc From HOLD_REFUND_UPLOAD Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, HoldStatus, Reason, Remarks, Progress, ErrorCode, ErrorDesc From HOLD_REFUND_UPLOAD Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -46,6 +46,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 			hrud.setId(rs.getLong("Id"));
 			hrud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			hrud.setReference(rs.getString("FinReference"));
+			hrud.setRecordSeq(rs.getLong("RecordSeq"));
 			hrud.setHoldStatus(rs.getString("HoldStatus"));
 			hrud.setReason(rs.getString("Reason"));
 			hrud.setRemarks(rs.getString("Remarks"));

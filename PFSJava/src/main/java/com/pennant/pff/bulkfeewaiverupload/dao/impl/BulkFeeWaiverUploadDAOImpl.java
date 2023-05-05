@@ -21,7 +21,7 @@ public class BulkFeeWaiverUploadDAOImpl extends SequenceDao<BulkFeeWaiverUpload>
 	@Override
 	public List<BulkFeeWaiverUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select Id, HeaderId");
-		sql.append(", FinID, FinReference, FeeTypeCode, WaivedAmount, Remarks, Progress, Status");
+		sql.append(", FinID, FinReference, RecordSeq, FeeTypeCode, WaivedAmount, Remarks, Progress, Status");
 		sql.append(", ErrorCode, ErrorDesc");
 		sql.append(" From FEE_WAIVER_UPLOAD");
 		sql.append(" Where HeaderId = ?");
@@ -35,6 +35,7 @@ public class BulkFeeWaiverUploadDAOImpl extends SequenceDao<BulkFeeWaiverUpload>
 			fw.setHeaderId(rs.getLong("HeaderId"));
 			fw.setReferenceID(rs.getLong("FinID"));
 			fw.setReference(rs.getString("FinReference"));
+			fw.setRecordSeq(rs.getLong("RecordSeq"));
 			fw.setFeeTypeCode(rs.getString("FeeTypeCode"));
 			fw.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
 			fw.setRemarks(rs.getString("Remarks"));

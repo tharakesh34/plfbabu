@@ -18,7 +18,7 @@ public class HostGLMappingUploadDAOImpl extends SequenceDao<HostGLMappingUpload>
 
 	@Override
 	public List<HostGLMappingUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HeaderId");
+		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq");
 		sql.append(", HostGLCode, AccountType, LoanType, CostCentreCode");
 		sql.append(", ProfitCentreCode, OpenedDate, AllowManualEntries, GLDescription");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
@@ -32,6 +32,7 @@ public class HostGLMappingUploadDAOImpl extends SequenceDao<HostGLMappingUpload>
 
 			hg.setId(rs.getLong("ID"));
 			hg.setHeaderId(rs.getLong("HeaderId"));
+			hg.setRecordSeq(rs.getLong("RecordSeq"));
 			hg.setHostGLCode(rs.getString("HostGLCode"));
 			hg.setAccountType(rs.getString("AccountType"));
 			hg.setLoanType(rs.getString("LoanType"));

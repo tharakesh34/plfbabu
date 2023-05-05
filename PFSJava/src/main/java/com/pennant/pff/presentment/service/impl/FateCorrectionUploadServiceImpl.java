@@ -144,6 +144,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 				List<PresentmentRespUpload> details = presentmentRespUploadDAO.getDetails(header.getId());
 
 				header.setTotalRecords(details.size());
+				header.getUploadDetails().addAll(details);
+
 				int sucessRecords = 0;
 				int failRecords = 0;
 

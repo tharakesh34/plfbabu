@@ -17,7 +17,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 
 	@Override
 	public List<LPPUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HeaderId, loanType");
+		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq, LoanType");
 		sql.append(", ApplyToExistingLoans, ApplyOverDue, FinID, FinReference");
 		sql.append(", PenaltyType, IncludeGraceDays, GraceDays, CalculatedOn");
 		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, HoldStatus");
@@ -32,6 +32,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 
 			lpp.setId(rs.getLong("ID"));
 			lpp.setHeaderId(rs.getLong("HeaderId"));
+			lpp.setRecordSeq(rs.getLong("RecordSeq"));
 			lpp.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			lpp.setReference(rs.getString("FinReference"));
 			lpp.setLoanType(rs.getString("LoanType"));

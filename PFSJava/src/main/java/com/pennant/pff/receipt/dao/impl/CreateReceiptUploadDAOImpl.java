@@ -33,12 +33,12 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 	@Override
 	public List<CreateReceiptUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, HeaderID, FinID, Reference, ReceiptPurpose, ExcessAdjustTo, AllocationType, ReceiptAmount");
-		sql.append(", EffectSchdMethod, Remarks, ValueDate, ReceiptMode, SubReceiptMode, ReceiptChannel, PaymentRef");
-		sql.append(", ChequeNumber, BankCode, ChequeAccountNumber, TransactionRef, ReceiptModeStatus, DepositDate");
-		sql.append(", RealizationDate, InstrumentDate, PanNumber, ExternalRef, ReceivedFrom, BounceDate");
-		sql.append(", BounceReason, BounceRemarks, PartnerBankCode, Status, Progress, ErrorCode, ErrorDesc");
-		sql.append(", PartnerBankCode, ClosureType, Reason, ReceiptID");
+		sql.append(" ID, HeaderID, FinID, Reference, RecordSeq, ReceiptPurpose, ExcessAdjustTo, AllocationType");
+		sql.append(", ReceiptAmount, EffectSchdMethod, Remarks, ValueDate, ReceiptMode, SubReceiptMode");
+		sql.append(", ReceiptChannel, PaymentRef, ChequeNumber, BankCode, ChequeAccountNumber, TransactionRef");
+		sql.append(", ReceiptModeStatus, DepositDate, RealizationDate, InstrumentDate, PanNumber, ExternalRef");
+		sql.append(", ReceivedFrom, BounceDate, BounceReason, BounceRemarks, PartnerBankCode, Status, Progress");
+		sql.append(", ErrorCode, ErrorDesc, PartnerBankCode, ClosureType, Reason, ReceiptID");
 		sql.append(" From CREATE_RECEIPT_UPLOAD");
 		sql.append(" Where HeaderId = ?");
 
@@ -51,6 +51,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 			receipt.setHeaderId(rs.getLong("HeaderID"));
 			receipt.setReferenceID(JdbcUtil.getLong(rs.getLong("FinID")));
 			receipt.setReference(rs.getString("Reference"));
+			receipt.setRecordSeq(rs.getLong("RecordSeq"));
 			receipt.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			receipt.setExcessAdjustTo(rs.getString("ExcessAdjustTo"));
 			receipt.setAllocationType(rs.getString("AllocationType"));
@@ -279,13 +280,13 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 	@Override
 	public long save(CreateReceiptUpload cru) {
 		StringBuilder sql = new StringBuilder("Insert into CREATE_RECEIPT_UPLOAD");
-		sql.append(" (HeaderID, Reference, ReceiptPurpose, ExcessAdjustTo, AllocationType, ReceiptAmount");
+		sql.append(" (HeaderID, Reference, RecordSeq, ReceiptPurpose, ExcessAdjustTo, AllocationType, ReceiptAmount");
 		sql.append(", EffectSchdMethod, Remarks, ValueDate, ReceiptMode, SubReceiptMode, ReceiptChannel, PaymentRef");
 		sql.append(", ChequeNumber, BankCode, ChequeAccountNumber, TransactionRef, ReceiptModeStatus, DepositDate");
 		sql.append(", RealizationDate, InstrumentDate, PanNumber, ExternalRef, ReceivedFrom, BounceDate");
 		sql.append(", BounceReason, BounceRemarks, PartnerBankCode, ClosureType, Reason, ReceiptID)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -301,6 +302,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 
 					ps.setLong(++index, cru.getHeaderId());
 					ps.setString(++index, cru.getReference());
+					ps.setLong(++index, cru.getRecordSeq());
 					ps.setString(++index, cru.getReceiptPurpose());
 					ps.setString(++index, cru.getExcessAdjustTo());
 					ps.setString(++index, cru.getAllocationType());

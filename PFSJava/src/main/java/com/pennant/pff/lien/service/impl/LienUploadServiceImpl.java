@@ -168,6 +168,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 							} else {
 								sucessRecords++;
 							}
+							header.getUploadDetails().add(luUpload);
 						}
 
 						header.setSuccessRecords(sucessRecords);

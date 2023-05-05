@@ -168,6 +168,8 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 					} else {
 						sucessRecords++;
 					}
+
+					header.getUploadDetails().add(detail);
 				}
 
 				try {

@@ -117,7 +117,11 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 						failRecords++;
 					} else {
 						sucessRecords++;
+						detail.setAppDate(appDate);
+						processRefunds(detail);
 					}
+
+					header.getUploadDetails().add(detail);
 				}
 
 				try {
@@ -156,11 +160,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 					txStatus = null;
 				}
 
-				logger.info("Payment Instruction Process is Initiated for the Header ID {}", header.getId());
-
-				processRefund(header.getId());
-
-				logger.info("Payment Instruction Process is Completed for the Header ID {}", header.getId());
 			}
 		}).start();
 
@@ -306,17 +305,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		return paymentInstructionUploadDAO.getSqlQuery();
 	}
 
-	private void processRefund(long headerID) {
-		List<PaymentInstUploadDetail> details = paymentInstructionUploadDAO.getDetails(headerID);
-		Date appDate = SysParamUtil.getAppDate();
-		for (PaymentInstUploadDetail detail : details) {
-			if ("S".equals(detail.getStatus())) {
-				detail.setAppDate(appDate);
-				processRefunds(detail);
-			}
-		}
-	}
-
 	private void processRefunds(PaymentInstUploadDetail detail) {
 		Date appDate = detail.getAppDate();
 
@@ -365,12 +353,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode("9999");
 			detail.setErrorDesc(error);
-			this.paymentInstructionUploadDAO.update(detail);
-		}
-
-		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-			updateFailRecords(1, 1, detail.getHeaderId());
 		}
 	}
 

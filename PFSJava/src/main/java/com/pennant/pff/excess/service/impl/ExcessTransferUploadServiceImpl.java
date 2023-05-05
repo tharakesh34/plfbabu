@@ -134,6 +134,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus txStatus = null;
 
+			Date appDate = SysParamUtil.getAppDate();
+
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 
@@ -143,18 +145,33 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				int sucessRecords = 0;
 				int failRecords = 0;
 
+				List<ExcessTransferUpload> process = new ArrayList<>();
+
 				for (ExcessTransferUpload fc : details) {
+					fc.setAppDate(appDate);
 					doValidate(header, fc);
 
 					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
 						failRecords++;
 					} else {
 						sucessRecords++;
+						process.add(fc);
 					}
 				}
 
 				try {
 					txStatus = transactionManager.getTransaction(txDef);
+
+					process(process);
+
+					for (ExcessTransferUpload fc : details) {
+						if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
+							failRecords++;
+							sucessRecords--;
+						}
+
+						header.getUploadDetails().add(fc);
+					}
 
 					excessTransferUploadDAO.update(details);
 
@@ -187,10 +204,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					txStatus = null;
 				}
 
-				logger.info("Excess Transfer Process is Initiated");
-
-				process(header.getId());
-
 				logger.info("Processed the File {}", header.getFileName());
 			}
 
@@ -198,11 +211,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void process(long headerID) {
-		List<ExcessTransferUpload> process = excessTransferUploadDAO.getProcess(headerID);
-
-		Date appDate = SysParamUtil.getAppDate();
-
+	private void process(List<ExcessTransferUpload> process) {
 		for (ExcessTransferUpload exc : process) {
 			List<FinExcessTransfer> transferList = new ArrayList<>();
 
@@ -239,7 +248,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				transfer.setFinReference(exc.getReference());
 				transfer.setTransferFromType(exc.getTransferFromType());
 				transfer.setTransferToType(exc.getTransferToType());
-				transfer.setTransferDate(excess.getValueDate() == null ? appDate : excess.getValueDate());
+				transfer.setTransferDate(excess.getValueDate() == null ? exc.getAppDate() : excess.getValueDate());
 				transfer.setTransferAmount(amount);
 				transfer.setTransferFromId(excess.getExcessID());
 				transfer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -258,10 +267,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			approveExcess(exc, transferList);
-
-			if (EodConstants.PROGRESS_FAILED == exc.getProgress()) {
-				updateFailRecords(1, 1, exc.getHeaderId());
-			}
 		}
 	}
 
@@ -273,10 +278,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				exc.setErrorCode(ERR_CODE);
 				exc.setErrorDesc(getErrorMessage(e));
 				exc.setProgress(EodConstants.PROGRESS_FAILED);
-				excessTransferUploadDAO.updateFailure(exc);
 			}
 		}
-		transferList.clear();
 	}
 
 	private AuditHeader getAuditHeader(FinExcessTransfer transfer, String tranType) {

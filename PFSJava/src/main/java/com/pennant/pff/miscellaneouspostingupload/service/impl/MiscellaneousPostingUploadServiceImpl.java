@@ -188,6 +188,8 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 				int failureCount = process(mList);
 
+				header.getUploadDetails().addAll(details);
+
 				try {
 					header.setSuccessRecords(sucessRecords - failureCount);
 					header.setFailureRecords(failRecords + failureCount);

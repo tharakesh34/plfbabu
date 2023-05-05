@@ -23,7 +23,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 	@Override
 	public List<CustomerKycDetail> loadRecordData(long headerID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, HeaderId, CustId, CustCif, FinID, FinReference");
+		sql.append(" Id, HeaderId, RecordSeq, CustId, CustCif, FinID, FinReference");
 		sql.append(", CustAddrType, CustAddrPriority, CustAddrLine3, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
 		sql.append(", CustAddrLine1, CustAddrLine2, CustAddrCity, CustAddrLine4, CustDistrict, CustAddrProvince");
 		sql.append(", CustAddrCountry, CustAddrZIP, PhoneTypeCode, PhoneTypePriority");
@@ -39,6 +39,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 
 			ckc.setId(rs.getLong("Id"));
 			ckc.setHeaderId(rs.getLong("HeaderId"));
+			ckc.setRecordSeq(rs.getLong("RecordSeq"));
 			ckc.setReferenceID(JdbcUtil.getLong(rs.getObject("CustId")));
 			ckc.setReference(rs.getString("CustCif"));
 			ckc.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));

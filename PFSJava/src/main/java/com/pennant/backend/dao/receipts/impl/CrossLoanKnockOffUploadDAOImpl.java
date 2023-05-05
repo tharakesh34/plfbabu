@@ -25,7 +25,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	@Override
 	public List<CrossLoanKnockoffUpload> loadRecordData(long id) {
 		StringBuilder sql = new StringBuilder("");
-		sql.append("Select Id, HeaderID, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
+		sql.append("Select Id, HeaderID, FromFinID, ToFinID, FromFinReference, TOFinReference, RecordSeq, ExcessType");
 		sql.append(", ExcessAmount, AllocationType, FeeTypeCode, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CROSS_LOAN_KNOCKOFF_UPLOAD");
 		sql.append(" Where HeaderID = ?");
@@ -43,6 +43,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 			upload.setToFinID(JdbcUtil.getLong(rs.getObject("ToFinID")));
 			upload.setFromFinReference(rs.getString("FromFinReference"));
 			upload.setToFinReference(rs.getString("TOFinReference"));
+			upload.setRecordSeq(rs.getLong("RecordSeq"));
 			upload.setExcessType(rs.getString("ExcessType"));
 			upload.setExcessAmount(rs.getBigDecimal("ExcessAmount"));
 			upload.setAllocationType(rs.getString("AllocationType"));
@@ -191,9 +192,9 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	@Override
 	public long save(CrossLoanKnockoffUpload ck) {
 		StringBuilder sql = new StringBuilder("Insert into CROSS_LOAN_KNOCKOFF_UPLOAD");
-		sql.append(" (HeaderId, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
+		sql.append(" (HeaderId, FromFinID, ToFinID, FromFinReference, TOFinReference, RecordSeq, ExcessType");
 		sql.append(", ExcessAmount, AllocationType, FeeTypeCode)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -212,6 +213,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 					ps.setObject(++index, ck.getToFinID());
 					ps.setString(++index, ck.getFromFinReference());
 					ps.setString(++index, ck.getToFinReference());
+					ps.setLong(++index, ck.getRecordSeq());
 					ps.setString(++index, ck.getExcessType());
 					ps.setBigDecimal(++index, ck.getExcessAmount());
 					ps.setString(++index, ck.getAllocationType());

@@ -18,7 +18,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 
 	@Override
 	public List<ChequeUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HeaderId, ChequeDetailsId");
+		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq, ChequeDetailsId");
 		sql.append(", ChequeHeaderId, BankBranchId, FinID, FinReference, AccountNo, ChequeSerialNo, ChequeDate");
 		sql.append(", EmiRefNo, Amount, ChequeCcy,Active, DocumentName, DocumentRef, ChequeType, ChequeStatus");
 		sql.append(", AccountType, AccHolderName, Action, IfscCode, Micr, Progress, Status, ErrorCode, ErrorDesc");
@@ -32,6 +32,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 
 			pdc.setId(rs.getLong("ID"));
 			pdc.setHeaderId(rs.getLong("HeaderId"));
+			pdc.setRecordSeq(rs.getLong("RecordSeq"));
 			pdc.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			pdc.setReference(rs.getString("FinReference"));
 

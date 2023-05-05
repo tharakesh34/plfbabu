@@ -265,6 +265,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 						transactionManager.commit(txStatus);
 					}
 
+					header.getUploadDetails().add(fc);
+
 					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
 						failRecords++;
 					} else {

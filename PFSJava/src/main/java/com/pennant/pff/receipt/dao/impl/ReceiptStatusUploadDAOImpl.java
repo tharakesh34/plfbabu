@@ -21,8 +21,8 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 	@Override
 	public List<ReceiptStatusUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, HeaderId, ReceiptId, StatusRM, RealizationDate ");
-		sql.append(", BounceDate, BorCReason, BorCRemarks");
+		sql.append(" ID, HeaderId, ReceiptId, RecordSeq, StatusRM, RealizationDate ");
+		sql.append(", BounceDate, BounceReason, BounceRemarks");
 		sql.append(" From Receipt_Status_UPLOAD");
 		sql.append(" Where HeaderId = ?");
 
@@ -34,11 +34,12 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 			rsu.setId(rs.getLong("ID"));
 			rsu.setHeaderId(rs.getLong("HeaderId"));
 			rsu.setReceiptId(rs.getLong("ReceiptId"));
+			rsu.setRecordSeq(rs.getLong("RecordSeq"));
 			rsu.setStatusRM(rs.getString("StatusRM"));
 			rsu.setRealizationDate(rs.getDate("RealizationDate"));
 			rsu.setBounceDate(rs.getDate("BounceDate"));
-			rsu.setBounceReason(rs.getString("BorCReason"));
-			rsu.setBounceRemarks(rs.getString("BorCRemarks"));
+			rsu.setBounceReason(rs.getString("BounceReason"));
+			rsu.setBounceRemarks(rs.getString("BounceRemarks"));
 
 			return rsu;
 		}, headerID);
@@ -105,8 +106,8 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" rs.ReceiptId, rs.StatusRM, rs.RealizationDate, rs.BounceDate, rs.BorCReason");
-		sql.append(" , rs.BorCRemarks, rs.Status, rs.ErrorCode, rs.ErrorDesc");
+		sql.append(" rs.ReceiptId, rs.StatusRM, rs.RealizationDate, rs.BounceDate, rs.BounceReason");
+		sql.append(" , rs.BounceRemarks, rs.Status, rs.ErrorCode, rs.ErrorDesc");
 		sql.append(", uh.CreatedOn, su1.UsrLogin CreatedName, uh.ApprovedOn");
 		sql.append(", su2.UsrLogin ApprovedName");
 		sql.append(" From Receipt_Status_UPLOAD rs");

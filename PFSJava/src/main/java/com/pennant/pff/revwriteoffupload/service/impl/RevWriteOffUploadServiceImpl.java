@@ -106,6 +106,14 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 					}
 				}
 
+				logger.info("Reverse WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
+
+				processRevWriteOffLoan(header, details);
+
+				logger.info("Reverse WriteOff Upload Process is Completed for the Header ID {}", header.getId());
+
+				header.getUploadDetails().addAll(details);
+
 				try {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
@@ -141,11 +149,6 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 					txStatus = null;
 				}
 
-				logger.info("Reverse WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
-
-				processRevWriteOffLoan(header, details);
-
-				logger.info("Reverse WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 			}
 		}).start();
 
@@ -193,11 +196,6 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				detail.setProgress(EodConstants.PROGRESS_FAILED);
 				detail.setErrorDesc(error);
-				this.revWriteOffUploadDAO.update(detail);
-			}
-
-			if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-				updateFailRecords(1, 1, detail.getHeaderId());
 			}
 		}
 	}

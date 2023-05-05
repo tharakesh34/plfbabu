@@ -84,6 +84,8 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 							detail.setErrorDesc("");
 							detail.setReferenceID(response.getMandateID());
 						}
+
+						header.getUploadDetails().add(detail);
 					}
 
 					mandateUploadDAO.update(details);

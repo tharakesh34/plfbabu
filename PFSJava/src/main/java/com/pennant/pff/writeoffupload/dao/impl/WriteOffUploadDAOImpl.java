@@ -27,7 +27,7 @@ public class WriteOffUploadDAOImpl extends SequenceDao<WriteOffUploadDetail> imp
 
 	@Override
 	public List<WriteOffUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, Remarks, Progress, ErrorCode, ErrorDesc, Status From WRITE_OFF_UPLOAD Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, Remarks, Progress, ErrorCode, ErrorDesc, Status From WRITE_OFF_UPLOAD Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -38,6 +38,7 @@ public class WriteOffUploadDAOImpl extends SequenceDao<WriteOffUploadDetail> imp
 			hrud.setId(rs.getLong("Id"));
 			hrud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			hrud.setReference(rs.getString("FinReference"));
+			hrud.setRecordSeq(rs.getLong("RecordSeq"));
 			hrud.setRemarks(rs.getString("Remarks"));
 			hrud.setProgress(rs.getInt("Progress"));
 			hrud.setErrorCode(rs.getString("ErrorCode"));

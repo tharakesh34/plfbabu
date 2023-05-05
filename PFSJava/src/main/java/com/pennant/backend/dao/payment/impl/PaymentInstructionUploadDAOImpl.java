@@ -48,7 +48,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public List<PaymentInstUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, ExcessType, FeeType, PayAmount, Remarks, OverRideOverDue, Progress, Status, ErrorCode, ErrorDesc From PAYMINS_UPLOADS Where HeaderId = ?";
+		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, ExcessType, FeeType, PayAmount, Remarks, OverRideOverDue, Progress, Status, ErrorCode, ErrorDesc From PAYMINS_UPLOADS Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -59,6 +59,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 			piud.setId(rs.getLong("Id"));
 			piud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			piud.setReference(rs.getString("FinReference"));
+			piud.setRecordSeq(rs.getLong("RecordSeq"));
 			piud.setExcessType(rs.getString("ExcessType"));
 			piud.setFeeType(rs.getString("FeeType"));
 			piud.setPayAmount(rs.getBigDecimal("PayAmount"));
