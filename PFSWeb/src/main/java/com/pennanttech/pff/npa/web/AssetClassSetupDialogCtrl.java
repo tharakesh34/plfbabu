@@ -920,7 +920,11 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			doSetValidation();
 			// fill the Promotion object with the components data
 			doWriteComponentsToBean(assetClassSetupHeader);
+		}
 
+		if (this.listBoxAssetClassSetup.getItems().isEmpty()) {
+			MessageUtil.showError("Asset Classification Setup Details can't be blank ");
+			return;
 		}
 
 		isNew = assetClassSetupHeader.isNewRecord();
