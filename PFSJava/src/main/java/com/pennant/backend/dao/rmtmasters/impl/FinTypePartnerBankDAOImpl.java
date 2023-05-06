@@ -368,7 +368,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	public List<Long> getClusterByPartnerbankCode(long partnerbankId) {
 		String sql = "Select Distinct ClusterId From FinTypePartnerBanks Where partnerbankId = ? and ClusterId is not null";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, JdbcUtil.getLong(partnerbankId));

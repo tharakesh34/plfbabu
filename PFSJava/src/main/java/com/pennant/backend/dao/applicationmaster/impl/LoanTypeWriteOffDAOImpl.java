@@ -144,7 +144,7 @@ public class LoanTypeWriteOffDAOImpl extends SequenceDao<FinTypeWriteOff> implem
 	public void delete(long loanTypeId, String tableType) {
 		StringBuilder sql = new StringBuilder("Delete From Auto_Write_Off_Loan_Type");
 		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Where LoanType = ?");
+		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

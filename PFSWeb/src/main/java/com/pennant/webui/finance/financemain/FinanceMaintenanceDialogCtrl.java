@@ -2718,7 +2718,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Extended Field details
 		if (afinanceDetail.getExtendedFieldRender() != null) {
 			ExtendedFieldRender details = afinanceDetail.getExtendedFieldRender();
+			int seqNo = details.getSeqNo();
 			details.setReference(afinanceMain.getFinReference());
+			details.setSeqNo(++seqNo);
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(afinanceMain.getRecordStatus());

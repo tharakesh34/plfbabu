@@ -166,7 +166,10 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 					cru.setRemarks(rowCell.toString());
 					break;
 				case 13:
-					cru.setReceiptID(Long.parseLong(rowCell.toString()));
+					String receiptId = rowCell.toString();
+					if (receiptId != null && StringUtils.isNotBlank(receiptId)) {
+						cru.setReceiptID(Long.parseLong(receiptId));
+					}
 					break;
 				case 14:
 					cru.setChequeNumber(rowCell.toString());
