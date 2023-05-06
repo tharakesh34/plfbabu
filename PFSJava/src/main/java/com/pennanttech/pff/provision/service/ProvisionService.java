@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pff.provision.model.Provision;
+import com.pennanttech.pff.provision.model.ProvisionRuleData;
 
 public interface ProvisionService {
 
@@ -38,4 +39,6 @@ public interface ProvisionService {
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	void executeProvisionRule(ProvisionRuleData provisionData, Provision p);
 }

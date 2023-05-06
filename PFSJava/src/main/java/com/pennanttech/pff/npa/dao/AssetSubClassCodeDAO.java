@@ -1,5 +1,7 @@
 package com.pennanttech.pff.npa.dao;
 
+import java.util.List;
+
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.npa.model.AssetSubClassCode;
@@ -15,5 +17,7 @@ public interface AssetSubClassCodeDAO extends BasicCrudDao<AssetSubClassCode> {
 	boolean checkDependency(String code);
 
 	boolean checkUniqueKey(String code, TableType type);
+
+	List<String> getAssetClassCodes();
 
 }

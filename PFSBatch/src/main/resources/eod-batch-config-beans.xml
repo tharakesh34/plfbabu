@@ -776,4 +776,7 @@
 	<bean id="lienDetailsDAO" class="com.pennant.backend.dao.liendetails.impl.LienDetailsDAOImpl" parent="sequenceDao" />
 	
 	<bean id = "lienService" class="com.pennant.pff.lien.service.impl.LienServiceImpl"/>
+	
+	<bean id="assetSubClassCodeDAO" class="com.pennanttech.pff.npa.dao.impl.AssetSubClassCodeDAOImpl"
+		parent="sequenceDao" />
 </beans>

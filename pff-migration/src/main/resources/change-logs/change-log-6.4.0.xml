@@ -10428,7 +10428,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#4753.7" author="sampath.d">
 		<createTable tableName="FIN_WRITE_OFF_DETAIL_LOG">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -12096,7 +12096,7 @@
 		 	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.3.0" author="Sravani.S">
 		<dropForeignKeyConstraint baseTableName="LIEN_UPLOAD"
 			constraintName="fk_lien_upload_headerid" />
@@ -13027,7 +13027,7 @@
 		 	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.39.1" author="Sravani.S">
 		<sql>
 			<![CDATA[
@@ -13075,7 +13075,7 @@
 	<changeSet id="ST#1528.40.3" author="Sravani.S" dbms="postgresql, oracle">
 		<addDefaultValue tableName="BRANCH_CHANGE_UPLOAD" columnName="RecordSeq" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.41.1" author="Sravani.S">
 		<sql>
 			<![CDATA[	
@@ -13100,7 +13100,7 @@
 	<changeSet id="ST#1528.41.3" author="Sravani.S" dbms="postgresql, oracle">
 		<addDefaultValue tableName="CREATE_RECEIPT_UPLOAD" columnName="RecordSeq" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.42" author="Sravani.S">
 		<addColumn tableName="LOAN_CANCEL_UPLOADS">
 			<column name="RecordSeq" type="bigint" />
@@ -13131,62 +13131,62 @@
 	<changeSet id="ST#1528.42.3" author="Sravani.S" dbms="postgresql, oracle">
 		<addDefaultValue tableName="LOAN_CANCEL_UPLOADS" columnName="RecordSeq" defaultValue="0" />
 	</changeSet>
-	
-		
+
+
 	<changeSet id="ST#4875.1" author="Poojitha.m">
 		<addColumn tableName="FinanceMain">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="ST#4875.2" author="Poojitha.m">
 		<addColumn tableName="FinanceMain">
 			<column name="CreatedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.3" author="Poojitha.m">
 		<addColumn tableName="FinanceMain">
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.4" author="Poojitha.m">
 		<addColumn tableName="FinanceMain">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.5" author="Poojitha.m">
 		<addColumn tableName="FinanceMain_Temp">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.6" author="Poojitha.m">
 		<addColumn tableName="FinanceMain_Temp">
 			<column name="CreatedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.7" author="Poojitha.m">
 		<addColumn tableName="FinanceMain_Temp">
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.8" author="Poojitha.m">
 		<addColumn tableName="FinanceMain_Temp">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.9" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.10" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain">
 			<column name="CreatedOn" type="datetime" />
@@ -13197,55 +13197,55 @@
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.12" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.13" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain_Temp">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.14" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain_Temp">
 			<column name="CreatedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.15" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain_Temp">
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.16" author="Poojitha.m">
 		<addColumn tableName="WifFinanceMain_Temp">
 			<column name="ApprovedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.17" author="Poojitha.m">
 		<addColumn tableName="RejectFinanceMain">
 			<column name="CreatedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.18" author="Poojitha.m">
 		<addColumn tableName="RejectFinanceMain">
 			<column name="CreatedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.19" author="Poojitha.m">
 		<addColumn tableName="RejectFinanceMain">
 			<column name="ApprovedBy" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.20" author="Poojitha.m">
 		<addColumn tableName="RejectFinanceMain">
 			<column name="ApprovedOn" type="datetime" />
@@ -13676,7 +13676,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#4875.2000_pre" author="Poojitha.M" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
@@ -14699,8 +14699,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="ST#4875.2002_pre" author="Poojitha.m" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
@@ -14830,8 +14830,8 @@
 			]]>
 		</sql>
 	</changeSet>
- 
- 	<changeSet id="ST#4876.500_pre" author="Poojitha.m" dbms="postgresql">
+
+	<changeSet id="ST#4876.500_pre" author="Poojitha.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies('plf','customers_view');
@@ -15821,7 +15821,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#61.1" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -15833,7 +15833,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#61.2" author="rahul.r">
 		<sql>
 			<![CDATA[
@@ -15844,7 +15844,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.43" author="Sravani.s">
 		<sql>
 			<![CDATA[
@@ -15872,7 +15872,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1471.10" author="Mounika.M">
 		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
 			<column name="CurDPDString" type="varchar(2400)" />
@@ -15890,7 +15890,7 @@
 	<changeSet id="ST#1471.12" author="Mounika.M" dbms="postgresql, oracle">
 		<addDefaultValue tableName="FINPFTDETAILS_SNAPSHOT" columnName="CurDPDString" defaultValue="null" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4876.20_01" author="Gopal.P" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -15903,7 +15903,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.20_02" author="Gopal.P" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -15915,7 +15915,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.20_03" author="Gopal.P" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -15927,7 +15927,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#4876.20_01" author="Gopal.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15939,7 +15939,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.20_02" author="Gopal.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15951,7 +15951,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.20_03" author="Gopal.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15963,7 +15963,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#4876.20_01" author="Gopal.P" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -15976,7 +15976,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.20_02" author="Gopal.P" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -15989,7 +15989,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.20_03" author="Gopal.P" dbms="mssql">
 		<sql>
 			<![CDATA[				
@@ -16001,8 +16001,8 @@
 				WHERE CNT = 1) T3 ON  T1.FINID = T3.FINID;
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#4876.21_01" author="Gopal.P" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -16015,7 +16015,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.21_02" author="Gopal.P" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -16028,7 +16028,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.21_03" author="Gopal.P" dbms="oracle">
 		<sql>
 			<![CDATA[
@@ -16041,7 +16041,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#4876.21_01" author="Gopal.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16053,7 +16053,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.21_02" author="Gopal.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16065,7 +16065,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.21_03" author="Gopal.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16077,8 +16077,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
- 	<changeSet id="ST#4876.21_01" author="Gopal.P" dbms="mssql">
+
+	<changeSet id="ST#4876.21_01" author="Gopal.P" dbms="mssql">
 		<sql>
 			<![CDATA[
 				UPDATE T1 SET T1.CREATEDBY = T3.LASTMNTBY,
@@ -16090,7 +16090,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.21_02" author="Gopal.P" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -16103,7 +16103,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="ST#4876.21_03" author="Gopal.P" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -16115,8 +16115,8 @@
 				WHERE CNT = 1) T3 ON  T1.CUSTID = T3.CUSTID;
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="PSD#223989" author="sailkrishna.b">
 		<sql>
 			 <![CDATA[
@@ -16132,7 +16132,7 @@
 			    ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.44" author="Sravani.S">
 		<addColumn tableName="CROSS_LOAN_KNOCKOFF_UPLOAD">
 			<column name="RecordSeq" type="bigint" />
@@ -16163,11 +16163,11 @@
 	<changeSet id="ST#1528.44.3" author="Sravani.S" dbms="postgresql, oracle">
 		<addDefaultValue tableName="CROSS_LOAN_KNOCKOFF_UPLOAD" columnName="RecordSeq" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.45" author="Sravani.S">
-		<dropColumn tableName="CROSS_LOAN_KNOCKOFF" columnName="RecordSeq"/>
+		<dropColumn tableName="CROSS_LOAN_KNOCKOFF" columnName="RecordSeq" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.46" author="gopal.p">
 		<comment>UPLOAD PATH value need to change as per client configuration</comment>
 		<sql>
@@ -16197,5 +16197,106 @@
 					);
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.14" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="EffManualAssetClass" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.15" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="EffManualAssetClass" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="ST#1469.25.16" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="NewRegProvisionPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.17" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="NewRegProvisionAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.18" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="NewIntProvisionPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.19" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="NewIntProvisionAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.20" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="NewRegProvisionPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.21" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="NewRegProvisionAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.22" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="NewIntProvisionPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.23" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="NewIntProvisionAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.24" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="OverRideProvision" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.25" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="OverRideProvision" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.26" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				UPDATE Loan_Provisions SET OverRideProvision = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.27" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				UPDATE Loan_Provisions_Temp SET OverRideProvision = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.28" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions">
+			<column name="EffManualAssetSubClass" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.29" author="nagavamsi.p">
+		<addColumn tableName="Loan_Provisions_Temp">
+			<column name="EffManualAssetSubClass" type="varchar(8)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog> 

@@ -39,6 +39,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.npa.dao.AssetSubClassCodeDAO;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
 import com.pennanttech.pff.provision.model.Provision;
@@ -54,6 +55,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 	private AccountEngineExecution engineExecution;
 	private PostingsDAO postingsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
+	private AssetSubClassCodeDAO assetSubClassCodeDAO;
 
 	@Override
 	public long prepareQueueForSOM() {
@@ -142,6 +144,11 @@ public class ProvisionServiceImpl implements ProvisionService {
 		p.setNpaClassID(prd.getNpaClassID());
 		p.setEffNpaClassCode(prd.getEffNpaClassCode());
 		p.setEffNpaSubClassCode(prd.getEffNpaSubClassCode());
+		p.setEffManualAssetClass(p.getLoanClassification());
+		p.setNewRegProvisionAmt(p.getRegProvsnAmt());
+		p.setNewRegProvisionPer(p.getRegProvsnPer());
+		p.setNewIntProvisionAmt(p.getIntProvsnAmt());
+		p.setNewIntProvisionPer(p.getIntProvsnPer());
 
 		if (newRecord || p.getNpaClassID() != prd.getNpaClassID()) {
 			p.setNpaClassChng(true);
@@ -245,7 +252,11 @@ public class ProvisionServiceImpl implements ProvisionService {
 
 	@Override
 	public Provision getProvisionDetail(String finReference) {
-		return provisionDao.getProvisionDetail(finReference);
+		Provision provision = provisionDao.getProvisionDetail(finReference);
+		if (provision != null) {
+			provision.setAssetClassCodes(assetSubClassCodeDAO.getAssetClassCodes());
+		}
+		return provision;
 	}
 
 	@Override
@@ -391,7 +402,8 @@ public class ProvisionServiceImpl implements ProvisionService {
 		return auditHeader;
 	}
 
-	private void executeProvisionRule(ProvisionRuleData provisionData, Provision p) {
+	@Override
+	public void executeProvisionRule(ProvisionRuleData provisionData, Provision p) {
 		String regProvsnRule = provisionData.getRegProvsnRule();
 		String intProvsnRule = provisionData.getIntProvsnRule();
 
@@ -647,6 +659,11 @@ public class ProvisionServiceImpl implements ProvisionService {
 	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	@Autowired
+	public void setAssetSubClassCodeDAO(AssetSubClassCodeDAO assetSubClassCodeDAO) {
+		this.assetSubClassCodeDAO = assetSubClassCodeDAO;
 	}
 
 }

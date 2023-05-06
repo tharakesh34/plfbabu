@@ -43,4 +43,6 @@ public interface ProvisionDAO {
 	Provision getProvisionById(long id, TableType tableType);
 
 	List<Date> getProvisionDates();
+
+	List<String> getAssetSubClassCodes(String code);
 }

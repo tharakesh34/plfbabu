@@ -431,6 +431,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", NpaPastDueDays = ?, EffNpaPastDueDays = ?, NpaClassID = ?, EffNpaClassID = ?");
 		sql.append(", OsPrincipal = ?, OSProfit = ?, OdPrincipal = ?, OdProfit = ?");
 		sql.append(", ProfitAccruedAndDue = ?, ProfitAccruedAndNotDue = ?");
+		sql.append(", EffManualAssetClass = ?, EffManualAssetSubClass = ?");
+		sql.append(", OverrideProvision = ?, NewRegProvisionAmt = ?, NewRegProvisionPer = ?");
+		sql.append(", NewIntProvisionAmt = ?, NewIntProvisionPer = ?");
 		sql.append(", CollateralAmt = ?, InsuranceAmt = ?, LinkedTranId = ?, ChgLinkedTranId = ?");
 		sql.append(", Version = ?, CreatedBy= ?, CreatedOn = ?, ApprovedBy = ? ");
 		sql.append(", ApprovedOn = ?, LastMntBy = ?, LastMntOn= ?, RecordStatus = ?, RoleCode = ?");
@@ -473,6 +476,13 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setBigDecimal(index++, p.getOdProfit());
 			ps.setBigDecimal(index++, p.getTotPftAccrued());
 			ps.setBigDecimal(index++, p.getTillDateSchdPri());
+			ps.setString(index++, p.getEffManualAssetClass());
+			ps.setString(index++, p.getEffManualAssetSubClass());
+			ps.setBoolean(index++, p.isOverrideProvision());
+			ps.setBigDecimal(index++, p.getNewRegProvisionAmt());
+			ps.setBigDecimal(index++, p.getNewRegProvisionPer());
+			ps.setBigDecimal(index++, p.getNewIntProvisionAmt());
+			ps.setBigDecimal(index++, p.getNewIntProvisionPer());
 			ps.setBigDecimal(index++, p.getCollateralAmt());
 			ps.setBigDecimal(index++, p.getInsuranceAmt());
 			ps.setObject(index++, p.getLinkedTranId());
@@ -515,6 +525,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", acc.Code LoanClassification , eacc.Code EffectiveClassification");
 		sql.append(", lp.PastDueDays, lp.NpaPastDueDays, lp.EffNpaPastDueDays");
 		sql.append(", lp.NpaClassId, lp.EffNpaClassId, lp.ProvisionDate");
+		sql.append(", lp.EffManualAssetClass, lp.EffManualAssetSubClass");
+		sql.append(", lp.NewRegProvisionPer, lp.NewRegProvisionAmt, lp.NewIntProvisionPer, lp.NewIntProvisionAmt");
+		sql.append(", lp.Overrideprovision");
 		sql.append(" From Loan_Provisions_Temp lp");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = lp.FinReference");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
@@ -540,6 +553,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", acc.Code LoanClassification , eacc.Code EffectiveClassification");
 		sql.append(", lp.PastDueDays, lp.NpaPastDueDays, lp.EffNpaPastDueDays");
 		sql.append(", lp.NpaClassId, lp.EffNpaClassId, lp.ProvisionDate");
+		sql.append(", lp.EffManualAssetClass, lp.EffManualAssetSubClass");
+		sql.append(", lp.NewRegProvisionPer, lp.NewRegProvisionAmt, lp.NewIntProvisionPer, lp.NewIntProvisionAmt");
+		sql.append(", lp.Overrideprovision");
 		sql.append(" From Loan_Provisions lp");
 		sql.append("  Inner Join FinanceMain fm on fm.FinReference = lp.FinReference");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
@@ -597,6 +613,13 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				p.setNpaClassID(rs.getLong("NpaClassId"));
 				p.setEffNpaClassID(rs.getLong("EffNpaClassId"));
 				p.setProvisionDate(rs.getTimestamp("ProvisionDate"));
+				p.setEffManualAssetClass(rs.getString("EffManualAssetClass"));
+				p.setEffManualAssetSubClass(rs.getString("EffManualAssetSubClass"));
+				p.setNewRegProvisionAmt(rs.getBigDecimal("NewRegProvisionAmt"));
+				p.setNewRegProvisionPer(rs.getBigDecimal("NewRegProvisionPer"));
+				p.setNewIntProvisionAmt(rs.getBigDecimal("NewIntProvisionAmt"));
+				p.setNewIntProvisionPer(rs.getBigDecimal("NewIntProvisionPer"));
+				p.setOverrideProvision(rs.getBoolean("OverrideProvision"));
 				p.setVersion(rs.getInt("Version"));
 				p.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
 				p.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -743,6 +766,20 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 			return p;
 		}
+	}
+
+	@Override
+	public List<String> getAssetSubClassCodes(String code) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select  ascc.Code  from Asset_Sub_Class_Codes ascc");
+		sql.append(" Inner Join Asset_class_codes acc on acc.Id = ascc.AssetClassId");
+		sql.append(" Where acc.Code = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return rs.getString(1);
+		}, code);
 	}
 
 }

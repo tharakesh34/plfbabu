@@ -20,6 +20,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
@@ -31,6 +32,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -43,7 +45,9 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.provision.dao.ProvisionDAO;
 import com.pennanttech.pff.provision.model.Provision;
+import com.pennanttech.pff.provision.model.ProvisionRuleData;
 import com.pennanttech.pff.provision.service.ProvisionService;
 
 public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
@@ -82,8 +86,15 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	private transient ManualProvisioningListCtrl manualProvisioningListCtrl;
 	private transient ProvisionService provisionService;
 	private CustomerDetailsService customerDetailsService;
-
+	private Combobox effManualAssetClassification;
+	private Combobox effManualAssetSubClassification;
+	protected Decimalbox newProvisionRegPercentage;
+	protected CurrencyBox newProvisionRegAmount;
+	protected Decimalbox newProvisionIntPercentage;
+	protected CurrencyBox newProvisionIntAmount;
+	protected Checkbox overrideProvision;
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
+	private ProvisionDAO provisionDao;
 
 	/**
 	 * default constructor.<br>
@@ -185,7 +196,12 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.regProvisionAmount.setProperties(false, finFormatter);
 		this.intProvisionAmount.setProperties(false, finFormatter);
 		this.manProvisionAmount.setProperties(false, finFormatter);
-
+		this.effManualAssetClassification.setMaxlength(20);
+		this.effManualAssetSubClassification.setMaxlength(20);
+		this.newProvisionRegPercentage.setMaxlength(8);
+		this.newProvisionRegAmount.setProperties(false, finFormatter);
+		this.newProvisionIntPercentage.setMaxlength(8);
+		this.newProvisionIntAmount.setProperties(false, finFormatter);
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -309,6 +325,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		BigDecimal manProvAmt = provision.getManProvsnAmt();
 
 		this.manualProvision.setChecked(manProv);
+		this.overrideProvision.setChecked(provision.isOverrideProvision());
 		this.manProvisionPercentage.setValue(manProvPer);
 		this.manProvisionAmount.setValue(PennantApplicationUtil.formateAmount(manProvAmt, format));
 
@@ -320,6 +337,25 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.amanProvisionAmount.setVisible(true);
 		this.amanProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(manProvAmt, 2)));
 		this.recordStatus.setValue(provision.getRecordStatus());
+
+		List<ValueLabel> acc = new ArrayList<>();
+
+		for (String assetClassCodes : provision.getAssetClassCodes()) {
+			ValueLabel codes = new ValueLabel();
+			codes.setLabel(assetClassCodes);
+			codes.setValue(assetClassCodes);
+			acc.add(codes);
+		}
+
+		this.effManualAssetClassification.setValue(provision.getEffManualAssetClass());
+		fillComboBox(this.effManualAssetClassification, provision.getEffManualAssetClass(), acc, "");
+		this.effManualAssetSubClassification.setValue(provision.getEffManualAssetSubClass());
+		this.newProvisionRegPercentage.setValue(provision.getNewRegProvisionPer());
+		this.newProvisionRegAmount
+				.setValue(PennantApplicationUtil.formateAmount(provision.getNewRegProvisionAmt(), format));
+		this.newProvisionIntPercentage.setValue(provision.getNewIntProvisionPer());
+		this.newProvisionIntAmount
+				.setValue(PennantApplicationUtil.formateAmount(provision.getNewIntProvisionAmt(), format));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -333,14 +369,54 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.ENTERING);
 
 		List<WrongValueException> wve = new ArrayList<>();
-
 		try {
 			provision.setManualProvision(this.manualProvision.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		if (this.manualProvision.isChecked()) {
+		try {
+			provision.setOverrideProvision(this.overrideProvision.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			provision.setEffManualAssetClass(this.effManualAssetClassification.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			provision.setEffManualAssetSubClass(this.effManualAssetSubClassification.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			provision.setNewRegProvisionPer(this.newProvisionRegPercentage.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			provision.setNewRegProvisionAmt(this.newProvisionRegAmount.getActualValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			provision.setNewIntProvisionPer(this.newProvisionIntPercentage.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			provision.setNewIntProvisionAmt(this.newProvisionIntAmount.getActualValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		if (this.overrideProvision.isChecked()) {
 			try {
 				provision.setManProvsnPer(this.manProvisionPercentage.getValue());
 			} catch (WrongValueException we) {
@@ -352,7 +428,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 				wve.add(we);
 			}
 		} else {
-			provision.setManualProvision(false);
+			provision.setOverrideProvision(false);
 			provision.setManProvsnPer(BigDecimal.ZERO);
 			provision.setManProvsnAmt(BigDecimal.ZERO);
 		}
@@ -651,15 +727,44 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	public void onCheck$manualProvision(Event event) throws Exception {
 		if (this.manualProvision.isChecked()) {
-			this.manProvisionPercentage.setDisabled(false);
-			this.manProvisionPercentage.setReadonly(false);
+			this.newProvisionIntPercentage.setDisabled(false);
+			this.newProvisionIntPercentage.setReadonly(false);
+			this.newProvisionRegPercentage.setDisabled(false);
+			this.newProvisionRegPercentage.setReadonly(false);
+			this.newProvisionRegAmount.setDisabled(false);
+			this.newProvisionRegAmount.setReadonly(false);
+			this.newProvisionIntAmount.setDisabled(false);
+			this.newProvisionIntAmount.setReadonly(false);
+			this.effManualAssetClassification.setDisabled(false);
+			this.effManualAssetSubClassification.setDisabled(false);
+
 		} else {
 			this.manProvisionPercentage.setValue(BigDecimal.ZERO);
 			this.manProvisionAmount.setValue(BigDecimal.ZERO);
 			this.amanProvisionAmount.setValue(String.valueOf(BigDecimal.ZERO));
 			this.amanProvisionAmount.setVisible(false);
+			this.newProvisionIntPercentage.setDisabled(true);
+			this.newProvisionIntPercentage.setReadonly(true);
+			this.newProvisionRegPercentage.setDisabled(true);
+			this.newProvisionRegPercentage.setReadonly(true);
+			this.newProvisionRegAmount.setDisabled(true);
+			this.newProvisionIntAmount.setDisabled(true);
+			this.effManualAssetClassification.setDisabled(true);
+			this.effManualAssetSubClassification.setDisabled(true);
+		}
+	}
+
+	public void onCheck$overrideProvision(Event event) throws Exception {
+		if (this.overrideProvision.isChecked()) {
+			this.manProvisionPercentage.setDisabled(false);
+			this.manProvisionPercentage.setReadonly(false);
+			this.manProvisionAmount.setDisabled(false);
+			this.manProvisionAmount.setReadonly(false);
+		} else {
 			this.manProvisionPercentage.setDisabled(true);
 			this.manProvisionPercentage.setReadonly(true);
+			this.manProvisionAmount.setDisabled(true);
+			this.manProvisionAmount.setReadonly(true);
 		}
 	}
 
@@ -684,6 +789,40 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.amanProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(amount, format)));
 	}
 
+	public void onSelect$effManualAssetClassification(Event event) throws Exception {
+		String stage = effManualAssetClassification.getSelectedItem().getLabel();
+		this.newProvisionIntPercentage.setValue("0");
+		this.newProvisionIntPercentage.setErrorMessage("");
+		ProvisionRuleData prd = provisionDao.getProvisionData(provision.getFinReference());
+		prd.setEffNpaClassCode(stage);
+		prd.setNpaClassCode(stage);
+		prd.setNpaSubClassCode(stage);
+		prd.setEffNpaSubClassCode(stage);
+		prd.setSecured(true);
+		List<String> assetSubClassCodes = provisionDao.getAssetSubClassCodes(stage);
+		List<ValueLabel> scc = new ArrayList<>();
+		for (String asc : assetSubClassCodes) {
+			ValueLabel subclassCodes = new ValueLabel();
+			subclassCodes.setLabel(asc);
+			subclassCodes.setValue(asc);
+			scc.add(subclassCodes);
+		}
+		this.effManualAssetSubClassification.setValue(stage);
+		fillComboBox(this.effManualAssetSubClassification, stage, scc, "");
+		provisionService.executeProvisionRule(prd, provision);
+
+		BigDecimal regperc = provision.getRegProvsnPer();
+		BigDecimal intperc = provision.getIntProvsnPer();
+
+		this.newProvisionIntAmount.setValue(provision.getIntProvsnAmt());
+		this.newProvisionIntAmount.setVisible(true);
+		this.newProvisionIntPercentage.setValue(intperc);
+		this.newProvisionRegPercentage.setValue(regperc);
+		this.newProvisionRegAmount.setValue(provision.getRegProvsnAmt());
+		this.newProvisionRegAmount.setVisible(true);
+
+	}
+
 	@Autowired
 	public void setProvisionService(ProvisionService provisionService) {
 		this.provisionService = provisionService;
@@ -692,6 +831,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setProvisionDao(ProvisionDAO provisionDao) {
+		this.provisionDao = provisionDao;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -52,8 +53,16 @@ public class Provision extends NpaProvisionStage {
 	private String custShrtName;
 	private Provision befImage;
 	private LoggedInUser userDetails;
+	private List<String> assetClassCodes;
+	private String effManualAssetClass;
+	private String effManualAssetSubClass;
+	private BigDecimal newRegProvisionPer = BigDecimal.ZERO;
+	private BigDecimal newRegProvisionAmt = BigDecimal.ZERO;
+	private BigDecimal newIntProvisionPer = BigDecimal.ZERO;
+	private BigDecimal newIntProvisionAmt = BigDecimal.ZERO;
 
 	private boolean newRecord = false;
+	private boolean overrideProvision = false;
 
 	public Provision() {
 		super();
@@ -97,6 +106,30 @@ public class Provision extends NpaProvisionStage {
 		excludeFields.add("linkedLoan");
 		excludeFields.add("effPastDueDays");
 		excludeFields.add("effPastDueDate");
+		excludeFields.add("effManualAssetClass");
+		excludeFields.add("effManualAssetSubClass");
+		excludeFields.add("newRegProvisionPer");
+		excludeFields.add("newRegProvisionAmt");
+		excludeFields.add("newIntProvisionPer");
+		excludeFields.add("newIntProvisionAmt");
+		excludeFields.add("custCoreBank");
+		excludeFields.add("assetClassCodes");
+		excludeFields.add("id");
+		excludeFields.add("osPrincipal");
+		excludeFields.add("osProfit");
+		excludeFields.add("pastDueDays");
+		excludeFields.add("derivedPastDueDate");
+		excludeFields.add("effNpaPastDueDays");
+		excludeFields.add("emiRe");
+		excludeFields.add("instIncome");
+		excludeFields.add("futurePri");
+		excludeFields.add("prvEmiRe");
+		excludeFields.add("prvInstIncome");
+		excludeFields.add("prvFuturePri");
+		excludeFields.add("selfEffected");
+		excludeFields.add("writeOffLoan");
+		excludeFields.add("underSettlement");
+		excludeFields.add("overrideProvision");
 
 		return excludeFields;
 	}
@@ -431,6 +464,70 @@ public class Provision extends NpaProvisionStage {
 
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
+	}
+
+	public BigDecimal getNewRegProvisionPer() {
+		return newRegProvisionPer;
+	}
+
+	public void setNewRegProvisionPer(BigDecimal newRegProvisionPer) {
+		this.newRegProvisionPer = newRegProvisionPer;
+	}
+
+	public BigDecimal getNewRegProvisionAmt() {
+		return newRegProvisionAmt;
+	}
+
+	public void setNewRegProvisionAmt(BigDecimal newRegProvisionAmt) {
+		this.newRegProvisionAmt = newRegProvisionAmt;
+	}
+
+	public BigDecimal getNewIntProvisionPer() {
+		return newIntProvisionPer;
+	}
+
+	public void setNewIntProvisionPer(BigDecimal newIntProvisionPer) {
+		this.newIntProvisionPer = newIntProvisionPer;
+	}
+
+	public BigDecimal getNewIntProvisionAmt() {
+		return newIntProvisionAmt;
+	}
+
+	public void setNewIntProvisionAmt(BigDecimal newIntProvisionAmt) {
+		this.newIntProvisionAmt = newIntProvisionAmt;
+	}
+
+	public boolean isOverrideProvision() {
+		return overrideProvision;
+	}
+
+	public void setOverrideProvision(boolean overrideProvision) {
+		this.overrideProvision = overrideProvision;
+	}
+
+	public List<String> getAssetClassCodes() {
+		return assetClassCodes;
+	}
+
+	public void setAssetClassCodes(List<String> assetClassCodes) {
+		this.assetClassCodes = assetClassCodes;
+	}
+
+	public String getEffManualAssetClass() {
+		return effManualAssetClass;
+	}
+
+	public void setEffManualAssetClass(String effManualAssetClass) {
+		this.effManualAssetClass = effManualAssetClass;
+	}
+
+	public String getEffManualAssetSubClass() {
+		return effManualAssetSubClass;
+	}
+
+	public void setEffManualAssetSubClass(String effManualAssetSubClass) {
+		this.effManualAssetSubClass = effManualAssetSubClass;
 	}
 
 }

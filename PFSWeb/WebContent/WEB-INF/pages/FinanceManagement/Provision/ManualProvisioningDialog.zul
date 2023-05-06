@@ -49,10 +49,10 @@
 						<caption label="${c:l('finSummaryDetails')}" />
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
 							</columns>
 							<rows>
 								<row id="row0">
@@ -124,10 +124,10 @@
 						<caption label="${c:l('assetclassification')}" />
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
 							</columns>
 							<rows>
 								<row>
@@ -148,10 +148,10 @@
 						<caption label="${c:l('provsion')}" />
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
 							</columns>
 							<rows>
 								<row>
@@ -178,17 +178,48 @@
 						<caption label="${c:l('manualProvsion')}" />
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
+								<column width="20%" />
+								<column width="30%" />
+								<column width="20%" />
+								<column width="30%" />
 							</columns>
 							<rows>
 								<row>
 									<label id="label_ManualProvision"
-										value="${c:l('label_ManualProvisioningDialog_ManualProv.value')}" />
-
+										value="${c:l('label_ManualProvisioningDialog_AllowManualProv.value')}" />
 									<checkbox id="manualProvision" checked="false" />
+								</row>
+								<row>
+									<label id="label_EffManualAssetClassification"
+										value="${c:l('label_ManualProvisioningDialog_EffManualAssetClassification.value')}" />
+									<combobox id="effManualAssetClassification" width="200px" />
+									<label id="label_EffManualAssetSubClassification"
+										value="${c:l('label_ManualProvisioningDialog_EffManualAssetSubClassification.value')}" />
+									<combobox id="effManualAssetSubClassification" width="200px" />
+								</row>
+								<row>
+									<label id="label_ProvisionRegPercentage"
+										value="${c:l('label_ManualProvisioningDialog_ProvisionRegPercentage.value')}" />
+
+									<decimalbox id="newProvisionRegPercentage" width="175px" disabled="true" />
+									<label id="label_ProvisionRegAmount"
+										value="${c:l('label_ManualProvisioningDialog_ProvisionRegAmount.value')}" />
+									<currencyBox id="newProvisionRegAmount" width="100px" disabled="true" />
+								</row>
+								<row>
+									<label id="label_ProvisionIntPercentage"
+										value="${c:l('label_ManualProvisioningDialog_ProvisionIntPercentage.value')}" />
+										
+									<decimalbox id="newProvisionIntPercentage" width="175px"  disabled="true" />
+									<label id="label_ProvisionIntAmount"
+										value="${c:l('label_ManualProvisioningDialog_ProvisionIntAmount.value')}" />
+
+									<currencyBox id="newProvisionIntAmount" width="100px" disabled="true" />
+								</row>
+								<row>
+									<label id="label_OverrideProvision"
+										value="${c:l('label_ManualProvisioningDialog_OverrideProvision.value')}" />
+									<checkbox id="overrideProvision" checked="false" />
 								</row>
 								<row>
 									<cell>

@@ -1,5 +1,7 @@
 package com.pennanttech.pff.npa.dao.impl;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
@@ -203,7 +205,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 		sql.append(type.getSuffix());
 		sql.append(" Where Code = ? and  AssetClassId = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), code, assetClassId) > 0;
 	}
@@ -219,7 +221,7 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 		sql.append(" Inner Join Asset_Sub_Class_Codes Ascc on Ascc.Id = Acsd.SubClassID");
 		sql.append(" Where Ascc.Code = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), code) > 0;
 	}
@@ -231,9 +233,18 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 		sql.append(type.getSuffix());
 		sql.append(" Where Code = ? ");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), code) > 0;
+	}
+
+	@Override
+	public List<String> getAssetClassCodes() {
+		String sql = "Select Code From Asset_Class_Codes";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getString(1));
 	}
 
 }

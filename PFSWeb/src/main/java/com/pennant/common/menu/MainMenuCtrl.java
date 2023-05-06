@@ -256,7 +256,6 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_AssetClassSetup":
 		case "menu_Item_NPA_Report":
 			return ImplementationConstants.ALLOW_NPA;
-		case "menu_Item_ManualProvisioning":
 		case "menu_Item_Provision_Report":
 			return ImplementationConstants.ALLOW_PROVISION;
 		case "menu_Item_LoanDownSizing":
@@ -349,8 +348,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		LoggedInUser user = userWorkspace.getLoggedInUser();
 
-		if (user.getLogonFromTime() != null && DateUtil.compareTime(new Date(System.currentTimeMillis()),
-				user.getLogonFromTime(), false) == -1) {
+		if (user.getLogonFromTime() != null
+				&& DateUtil.compareTime(new Date(System.currentTimeMillis()), user.getLogonFromTime(), false) == -1) {
 			MessageUtil.showInfo("OPS_NOT_ALLOWED_BEFORE",
 					DateUtil.format(user.getLogonFromTime(), DateFormat.SHORT_TIME));
 			return;
