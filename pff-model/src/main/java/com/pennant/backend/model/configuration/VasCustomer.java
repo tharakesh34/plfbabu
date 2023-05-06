@@ -1,6 +1,10 @@
 package com.pennant.backend.model.configuration;
 
-public class VasCustomer {
+import java.io.Serializable;
+
+public class VasCustomer implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private long customerId;
 	private String custCIF;
 	private String custShrtName;
