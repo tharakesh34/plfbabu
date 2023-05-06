@@ -81,6 +81,7 @@ import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.controller.CreateFinanceController;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -580,7 +581,7 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 			logger.debug(Literal.LEAVING);
 
 			return fd;
-		} catch (Exception e) {
+		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 			fd = getFaultResponse();
 			return fd;
