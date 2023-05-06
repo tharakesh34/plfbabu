@@ -162,7 +162,7 @@
 										<label id="label_AccountingSetDialog_AccountSetCode" value="${c:l('label_AccountingSetDialog_AccountSetCode.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="accountSetCode" maxlength="8" width="150px" readonly="true" />
+											<textbox id="accountSetCode" maxlength="10" width="150px" readonly="true" />
 										</hbox>
 										<label id="label_AccountingSetDialog_AccountSetCodeName" value="${c:l('label_AccountingSetDialog_AccountSetCodeName.value')}" />
 										<hbox>
