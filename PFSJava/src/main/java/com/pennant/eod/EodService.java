@@ -40,6 +40,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.core.loan.util.DPDStringCalculator;
+import com.pennant.pff.extension.DPDExtension;
 import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -337,13 +338,12 @@ public class EodService {
 			assetClassificationService.process(custEODEvent);
 		}
 
-		int dpdStringCal = eventProperties.getDpdStringCal();
 		if ((custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
-				|| eventProperties.isEomOnEOD()) && dpdStringCal == 0) {
+				|| eventProperties.isEomOnEOD()) && DPDExtension.DPD_STRING_CALCULATION_ON == 0) {
 			DPDStringCalculator.process(custEODEvent, true);
 		}
 
-		if (dpdStringCal == 1) {
+		if (DPDExtension.DPD_STRING_CALCULATION_ON == 1) {
 			DPDStringCalculator.process(custEODEvent, false);
 		}
 	}

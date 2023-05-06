@@ -4,24 +4,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.FrequencyUtil;
-import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.app.util.LookupMethods;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennant.pff.extension.DPDExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.core.util.SchdUtil;
 
 public class DPDStringCalculator {
-	private static Logger logger = LogManager.getLogger(DPDStringCalculator.class);
-
 	private DPDStringCalculator() {
 		super();
 	}
@@ -38,85 +32,61 @@ public class DPDStringCalculator {
 	 * @param monthEnd
 	 */
 	public static void process(CustEODEvent custEODEvent, boolean monthEnd) {
-		logger.debug(Literal.ENTERING);
-
-		EventProperties eventProperties = custEODEvent.getEventProperties();
-
-		int dpdStringLength = eventProperties.getDpdStringLength();
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
-		Date eodDate = custEODEvent.getEodDate();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 
-			logger.info("DPD Calculation is proccessing for the Loan {}", fm.getFinReference());
-
 			List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 			FinanceProfitDetail fpd = finEODEvent.getFinProfitDetail();
 
-			String dpdString = getDpdString(monthEnd, eodDate, fm, schedules, fpd.getCurODDays());
-			fpd.setCurDPDString(deriveDPDString(dpdStringLength, fpd.getCurDPDString(), dpdString));
+			String dpdString = getDpdString(monthEnd, fm, schedules);
+			fpd.setCurDPDString(deriveDPDString(fpd.getCurDPDString(), dpdString));
 
-			logger.info("DPD Calculation is proccessed for the Loan {} and Calculated DPD String is {}",
-					fm.getFinReference(), fpd.getCurDPDString());
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
-	private static String deriveDPDString(int dpdStringLength, String curDPDStr, String dpdString) {
+	private static String deriveDPDString(String curDPDStr, String dpdString) {
 		if (StringUtils.isEmpty(dpdString)) {
-			logger.info("Calculated DPD is Empty");
 			return curDPDStr;
 		}
 
-		if (StringUtils.isNotEmpty(curDPDStr) && curDPDStr.length() == dpdStringLength) {
+		if (StringUtils.isNotEmpty(curDPDStr) && curDPDStr.length() == DPDExtension.DPD_STRING_LENGTH) {
 			curDPDStr = curDPDStr.substring(1);
 		}
 
 		if (StringUtils.isEmpty(curDPDStr)) {
-			logger.info("Calculated DPD is Empty");
 			return dpdString;
 		}
 
 		return curDPDStr.concat(dpdString);
 	}
 
-	private static String getDpdString(boolean monthEnd, Date eodDate, FinanceMain fm,
-			List<FinanceScheduleDetail> schedules, int curduedays) {
+	private static String getDpdString(boolean monthEnd, FinanceMain fm, List<FinanceScheduleDetail> schedules) {
+		int dueBucket = fm.getDueBucket();
+
 		if (monthEnd) {
-			if (curduedays == 0) {
+			if (dueBucket == 0) {
 				return null;
 			}
-			return getDueBucket((int) Math.ceil((curduedays / 30.0)));
+			return getDueBucket(dueBucket);
 		}
 
-		String frqCode = fm.getRepayFrq().substring(0, 1);
-
 		int frequencyDay = FrequencyUtil.getIntFrequencyDay(fm.getRepayFrq());
-		int dueDay = DateUtil.getDay(fm.getEventProperties().getBusinessDate());
+		Date nextBusinessDate = fm.getEventProperties().getBusinessDate();
+		int dueDay = DateUtil.getDay(nextBusinessDate);
 
-		if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode) || FrequencyCodeTypes.FRQ_WEEKLY.equals(frqCode)
-				|| FrequencyCodeTypes.FRQ_FORTNIGHTLY.equals(frqCode)
-				|| FrequencyCodeTypes.FRQ_BIWEEKLY.equals(frqCode)) {
-			if (schedules.stream()
-					.anyMatch(s -> s.getSchDate().compareTo(fm.getEventProperties().getBusinessDate()) == 0)) {
-				frequencyDay = dueDay;
-			}
+		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0) {
+			frequencyDay = dueDay;
 		}
 
 		if (frequencyDay == dueDay) {
-			int pastDueDays = 0;
-			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
-				if (curduedays == 0) {
-					return null;
-				}
-				pastDueDays = curduedays;
-			} else {
-				pastDueDays = SchdUtil.getPastDueDays(schedules, eodDate);
+			if (dueBucket == 0) {
+				return null;
 			}
 
-			return getDueBucket((int) Math.ceil((pastDueDays / 30.0)));
+			return getDueBucket(dueBucket);
 		}
 
 		return null;

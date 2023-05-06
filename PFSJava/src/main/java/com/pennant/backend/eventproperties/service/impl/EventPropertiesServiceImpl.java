@@ -15,7 +15,6 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.extension.DPDExtension;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -148,10 +147,7 @@ public class EventPropertiesServiceImpl implements EventPropertiesService {
 		ep.setAutoRefundCheckDPD(SysParamUtil.getValueAsInt(SMTParameterConstants.AUTO_REFUND_HOLD_DPD) - 1);
 		ep.setAutoRefundOverdueCheck(SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_OVERDUE_CHECK));
 		ep.setAutoRefundByCheque(SysParamUtil.isAllowed(SMTParameterConstants.AUTO_REFUND_THROUGH_CHEQUE));
-
 		ep.setAllowOTSOnEOD(SysParamUtil.isAllowed(SMTParameterConstants.ALW_OTS_ON_EOD));
-		ep.setDpdStringCal(DPDExtension.DPD_STRING_CALCULATION_ON);
-		ep.setDpdStringLength(DPDExtension.DPD_STRING_LENGTH);
 
 		ep.setParameterLoaded(true);
 
