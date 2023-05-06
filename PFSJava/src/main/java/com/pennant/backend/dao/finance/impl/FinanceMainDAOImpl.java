@@ -1541,7 +1541,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(++index, fm.getFinPurpose());
 				ps.setBoolean(++index, fm.isDeviationApproval());
 				ps.setString(++index, fm.getFinPreApprovedRef());
-				ps.setLong(++index, fm.getMandateID());
+				ps.setObject(++index, fm.getMandateID());
 				ps.setString(++index, fm.getFinStatus());
 				ps.setString(++index, fm.getFinStsReason());
 				ps.setLong(++index, fm.getInitiateUser());
@@ -1627,7 +1627,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(++index, fm.getVerification());
 				ps.setString(++index, fm.getSourcingBranch());
 				ps.setString(++index, fm.getSourChannelCategory());
-				ps.setLong(++index, fm.getAsmName());
+				ps.setObject(++index, fm.getAsmName());
 				ps.setString(++index, fm.getOfferId());
 				ps.setBoolean(++index, fm.isAlwLoanSplit());
 				ps.setBoolean(++index, fm.isAlwGrcAdj());
