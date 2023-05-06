@@ -7338,6 +7338,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				for (FinFeeDetail fee : fd.getFinScheduleData().getFinFeeDetailList()) {
 					actualAmbnt = actualAmbnt.add(fee.getActualAmount());
 					netfinamnt = fm.getFinAmount().subtract(actualAmbnt);
+					netfinamnt = netfinamnt.subtract(fm.getDownPaySupl());
 				}
 
 				fm.setDeductFeeDisb(actualAmbnt);

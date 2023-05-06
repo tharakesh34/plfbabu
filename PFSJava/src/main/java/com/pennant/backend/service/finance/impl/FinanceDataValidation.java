@@ -3921,6 +3921,13 @@ public class FinanceDataValidation {
 			fm.setAdvStage(finType.getAdvStage());
 		}
 
+		if (!schdData.getFinanceType().isAdvIntersetReq() && !"#".equals(fm.getAdvType())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = " Advance Type not configured in Loan Type";
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+			return;
+		}
+
 		if (finType.isAlwHybridRate()) {
 			if (fm.getFixedRateTenor() < 0) {
 				String[] valueParm = new String[2];

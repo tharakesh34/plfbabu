@@ -921,8 +921,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			singletDisbursment = disbursement.getDisbAmount();
 
 			if (disbDate.compareTo(fm.getFinStartDate()) == 0 && disbursement.getDisbSeq() == 1) {
-				singletDisbursment = singletDisbursment.subtract(fm.getDownPayment());
+				singletDisbursment = singletDisbursment.subtract(fm.getDownPaySupl());
 				singletDisbursment = singletDisbursment.subtract(fm.getDeductFeeDisb());
+				singletDisbursment = singletDisbursment.subtract(feeAmount);
 				if (FinanceConstants.BPI_DISBURSMENT.equals(fm.getBpiTreatment())) {
 					singletDisbursment = singletDisbursment.subtract(fm.getBpiAmount());
 				}
@@ -978,7 +979,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				// check is first disbursement to make sure the we deducted from first disbursement date
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 						&& financeDisbursement.getDisbSeq() == 1) {
-					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+					totdisbAmt = totdisbAmt.subtract(main.getDownPaySupl());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());

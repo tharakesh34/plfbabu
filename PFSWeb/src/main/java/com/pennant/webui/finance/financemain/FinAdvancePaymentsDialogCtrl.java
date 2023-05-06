@@ -1117,7 +1117,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						&& curDisb.getDisbSeq() == 1) {
 					otherExp = otherExp.add(financeMain.getDeductFeeDisb());
 
-					disbAmount = disbAmount.subtract(financeMain.getDownPayment());
+					disbAmount = disbAmount.subtract(financeMain.getDownPaySupl());
 					disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
 					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment())
 							.equals(FinanceConstants.BPI_DISBURSMENT)) {

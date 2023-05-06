@@ -57,7 +57,9 @@ public class LienServiceImpl implements LienService {
 			headerID = lienHeaderDAO.save(lh);
 		} else {
 			headerID = lh.getId();
-			if (!(fm.getFinRepayMethod().equals(fm.getBefImage().getFinRepayMethod())
+			FinanceMain fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
+
+			if (!(fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
 					&& InstrumentType.isSI(fm.getFinRepayMethod()))) {
 				lh.setLienStatus(false);
 				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));

@@ -755,7 +755,7 @@ public class DisbursementInstCtrl {
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 						&& financeDisbursement.getDisbSeq() == 1) {
 
-					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+					totdisbAmt = totdisbAmt.subtract(main.getDownPaySupl());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
@@ -784,7 +784,7 @@ public class DisbursementInstCtrl {
 		if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 				&& financeDisbursement.getDisbSeq() == 1) {
 
-			totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+			totdisbAmt = totdisbAmt.subtract(main.getDownPaySupl());
 			totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 			if (FinanceConstants.BPI_DISBURSMENT.equals(main.getBpiTreatment())) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
