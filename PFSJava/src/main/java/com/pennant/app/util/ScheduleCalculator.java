@@ -394,6 +394,13 @@ public class ScheduleCalculator {
 			setFinScheduleData(procGetCalManualSchd(finScheduleData));
 		}
 
+		/* Revised Computation : Apply Goal seek to change the Total Interest to desired profit by changing the ROI */
+		if (desiredPftAmount.compareTo(BigDecimal.ZERO) > 0 && PROC_GETCALSCHD.equals(method)
+				&& PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
+			finScheduleData = calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
+					desiredPftAmount, fm.getFinStartDate(), fm.getMaturityDate(), true);
+		}
+
 		logger.debug("Leaving");
 	}
 

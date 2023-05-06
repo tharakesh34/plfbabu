@@ -459,7 +459,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				} else {
 					schdData = ScheduleGenerator.getNewSchd(schdData);
 					if (schedules.size() != 0) {
-						schdData = ScheduleCalculator.getCalSchd(schdData, BigDecimal.ZERO);
+						schdData = ScheduleCalculator.getCalSchd(schdData, fm.getDesiredProfit());
 						schdData.setSchduleGenerated(true);
 						// process planned EMI details
 						doProcessPlanEMIHDays(schdData);

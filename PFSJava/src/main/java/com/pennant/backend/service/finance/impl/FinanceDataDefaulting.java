@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -74,6 +75,8 @@ public class FinanceDataDefaulting {
 		// Get the logged in users one time and set to avoid multiple calls
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		fm.setUserDetails(userDetails);
+		fm.setCreatedBy(userDetails.getUserId());
+		fm.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 
 		if (!PennantConstants.VLD_CRT_SCHD.equals(vldGroup) || StringUtils.isNotEmpty(fm.getCustCIF())) {
 			if (StringUtils.isNotBlank(coreBankId)) {

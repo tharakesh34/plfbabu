@@ -437,6 +437,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date recalToDate;
 	private String recalType;
 	private String recalSchdMethod;
+	@XmlElement
 	private BigDecimal desiredProfit = BigDecimal.ZERO;
 	private String rvwRateApplFor;
 	private boolean lovDescAdjClosingBal;
