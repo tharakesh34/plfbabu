@@ -296,7 +296,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		fm.setVersion(1);
 		fm.setLastMntBy(userDetails.getUserId());
 		fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		fm.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
+		fm.setFinStatus(FinanceConstants.FINSTSRSN_SYSTEM);
 
 		fm.setMaturityDate(fm.getCalMaturity());
 		fm.setNumberOfTerms(fm.getCalTerms());

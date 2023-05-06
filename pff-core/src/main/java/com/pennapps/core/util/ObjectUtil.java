@@ -100,7 +100,7 @@ public class ObjectUtil {
 	}
 
 	public static <T> Object valueAsObject(MapSqlParameterSource parameter, T object) {
-		ObjectMapper objectMapper = JsonMapperUtil.objectMapper(DateFormat.LONG_DATE.getPattern());
+		ObjectMapper objectMapper = JsonMapperUtil.objectMapper("E MMM dd HH:mm:ss Z yyyy");
 
 		JSONObject jsonObject = new JSONObject(parameter);
 

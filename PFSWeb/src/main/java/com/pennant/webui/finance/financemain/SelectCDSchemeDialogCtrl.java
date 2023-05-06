@@ -464,8 +464,7 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// Fetch & set Default statuses f
 			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
 				financeDetail.getFinScheduleData().getFinanceMain().setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
-				financeDetail.getFinScheduleData().getFinanceMain()
-						.setFinStatus(this.financeDetailService.getCustStatusByMinDueDays());
+				financeDetail.getFinScheduleData().getFinanceMain().setFinStatus(FinanceConstants.FINSTSRSN_SYSTEM);
 			}
 		} catch (Exception e) {
 			logger.debug(e);

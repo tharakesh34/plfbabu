@@ -1212,7 +1212,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		fm.setVersion(1);
 		fm.setFinIsActive(true);
-		fm.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
+		fm.setFinStatus(FinanceConstants.FINSTSRSN_SYSTEM);
 
 		if (fm.getMaturityDate() == null) {
 			fm.setMaturityDate(fm.getCalMaturity());
