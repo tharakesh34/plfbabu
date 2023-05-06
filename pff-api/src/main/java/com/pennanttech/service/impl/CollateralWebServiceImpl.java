@@ -336,6 +336,10 @@ public class CollateralWebServiceImpl extends ExtendedTestClass
 	private void doBasicMandatoryValidations(List<CoOwnerDetail> coOwnerDetail) {
 		List<ServiceExceptionDetails> exceptions = new ArrayList<>();
 
+		if (CollectionUtils.isEmpty(coOwnerDetail)) {
+			return;
+		}
+
 		coOwnerDetail.stream().forEach(cd -> {
 			ServiceExceptionDetails error = new ServiceExceptionDetails();
 			if ((cd.isBankCustomer() && StringUtils.isEmpty(cd.getCoOwnerCIF()))
