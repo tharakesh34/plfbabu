@@ -1054,7 +1054,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// Fetch & set Default statuses f
 			if (fm != null) {
 				fm.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
-				fm.setFinStatus(this.financeDetailService.getCustStatusByMinDueDays());
+				fm.setFinStatus(FinanceConstants.FINSTSRSN_SYSTEM);
 			}
 		} catch (Exception e) {
 			logger.debug(e);

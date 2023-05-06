@@ -119,7 +119,7 @@ public class FinanceConstants {
 	public static final String REF_DIVISION_CORP = "WB";
 
 	// Finance Status Reason Codes
-	public static final String FINSTSRSN_SYSTEM = "S";
+	public static final String FINSTSRSN_SYSTEM = "0";
 	public static final String FINSTSRSN_MANUAL = "M";
 	public static final String FINSTSRSN_OTHER = "O";
 
