@@ -29,7 +29,9 @@ public enum UploadTypes {
 
 	BLOCK_AUTO_GEN_LTR("Block Auto Letter Generate Upload Details Screen"),
 
-	GENERATE_LETTER("GenerateLetter Upload Details Screen");
+	GENERATE_LETTER("GenerateLetter Upload Details Screen"),
+
+	COURIER_DETAIL("Letter Courier Details Upload Screen");
 
 	private String description;
 

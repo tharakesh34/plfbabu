@@ -13338,4 +13338,12 @@
 		
 	<bean id="bulkGenerateLetterUploadValidateRecord"
 		class="com.pennant.pff.noc.service.impl.BulkGenerateLetterUploadValidateRecord" />
+		
+	<bean id="courierDetailUploadDAO" class="com.pennant.pff.courierdetailupload.dao.impl.CourierDetailUploadDAOImpl"
+	 parent="sequenceDao"/>	
+	 
+	<bean id="courierDetailUploadService" class="com.pennant.pff.courierdetailupload.service.impl.CourierDetailUploadServiceImpl"
+	 parent="aUploadService"/>
+	 
+	 <bean id="courierDetailUploadValidateRecord" class="com.pennant.pff.courierdetailupload.service.impl.CourierDetailUploadValidateRecord"/>
 </beans>

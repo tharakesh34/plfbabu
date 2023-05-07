@@ -6202,4 +6202,6 @@
 	<bean id="bulkGenerateLetterUploadListCtrl" class="com.pennant.pff.noc.upload.list.BulkGenerateLetterUploadListCtrl"
 	parent="uploadList" />
 	
+	<bean id="courierDetailUploadListCtrl" class="com.pennant.pff.courierdetails.upload.list.CourierDetailUploadListCtrl" 
+	parent="uploadList" />
 </beans>
