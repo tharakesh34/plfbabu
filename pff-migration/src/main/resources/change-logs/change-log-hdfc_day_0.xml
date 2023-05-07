@@ -36,7 +36,14 @@
 		<sql>
 			<![CDATA[
 				Update SMTParameters set SysParmValue = 'SSSSSSSSSS' Where SysparmCode = 'LOAN_REF_FORMAT';
-				Update SMTParameters set SysParmValue = '' Where SysparmCode = 'LOAN_REF_PREFIX';
+				Update SMTParameters set SysParmValue = '' Where SysparmCode = 'LOAN_REF_PREFIX';			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2.0.1" author="murthy.y" dbms="oracle,postgresql">
+		<sql>
+			<![CDATA[
 				Alter sequence SeqFinReference restart start with 1000000001;
 			]]>
 		</sql>
@@ -45,7 +52,7 @@
 	<!-- <changeSet id="3.0" author="murthy.y"> <sql> <![CDATA[ Alter sequence SeqProspectCustomer restart start with 1000000001; 
 		]]> </sql> </changeSet> -->
 		
-	<changeSet id="4.0" author="gopal.p">
+	<changeSet id="4.0_1" author="gopal.p">
 		<comment>UPLOAD PATH value need to change as per client configuration</comment>
 		<sql>
 			<![CDATA[
@@ -71,6 +78,9 @@
 					, 'WRITE_OFF_UPLOAD'
 					, 'REV_WRITE_OFF_UPLOAD'
 					, 'BRANCH_CHANGE_UPLOAD'
+					, 'BLOCK_AUTO_GEN_LTR_UPLOAD'
+					, 'LOAN_LETTER_UPLOAD'
+					, 'COURIER_DETAILS_UPLOAD'
 					);
 			]]>
 		</sql>
