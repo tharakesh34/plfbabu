@@ -54,6 +54,7 @@ public class Provision extends NpaProvisionStage {
 	private Provision befImage;
 	private LoggedInUser userDetails;
 	private List<String> assetClassCodes;
+	private List<String> assetSubClassCodes;
 	private String effManualAssetClass;
 	private String effManualAssetSubClass;
 	private BigDecimal newRegProvisionPer = BigDecimal.ZERO;
@@ -114,6 +115,7 @@ public class Provision extends NpaProvisionStage {
 		excludeFields.add("newIntProvisionAmt");
 		excludeFields.add("custCoreBank");
 		excludeFields.add("assetClassCodes");
+		excludeFields.add("assetSubClassCodes");
 		excludeFields.add("id");
 		excludeFields.add("osPrincipal");
 		excludeFields.add("osProfit");
@@ -529,5 +531,15 @@ public class Provision extends NpaProvisionStage {
 	public void setEffManualAssetSubClass(String effManualAssetSubClass) {
 		this.effManualAssetSubClass = effManualAssetSubClass;
 	}
+
+	public List<String> getAssetSubClassCodes() {
+		return assetSubClassCodes;
+	}
+
+	public void setAssetSubClassCodes(List<String> assetSubClassCodes) {
+		this.assetSubClassCodes = assetSubClassCodes;
+	}
+	
+	
 
 }

@@ -192,10 +192,10 @@
 								<row>
 									<label id="label_EffManualAssetClassification"
 										value="${c:l('label_ManualProvisioningDialog_EffManualAssetClassification.value')}" />
-									<combobox id="effManualAssetClassification" width="200px" />
+									<combobox id="effManualAssetClassification" width="200px" disabled="true" />
 									<label id="label_EffManualAssetSubClassification"
 										value="${c:l('label_ManualProvisioningDialog_EffManualAssetSubClassification.value')}" />
-									<combobox id="effManualAssetSubClassification" width="200px" />
+									<combobox id="effManualAssetSubClassification" width="200px" disabled="true" />
 								</row>
 								<row>
 									<label id="label_ProvisionRegPercentage"

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -338,17 +339,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		this.amanProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(manProvAmt, 2)));
 		this.recordStatus.setValue(provision.getRecordStatus());
 
-		List<ValueLabel> acc = new ArrayList<>();
-
-		for (String assetClassCodes : provision.getAssetClassCodes()) {
-			ValueLabel codes = new ValueLabel();
-			codes.setLabel(assetClassCodes);
-			codes.setValue(assetClassCodes);
-			acc.add(codes);
-		}
-
 		this.effManualAssetClassification.setValue(provision.getEffManualAssetClass());
-		fillComboBox(this.effManualAssetClassification, provision.getEffManualAssetClass(), acc, "");
+		fillComboBox(this.effManualAssetClassification, provision.getEffManualAssetClass(),
+				getAssetClassList(provision), "");
 		this.effManualAssetSubClassification.setValue(provision.getEffManualAssetSubClass());
 		this.newProvisionRegPercentage.setValue(provision.getNewRegProvisionPer());
 		this.newProvisionRegAmount
@@ -381,13 +374,21 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			wve.add(we);
 		}
 		try {
-			provision.setEffManualAssetClass(this.effManualAssetClassification.getValue());
+			if (this.effManualAssetClassification.getSelectedIndex() <= 0) {
+				provision.setEffManualAssetClass("");
+			} else {
+				provision.setEffManualAssetClass(this.effManualAssetClassification.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			provision.setEffManualAssetSubClass(this.effManualAssetSubClassification.getValue());
+			if (this.effManualAssetSubClassification.getSelectedIndex() <= 0) {
+				provision.setEffManualAssetSubClass("");
+			} else {
+				provision.setEffManualAssetSubClass(this.effManualAssetSubClassification.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -433,6 +434,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			provision.setManProvsnAmt(BigDecimal.ZERO);
 		}
 
+		doRemoveValidation();
+
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -442,6 +445,12 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doRemoveValidation() {
+		this.effManualAssetClassification.setConstraint("");
+		this.effManualAssetSubClassification.setConstraint("");
+
 	}
 
 	/**
@@ -479,6 +488,23 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doSetValidation() {
+		logger.debug(Literal.ENTERING);
+		if (this.manualProvision.isChecked() && this.effManualAssetClassification.getSelectedIndex() <= 0) {
+			throw new WrongValueException(this.effManualAssetClassification,
+					Labels.getLabel("STATIC_INVALID", new String[] {
+							Labels.getLabel("label_ManualProvisioningDialog_EffManualAssetClassification.value") }));
+		}
+		if (this.effManualAssetSubClassification.getSelectedIndex() <= 0
+				&& this.effManualAssetClassification.getSelectedIndex() > 0) {
+			throw new WrongValueException(this.effManualAssetSubClassification,
+					Labels.getLabel("STATIC_INVALID", new String[] {
+							Labels.getLabel("label_ManualProvisioningDialog_EffManualAssetSubClassification.value") }));
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
 
@@ -505,6 +531,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		final Provision aProvision = new Provision();
 		BeanUtils.copyProperties(this.provision, aProvision);
+		doSetValidation();
 
 		doWriteComponentsToBean(aProvision);
 
@@ -737,7 +764,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.newProvisionIntAmount.setReadonly(false);
 			this.effManualAssetClassification.setDisabled(false);
 			this.effManualAssetSubClassification.setDisabled(false);
-
+			fillComboBox(this.effManualAssetSubClassification, this.effManualAssetClassification.getValue(),
+					getAssetSubClassCodesList(provision, provision.getEffManualAssetClass()), "");
 		} else {
 			this.manProvisionPercentage.setValue(BigDecimal.ZERO);
 			this.manProvisionAmount.setValue(BigDecimal.ZERO);
@@ -752,6 +780,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.effManualAssetClassification.setDisabled(true);
 			this.effManualAssetSubClassification.setDisabled(true);
 		}
+
 	}
 
 	public void onCheck$overrideProvision(Event event) throws Exception {
@@ -791,15 +820,43 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	public void onSelect$effManualAssetClassification(Event event) throws Exception {
 		String stage = effManualAssetClassification.getSelectedItem().getLabel();
-		this.newProvisionIntPercentage.setValue("0");
-		this.newProvisionIntPercentage.setErrorMessage("");
 		ProvisionRuleData prd = provisionDao.getProvisionData(provision.getFinReference());
 		prd.setEffNpaClassCode(stage);
 		prd.setNpaClassCode(stage);
 		prd.setNpaSubClassCode(stage);
 		prd.setEffNpaSubClassCode(stage);
 		prd.setSecured(true);
+		List<ValueLabel> assetSubClassCodesList = getAssetSubClassCodesList(provision, stage);
+		if (CollectionUtils.isNotEmpty(assetSubClassCodesList)) {
+			this.effManualAssetSubClassification.setValue(stage);
+			fillComboBox(this.effManualAssetSubClassification, stage, assetSubClassCodesList, "");
+			provisionService.executeProvisionRule(prd, provision);
+
+			BigDecimal regperc = provision.getRegProvsnPer();
+			BigDecimal intperc = provision.getIntProvsnPer();
+
+			this.newProvisionIntAmount.setValue(provision.getIntProvsnAmt());
+			this.newProvisionIntAmount.setVisible(true);
+			this.newProvisionIntPercentage.setValue(intperc);
+			this.newProvisionRegPercentage.setValue(regperc);
+			this.newProvisionRegAmount.setValue(provision.getRegProvsnAmt());
+			this.newProvisionRegAmount.setVisible(true);
+		} else {
+			this.effManualAssetSubClassification.setValue("");
+			this.newProvisionIntPercentage.setValue("0");
+			this.newProvisionIntAmount.setValue("0");
+			this.newProvisionRegPercentage.setValue("0");
+			this.newProvisionRegAmount.setValue("0");
+			fillComboBox(this.effManualAssetSubClassification, stage, assetSubClassCodesList, "");
+
+		}
+
+	}
+
+	private List<ValueLabel> getAssetSubClassCodesList(Provision provision, String stage) {
+
 		List<String> assetSubClassCodes = provisionDao.getAssetSubClassCodes(stage);
+		this.provision.setAssetSubClassCodes(assetSubClassCodes);
 		List<ValueLabel> scc = new ArrayList<>();
 		for (String asc : assetSubClassCodes) {
 			ValueLabel subclassCodes = new ValueLabel();
@@ -807,20 +864,21 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			subclassCodes.setValue(asc);
 			scc.add(subclassCodes);
 		}
-		this.effManualAssetSubClassification.setValue(stage);
-		fillComboBox(this.effManualAssetSubClassification, stage, scc, "");
-		provisionService.executeProvisionRule(prd, provision);
+		return scc;
+	}
 
-		BigDecimal regperc = provision.getRegProvsnPer();
-		BigDecimal intperc = provision.getIntProvsnPer();
+	private List<ValueLabel> getAssetClassList(Provision provision) {
 
-		this.newProvisionIntAmount.setValue(provision.getIntProvsnAmt());
-		this.newProvisionIntAmount.setVisible(true);
-		this.newProvisionIntPercentage.setValue(intperc);
-		this.newProvisionRegPercentage.setValue(regperc);
-		this.newProvisionRegAmount.setValue(provision.getRegProvsnAmt());
-		this.newProvisionRegAmount.setVisible(true);
+		List<ValueLabel> acc = new ArrayList<>();
 
+		for (String assetClassCodes : provision.getAssetClassCodes()) {
+			ValueLabel codes = new ValueLabel();
+			codes.setLabel(assetClassCodes);
+			codes.setValue(assetClassCodes);
+			acc.add(codes);
+		}
+
+		return acc;
 	}
 
 	@Autowired
