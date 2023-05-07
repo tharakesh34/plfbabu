@@ -30,6 +30,14 @@ public enum ClosureType {
 		return code;
 	}
 
+	public static boolean isValid(String closureType) {
+		if (getType(closureType) == null) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public static boolean isCancel(String closureType) {
 		return isEqual(CANCEL, getType(closureType));
 	}

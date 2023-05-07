@@ -81,6 +81,7 @@
 					, 'BLOCK_AUTO_GEN_LTR_UPLOAD'
 					, 'LOAN_LETTER_UPLOAD'
 					, 'COURIER_DETAILS_UPLOAD'
+					, 'LOAN_CLOSURE_JOB'
 					);
 			]]>
 		</sql>

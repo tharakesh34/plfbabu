@@ -38,6 +38,7 @@ import com.pennant.pff.noc.upload.job.LoanLetterUploadJob;
 import com.pennant.pff.presentment.upload.job.FateCorrectionJob;
 import com.pennant.pff.presentment.upload.job.RepresentmentJob;
 import com.pennant.pff.receipt.upload.job.CreateReceiptUploadJob;
+import com.pennant.pff.receipt.upload.job.LoanClosureUploadJob;
 import com.pennant.pff.receipt.upload.job.ReceiptStatusUploadJob;
 import com.pennant.pff.revwriteoffupload.upload.job.RevWriteOffUploadJob;
 import com.pennant.pff.upload.service.UploadService;
@@ -120,6 +121,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService courierDetailUploadService;
 	private UploadService loanLetterUploadService;
 	private UploadService blockAutoGenLetterUploadService;
+	private UploadService loanClosureUploadService;
 
 	@Autowired(required = false)
 	private JobSchedulerExtension jobSchedulerExtension;
@@ -534,6 +536,11 @@ public class PFFJobScheduler extends JobScheduler {
 		args.put("blockAutoGenLetterUploadService", blockAutoGenLetterUploadService);
 		jobData = new JobData("BLOCK_AUTO_GEN_LETTER_JOB", BlockAutoLetterGenerateUploadJob.class, args);
 		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("loanClosureUploadService", loanClosureUploadService);
+		jobData = new JobData("LOAN_CLOSURE_JOB", LoanClosureUploadJob.class, args);
+		jobDataList.add(jobData);
 		/**
 		 * For client specific jobs
 		 */
@@ -800,4 +807,8 @@ public class PFFJobScheduler extends JobScheduler {
 		this.blockAutoGenLetterUploadService = blockAutoGenLetterUploadService;
 	}
 
+	@Autowired
+	public void setLoanClosureUploadService(UploadService loanClosureUploadService) {
+		this.loanClosureUploadService = loanClosureUploadService;
+	}
 }

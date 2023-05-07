@@ -6277,4 +6277,6 @@
 	<bean id="selectGenerateLetterCtrl" class="com.pennant.pff.noc.webui.SelectGenerateLetterCtrl" parent="basisCtrl"
 		scope="prototype" />
 	
+	<bean id="loanClosureUploadListCtrl" class="com.pennant.pff.receipt.web.LoanClosureUploadListCtrl"
+		parent="uploadList" />
 </beans>

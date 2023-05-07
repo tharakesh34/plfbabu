@@ -13449,4 +13449,12 @@
 	
 	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl"/>
 	
+	<bean id="loanClosureUploadService" class="com.pennant.pff.receipt.service.impl.LoanClosureUploadServiceImpl"
+		parent="aUploadService" />
+
+	<bean id="loanClosureUploadDAO" class="com.pennant.pff.receipt.dao.impl.LoanClosureUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="loanClosureUploadProcessRecord"
+		class="com.pennant.pff.receipt.service.impl.LoanClosureUploadProcessRecord" />
 </beans>
