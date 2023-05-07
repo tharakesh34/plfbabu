@@ -99,7 +99,9 @@ public class CustomerAddres extends AbstractWorkflowEntity {
 	private String cityRefNo;
 	private String stateRefNo;
 	private String lovDescCustAddrZip;
+	@XmlElement
 	private String custAddrLine3;
+	@XmlElement
 	private String custAddrLine4;
 	private String custDistrict;
 	@XmlElement

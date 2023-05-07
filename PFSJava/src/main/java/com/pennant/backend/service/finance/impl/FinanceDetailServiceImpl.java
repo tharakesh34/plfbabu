@@ -11448,11 +11448,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinReceiptData frd = new FinReceiptData();
 		FinReceiptHeader frh = new FinReceiptHeader();
 		List<CustomerAddres> ca = null;
+		CustomerDetails cd = fd.getCustomerDetails();
 
-		ca = fd.getCustomerDetails().getAddressList();
+		if (cd == null) {
+			cd = new CustomerDetails();
+		}
+
+		ca = cd.getAddressList();
+
 		if (ca == null) {
 			ca = new ArrayList<>();
-			fd.getCustomerDetails().setAddressList(ca);
+			cd.setAddressList(ca);
 		}
 
 		FinScheduleData fsd = fd.getFinScheduleData();

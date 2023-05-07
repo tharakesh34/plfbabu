@@ -53,10 +53,10 @@ import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -2153,60 +2153,6 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 	}
 
 	@Override
-	public LoanAuthentication getAuthenticationDetails(LoanAuthentication laRequest) {
-		logger.debug(Literal.ENTERING);
-
-		String finReference = laRequest.getFinReference();
-
-		Date dob = laRequest.getDateOfBirth();
-		BigDecimal loanEMI = laRequest.getLoanEMI();
-		Date appDate = SysParamUtil.getAppDate();
-
-		laRequest.setAppDate(appDate);
-
-		LoanAuthentication response = null;
-
-		WSReturnStatus wsrs = validateDob(dob, appDate);
-
-		if (wsrs != null) {
-			response = new LoanAuthentication();
-			response.setReturnStatus(wsrs);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		wsrs = validateFinReference(finReference);
-
-		if (wsrs != null) {
-			response = new LoanAuthentication();
-			response.setReturnStatus(wsrs);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		wsrs = validateRepayAmount(loanEMI);
-
-		if (wsrs != null) {
-			response = new LoanAuthentication();
-			response.setReturnStatus(wsrs);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		logKeyFields(finReference, dob, loanEMI);
-
-		logger.debug("FinReference {}, Customer Date of Birth {}, Loan Instalment Amount {}", finReference,
-				DateUtil.formatToLongDate(dob), loanEMI);
-
-		response = createFinanceController.getAuthenticationDetails(laRequest);
-
-		logger.debug(Literal.LEAVING);
-
-		return response;
-
-	}
-
-	@Override
 	public List<PaymentMode> getPDCEnquiry(String finReference) {
 		logger.debug(Literal.ENTERING);
 
@@ -2282,6 +2228,51 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		logger.debug(Literal.LEAVING);
 
 		return createFinanceController.getPDCDetails(fm);
+	}
+
+	@Override
+	public SourcingDetails getSourcingDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		SourcingDetails response;
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		if (finID == null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(getFailedStatus("90201", finReference));
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		response = financeMainDAO.getSourcingDetailsByFinReference(finID, TableType.MAIN_TAB);
+		if (response == null) {
+			response = new SourcingDetails();
+			response.setPrimaryRelationOfficer(null);
+			response.setReturnStatus(getFailedStatus("90266", finReference));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+		response.setFinalSource("");
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
 	}
 
 	private WSReturnStatus validateFinReference(String finReference) {

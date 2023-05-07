@@ -208,6 +208,23 @@ public class APIServices {
 		services.add("getCustomerDetailsByNameAndPhoneNumber");
 		services.add("getCustomerDetailsByNameAndDOB");
 		services.add("getCustomerDetailsByNameAndEMIAmount");
+		services.add("getGuarantorDetails");
+		services.add("getSourcingDetails");
+		services.add("getLoanBalanceDetails");
+		services.add("forgotUserID");
+		services.add("getLoanBasicDetails");
+		services.add("getRepaymetDetails");
+		services.add("getCustomerData");
+		services.add("getLoansByPhoneNumber");
+		services.add("getLoansByAccountNumber");
+		services.add("getLoansByCustomerName");
+		services.add("getLoansByNameAndMobileNumber");
+		services.add("getLoansByNameAndDateOfBirth");
+		services.add("getLoansByPANNumber");
+		services.add("getLoansByNameAndPanNumber");
+		services.add("getLoansByProductShrtNameAndDateOfBirth");
+		services.add("getCustomerDataByCIF");
+		services.add("getLoansByNameAndEMIAmount");
 
 		return services;
 	}

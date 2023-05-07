@@ -89,6 +89,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String investmentRef = "";
 	@XmlElement
 	private String finType;
+	@XmlElement(name = "finTypeDesc")
 	private String lovDescFinTypeName;
 	@XmlElement
 	private String promotionCode;
@@ -851,6 +852,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean isEOD;
 	@XmlElement
 	private Date grcStartDate;
+	private String loanName;
+	private Date custDOB;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1097,6 +1100,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("reason");
 		excludeFields.add("isEOD");
 		excludeFields.add("grcStartDate");
+		excludeFields.add("loanName");
+		excludeFields.add("custDOB");
+
 		return excludeFields;
 	}
 
@@ -5603,5 +5609,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setGrcStartDate(Date grcStartDate) {
 		this.grcStartDate = grcStartDate;
+	}
+
+	public String getLoanName() {
+		return loanName;
+	}
+
+	public void setLoanName(String loanName) {
+		this.loanName = loanName;
+	}
+
+	public Date getCustDOB() {
+		return custDOB;
+	}
+
+	public void setCustDOB(Date custDOB) {
+		this.custDOB = custDOB;
 	}
 }

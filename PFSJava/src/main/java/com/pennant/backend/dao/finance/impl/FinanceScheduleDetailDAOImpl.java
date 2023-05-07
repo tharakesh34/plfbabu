@@ -1389,4 +1389,25 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			return null;
 		}
 	}
+
+	@Override
+	public List<FinanceScheduleDetail> getBasicDetails(long finID) {
+		String sql = "Select RepayOnSchDate, SchDate, InstNumber, PrincipalSchd, SchdPriPaid, ProfitSchd, SchPftPaid From FinScheduleDetails Where finID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+
+			fsd.setSchDate(rs.getDate("SchDate"));
+			fsd.setInstNumber(rs.getInt("InstNumber"));
+			fsd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+			fsd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+			fsd.setSchdPftPaid(rs.getBigDecimal("SchPftPaid"));
+			fsd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+			fsd.setRepayOnSchDate(rs.getBoolean("RepayOnSchDate"));
+
+			return fsd;
+		}, finID);
+	}
 }

@@ -54,24 +54,25 @@ public class CustomerUtil {
 				continue;
 			}
 
-			String custFlatNbr = StringUtils.trimToEmpty(add.getCustFlatNbr());
+			String custHouseNumber = StringUtils.trimToEmpty(add.getCustAddrHNbr());
 			String custStreet = StringUtils.trimToEmpty(add.getCustAddrStreet());
 			String custLocality = StringUtils.trimToEmpty(add.getCustAddrLine2());
 			String custLandMark = StringUtils.trimToEmpty(add.getCustAddrLine1());
-			String custCity = StringUtils.trimToEmpty(add.getCustAddrCity());
-			String custState = StringUtils.trimToEmpty(add.getCustAddrProvince());
-			String custAddrCountry = StringUtils.trimToEmpty(add.getCustAddrCountry());
+			String custCity = StringUtils.trimToEmpty(add.getLovDescCustAddrCityName());
+			String custState = StringUtils.trimToEmpty(add.getLovDescCustAddrProvinceName());
+			String custAddrCountry = StringUtils.trimToEmpty(add.getLovDescCustAddrCountryName());
 			String custZip = StringUtils.trimToEmpty(add.getCustAddrZIP());
 
-			if (StringUtils.isNotBlank(custFlatNbr)) {
-				address.append(Labels.getLabel("label_CustomerAddresDialog_CustFlatNbr.value") + ":");
-				address.append(custFlatNbr);
+			if (StringUtils.isNotBlank(custHouseNumber)) {
+				address.append(Labels.getLabel("label_CustomerAddresDialog_CustAddrHNbr.value") + ":");
+				address.append(custHouseNumber);
 			}
 
 			if (StringUtils.isNotBlank(custStreet)) {
 				if (address.length() > 0) {
 					address.append(", ");
 				}
+				address.append(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value") + ":");
 				address.append(custStreet);
 			}
 
@@ -79,6 +80,7 @@ public class CustomerUtil {
 				if (address.length() > 0) {
 					address.append(", ");
 				}
+				address.append(Labels.getLabel("label_CustomerAddresDialog_CustAddrLine2.value") + ":");
 				address.append(custLocality);
 			}
 

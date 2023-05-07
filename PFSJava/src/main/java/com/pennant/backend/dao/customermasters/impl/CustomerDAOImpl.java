@@ -3102,20 +3102,20 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
-			sql.append(" Select CustID From Customers c");
+			sql.append(" Select c.CustID From Customers c");
 			sql.append(" Inner Join Mandates m on m.CustID = c.CustID where m.AccNumber = ?");
 			break;
 		case TEMP_TAB:
 			object = new Object[] { accNumber };
-			sql.append(" Select CustID From Customers_Temp c");
+			sql.append(" Select c.CustID From Customers_Temp c");
 			sql.append(" Inner Join Mandates m on m.CustID = c.CustID where m.AccNumber = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { accNumber, accNumber };
-			sql.append(" Select CustID From Customers_Temp c");
+			sql.append(" Select c.CustID From Customers_Temp c");
 			sql.append(" Inner Join Mandates m on m.CustID = c.CustID where m.AccNumber = ?");
 			sql.append(" Union All");
-			sql.append(" Select CustID From Customers c");
+			sql.append(" Select c.CustID From Customers c");
 			sql.append(" Inner Join Mandates m on m.CustID = c.CustID where m.AccNumber = ?");
 			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 		default:
@@ -3140,26 +3140,30 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public List<Long> getByPhoneNumber(String phoneNumber, TableType tableType) {
-		Object[] object = new Object[] { phoneNumber };
+		Object[] object = new Object[] { phoneNumber, 5 };
 
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
 			sql.append(" Select CustID From Customers c");
-			sql.append(" Inner Join CustomerPhoneNumbers cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
+			sql.append(
+					" Inner Join CustomerPhoneNumbers cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ? and PhoneTypePriority = ?");
 			break;
 		case TEMP_TAB:
-			object = new Object[] { phoneNumber };
+			object = new Object[] { phoneNumber, 5 };
 			sql.append(" Select CustID From Customers_Temp c");
-			sql.append(" Inner Join CustomerPhoneNumbers_Temp cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
+			sql.append(
+					" Inner Join CustomerPhoneNumbers_Temp cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ? and PhoneTypePriority = ?");
 			break;
 		case BOTH_TAB:
-			object = new Object[] { phoneNumber, phoneNumber };
+			object = new Object[] { phoneNumber, 5, phoneNumber, 5 };
 			sql.append(" Select CustID From Customers_Temp c");
-			sql.append(" Inner Join CustomerPhoneNumbers_Temp cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
+			sql.append(" Inner Join CustomerPhoneNumbers_Temp cp");
+			sql.append(" on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ? and PhoneTypePriority = ?");
 			sql.append(" Union All");
 			sql.append(" Select CustID From Customers c");
-			sql.append(" Inner Join CustomerPhoneNumbers cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
+			sql.append(" Inner Join CustomerPhoneNumbers cp");
+			sql.append(" on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ? and PhoneTypePriority = ?");
 			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
 		default:
 			break;
@@ -3246,5 +3250,216 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.queryForList(sql.toString(), Long.class, 1, repayAmount, customerName);
+	}
+
+	@Override
+	public List<Long> getByCustShrtNameAndPANNumber(String custShrtName, String custCRCPR, TableType tableType) {
+		Object[] object = new Object[] { custCRCPR, custShrtName };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select CustID From Customers Where CustCRCPR = ? and CustShrtName = ?");
+			break;
+		case TEMP_TAB:
+			object = new Object[] { custCRCPR, custShrtName };
+			sql.append(" Select CustID From Customers_Temp  Where CustCRCPR = ? and CustShrtName = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { custCRCPR, custShrtName, custCRCPR, custShrtName };
+			sql.append(" Select CustID From Customers_Temp  Where CustCRCPR = ? and CustShrtName = ?");
+			sql.append(" Union All");
+			sql.append(" Select CustID From Customers c Where CustCRCPR = ? and CustShrtName = ?");
+			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, object);
+	}
+
+	@Override
+	public Customer getBasicDetails(long custID, TableType tableType) {
+		Object[] object = new Object[] { custID };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select CustID");
+			sql.append(", CustCIF, CustSalutationCode, CustFName, CustMName, CustLName");
+			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(" From Customers Where CustID = ?");
+			break;
+		case TEMP_TAB:
+			sql.append(" Select CustSalutationCode, CustFName, CustMName, CustLName");
+			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(" From Customers_Temp Where CustID = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { custID, custID };
+
+			sql.append(" Select CustSalutationCode, CustFName, CustMName, CustLName");
+			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(" From Customers_Temp Where CustID = ?");
+			sql.append(" Union All");
+			sql.append(" Select CustSalutationCode, CustFName, CustMName, CustLName");
+			sql.append(", CustCoreBank, CustShrtName, CustMotherMaiden, CustShrtNameLclLng");
+			sql.append(", CustGenderCode, CustCRCPR, CustDOB");
+			sql.append(" From Customers c Where CustID = ?");
+			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Customer c = new Customer();
+				c.setCustSalutationCode(rs.getString("CustSalutationCode"));
+				c.setCustCIF(rs.getString("CustCIF"));
+				c.setCustFName(rs.getString("CustFName"));
+				c.setCustMName(rs.getString("CustMName"));
+				c.setCustLName(rs.getString("CustLName"));
+				c.setCustCoreBank(rs.getString("CustCoreBank"));
+				c.setCustShrtName(rs.getString("CustShrtName"));
+				c.setCustMotherMaiden(rs.getString("CustMotherMaiden"));
+				c.setCustShrtNameLclLng(rs.getString("CustGenderCode"));
+				c.setCustCRCPR(rs.getString("CustCRCPR"));
+				c.setCustDOB(rs.getDate("CustDOB"));
+
+				return c;
+			}, object);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public List<Customer> getBasicDetailsForJointCustomers(long finID, TableType tableType) {
+		Object[] object = new Object[] { 1, finID };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers c");
+			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
+			sql.append(" Inner Join FinJointAccountDetails ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
+			sql.append(" Where fm.finID = ?");
+			break;
+		case TEMP_TAB:
+			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers_Temp c");
+			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
+			sql.append(" Inner Join FinJointAccountDetails_Temp ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
+			sql.append(" Where fm.finID = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { 1, finID, 1, finID };
+
+			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers_Temp c");
+			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
+			sql.append(" Inner Join FinJointAccountDetails_Temp ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
+			sql.append(" Where fm.finID = ?");
+			sql.append(" Union All");
+			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers c");
+			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
+			sql.append(" Inner Join FinJointAccountDetails ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
+			sql.append(" Where fm.finID = ?");
+			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			Customer c = new Customer();
+			c.setCustID(rs.getLong("CustID"));
+			c.setCustSalutationCode(rs.getString("CustSalutationCode"));
+			c.setCustFName(rs.getString("CustFName"));
+			c.setCustMName(rs.getString("CustMName"));
+			c.setCustLName(rs.getString("CustLName"));
+			c.setRelationWithCust(rs.getString("CatOfcoApplicant"));
+
+			return c;
+		}, object);
+
+	}
+
+	@Override
+	public List<Long> getByCustShrtNameDOBAndFinType(String custShrtName, Date custDOB, String finType,
+			TableType tableType) {
+		Object[] object = new Object[] { custDOB, custShrtName, finType };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select c.CustID From Customers c");
+			sql.append(" Inner Join FinanceMain fm on fm.CustID = c.CustID");
+			sql.append(" Where c.CustDOB = ? and c.CustShrtName = ? And fm.FinType = ?");
+			break;
+		case TEMP_TAB:
+			object = new Object[] { custDOB, custShrtName, finType };
+			sql.append(" Select c.CustID From Customers_Temp c");
+			sql.append(" Inner Join FinanceMain_Temp fm on fm.CustID = c.CustID");
+			sql.append(" Where c.CustDOB = ? and c.CustShrtName = ? And fm.FinType = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { custDOB, custShrtName, finType, custDOB, custShrtName, finType };
+			sql.append(" Select c.CustID From Customers_Temp c");
+			sql.append(" Inner Join FinanceMain_Temp fm on fm.CustID = c.CustID");
+			sql.append(" Where c.CustDOB = ? and c.CustShrtName = ? And fm.FinType = ?");
+			sql.append(" Union All");
+			sql.append(" Select c.CustID From Customers c");
+			sql.append(" Inner Join FinanceMain fm on fm.CustID = c.CustID");
+			sql.append(" Where c.CustDOB = ? and c.CustShrtName = ? And fm.FinType = ?");
+			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, object);
+	}
+
+	@Override
+	public List<Long> getByCustName(String custShrtName, TableType tableType) {
+		Object[] object = new Object[] { custShrtName };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select CustID From Customers Where CustShrtName = ?");
+			break;
+		case TEMP_TAB:
+			object = new Object[] { custShrtName };
+			sql.append(" Select CustID From Customers_Temp  Where CustShrtName = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { custShrtName, custShrtName };
+			sql.append(" Select CustID From Customers_Temp  Where CustShrtName = ?");
+			sql.append(" Union All");
+			sql.append(" Select CustID From Customers c Where CustShrtName = ?");
+			sql.append(" and not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, object);
 	}
 }
