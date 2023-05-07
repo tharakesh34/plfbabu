@@ -6267,4 +6267,14 @@
 	<bean id="loanTypeLetterMappingDialogCtrl" class="com.pennant.pff.noc.webui.LoanTypeLetterMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
+	
+	<bean id="generateLetterDialogCtrl" class="com.pennant.pff.noc.webui.GenerateLetterDialogCtrl" parent="basisCtrl"
+	scope="prototype" />
+
+	<bean id="generateLetterListCtrl" class="com.pennant.pff.noc.webui.GenerateLetterListCtrl" parent="basisCtrl"
+		scope="prototype" />
+
+	<bean id="selectGenerateLetterCtrl" class="com.pennant.pff.noc.webui.SelectGenerateLetterCtrl" parent="basisCtrl"
+		scope="prototype" />
+	
 </beans>

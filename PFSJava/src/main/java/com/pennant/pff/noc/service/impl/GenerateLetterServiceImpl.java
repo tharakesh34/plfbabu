@@ -2,6 +2,8 @@ package com.pennant.pff.noc.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
@@ -62,4 +64,10 @@ public class GenerateLetterServiceImpl implements GenerateLetterService {
 	public AuditHeader doReject(AuditHeader ah) {
 		return null;
 	}
+
+	@Autowired
+	public void setGenerateLetterDAO(GenerateLetterDAO generateLetterDAO) {
+		this.generateLetterDAO = generateLetterDAO;
+	}
+
 }
