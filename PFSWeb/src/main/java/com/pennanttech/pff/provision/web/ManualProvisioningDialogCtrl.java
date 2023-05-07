@@ -453,6 +453,12 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	}
 
+	private void doClearmessage() {
+		this.effManualAssetClassification.setErrorMessage("");
+		this.effManualAssetSubClassification.setErrorMessage("");
+
+	}
+
 	/**
 	 * Displays the dialog page.
 	 * 
@@ -779,6 +785,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			this.newProvisionIntAmount.setDisabled(true);
 			this.effManualAssetClassification.setDisabled(true);
 			this.effManualAssetSubClassification.setDisabled(true);
+			doClearmessage();
 		}
 
 	}
