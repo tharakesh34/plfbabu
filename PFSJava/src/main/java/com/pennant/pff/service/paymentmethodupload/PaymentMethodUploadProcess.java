@@ -289,12 +289,6 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 							.filter(cd -> cd.getChequeDate().compareTo(appDate) > 0
 									&& PennantConstants.RECORD_TYPE_NEW.equals(cd.getStatus()))
 							.collect(Collectors.toList()).size();
-					/*
-					 * for (ChequeDetail cd : ch.getChequeDetailList()) { if (cd.getChequeDate().compareTo(appDate) > 0
-					 * && PennantConstants.RECORD_TYPE_NEW.equals(cd.getStatus())) { //validateflag = false; } }
-					 * 
-					 * 
-					 */
 
 					if (size > 0) {
 						validateflag = false;

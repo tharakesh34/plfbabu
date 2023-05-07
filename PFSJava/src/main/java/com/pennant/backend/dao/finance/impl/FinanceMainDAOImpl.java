@@ -75,6 +75,7 @@ import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -5918,21 +5919,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
-			sql.append(" Select FinID, CustID, MaturityDate");
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
 			sql.append(" From FinanceMain fm Where FinReference = ?");
 			break;
 		case TEMP_TAB:
-			sql.append(" Select FinID, CustID, MaturityDate");
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { finReference, finReference };
 
-			sql.append("Select FinID, CustID, MaturityDate From (");
-			sql.append(" Select FinID, CustID, MaturityDate");
+			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID From (");
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			sql.append(" Union All");
-			sql.append(" Select FinID, CustID, MaturityDate");
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
 			sql.append("  From FinanceMain fm Where FinReference = ?");
 			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 			sql.append(" ) fm");
@@ -5941,12 +5942,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		}
 
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 				fm.setFinID(rs.getLong("FinID"));
 				fm.setCustID(rs.getLong("CustID"));
 				fm.setMaturityDate(rs.getDate("MaturityDate"));
+				fm.setMandateID(rs.getLong("MandateID"));
+				fm.setSecurityMandateID(rs.getLong("SecurityMandateID"));
 
 				return fm;
 			}, object);
@@ -7205,7 +7210,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
-			sql.append(" Select distinct FinID");
+			sql.append(" Select  FinID");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID and c.CustShrtName = ?");
 			sql.append(" Inner Join CustomerPhoneNumbers cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
@@ -7213,7 +7218,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		case TEMP_TAB:
 			object = new Object[] { phoneNumber, phoneNumber, custShrtName };
-			sql.append(" Select distinct FinID");
+			sql.append(" Select FinID");
 			sql.append(" From FinanceMain_Temp fm");
 			sql.append(" Inner Join");
 			sql.append(" (Select CustID, CustShrtName From (");
@@ -7227,7 +7232,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		case BOTH_TAB:
 			object = new Object[] { custShrtName, phoneNumber, 1, phoneNumber, phoneNumber, custShrtName };
-			sql.append(" Select distinct FinID");
+			sql.append(" Select FinID");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID and c.CustShrtName = ?");
 			sql.append(" Inner Join CustomerPhoneNumbers cp on cp.PhoneCustID = c.CustID and cp.PhoneNumber = ?");
@@ -7261,14 +7266,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
-			sql.append(" Select distinct FinID");
+			sql.append(" Select FinID");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID and c.CustShrtName = ? and c.CustDOB = ?");
 			sql.append(" Where fm.FinIsActive = ? ");
 			break;
 		case TEMP_TAB:
 			object = new Object[] { custShrtName, dateOfBirth };
-			sql.append(" Select distinct FinID");
+			sql.append(" Select FinID");
 			sql.append(" From FinanceMain_Temp fm");
 			sql.append(" Inner Join");
 			sql.append(" (Select CustID, CustShrtName, CustDOB From (");
@@ -7280,7 +7285,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		case BOTH_TAB:
 			object = new Object[] { custShrtName, dateOfBirth, 1, custShrtName, dateOfBirth };
-			sql.append(" Select distinct FinID");
+			sql.append(" Select FinID");
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID and c.CustShrtName = ? and c.CustDOB = ?");
 			sql.append(" Where fm.FinIsActive = ?");
@@ -7307,7 +7312,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<Long> getByCustShrtNameAndEMIAmount(String customerName, BigDecimal repayAmount) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select distinct fs.FinID");
+		sql.append(" Select fs.FinID");
 		sql.append(" From FinScheduleDetails fs");
 		sql.append(" Inner Join FinanceMain fm On fm.finID = fs.finID");
 		sql.append(" Inner Join Customers cu on cu.CustID = fm.CustID");
@@ -7362,5 +7367,100 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	public SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType) {
+		Object[] object = new Object[] { finID };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain fm");
+			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ? ");
+			break;
+		case TEMP_TAB:
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain_Temp fm");
+			sql.append(" Inner Join");
+			sql.append(" (Select CustID, CustRO1  From (");
+			sql.append(" Select CustID, CustRO1 From Customers_Temp c");
+			sql.append(" Union All");
+			sql.append(" Select CustID, CustRO1 From Customers c ");
+			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+			sql.append(" )) c on  c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { finID, finID };
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain fm");
+			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ? ");
+			sql.append(" Union All");
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain_Temp fm");
+			sql.append(" Inner Join");
+			sql.append(" (Select CustID, CustRO1  From (");
+			sql.append(" Select CustID, CustRO1 From Customers_Temp c");
+			sql.append(" Union All");
+			sql.append(" Select CustID, CustRO1 From Customers c ");
+			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+			sql.append(" )) c on  c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ?");
+			sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				SourcingDetails sd = new SourcingDetails();
+
+				sd.setDmaCode(rs.getString("DMACode"));
+				sd.setPrimaryRelationOfficer(rs.getLong("CustRO1"));
+				sd.setPslCategory(rs.getString("CategoryCode"));
+
+				return sd;
+			}, object);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public List<Long> getFinIDsByCustID(Long custID, TableType tableType) {
+		Object[] object = new Object[] { custID, 1 };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select FinID From FinanceMain fm Where CustID = ? and FinIsActive = ?");
+			break;
+		case TEMP_TAB:
+			object = new Object[] { custID };
+			sql.append(" Select FinID From FinanceMain_Temp fm Where CustID = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { custID, 1, custID };
+			sql.append(" Select FinID From FinanceMain_Temp fm Where CustID = ?");
+			sql.append(" Union All");
+			sql.append(" Select FinID From FinanceMain fm Where CustID = ? and FinIsActive = ?");
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, object);
 	}
 }

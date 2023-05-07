@@ -367,7 +367,11 @@ public class Customer extends AbstractWorkflowEntity {
 	@XmlElement
 	private String loanName;
 	@XmlElement
-	private BigDecimal loanInstalmentAmount = null;
+	private BigDecimal loanInstalmentAmount;
+	private String applicantType;
+	private String relationWithCust;
+	@XmlElement
+	private String product;
 
 	public Customer() {
 		super();
@@ -451,6 +455,9 @@ public class Customer extends AbstractWorkflowEntity {
 		excludeFields.add("prospectAsCIF");
 		excludeFields.add("loanName");
 		excludeFields.add("loanInstalmentAmount");
+		excludeFields.add("applicantType");
+		excludeFields.add("relationWithCust");
+		excludeFields.add("product");
 
 		return excludeFields;
 	}
@@ -2317,5 +2324,29 @@ public class Customer extends AbstractWorkflowEntity {
 
 	public void setLoanInstalmentAmount(BigDecimal loanInstalmentAmount) {
 		this.loanInstalmentAmount = loanInstalmentAmount;
+	}
+
+	public String getApplicantType() {
+		return applicantType;
+	}
+
+	public void setApplicantType(String applicantType) {
+		this.applicantType = applicantType;
+	}
+
+	public String getRelationWithCust() {
+		return relationWithCust;
+	}
+
+	public void setRelationWithCust(String relationWithCust) {
+		this.relationWithCust = relationWithCust;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
 	}
 }

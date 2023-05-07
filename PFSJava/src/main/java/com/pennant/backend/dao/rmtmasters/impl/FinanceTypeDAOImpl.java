@@ -1510,4 +1510,13 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 			return false;
 		}
 	}
+
+	@Override
+	public boolean isFinTypeExists(String finType) {
+		String sql = "Select count(FinType) From RmtFinancetypes Where FinType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finType) > 0;
+	}
 }

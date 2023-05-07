@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -74,6 +75,14 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 
 		boolean isHeaderImported = false;
 		ExtPrmntRespHeader prh = null;
+
+		// Fetch bounce details beforehand..
+		if (ExtBounceReasons.getInstance().getBounceData().isEmpty()) {
+			List<ExtBounceReason> bounceReasons = externalPresentmentDAO.fetchBounceReasons();
+			for (ExtBounceReason bounceReason : bounceReasons) {
+				ExtBounceReasons.getInstance().getBounceData().put(bounceReason.getReturnCode(), bounceReason);
+			}
+		}
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<ExtPresentmentFile> cursorItemReader = new JdbcCursorItemReader<ExtPresentmentFile>();

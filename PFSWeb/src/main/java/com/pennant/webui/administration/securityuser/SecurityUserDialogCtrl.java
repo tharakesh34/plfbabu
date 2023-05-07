@@ -324,10 +324,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		fillComboBox(authType, "", authTypesList, "");
 		fillComboBox(ldapDomainName, "", ldapDomainList, "");
 
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-			fillComboBox(ldapDomainName, "", ldapDomainList, "");
-		}
-
 		// Empty sent any required attributes
 		int pwdMaxLenght = Integer.parseInt(SysParamUtil.getValueAsString("USR_PWD_MAX_LEN"));
 		this.usrLogin.setMaxlength(50);
@@ -601,10 +597,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.usrDftAppId.setValue(PennantApplicationUtil.getLabelDesc(String.valueOf(securityUser.getUsrDftAppId()),
 					PennantStaticListUtil.getAppCodes()));
 		}
+
 		fillComboBox(authType, securityUser.getAuthType(), authTypesList, "");
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-			fillComboBox(ldapDomainName, securityUser.getldapDomainName(), ldapDomainList, "");
-		}
+
+		fillComboBox(ldapDomainName, securityUser.getldapDomainName(), ldapDomainList, "");
+
 		this.usrBranchCode.setValue(aSecurityUser.getUsrBranchCode());
 		this.usrDeptCode.setValue(aSecurityUser.getUsrDeptCode());
 		this.usrIsMultiBranch.setChecked(aSecurityUser.isUsrIsMultiBranch());
@@ -1143,9 +1140,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aSecurityUser);
-			if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-				showLDAPDomainName();
-			}
+			showLDAPDomainName();
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -1187,11 +1182,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.authType.setConstraint(new StaticListValidator(authTypesList,
 					Labels.getLabel("label_SecurityUserDialog_AuthenticationType.value")));
 		}
-		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
-			if (!this.ldapDomainName.isDisabled()) {
-				this.ldapDomainName.setConstraint(new StaticListValidator(ldapDomainList,
-						Labels.getLabel("label_SecurityUserDialog_ldapDomainName.value")));
-			}
+		if (!this.ldapDomainName.isDisabled()) {
+			this.ldapDomainName.setConstraint(new StaticListValidator(ldapDomainList,
+					Labels.getLabel("label_SecurityUserDialog_ldapDomainName.value")));
 		}
 
 		if (!this.userStaffID.isReadonly()) {

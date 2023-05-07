@@ -2116,8 +2116,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean finIsActive = fm.isFinIsActive();
 		fm.setClosureType(rch.getClosureType());
-		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose(),
-				isPresentProc);
+		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose());
+
 		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY
 				&& (RepayConstants.PAYSTATUS_DEPOSITED.equals(rmStatus))) {
 
@@ -8533,18 +8533,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		saveDepositDetails(rch, PennantConstants.method_doApprove);
 		BigDecimal prvMthAmz = fpd.getPrvMthAmz();
 
-		boolean isPresentProc = false;
-		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails())) {
-			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
-				if (RepayConstants.PAYTYPE_PRESENTMENT.equals(rcd.getPaymentType())) {
-					isPresentProc = true;
-				}
-			}
-		}
-
 		fm.setClosureType(rch.getClosureType());
-		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose(),
-				isPresentProc);
+		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose());
 
 		String closingStatus = fm.getClosingStatus();
 		if (isLoanActiveBef && !fm.isFinIsActive() && (FinServiceEvent.SCHDRPY.equals(receiptPurpose))

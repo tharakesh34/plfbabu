@@ -3304,8 +3304,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
 		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
 		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
-		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
-		summary.setOverDueEMI(SchdUtil.getOverDueEMI(appDate, schedules));
 
 		schdData.setFinanceSummary(summary);
 
@@ -4996,7 +4994,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			paymentModeList.add(response);
 		}
 
-		if (secMandateID != null) {
+		if (secMandateID != null && secMandateID > 0) {
 			Mandate secMandate = mandateDAO.getMandateById(secMandateID, "_AView");
 			response = preparePaymentMode(secMandate);
 			paymentModeList.add(response);
@@ -5023,7 +5021,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		boolean isEmpty = CollectionUtils.isEmpty(chequeDetailList);
 
 		Mandate mandate = null;
-		if (mandateID != null) {
+		if (mandateID != null && mandateID > 0) {
 			mandate = mandateDAO.getMandateById(mandateID, "_AView");
 		}
 

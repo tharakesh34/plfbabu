@@ -80,10 +80,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
 
-		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getIsSftp()))) {
-			fetchResponseFilesFromSFTP(externalRespConfig);
-		}
-
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
 			externalRespConfig = null;
@@ -109,6 +105,10 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
 		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
+
+		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getIsSftp()))) {
+			fetchResponseFilesFromSFTP(externalRespConfig);
+		}
 
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
@@ -395,7 +395,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 	private void moveToBackup(ExternalConfig externalRespConfig, String localFolderPath, String fileName) {
 		logger.debug(Literal.ENTERING);
-		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileBackupLocation()))) {
+		if ("".equals(StringUtils.stripToEmpty(externalRespConfig.getFileBackupLocation()))) {
 			logger.debug("EXT_PRMNT: No configuration found for Backup path, so returning.");
 			return;
 		}

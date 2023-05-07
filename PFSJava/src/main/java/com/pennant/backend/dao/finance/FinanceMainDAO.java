@@ -41,6 +41,7 @@ import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
@@ -446,4 +447,8 @@ public interface FinanceMainDAO {
 	Date getMaturityDatebyFinID(long finID);
 
 	FinanceMain getFinanceMainForLien(long finID);
+
+	SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType);
+
+	List<Long> getFinIDsByCustID(Long custID, TableType tableType);
 }

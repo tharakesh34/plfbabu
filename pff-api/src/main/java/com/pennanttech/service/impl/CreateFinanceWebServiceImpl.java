@@ -61,6 +61,7 @@ import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
@@ -2364,7 +2365,6 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		logger.debug(Literal.LEAVING);
 
 		return response;
-
 	}
 
 	@Override
@@ -2443,6 +2443,51 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		logger.debug(Literal.LEAVING);
 
 		return createFinanceController.getPDCDetails(fm);
+	}
+
+	@Override
+	public SourcingDetails getSourcingDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		SourcingDetails response;
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		if (finID == null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(getFailedStatus("90201", finReference));
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		response = financeMainDAO.getSourcingDetailsByFinReference(finID, TableType.MAIN_TAB);
+		if (response == null) {
+			response = new SourcingDetails();
+			response.setPrimaryRelationOfficer(null);
+			response.setReturnStatus(getFailedStatus("90266", finReference));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+		response.setFinalSource("");
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
 	}
 
 	private WSReturnStatus validateFinReference(String finReference) {
@@ -2625,4 +2670,5 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
 	}
+
 }

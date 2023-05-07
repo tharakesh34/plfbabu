@@ -1950,7 +1950,7 @@ public class RepaymentProcessUtil {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
-			List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc) {
+			List<FinODDetails> overdueList, String receiptPurpose) {
 		return repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
 				receiptPurpose);
 	}
@@ -2483,7 +2483,7 @@ public class RepaymentProcessUtil {
 			finODDetailsDAO.updateList(overdueList);
 		}
 
-		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose(), false);
+		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose());
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow);

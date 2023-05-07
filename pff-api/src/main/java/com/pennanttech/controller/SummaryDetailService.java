@@ -42,6 +42,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.util.APIConstants;
 
 public class SummaryDetailService extends AbstractController {
@@ -67,6 +68,7 @@ public class SummaryDetailService extends AbstractController {
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		FinanceSummary summary = new FinanceSummary();
+		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 
 		fd.setFinID(finID);
 		fd.setFinReference(finReference);
@@ -83,8 +85,8 @@ public class SummaryDetailService extends AbstractController {
 		FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
 		fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		FinScheduleData curSchd = resetScheduleDetail(fd.getFinScheduleData());
-		finPftDetail = accrualService.calProfitDetails(fm, curSchd.getFinanceScheduleDetails(), finPftDetail,
-				SysParamUtil.getAppDate());
+		Date appDate = SysParamUtil.getAppDate();
+		finPftDetail = accrualService.calProfitDetails(fm, curSchd.getFinanceScheduleDetails(), finPftDetail, appDate);
 
 		// override repay profit rate with FinProfitdetail calculated value(which is latest).
 		fm.setRepayProfitRate(finPftDetail.getCurReducingRate());
@@ -101,8 +103,7 @@ public class SummaryDetailService extends AbstractController {
 		// Total future Installments
 		// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
 		summary.setFutureInst(finPftDetail.getFutureInst());
-		summary.setFutureTenor(
-				DateUtil.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
+		summary.setFutureTenor(DateUtil.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
 		summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
 		summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
 		summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
@@ -188,6 +189,10 @@ public class SummaryDetailService extends AbstractController {
 			summary.setFinODDetail(finODDetailsList);
 			summary.setOverDueInstlments(odInst);
 			summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
+			summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+			summary.setOverDueEMI(SchdUtil.getOverDueEMI(appDate, schedules));
+			summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+
 			fd.getFinScheduleData().setFinODDetails(finODDetailsList);
 		}
 		logger.debug("Leaving");

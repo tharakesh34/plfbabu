@@ -281,6 +281,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("strSecurityMandate");
 		excludeFields.add("schdDate");
 		excludeFields.add("instalmentNo");
+		excludeFields.add("strSecurityMandate");
 
 		return excludeFields;
 	}

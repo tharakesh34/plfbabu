@@ -216,20 +216,16 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalOutStandCharges = BigDecimal.ZERO;
 	private BigDecimal OutStandIncludeCharges = BigDecimal.ZERO;
 	private BigDecimal availableAmtExcludeCharges = BigDecimal.ZERO;
-	@XmlElement(name = "loanInstallmentAmt")
 	private BigDecimal loanEMI = BigDecimal.ZERO;
-	@XmlElement(name = "loanForeclosureAmount")
 	private BigDecimal foreClosureAmount = BigDecimal.ZERO;
-	@XmlElement(name = "loanInstallmentNo")
 	private int installmentNo;
-	@XmlElement(name = "loanDueDate")
 	private Date dueDate;
-	@XmlElement
 	private BigDecimal loanTotPrincipal = BigDecimal.ZERO;
-	@XmlElement
 	private BigDecimal loanTotInterest = BigDecimal.ZERO;
-	@XmlElement
 	private BigDecimal overDueEMI;
+	private String vehicleNo;
+	private String migratedNo;
+	private Date lastInstDate;
 
 	private String createdName;
 	private String approvedName;
@@ -1255,4 +1251,27 @@ public class FinanceSummary implements Serializable {
 		this.approvedName = approvedName;
 	}
 
+	public String getVehicleNo() {
+		return vehicleNo;
+	}
+
+	public void setVehicleNo(String vehicleNo) {
+		this.vehicleNo = vehicleNo;
+	}
+
+	public String getMigratedNo() {
+		return migratedNo;
+	}
+
+	public void setMigratedNo(String migratedNo) {
+		this.migratedNo = migratedNo;
+	}
+
+	public Date getLastInstDate() {
+		return lastInstDate;
+	}
+
+	public void setLastInstDate(Date lastInstDate) {
+		this.lastInstDate = lastInstDate;
+	}
 }

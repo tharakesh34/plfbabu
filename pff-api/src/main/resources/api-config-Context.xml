@@ -236,4 +236,8 @@
 	
 	<bean id="paymentInstructionController" class="com.pennanttech.controller.PaymentInstructionController" autowire="byName"
 		scope="prototype" />
+
+	<bean id="financeEnquiryController" class="com.pennanttech.controller.FinanceEnquiryController" autowire="byName"
+		scope="prototype" parent="absractController">
+	</bean>
 </beans>

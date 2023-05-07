@@ -1008,6 +1008,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(isReadOnly("MandateDialog_AccHolderName"), this.accHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_JointAccHolderName"), this.jointAccHolderName);
 			readOnlyComponent(isReadOnly("MandateDialog_MICR"), this.micr);
+			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
+			readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
 
 			String bankcode = SysParamUtil.getValueAsString("BANK_CODE");
 			Filter[] filters = new Filter[1];
@@ -2063,6 +2065,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		logger.debug(Literal.LEAVING);
 		return wve;
+
 	}
 
 	private void showErrorDetails(List<WrongValueException> wve) {
@@ -3096,7 +3099,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
 		this.bankAccountValidationService = bankAccountValidationService;
 	}
-	
+
 	private void doSetSwapValidation(boolean validate) {
 		if (this.swapMandate.isChecked() && this.swapEffectiveDate.getValue() == null) {
 			this.swapEffectiveDate.setConstraint(
