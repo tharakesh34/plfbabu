@@ -948,4 +948,7 @@ public class PennantConstants {
 	public static final int FEE_REFUND_APPROVAL_SUCCESS = 1;
 	public static final int FEE_REFUND_APPROVAL_HOLD = 2;
 	public static final int FEE_REFUND_APPROVAL_DOWNLOADED = 3;
+
+	public static final String COURIER = "COURIER";
+	public static final String EMAIL = "EMAIL";
 }

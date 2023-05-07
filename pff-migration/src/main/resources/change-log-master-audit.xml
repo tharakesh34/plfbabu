@@ -5,7 +5,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 	
-	<include file="change-logs/change-log-5.3.0-audit.xml" />
+	<!-- <include file="change-logs/change-log-5.3.0-audit.xml" />
 	<include file="change-logs/change-log-5.4.0-audit.xml" />
 	<include file="change-logs/change-log-5.5.0-audit.xml" />
 	<include file="change-logs/change-log-5.6.0-audit.xml" />
@@ -32,5 +32,8 @@
 	<include file="change-logs/change-log-6.1.0-audit.xml" />
 	<include file="change-logs/change-log-6.2.0-audit.xml" />
 	<include file="change-logs/change-log-6.3.0-audit.xml" />
-	<include file="change-logs/change-log-6.4.0-audit.xml" />
+	<include file="change-logs/change-log-6.4.0-audit.xml" /> -->
+	
+	
+	<include file="change-logs/change-log-NOCLTLM-audit.xml" />
 </databaseChangeLog>

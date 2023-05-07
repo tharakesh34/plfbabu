@@ -371,6 +371,8 @@ public class PennantStaticListUtil {
 	private static List<String> allowedExcessTypeList;
 	private static List<ValueLabel> enqSettlementStatus;
 	private static List<ValueLabel> excessTransferHead;
+	private static List<ValueLabel> finTypeLetterType;
+	private static List<ValueLabel> finTypeLetterMappingMode;
 
 	/**
 	 * Gets the list of applications.
@@ -2361,6 +2363,9 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(FinServiceEvent.CANCELFIN, Labels.getLabel("label_VasEvent_Cancellation")));
 			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS, Labels.getLabel("label_VasEvent_DueAlerts")));
 			templateEvents.add(new ValueLabel("SecurityUser", Labels.getLabel("label_OTP_SecurityUser")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.NOCLTR, Labels.getLabel("label_FinSerEvent_NOCLTR")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.CANCLLTR, Labels.getLabel("label_FinSerEvent_CANCLLTR")));
+			templateEvents.add(new ValueLabel(FinServiceEvent.CLOSELTR, Labels.getLabel("label_FinSerEvent_CLOSELTR")));
 		}
 		return templateEvents;
 	}
@@ -5626,5 +5631,25 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
 		}
 		return excessTransferHead;
+	}
+
+	public static List<ValueLabel> getFinTypeLetterType() {
+		if (finTypeLetterType == null) {
+			finTypeLetterType = new CopyOnWriteArrayList<ValueLabel>();
+			finTypeLetterType.add(new ValueLabel(FinServiceEvent.NOCLTR, Labels.getLabel("label_NOC")));
+			finTypeLetterType.add(new ValueLabel(FinServiceEvent.CLOSELTR, Labels.getLabel("label_ClosureLetter")));
+			finTypeLetterType
+					.add(new ValueLabel(FinServiceEvent.CANCLLTR, Labels.getLabel("label_CancellationLetter")));
+		}
+		return finTypeLetterType;
+	}
+
+	public static List<ValueLabel> getFinTypeLetterMappingMode() {
+		if (finTypeLetterMappingMode == null) {
+			finTypeLetterMappingMode = new CopyOnWriteArrayList<ValueLabel>();
+			finTypeLetterMappingMode.add(new ValueLabel(PennantConstants.COURIER, Labels.getLabel("label_Courier")));
+			finTypeLetterMappingMode.add(new ValueLabel(PennantConstants.EMAIL, Labels.getLabel("label_Email")));
+		}
+		return finTypeLetterMappingMode;
 	}
 }

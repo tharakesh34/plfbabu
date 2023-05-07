@@ -93,4 +93,8 @@ public class FinServiceEvent {
 	public static final String FEEREFUNDINST = "FeeRefundInst";
 	public static final String CROSS_LOAN_KNOCKOFF = "CROSSLOANKNOCKOFF";
 
+	public static final String NOCLTR = "NOCLTR";
+	public static final String CANCLLTR = "CANCLLTR";
+	public static final String CLOSELTR = "CLOSELTR";
+
 }

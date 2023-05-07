@@ -527,6 +527,9 @@
 			<menuItem id="menu_Item_FinTypePartnerbankMapping"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerbankMappingList.zul"
 				rightName="menu_Item_FinTypePartnerbankMapping" />
+			<menuItem id="menu_Item_LoanTypeLetterMapping"
+				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/LoanTypeLetterMappingList.zul"
+				rightName="menu_Item_LoanTypeLetterMapping" />
 		</menu>
 		<menu id="menu_Category_PromotionSetup">
 			<menuItem id="menu_Item_Promotion"

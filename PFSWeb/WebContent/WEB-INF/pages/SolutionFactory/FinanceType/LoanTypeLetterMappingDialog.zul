@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="windowLoanTypeLetterMappingDialog" border="normal" apply="${loanTypeLetterMappingDialogCtrl}"
+		width="100%" height="100%" sizable="false">
+
+		<borderlayout id="borderlayoutLoanTypeLetterMapping">
+			<north id="north">
+				<div sclass="z-toolbar">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+
+						<!-- COMMON BUTTONS -->
+						<toolbar align="start" sclass="toolbar-start">
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
+								sclass="z-toolbarbutton" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" />
+						</toolbar>
+
+						<!-- SEARCH AREA -->
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_LoanTypeLetterMapping.title')}" sclass="label-heading" />
+						</toolbar>
+
+						<!-- CRUD BUTTONS -->
+						<toolbar align="end" sclass="toolbar-end">
+							<button id="btnHelp" visible="false" label="${c:l('label_Help')}"
+								tooltiptext="${c:l('btnHelp.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+						</toolbar>
+					</hbox>
+				</div>
+			</north>
+
+			<center border="none" autoscroll="false" style="padding:5px;">
+				<div>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_finType"
+										value="${c:l('label_LoanTypeLetterMappingDialog_FinType.value')}" />
+									<hbox>
+										<extendedcombobox id="finType" width="155px" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+						<groupbox id="gb_LoanTypeLetterMapping" sclass="gb_dialog">
+							<div sclass="z-toolbar" style="padding:0">
+								<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+									style=" padding:0px;">
+									<toolbar align="start" style="border:none;">
+										<label value="${c:l('label_FinTypeLetterMapping.value')}"
+											sclass="listboxHeading">
+										</label>
+									</toolbar>
+									<toolbar align="end" style="float:right; border-style: none; padding:0px;">
+										<button id="btnNewLoanTypeLetterMapping" label="${c:l('label_New')}"
+											tooltiptext="${c:l('btnNewFLoanTypeLetterMapping.tooltiptext')}" autodisable="btnNewFLoanTypeLetterMapping" />
+									</toolbar>
+								</hbox>
+							</div>
+							<listbox id="listBoxLoanTypeLetterMapping" span="true" sizedByContent="true" width="100%"
+								multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+								<listhead sizable="true">
+									<listheader id="listheader_LoanTypeLetterMapping_LetterType"
+										label="${c:l('listheader_LetterType.label')}" sort="false" hflex="min" />
+									<listheader id="listheader_LoanTypeLetterMapping_AutoGeneration"
+										label="${c:l('listheader_AutoGeneration.label')}" sort="false" hflex="min" />
+									<listheader id="listheader_LoanTypeLetterMapping_Mode"
+										label="${c:l('listheader_Mode.label')}" sort="false" hflex="min" />
+									<listheader id="listheader_LoanTypeLetterMapping_EmailTemplate"
+										label="${c:l('listheader_EmailTemplate.label')}" sort="false" hflex="min" />
+									<listheader id="listheader_LoanTypeLetterMapping_AgreementCode"
+										label="${c:l('listheader_AgreementCode.label')}" sort="false" hflex="min" />
+									<listheader id="listheader_Delete" width="20%" sort="auto" hflex="min" />
+								</listhead>
+							</listbox>
+						</groupbox>
+					</div>
+				</center>
+				
+				<south sclass="south-dialog">
+				<groupbox id="groupboxWf" width="99%">
+					<caption label="${c:l('Action')}" />
+					<hbox width="95%">
+						<radiogroup id="userAction" name="action" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
+						<label id="recordStatus" />
+					</hbox>
+				</groupbox>
+				
+			</south>
+		</borderlayout>
+	</window>
+</zk>

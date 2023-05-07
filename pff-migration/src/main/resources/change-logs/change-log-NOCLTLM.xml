@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Gopal.p" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="01" author="sainaveen.y">
+		<sql>
+			 <![CDATA[
+	       		 INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('NOCLTR',   'Generate NOC Letter',           1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+                 INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('CANCLLTR', 'Generate Cancellation Letter',  1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+                 INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('CLOSELTR', 'Closure Letter',                1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+               ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4444.72" author="vasudevarao.S">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'NOCLTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustCtgCode',     				'Customer Category',                					'nvarchar',  	12,  '0', '1', 'CustomerCategory',    		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustTypeCode',    				'Customer Type',                    					'nvarchar',  	12,  '0', '1', 'CustomerType',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustomerGenderCode',     		'Customer Gender Code',                  				'nvarchar',  	12,  '0', '1', 'CustomerGenderCode',  		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanClosureAge',         		'Days between Closure date and Application Date',       'bigint',       8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanCancellationAge',    		'Days between Cancellation Date and Application Date',  'bigint',       8,   '0', '1', 'LoanCancellationAge',       'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'ClosureType',     				'ClosureType',                							'nvarchar',  	12,  '0', '1', 'Closure_Types',    			'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'Sequence No',    				'same letter type is being issued for the same loan ',  'bigint',		8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''   		  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'Status of previous letters',     'Status of previous letters',                 			'nvarchar',  	12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#4444.73" author="vasudevarao.S">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'CANCLLTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustCtgCode',     			      'Customer Category',                		 				 'nvarchar',    	12, '0', '1', 'CustomerCategory',      'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustTypeCode',    			      'Customer Type',                    				         'nvarchar',    	12, '0', '1', 'CustomerType',          'static,global,dbvalue', '' 			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustomerGenderCode',             'Customer Gender Code',                				     'nvarchar',    	12, '0', '1', 'CustomerGenderCode',    'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanClosureAge',         	      'Days between Closure date and Application Date',          'bigint',         	8,  '0', '1', 'LoanClosureAge',        'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanCancellationAge',   		  'Days between Cancellation Date and Application Date',     'bigint',        	8,  '0', '1', 'LoanCancellationAge',   'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'ClosureType',     				  'ClosureType',                							 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'Sequence No',    				  'same letter type is being issued for the same loan ',     'bigint', 			8,  '0', '1', 'Sequence No',           'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'Status of previous letters',     'Status of previous letter’s',               				 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
+            ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4444.74" author="vasudevarao.S">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE = 'FEES' and RBEVENT = 'CLOSELTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustCtgCode',     			      'Customer Category',                						'nvarchar',  12,  '0', '1', 'CustomerCategory',    		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustTypeCode',    				  'Customer Type',                    						'nvarchar',  12,  '0', '1', 'CustomerType',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustomerGenderCode',       	  'Customer Gender Code',                 					'nvarchar',  12,  '0', '1', 'CustomerGenderCode',  		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanClosureAge',          		  'Days between Closure date and Application Date',         'bigint',    8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanCancellationAge',      	  'Days between Cancellation Date and Application Date',    'bigint',    8,   '0', '1', 'LoanCancellationAge',      'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'ClosureType',     				  'ClosureType',                							'nvarchar',  12,  '0', '1', 'Closure_Types',    		'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'Sequence No',    				  'same letter type is being issued for the same loan ',    'bigint', 	 8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'Status of previous letters',     'Status of previous letter’s',                 			'nvarchar',  12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
+            ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4444.75" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'NOCLTR');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4444.76" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'CANCLLTR');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4444.77" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'CLOSELTR');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="001" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_LOANTYPE_LETTER_MAPPING" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+	
+	<changeSet id="002" author="saikrishna.b">
+		<createTable tableName="LOANTYPE_LETTER_MAPPING">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(20)" />
+			<column name="LetterType" type="varchar(20)" />
+			<column name="AutoGeneration" type="boolean" />
+			<column name="LetterMode" type="varchar(15)" />
+			<column name="EmailTemplateId" type="bigint" />
+			<column name="AgreementCodeId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	 </changeSet>
+	
+	<changeSet id="003" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_ID" tableName="LOANTYPE_LETTER_MAPPING" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="004" author="saikrishna.b">
+		<createTable tableName="LOANTYPE_LETTER_MAPPING_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(20)" />
+			<column name="LetterType" type="varchar(20)" />
+			<column name="AutoGeneration" type="boolean" />
+			<column name="LetterMode" type="varchar(15)" />
+			<column name="EmailTemplateId" type="bigint" />
+			<column name="AgreementCodeId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+    <changeSet id="005" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_TID" tableName="LOANTYPE_LETTER_MAPPING_TEMP" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="006" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLES WHERE ROLECD ='LOANTYPE_LETTER_MAPPING_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='LOANTYPE_LETTER_MAPPING_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD ='LOANTYPE_LETTER_MAPPING_VIEW';
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOANTYPE_LETTER_MAPPING_MAKER', 		'Role for loantype letter mapping maker',	    NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOANTYPE_LETTER_MAPPING_APPROVER', 	'Role for loantype letter mapping approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOANTYPE_LETTER_MAPPING_VIEW', 	    'Role for loantype letter mapping view',	    NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOANTYPE_LETTER_MAPPING_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOANTYPE_LETTER_MAPPING_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOANTYPE_LETTER_MAPPING_VIEW';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_LETTER_MAPPING_MAKER',    'WF Maker Group',     1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_LETTER_MAPPING_APPROVER', 'WF Approver Group',  1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_LETTER_MAPPING_VIEW',     'WF View Group',      1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_LoanTypeLetterMapping';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnNew';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnEdit';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnDelete';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnSave';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_NewLetterMapping';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_FinType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_LetterType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_AutoGeneration';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_LetterMode';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_EmailTemplateId';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_AgreementCodeId';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_LoanTypeLetterMapping',                		'MENU',                         0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnNew',      		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnEdit',     		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnDelete',   		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnSave',     		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_NewLetterMapping', 'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_FinType',            		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_LetterType',        		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_AutoGeneration',     		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_LetterMode',        		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_EmailTemplateId',    		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_AgreementCodeId',    		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+			
+			    INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeLetterMapping'),               		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnNew'),     		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnDelete'),  		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnSave'),    		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_NewLetterMapping'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_FinType'),           		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_LetterType'),        		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_AutoGeneration'),    		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_LetterMode'),        		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_EmailTemplateId'),   		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_AgreementCodeId'),   		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnSave'),  1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeLetterMapping'),             1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'),    (SELECT ROLEID FROM SECROLES  WHERE ROLECD = 'LOANTYPE_LETTER_MAPPING_MAKER'),     0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_APPROVER'), (SELECT ROLEID FROM SECROLES  WHERE ROLECD = 'LOANTYPE_LETTER_MAPPING_APPROVER'),  0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog> 

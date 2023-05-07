@@ -365,6 +365,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.GSTRate;
+import com.pennant.backend.model.rmtmasters.LoanTypeLetterMapping;
 import com.pennant.backend.model.rmtmasters.PartnerBankDataEngine;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -3992,6 +3993,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("CourierDetailUpload", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("LoanTypeLetterMapping",
+				new ModuleMapping("LoanTypeLetterMapping", LoanTypeLetterMapping.class,
+						new String[] { "Loantype_Letter_Mapping" }, masterWF, new String[] { "FinType", "LetetrType" },
+						null, 600));
 
 		registerCustomModules();
 	}

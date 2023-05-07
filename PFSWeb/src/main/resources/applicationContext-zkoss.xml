@@ -6204,4 +6204,15 @@
 	
 	<bean id="courierDetailUploadListCtrl" class="com.pennant.pff.courierdetails.upload.list.CourierDetailUploadListCtrl" 
 	parent="uploadList" />
+	
+	<bean id="loanTypeLetterMappingListCtrl" class="com.pennant.webui.rmtmasters.financetype.LoanTypeLetterMappingListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="selectLoanTypeLetterMappingDialogCtrl" class="com.pennant.webui.rmtmasters.financetype.SelectLoanTypeLetterMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<bean id="loanTypeLetterMappingDialogCtrl" class="com.pennant.webui.rmtmasters.financetype.LoanTypeLetterMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>
