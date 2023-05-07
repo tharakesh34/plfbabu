@@ -99,6 +99,8 @@
 			<menuItem id="menu_Item_Designation"
 				zulNavigation="/WEB-INF/pages/SystemMaster/Designation/DesignationList.zul"
 				rightName="menuItem_SystemMaster_Designation" />
+			<menuItem id="menuItem_Customer_Service_Branch" zulNavigation="/WEB-INF/pages/NOC/ServiceBranchList.zul"
+				rightName="menuItem_Customer_Service_Branch" />
 		</menu>
 		<menu id="menu_Category_SegmentationMasters">
 			<menuItem id="menu_Item_CustomerType"
@@ -529,6 +531,9 @@
 			<menuItem id="menu_Item_FinTypePartnerbankMapping"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerbankMappingList.zul"
 				rightName="menu_Item_FinTypePartnerbankMapping" />
+			<menuItem id="menu_Item_LoanTypeLetterMapping"
+				zulNavigation="/WEB-INF/pages/NOC/LoanTypeLetterMappingList.zul"
+				rightName="menu_Item_LoanTypeLetterMapping" />
 		</menu>
 		<menu id="menu_Category_PromotionSetup">
 			<menuItem id="menu_Item_Promotion"
@@ -1333,7 +1338,6 @@
 				zulNavigation="/WEB-INF/pages/MiscellaneousPostingUpload/MiscellaneousPostingUploadList.zul?stage=A"
 				rightName="menu_Item_MiscellaneousPostingUpload_Approver" />
 		</menu>
-		
 		<menu id="menu_Category_Lien">
 			<menuItem id="menu_Item_LienUpload_Maker"
 				zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=M" rightName="menu_Item_LienUpload_Maker" />
@@ -1365,6 +1369,30 @@
 			<menuItem id="menu_Item_BulkBranchChangeUpload_Approver"
 				zulNavigation="/WEB-INF/pages/BranchChangeUpload/BranchChangeUploadList.zul?stage=A"
 				rightName="menu_Item_BulkBranchChangeUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_BlockAutoGenerateLetterUpload">
+			<menuItem id="menu_Item_BlockAutoGenerateLetterUpload_Maker"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/BlockAutoGenLetterUploadList.zul?stage=M"
+				rightName="menu_Item_BlockAutoGenerateLetterUpload_Maker" />
+			<menuItem id="menu_Item_BlockAutoGenerateLetterUpload_Approver"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/BlockAutoGenLetterUploadList.zul?stage=A"
+				rightName="menu_Item_BlockAutoGenerateLetterUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_Loan_Letter_Upload">
+			<menuItem id="menu_Item_loan_letter_upload_Maker"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/LoanLetterUploadList.zul?stage=M"
+				rightName="menu_Item_loan_letter_upload_Maker" />
+			<menuItem id="menu_Item_loan_letter_upload_Approver"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/LoanLetterUploadList.zul?stage=A"
+				rightName="menu_Item_loan_letter_upload_Approver" />
+		</menu>
+		<menu id="menu_Category_Letter_Courier_Details_Upload">
+			<menuItem id="menu_Item_courier_details_upload_Maker"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/CourierDetailUploadList.zul?stage=M"
+				rightName="menu_Item_courier_details_upload_Maker" />
+			<menuItem id="menu_Item_courier_details_upload_Approver"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/CourierDetailUploadList.zul?stage=A"
+				rightName="menu_Item_courier_details_upload_Approver" />
 		</menu>
 	</menu>
 	<!-- Insurance Module -->

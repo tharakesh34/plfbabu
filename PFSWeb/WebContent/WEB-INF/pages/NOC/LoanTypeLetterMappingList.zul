@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="windowLoanTypeLetterMappingList" apply="${loanTypeLetterMappingListCtrl}" border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0px" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
+
+					<!-- COMMON BUTTONS -->
+					<label value="" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button id="buttonLoanTypeLetterMappingSearchDialog" label="${c:l('label_Filter')}"
+							forward="window_FinanceTypeList.onOK"
+							autodisable="buttonLoanTypeLetterMappingSearchDialog,print,
+							buttonNewLoanTypeLetterMapping,btnRefresh,help"
+							tooltiptext="${c:l('buttonFinanceTypeListFinanceTypeSearchDialog.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="print" label="${c:l('label_Print')}"
+							autodisable="buttonLoanTypeLetterMappingSearchDialog,print,
+							buttonNewLoanTypeLetterMapping,btnRefresh,help"
+							tooltiptext="${c:l('print.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="buttonNewLoanTypeLetterMapping" label="${c:l('label_New')}"
+							autodisable="buttonLoanTypeLetterMappingSearchDialog,print,
+							buttonNewLoanTypeLetterMapping,btnRefresh,help"
+							tooltiptext="${c:l('buttonFinanceTypeListNewFinanceType.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="btnRefresh" label="${c:l('label_Refresh')}"
+							autodisable="buttonLoanTypeLetterMappingSearchDialog,print,
+							buttonNewLoanTypeLetterMapping,btnRefresh,help"
+							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+						<button id="help" visible="false" label="${c:l('label_Help')}"
+							autodisable="buttonLoanTypeLetterMappingSearchDialog,print,
+							buttonNewLoanTypeLetterMapping,btnRefresh,help"
+							tooltiptext="${c:l('help.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="borderLayoutLoanTypeLetterMappingList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_FinanceTypeLetterMappingSearch_FinType"
+										value="${c:l('label_LoanTypeLetterMappingSearch_FinType.value')}" />
+									<listbox id="sortOperatorFinType" width="43px" mold="select" rows="1" />
+									<uppercasebox id="finType" width="100px" maxlength="8" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label id="label_FinanceTypeSearch_RecordStatus"
+										value="${c:l('label_FinanceTypeSearch_RecordStatus.value')}" />
+									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
+									<textbox id="recordStatus" width="100px" maxlength="50" />
+
+									<label id="label_FinanceTypeSearch_RecordType"
+										value="${c:l('label_FinanceTypeSearch_RecordType.value')}" />
+									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+						<listbox id="listBoxLoanTypeLetterMapping" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" emptyMessage="${c:l('listbox.emptyMessage')}"
+							span="true">
+							<listhead sizable="true">
+								<listheader id="listheaderFinType" label="${c:l('listheaderFinType.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}"
+									sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				
+				<south border="none">
+					<paging id="pagingLoanTypeLetterMapping" height="35px" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

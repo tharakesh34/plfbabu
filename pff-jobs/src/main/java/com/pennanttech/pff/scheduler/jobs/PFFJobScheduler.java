@@ -20,8 +20,10 @@ import com.pennant.backend.service.fincancelupload.impl.FinanceCancellationUploa
 import com.pennant.backend.upload.job.CrossLoanKnockOffJob;
 import com.pennant.backend.upload.job.FeeWaiverUploadJob;
 import com.pennant.backend.upload.job.PaymentInstJob;
+import com.pennant.pff.blockautolettergenerate.upload.job.BlockAutoLetterGenerateUploadJob;
 import com.pennant.pff.branchchange.upload.job.BranchChangeUploadJob;
 import com.pennant.pff.cheques.upload.job.ChequeUploadJob;
+import com.pennant.pff.courierdetailupload.upload.job.CourierDetailUploadJob;
 import com.pennant.pff.customer.upload.job.KycDetailUploadJob;
 import com.pennant.pff.excess.upload.job.ExcessTransferUploadJob;
 import com.pennant.pff.extension.MandateExtension;
@@ -31,6 +33,8 @@ import com.pennant.pff.lien.upload.job.LienUploadJob;
 import com.pennant.pff.lpp.upload.job.LPPUploadJob;
 import com.pennant.pff.mandate.upload.job.MandateUploadJob;
 import com.pennant.pff.manualknockoff.upload.job.ManualKnockOffJob;
+import com.pennant.pff.miscellaneouspostingupload.service.impl.MiscellaneousPostingUploadJob;
+import com.pennant.pff.noc.upload.job.LoanLetterUploadJob;
 import com.pennant.pff.presentment.upload.job.FateCorrectionJob;
 import com.pennant.pff.presentment.upload.job.RepresentmentJob;
 import com.pennant.pff.receipt.upload.job.CreateReceiptUploadJob;
@@ -91,6 +95,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private MandateProcesses mandateProcesses;
 	private PmayProcess pmayProcess;
 	private SecurityUserService securityUserService;
+
 	private UploadService excessTransferUploadService;
 	private UploadService holdRefundUploadService;
 	private UploadService rePresentmentUploadService;
@@ -112,6 +117,10 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService writeOffUploadService;
 	private UploadService revWriteOffUploadService;
 	private UploadService branchChangeUploadService;
+	private UploadService courierDetailUploadService;
+	private UploadService loanLetterUploadService;
+	private UploadService blockAutoGenLetterUploadService;
+
 	@Autowired(required = false)
 	private JobSchedulerExtension jobSchedulerExtension;
 
@@ -468,7 +477,7 @@ public class PFFJobScheduler extends JobScheduler {
 
 		args = new JobDataMap();
 		args.put("miscellaneouspostingUploadService", miscellaneouspostingUploadService);
-		jobData = new JobData("MIS_POST_DETAILS_JOB", HostGLMappingUploadJob.class, args);
+		jobData = new JobData("MIS_POST_DETAILS_JOB", MiscellaneousPostingUploadJob.class, args);
 		jobDataList.add(jobData);
 
 		args = new JobDataMap();
@@ -511,6 +520,20 @@ public class PFFJobScheduler extends JobScheduler {
 		jobData = new JobData("BRANCH_DETAILS_JOB", BranchChangeUploadJob.class, args);
 		jobDataList.add(jobData);
 
+		args = new JobDataMap();
+		args.put("courierDetailUploadService", courierDetailUploadService);
+		jobData = new JobData("COURIER_DETAILS_JOB", CourierDetailUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("loanLetterUploadService", loanLetterUploadService);
+		jobData = new JobData("LOAN_LETTER_JOB", LoanLetterUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("blockAutoGenLetterUploadService", blockAutoGenLetterUploadService);
+		jobData = new JobData("BLOCK_AUTO_GEN_LETTER_JOB", BlockAutoLetterGenerateUploadJob.class, args);
+		jobDataList.add(jobData);
 		/**
 		 * For client specific jobs
 		 */
@@ -760,6 +783,21 @@ public class PFFJobScheduler extends JobScheduler {
 	@Autowired
 	public void setBranchChangeUploadService(UploadService branchChangeUploadService) {
 		this.branchChangeUploadService = branchChangeUploadService;
+	}
+
+	@Autowired
+	public void setCourierDetailUploadService(UploadService courierDetailUploadService) {
+		this.courierDetailUploadService = courierDetailUploadService;
+	}
+
+	@Autowired
+	public void setLoanLetterUploadService(UploadService loanLetterUploadService) {
+		this.loanLetterUploadService = loanLetterUploadService;
+	}
+
+	@Autowired
+	public void setBlockAutoGenLetterUploadService(UploadService blockAutoGenLetterUploadService) {
+		this.blockAutoGenLetterUploadService = blockAutoGenLetterUploadService;
 	}
 
 }

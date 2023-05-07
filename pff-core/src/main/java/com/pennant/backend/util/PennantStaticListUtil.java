@@ -372,6 +372,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> enqSettlementStatus;
 	private static List<ValueLabel> excessTransferHead;
 	private static List<ValueLabel> sanctionStatusList;
+	private static List<ValueLabel> finTypeLetterType;
+	private static List<ValueLabel> finTypeLetterMappingMode;
 
 	/**
 	 * Gets the list of applications.
@@ -2364,6 +2366,7 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(FinServiceEvent.CANCELFIN, Labels.getLabel("label_VasEvent_Cancellation")));
 			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS, Labels.getLabel("label_VasEvent_DueAlerts")));
 			templateEvents.add(new ValueLabel("SecurityUser", Labels.getLabel("label_OTP_SecurityUser")));
+			templateEvents.addAll(getFinTypeLetterType());
 		}
 		return templateEvents;
 	}
@@ -5642,5 +5645,28 @@ public class PennantStaticListUtil {
 					new ValueLabel(PennantConstants.SANCTION_CLOSED, Labels.getLabel("label_Sanction_Status_Closed")));
 		}
 		return sanctionStatusList;
+	}
+
+	public static List<ValueLabel> getFinTypeLetterType() {
+		if (finTypeLetterType == null) {
+			finTypeLetterType = new ArrayList<>();
+
+			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_NOC_LTR, Labels.getLabel("label_NOC")));
+			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_CAN_LTR, Labels.getLabel("label_CancellationLetter")));
+			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_CLOSE_LTR, Labels.getLabel("label_ClosureLetter")));
+		}
+		
+		return finTypeLetterType;
+	}
+
+	public static List<ValueLabel> getFinTypeLetterMappingMode() {
+		if (finTypeLetterMappingMode == null) {
+			finTypeLetterMappingMode = new ArrayList<>();
+			
+			finTypeLetterMappingMode.add(new ValueLabel(NOCConstants.MODE_COURIER, Labels.getLabel("label_Courier")));
+			finTypeLetterMappingMode.add(new ValueLabel(NOCConstants.MODE_EMAIL, Labels.getLabel("label_Email")));
+		}
+
+		return finTypeLetterMappingMode;
 	}
 }

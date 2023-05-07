@@ -1,0 +1,24 @@
+package com.pennant.pff.noc.upload.error;
+
+public enum BlockAutoGenLetterUploadError {
+
+	BALG_01("Loan Reference is In-valid."),
+
+	BALG_02("The Possible values should be (B/U) Only."),
+
+	BALG_03("Flag already exists against the Loan."),
+
+	BALG_04("Hold Flag is not available."),
+
+	BALG_05("Action is mandatory.");
+
+	private String description;
+
+	private BlockAutoGenLetterUploadError(String description) {
+		this.description = description;
+	}
+
+	public String description() {
+		return description;
+	}
+}

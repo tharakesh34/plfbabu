@@ -13360,5 +13360,70 @@
 
 	<bean id="accountEngineEventDAO" class="com.pennant.backend.dao.bmtmasters.impl.AccountEngineEventDAOImpl"
 		parent="basicDao" />
+	
+	<bean id="serviceBranchDAO" class="com.pennant.pff.noc.dao.impl.ServiceBranchDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="serviceBranchService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="serviceBranchServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="serviceBranchServiceTarget" class="com.pennant.pff.noc.service.impl.ServiceBranchServiceImpl"/>
+
+	<bean id="blockAutoGenLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.BlockAutoGenLetterUploadDAOImpl"
+		parent="sequenceDao" />
+			
+	<bean id="blockAutoGenLetterUploadService"
+		class="com.pennant.pff.noc.upload.service.impl.BlockAutoGenLetterUploadServiceImpl" parent="aUploadService" />
+		
+		<bean id="loanLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.LoanLetterUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="loanLetterUploadService"
+		class="com.pennant.pff.noc.upload.service.impl.LoanLetterUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="courierDetailUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.CourierDetailUploadDAOImpl"
+	 parent="sequenceDao"/>	
+	 
+	<bean id="courierDetailUploadService" class="com.pennant.pff.noc.upload.service.impl.CourierDetailUploadServiceImpl"
+	 parent="aUploadService"/>
+
+	<bean id="loanTypeLetterMappingDAO" class="com.pennant.pff.noc.dao.impl.LoanTypeLetterMappingDAOImpl"
+		parent="sequenceDao" />	 
+
+	<bean id="loanTypeLetterMappingService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="loanTypeLetterMappingServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	
+	 <bean id="loanTypeLetterMappingServiceTarget"
+		class="com.pennant.pff.noc.service.impl.LoanTypeLetterMappingServiceImpl" />
 
 </beans>

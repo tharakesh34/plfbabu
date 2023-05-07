@@ -903,6 +903,18 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 	protected boolean doProcess(FinTypeKnockOff aKnockOff, String tranType) {
 		logger.debug(Literal.ENTERING);
 
+		List<FinTypeKnockOff> knockOffMapping = aKnockOff.getLoanTypeKonckOffMapping();
+		List<FinTypeKnockOff> tempKnockOffMapping = new ArrayList<>();
+
+		for (FinTypeKnockOff KM : knockOffMapping) {
+			if (KM.getRecordType() != null && PennantConstants.RECORD_TYPE_CAN.equals(KM.getRecordType())) {
+				tempKnockOffMapping.add(KM);
+			}
+		}
+
+		knockOffMapping.removeAll(tempKnockOffMapping);
+		aKnockOff.setLoanTypeKonckOffMapping(knockOffMapping);
+
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";

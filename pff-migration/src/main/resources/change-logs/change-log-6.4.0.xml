@@ -17076,5 +17076,1083 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet id="ST#1561.1" author="Mounika.M">
+		<createSequence sequenceName="SEQ_Service_Branches" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.2" author="Mounika.M">
+		<createTable tableName="Service_Branches">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OfcOrHouseNum" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FlatNum" type="varchar(50)" />
+			<column name="Street" type="varchar(50)" />
+			<column name="AddrLine1" type="varchar(50)"/>
+			<column name="AddrLine2" type="varchar(50)" />
+			<column name="PoBox" type="varchar(50)" />
+			<column name="Country" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="City" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CpProvince" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PinCodeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PinCode" type="varchar(10)" />
+			<column name="FolderPath" type="varchar(500)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
+	<changeSet id="ST#1561.3" author="Mounika.M">
+		<addPrimaryKey tableName="Service_Branches" columnNames="Id" constraintName="pk_SerBrank_ID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.4" author="Mounika.M">
+		<addUniqueConstraint tableName="Service_Branches" columnNames="Code"
+			constraintName="UK_servBranch_code" />
+	</changeSet>
+
+	<changeSet id="ST#1561.5" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SB_pincodeid" referencedTableName="Pincodes"
+			baseColumnNames="PincodeId" baseTableName="Service_Branches" referencedColumnNames="PincodeId" />
+	</changeSet>
+
+	<changeSet id="ST#1561.6" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SB_City"
+			referencedTableName="RMTProvinceVSCity" baseColumnNames="City" baseTableName="Service_Branches"
+			referencedColumnNames="PCCITY" />
+	</changeSet>
+
+	<changeSet id="ST#1561.7" author="Mounika.M">
+		<createTable tableName="Service_Branches_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Code" type="varchar(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Description" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OfcOrHouseNum" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FlatNum" type="varchar(50)" />
+			<column name="Street" type="varchar(50)" />
+			<column name="AddrLine1" type="varchar(50)" />
+			<column name="AddrLine2" type="varchar(50)" />
+			<column name="PoBox" type="varchar(50)" />
+			<column name="Country" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="City" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CpProvince" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PinCodeId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PinCode" type="varchar(10)" />
+			<column name="FolderPath" type="varchar(500)" />
+			<column name="Active" type="boolean" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.8" author="Mounika.M">
+		<addPrimaryKey tableName="Service_Branches_Temp" columnNames="Id" constraintName="pk_SerBrank_Temp_ID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.9" author="Mounika.M">
+		<addUniqueConstraint tableName="Service_Branches_Temp" columnNames="Code"
+			constraintName="UK_code_servBranch_Temp" />
+	</changeSet>
+
+	<changeSet id="ST#1561.10" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBT_pincodeid" referencedTableName="Pincodes"
+			baseColumnNames="PincodeId" baseTableName="Service_Branches_Temp" referencedColumnNames="PincodeId" />
+	</changeSet>
+
+	<changeSet id="ST#1561.11" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBT_City"
+			referencedTableName="RMTProvinceVSCity" baseColumnNames="City" baseTableName="Service_Branches_Temp"
+			referencedColumnNames="PCCITY" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.12" author="Mounika.M">
+		<createSequence sequenceName="SEQ_Service_Branches_LoanType" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1" />
+	</changeSet>
+
+	<changeSet id="ST#1561.13" author="Mounika.M">
+		<createTable tableName="Service_Branches_LoanType">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Branch" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.14" author="Mounika.M">
+		<addPrimaryKey tableName="Service_Branches_LoanType" columnNames="Id"
+			constraintName="PK_id_servBranchLT" />
+	</changeSet>
+
+	<changeSet id="ST#1561.15" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBT_id_SerBranch"
+			referencedTableName="Service_Branches" baseColumnNames="HeaderId" baseTableName="Service_Branches_LoanType"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#1561.16" author="Mounika.M">
+		<addUniqueConstraint tableName="Service_Branches_LoanType" columnNames="HeaderId,FinType,Branch"
+			constraintName="uk_sbt_hdrid_ft_br" />
+	</changeSet>
+
+	<changeSet id="ST#1561.17" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBT_RMTBranch" referencedTableName="RMTBranches"
+			baseColumnNames="Branch" baseTableName="Service_Branches_LoanType" referencedColumnNames="BranchCode" />
+	</changeSet>
+
+	<changeSet id="ST#1561.18" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBT_RMTFinanceType"
+			referencedTableName="RMTFinanceTypes" baseColumnNames="FinType" baseTableName="Service_Branches_LoanType"
+			referencedColumnNames="FinType" />
+	</changeSet>
+
+	<changeSet id="ST#1561.19" author="Mounika.M">
+		<createTable tableName="Service_Branches_LoanType_Temp">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="FinType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Branch" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.20" author="Mounika.M">
+		<addPrimaryKey tableName="Service_Branches_LoanType_Temp" columnNames="Id"
+			constraintName="UK_code_servBranchLTT" />
+	</changeSet>
+
+	<changeSet id="ST#1561.21" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBTT_id_SerBranchT"
+			referencedTableName="Service_Branches_Temp" baseColumnNames="HeaderId" baseTableName="Service_Branches_LoanType_Temp"
+			referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="ST#1561.22" author="Mounika.M">
+		<addUniqueConstraint tableName="Service_Branches_LoanType_Temp"
+			columnNames="HeaderId,FinType,Branch" constraintName="fk_sbtt_header_id_br" />
+	</changeSet>
+
+	<changeSet id="ST#1561.23" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBTT_RMTBranch" referencedTableName="RMTBranches"
+			baseColumnNames="Branch" baseTableName="Service_Branches_LoanType_Temp" referencedColumnNames="BranchCode" />
+	</changeSet>
+
+	<changeSet id="ST#1561.24" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="fk_SBTT_RMTFinanceType"
+			referencedTableName="RMTFinanceTypes" baseColumnNames="FinType" baseTableName="Service_Branches_LoanType_Temp"
+			referencedColumnNames="FinType" />
+	</changeSet>
+
+	<changeSet id="ST#1561.25" author="Mounika.M">
+		<comment>Rights for Customer Service Branch</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_VIEW');
+				
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE ROLEID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW');
+				
+				DELETE FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_VIEW';
+				
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW');
+				
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW');
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW';
+				
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'menuItem_Customer_Service_Branch');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranch_btnNew');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranch_SearchDialog');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranchDialog_btnEdit');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranchDialog_btnSave');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranchDialog_btnDelete');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Code');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Description');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_OfcOrHouseNum');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_FlatNum');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Street');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_AddrLine1');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_AddrLine2');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_PoBox');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_City');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Country');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_CpProvince');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_PinCode');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_FolderPath');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Active');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_Branch');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_FinType');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnNew');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnRemove');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnUpload');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnImport');
+				DELETE FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_File');
+				
+				DELETE FROM SECRIGHTS WHERE RightName = 'menuItem_Customer_Service_Branch';
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranch_btnNew';
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranch_SearchDialog';
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranchDialog_btnEdit';
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranchDialog_btnSave';
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_CustomerServiceBranchDialog_btnDelete';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Code';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Description';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_OfcOrHouseNum';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_FlatNum';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Street';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_AddrLine1';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_AddrLine2';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_PoBox';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_City';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Country';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_CpProvince';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_PinCode';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_FolderPath';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchDialog_Active';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_Branch';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_FinType';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnNew';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnRemove';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnUpload';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_btnImport';
+				DELETE FROM SECRIGHTS WHERE RightName = 'CustomerServiceBranchLoanTypeDialog_File';
+				
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Customer_Service_Branch', 			'MENU', 						0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_CustomerServiceBranch_btnNew',			'ServiceBranchList',    0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_CustomerServiceBranch_SearchDialog',	'ServiceBranchList',    0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_CustomerServiceBranchDialog_btnEdit',	'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_CustomerServiceBranchDialog_btnSave',	'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_CustomerServiceBranchDialog_btnDelete',	'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_Code',				'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_Description',		'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_OfcOrHouseNum',	'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_FlatNum',			'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_Street',			'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_AddrLine1',		'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_AddrLine2',		'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_PoBox',			'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_City',				'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_Country',		    'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_CpProvince',		'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_PinCode',			'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_FolderPath',		'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchDialog_Active',			'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchLoanTypeDialog_FinType',	'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'CustomerServiceBranchLoanTypeDialog_btnNew',	'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'CustomerServiceBranchLoanTypeDialog_btnRemove','ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'CustomerServiceBranchLoanTypeDialog_btnUpload','ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'CustomerServiceBranchLoanTypeDialog_btnImport','ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerServiceBranchLoanTypeDialog_File',		'ServiceBranchDialog',  0, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'SERVICE_BRANCH_MAKER', 		'CUSTOMER SERVICE BRANCH MAKER',  	1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'SERVICE_BRANCH_APPROVER', 	'CUSTOMER SERVICE BRANCH APPROVER', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'SERVICE_BRANCH_VIEW', 		'CUSTOMER SERVICE BRANCH VIEW',  	1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_Customer_Service_Branch'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerServiceBranch_btnNew'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerServiceBranch_SearchDialog'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerServiceBranchDialog_btnEdit'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerServiceBranchDialog_btnSave'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerServiceBranchDialog_btnDelete'),  1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_Code'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_Description'), 		 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_FlatNum'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_Street'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_OfcOrHouseNum'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_AddrLine1'), 		 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_AddrLine2'), 		 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_PoBox'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_City'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_Country'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_CpProvince'), 		 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_PinCode'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_FolderPath'), 		 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchDialog_Active'), 			 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchLoanTypeDialog_FinType'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchLoanTypeDialog_btnNew'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchLoanTypeDialog_btnRemove'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchLoanTypeDialog_btnUpload'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchLoanTypeDialog_btnImport'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'CustomerServiceBranchLoanTypeDialog_File'), 	 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_Customer_Service_Branch'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_CustomerServiceBranchDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPRIGHTID) + 1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_Customer_Service_Branch'), 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'SERVICE_BRANCH_MAKER', 'Maker role for Customer Service Branch', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'SERVICE_BRANCH_APPROVER', 'Approver role for Customer Service Branch',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		  		INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'SERVICE_BRANCH_VIEW', 'View role for Customer Service Branch',	'', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		  		
+		  		INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW'), 	(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'SERVICE_BRANCH_VIEW'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		    	INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'SERVICE_BRANCH_VIEW'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'MSTGRP1_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.26" author="sainaveen.y">
+		<sql>
+			 <![CDATA[
+			 	 DELETE FROM BMTAEEVENTS WHERE AEEVENTCODE IN ('NOCLTR', 'CANCLLTR', 'CLOSELTR');
+			 	 
+	       		 INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('NOCLTR',   'Generate NOC Letter',           1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+                 INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('CANCLLTR', 'Generate Cancellation Letter',  1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+                 INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES ('CLOSELTR', 'Generate Closure Letter',                1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+             ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.27" author="vasudevarao.S">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'NOCLTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustCtgCode',     				'Customer Category',                					'nvarchar',  	12,  '0', '1', 'CustomerCategory',    		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustTypeCode',    				'Customer Type',                    					'nvarchar',  	12,  '0', '1', 'CustomerType',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustomerGenderCode',     		'Customer Gender Code',                  				'nvarchar',  	12,  '0', '1', 'CustomerGenderCode',  		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanClosureAge',         		'Days between Closure date and Application Date',       'bigint',       8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanCancellationAge',    		'Days between Cancellation Date and Application Date',  'bigint',       8,   '0', '1', 'LoanCancellationAge',       'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'ClosureType',     				'ClosureType',                							'nvarchar',  	12,  '0', '1', 'Closure_Types',    			'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'Sequence No',    				'same letter type is being issued for the same loan ',  'bigint',		8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''   		  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'Status of previous letters',     'Status of previous letters',                 			'nvarchar',  	12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.28" author="vasudevarao.S">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'CANCLLTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustCtgCode',     			      'Customer Category',                		 				 'nvarchar',    	12, '0', '1', 'CustomerCategory',      'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustTypeCode',    			      'Customer Type',                    				         'nvarchar',    	12, '0', '1', 'CustomerType',          'static,global,dbvalue', '' 			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustomerGenderCode',             'Customer Gender Code',                				     'nvarchar',    	12, '0', '1', 'CustomerGenderCode',    'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanClosureAge',         	      'Days between Closure date and Application Date',          'bigint',         	8,  '0', '1', 'LoanClosureAge',        'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanCancellationAge',   		  'Days between Cancellation Date and Application Date',     'bigint',        	8,  '0', '1', 'LoanCancellationAge',   'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'ClosureType',     				  'ClosureType',                							 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'Sequence No',    				  'same letter type is being issued for the same loan ',     'bigint', 			8,  '0', '1', 'Sequence No',           'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'Status of previous letters',     'Status of previous letter’s',               				 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
+            ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.29" author="vasudevarao.S">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE = 'FEES' and RBEVENT = 'CLOSELTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustCtgCode',     			      'Customer Category',                						'nvarchar',  12,  '0', '1', 'CustomerCategory',    		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustTypeCode',    				  'Customer Type',                    						'nvarchar',  12,  '0', '1', 'CustomerType',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustomerGenderCode',       	  'Customer Gender Code',                 					'nvarchar',  12,  '0', '1', 'CustomerGenderCode',  		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanClosureAge',          		  'Days between Closure date and Application Date',         'bigint',    8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanCancellationAge',      	  'Days between Cancellation Date and Application Date',    'bigint',    8,   '0', '1', 'LoanCancellationAge',      'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'ClosureType',     				  'ClosureType',                							'nvarchar',  12,  '0', '1', 'Closure_Types',    		'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'Sequence No',    				  'same letter type is being issued for the same loan ',    'bigint', 	 8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'Status of previous letters',     'Status of previous letter’s',                 			'nvarchar',  12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
+            ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.30" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'NOCLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'NOCLTR');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.31" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'CANCLLTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'CANCLLTR');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.32" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'CLOSELTR');
+                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'CLOSELTR');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.33" author="saikrishna.b">
+		<createSequence sequenceName="SEQ_LOANTYPE_LETTER_MAPPING" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.34" author="saikrishna.b">
+		<createTable tableName="LOANTYPE_LETTER_MAPPING">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(20)" />
+			<column name="LetterType" type="varchar(20)" />
+			<column name="AutoGeneration" type="boolean" />
+			<column name="LetterMode" type="varchar(15)" />
+			<column name="EmailTemplateId" type="bigint" />
+			<column name="AgreementCodeId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	 </changeSet>
+	
+	<changeSet id="ST#1561.35" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_ID" tableName="LOANTYPE_LETTER_MAPPING" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.36" author="saikrishna.b">
+		<createTable tableName="LOANTYPE_LETTER_MAPPING_TEMP">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinType" type="varchar(20)" />
+			<column name="LetterType" type="varchar(20)" />
+			<column name="AutoGeneration" type="boolean" />
+			<column name="LetterMode" type="varchar(15)" />
+			<column name="EmailTemplateId" type="bigint" />
+			<column name="AgreementCodeId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+    <changeSet id="ST#1561.37" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_TID" tableName="LOANTYPE_LETTER_MAPPING_TEMP" columnNames="Id" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.38" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLES WHERE ROLECD ='LOANTYPE_LETTER_MAPPING_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='LOANTYPE_LETTER_MAPPING_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD ='LOANTYPE_LETTER_MAPPING_VIEW';
+				
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOANTYPE_LETTER_MAPPING_MAKER', 		'Role for loantype letter mapping maker',	    NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOANTYPE_LETTER_MAPPING_APPROVER', 	'Role for loantype letter mapping approver',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES ((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOANTYPE_LETTER_MAPPING_VIEW', 	    'Role for loantype letter mapping view',	    NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOANTYPE_LETTER_MAPPING_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOANTYPE_LETTER_MAPPING_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOANTYPE_LETTER_MAPPING_VIEW';
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_LETTER_MAPPING_MAKER',    'WF Maker Group',     1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_LETTER_MAPPING_APPROVER', 'WF Approver Group',  1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS_VIEW), 'LOANTYPE_LETTER_MAPPING_VIEW',     'WF View Group',      1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_LoanTypeLetterMapping';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnNew';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnEdit';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnDelete';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_btnSave';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='button_LoanTypeLetterMappingDialog_NewLetterMapping';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_FinType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_LetterType';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_AutoGeneration';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_LetterMode';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_EmailTemplateId';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='LoanTypeLetterMappingDialog_AgreementCodeId';
+				
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 0, 'menu_Item_LoanTypeLetterMapping',                		'MENU',                         0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnNew',      		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnEdit',     		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnDelete',   		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_btnSave',     		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 2, 'button_LoanTypeLetterMappingDialog_NewLetterMapping', 'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_FinType',            		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_LetterType',        		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_AutoGeneration',     		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_LetterMode',        		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_EmailTemplateId',    		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS_VIEW), 3, 'LoanTypeLetterMappingDialog_AgreementCodeId',    		'LoanTypeLetterMappingDialog',   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+			    INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeLetterMapping'),               		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnNew'),     		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnDelete'),  		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnSave'),    		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_NewLetterMapping'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_FinType'),           		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_LetterType'),        		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_AutoGeneration'),    		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_LetterMode'),        		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_EmailTemplateId'),   		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'LoanTypeLetterMappingDialog_AgreementCodeId'),   		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_LoanTypeLetterMappingDialog_btnSave'),  1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LoanTypeLetterMapping'),             1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_MAKER'),    (SELECT ROLEID FROM SECROLES  WHERE ROLECD = 'LOANTYPE_LETTER_MAPPING_MAKER'),     0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)  VALUES  ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS_VIEW), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOANTYPE_LETTER_MAPPING_APPROVER'), (SELECT ROLEID FROM SECROLES  WHERE ROLECD = 'LOANTYPE_LETTER_MAPPING_APPROVER'),  0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.39" author="ramya.v">
+		<createTable tableName="LOAN_LETTER_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="LetterType" type="varchar(50)" />
+			<column name="ModeOfTransfer" type="varchar(50)" />
+			<column name="WaiverCharges" type="varchar(50)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#1561.40" author="ramya.v">
+		<addPrimaryKey constraintName="PK_LOAN_LETTER_UPLOAD_ID" tableName="LOAN_LETTER_UPLOAD" columnNames="id" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.41" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_VIEW');
+
+				DELETE FROM SECROLES WHERE ROLECD ='LOAN_LETTER_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='LOAN_LETTER_UPLOAD_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD ='LOAN_LETTER_UPLOAD_VIEW';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_VIEW');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOAN_LETTER_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOAN_LETTER_UPLOAD_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='LOAN_LETTER_UPLOAD_VIEW';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_loan_letter_upload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_loan_letter_upload_Approver';
+
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_loan_letter_upload_Maker', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_loan_letter_upload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LOAN_LETTER_UPLOAD_MAKER', 	'WF Maker for NOC Loan Letter Upload', 		0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LOAN_LETTER_UPLOAD_APPROVER', 'WF Approver for NOC Loan Letter Upload', 	0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LOAN_LETTER_UPLOAD_VIEW', 	'WF View for NOC Loan Letter Upload', 		0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_loan_letter_upload_Maker'),    1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_loan_letter_upload_Approver'), 1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_VIEW'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_loan_letter_upload_Maker'), 		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_VIEW'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_loan_letter_upload_Approver'), 	1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOAN_LETTER_UPLOAD_MAKER', 'Maker role from  NOC Loan Letter Upload', 		 '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOAN_LETTER_UPLOAD_APPROVER', 'Approver role from  NOC Loan Letter Upload', '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'LOAN_LETTER_UPLOAD_VIEW', 'Menu role from  NOC Loan Letter Upload', 		 '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_MAKER'), 	(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LOAN_LETTER_UPLOAD_MAKER'), 	0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LOAN_LETTER_UPLOAD_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_VIEW'), 	(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LOAN_LETTER_UPLOAD_VIEW'), 	0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_MAKER'), 	(SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LOAN_LETTER_UPLOAD_VIEW'), 	0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_LETTER_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'LOAN_LETTER_UPLOAD_VIEW'), 	0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.42" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LOAN_LETTER_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LOAN_LETTER_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='LOAN_LETTER_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD';
+
+                INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE, MAXRECORDS) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LOAN_LETTER_UPLOAD', 'NOC Generate Letter Upload File.', 12, 'GENERATE_LETTER', null, null, ',', 0, 1, null, 'ROW:{Loan Reference, Report, Mode, Override Charges}', null, 'C', '/opt/PFF/BASE/hdfc/GenerateLetterUpload/upload', 'GenerateLetter_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, 0, NULL, 1, 1, 10000);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD'), 'LOAN_LETTER_UPLOAD', 1, 'HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD')), 'finReference',         			 0, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD')), 'letterType',              		 0, 'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD')), 'modeOfTransfer', 			 	 0, 'N', NULL, NULL, NULL, NULL, '2',  NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_UPLOAD')), 'waiverCharges', 		   		 	 0, 'N', NULL, NULL, NULL, NULL, '3',  NULL, NULL, NULL, NULL, 'M');
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.43" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LOAN_LETTER_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LOAN_LETTER_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='GENERATE_LETTER_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LOAN_LETTER_TEMPLATE', 'NOC Generate Letter Template Download', 3, 'GENERATE_LETTER', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference, Report, Mode, Override Charges}',  '', 'A', '/opt/PFF/BASE/hdfc/GenerateLetterUpload/template', 'GenerateLetter_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE'), 'LOAN_LETTER_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 4, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE')),  'FINREFERENCE',            0, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE')),  'LETTERTYPE',              0, 'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE')),  'MODEOFTRANSFER', 			0, 'N', NULL, NULL, NULL, NULL, '2',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LOAN_LETTER_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LOAN_LETTER_TEMPLATE')),  'WAIVERCHARGES', 		   	0, 'N', NULL, NULL, NULL, NULL, '3',  NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.44" author="VinayKumar.K">
+		<createTable tableName="COURIER_DETAILS_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="Varchar(20)" />
+			<column name="LetterType" type="Varchar(30)" />
+			<column name="LetterDate" type="datetime" />
+			<column name="DispatchDate" type="datetime" />
+			<column name="CourierAgency" type="Varchar(50)" />
+			<column name="Deliverystatus" type="char(1)" />
+			<column name="DeliveryDate" type="datetime" />
+			<column name="Status" type="char(1)" />
+			<column name="Progress" type="int" />
+			<column name="ErrorCode" type="Varchar(20)" />
+			<column name="ErrorDesc" type="Varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.45" author="VinayKumar.K">
+		<addPrimaryKey constraintName="PK_COURIER_DETAILS_UPLOAD_ID" tableName="COURIER_DETAILS_UPLOAD" columnNames="ID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.46" author="VinayKumar.K">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COURIER_DETAILS_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COURIER_DETAILS_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='COURIER_DETAILS_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE, MAXRECORDS) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'COURIER_DETAILS_UPLOAD', 'Bulk CourierDetail Upload File.', 12, 'COURIERDETAILS', null, null, ',', 1, 1, null, 'ROW:{Loan Reference, Letter Type, Letter Date, Dispatch Date, Courier Agency, Delivery Status, Delivery Date}', null, 'C', '/opt/pff/hdfc/bulkCourierDetails/upload', 'bulkCourierDetails_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', null, '0', NULL, 1, 1, 10000);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD'), 'COURIER_DETAILS_UPLOAD', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, 0, 0);
+								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'finReference',  		 0, 'N', NULL, NULL, NULL,             NULL, '0',  NULL, NULL, NULL,  NULL,         	'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'letterType',    		 0, 'N', NULL, NULL, NULL,             NULL, '1',  NULL, NULL, NULL,  NULL,         	'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'letterDate',    		 0, 'N', NULL, NULL, NULL,             NULL, '2' , NULL, NULL, NULL, 'dd-MMM-yyyy', 	'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'dispatchDate',  		 0, 'N', NULL, NULL, NULL,             NULL, '3' , NULL, NULL, NULL, 'dd-MMM-yyyy', 	'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'courierAgency', 		 0, 'N', NULL, NULL, NULL,             NULL, '4' , NULL, NULL, NULL,  NULL, 			'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'deliveryStatus', 	 0, 'N', NULL, NULL, NULL,             NULL, '5' , NULL, NULL, NULL,  NULL, 			'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_UPLOAD')), 'deliveryDate',     	 0, 'N', NULL, NULL, NULL,             NULL, '6' , NULL, NULL, NULL, 'dd-MMM-yyyy', 	'O');
+	 		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.47" author="VinayKumar.K">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COURIER_DETAILS_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='COURIER_DETAILS_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='COURIER_DETAILS_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'COURIER_DETAILS_TEMPLATE', 'Bulk CourierDetail template download', 3, 'COURIERDETAILS', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference, Letter Type, Letter Date, Dispatch Date, Courier Agency, Delivery Status, Delivery Date}', NULL, 'A', '/opt/pff/hdfc/bulkCourierDetails/template', 'bulkCourierDetails_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+				
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE'), 'COURIER_DETAILS_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 7, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'FINREFERENCE',     0, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL,  NULL,'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'LETTERTYPE',       0, 'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL,  NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'LETTERDATE',   	 0, 'N', NULL, NULL, NULL, NULL, '2' , NULL, NULL, NULL, 'dd-MMM-yyyy','M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'DISPATCHDATE',     0, 'N', NULL, NULL, NULL, NULL, '3' , NULL, NULL, NULL, 'dd-MMM-yyyy','M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'COURIERAGENCY',    0, 'N', NULL, NULL, NULL, NULL, '4' , NULL, NULL, NULL,  NULL,'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'DELIVERYSTATUS',   0, 'N', NULL, NULL, NULL, NULL, '5' , NULL, NULL, NULL,  NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'COURIER_DETAILS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'COURIER_DETAILS_TEMPLATE')),  'DELIVERYDATE',     0, 'N', NULL, NULL, NULL, NULL, '6' , NULL, NULL, NULL, 'dd-MMM-yyyy','O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.48" author="VinayKumar.K">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_VIEW');
+
+				DELETE FROM SECROLES WHERE ROLECD ='COURIER_DETAILS_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='COURIER_DETAILS_UPLOAD_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD ='COURIER_DETAILS_UPLOAD_VIEW';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_VIEW');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='COURIER_DETAILS_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='COURIER_DETAILS_UPLOAD_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='COURIER_DETAILS_UPLOAD_VIEW';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_courier_details_upload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_courier_details_upload_Approver';
+
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_courier_details_upload_Maker',    'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS(RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_courier_details_upload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COURIER_DETAILS_UPLOAD_VIEW', 	   'Menu group for LetterCourierDetail Upload',  0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COURIER_DETAILS_UPLOAD_MAKER',    'WF Maker for LetterCourierDetail Upload',    0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COURIER_DETAILS_UPLOAD_APPROVER',  'WF Approver for LetterCourierDetail Upload', 0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_MAKER'),     (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_courier_details_upload_Maker'),       1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_APPROVER'),  (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_courier_details_upload_Approver'),    1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_VIEW'), 	 (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_courier_details_upload_Maker'), 	  1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_VIEW'), 	 (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_courier_details_upload_Approver'),    1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'COURIER_DETAILS_UPLOAD_MAKER',    'Maker role from LetterCourierDetail Upload',      '',  0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'COURIER_DETAILS_UPLOAD_APPROVER', 'Approver role from LetterCourierDetail Upload',	 '',  0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'COURIER_DETAILS_UPLOAD_VIEW', 	 'Menu role for LetterCourierDetail Upload',		 '',  0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'COURIER_DETAILS_UPLOAD_MAKER'),     0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'COURIER_DETAILS_UPLOAD_APPROVER'),  0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_VIEW'), 	   (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'COURIER_DETAILS_UPLOAD_VIEW'), 	   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'COURIER_DETAILS_UPLOAD_VIEW'), 	   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'COURIER_DETAILS_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'COURIER_DETAILS_UPLOAD_VIEW'), 	   0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.49" author="sainaveen.y">
+		<createTable tableName="BLOCK_AUTO_GEN_LTR_UPLOAD">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Action" type="char(1)" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.50" author="sainaveen.y">
+		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_UPLOAD" columnNames="Id" constraintName="PK_BCK_AUTO_GEN_LTR_UPLOAD_ID" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.51" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='BLOCK_AUTO_GEN_LTR_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='BLOCK_AUTO_GEN_LTR_UPLOAD');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='BLOCK_AUTO_GEN_LTR_UPLOAD';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD';
+
+                INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE, MAXRECORDS) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'BLOCK_AUTO_GEN_LTR_UPLOAD', 'Block Auto Letter Generate Upload Upload File.', 12, 'BLOCK_AUTO_LETTER_GENERATE', null, null, ',', 0, 1, null, 'ROW:{Loan Reference, Action, Remarks}', null, 'C', '/opt/PFF/BASE/hdfc/BlockAutoLetterGenerateUpload/upload', 'BLOCK_AUTO_LETTER_GENERATE_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', NULL, 0, NULL, 1, 1, 10000);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD'), 'BLOCK_AUTO_GEN_LTR_UPLOAD', 1, 'HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD')), 'finReference',  0, 'N', NULL, NULL,  NULL,            NULL, '0',  NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD')), 'action',        0, 'N', NULL, NULL,  NULL,            NULL, '1',  NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD')), 'remarks', 	     0, 'N', NULL, NULL,  NULL,            NULL, '2',  NULL, NULL, NULL, NULL, 'O');
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.52" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='BLOCK_AUTO_GEN_LTR_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='BLOCK_AUTO_GEN_LTR_TEMPLATE');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='BLOCK_AUTO_GEN_LTR_TEMPLATE';
+							
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE';
+							
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'BLOCK_AUTO_GEN_LTR_TEMPLATE', 'Block Auto Letter Generate template download', 3, 'BLOCK_AUTO_LETTER_GENERATE', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Loan Reference, Action, Remarks}',  '', 'A', '/opt/PFF/BASE/hdfc/BlockAutoLetterGenerateUpload/template', 'BLOCK_AUTO_LETTER_GENERATE_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE'), 'BLOCK_AUTO_GEN_LTR_UPLOAD',  0, 'ID', 'HEADERID = :HEADERID', NULL, NULL, NULL, NULL, NULL, NULL, 3, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE')), 'FINREFERENCE', 0, 'N', NULL, NULL, NULL, NULL, '0',  NULL, NULL, NULL, NULL,  'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE')), 'ACTION',       0, 'N', NULL, NULL, NULL, NULL, '1',  NULL, NULL, NULL, NULL,  'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'BLOCK_AUTO_GEN_LTR_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'BLOCK_AUTO_GEN_LTR_TEMPLATE')), 'REMARKS',      0, 'N', NULL, NULL, NULL, NULL, '2',  NULL, NULL, NULL, NULL,  'O');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.53" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER');
+				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW');
+
+				DELETE FROM SECROLES WHERE ROLECD ='BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER';
+				DELETE FROM SECROLES WHERE ROLECD ='BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER';
+				DELETE FROM SECROLES WHERE ROLECD ='BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW';
+
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER');
+				DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW');
+
+				DELETE FROM SECGROUPS WHERE GRPCODE ='BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER';
+				DELETE FROM SECGROUPS WHERE GRPCODE ='BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW';
+
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_BlockAutoGenerateLetterUpload_Maker';
+				DELETE FROM SECRIGHTS WHERE RIGHTNAME ='menu_Item_BlockAutoGenerateLetterUpload_Approver';
+
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_BlockAutoGenerateLetterUpload_Maker',    'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_BlockAutoGenerateLetterUpload_Approver', 'MENU', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER',    'WF Maker for Block Auto Letter Generate Upload',       0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+				INSERT INTO SECGROUPS (GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER', 'WF Approver for Block Auto Letter Generate Upload',    0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+                INSERT INTO SECGROUPS(GRPID, GRPCODE, GRPDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPID)+1 FROM SECGROUPS),  'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW', 	'Menu group for Block Auto Letter Generate Upload',     0, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
+
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER'),    (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_BlockAutoGenerateLetterUpload_Maker'),      1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER'), (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_BlockAutoGenerateLetterUpload_Approver'),   1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW'),     (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_BlockAutoGenerateLetterUpload_Maker'), 		1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECGROUPRIGHTS (GRPRIGHTID, GRPID, RIGHTID, ACCESSTYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW'), 	(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_BlockAutoGenerateLetterUpload_Approver'), 	1, 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER',    'Maker role from Block Auto Letter Generate Upload',     '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0); 
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER', 'Approver role from Block Auto Letter Generate Upload',  '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLES (ROLEID, ROLEAPP, ROLECD, ROLEDESC, ROLECATEGORY, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES((SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW',     'Menu role for Block Auto Letter Generate Upload',       '', 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER'),    (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'BLOCK_AUTO_GEN_LTR_UPLOAD_MAKER'),    0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER'), (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'BLOCK_AUTO_GEN_LTR_UPLOAD_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SECROLEGROUPS (ROLEGRPID, GRPID, ROLEID, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID)VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW'), 	   (SELECT ROLEID FROM SECROLES WHERE ROLECD = 'BLOCK_AUTO_GEN_LTR_UPLOAD_VIEW'), 	  0, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.54" author="sainaveen.y">
+		<createTable tableName="BLOCK_AUTO_GEN_LTR_LOG">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="HeaderId" type="bigint" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Action" type="char(1)" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
+			<column name="CreatedOn" type="datetime" />
+			<column name="CreatedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.55" author="sainaveen.y">
+		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_LOG" columnNames="Id" constraintName="PK_BLOCK_AUTO_GEN_LTR_LOG_ID" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.56" author="sainaveen.y">
+		<sql>
+			<![CDATA[
+				DELETE FROM JOB_DETAILS WHERE JOBKEY = 'COURIER_DETAILS_JOB';
+				DELETE FROM JOB_DETAILS WHERE JOBKEY = 'LOAN_LETTER_JOB';
+				DELETE FROM JOB_DETAILS WHERE JOBKEY = 'BLOCK_AUTO_GEN_LETTER_JOB';
+
+				INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'COURIER_DETAILS_JOB', 		'COURIER DETAILS JOB',	 		'COURIER_DETAILS_JOB_TRIGGER', 			'0 0/10 * 1/1 * ? *', 1, 0, 1, 0, NULL, NULL, 0, NULL, NULL, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1); 
+				INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'LOAN_LETTER_JOB', 			'LOAN LETTER JOB', 				'LOAN_LETTER_JOB_TRIGGER', 				'0 0/10 * 1/1 * ? *', 1, 0, 1, 0, NULL, NULL, 0, NULL, NULL, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1); 
+				INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'BLOCK_AUTO_GEN_LETTER_JOB', 			'BLOCK AUTO GEN LETTER JOB', 			'BLOCK_AUTO_GEN_LETTER_JOB_TRIGGER', 			'0 0/10 * 1/1 * ? *', 1, 0, 1, 0, NULL, NULL, 0, NULL, NULL, 1, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

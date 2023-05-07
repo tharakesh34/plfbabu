@@ -41,7 +41,13 @@ public enum UploadTypes {
 
 	REV_WRITE_OFF("Reverse WriteOff Upload Details Screen"),
 
-	BRANCH_CHANGE("Branch Change Upload Details Screen");
+	BRANCH_CHANGE("Branch Change Upload Details Screen"),
+
+	BLOCK_AUTO_GEN_LTR("Block Auto Letter Generate Upload Details Screen"),
+
+	LOAN_LETTER("Loan Letter Upload Details Screen"),
+
+	COURIER_DETAILS("Courier Details Upload Screen");
 
 	private String description;
 

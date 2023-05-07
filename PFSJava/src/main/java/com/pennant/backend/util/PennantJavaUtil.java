@@ -365,6 +365,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.GSTRate;
+import com.pennant.backend.model.rmtmasters.LoanTypeLetterMapping;
 import com.pennant.backend.model.rmtmasters.PartnerBankDataEngine;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -450,6 +451,8 @@ import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
+import com.pennant.pff.service.branch.model.ServiceBranch;
+import com.pennant.pff.service.branch.model.ServiceBranchesLoanType;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.model.SettlementSchedule;
 import com.pennant.pff.settlement.model.SettlementTypeDetail;
@@ -4008,6 +4011,36 @@ public class PennantJavaUtil {
 				new ModuleMapping("BranchChangeUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("ServiceBranch",
+				new ModuleMapping("ServiceBranch", ServiceBranch.class,
+						new String[] { "Service_Branches", "Service_Branches" }, masterWF,
+						new String[] { "Id", "Code" }, null, 300));
+
+		ModuleUtil.register("ServiceBranchesLoanType",
+				new ModuleMapping("ServiceBranchesLoanType", ServiceBranchesLoanType.class,
+						new String[] { "Service_Branches_LoanType", "Service_Branches_LoanType" }, masterWF,
+						new String[] { "Id", "FinType", "Branch" }, null, 300));
+
+		ModuleUtil.register("BlockAutoGenLetterUploadHeader",
+				new ModuleMapping("BlockAutoGenLetterUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LoanLetterUploadHeader",
+				new ModuleMapping("LoanLetterUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("CourierDetailUploadHeader",
+				new ModuleMapping("CourierDetailUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LoanTypeLetterMapping",
+				new ModuleMapping("LoanTypeLetterMapping", LoanTypeLetterMapping.class,
+						new String[] { "Loantype_Letter_Mapping" }, masterWF, new String[] { "FinType", "LetetrType" },
+						null, 600));
 
 		registerCustomModules();
 	}

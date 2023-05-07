@@ -6241,4 +6241,30 @@
 	
 	<bean id="branchChangeUploadListCtrl" class="com.pennant.pff.branchchange.upload.list.BranchChangeUploadListCtrl"
 		parent="uploadList" />
+	
+	<bean id="serviceBranchListCtrl"
+		class = "com.pennant.pff.noc.webui.ServiceBranchListCtrl" parent="basisListCtrl" scope="prototype"/>
+		
+	<bean id="serviceBranchDialogCtrl"
+	class="com.pennant.pff.noc.webui.ServiceBranchDialogCtrl" parent="basisCtrl" scope="prototype" />
+	
+	<bean id="blockAutoGenLetterUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.BlockAutoGenLetterUploadListCtrl"
+	parent="uploadList" />
+	
+	<bean id="loanLetterUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.LoanLetterUploadListCtrl"
+	parent="uploadList" />
+	
+	<bean id="courierDetailUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.CourierDetailUploadListCtrl" 
+	parent="uploadList" />
+	
+	<bean id="loanTypeLetterMappingListCtrl" class="com.pennant.pff.noc.webui.LoanTypeLetterMappingListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+		
+	<bean id="selectLoanTypeLetterMappingDialogCtrl" class="com.pennant.pff.noc.webui.SelectLoanTypeLetterMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
+	
+	<bean id="loanTypeLetterMappingDialogCtrl" class="com.pennant.pff.noc.webui.LoanTypeLetterMappingDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>
