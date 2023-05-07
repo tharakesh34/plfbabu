@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,9 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -56,7 +53,7 @@ import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
-public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
+public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKnockOffUpload> {
 	private static final Logger logger = LogManager.getLogger(ManualKnockOffUploadServiceImpl.class);
 
 	private ManualKnockOffUploadDAO manualKnockOffUploadDAO;
@@ -66,21 +63,26 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private ReceiptService receiptService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private transient FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	protected FinanceRepaymentsDAO financeRepaymentsDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	
+	public ManualKnockOffUploadServiceImpl(){
+		super();
+	}
+
+	@Override
+	protected ManualKnockOffUpload getDetail(Object object) {
+		if (object instanceof ManualKnockOffUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		ManualKnockOffUpload detail = null;
-
-		if (object instanceof ManualKnockOffUpload) {
-			detail = (ManualKnockOffUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		ManualKnockOffUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 
@@ -231,10 +233,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -253,17 +251,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 					fc.setUserDetails(header.getUserDetails());
 
 					if (fc.getProgress() == EodConstants.PROGRESS_SUCCESS) {
-						txStatus = transactionManager.getTransaction(txDef);
-
-						try {
-							createReceipt(fc, header);
-						} catch (AppException e) {
-							fc.setProgress(EodConstants.PROGRESS_FAILED);
-							fc.setErrorCode("9999");
-							fc.setErrorDesc(e.getMessage());
-						}
-
-						transactionManager.commit(txStatus);
+						createReceipt(fc, header);
 					}
 
 					header.getUploadDetails().add(fc);
@@ -276,39 +264,17 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				}
 
 				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
 					manualKnockOffUploadDAO.update(details);
 
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 
 					updateHeader(headerList, true);
-
-					logger.info("Manual KnockOff Process is Initiated");
-
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
 
 				logger.info("Processed the File {}", header.getFileName());
@@ -374,7 +340,32 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			fsi.setReceiptDetails(receiptService.prepareRCDForMA(fc.getAdvises(), rud));
 		}
 
-		FinanceDetail fd = receiptService.receiptTransaction(fsi);
+		FinanceDetail fd = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
+		try {
+			fd = receiptService.receiptTransaction(fsi);
+			transactionManager.commit(txStatus);
+		} catch (AppException e) {
+			fc.setProgress(EodConstants.PROGRESS_FAILED);
+			fc.setErrorCode(ERR_CODE);
+			fc.setErrorDesc(e.getMessage());
+
+			logger.error(Literal.EXCEPTION, e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+			
+			return;
+		}
+
+		if (fd == null) {
+			fc.setProgress(EodConstants.PROGRESS_FAILED);
+			fc.setErrorCode(ERR_CODE);
+			fc.setErrorCode("Finance Detail is null.");
+			return;
+		}
 
 		FinScheduleData schd = fd.getFinScheduleData();
 		if (!schd.getErrorDetails().isEmpty()) {
@@ -390,18 +381,18 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			manualKnockOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(manualKnockOffUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -435,7 +426,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		// Implemented for process record.
 	}
 
@@ -537,5 +528,4 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
-
 }

@@ -5,16 +5,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -49,7 +46,7 @@ import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
+public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<FinCancelUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(FinanceCancellationUploadServiceImpl.class);
 
 	private FinanceCancellationUploadDAO financeCancellationUploadDAO;
@@ -59,18 +56,23 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceCancelValidator financeCancelValidator;
+	
+	public FinanceCancellationUploadServiceImpl(){
+		super();
+	}
+
+	@Override
+	protected FinCancelUploadDetail getDetail(Object object) {
+		if (object instanceof FinCancelUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		FinCancelUploadDetail detail = null;
-
-		if (object instanceof FinCancelUploadDetail) {
-			detail = (FinCancelUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		FinCancelUploadDetail detail = getDetail(object);
 
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 
@@ -132,11 +134,6 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -167,6 +164,13 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 						failRecords++;
 					} else {
 						sucessRecords++;
+
+						logger.info("Loan Cancelation Process is Initiated for the Header ID {}", header.getId());
+
+						detail.setAppDate(appDate);
+						processCancelLoan(detail);
+
+						logger.info("Loan Cancelation Process is Completed for the Header ID {}", header.getId());
 					}
 
 					header.getUploadDetails().add(detail);
@@ -176,19 +180,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
 
 					financeCancellationUploadDAO.update(details);
 
@@ -196,45 +188,30 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 					headerList.add(header);
 					updateHeader(headerList, true);
 
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
-
-				logger.info("Loan Cancelation Process is Initiated for the Header ID {}", header.getId());
-
-				processCancelLoan(header);
-
-				logger.info("Loan Cancelation Process is Completed for the Header ID {}", header.getId());
 			}
 		}).start();
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-
-			txStatus = transactionManager.getTransaction(txDef);
-
 			financeCancellationUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(financeCancellationUploadDAO.getDetails(h1.getId()));
+			});
 
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 
@@ -247,18 +224,6 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public String getSqlQuery() {
 		return financeCancellationUploadDAO.getSqlQuery();
-	}
-
-	private void processCancelLoan(FileUploadHeader header) {
-		List<FinCancelUploadDetail> details = financeCancellationUploadDAO.getDetails(header.getId());
-		Date appDate = header.getAppDate();
-
-		for (FinCancelUploadDetail detail : details) {
-			if ("S".equals(detail.getStatus())) {
-				detail.setAppDate(appDate);
-				processCancelLoan(detail);
-			}
-		}
 	}
 
 	private void processCancelLoan(FinCancelUploadDetail detail) {
@@ -276,31 +241,27 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 			fd.setReasonHeader(rh);
 		}
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+		TransactionStatus txnStatus = getTransactionStatus();
 
 		try {
 			if (EodConstants.PROGRESS_FAILED != detail.getProgress()) {
 				fm.setFinSourceID(UploadTypes.LOAN_CANCEL.name());
 				fm.setCancelRemarks(detail.getRemarks());
 				fm.setCancelType(detail.getCancelType());
-				fm.setDetailsList(rh.getDetailsList());
+				if (rh != null) {
+					fm.setDetailsList(rh.getDetailsList());
+				}
 
 				processLoanCancel(fd, detail);
 			}
 
-			if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-				this.financeCancellationUploadDAO.update(detail);
-			}
-
-			this.transactionManager.commit(transactionStatus);
-
+			this.transactionManager.commit(txnStatus);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 
-			transactionManager.rollback(transactionStatus);
+			if (txnStatus != null) {
+				transactionManager.rollback(txnStatus);
+			}
 
 			String error = StringUtils.trimToEmpty(e.getMessage());
 
@@ -310,11 +271,6 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
 			detail.setErrorDesc(error);
-			this.financeCancellationUploadDAO.update(detail);
-		}
-
-		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-			updateFailRecords(1, 1, detail.getHeaderId());
 		}
 	}
 
@@ -341,9 +297,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void processLoanCancel(FinanceDetail financeDetail, FinCancelUploadDetail fcud) {
-		String tranType = PennantConstants.TRAN_WF;
-
-		AuditHeader ah = getAuditDetail(financeDetail, tranType);
+		AuditHeader ah = getAuditDetail(financeDetail);
 
 		AuditHeader audH = financeCancellationService.doApprove(ah, true);
 
@@ -356,10 +310,10 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 		}
 	}
 
-	private AuditHeader getAuditDetail(FinanceDetail fd, String tranType) {
+	private AuditHeader getAuditDetail(FinanceDetail fd) {
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, fd);
 		return new AuditHeader(fd.getFinReference(), null, null, null, auditDetail,
-				fd.getFinScheduleData().getFinanceMain().getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+				fd.getFinScheduleData().getFinanceMain().getUserDetails(), new HashMap<>());
 	}
 
 	private void setError(FinCancelUploadDetail detail, FinCancelUploadError error) {
@@ -374,13 +328,13 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinCancelUploadDetail details = (FinCancelUploadDetail) ObjectUtil.valueAsObject(record,
+		FinCancelUploadDetail details = (FinCancelUploadDetail) ObjectUtil.valueAsObject(paramSource,
 				FinCancelUploadDetail.class);
 
-		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -391,7 +345,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, details);
 
-		updateProcess(header, details, record);
+		updateProcess(header, details, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

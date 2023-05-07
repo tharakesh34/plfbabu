@@ -6,15 +6,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -44,7 +41,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
-public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
+public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateReceiptUpload> {
 	private static final Logger logger = LogManager.getLogger(CreateReceiptUploadServiceImpl.class);
 
 	private ReceiptService receiptService;
@@ -56,16 +53,17 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	protected CreateReceiptUpload getDetail(Object object) {
+		if (object instanceof CreateReceiptUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
+	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		CreateReceiptUpload detail = null;
-
-		if (object instanceof CreateReceiptUpload) {
-			detail = (CreateReceiptUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		CreateReceiptUpload detail = getDetail(object);
 
 		createReceiptUploadProcessRecord.validate(detail, header);
 		createReceiptUploadProcessRecord.validateAllocations(detail);
@@ -74,10 +72,6 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
 
 			Date appDate = SysParamUtil.getAppDate();
 			boolean dedupCheck = SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTUPLOAD_DEDUPCHECK);
@@ -97,17 +91,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 					receipt.setUserDetails(header.getUserDetails());
 
 					if (receipt.getProgress() == EodConstants.PROGRESS_SUCCESS) {
-						txStatus = transactionManager.getTransaction(txDef);
-
-						try {
-							createReceipt(receipt, header);
-						} catch (AppException e) {
-							receipt.setProgress(EodConstants.PROGRESS_FAILED);
-							receipt.setErrorCode("9999");
-							receipt.setErrorDesc(e.getMessage());
-						}
-
-						transactionManager.commit(txStatus);
+						createReceipt(receipt, header);
 					}
 
 					header.getUploadDetails().add(receipt);
@@ -119,79 +103,57 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 					}
 
 					try {
-						txStatus = transactionManager.getTransaction(txDef);
-
 						createReceiptUploadDAO.update(details);
 
 						header.setSuccessRecords(sucessRecords);
 						header.setFailureRecords(failRecords);
-
-						StringBuilder remarks = new StringBuilder("Process Completed");
-
-						if (failRecords > 0) {
-							remarks.append(" with exceptions, ");
-						}
-
-						remarks.append(" Total Records : ").append(header.getTotalRecords());
-						remarks.append(" Success Records : ").append(sucessRecords);
-						remarks.append(" Failed Records : ").append(failRecords);
 
 						List<FileUploadHeader> headerList = new ArrayList<>();
 						headerList.add(header);
 
 						updateHeader(headerList, true);
 
-						logger.info("Manual KnockOff Process is Initiated");
-
-						transactionManager.commit(txStatus);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
-
-						if (txStatus != null) {
-							transactionManager.rollback(txStatus);
-						}
-					} finally {
-						txStatus = null;
 					}
-
 				}
-				logger.info("Processed the File {}", header.getFileName());
 
+				logger.info("Processed the File {}", header.getFileName());
 			}
 		}).start();
 	}
 
-	private void createReceipt(CreateReceiptUpload reaceipt, FileUploadHeader header) {
+	private void createReceipt(CreateReceiptUpload detail, FileUploadHeader header) {
 		String entityCode = header.getEntityCode();
 
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
 
-		rud.setReference(reaceipt.getReference());
-		rud.setFinID(reaceipt.getReferenceID());
-		rud.setAllocationType(reaceipt.getAllocationType());
-		rud.setValueDate(reaceipt.getAppDate());
-		rud.setRealizationDate(reaceipt.getAppDate());
-		rud.setReceivedDate(reaceipt.getAppDate());
-		rud.setReceiptAmount(reaceipt.getReceiptAmount());
+		rud.setReference(detail.getReference());
+		rud.setFinID(detail.getReferenceID());
+		rud.setAllocationType(detail.getAllocationType());
+		rud.setValueDate(detail.getAppDate());
+		rud.setRealizationDate(detail.getAppDate());
+		rud.setReceivedDate(detail.getAppDate());
+		rud.setReceiptAmount(detail.getReceiptAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode(reaceipt.getReceiptMode());
-		rud.setSubReceiptMode(reaceipt.getSubReceiptMode());
-		rud.setReceiptPurpose(reaceipt.getReceiptPurpose());
+		rud.setReceiptMode(detail.getReceiptMode());
+		rud.setSubReceiptMode(detail.getSubReceiptMode());
+		rud.setReceiptPurpose(detail.getReceiptPurpose());
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
-		rud.setDepositDate(reaceipt.getDepositDate());
-		rud.setBankCode(reaceipt.getBankCode());
-		rud.setEffectSchdMethod(reaceipt.getEffectSchdMethod());
-		String receiptMode = reaceipt.getReceiptMode();
+		rud.setDepositDate(detail.getDepositDate());
+		rud.setBankCode(detail.getBankCode());
+		rud.setEffectSchdMethod(detail.getEffectSchdMethod());
+		String receiptMode = detail.getReceiptMode();
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
-			rud.setTransactionRef(reaceipt.getChequeNumber());
-			rud.setFavourNumber(reaceipt.getChequeNumber());
+			rud.setTransactionRef(detail.getChequeNumber());
+			rud.setFavourNumber(detail.getChequeNumber());
 		}
 
 		List<UploadAlloctionDetail> list = new ArrayList<>();
 
 		Map<String, BigDecimal> waivedAmounts = new HashMap<>();
-		for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
+		for (CreateReceiptUpload alloc : detail.getAllocations()) {
 			if (alloc.getCode().contains("_W")) {
 				String code = alloc.getCode().split("_")[0];
 
@@ -199,8 +161,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 			}
 		}
 
-		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType())) {
-			for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
+		if (AllocationType.MANUAL.equals(detail.getAllocationType())) {
+			for (CreateReceiptUpload alloc : detail.getAllocations()) {
 				UploadAlloctionDetail uad = new UploadAlloctionDetail();
 
 				uad.setRootId(String.valueOf(alloc.getFeeId()));
@@ -218,12 +180,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 
 		rud.setListAllocationDetails(list);
 
-		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType()) && list != null) {
-			if (!(reaceipt.getReceiptAmount().equals(getSumOfAllocations(list)))) {
-				reaceipt.setProgress(EodConstants.PROGRESS_FAILED);
-				reaceipt.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
-				return;
-			}
+		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
+				&& !(detail.getReceiptAmount().equals(getSumOfAllocations(list)))) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+			return;
 		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
@@ -231,7 +192,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
-		LoggedInUser userDetails = reaceipt.getUserDetails();
+		LoggedInUser userDetails = detail.getUserDetails();
 
 		if (userDetails == null) {
 			userDetails = new LoggedInUser();
@@ -242,38 +203,62 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 		fsi.setLoggedInUser(userDetails);
 
 		fsi.setKnockOffReceipt(true);
-		if (FinanceConstants.EARLYSETTLEMENT.equals(reaceipt.getReceiptPurpose())) {
-			fsi.setClosureType(reaceipt.getClosureType());
+		if (FinanceConstants.EARLYSETTLEMENT.equals(detail.getReceiptPurpose())) {
+			fsi.setClosureType(detail.getClosureType());
 		}
 
-		FinanceDetail fd = receiptService.receiptTransaction(fsi);
+		FinanceDetail fd = null;
+
+		TransactionStatus txStatus = getTransactionStatus();
+
+		try {
+			fd = receiptService.receiptTransaction(fsi);
+			transactionManager.commit(txStatus);
+		} catch (AppException e) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc(e.getMessage());
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+			
+			return;
+		}
+
+		if (fd == null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorCode("Finance Detail is null.");
+			return;
+		}
 
 		FinScheduleData schd = fd.getFinScheduleData();
 		if (!schd.getErrorDetails().isEmpty()) {
 			ErrorDetail error = schd.getErrorDetails().get(0);
-			reaceipt.setProgress(EodConstants.PROGRESS_FAILED);
-			reaceipt.setErrorCode(error.getCode());
-			reaceipt.setErrorDesc(error.getError());
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(error.getCode());
+			detail.setErrorDesc(error.getError());
 		} else {
-			reaceipt.setReceiptID(fd.getReceiptId());
-			reaceipt.setProgress(EodConstants.PROGRESS_SUCCESS);
+			detail.setReceiptID(fd.getReceiptId());
+			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		}
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			createReceiptUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(createReceiptUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -302,7 +287,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		// Implemented in process record.
 	}
 

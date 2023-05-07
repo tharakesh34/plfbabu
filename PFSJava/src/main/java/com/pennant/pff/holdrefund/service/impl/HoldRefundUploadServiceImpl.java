@@ -2,16 +2,13 @@ package com.pennant.pff.holdrefund.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -30,21 +27,29 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
+public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(HoldRefundUploadServiceImpl.class);
 
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;
+	
+	public HoldRefundUploadServiceImpl(){
+		super();
+	}
+
+	@Override
+	protected HoldRefundUploadDetail getDetail(Object object) {
+		if (object instanceof HoldRefundUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -77,9 +82,9 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 					header.getUploadDetails().add(detail);
 				}
 
-				try {
-					txStatus = transactionManager.getTransaction(txDef);
+				TransactionStatus txStatus = getTransactionStatus();
 
+				try {
 					holdRefundUploadDAO.update(details);
 
 					transactionManager.commit(txStatus);
@@ -95,54 +100,29 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 
 				header.setSuccessRecords(sucessRecords);
 				header.setFailureRecords(failRecords);
-
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
-				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
-
-				logger.info("Processed the File {}", header.getFileName());
 			}
 
 			try {
-				txStatus = transactionManager.getTransaction(txDef);
-
 				updateHeader(headers, true);
-
-				logger.info("Hold Refund Process is Completed");
-
-				transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
-
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
-				}
-			} finally {
-				txStatus = null;
 			}
-
 		}).start();
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			holdRefundUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(holdRefundUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -157,15 +137,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		HoldRefundUploadDetail detail = null;
-
-		if (object instanceof HoldRefundUploadDetail) {
-			detail = (HoldRefundUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		HoldRefundUploadDetail detail = getDetail(object);
 
 		String reference = detail.getReference();
 
@@ -276,7 +248,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
@@ -287,7 +259,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
+		String finReference = ObjectUtil.valueAsString(paramSource.getValue("finReference"));
 		boolean recordExist = isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -297,13 +269,13 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl {
 		HoldRefundUploadDetail detail = new HoldRefundUploadDetail();
 		detail.setHeaderId(headerID);
 		detail.setReference(finReference);
-		detail.setHoldStatus(ObjectUtil.valueAsString(record.getValue("holdStatus")));
-		detail.setReason(ObjectUtil.valueAsString(record.getValue("reason")));
-		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("remarks")));
+		detail.setHoldStatus(ObjectUtil.valueAsString(paramSource.getValue("holdStatus")));
+		detail.setReason(ObjectUtil.valueAsString(paramSource.getValue("reason")));
+		detail.setRemarks(ObjectUtil.valueAsString(paramSource.getValue("remarks")));
 
 		doValidate(header, detail);
 
-		updateProcess(header, detail, record);
+		updateProcess(header, detail, paramSource);
 	}
 
 	@Autowired

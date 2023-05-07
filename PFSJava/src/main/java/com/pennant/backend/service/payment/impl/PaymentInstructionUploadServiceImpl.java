@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.core.FinOverDueService;
 import com.pennant.app.util.CalculationUtil;
@@ -55,7 +52,7 @@ import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
+public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<PaymentInstUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(PaymentInstructionUploadServiceImpl.class);
 
 	private FinOverDueService finOverDueService;
@@ -70,14 +67,22 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	private ManualAdviseDAO manualAdviseDAO;
 	private RefundBeneficiary refundBeneficiary;
 
+	public PaymentInstructionUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected PaymentInstUploadDetail getDetail(Object object) {
+		if (object instanceof PaymentInstUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -129,56 +134,32 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
 
 					paymentInstructionUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headerList, true);
-
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
-
 			}
 		}).start();
-
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 		try {
-
-			txStatus = transactionManager.getTransaction(txDef);
-
 			paymentInstructionUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(paymentInstructionUploadDAO.getDetails(h1.getId()));
+			});
 
 			updateHeader(headers, false);
 
@@ -195,15 +176,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		PaymentInstUploadDetail detail = null;
-
-		if (object instanceof PaymentInstUploadDetail) {
-			detail = (PaymentInstUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		PaymentInstUploadDetail detail = getDetail(object);
 
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 
@@ -268,14 +241,12 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		boolean payInstInProgess = paymentInstructionDAO.isInProgress(fm.getFinID());
-		if (payInstInProgess) {
+		if (paymentInstructionDAO.isInProgress(fm.getFinID())) {
 			setError(detail, PaymentUploadError.REFUP006);
 			return;
 		}
 
-		boolean feerefundInProgess = this.feeRefundHeaderService.isInProgress(fm.getFinID());
-		if (feerefundInProgess) {
+		if (this.feeRefundHeaderService.isInProgress(fm.getFinID())) {
 			setError(detail, PaymentUploadError.REFUP011);
 			return;
 		}
@@ -325,10 +296,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			ph.getPaymentDetailList().addAll(prepareExcess(detail));
 		}
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-
-		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+		TransactionStatus transactionStatus = getTransactionStatus();
 
 		try {
 			if (EodConstants.PROGRESS_FAILED != detail.getProgress()) {
@@ -340,11 +308,12 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			this.transactionManager.commit(transactionStatus);
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 
-			transactionManager.rollback(transactionStatus);
+			if (transactionStatus != null) {
+				transactionManager.rollback(transactionStatus);
+			}
 
 			String error = StringUtils.trimToEmpty(e.getMessage());
 
@@ -353,7 +322,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode("9999");
+			detail.setErrorCode(ERR_CODE);
 			detail.setErrorDesc(error);
 		}
 	}
@@ -424,10 +393,9 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		if (!payableExists) {
-			String ErrorDesc = "Payable Advises are not found for the Loan Reference : " + finreference
-					+ " and Fee Type Code : " + feeType;
 			bud.setProgress(EodConstants.PROGRESS_FAILED);
-			bud.setErrorDesc(ErrorDesc);
+			bud.setErrorDesc("Payable Advises are not found for the Loan Reference : " + finreference
+					+ " and Fee Type Code : " + feeType);
 		}
 
 		return pdList;
@@ -555,24 +523,24 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		PaymentInstUploadDetail paymentDetail = (PaymentInstUploadDetail) ObjectUtil.valueAsObject(record,
+		PaymentInstUploadDetail pd = (PaymentInstUploadDetail) ObjectUtil.valueAsObject(paramSource,
 				PaymentInstUploadDetail.class);
 
-		paymentDetail.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		pd.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
 
-		paymentDetail.setHeaderId(header.getId());
-		paymentDetail.setAppDate(header.getAppDate());
+		pd.setHeaderId(header.getId());
+		pd.setAppDate(header.getAppDate());
 
-		doValidate(header, paymentDetail);
+		doValidate(header, pd);
 
-		updateProcess(header, paymentDetail, record);
+		updateProcess(header, pd, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

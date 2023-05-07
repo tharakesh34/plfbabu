@@ -50,7 +50,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
+public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<MiscellaneousPostingUpload> {
 	private static final Logger logger = LogManager.getLogger(MiscellaneousPostingUploadServiceImpl.class);
 
 	private MiscellaneousPostingUploadDAO miscellaneousPostingUploadDAO;
@@ -58,18 +58,23 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	private AccountMappingDAO accountMappingDAO;
 	private JVPostingService jVPostingService;
 	private JVPostingDAO jVPostingDAO;
+	
+	public MiscellaneousPostingUploadServiceImpl(){
+		super();
+	}
+
+	@Override
+	protected MiscellaneousPostingUpload getDetail(Object object) {
+		if (object instanceof MiscellaneousPostingUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		MiscellaneousPostingUpload detail = null;
-
-		if (object instanceof MiscellaneousPostingUpload) {
-			detail = (MiscellaneousPostingUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		MiscellaneousPostingUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 		Date valueDate = detail.getValueDate();
@@ -103,7 +108,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (valueDate == null) {
+		if (valueDate != null) {
 			validateValueDate(detail, valueDate, appdate);
 		}
 
@@ -125,7 +130,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		if (BigDecimal.ZERO.compareTo(txnamt) >= 0) {
 			setError(detail, MiscellaneousPostingUploadError.MP010);
-			return;
 		}
 	}
 
@@ -139,7 +143,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		if (valueDate.compareTo(appdate) > 0) {
 			setError(detail, MiscellaneousPostingUploadError.ML07);
-			return;
 		}
 
 	}
@@ -147,10 +150,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
 
 			Date appDate = SysParamUtil.getAppDate();
 			String currency = SysParamUtil.getValue("APP_DFT_CURR").toString();
@@ -194,19 +193,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords - failureCount);
 					header.setFailureRecords(failRecords + failureCount);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
 
 					miscellaneousPostingUploadDAO.update(details);
 
@@ -214,15 +201,8 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 					headerList.add(header);
 					updateHeader(headers, true);
 
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
 			}
 		}).start();
@@ -272,7 +252,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 		List<AuditHeader> auditList = new ArrayList<>();
 
 		for (Map.Entry<String, List<MiscellaneousPostingUpload>> entry : map.entrySet()) {
-
 			List<JVPostingEntry> jVPostingEntryList = new ArrayList<>();
 
 			List<MiscellaneousPostingUpload> mpuList = entry.getValue();
@@ -331,15 +310,33 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		int failureCount = 0;
 		for (AuditHeader auditHeader : auditList) {
-			AuditHeader ah = jVPostingService.doApprove(auditHeader);
+			TransactionStatus txStatus = getTransactionStatus();
+
+			try {
+				auditHeader = jVPostingService.doApprove(auditHeader);
+				transactionManager.commit(txStatus);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+
+				if (txStatus != null) {
+					transactionManager.rollback(txStatus);
+				}
+				
+				++failureCount;
+				continue;
+			}
+
+			if (auditHeader == null) {
+				continue;
+			}
 
 			JVPosting upload = (JVPosting) auditHeader.getModelData();
 
 			List<Long> headerIDs = new ArrayList<>();
 
-			if (ah.getErrorMessage() != null) {
+			if (auditHeader.getErrorMessage() != null) {
 				headerIDs.add(upload.getUploadID());
-				ErrorDetail ed = ah.getErrorMessage().get(0);
+				ErrorDetail ed = auditHeader.getErrorMessage().get(0);
 				miscellaneousPostingUploadDAO.update(headerIDs, ed.getCode(), ed.getMessage(),
 						EodConstants.PROGRESS_FAILED);
 				failureCount++;
@@ -444,7 +441,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		if (!fm.isFinIsActive()) {
 			setError(detail, MiscellaneousPostingUploadError.MP03);
-			return;
 		}
 	}
 
@@ -481,13 +477,13 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		MiscellaneousPostingUpload details = (MiscellaneousPostingUpload) ObjectUtil.valueAsObject(record,
+		MiscellaneousPostingUpload details = (MiscellaneousPostingUpload) ObjectUtil.valueAsObject(paramSource,
 				MiscellaneousPostingUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(record.getValue("reference")));
+		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -498,7 +494,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, details);
 
-		updateProcess(header, details, record);
+		updateProcess(header, details, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

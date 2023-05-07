@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
@@ -33,12 +36,11 @@ import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadStatus;
 import com.pennanttech.pff.file.UploadTypes;
 
-public abstract class AUploadServiceImpl implements UploadService, ValidateRecord {
+public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRecord {
 	protected static final Logger logger = LogManager.getLogger(AUploadServiceImpl.class);
 
 	private UploadDAO uploadDAO;
@@ -50,6 +52,9 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 	protected static final String INFO_LOG = "{} records to process the {}_PROCESS_JOB.";
 	protected static final String ERR_CODE = "9999";
 	protected static final String ERR_DESC = "User rejected the record";
+	protected static final String IN_VALID_OBJECT = "Invalid Data transferred...";
+
+	protected abstract T getDetail(Object object);
 
 	@Override
 	public FileUploadHeader getUploadHeader(String moduleCode) {
@@ -129,6 +134,8 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 				header.setApprovedBy(null);
 				header.setApprovedOn(null);
 				header.setProgress(UploadStatus.REJECTED.status());
+
+				header.getUploadDetails().forEach(detail -> updateProcess(header, detail, null));
 			}
 		}
 	}
@@ -156,12 +163,12 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 
 	private void uploadProcess1(String type, ProcessRecord processRecord, UploadService uploadService,
 			String moduleCode) {
-		logger.info("{} Upload job is started...", type.toUpperCase());
+		logger.info("{} Upload job is started...", type);
 
 		List<FileUploadHeader> loadData = uploadDAO.loadData(type);
 
 		if (CollectionUtils.isEmpty(loadData)) {
-			logger.debug(String.format("There is no records to process the %s.", type.toUpperCase()));
+			logger.debug("There is no records to process the {}.", type);
 			return;
 		}
 
@@ -185,27 +192,27 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 		Date appDate = SysParamUtil.getAppDate();
 
 		if (CollectionUtils.isNotEmpty(initaitedList)) {
-			logger.info(INFO_LOG, initaitedList.size(), type.toUpperCase());
+			logger.info(INFO_LOG, initaitedList.size(), type);
 			new Thread(() -> {
 				String jobName = type.toUpperCase().concat("_PROCESS_JOB");
-				processJob(processRecord, jobName, initaitedList, appDate, uploadService, moduleCode);
+				processJob(processRecord, jobName, initaitedList, appDate, uploadService);
 			}).start();
 		}
 
 		if (CollectionUtils.isNotEmpty(approvalList)) {
-			logger.info(INFO_LOG, approvalList.size(), type.toUpperCase());
+			logger.info(INFO_LOG, approvalList.size(), type);
 			new Thread(() -> {
 				String jobName = type.toUpperCase().concat("_APPROVER_JOB");
-				processJob(processRecord, jobName, approvalList, appDate, uploadService, moduleCode);
+				processJob(processRecord, jobName, approvalList, appDate, uploadService);
 			}).start();
 
 		}
 
-		logger.info(String.format("%s is completed...", type.toUpperCase()));
+		logger.info("{} is completed...", type);
 	}
 
 	private void processJob(ProcessRecord processRecord, String jobName, List<FileUploadHeader> loadData, Date appDate,
-			UploadService uploadService, String moduleCode) {
+			UploadService uploadService) {
 
 		SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor(jobName);
 		CountDownLatch latch = new CountDownLatch(1);
@@ -225,10 +232,9 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 
 		try {
 			latch.await();
-
-			logger.info("Thread Execution for the pool thread{} to thread{} ended");
 		} catch (InterruptedException ie) {
-			logger.error(Literal.EXCEPTION, ie);
+			logger.warn("Interrupted!", ie);
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -257,10 +263,6 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 
 			if (nextTasks != null && nextTasks.length > 0) {
 				for (int i = 0; i < nextTasks.length; i++) {
-
-					if (nextRoleCode.length() > 1) {
-						nextRoleCode = nextRoleCode.concat(",");
-					}
 					nextRoleCode = workFlowEngine.getUserTask(nextTasks[i]).getActor();
 				}
 			} else {
@@ -331,13 +333,13 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 	}
 
 	@Override
-	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record,
+	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource paramSource,
 			String successStatus, String failureStatus) {
 
 		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			if (record != null) {
-				record.addValue("ERRORCODE", detail.getErrorCode());
-				record.addValue("ERRORDESC", detail.getErrorDesc());
+			if (paramSource != null) {
+				paramSource.addValue("ERRORCODE", detail.getErrorCode());
+				paramSource.addValue("ERRORDESC", detail.getErrorDesc());
 			}
 
 			header.setFailureRecords(header.getFailureRecords() + 1);
@@ -354,18 +356,33 @@ public abstract class AUploadServiceImpl implements UploadService, ValidateRecor
 			detail.setStatus(detail.getProgress() == EodConstants.PROGRESS_FAILED ? "R" : "C");
 		}
 
-		if (record != null) {
-			record.addValue("STATUS", detail.getStatus());
-			record.addValue("PROGRESS", detail.getProgress());
+		if (paramSource != null) {
+			paramSource.addValue("STATUS", detail.getStatus());
+			paramSource.addValue("PROGRESS", detail.getProgress());
 		}
 	}
 
-	@Override
-	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record) {
-		updateProcess(header, detail, record, "S", "F");
+	protected TransactionStatus getTransactionStatus() {
+		return transactionManager
+				.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
 	}
 
-	public abstract void doValidate(FileUploadHeader header, Object object);
+	protected void getRemarks(FileUploadHeader header, int sucessRecords, int failRecords) {
+		StringBuilder remarks = new StringBuilder("Process Completed");
+
+		if (failRecords > 0) {
+			remarks.append(" with exceptions, ");
+		}
+
+		remarks.append(" Total Records : ").append(header.getTotalRecords());
+		remarks.append(" Success Records : ").append(sucessRecords);
+		remarks.append(" Failed Records : ").append(failRecords);
+	}
+
+	@Override
+	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource paramSource) {
+		updateProcess(header, detail, paramSource, "S", "F");
+	}
 
 	private WorkFlowDetails getWorkflow(String moduleCode) {
 		return uploadDAO.getWorkFlow(moduleCode);

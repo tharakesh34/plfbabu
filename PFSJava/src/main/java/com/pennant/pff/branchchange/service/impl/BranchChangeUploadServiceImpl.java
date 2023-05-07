@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -38,7 +35,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
+public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChangeUpload> {
 	private static final Logger logger = LogManager.getLogger(BranchChangeUploadServiceImpl.class);
 	private BranchChangeUploadDAO branchChangeUploadDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -47,16 +44,17 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	private PostingsPreparationUtil postingsPreparationUtil;
 
 	@Override
+	protected BranchChangeUpload getDetail(Object object) {
+		if (object instanceof BranchChangeUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
+	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		BranchChangeUpload detail = null;
-
-		if (object instanceof BranchChangeUpload) {
-			detail = (BranchChangeUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		BranchChangeUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 		String branchcode = detail.getBranchCode();
@@ -111,11 +109,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -139,21 +132,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 						bcu.setErrorDesc("");
 						bcu.setUserDetails(header.getUserDetails());
 
-						Long referenceID = bcu.getReferenceID();
-						String reference = bcu.getReference();
-						String branchCode = bcu.getBranchCode();
-
-						branchMigrationDAO.updateFinanceMain(referenceID, branchCode);
-						branchMigrationDAO.updateFinODDetails(referenceID, branchCode);
-						branchMigrationDAO.updateFinRepayDeatils(referenceID, branchCode);
-						branchMigrationDAO.updateFinRpyQueue(referenceID, branchCode);
-						branchMigrationDAO.updateFinPFTDetails(referenceID, branchCode);
-						branchMigrationDAO.updatePaymentRecoveryDetails(reference, branchCode);
-						branchMigrationDAO.updateFinSuspHead(referenceID, branchCode);
-						branchMigrationDAO.updateFinSuspDetails(referenceID, branchCode);
-						branchMigrationDAO.updateLegalDetails(reference, branchCode);
-
-						doBranchChange(referenceID, bcu.getOldBranch(), branchCode, appDate);
+						process(appDate, bcu);
 					}
 
 					header.getUploadDetails().add(bcu);
@@ -165,59 +144,68 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 					}
 				}
 
-				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
+				header.setSuccessRecords(sucessRecords);
+				header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
+				logger.info("Processed the File {}", header.getFileName());
 
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
+				branchChangeUploadDAO.update(details);
 
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
+				List<FileUploadHeader> headerList = new ArrayList<>();
+				headerList.add(header);
+				updateHeader(headers, true);
+			}
+		}).start();
+	}
 
-					logger.info("Processed the File {}", header.getFileName());
+	private void process(Date appDate, BranchChangeUpload bcu) {
+		Long referenceID = bcu.getReferenceID();
+		String reference = bcu.getReference();
+		String branchCode = bcu.getBranchCode();
 
-					txStatus = transactionManager.getTransaction(txDef);
+		TransactionStatus txStatus = getTransactionStatus();
 
-					branchChangeUploadDAO.update(details);
+		try {
+			branchMigrationDAO.updateFinanceMain(referenceID, branchCode);
+			branchMigrationDAO.updateFinODDetails(referenceID, branchCode);
+			branchMigrationDAO.updateFinRepayDeatils(referenceID, branchCode);
+			branchMigrationDAO.updateFinRpyQueue(referenceID, branchCode);
+			branchMigrationDAO.updateFinPFTDetails(referenceID, branchCode);
+			branchMigrationDAO.updatePaymentRecoveryDetails(reference, branchCode);
+			branchMigrationDAO.updateFinSuspHead(referenceID, branchCode);
+			branchMigrationDAO.updateFinSuspDetails(referenceID, branchCode);
+			branchMigrationDAO.updateLegalDetails(reference, branchCode);
 
-					List<FileUploadHeader> headerList = new ArrayList<>();
-					headerList.add(header);
-					updateHeader(headers, true);
+			doBranchChange(referenceID, bcu.getOldBranch(), branchCode, appDate);
 
-					transactionManager.commit(txStatus);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
-				}
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
 			}
 
-		}).start();
-
+			bcu.setProgress(EodConstants.PROGRESS_FAILED);
+			bcu.setErrorCode(ERR_CODE);
+			bcu.setErrorDesc(e.getMessage());
+		}
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			branchChangeUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(branchChangeUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -285,7 +273,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 		aeEvent.setCustAppDate(appDate);
 
 		postingsPreparationUtil.postAccountingEOD(aeEvent);
-
 		postingsPreparationUtil.saveAccountingEOD(aeEvent.getReturnDataSet());
 	}
 
@@ -295,12 +282,13 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource parameterSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		BranchChangeUpload details = (BranchChangeUpload) ObjectUtil.valueAsObject(record, BranchChangeUpload.class);
+		BranchChangeUpload details = (BranchChangeUpload) ObjectUtil.valueAsObject(parameterSource,
+				BranchChangeUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		details.setReference(ObjectUtil.valueAsString(parameterSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -311,7 +299,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, details);
 
-		updateProcess(header, details, record);
+		updateProcess(header, details, parameterSource);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -2,7 +2,6 @@ package com.pennant.pff.customer.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
+public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycDetail> {
 	private static final Logger logger = LogManager.getLogger(KycDetailsUploadServiceImpl.class);
 
 	@Autowired
@@ -53,6 +52,19 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	private CustomerPhoneNumberUpload customerPhoneNumberUpload;
 	@Autowired
 	private CustomerEmailUpload customerEmailUpload;
+	
+	public KycDetailsUploadServiceImpl(){
+		super();
+	}
+	
+	@Override
+	protected CustomerKycDetail getDetail(Object object) {
+		if (object instanceof CustomerKycDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -166,17 +178,18 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			kycDetailsUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(kycDetailsUploadDAO.loadRecordData(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -196,15 +209,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		CustomerKycDetail detail = null;
-
-		if (object instanceof CustomerKycDetail) {
-			detail = (CustomerKycDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		CustomerKycDetail detail = getDetail(object);
 
 		String reference = detail.getReference();
 
@@ -404,7 +409,6 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 		if (getLength(detail.getCustDistrict()) > 50) {
 			setError(detail, CustomerDetailsUploadError.KYC_ADD_11, "District");
-			return;
 		}
 	}
 
@@ -419,7 +423,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
@@ -430,9 +434,9 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String custCif = ObjectUtil.valueAsString(record.getValue("custCif"));
+		String custCif = ObjectUtil.valueAsString(paramSource.getValue("custCif"));
 
-		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
+		String finReference = ObjectUtil.valueAsString(paramSource.getValue("finReference"));
 
 		boolean recordExist = isInProgress(headerID, custCif);
 
@@ -445,30 +449,30 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl {
 		detail.setFinReference(finReference);
 		detail.setReference(custCif);
 
-		detail.setCustAddrType(ObjectUtil.valueAsString(record.getValue("custAddrType")));
-		detail.setCustAddrPriority(ObjectUtil.valueAsInt(record.getValue("custAddrPriority")));
-		detail.setCustAddrLine3(ObjectUtil.valueAsString(record.getValue("custAddrLine3")));
-		detail.setCustAddrHNbr(ObjectUtil.valueAsString(record.getValue("custAddrHNbr")));
-		detail.setCustFlatNbr(ObjectUtil.valueAsString(record.getValue("custFlatNbr")));
-		detail.setCustAddrStreet(ObjectUtil.valueAsString(record.getValue("custAddrStreet")));
-		detail.setCustAddrLine1(ObjectUtil.valueAsString(record.getValue("custAddrLine1")));
-		detail.setCustAddrLine2(ObjectUtil.valueAsString(record.getValue("custAddrLine2")));
-		detail.setCustAddrCity(ObjectUtil.valueAsString(record.getValue("custAddrCity")));
-		detail.setCustAddrLine4(ObjectUtil.valueAsString(record.getValue("custAddrLine4")));
-		detail.setCustDistrict(ObjectUtil.valueAsString(record.getValue("custDistrict")));
-		detail.setCustAddrProvince(ObjectUtil.valueAsString(record.getValue("custAddrProvince")));
-		detail.setCustAddrCountry(ObjectUtil.valueAsString(record.getValue("custAddrCountry")));
-		detail.setCustAddrZIP(ObjectUtil.valueAsString(record.getValue("custAddrZIP")));
-		detail.setPhoneTypeCode(ObjectUtil.valueAsString(record.getValue("phoneTypeCode")));
-		detail.setPhoneNumber(ObjectUtil.valueAsString(record.getValue("phoneNumber")));
-		detail.setPhoneTypePriority(ObjectUtil.valueAsInt(record.getValue("phoneTypePriority")));
-		detail.setCustEMailTypeCode(ObjectUtil.valueAsString(record.getValue("custEMailTypeCode")));
-		detail.setCustEMail(ObjectUtil.valueAsString(record.getValue("custEMail")));
-		detail.setCustEMailPriority(ObjectUtil.valueAsInt(record.getValue("custEMailPriority")));
+		detail.setCustAddrType(ObjectUtil.valueAsString(paramSource.getValue("custAddrType")));
+		detail.setCustAddrPriority(ObjectUtil.valueAsInt(paramSource.getValue("custAddrPriority")));
+		detail.setCustAddrLine3(ObjectUtil.valueAsString(paramSource.getValue("custAddrLine3")));
+		detail.setCustAddrHNbr(ObjectUtil.valueAsString(paramSource.getValue("custAddrHNbr")));
+		detail.setCustFlatNbr(ObjectUtil.valueAsString(paramSource.getValue("custFlatNbr")));
+		detail.setCustAddrStreet(ObjectUtil.valueAsString(paramSource.getValue("custAddrStreet")));
+		detail.setCustAddrLine1(ObjectUtil.valueAsString(paramSource.getValue("custAddrLine1")));
+		detail.setCustAddrLine2(ObjectUtil.valueAsString(paramSource.getValue("custAddrLine2")));
+		detail.setCustAddrCity(ObjectUtil.valueAsString(paramSource.getValue("custAddrCity")));
+		detail.setCustAddrLine4(ObjectUtil.valueAsString(paramSource.getValue("custAddrLine4")));
+		detail.setCustDistrict(ObjectUtil.valueAsString(paramSource.getValue("custDistrict")));
+		detail.setCustAddrProvince(ObjectUtil.valueAsString(paramSource.getValue("custAddrProvince")));
+		detail.setCustAddrCountry(ObjectUtil.valueAsString(paramSource.getValue("custAddrCountry")));
+		detail.setCustAddrZIP(ObjectUtil.valueAsString(paramSource.getValue("custAddrZIP")));
+		detail.setPhoneTypeCode(ObjectUtil.valueAsString(paramSource.getValue("phoneTypeCode")));
+		detail.setPhoneNumber(ObjectUtil.valueAsString(paramSource.getValue("phoneNumber")));
+		detail.setPhoneTypePriority(ObjectUtil.valueAsInt(paramSource.getValue("phoneTypePriority")));
+		detail.setCustEMailTypeCode(ObjectUtil.valueAsString(paramSource.getValue("custEMailTypeCode")));
+		detail.setCustEMail(ObjectUtil.valueAsString(paramSource.getValue("custEMail")));
+		detail.setCustEMailPriority(ObjectUtil.valueAsInt(paramSource.getValue("custEMailPriority")));
 
 		doValidate(header, detail);
 
-		updateProcess(header, detail, record);
+		updateProcess(header, detail, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

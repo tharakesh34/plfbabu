@@ -1041,9 +1041,6 @@ public class FileUploadList extends Window implements Serializable {
 			headers.add(header);
 		}
 
-		headers = headers.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId()))
-				.collect(Collectors.toList());
-
 		search(true);
 		logger.debug(Literal.LEAVING);
 	}

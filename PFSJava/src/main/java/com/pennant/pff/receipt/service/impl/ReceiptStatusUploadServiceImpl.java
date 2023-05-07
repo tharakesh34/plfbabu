@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
@@ -57,7 +54,7 @@ import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.upload.ReceiptStatusUploadError;
 import com.pennapps.core.util.ObjectUtil;
 
-public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
+public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptStatusUpload> {
 	private static final Logger logger = LogManager.getLogger(ReceiptStatusUploadServiceImpl.class);
 
 	private ReceiptStatusUploadDAO receiptStatusUploadDAO;
@@ -73,17 +70,22 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 	private CustomerDAO customerDAO;
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
 
+	public ReceiptStatusUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected ReceiptStatusUpload getDetail(Object object) {
+		if (object instanceof ReceiptStatusUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		ReceiptStatusUpload detail = null;
-
-		if (object instanceof ReceiptStatusUpload) {
-			detail = (ReceiptStatusUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		ReceiptStatusUpload detail = getDetail(object);
 
 		long receiptID = detail.getReceiptId();
 
@@ -132,11 +134,9 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (RepayConstants.PAYSTATUS_REALIZED.equals(receiptmodestatus)) {
-			if (receiptmodestatus.equals(status)) {
-				setError(detail, ReceiptStatusUploadError.RU06);
-				return;
-			}
+		if (RepayConstants.PAYSTATUS_REALIZED.equals(receiptmodestatus) && receiptmodestatus.equals(status)) {
+			setError(detail, ReceiptStatusUploadError.RU06);
+			return;
 		}
 
 		String receiptmode = frh.getReceiptMode();
@@ -164,21 +164,17 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 
 			Date depositDate = frh.getDepositDate();
 
-			if (depositDate != null) {
-				if (DateUtil.compare(realizedDate, depositDate) < 0) {
-					setError(detail, ReceiptStatusUploadError.RU010);
-					return;
-				}
+			if (depositDate != null && DateUtil.compare(realizedDate, depositDate) < 0) {
+				setError(detail, ReceiptStatusUploadError.RU010);
+				return;
 			}
 		}
 
 		Date bounceDate = detail.getBounceDate();
 
-		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
-			if (bounceDate != null) {
-				setError(detail, ReceiptStatusUploadError.RU016);
-				return;
-			}
+		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(status) && bounceDate != null) {
+			setError(detail, ReceiptStatusUploadError.RU016);
+			return;
 		}
 
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
@@ -207,20 +203,15 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (RepayConstants.PAYSTATUS_BOUNCE.equals(status)) {
-				if (bounceReasonDAO.getBounceCodeCount(borCReason) == 0) {
-					setError(detail, ReceiptStatusUploadError.RU013);
-					return;
-				}
+			if (RepayConstants.PAYSTATUS_BOUNCE.equals(status) && bounceReasonDAO.getBounceCodeCount(borCReason) == 0) {
+				setError(detail, ReceiptStatusUploadError.RU013);
+				return;
 			}
 
-			if (RepayConstants.PAYSTATUS_CANCEL.equals(status)) {
-				if (rejectDetailDAO.getRejectCodeCount(borCReason) == 0) {
-					setError(detail, ReceiptStatusUploadError.RU014);
-					return;
-				}
+			if (RepayConstants.PAYSTATUS_CANCEL.equals(status) && rejectDetailDAO.getRejectCodeCount(borCReason) == 0) {
+				setError(detail, ReceiptStatusUploadError.RU014);
+				return;
 			}
-
 		} else {
 			if (StringUtils.isNotBlank(borCReason)) {
 				setError(detail, ReceiptStatusUploadError.RU012);
@@ -228,13 +219,9 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 			}
 		}
 
-		if (StringUtils.isNotBlank(borCRemarks)) {
-			if (borCRemarks.length() > 50) {
-				setError(detail, ReceiptStatusUploadError.RU012);
-				return;
-			}
+		if (StringUtils.isNotBlank(borCRemarks) && borCRemarks.length() > 50) {
+			setError(detail, ReceiptStatusUploadError.RU012);
 		}
-
 	}
 
 	private void setError(ReceiptStatusUpload detail, ReceiptStatusUploadError error) {
@@ -246,11 +233,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -290,38 +272,17 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
 
 					receiptStatusUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headers, true);
-
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
 			}
-
 		}).start();
 	}
 
@@ -348,6 +309,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 			frh.setBounceDate(detail.getBounceDate());
 			frh.setBounceDate(detail.getBounceDate());
 		}
+
 		if (RepayConstants.PAYSTATUS_CANCEL.equals(detail.getStatusRM())) {
 			frh.setCancelReason(detail.getBounceReason());
 		}
@@ -387,12 +349,32 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 		auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setModelData(fd);
 
-		AuditHeader rs = receiptService.doApprove(auditHeader);
+		TransactionStatus txStatus = getTransactionStatus();
+		try {
+			auditHeader = receiptService.doApprove(auditHeader);
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
 
-		if (rs.getErrorMessage() != null) {
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(rs.getErrorMessage().get(0).getMessage().toString());
-			detail.setErrorCode(rs.getErrorMessage().get(0).getCode().toString());
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc(e.getMessage());
+			return;
+		}
+
+		if (auditHeader == null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc("");
+			return;
+		}
+
+		if (auditHeader.getErrorMessage() != null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
+			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
 		} else {
 			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 			detail.setErrorCode("");
@@ -408,17 +390,18 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			receiptStatusUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(receiptStatusUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -442,12 +425,13 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		ReceiptStatusUpload details = (ReceiptStatusUpload) ObjectUtil.valueAsObject(record, ReceiptStatusUpload.class);
+		ReceiptStatusUpload details = (ReceiptStatusUpload) ObjectUtil.valueAsObject(paramSource,
+				ReceiptStatusUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -458,7 +442,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, details);
 
-		updateProcess(header, details, record);
+		updateProcess(header, details, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

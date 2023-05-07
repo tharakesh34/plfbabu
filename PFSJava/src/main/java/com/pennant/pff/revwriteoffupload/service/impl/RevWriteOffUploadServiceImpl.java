@@ -6,16 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -51,7 +48,7 @@ import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennapps.core.util.ObjectUtil;
 
-public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
+public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOffUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(RevWriteOffUploadServiceImpl.class);
 
 	private RevWriteOffUploadDAO revWriteOffUploadDAO;
@@ -64,14 +61,22 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FeeTypeDAO feeTypeDAO;
 
+	public RevWriteOffUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected RevWriteOffUploadDetail getDetail(Object object) {
+		if (object instanceof RevWriteOffUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -118,19 +123,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
 
 					revWriteOffUploadDAO.update(details);
 
@@ -138,17 +131,9 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 					headerList.add(header);
 					updateHeader(headerList, true);
 
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
-
 			}
 		}).start();
 
@@ -161,19 +146,15 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 	 */
 	private void processRevWriteOffLoan(FileUploadHeader header, List<RevWriteOffUploadDetail> details) {
 		for (RevWriteOffUploadDetail detail : details) {
-
 			if (detail.getProgress() != EodConstants.PROGRESS_SUCCESS) {
 				continue;
 			}
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			long finId = detail.getReferenceID();
 
-			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+			TransactionStatus txnStatus = getTransactionStatus();
 
 			try {
-				long finId = detail.getReferenceID();
-
 				if (!executeAccountingProcess(detail, finId)) {
 					throw new AppException("Postings Execution failed for Loan Reference : " + detail.getReference());
 				}
@@ -182,11 +163,13 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				saveLog(detail, header);
 
-				this.transactionManager.commit(transactionStatus);
+				this.transactionManager.commit(txnStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 
-				transactionManager.rollback(transactionStatus);
+				if (txnStatus != null) {
+					transactionManager.rollback(txnStatus);
+				}
 
 				String error = StringUtils.trimToEmpty(e.getMessage());
 
@@ -286,17 +269,18 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			revWriteOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(revWriteOffUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -311,21 +295,12 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	private void saveLog(RevWriteOffUploadDetail detail, FileUploadHeader header) {
 		detail.setEvent(UploadTypes.REV_WRITE_OFF.name());
-
 		revWriteOffUploadDAO.saveLog(detail, header);
 	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		RevWriteOffUploadDetail detail = null;
-
-		if (object instanceof RevWriteOffUploadDetail) {
-			detail = (RevWriteOffUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		RevWriteOffUploadDetail detail = getDetail(object);
 
 		detail.setHeaderId(header.getId());
 
@@ -375,7 +350,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
@@ -386,7 +361,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = ObjectUtil.valueAsString(record.getValue("finReference"));
+		String finReference = ObjectUtil.valueAsString(paramSource.getValue("finReference"));
 		boolean recordExist = isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -396,11 +371,11 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl {
 		RevWriteOffUploadDetail detail = new RevWriteOffUploadDetail();
 		detail.setHeaderId(headerID);
 		detail.setReference(finReference);
-		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("remarks")));
+		detail.setRemarks(ObjectUtil.valueAsString(paramSource.getValue("remarks")));
 
 		doValidate(header, detail);
 
-		updateProcess(header, detail, record);
+		updateProcess(header, detail, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

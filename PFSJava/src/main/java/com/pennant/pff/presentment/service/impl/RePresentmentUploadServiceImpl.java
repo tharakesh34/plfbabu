@@ -3,16 +3,13 @@ package com.pennant.pff.presentment.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -34,7 +31,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
+public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresentmentUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(RePresentmentUploadServiceImpl.class);
 
 	private ExtractionService extractionService;
@@ -43,15 +40,24 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
+	public RePresentmentUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected RePresentmentUploadDetail getDetail(Object object) {
+		if (object instanceof RePresentmentUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
-			List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+			List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
 			Date appDate = SysParamUtil.getAppDate();
 			String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
@@ -79,40 +85,16 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 					header.getUploadDetails().add(detail);
 				}
 
-				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
-					representmentUploadDAO.update(details);
-					transactionManager.commit(txStatus);
-				} catch (Exception e) {
-					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
-				}
+				representmentUploadDAO.update(details);
 
 				header.setSuccessRecords(sucessRecords);
 				header.setFailureRecords(failRecords);
 
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
-				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
-
 				logger.info("Processed the File {}", header.getFileName());
 			}
 
+			TransactionStatus txStatus = getTransactionStatus();
 			try {
-				txStatus = transactionManager.getTransaction(txDef);
-
 				updateHeader(headers, true);
 
 				logger.info("RePresentment Process is Initiated");
@@ -128,23 +110,23 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			} finally {
 				txStatus = null;
 			}
-
 		}).start();
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			representmentUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(representmentUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -159,15 +141,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		RePresentmentUploadDetail detail = null;
-
-		if (object instanceof RePresentmentUploadDetail) {
-			detail = (RePresentmentUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		RePresentmentUploadDetail detail = getDetail(object);
 
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 
@@ -273,13 +247,13 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		RePresentmentUploadDetail representment = (RePresentmentUploadDetail) ObjectUtil.valueAsObject(record,
+		RePresentmentUploadDetail representment = (RePresentmentUploadDetail) ObjectUtil.valueAsObject(paramSource,
 				RePresentmentUploadDetail.class);
 
-		representment.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		representment.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -290,7 +264,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, representment);
 
-		updateProcess(header, representment, record);
+		updateProcess(header, representment, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,9 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.GSTCalculator;
@@ -46,25 +43,30 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
+public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWaiverUpload> {
 	private static final Logger logger = LogManager.getLogger(BulkFeeWaiverUploadServiceImpl.class);
 
 	private BulkFeeWaiverUploadDAO bulkFeeWaiverUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FeeWaiverUploadHeaderService feeWaiverUploadHeaderService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
+	
+	public BulkFeeWaiverUploadServiceImpl(){
+		super();
+	}
+	
+	@Override
+	protected BulkFeeWaiverUpload getDetail(Object object) {
+		if (object instanceof BulkFeeWaiverUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		BulkFeeWaiverUpload detail = null;
-
-		if (object instanceof BulkFeeWaiverUpload) {
-			detail = (BulkFeeWaiverUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		BulkFeeWaiverUpload detail = getDetail(object);
 
 		detail.setUserDetails(header.getUserDetails());
 
@@ -107,9 +109,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 		logger.debug(Literal.ENTERING);
 
 		new Thread(() -> {
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -127,23 +126,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 					doValidate(header, detail);
 
 					if (EodConstants.PROGRESS_SUCCESS == detail.getProgress()) {
-						AuditHeader ah = getAuditHeader(prepare(detail), PennantConstants.TRAN_WF);
-
-						txStatus = transactionManager.getTransaction(txDef);
-
-						AuditHeader few = feeWaiverHeaderService.doApprove(ah);
-
-						if (few.getErrorMessage() != null) {
-							detail.setProgress(EodConstants.PROGRESS_FAILED);
-							detail.setErrorDesc(few.getErrorMessage().get(0).getMessage().toString());
-							detail.setErrorCode(few.getErrorMessage().get(0).getCode().toString());
-						} else {
-							detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-							detail.setErrorDesc("");
-							detail.setErrorCode("");
-						}
-
-						transactionManager.commit(txStatus);
+						processWaiver(detail);
 					}
 
 					header.getUploadDetails().add(detail);
@@ -157,38 +140,15 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 				}
 
 				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
 					bulkFeeWaiverUploadDAO.update(details);
 
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
-					logger.info("Processed the File {}", header.getFileName());
-
 					updateHeader(headers, true);
 
-					logger.info("BulkFeeWaiver Process is Initiated");
-
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
 			}
 
@@ -197,19 +157,55 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void processWaiver(BulkFeeWaiverUpload detail) {
+		TransactionStatus txStatus = getTransactionStatus();
+		AuditHeader ah = getAuditHeader(prepare(detail), PennantConstants.TRAN_WF);
+
+		try {
+			ah = feeWaiverHeaderService.doApprove(ah);
+			transactionManager.commit(txStatus);
+		} catch (AppException e) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc(e.getMessage());
+
+			logger.error(Literal.EXCEPTION, e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+			
+			return;
+		}
+
+		if (ah == null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorCode("Audit Header is null.");
+			return;
+		}
+
+		if (ah.getErrorMessage() != null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc(ah.getErrorMessage().get(0).getMessage());
+			detail.setErrorCode(ah.getErrorMessage().get(0).getCode());
+		}
+	}
+
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			bulkFeeWaiverUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(bulkFeeWaiverUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -333,12 +329,10 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 
 		if (fwh.isNewRecord()) {
 			for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
-				if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
-					if (fwd.getFeeTypeCode().equals(detail.getFeeTypeCode().trim())) {
-						fwd.setWaivedAmount(detail.getWaivedAmount());
-						fwd.setFeeTypeCode(detail.getFeeTypeCode());
-						fwdList.add(fwd);
-					}
+				if (isValidRecord(detail, fwd)) {
+					fwd.setWaivedAmount(detail.getWaivedAmount());
+					fwd.setFeeTypeCode(detail.getFeeTypeCode());
+					fwdList.add(fwd);
 				}
 			}
 		} else {
@@ -350,6 +344,11 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		fwh.setFeeWaiverDetails(fwdList);
+	}
+
+	private boolean isValidRecord(BulkFeeWaiverUpload detail, FeeWaiverDetail fwd) {
+		return fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0
+				&& fwd.getFeeTypeCode().equals(detail.getFeeTypeCode().trim());
 	}
 
 	private void prepareGST(FeeWaiverDetail fwd, BigDecimal waiverAmount, Map<String, BigDecimal> gstPercentages) {
@@ -384,7 +383,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
@@ -399,13 +398,13 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 
 		bfee.setHeaderId(headerID);
 		bfee.setAppDate(SysParamUtil.getAppDate());
-		bfee.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
-		bfee.setFeeTypeCode(ObjectUtil.valueAsString(record.getValue("feeTypeCode")));
-		bfee.setWaivedAmount(ObjectUtil.valueAsBigDecimal(record.getValue("waivedAmount")));
+		bfee.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		bfee.setFeeTypeCode(ObjectUtil.valueAsString(paramSource.getValue("feeTypeCode")));
+		bfee.setWaivedAmount(ObjectUtil.valueAsBigDecimal(paramSource.getValue("waivedAmount")));
 
 		doValidate(header, bfee);
 
-		updateProcess(header, bfee, record);
+		updateProcess(header, bfee, paramSource);
 
 		List<BulkFeeWaiverUpload> details = new ArrayList<>();
 		details.add(bfee);
@@ -423,11 +422,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setfeeWaiverUploadHeaderService(FeeWaiverUploadHeaderService feeWaiverUploadHeaderService) {
-		this.feeWaiverUploadHeaderService = feeWaiverUploadHeaderService;
 	}
 
 	@Autowired

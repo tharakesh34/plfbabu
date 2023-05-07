@@ -6,16 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.SysParamUtil;
@@ -43,21 +40,29 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class LPPUploadServiceImpl extends AUploadServiceImpl {
+public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	private static final Logger logger = LogManager.getLogger(LPPUploadServiceImpl.class);
 
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMaintenanceService financeMaintenanceService;
 
+	public LPPUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected LPPUpload getDetail(Object object) {
+		if (object instanceof LPPUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
+
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -80,7 +85,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 						detail.setErrorCode("");
 						detail.setErrorDesc("");
 						detail.setUserDetails(header.getUserDetails());
-						setFinODPenaltyRateDate(detail, header);
+						process(detail, header);
 					}
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -96,42 +101,20 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
-					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
-
 					lppUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headers, true);
-
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
 			}
 
 		}).start();
 	}
 
-	private void setFinODPenaltyRateDate(LPPUpload detail, FileUploadHeader header) {
+	private void process(LPPUpload detail, FileUploadHeader header) {
 		FinODPenaltyRate pr = new FinODPenaltyRate();
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = new FinScheduleData();
@@ -148,18 +131,10 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		if (PennantConstants.YES.equals(detail.getApplyOverDue())) {
-			if (PennantConstants.NO.equals(detail.getIncludeGraceDays())) {
-				pr.setODIncGrcDays(false);
-			} else {
-				pr.setODIncGrcDays(true);
-			}
-
-			if (PennantConstants.NO.equals(detail.getAllowWaiver())) {
-				pr.setODAllowWaiver(false);
-			} else {
-				pr.setODAllowWaiver(true);
-			}
+			pr.setODIncGrcDays(PennantConstants.YES.equals(detail.getIncludeGraceDays()));
+			pr.setODAllowWaiver(PennantConstants.YES.equals(detail.getAllowWaiver()));
 		}
+
 		pr.setODChargeType(detail.getPenaltyType());
 		pr.setODChargeAmtOrPerc(detail.getAmountOrPercent());
 		pr.setODChargeCalOn(detail.getCalculatedOn());
@@ -198,12 +173,33 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 		auditHeader = getAuditHeader(fd, PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setModelData(fd);
 
-		AuditHeader lppah = financeMaintenanceService.doApprove(auditHeader);
+		TransactionStatus txStatus = getTransactionStatus();
+		try {
+			auditHeader = financeMaintenanceService.doApprove(auditHeader);
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
 
-		if (lppah.getErrorMessage() != null) {
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(lppah.getErrorMessage().get(0).getMessage().toString());
-			detail.setErrorCode(lppah.getErrorMessage().get(0).getCode().toString());
+			detail.setErrorDesc(ERR_CODE);
+			detail.setErrorCode(e.getMessage());
+			
+			return;
+		}
+
+		if (auditHeader == null) {
+			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc("Audit Header is null.");
+			return;
+		}
+
+		if (auditHeader.getErrorMessage() != null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
+			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
 		} else {
 			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 			detail.setErrorCode("");
@@ -213,17 +209,17 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			lppUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(lppUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -238,15 +234,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		LPPUpload detail = null;
-
-		if (object instanceof LPPUpload) {
-			detail = (LPPUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		LPPUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 
@@ -373,11 +361,10 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				return;
 			}
 
-			if (StringUtils.isNotBlank(String.valueOf(maxWaiver))) {
-				if (!allowWaiver && maxWaiver.compareTo(BigDecimal.ZERO) > 0) {
-					setError(detail, LPPUploadError.LPP11);
-					return;
-				}
+			if (StringUtils.isNotBlank(String.valueOf(maxWaiver)) && !allowWaiver
+					&& maxWaiver.compareTo(BigDecimal.ZERO) > 0) {
+				setError(detail, LPPUploadError.LPP11);
+				return;
 			}
 
 			PenaltyTypes lppType = PenaltyTypes.getTypes(penaltyType);
@@ -388,8 +375,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			switch (lppType) {
-			case FLAT:
-			case FLAT_ON_PD_MTH:
+			case FLAT, FLAT_ON_PD_MTH:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) < 0
 						|| (amountOrPercent.compareTo(new BigDecimal(9999999)) > 0)) {
@@ -403,10 +389,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				}
 
 				break;
-			case PERC_ONE_TIME:
-			case PERC_ON_PD_MTH:
-			case PERC_ON_DUE_DAYS:
-			case PERC_ON_EFF_DUE_DAYS:
+			case PERC_ONE_TIME, PERC_ON_PD_MTH, PERC_ON_DUE_DAYS, PERC_ON_EFF_DUE_DAYS:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
 				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) <= 0
 						|| (amountOrPercent.compareTo(new BigDecimal(100)) > 0)) {
@@ -432,21 +415,18 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 				break;
 			}
 
-			if (!(PenaltyTypes.PERC_ONE_TIME.equals(lppType) || PenaltyTypes.PERC_ON_PD_MTH.equals(lppType))) {
-				if (FinanceConstants.ODCALON_INST.equals(calculatedOn)) {
-					setError(detail, LPPUploadError.LPP25);
-					return;
-				}
+			boolean isLppType = PenaltyTypes.PERC_ONE_TIME.equals(lppType)
+					|| PenaltyTypes.PERC_ON_PD_MTH.equals(lppType);
+
+			if (!isLppType && FinanceConstants.ODCALON_INST.equals(calculatedOn)) {
+				setError(detail, LPPUploadError.LPP25);
+				return;
 			}
 
-			if ((PenaltyTypes.PERC_ONE_TIME.equals(lppType) || PenaltyTypes.PERC_ON_PD_MTH.equals(lppType))) {
-				if (StringUtils.isBlank(String.valueOf(detail.getODMinAmount()))) {
-					setError(detail, LPPUploadError.LPP26);
-					return;
-				}
+			if (isLppType && StringUtils.isBlank(String.valueOf(detail.getODMinAmount()))) {
+				setError(detail, LPPUploadError.LPP26);
 			}
 		}
-
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {
@@ -472,12 +452,12 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		LPPUpload lppUpload = (LPPUpload) ObjectUtil.valueAsObject(record, LPPUpload.class);
+		LPPUpload lppUpload = (LPPUpload) ObjectUtil.valueAsObject(paramSource, LPPUpload.class);
 
-		lppUpload.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		lppUpload.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -488,7 +468,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, lppUpload);
 
-		updateProcess(header, lppUpload, record);
+		updateProcess(header, lppUpload, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,13 +43,12 @@ import com.pennant.pff.writeoffupload.exception.WriteOffUploadError;
 import com.pennant.pff.writeoffupload.model.WriteOffUploadDetail;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
+public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(WriteOffUploadServiceImpl.class);
 
 	private WriteOffUploadDAO writeOffUploadDAO;
@@ -62,6 +60,19 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinanceDetailService financeDetailService;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
+
+	public WriteOffUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected WriteOffUploadDetail getDetail(Object object) {
+		if (object instanceof WriteOffUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
@@ -110,8 +121,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 				logger.info("WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
 
-				// Method for Processing Writeoff Loan
-				processWriteOffLoan(header, details, appDate);
+				processWriteOffLoan(header, details);
 
 				logger.info("WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 
@@ -160,7 +170,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void processWriteOffLoan(FileUploadHeader header, List<WriteOffUploadDetail> details, Date appDate) {
+	private void processWriteOffLoan(FileUploadHeader header, List<WriteOffUploadDetail> details) {
 
 		// Rendering Write off Loan Details
 		for (WriteOffUploadDetail detail : details) {
@@ -169,32 +179,25 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 				continue;
 			}
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+			FinanceWriteoffHeader fwh = financeWriteoffService.getFinanceWriteoffDetailById(detail.getReferenceID(),
+					"_View", null, FinServiceEvent.WRITEOFFPAY);
+			setWriteOffTotals(fwh);
 
-			TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
+			AuditHeader auditHeader = getAuditHeader(fwh, PennantConstants.TRAN_WF);
+
+			fwh.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
+			TransactionStatus transactionStatus = getTransactionStatus();
 
 			try {
-				// Preparing the data for writeOff
-				FinanceWriteoffHeader fwh = financeWriteoffService.getFinanceWriteoffDetailById(detail.getReferenceID(),
-						"_View", null, FinServiceEvent.WRITEOFFPAY);
-
-				// setting the write off amounts
-				setWriteOffTotals(fwh);
-				fwh.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
-
-				AuditHeader auditHeader = getAuditHeader(fwh, PennantConstants.TRAN_WF);
-
 				this.financeWriteoffService.doApprove(auditHeader);
-
-				// Upload header Log Update
 				saveLog(detail, header);
-
 				this.transactionManager.commit(transactionStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 
-				transactionManager.rollback(transactionStatus);
+				if (transactionStatus != null) {
+					transactionManager.rollback(transactionStatus);
+				}
 
 				String error = StringUtils.trimToEmpty(e.getMessage());
 
@@ -214,10 +217,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void saveLog(WriteOffUploadDetail detail, FileUploadHeader header) {
-
-		long receiptId = finReceiptHeaderDAO.getMaxReceiptIdFinRef(detail.getReference());
-
-		detail.setReceiptId(receiptId);
+		detail.setReceiptId(finReceiptHeaderDAO.getMaxReceiptIdFinRef(detail.getReference()));
 		detail.setEvent(UploadTypes.WRITE_OFF.name());
 
 		writeOffUploadDAO.saveLog(detail, header);
@@ -234,26 +234,16 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 			fw.setWriteoffSchFee(fw.getUnpaidSchFee());
 		}
 
-		List<FinanceScheduleDetail> financeScheduleDetails;
 		try {
-			// calculating the schedule with writeOff amounts
-			financeScheduleDetails = calScheduleWriteOffDetails(header);
-			header.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(financeScheduleDetails);
+			header.getFinanceDetail().getFinScheduleData()
+					.setFinanceScheduleDetails(calScheduleWriteOffDetails(header));
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 	}
 
-	/***
-	 * Method for calculating schedule for Writeoff
-	 * 
-	 * @param financeWriteoffHeader
-	 * @return
-	 */
 	private List<FinanceScheduleDetail> calScheduleWriteOffDetails(FinanceWriteoffHeader financeWriteoffHeader) {
-		logger.debug("Entering");
-
 		FinanceWriteoff fw = financeWriteoffHeader.getFinanceWriteoff();
 
 		BigDecimal woPriAmt = fw.getWriteoffPrincipal();
@@ -263,12 +253,11 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 		List<FinanceScheduleDetail> effectedFinSchDetails = financeWriteoffHeader.getFinanceDetail()
 				.getFinScheduleData().getFinanceScheduleDetails();
 
-		if (effectedFinSchDetails != null && effectedFinSchDetails.size() > 0) {
+		if (CollectionUtils.isNotEmpty(effectedFinSchDetails)) {
 			for (int i = 0; i < effectedFinSchDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchdl = effectedFinSchDetails.get(i);
 
-				// Reset Write-off Principal Amount
 				if (woPriAmt.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schPriBal = curSchdl.getPrincipalSchd().subtract(curSchdl.getSchdPriPaid())
 							.subtract(curSchdl.getWriteoffPrincipal());
@@ -282,7 +271,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 						}
 					}
 				}
-				// Reset Write-off Profit Amount
+
 				if (woPftAmt.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schPftBal = curSchdl.getProfitSchd().subtract(curSchdl.getSchdPftPaid())
 							.subtract(curSchdl.getWriteoffProfit());
@@ -297,7 +286,6 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 					}
 				}
 
-				// Reset Write-off Schedule Fee
 				if (woSchFee.compareTo(BigDecimal.ZERO) > 0) {
 					BigDecimal schFee = curSchdl.getFeeSchd()
 							.subtract(curSchdl.getSchdFeePaid().subtract(curSchdl.getWriteoffSchFee()));
@@ -311,27 +299,26 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 						}
 					}
 				}
-
 			}
 		}
 
 		return effectedFinSchDetails;
-
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			writeOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(writeOffUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -346,15 +333,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		WriteOffUploadDetail detail = null;
-
-		if (object instanceof WriteOffUploadDetail) {
-			detail = (WriteOffUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		WriteOffUploadDetail detail = getDetail(object);
 
 		detail.setHeaderId(header.getId());
 
@@ -458,7 +437,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, null, header);
 		return new AuditHeader(String.valueOf(header.getFinReference()), String.valueOf(header.getFinReference()), null,
 				null, auditDetail, header.getFinanceDetail().getFinScheduleData().getFinanceMain().getUserDetails(),
-				new HashMap<String, List<ErrorDetail>>());
+				new HashMap<>());
 	}
 
 	@Override
@@ -472,7 +451,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
@@ -483,7 +462,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = ObjectUtil.valueAsString(record.getValue("FINREFERENCE"));
+		String finReference = ObjectUtil.valueAsString(paramSource.getValue("FINREFERENCE"));
 		boolean recordExist = isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -493,11 +472,11 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl {
 		WriteOffUploadDetail detail = new WriteOffUploadDetail();
 		detail.setHeaderId(headerID);
 		detail.setReference(finReference);
-		detail.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
+		detail.setRemarks(ObjectUtil.valueAsString(paramSource.getValue("REMARKS")));
 
 		doValidate(header, detail);
 
-		updateProcess(header, detail, record);
+		updateProcess(header, detail, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

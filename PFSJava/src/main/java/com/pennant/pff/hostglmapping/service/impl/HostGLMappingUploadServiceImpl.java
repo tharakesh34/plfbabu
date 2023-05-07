@@ -6,16 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CostCenterDAO;
@@ -43,7 +40,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
+public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMappingUpload> {
 	private static final Logger logger = LogManager.getLogger(HostGLMappingUploadServiceImpl.class);
 
 	private HostGLMappingUploadDAO hostGLMappingUploadDAO;
@@ -52,18 +49,23 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	private CostCenterDAO costCenterDAO;
 	private ProfitCenterDAO profitCenterDAO;
 	private AccountMappingService accountMappingService;
+	
+	public HostGLMappingUploadServiceImpl(){
+		super();
+	}
+
+	@Override
+	protected HostGLMappingUpload getDetail(Object object) {
+		if (object instanceof HostGLMappingUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		HostGLMappingUpload detail = null;
-
-		if (object instanceof HostGLMappingUpload) {
-			detail = (HostGLMappingUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		HostGLMappingUpload detail = getDetail(object);
 
 		String acctype = detail.getAccountType();
 		String fintype = detail.getLoanType();
@@ -78,20 +80,14 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		boolean isExsistAccountType = accountTypeDAO.isExsistAccountType(acctype);
-
-		if (!isExsistAccountType) {
+		if (!accountTypeDAO.isExsistAccountType(acctype)) {
 			setError(detail, HostGLMappingUploadError.HGL03);
 			return;
 		}
 
-		if (StringUtils.isNotBlank(fintype)) {
-			int FinTypeCount = financeTypeDAO.getFinTypeCount(fintype, "");
-
-			if (FinTypeCount <= 0) {
-				setError(detail, HostGLMappingUploadError.HGL04);
-				return;
-			}
+		if (StringUtils.isNotBlank(fintype) && financeTypeDAO.getFinTypeCount(fintype, "") <= 0) {
+			setError(detail, HostGLMappingUploadError.HGL04);
+			return;
 		}
 
 		String costcentre = detail.getCostCentreCode();
@@ -146,24 +142,16 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		String groupCode = accountTypeDAO.getGroupCodeByAccType(acctype);
-
-		detail.setAccountTypeGroup(groupCode);
+		detail.setAccountTypeGroup(accountTypeDAO.getGroupCodeByAccType(acctype));
 
 		if (detail.getOpenedDate().compareTo(header.getAppDate()) > 0) {
 			setError(detail, HostGLMappingUploadError.HGL10);
-			return;
 		}
 	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
@@ -204,45 +192,22 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 					header.setSuccessRecords(sucessRecords);
 					header.setFailureRecords(failRecords);
 
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
-					logger.info("Processed the File {}", header.getFileName());
-
-					txStatus = transactionManager.getTransaction(txDef);
-
 					hostGLMappingUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headers, true);
 
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
 			}
-
 		}).start();
 
 	}
 
 	private void process(HostGLMappingUpload detail) {
 		AccountMapping ac = new AccountMapping();
-		AuditHeader auditHeader = null;
 
 		ac.setAccountType(detail.getAccountType());
 		ac.setFinType(detail.getLoanType());
@@ -264,15 +229,37 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 		ac.setCreatedOn(detail.getCreatedOn());
 		ac.setCreatedBy(detail.getCreatedBy());
 
-		auditHeader = getAuditHeader(ac, PennantConstants.TRAN_WF);
+		AuditHeader auditHeader = getAuditHeader(ac, PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setModelData(ac);
 
-		AuditHeader ah = accountMappingService.doApprove(auditHeader);
+		TransactionStatus txStatus = getTransactionStatus();
+		try {
+			auditHeader = accountMappingService.doApprove(auditHeader);
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 
-		if (ah.getErrorMessage() != null) {
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(ah.getErrorMessage().get(0).getMessage().toString());
-			detail.setErrorCode(ah.getErrorMessage().get(0).getCode().toString());
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc(e.getMessage());
+			return;
+		}
+
+		if (auditHeader == null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode(ERR_CODE);
+			detail.setErrorDesc("");
+			return;
+		}
+
+		if (auditHeader.getErrorMessage() != null) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
+			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
 		} else {
 			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 			detail.setErrorCode("");
@@ -288,17 +275,16 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			hostGLMappingUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(hostGLMappingUploadDAO.getDetails(h1.getId()));
+			});
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -317,12 +303,13 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		HostGLMappingUpload details = (HostGLMappingUpload) ObjectUtil.valueAsObject(record, HostGLMappingUpload.class);
+		HostGLMappingUpload details = (HostGLMappingUpload) ObjectUtil.valueAsObject(paramSource,
+				HostGLMappingUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -333,7 +320,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, details);
 
-		updateProcess(header, details, record);
+		updateProcess(header, details, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}

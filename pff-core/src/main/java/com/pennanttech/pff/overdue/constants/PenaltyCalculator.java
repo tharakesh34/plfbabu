@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -12,6 +13,16 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 
 public class PenaltyCalculator {
 
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
+	 */
+	private PenaltyCalculator() throws IllegalAccessException {
+		throw new IllegalAccessException();
+	}
+
 	public static FinODPenaltyRate getEffectiveRate(Date dueDate, List<FinODPenaltyRate> prList) {
 		return getEffectiveRate(dueDate, prList, null);
 	}
@@ -19,7 +30,7 @@ public class PenaltyCalculator {
 	public static FinODPenaltyRate getEffectiveRate(Date dueDate, List<FinODPenaltyRate> prList, String odChargeType) {
 		int idx = -1;
 
-		if (prList == null || prList.size() == 0) {
+		if (CollectionUtils.isEmpty(prList)) {
 			return new FinODPenaltyRate();
 		}
 
@@ -29,7 +40,7 @@ public class PenaltyCalculator {
 			}
 
 			if (StringUtils.isEmpty(odChargeType)) {
-				// New OD record creation
+				//
 			} else if (!StringUtils.equals(prList.get(i).getODChargeType(), odChargeType)) {
 				continue;
 			}
@@ -50,13 +61,11 @@ public class PenaltyCalculator {
 	}
 
 	public static BigDecimal getEffectiveODCharge(FinanceMain fm, Date movementDate) {
-		FinODPenaltyRate defPenaltyRate = new FinODPenaltyRate();
 		List<FinODPenaltyRate> penaltyRates = fm.getPenaltyRates();
 		BigDecimal odRate = BigDecimal.ZERO;
 
-		if (penaltyRates.size() > 0) {
-			defPenaltyRate = penaltyRates.get(0);
-			odRate = defPenaltyRate.getODChargeAmtOrPerc();
+		if (!penaltyRates.isEmpty()) {
+			odRate = penaltyRates.get(0).getODChargeAmtOrPerc();
 		}
 
 		for (FinODPenaltyRate penaltyRate : penaltyRates) {

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +39,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
 
-public class LienUploadServiceImpl extends AUploadServiceImpl {
+public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	private static final Logger logger = LogManager.getLogger(LienUploadServiceImpl.class);
 
 	private LienUploadDAO lienUploadDAO;
@@ -48,18 +47,23 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	private LienDetailsDAO lienDetailsDAO;
 	private LienHeaderDAO lienHeaderDAO;
 	private LienService lienService;
+	
+	public LienUploadServiceImpl(){
+		super();
+	}
+
+	@Override
+	protected LienUpload getDetail(Object object) {
+		if (object instanceof LienUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		LienUpload detail = null;
-
-		if (object instanceof LienUpload) {
-			detail = (LienUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		LienUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 		logger.info("Validating the Data for the reference {}", reference);
@@ -106,94 +110,83 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 		new Thread(() -> {
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
 			Date appDate = SysParamUtil.getAppDate();
 
-			try {
-				txStatus = transactionManager.getTransaction(txDef);
-				for (FileUploadHeader header : headers) {
-					Map<String, List<LienUpload>> lienUploadsMap = new HashMap<>();
-					List<LienUpload> lienUploadList = lienUploadDAO.getDetails(header.getId());
+			for (FileUploadHeader header : headers) {
+				Map<String, List<LienUpload>> lienUploadsMap = new HashMap<>();
+				List<LienUpload> lienUploadList = lienUploadDAO.getDetails(header.getId());
 
-					for (LienUpload lienUpload : lienUploadList) {
-						String reference = lienUpload.getReference();
-						if (lienUploadsMap.containsKey(reference)) {
-							List<LienUpload> list = lienUploadsMap.get(reference);
-							list.add(lienUpload);
-						} else {
-							List<LienUpload> list = new ArrayList<>();
-							list.add(lienUpload);
-							lienUploadsMap.put(reference, list);
+				for (LienUpload lienUpload : lienUploadList) {
+					String reference = lienUpload.getReference();
+					if (lienUploadsMap.containsKey(reference)) {
+						List<LienUpload> list = lienUploadsMap.get(reference);
+						list.add(lienUpload);
+					} else {
+						List<LienUpload> list = new ArrayList<>();
+						list.add(lienUpload);
+						lienUploadsMap.put(reference, list);
+					}
+				}
+
+				Set<String> references = lienUploadsMap.keySet();
+
+				int sucessRecords = 0;
+				int failRecords = 0;
+
+				FinanceMain fm = null;
+
+				for (String finReference : references) {
+					List<LienUpload> lienUploads = lienUploadsMap.get(finReference);
+
+					fm = financeMainDAO.getFinanceMain(finReference, header.getEntityCode());
+
+					if (fm != null && !fm.isFinIsActive()) {
+						for (LienUpload lienUpload : lienUploads) {
+							lienUpload.setProgress(EodConstants.PROGRESS_FAILED);
+							lienUpload.setErrorCode("9999");
+							lienUpload.setErrorDesc("Fin Reference is not active.");
 						}
+
+						continue;
+					} else {
+						fm = new FinanceMain();
+						fm.setFinReference(finReference);
+						fm.setFinSourceID(RequestSource.UPLOAD.name());
 					}
 
-					Set<String> References = lienUploadsMap.keySet();
+					fm.setAppDate(appDate);
+					header.setAppDate(appDate);
 
-					int sucessRecords = 0;
-					int failRecords = 0;
-
-					FinanceMain fm = null;
-
-					for (String finReference : References) {
-						List<LienUpload> lienUploads = lienUploadsMap.get(finReference);
-
-						fm = financeMainDAO.getFinanceMain(finReference, header.getEntityCode());
-
-						if (fm != null && !fm.isFinIsActive()) {
-							for (LienUpload lienUpload : lienUploads) {
-								lienUpload.setProgress(EodConstants.PROGRESS_FAILED);
-								lienUpload.setErrorCode("9999");
-								lienUpload.setErrorDesc("Fin Reference is not active.");
-							}
-
-							continue;
-						} else {
-							fm = new FinanceMain();
-							fm.setFinReference(finReference);
-							fm.setFinSourceID(RequestSource.UPLOAD.name());
-						}
-
-						fm.setAppDate(appDate);
-						header.setAppDate(appDate);
-
-						for (LienUpload lu : lienUploads) {
-							lu.setFinanceMain(fm);
-						}
-
-						process(header, lienUploads);
-
-						for (LienUpload luUpload : lienUploads) {
-							if (luUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
-								failRecords++;
-							} else {
-								sucessRecords++;
-							}
-							header.getUploadDetails().add(luUpload);
-						}
-
-						header.setSuccessRecords(sucessRecords);
-						header.setFailureRecords(failRecords);
+					for (LienUpload lu : lienUploads) {
+						lu.setFinanceMain(fm);
 					}
 
-					logger.info("Processed the File {}", header.getFileName());
+					process(header, lienUploads);
 
-					lienUploadDAO.updateStatus(lienUploadList);
-					updateHeader(headers, true);
-					transactionManager.commit(txStatus);
+					for (LienUpload luUpload : lienUploads) {
+						if (luUpload.getProgress() == EodConstants.PROGRESS_FAILED) {
+							failRecords++;
+						} else {
+							sucessRecords++;
+						}
+						header.getUploadDetails().add(luUpload);
+					}
 
+					header.setSuccessRecords(sucessRecords);
+					header.setFailureRecords(failRecords);
 				}
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
 
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
-				}
-			} finally {
-				txStatus = null;
+				logger.info("Processed the File {}", header.getFileName());
+
+				lienUploadDAO.updateStatus(lienUploadList);
 			}
 
+			try {
+				updateHeader(headers, true);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
 		}).start();
-
 	}
 
 	private void process(FileUploadHeader header, List<LienUpload> lienUploads) {
@@ -223,49 +216,60 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 				lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
 			}
 
-			lienUploadDAO.update(lienup, lienup.getId());
-
 			String accNumber = lienup.getAccNumber();
 			LienHeader lienheader = lienHeaderDAO.getLienByAcc(accNumber);
 
-			if (lienheader != null) {
-				lienup.setLienID(lienheader.getLienID());
-				lienup.setLienReference(lienheader.getLienReference());
+			TransactionStatus txStatus = getTransactionStatus();
+			try {
+				lienUploadDAO.update(lienup, lienup.getId());
+
+				if (lienheader != null) {
+					lienup.setLienID(lienheader.getLienID());
+					lienup.setLienReference(lienheader.getLienReference());
+				}
+
+				FinanceMain fm = lienup.getFinanceMain();
+				fm.setFinSourceID(RequestSource.UPLOAD.name());
+
+				FinanceDetail fd = new FinanceDetail();
+				LienHeader lienhead = new LienHeader();
+				fd.getFinScheduleData().setFinanceMain(fm);
+				Mandate mandate = new Mandate();
+				mandate.setAccNumber(lienup.getAccNumber());
+				fd.setMandate(mandate);
+				lienhead.setLienID(lienup.getLienID());
+				lienhead.setLienReference(lienup.getLienReference());
+				lienhead.setId(lienup.getId());
+				lienhead.setSource(lienup.getSource());
+				fd.setLienHeader(lienhead);
+
+				lienService.save(fd);
+
+				transactionManager.commit(txStatus);
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+
+				if (txStatus != null) {
+					transactionManager.rollback(txStatus);
+				}
 			}
-
-			FinanceMain fm = lienup.getFinanceMain();
-			fm.setFinSourceID(RequestSource.UPLOAD.name());
-
-			FinanceDetail fd = new FinanceDetail();
-			LienHeader lienhead = new LienHeader();
-			fd.getFinScheduleData().setFinanceMain(fm);
-			Mandate mandate = new Mandate();
-			mandate.setAccNumber(lienup.getAccNumber());
-			fd.setMandate(mandate);
-			lienhead.setLienID(lienup.getLienID());
-			lienhead.setLienReference(lienup.getLienReference());
-			lienhead.setId(lienup.getId());
-			lienhead.setSource(lienup.getSource());
-			fd.setLienHeader(lienhead);
-
-			lienService.save(fd);
 		}
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-
 			lienUploadDAO.updateRejectStatus(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(ERR_DESC);
+				h1.getUploadDetails().addAll(lienUploadDAO.getDetails(h1.getId()));
+			});
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -290,12 +294,12 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public void validate(DataEngineAttributes attributes, MapSqlParameterSource record) throws Exception {
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		LienUpload details = (LienUpload) ObjectUtil.valueAsObject(record, LienUpload.class);
+		LienUpload details = (LienUpload) ObjectUtil.valueAsObject(paramSource, LienUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(record.getValue("finReference")));
+		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -306,7 +310,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 
 		doValidate(header, details);
 
-		updateProcess(header, details, record);
+		updateProcess(header, details, paramSource);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -341,5 +345,4 @@ public class LienUploadServiceImpl extends AUploadServiceImpl {
 	public void setLienService(LienService lienService) {
 		this.lienService = lienService;
 	}
-
 }
