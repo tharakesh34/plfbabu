@@ -78,7 +78,7 @@ public class PartitioningMasterAmortization implements Partitioner {
 			return partitionData;
 		}
 
-		long noOfRows = Math.round((new Double(finsCount) / new Double(threadCount)));
+		long noOfRows = Math.round(Double.valueOf(finsCount) / Double.valueOf(threadCount));
 
 		if (finsCount < threadCount) {
 			recordsLessThanThread = true;

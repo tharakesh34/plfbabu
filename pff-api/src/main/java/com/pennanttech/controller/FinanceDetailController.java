@@ -25,10 +25,6 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.dao.rulefactory.FinFeeChargesDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -50,9 +46,7 @@ import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -74,14 +68,8 @@ public class FinanceDetailController extends SummaryDetailService {
 	private FinanceDetailService financeDetailService;
 	private StepPolicyDetailDAO stepPolicyDetailDAO;
 	private StepPolicyHeaderDAO stepPolicyHeaderDAO;
-	private FinanceMainDAO financeMainDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private FinFeeChargesDAO finFeeChargesDAO;
-	private RuleService ruleService;
 	private CustomerDetailsService customerDetailsService;
 	private FeeDetailService feeDetailService;
-	private FinFeeDetailService finFeeDetailService;
 
 	public FinScheduleData doCreateFinanceSchedule(FinScheduleData schdData) throws AppException {
 		logger.debug(Literal.ENTERING);
@@ -375,7 +363,7 @@ public class FinanceDetailController extends SummaryDetailService {
 				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
 					@Override
 					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
-						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+						return (Integer.valueOf(b1.getStepNo()).compareTo(Integer.valueOf(b2.getStepNo())));
 					}
 				});
 				// method for prepare step installments
@@ -556,7 +544,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 				@Override
 				public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-					return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+					return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 				}
 			});
 

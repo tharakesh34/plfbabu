@@ -94,7 +94,6 @@ public class LatePayBucketService extends ServiceHelper {
 		BigDecimal duePercentage = BigDecimal.ZERO;
 		Date firstDuedate = null;
 		int newCurODDays = 0;
-		long bucketID = 0;
 		boolean dpdCalcIncExs = false;
 
 		String finStatus = StringUtils.trimToEmpty(fm.getFinStatus());

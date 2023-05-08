@@ -41,7 +41,7 @@ public class ProvisionCalcPartition implements Partitioner {
 		boolean recordsLessThanThread = false;
 		long totalLoans = 0;
 
-		long noOfRows = Math.round((new Double(queueCount) / new Double(threadCount)));
+		long noOfRows = Math.round(Double.valueOf(queueCount) / Double.valueOf(threadCount));
 
 		if (queueCount < threadCount) {
 			recordsLessThanThread = true;

@@ -7464,12 +7464,7 @@ public class FinanceDataValidation {
 			}
 
 			if (StringUtils.equalsIgnoreCase("HF", pslDetail.getCategoryCode())) {
-				if (StringUtils.isBlank(pslDetail.getSubCategory())) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "subCategory";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				} else {
-
+				if (StringUtils.isNotBlank(pslDetail.getSubCategory())) {
 					List<ValueLabel> subcategory = PennantStaticListUtil.getSubCategoriesList();
 					boolean categ = false;
 
@@ -7484,8 +7479,8 @@ public class FinanceDataValidation {
 						valueParm[0] = pslDetail.getSubCategory();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
 					}
-
 				}
+
 				if (StringUtils.isBlank(pslDetail.getPurpose())) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "purpose";

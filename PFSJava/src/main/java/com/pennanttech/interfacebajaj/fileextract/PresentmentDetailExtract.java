@@ -431,7 +431,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.info(Literal.ENTERING);
 		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_RESP_PROCESS_THREAD_COUNT);
 
-		long noOfRows = Math.round((new Double(totalRecords) / new Double(threadCount)));
+		long noOfRows = Math.round(Double.valueOf(totalRecords) / Double.valueOf(threadCount));
 
 		boolean recordsLessThanThread = false;
 
