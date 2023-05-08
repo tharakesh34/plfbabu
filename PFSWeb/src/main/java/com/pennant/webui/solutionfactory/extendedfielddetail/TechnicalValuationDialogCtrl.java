@@ -663,7 +663,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		private static final long serialVersionUID = 6321996138703133595L;
 
 		public ExtendedFieldListItemRenderer() {
-
+		    super();
 		}
 
 		@Override

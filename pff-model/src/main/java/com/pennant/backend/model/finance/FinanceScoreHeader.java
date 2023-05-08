@@ -23,7 +23,7 @@ public class FinanceScoreHeader implements Serializable {
 	private long custId;
 
 	public FinanceScoreHeader() {
-
+	    super();
 	}
 
 	public long getId() {

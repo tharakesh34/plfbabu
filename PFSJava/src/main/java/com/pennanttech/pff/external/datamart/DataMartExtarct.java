@@ -511,6 +511,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldLoanPolicyDataMart implements Runnable {
 
 		public GoldLoanPolicyDataMart() {
+		    super();
 		}
 
 		@Override
@@ -573,6 +574,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldLoanStatePolicyDataMart implements Runnable {
 
 		public GoldLoanStatePolicyDataMart() {
+		    super();
 		}
 
 		@Override
@@ -636,6 +638,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldRateDataMart implements Runnable {
 
 		public GoldRateDataMart() {
+		    super();
 		}
 
 		@Override
@@ -698,6 +701,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldPromotionDataMart implements Runnable {
 
 		public GoldPromotionDataMart() {
+		    super();
 		}
 
 		@Override
@@ -760,6 +764,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldPromotionSlabRatesDataMart implements Runnable {
 
 		public GoldPromotionSlabRatesDataMart() {
+		    super();
 		}
 
 		@Override
@@ -823,6 +828,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldPromotionBranchesDataMart implements Runnable {
 
 		public GoldPromotionBranchesDataMart() {
+		    super();
 		}
 
 		@Override
@@ -886,6 +892,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldPromotionStatesDataMart implements Runnable {
 
 		public GoldPromotionStatesDataMart() {
+		    super();
 		}
 
 		@Override
@@ -949,6 +956,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class GoldOrnamentTypeDataMart implements Runnable {
 
 		public GoldOrnamentTypeDataMart() {
+		    super();
 		}
 
 		@Override
@@ -1011,6 +1019,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 	public class OrnamentDetailsDataMart implements Runnable {
 
 		public OrnamentDetailsDataMart() {
+		    super();
 		}
 
 		@Override

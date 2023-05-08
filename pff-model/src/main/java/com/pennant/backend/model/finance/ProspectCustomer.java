@@ -14,7 +14,7 @@ public class ProspectCustomer implements Serializable {
 	private String custDftBranch;
 
 	public ProspectCustomer() {
-
+	    super();
 	}
 
 	// ******************************************************//

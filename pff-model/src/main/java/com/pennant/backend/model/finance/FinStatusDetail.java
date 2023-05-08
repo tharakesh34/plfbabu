@@ -12,7 +12,7 @@ public class FinStatusDetail {
 	private int ODDays;
 
 	public FinStatusDetail() {
-
+	    super();
 	}
 
 	public long getFinID() {

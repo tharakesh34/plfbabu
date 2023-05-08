@@ -47,7 +47,7 @@ public class TransactionCodeListModelItemRenderer implements ListitemRenderer<Tr
 	private static final long serialVersionUID = 2146337993294728738L;
 
 	public TransactionCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

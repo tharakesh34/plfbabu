@@ -47,7 +47,7 @@ public class DedupParmListModelItemRenderer implements ListitemRenderer<DedupPar
 	private static final long serialVersionUID = 2857143548087995871L;
 
 	public DedupParmListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

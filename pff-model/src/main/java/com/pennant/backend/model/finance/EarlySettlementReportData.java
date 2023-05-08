@@ -53,7 +53,7 @@ public class EarlySettlementReportData implements java.io.Serializable {
 	private String totCustPaidAmount;
 
 	public EarlySettlementReportData() {
-
+	    super();
 	}
 
 	// ******************************************************//

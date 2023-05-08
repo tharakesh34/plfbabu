@@ -97,7 +97,7 @@ public class RepayScheduleDetail implements Serializable {
 	private TaxHeader taxHeader;
 
 	public RepayScheduleDetail() {
-
+	    super();
 	}
 
 	public RepayScheduleDetail copyEntity() {

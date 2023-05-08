@@ -39,7 +39,7 @@ public class FinanceExposure implements Serializable {
 	private Long custID;
 
 	public FinanceExposure() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

@@ -45,7 +45,7 @@ public class DeviationParamListModelItemRenderer implements ListitemRenderer<Dev
 	private static final long serialVersionUID = 1L;
 
 	public DeviationParamListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

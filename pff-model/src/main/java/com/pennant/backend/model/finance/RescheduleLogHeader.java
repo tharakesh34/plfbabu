@@ -11,6 +11,7 @@ public class RescheduleLogHeader {
 	private List<RescheduleLog> rescheduleLogList = new ArrayList<>();
 
 	public RescheduleLogHeader() {
+	    super();
 	}
 
 	public String getCustName() {

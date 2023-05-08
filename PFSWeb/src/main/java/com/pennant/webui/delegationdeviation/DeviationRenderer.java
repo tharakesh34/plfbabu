@@ -65,7 +65,7 @@ public class DeviationRenderer {
 	class CompareDeviation implements Comparator<FinanceDeviations> {
 
 		public CompareDeviation() {
-
+		    super();
 		}
 
 		@Override

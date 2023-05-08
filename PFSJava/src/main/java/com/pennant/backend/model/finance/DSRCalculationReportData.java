@@ -74,7 +74,7 @@ public class DSRCalculationReportData implements Serializable {
 	List<Fee> feeList = new ArrayList<Fee>();
 
 	public DSRCalculationReportData() {
-
+	    super();
 	}
 
 	public class Fee {
@@ -82,7 +82,7 @@ public class DSRCalculationReportData implements Serializable {
 		private String feeAmount;
 
 		public Fee() {
-
+		    super();
 		}
 
 		public void setFeeDesc(String feeDesc) {
@@ -171,7 +171,7 @@ public class DSRCalculationReportData implements Serializable {
 		private String override = "";
 
 		public Eligibility() {
-
+		    super();
 		}
 
 		public String getRuleCode() {
@@ -236,7 +236,7 @@ public class DSRCalculationReportData implements Serializable {
 		private String score = "";
 
 		public Score() {
-
+		    super();
 		}
 
 		public String getScoringGroup() {

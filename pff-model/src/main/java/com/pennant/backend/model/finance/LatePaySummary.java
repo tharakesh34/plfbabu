@@ -28,7 +28,7 @@ public class LatePaySummary implements Serializable {
 	private BigDecimal lppBal = BigDecimal.ZERO;
 
 	public LatePaySummary() {
-
+	    super();
 	}
 
 	// ******************************************************//

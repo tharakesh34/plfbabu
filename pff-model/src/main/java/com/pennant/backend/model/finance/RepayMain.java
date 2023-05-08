@@ -84,7 +84,7 @@ public class RepayMain implements Serializable {
 	private BigDecimal principalPaid = BigDecimal.ZERO;
 
 	public RepayMain() {
-
+	    super();
 	}
 
 	public RepayMain copyEntity() {

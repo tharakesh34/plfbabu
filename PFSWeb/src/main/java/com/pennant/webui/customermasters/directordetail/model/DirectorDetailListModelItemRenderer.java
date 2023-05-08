@@ -59,7 +59,7 @@ public class DirectorDetailListModelItemRenderer implements ListitemRenderer<Dir
 	private static final long serialVersionUID = -6611216779270185816L;
 
 	public DirectorDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

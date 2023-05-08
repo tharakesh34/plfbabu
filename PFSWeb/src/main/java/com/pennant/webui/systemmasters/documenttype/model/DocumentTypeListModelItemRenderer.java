@@ -45,7 +45,7 @@ public class DocumentTypeListModelItemRenderer implements ListitemRenderer<Docum
 	private static final long serialVersionUID = -2962501113956666838L;
 
 	public DocumentTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -140,7 +140,7 @@ public class FinanceEnquiry implements Serializable {
 	private BigDecimal advanceEMI = BigDecimal.ZERO;
 
 	public FinanceEnquiry() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

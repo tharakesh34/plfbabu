@@ -15,7 +15,7 @@ public class ReceiptCancelDetail implements Serializable {
 	private String action;
 
 	public ReceiptCancelDetail() {
-
+	    super();
 	}
 
 	// ******************************************************//

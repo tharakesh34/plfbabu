@@ -19,7 +19,7 @@ public class MonthlyAccumulateDetail implements Serializable {
 	private BigDecimal depreciatePri = BigDecimal.ZERO;
 
 	public MonthlyAccumulateDetail() {
-
+	    super();
 	}
 
 	// ******************************************************//

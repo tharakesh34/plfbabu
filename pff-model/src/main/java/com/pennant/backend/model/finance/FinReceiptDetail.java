@@ -102,7 +102,7 @@ public class FinReceiptDetail implements Serializable {
 	}
 
 	public FinReceiptDetail() {
-
+	    super();
 	}
 
 	public FinReceiptDetail copyEntity() {

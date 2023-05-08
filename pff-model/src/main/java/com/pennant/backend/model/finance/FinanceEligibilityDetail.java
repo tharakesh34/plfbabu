@@ -52,7 +52,7 @@ public class FinanceEligibilityDetail implements Serializable {
 	private JSONObject json;
 
 	public FinanceEligibilityDetail() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

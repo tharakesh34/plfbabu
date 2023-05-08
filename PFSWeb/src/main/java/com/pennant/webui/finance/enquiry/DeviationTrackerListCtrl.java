@@ -381,7 +381,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 	class CompareDeviation implements Comparator<FinanceDeviations> {
 
 		public CompareDeviation() {
-
+		    super();
 		}
 
 		@Override
