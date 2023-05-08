@@ -85,6 +85,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.AccountingUtil;
 import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.util.ErrorControl;
@@ -1758,7 +1759,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				item = new Listitem();
 				lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
 				lc.setParent(item);
-				lc = new Listcell(String.valueOf(StringUtils.trimToEmpty(jvPostingEntry.getGlCode())));
+				lc = new Listcell(String.valueOf(AccountingConfigCache.getAccountMapping(jvPostingEntry.getAccount())));
 				lc.setParent(item);
 
 				if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
