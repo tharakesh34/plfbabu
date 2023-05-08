@@ -62,6 +62,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff> {
@@ -223,7 +224,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)) {
 
 			Filter[] filters = new Filter[3];
-			filters[0] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
+			filters[0] = new Filter("RECEIPTPURPOSE", ReceiptPurpose.SCHDRPY.code(), Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			filters[2] = new Filter("ReceiptModeStatus", "C");
 			this.searchObject.addFilters(filters);
@@ -231,8 +232,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 
 			whereClause.append(
 					"  RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE like '%MAKER')  and (KnockOffType = '"
-							+ KnockOffType.CROSS_LOAN.code()
-							+ "' or KnockOffType  is null) and (RecordStatus = 'Approved' or RecordStatus = 'Resubmitted')");
+							+ KnockOffType.CROSS_LOAN.code() + "' or KnockOffType  is null)");
 		}
 
 		// Filtering added based on user branch and division
