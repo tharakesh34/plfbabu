@@ -15750,13 +15750,21 @@
 	<changeSet id="ST#1528.44.3" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE CROSS_LOAN_KNOCKOFF_UPLOAD ADD CONSTRAINT DF_CK_KO_RECORDSEQ DEFAULT 0 FOR RECORDSEQ;
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_UPLOAD ADD CONSTRAINT DF_CK_KO_UPLOAD_RECORDSEQ DEFAULT 0 FOR RECORDSEQ;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1528.44.3" author="Sravani.S" dbms="postgresql, oracle">
 		<addDefaultValue tableName="CROSS_LOAN_KNOCKOFF_UPLOAD" columnName="RecordSeq" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#1528.45.1" author="Sravani.S" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE CROSS_LOAN_KNOCKOFF DROP constraint DF_CK_KO_RECORDSEQ  ;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="ST#1528.45" author="Sravani.S">
@@ -16920,7 +16928,7 @@
 
 	<changeSet id="ST#1561.20" author="Mounika.M">
 		<addPrimaryKey tableName="Service_Branches_LoanType_Temp" columnNames="Id"
-			constraintName="UK_code_servBranchLTT" />
+			constraintName="PK_servBranchLTT_Id" />
 	</changeSet>
 
 	<changeSet id="ST#1561.21" author="Mounika.M">
