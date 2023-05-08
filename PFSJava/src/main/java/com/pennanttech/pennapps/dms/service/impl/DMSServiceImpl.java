@@ -235,7 +235,6 @@ public class DMSServiceImpl implements DMSService {
 		Long custId = null;
 		DMSModule module = dmsQueue.getModule();
 		DMSModule subModule = dmsQueue.getSubModule();
-		Long finID = dmsQueue.getFinID();
 		String finRefernce = StringUtils.trimToNull(dmsQueue.getFinReference());
 		String reference = StringUtils.trimToNull(dmsQueue.getReference());
 
