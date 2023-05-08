@@ -2347,6 +2347,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (validateflag) {
 					MessageUtil.showError("Minimum 1 cheque for future instalment to be available for Reference:"
 							.concat(afm.getFinReference()));
+					return;
 				}
 			}
 		}
