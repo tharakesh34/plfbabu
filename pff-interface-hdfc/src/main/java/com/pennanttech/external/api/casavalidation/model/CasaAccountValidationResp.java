@@ -479,7 +479,7 @@ public class CasaAccountValidationResp implements Serializable {
 	}
 
 	public CasaAccountValidationResp() {
-
+	    super();
 	}
 
 	public ResponseData getRespData() {
