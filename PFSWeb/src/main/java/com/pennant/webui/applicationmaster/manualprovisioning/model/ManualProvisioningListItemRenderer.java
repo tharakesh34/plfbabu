@@ -17,7 +17,7 @@ public class ManualProvisioningListItemRenderer implements ListitemRenderer<Prov
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public ManualProvisioningListItemRenderer() {
-
+	    super();
 	}
 
 	@Override

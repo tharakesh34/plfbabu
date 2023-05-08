@@ -45,7 +45,7 @@ public class MaritalStatusCodeListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = 7785935117741551251L;
 
 	public MaritalStatusCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

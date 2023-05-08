@@ -45,7 +45,7 @@ public class NotificationsListModelItemRenderer implements ListitemRenderer<Noti
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public NotificationsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

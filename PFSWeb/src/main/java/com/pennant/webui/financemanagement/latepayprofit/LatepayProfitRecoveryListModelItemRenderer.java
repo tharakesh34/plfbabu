@@ -48,7 +48,7 @@ public class LatepayProfitRecoveryListModelItemRenderer
 	private static final long serialVersionUID = 3995133144435008423L;
 
 	public LatepayProfitRecoveryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

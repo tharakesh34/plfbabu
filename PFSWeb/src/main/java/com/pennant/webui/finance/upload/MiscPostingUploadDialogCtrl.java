@@ -1064,7 +1064,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		private static final long serialVersionUID = -8236407402292558694L;
 
 		public MiscPostingUploadListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -1131,7 +1131,7 @@ public class MiscPostingUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		private static final long serialVersionUID = -1575041147690519358L;
 
 		public MiscPostingUploadRejectListItemRenderer() {
-
+		    super();
 		}
 
 		@Override

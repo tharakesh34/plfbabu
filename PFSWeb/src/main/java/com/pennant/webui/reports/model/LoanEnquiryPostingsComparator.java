@@ -10,7 +10,7 @@ public class LoanEnquiryPostingsComparator implements Comparator<Object>, Serial
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public LoanEnquiryPostingsComparator() {
-
+	    super();
 	}
 
 	@Override

@@ -294,7 +294,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	final class SearchBoxItemRenderer implements ListitemRenderer<ValueLabel> {
 
 		public SearchBoxItemRenderer() {
-
+		    super();
 		}
 
 		@SuppressWarnings("unchecked")
@@ -328,7 +328,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	public final class OnPagingEventListener implements EventListener {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override
@@ -346,7 +346,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	public final class onCheckBoxCheked implements EventListener {
 
 		public onCheckBoxCheked() {
-
+		    super();
 		}
 
 		public void onEvent(Event event) throws Exception {
@@ -385,7 +385,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	final class OnSearchListener implements EventListener<Event> {
 
 		public OnSearchListener() {
-
+		    super();
 		}
 
 		@Override
@@ -402,7 +402,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	final class OnCloseListener implements EventListener {
 
 		public OnCloseListener() {
-
+		    super();
 		}
 
 		@Override
@@ -429,7 +429,7 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	final class OnClearListener implements EventListener<Event> {
 
 		public OnClearListener() {
-
+		    super();
 		}
 
 		@Override

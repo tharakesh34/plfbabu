@@ -21,7 +21,7 @@ public class LimitReferenceMapping implements Serializable {
 	private boolean proceeed = true;
 
 	public LimitReferenceMapping() {
-
+	    super();
 	}
 
 	public LimitReferenceMapping(String id) {

@@ -15,6 +15,7 @@ public class LoanTypeWriteOffModelItemRender implements ListitemRenderer<FinType
 	private static final long serialVersionUID = 1L;
 
 	public LoanTypeWriteOffModelItemRender() {
+	    super();
 	}
 
 	@Override

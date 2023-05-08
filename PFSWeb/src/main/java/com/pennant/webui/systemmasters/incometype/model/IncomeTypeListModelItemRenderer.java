@@ -47,7 +47,7 @@ public class IncomeTypeListModelItemRenderer implements ListitemRenderer<IncomeT
 	private static final long serialVersionUID = -385475759409018331L;
 
 	public IncomeTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -63,7 +63,7 @@ public class LimitServiceController extends ExtendedTestClass {
 	private LimitDetailDAO limitDetailDAO;
 
 	public LimitServiceController() {
-
+	    super();
 	}
 
 	private final String PROCESS_TYPE_SAVE = "Save";

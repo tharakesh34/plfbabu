@@ -47,7 +47,7 @@ public class LovFieldCodeListModelItemRenderer implements ListitemRenderer<LovFi
 	private static final long serialVersionUID = 1L;
 
 	public LovFieldCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

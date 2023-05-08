@@ -45,7 +45,7 @@ public class OtherBankFinanceTypeListModelItemRenderer implements ListitemRender
 	private static final long serialVersionUID = 1L;
 
 	public OtherBankFinanceTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

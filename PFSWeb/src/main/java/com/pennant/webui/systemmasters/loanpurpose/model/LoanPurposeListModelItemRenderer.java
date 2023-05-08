@@ -45,7 +45,7 @@ public class LoanPurposeListModelItemRenderer implements ListitemRenderer<LoanPu
 	private static final long serialVersionUID = 6352065299727172054L;
 
 	public LoanPurposeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

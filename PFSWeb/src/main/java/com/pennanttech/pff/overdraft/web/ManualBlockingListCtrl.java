@@ -192,7 +192,7 @@ public class ManualBlockingListCtrl extends GFCBaseListCtrl<OverdraftLimit> {
 		private static final long serialVersionUID = 5003155481625938369L;
 
 		public ManualBlockingListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override

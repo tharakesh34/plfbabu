@@ -28,6 +28,7 @@ public class OControl {
 
 	@JsonCreator
 	public OControl() {
+	    super();
 	}
 
 	// Getter Methods

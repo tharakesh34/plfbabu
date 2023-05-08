@@ -47,7 +47,7 @@ public class OverdueDetailListModelItemRenderer implements ListitemRenderer<FinO
 	private int ccyFormatter = 0;
 
 	public OverdueDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	public OverdueDetailListModelItemRenderer(int ccyFormatter) {

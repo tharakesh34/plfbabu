@@ -49,7 +49,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 	private BigDecimal cummulativePenalityAmt;
 
 	public OverdueChargeRecoveryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

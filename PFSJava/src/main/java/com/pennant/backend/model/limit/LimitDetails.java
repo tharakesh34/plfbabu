@@ -152,6 +152,7 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 	private int tenor;
 
 	public LimitDetails() {
+	    super();
 	}
 
 	public LimitDetails(long id) {

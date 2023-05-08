@@ -360,7 +360,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	final class SearchBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public SearchBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -407,7 +407,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override
@@ -475,7 +475,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	final class OnSearchListener implements EventListener<Event> {
 
 		public OnSearchListener() {
-
+		    super();
 		}
 
 		@Override
@@ -493,7 +493,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	final class OnCloseListener implements EventListener<Event> {
 
 		public OnCloseListener() {
-
+		    super();
 		}
 
 		@Override
@@ -524,7 +524,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	final class OnClearListener implements EventListener<Event> {
 
 		public OnClearListener() {
-
+		    super();
 		}
 
 		@Override
