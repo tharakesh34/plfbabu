@@ -47,7 +47,7 @@ public enum DocumentType {
 	public static List<Integer> getKeys() {
 		List<Integer> list = new ArrayList<>();
 		for (DocumentType status : values()) {
-			list.add(new Integer(status.getKey()));
+			list.add(status.getKey());
 		}
 		return list;
 	}
