@@ -46,6 +46,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 	private class FinLogEntryRowMapper implements RowMapper<FinLogEntryDetail> {
 		public FinLogEntryRowMapper() {
+		    super();
 		}
 
 		@Override

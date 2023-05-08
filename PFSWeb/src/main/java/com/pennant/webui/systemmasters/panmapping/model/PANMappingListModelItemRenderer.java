@@ -46,7 +46,7 @@ public class PANMappingListModelItemRenderer implements ListitemRenderer<CustTyp
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public PANMappingListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

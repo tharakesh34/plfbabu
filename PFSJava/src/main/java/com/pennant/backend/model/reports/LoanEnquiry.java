@@ -17,7 +17,7 @@ public class LoanEnquiry implements java.io.Serializable {
 	private List<FinanceMain> financeMainList;
 
 	public LoanEnquiry() {
-
+	    super();
 	}
 
 	// ******************************************************//

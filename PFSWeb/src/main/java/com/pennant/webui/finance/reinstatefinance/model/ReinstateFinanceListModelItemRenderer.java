@@ -46,7 +46,7 @@ public class ReinstateFinanceListModelItemRenderer implements ListitemRenderer<R
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public ReinstateFinanceListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

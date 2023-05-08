@@ -121,7 +121,7 @@ public class ReportListDetail {
 	private Date fieldDate15;
 
 	public ReportListDetail() {
-
+	    super();
 	}
 
 	// ******************************************************//

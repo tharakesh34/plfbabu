@@ -223,7 +223,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 		private static final long serialVersionUID = -8606975433219761922L;
 
 		public FileDownloadComparator() {
-
+		    super();
 		}
 
 		@Override

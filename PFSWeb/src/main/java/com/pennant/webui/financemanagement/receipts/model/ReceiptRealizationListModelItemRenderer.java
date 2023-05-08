@@ -50,7 +50,7 @@ public class ReceiptRealizationListModelItemRenderer implements ListitemRenderer
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public ReceiptRealizationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -2849,7 +2849,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	public final class onMultiSelectionItemSelected implements EventListener {
 
 		public onMultiSelectionItemSelected() {
-
+		    super();
 		}
 
 		@Override

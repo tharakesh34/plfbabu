@@ -48,7 +48,7 @@ public class ReceiptDetailHeaderListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 6906998807263283546L;
 
 	public ReceiptDetailHeaderListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

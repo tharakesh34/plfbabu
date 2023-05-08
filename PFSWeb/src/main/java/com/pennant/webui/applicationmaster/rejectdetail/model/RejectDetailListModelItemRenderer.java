@@ -45,7 +45,7 @@ public class RejectDetailListModelItemRenderer implements ListitemRenderer<Rejec
 	private static final long serialVersionUID = 9099171990501035267L;
 
 	public RejectDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -49,7 +49,7 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public ReceiptCancellationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -4343497695244309847L;
 
 	public ProvisionMovementListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

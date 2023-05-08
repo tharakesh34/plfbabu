@@ -13,7 +13,7 @@ public class ReceiptUploadTracker {
 	private double maxProgress;
 
 	public ReceiptUploadTracker() {
-
+	    super();
 	}
 
 	public long getHeaderId() {

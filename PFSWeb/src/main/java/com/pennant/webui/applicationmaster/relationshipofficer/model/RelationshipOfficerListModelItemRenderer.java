@@ -45,7 +45,7 @@ public class RelationshipOfficerListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 6660192448428639124L;
 
 	public RelationshipOfficerListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

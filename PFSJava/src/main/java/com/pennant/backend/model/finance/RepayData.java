@@ -49,7 +49,7 @@ public class RepayData implements Serializable {
 	private FinanceDetail financeDetail;
 
 	public RepayData() {
-
+	    super();
 	}
 
 	// ******************************************************//

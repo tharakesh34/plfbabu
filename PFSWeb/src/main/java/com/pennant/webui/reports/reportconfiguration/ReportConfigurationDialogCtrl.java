@@ -1129,7 +1129,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	private class ReportFilterFieldsListModelItemRenderer implements ListitemRenderer<ReportFilterFields> {
 
 		public ReportFilterFieldsListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override

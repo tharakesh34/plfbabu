@@ -16,7 +16,7 @@ public class ReturnedCheques implements Serializable {
 	private int counting;
 
 	public ReturnedCheques() {
-
+	    super();
 	}
 
 	// ******************************************************//

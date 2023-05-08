@@ -44,7 +44,7 @@ public class PartnerBankListModelItemRenderer implements ListitemRenderer<Partne
 	private static final long serialVersionUID = 1L;
 
 	public PartnerBankListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

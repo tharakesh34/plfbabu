@@ -45,7 +45,7 @@ public class GenderListModelItemRenderer implements ListitemRenderer<Gender>, Se
 	private static final long serialVersionUID = 5688039398131772187L;
 
 	public GenderListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
