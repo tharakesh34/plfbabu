@@ -377,7 +377,10 @@
 				
 			<menuItem id="menu_Item_LoanTypeWriteOff"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/LoanTypeWriteOff/LoanTypeWriteOffList.zul"
-				rightName="menu_Item_LoanTypeWriteOff" />
+				rightName="menu_Item_LoanTypeWriteOff" />		
+			<menuItem id="menu_Item_LoanTypeLetterMapping"
+				zulNavigation="/WEB-INF/pages/NOC/LoanTypeLetterMappingList.zul"
+				rightName="menu_Item_LoanTypeLetterMapping" />
 
 			<menuItem id="menu_Item_PANLetterMapping"
 				zulNavigation="/WEB-INF/pages/SystemMaster/PANMapping/CustTypePANMappingList.zul"
@@ -531,9 +534,6 @@
 			<menuItem id="menu_Item_FinTypePartnerbankMapping"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/FinTypePartnerbankMappingList.zul"
 				rightName="menu_Item_FinTypePartnerbankMapping" />
-			<menuItem id="menu_Item_LoanTypeLetterMapping"
-				zulNavigation="/WEB-INF/pages/NOC/LoanTypeLetterMappingList.zul"
-				rightName="menu_Item_LoanTypeLetterMapping" />
 		</menu>
 		<menu id="menu_Category_PromotionSetup">
 			<menuItem id="menu_Item_Promotion"
