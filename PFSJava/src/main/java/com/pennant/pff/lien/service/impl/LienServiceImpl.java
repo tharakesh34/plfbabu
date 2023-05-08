@@ -10,7 +10,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
-import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.lien.service.LienService;
@@ -25,14 +24,13 @@ public class LienServiceImpl implements LienService {
 
 	private LienHeaderDAO lienHeaderDAO;
 	private LienDetailsDAO lienDetailsDAO;
-	private MandateDAO mandateDAO;
 
 	public LienServiceImpl() {
 		super();
 	}
 
 	@Override
-	public void save(FinanceDetail fd) {
+	public void save(FinanceDetail fd, boolean isMandate) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
@@ -47,6 +45,7 @@ public class LienServiceImpl implements LienService {
 			lh = getLienHeader(fm, fd);
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
+			lh.setMarkingDate(fd.getMandate().getStartDate());
 
 			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
 				lh.setLienID(fd.getLienHeader().getLienID());
@@ -57,22 +56,24 @@ public class LienServiceImpl implements LienService {
 			headerID = lienHeaderDAO.save(lh);
 		} else {
 			headerID = lh.getId();
-			FinanceMain fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
+			if (isMandate) {
+				FinanceMain fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
 
-			if (!(fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
-					&& InstrumentType.isSI(fm.getFinRepayMethod()))) {
-				lh.setLienStatus(false);
-				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-				lienHeaderDAO.update(lh);
+				if (fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
+						&& InstrumentType.isSI(fm.getFinRepayMethod())) {
+					lh.setLienStatus(false);
+					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+					lienHeaderDAO.update(lh);
 
-				LienDetails lu = getLienDetails(lh, fm);
+					LienDetails lu = getLienDetails(lh, fm);
 
-				lu.setLienStatus(false);
-				lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-				lu.setDemarkingDate(fm.getClosedDate());
-				lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
+					lu.setLienStatus(false);
+					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+					lu.setDemarkingDate(fm.getClosedDate());
+					lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
 
-				lienDetailsDAO.update(lu);
+					lienDetailsDAO.update(lu);
+				}
 			}
 		}
 
@@ -80,6 +81,7 @@ public class LienServiceImpl implements LienService {
 		lu.setHeaderID(headerID);
 		lu.setLienID(lh.getLienID());
 		lu.setLienReference(lh.getLienReference());
+		lh.setMarkingDate(fd.getMandate().getStartDate());
 		lu.setDemarking("");
 		lu.setDemarkingDate(null);
 		lu.setDemarkingReason("");
@@ -99,39 +101,39 @@ public class LienServiceImpl implements LienService {
 			return;
 		}
 
-		String accNum = mandateDAO.getMandateNumber(fmBef.getMandateID());
-
-		LienHeader lienheader = lienHeaderDAO.getLienByReference(fm.getFinReference(), accNum);
+		List<LienHeader> lienheader = lienHeaderDAO.getLienHeaderList(fm.getFinReference());
 
 		if (lienheader == null) {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
+		for (LienHeader lh : lienheader) {
 
-		List<LienDetails> lienDetail = lienDetailsDAO.getLienListByLienId(lienheader.getLienID());
+			List<LienDetails> lienDetail = lienDetailsDAO.getLienListByLienId(lh.getLienID());
 
-		boolean isAllInActive = true;
-		for (LienDetails lu : lienDetail) {
-			if (lu.getReference().equals(fm.getFinReference())) {
-				lu.setLienStatus(false);
-				lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-				lu.setDemarkingDate(fm.getClosedDate());
-				lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
+			boolean isAllInActive = true;
+			for (LienDetails lu : lienDetail) {
+				if (lu.getReference().equals(fm.getFinReference())) {
+					lu.setLienStatus(false);
+					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+					lu.setDemarkingDate(fm.getClosedDate());
+					lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
 
-				lienDetailsDAO.update(lu);
+					lienDetailsDAO.update(lu);
+				}
+
+				if (lu.isLienStatus()) {
+					isAllInActive = false;
+				}
 			}
 
-			if (lu.isLienStatus()) {
-				isAllInActive = false;
+			if (isAllInActive) {
+				lh.setLienStatus(false);
+				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+				lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+				lh.setDemarkingDate(fm.getClosedDate());
+				lienHeaderDAO.update(lh);
 			}
-		}
-
-		if (isAllInActive) {
-			lienheader.setLienStatus(false);
-			lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-			lienheader.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-			lienheader.setDemarkingDate(fm.getClosedDate());
-			lienHeaderDAO.update(lienheader);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -194,10 +196,4 @@ public class LienServiceImpl implements LienService {
 	public void setLienDetailsDAO(LienDetailsDAO lienDetailsDAO) {
 		this.lienDetailsDAO = lienDetailsDAO;
 	}
-
-	@Autowired
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
 }

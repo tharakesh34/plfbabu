@@ -243,7 +243,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				lienhead.setSource(lienup.getSource());
 				fd.setLienHeader(lienhead);
 
-				lienService.save(fd);
+				lienService.save(fd, true);
 
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {

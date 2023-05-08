@@ -78,7 +78,7 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 			doFillHeaderList(lienDetail, headerType);
 
 			if (!headerType) {
-				listheaderLienReference.setLabel(Labels.getLabel("label_SelectLienEnquiryList_accNum"));
+				listheaderLienReference.setLabel(Labels.getLabel("label_SelectLienEnquiryList_accNum.value"));
 			}
 
 			setDialog(DialogType.EMBEDDED);

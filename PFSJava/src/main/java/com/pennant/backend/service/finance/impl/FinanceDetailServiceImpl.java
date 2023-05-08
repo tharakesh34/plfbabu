@@ -4928,7 +4928,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.variableOverdraftSchdService.doApprove(fd);
 
 		if (ImplementationConstants.ALLOW_LIEN && InstrumentType.isSI(fm.getFinRepayMethod())) {
-			lienService.save(fd);
+			lienService.save(fd, false);
 		}
 
 		logger.debug(Literal.LEAVING);

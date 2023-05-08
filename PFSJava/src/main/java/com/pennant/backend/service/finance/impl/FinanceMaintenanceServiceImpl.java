@@ -940,7 +940,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (ImplementationConstants.ALLOW_LIEN) {
 			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
-				lienService.save(fd);
+				lienService.save(fd, true);
 			} else {
 				lienService.update(fd);
 			}

@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.lienheader.impl;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -174,6 +176,40 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				return lu;
 
 			}, accnumber);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public List<LienHeader> getLienHeaderList(String reference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate,");
+		sql.append(" lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus, lh.InterfaceStatus");
+		sql.append(" From Lien_Header lh");
+		sql.append(" Inner Join Lien_Details ld ON lh.LienID = ld.LienID");
+		sql.append(" Where ld.Reference = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				LienHeader lu = new LienHeader();
+
+				lu.setLienID(rs.getLong("LienID"));
+				lu.setReference(rs.getString("Reference"));
+				lu.setAccountNumber(rs.getString("AccNumber"));
+				lu.setMarking(rs.getString("Marking"));
+				lu.setMarkingDate(rs.getTimestamp("MarkingDate"));
+				lu.setDemarking(rs.getString(("DeMarking")));
+				lu.setDemarkingDate(rs.getDate("DemarkingDate"));
+				lu.setLienReference(rs.getString("LienReference"));
+				lu.setLienStatus(rs.getBoolean("LienStatus"));
+				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				return lu;
+
+			}, reference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

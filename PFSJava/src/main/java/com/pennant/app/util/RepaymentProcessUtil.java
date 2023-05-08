@@ -334,6 +334,7 @@ public class RepaymentProcessUtil {
 
 		// If all presentment also Approved and upload status is succeed then only need to check the case
 		if (presentmentDetailDAO.getApprovedPresentmentCount(fm.getFinReference()) == 0) {
+			boolean oldFinActive = fm.isFinIsActive();
 			LoanPayment lp = new LoanPayment(fm.getFinID(), fm.getFinReference(), scheduleDetails, rch.getValueDate());
 			boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
@@ -345,7 +346,9 @@ public class RepaymentProcessUtil {
 
 			if (isFinFullyPaid) {
 				fm.setFinIsActive(false);
-				fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+				if (oldFinActive) {
+					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+				}
 				profitDetail.setFinIsActive(false);
 				profitDetail.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 			} else {
