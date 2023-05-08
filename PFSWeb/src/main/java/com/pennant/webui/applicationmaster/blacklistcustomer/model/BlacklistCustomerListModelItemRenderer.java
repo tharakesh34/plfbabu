@@ -17,7 +17,7 @@ public class BlacklistCustomerListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = 1L;
 
 	public BlacklistCustomerListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

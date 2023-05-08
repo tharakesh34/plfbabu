@@ -68,7 +68,7 @@ public class WIFCustomer implements Serializable {
 	private List<CustomerIncome> customerIncomeList;
 
 	public WIFCustomer() {
-
+	    super();
 	}
 
 	// ******************************************************//

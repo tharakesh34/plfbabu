@@ -14,7 +14,7 @@ public class BMTRBFldDetails {
 	private String rbSTFlds;
 
 	public BMTRBFldDetails() {
-
+	    super();
 	}
 
 	// ******************************************************//

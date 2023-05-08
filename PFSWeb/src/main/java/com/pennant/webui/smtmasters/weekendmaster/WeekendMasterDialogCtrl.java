@@ -795,7 +795,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 		private static final long serialVersionUID = 1L;
 
 		public WeekendItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -821,7 +821,7 @@ public class WeekendMasterDialogCtrl extends GFCBaseCtrl<WeekendMaster> {
 	public final class onCheckBoxCheked implements EventListener<Event> {
 
 		public onCheckBoxCheked() {
-
+		    super();
 		}
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })

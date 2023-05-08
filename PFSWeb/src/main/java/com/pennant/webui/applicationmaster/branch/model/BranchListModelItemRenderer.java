@@ -46,7 +46,7 @@ public class BranchListModelItemRenderer implements ListitemRenderer<Branch>, Se
 	private static final long serialVersionUID = -4870847307910889683L;
 
 	public BranchListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

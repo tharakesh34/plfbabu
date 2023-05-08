@@ -44,7 +44,7 @@ public class BeneficiaryListModelItemRenderer implements ListitemRenderer<Benefi
 	private static final long serialVersionUID = 1L;
 
 	public BeneficiaryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

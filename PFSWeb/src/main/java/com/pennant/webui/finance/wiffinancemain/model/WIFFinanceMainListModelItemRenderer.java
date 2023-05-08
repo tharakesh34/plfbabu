@@ -48,7 +48,7 @@ public class WIFFinanceMainListModelItemRenderer implements ListitemRenderer<Fin
 	private static final long serialVersionUID = 1L;
 
 	public WIFFinanceMainListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

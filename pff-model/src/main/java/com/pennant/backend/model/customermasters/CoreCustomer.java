@@ -96,7 +96,7 @@ public class CoreCustomer implements Serializable {
 	private boolean newRecord;
 
 	public CoreCustomer() {
-
+	    super();
 	}
 
 	// ******************************************************//
