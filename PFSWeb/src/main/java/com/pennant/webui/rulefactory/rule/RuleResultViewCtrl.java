@@ -173,7 +173,7 @@ public class RuleResultViewCtrl extends GFCBaseCtrl<Object> {
 
 			for (ValueLabel valueLabel : variablesList) {
 				decimalbox = (Decimalbox) rows_ruleValues.getFellowIfAny(valueLabel.getValue());
-				map.put(valueLabel.getValue(), decimalbox.getValue() == null ? new Double(0) : decimalbox.getValue());
+				map.put(valueLabel.getValue(), decimalbox.getValue() == null ? BigDecimal.ZERO : decimalbox.getValue());
 			}
 
 			if (this.ruleResultDialogCtrl != null) {
