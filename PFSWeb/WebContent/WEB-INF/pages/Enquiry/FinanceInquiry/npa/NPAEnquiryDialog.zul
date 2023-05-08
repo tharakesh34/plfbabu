@@ -106,6 +106,8 @@
 									<row>
 										<label value="${c:l('label_secondary_npa_classification')}" />
 										<textbox id="secondaryNpaClass" readonly="true" width="250px" />
+										<label value="${c:l('label_secondary_npa_modified_date')}" />
+										<textbox id="secondaryNpaModifiedDate" readonly="true" width="250px" />
 									</row>
 								</rows>
 							</grid>
