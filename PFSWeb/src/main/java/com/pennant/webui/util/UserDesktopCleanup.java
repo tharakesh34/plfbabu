@@ -47,7 +47,7 @@ public class UserDesktopCleanup implements DesktopCleanup {
 	private static final Logger logger = LogManager.getLogger(UserDesktopCleanup.class);
 
 	public UserDesktopCleanup() {
-
+	    super();
 	}
 
 	@Override

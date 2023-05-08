@@ -10,7 +10,7 @@ public class CustomerIncomeComparator implements Comparator<Object>, Serializabl
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public CustomerIncomeComparator() {
-
+	    super();
 	}
 
 	@Override

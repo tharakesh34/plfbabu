@@ -10,7 +10,7 @@ public class CustomerEmailComparater implements Comparator<Object>, Serializable
 	private static final long serialVersionUID = -5089682583362960445L;
 
 	public CustomerEmailComparater() {
-
+	    super();
 	}
 
 	@Override

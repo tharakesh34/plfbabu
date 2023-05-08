@@ -46,7 +46,7 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 	private List<ValueLabel> custTargetList = null;
 
 	public CustomerSelectItemRenderer() {
-
+	    super();
 	}
 
 	public CustomerSelectItemRenderer(List<ValueLabel> custTargetListDetails) {

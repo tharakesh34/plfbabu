@@ -54,7 +54,7 @@ public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeade
 	}
 
 	public UploadListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

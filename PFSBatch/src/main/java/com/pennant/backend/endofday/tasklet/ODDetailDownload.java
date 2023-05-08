@@ -28,7 +28,7 @@ public class ODDetailDownload implements Tasklet {
 	private ExecutionContext stepExecutionContext;
 
 	public ODDetailDownload() {
-
+	    super();
 	}
 
 	@Override

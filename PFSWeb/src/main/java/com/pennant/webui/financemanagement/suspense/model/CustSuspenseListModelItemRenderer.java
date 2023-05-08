@@ -45,7 +45,7 @@ public class CustSuspenseListModelItemRenderer implements ListitemRenderer<Custo
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public CustSuspenseListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

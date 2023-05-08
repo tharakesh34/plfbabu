@@ -13,7 +13,7 @@ public class CustomerLimitCategory implements Serializable {
 	private BigDecimal availableWeight;
 
 	public CustomerLimitCategory() {
-
+	    super();
 	}
 
 	// ******************************************************//

@@ -37,7 +37,7 @@ public class CustomerLimitSummary implements Serializable {
 	private String limitItem;
 
 	public CustomerLimitSummary() {
-
+	    super();
 	}
 
 	@XmlElement(name = "LimitReference")

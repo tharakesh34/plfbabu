@@ -44,7 +44,7 @@ public class CustomerRatingListModelItemRenderer implements ListitemRenderer<Cus
 	private static final long serialVersionUID = 1255070721055120232L;
 
 	public CustomerRatingListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

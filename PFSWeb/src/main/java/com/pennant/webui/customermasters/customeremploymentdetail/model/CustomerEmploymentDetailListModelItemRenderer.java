@@ -45,7 +45,7 @@ public class CustomerEmploymentDetailListModelItemRenderer
 	private static final long serialVersionUID = -6978886004363491169L;
 
 	public CustomerEmploymentDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

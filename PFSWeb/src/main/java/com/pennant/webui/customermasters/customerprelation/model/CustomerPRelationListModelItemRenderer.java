@@ -48,7 +48,7 @@ public class CustomerPRelationListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -4384335745555359611L;
 
 	public CustomerPRelationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

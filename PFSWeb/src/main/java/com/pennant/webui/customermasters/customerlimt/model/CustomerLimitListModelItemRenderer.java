@@ -43,7 +43,7 @@ public class CustomerLimitListModelItemRenderer implements ListitemRenderer<Cust
 	private static final long serialVersionUID = 2274326782681085785L;
 
 	public CustomerLimitListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

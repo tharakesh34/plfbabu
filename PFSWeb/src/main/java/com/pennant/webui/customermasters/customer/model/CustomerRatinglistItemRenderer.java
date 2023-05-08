@@ -36,7 +36,7 @@ public class CustomerRatinglistItemRenderer implements ListitemRenderer<Customer
 	private static final long serialVersionUID = 6321996138703133595L;
 
 	public CustomerRatinglistItemRenderer() {
-
+	    super();
 	}
 
 	@Override

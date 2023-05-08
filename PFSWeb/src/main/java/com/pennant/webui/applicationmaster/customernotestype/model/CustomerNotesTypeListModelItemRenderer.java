@@ -45,7 +45,7 @@ public class CustomerNotesTypeListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -228283421898600121L;
 
 	public CustomerNotesTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
