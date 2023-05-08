@@ -424,12 +424,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",DIGITAL,PRESENT,");
 		}
-		if (isKnockOff) {
-			this.finReference.setFilters((new Filter[] { new Filter("WriteOffLoan", 0, Filter.OP_EQUAL) }));
-			this.receiptAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
-		} else {
-			this.receiptAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
-		}
+		this.receiptAmount.setProperties(isKnockOff, PennantConstants.defaultCCYDecPos);
 		this.receiptDues.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptDues.setTextBoxWidth(190);
 		this.receiptDues.setDisabled(true);
@@ -1502,8 +1497,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
-		this.knockOffFrom
-				.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
+		this.knockOffFrom.setConstraint(
+				new PTListValidator<ValueLabel>(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
 						PennantStaticListUtil.getKnockOffFromVlaues(), true));
 		// this.receiptAmount
 		// .setConstraint(new
