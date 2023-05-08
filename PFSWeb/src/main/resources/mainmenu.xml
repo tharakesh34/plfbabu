@@ -1403,6 +1403,14 @@
 				zulNavigation="/WEB-INF/pages/NOC/Upload/CourierDetailUploadList.zul?stage=A"
 				rightName="menu_Item_courier_details_upload_Approver" />
 		</menu>
+		<menu id="menu_Category_Provision_Upload">
+			<menuItem id="menu_Item_Provision_Upload_Maker"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionUploadList.zul?stage=M"
+				rightName="menu_Item_Provision_Upload_Maker" />
+			<menuItem id="menu_Item_Provision_Upload_Approver"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionUploadList.zul?stage=A"
+				rightName="menu_Item_Provision_Upload_Approver" />
+	  </menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

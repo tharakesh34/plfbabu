@@ -1,7 +1,5 @@
 package com.pennanttech.pff.npa.dao.impl;
 
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
@@ -237,14 +235,4 @@ public class AssetSubClassCodeDAOImpl extends SequenceDao<AssetSubClassCode> imp
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), code) > 0;
 	}
-
-	@Override
-	public List<String> getAssetClassCodes() {
-		String sql = "Select Code From Asset_Class_Codes";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getString(1));
-	}
-
 }

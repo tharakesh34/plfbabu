@@ -342,12 +342,12 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 				paramSource.addValue("ERRORDESC", detail.getErrorDesc());
 			}
 
-			header.setFailureRecords(header.getFailureRecords());
+			header.setFailureRecords(header.getFailureRecords() + 1);
 			detail.setStatus(failureStatus);
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
 
 		} else {
-			header.setSuccessRecords(header.getSuccessRecords());
+			header.setSuccessRecords(header.getSuccessRecords() + 1);
 			detail.setStatus(successStatus);
 			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		}

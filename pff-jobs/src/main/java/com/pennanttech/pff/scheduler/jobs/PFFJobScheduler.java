@@ -66,6 +66,7 @@ import com.pennanttech.pff.external.service.ExternalInterfaceService;
 import com.pennanttech.pff.notifications.service.InvokeSysNotifications;
 import com.pennanttech.pff.notifications.service.ProcessSystemNotifications;
 import com.pennanttech.pff.process.ExtractCustomerData;
+import com.pennanttech.pff.provision.upload.job.ProvisionUploadJob;
 
 public class PFFJobScheduler extends JobScheduler {
 	private AccountUpdater accountUpdater;
@@ -122,6 +123,7 @@ public class PFFJobScheduler extends JobScheduler {
 	private UploadService loanLetterUploadService;
 	private UploadService blockAutoGenLetterUploadService;
 	private UploadService loanClosureUploadService;
+	private UploadService provisionUploadService;
 
 	@Autowired(required = false)
 	private JobSchedulerExtension jobSchedulerExtension;
@@ -541,6 +543,11 @@ public class PFFJobScheduler extends JobScheduler {
 		args.put("loanClosureUploadService", loanClosureUploadService);
 		jobData = new JobData("LOAN_CLOSURE_JOB", LoanClosureUploadJob.class, args);
 		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("provisionUploadService", provisionUploadService);
+		jobData = new JobData("PROVISION_JOB", ProvisionUploadJob.class, args);
+		jobDataList.add(jobData);
 		/**
 		 * For client specific jobs
 		 */
@@ -810,5 +817,10 @@ public class PFFJobScheduler extends JobScheduler {
 	@Autowired
 	public void setLoanClosureUploadService(UploadService loanClosureUploadService) {
 		this.loanClosureUploadService = loanClosureUploadService;
+	}
+
+	@Autowired
+	public void setProvisionUploadService(UploadService provisionUploadService) {
+		this.provisionUploadService = provisionUploadService;
 	}
 }

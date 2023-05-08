@@ -941,7 +941,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("enquiry", true);
 			map.put("finReference", this.finReference);
 
-			Provision provision = provisionService.getProvisionDetail(this.finReference);
+			Provision provision = provisionService.getProvisionDetail(this.finID);
 			map.put("provision", provision);
 			if (provision == null) {
 				MessageUtil.showMessage("Provision Details are not available.");

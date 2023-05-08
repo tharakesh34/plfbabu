@@ -496,4 +496,64 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="ST#1469.25.14" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="ManualAssetClassID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.28" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="ManualAssetSubClassID" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.16" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="NewRegProvisionPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.17" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="NewRegProvisionAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.18" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="NewIntProvisionPer" type="decimal(5,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.19" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="NewIntProvisionAmt" type="decimal(18,0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.24" author="nagavamsi.p">
+		<addColumn tableName="AdtLoan_Provisions">
+			<column name="OverRideProvision" type="smallint" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="ST#1469.25.26" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				UPDATE AdtAdtLoan_Provisions SET OverRideProvision = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1469.25.27" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				UPDATE AdtAdtAdtLoan_Provisions_Temp SET OverRideProvision = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>

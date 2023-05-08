@@ -13457,4 +13457,10 @@
 		
 	<bean id="loanClosureUploadProcessRecord"
 		class="com.pennant.pff.receipt.service.impl.LoanClosureUploadProcessRecord" />
+		
+		<bean id="provisionUploadDAO" class="com.pennanttech.pff.provision.dao.impl.ProvisionUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="provisionUploadService"
+		class="com.pennanttech.pff.provision.service.impl.ProvisionUploadServiceImpl" parent="aUploadService" />
 </beans>

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -53,10 +52,10 @@ public class Provision extends NpaProvisionStage {
 	private String custShrtName;
 	private Provision befImage;
 	private LoggedInUser userDetails;
-	private List<String> assetClassCodes;
-	private List<String> assetSubClassCodes;
-	private String effManualAssetClass;
-	private String effManualAssetSubClass;
+	private Long manualAssetClassID;
+	private String manualAssetClassCode;
+	private Long manualAssetSubClassID;
+	private String manualAssetSubClassCode;
 	private BigDecimal newRegProvisionPer = BigDecimal.ZERO;
 	private BigDecimal newRegProvisionAmt = BigDecimal.ZERO;
 	private BigDecimal newIntProvisionPer = BigDecimal.ZERO;
@@ -64,6 +63,9 @@ public class Provision extends NpaProvisionStage {
 
 	private boolean newRecord = false;
 	private boolean overrideProvision = false;
+
+	private long effectiveAssetClassID;
+	private long effectiveAssetSubClassID;
 
 	public Provision() {
 		super();
@@ -107,12 +109,8 @@ public class Provision extends NpaProvisionStage {
 		excludeFields.add("linkedLoan");
 		excludeFields.add("effPastDueDays");
 		excludeFields.add("effPastDueDate");
-		excludeFields.add("effManualAssetClass");
-		excludeFields.add("effManualAssetSubClass");
-		excludeFields.add("newRegProvisionPer");
-		excludeFields.add("newRegProvisionAmt");
-		excludeFields.add("newIntProvisionPer");
-		excludeFields.add("newIntProvisionAmt");
+		excludeFields.add("manualAssetClassCode");
+		excludeFields.add("manualAssetSubClassCode");
 		excludeFields.add("custCoreBank");
 		excludeFields.add("assetClassCodes");
 		excludeFields.add("assetSubClassCodes");
@@ -131,7 +129,8 @@ public class Provision extends NpaProvisionStage {
 		excludeFields.add("selfEffected");
 		excludeFields.add("writeOffLoan");
 		excludeFields.add("underSettlement");
-		excludeFields.add("overrideProvision");
+		excludeFields.add("effectiveAssetClassID");
+		excludeFields.add("effectiveAssetSubClassID");
 
 		return excludeFields;
 	}
@@ -468,6 +467,38 @@ public class Provision extends NpaProvisionStage {
 		this.newRecord = newRecord;
 	}
 
+	public Long getManualAssetClassID() {
+		return manualAssetClassID;
+	}
+
+	public void setManualAssetClassID(Long manualAssetClassID) {
+		this.manualAssetClassID = manualAssetClassID;
+	}
+
+	public String getManualAssetClassCode() {
+		return manualAssetClassCode;
+	}
+
+	public void setManualAssetClassCode(String manualAssetClassCode) {
+		this.manualAssetClassCode = manualAssetClassCode;
+	}
+
+	public Long getManualAssetSubClassID() {
+		return manualAssetSubClassID;
+	}
+
+	public void setManualAssetSubClassID(Long manualAssetSubClassID) {
+		this.manualAssetSubClassID = manualAssetSubClassID;
+	}
+
+	public String getManualAssetSubClassCode() {
+		return manualAssetSubClassCode;
+	}
+
+	public void setManualAssetSubClassCode(String manualAssetSubClassCode) {
+		this.manualAssetSubClassCode = manualAssetSubClassCode;
+	}
+
 	public BigDecimal getNewRegProvisionPer() {
 		return newRegProvisionPer;
 	}
@@ -508,38 +539,20 @@ public class Provision extends NpaProvisionStage {
 		this.overrideProvision = overrideProvision;
 	}
 
-	public List<String> getAssetClassCodes() {
-		return assetClassCodes;
+	public long getEffectiveAssetClassID() {
+		return effectiveAssetClassID;
 	}
 
-	public void setAssetClassCodes(List<String> assetClassCodes) {
-		this.assetClassCodes = assetClassCodes;
+	public void setEffectiveAssetClassID(long effectiveAssetClassID) {
+		this.effectiveAssetClassID = effectiveAssetClassID;
 	}
 
-	public String getEffManualAssetClass() {
-		return effManualAssetClass;
+	public long getEffectiveAssetSubClassID() {
+		return effectiveAssetSubClassID;
 	}
 
-	public void setEffManualAssetClass(String effManualAssetClass) {
-		this.effManualAssetClass = effManualAssetClass;
+	public void setEffectiveAssetSubClassID(long effectiveAssetSubClassID) {
+		this.effectiveAssetSubClassID = effectiveAssetSubClassID;
 	}
-
-	public String getEffManualAssetSubClass() {
-		return effManualAssetSubClass;
-	}
-
-	public void setEffManualAssetSubClass(String effManualAssetSubClass) {
-		this.effManualAssetSubClass = effManualAssetSubClass;
-	}
-
-	public List<String> getAssetSubClassCodes() {
-		return assetSubClassCodes;
-	}
-
-	public void setAssetSubClassCodes(List<String> assetSubClassCodes) {
-		this.assetSubClassCodes = assetSubClassCodes;
-	}
-	
-	
 
 }

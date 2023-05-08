@@ -24,6 +24,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
@@ -38,7 +39,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 	private DataSource dataSource;
 	private ProvisionService provisionService;
 
-	private static final String QUEUE_QUERY = "Select FinReference From Provision_Calc_Queue Where ThreadID = ? and Progress = ?";
+	private static final String QUEUE_QUERY = "Select FinID From Provision_Calc_Queue Where ThreadID = ? and Progress = ?";
 
 	private static final String START_MSG = "Provision Calculation/Reversal started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Provision Calculation/Reversal failed on {} for the FinReference {}";
@@ -78,12 +79,10 @@ public class ProvisionClacTaskLet implements Tasklet {
 
 		BatchUtil.setExecutionStatus(context, StepUtil.PROVISION_CALC);
 
-		JdbcCursorItemReader<String> itemReader = new JdbcCursorItemReader<>();
+		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
-		itemReader.setRowMapper((rs, rowNum) -> {
-			return rs.getString("FinReference");
-		});
+		itemReader.setRowMapper((rs, rowNum) -> JdbcUtil.getLong(rs.getObject("FinID")));
 		itemReader.setPreparedStatementSetter(ps -> {
 			ps.setLong(1, threadId);
 			ps.setInt(2, EodConstants.PROGRESS_WAIT);
@@ -100,13 +99,13 @@ public class ProvisionClacTaskLet implements Tasklet {
 		boolean reveralOnSOM = ImplementationConstants.PROVISION_REVERSAL_STAGE == ProvisionReversalStage.SOM;
 		boolean reveralOnEOM = ImplementationConstants.PROVISION_REVERSAL_STAGE == ProvisionReversalStage.EOM;
 
-		String finReference = null;
+		Long finID = null;
 
-		while ((finReference = itemReader.read()) != null) {
+		while ((finID = itemReader.read()) != null) {
 			try {
-				provisionService.updateProgress(finReference, EodConstants.PROGRESS_IN_PROCESS);
+				provisionService.updateProgress(finID, EodConstants.PROGRESS_IN_PROCESS);
 
-				Long linkedTranId = provisionService.getLinkedTranId(finReference);
+				Long linkedTranId = provisionService.getLinkedTranId(finID);
 
 				if (isMonthStart) {
 					if (reversalReq && reveralOnSOM && linkedTranId != null) {
@@ -116,7 +115,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 							provisionService.doReversal(linkedTranId);
 						}
 
-						provisionService.updateProgress(finReference, EodConstants.PROGRESS_SUCCESS);
+						provisionService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);
 
 						transactionManager.commit(txStatus);
 					}
@@ -125,7 +124,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 					continue;
 				}
 
-				Provision provision = provisionService.getProvision(finReference, appDate);
+				Provision provision = provisionService.getProvision(finID, appDate, null);
 
 				if (provision != null) {
 					txStatus = transactionManager.getTransaction(txDef);
@@ -144,7 +143,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 						provisionService.update(provision);
 					}
 
-					provisionService.updateProgress(finReference, EodConstants.PROGRESS_SUCCESS);
+					provisionService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);
 
 					transactionManager.commit(txStatus);
 				}
@@ -162,9 +161,9 @@ public class ProvisionClacTaskLet implements Tasklet {
 				exceptions.add(e);
 				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 
-				logger.info(FAILED_MSG, strSysDate, finReference);
+				logger.info(FAILED_MSG, strSysDate, finID);
 
-				provisionService.updateProgress(finReference, EodConstants.PROGRESS_FAILED);
+				provisionService.updateProgress(finID, EodConstants.PROGRESS_FAILED);
 			} finally {
 				txStatus = null;
 			}

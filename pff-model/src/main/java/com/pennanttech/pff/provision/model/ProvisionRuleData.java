@@ -49,6 +49,8 @@ public class ProvisionRuleData implements Serializable {
 	private BigDecimal odProfit;
 	private int npaAge;
 	private int effNpaAge;
+	private long effAssetClassID;
+	private long effAssetSubClassID;
 
 	public ProvisionRuleData() {
 		super();
@@ -382,6 +384,22 @@ public class ProvisionRuleData implements Serializable {
 		this.effNpaAge = effNpaAge;
 	}
 
+	public long getEffAssetClassID() {
+		return effAssetClassID;
+	}
+
+	public void setEffAssetClassID(long effAssetClassID) {
+		this.effAssetClassID = effAssetClassID;
+	}
+
+	public long getEffAssetSubClassID() {
+		return effAssetSubClassID;
+	}
+
+	public void setEffAssetSubClassID(long effAssetSubClassID) {
+		this.effAssetSubClassID = effAssetSubClassID;
+	}
+
 	public Map<String, Object> getDeclaredFields() {
 		Map<String, Object> map = new HashMap<>();
 
@@ -423,7 +441,6 @@ public class ProvisionRuleData implements Serializable {
 		map.put("odProfit", this.odProfit);
 
 		return map;
-
 	}
 
 }

@@ -49,7 +49,9 @@ public enum UploadTypes {
 
 	COURIER_DETAILS("Courier Details Upload Screen"),
 
-	LOAN_CLOSURE("Loan Closure Upload Details Screen");
+	LOAN_CLOSURE("Loan Closure Upload Details Screen"),
+
+	PROVISION("Provision Upload Details Screen");
 
 	private String description;
 

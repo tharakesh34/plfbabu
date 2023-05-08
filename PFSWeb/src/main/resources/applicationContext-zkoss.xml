@@ -6279,4 +6279,7 @@
 	
 	<bean id="loanClosureUploadListCtrl" class="com.pennant.pff.receipt.web.LoanClosureUploadListCtrl"
 		parent="uploadList" />
+		
+	<bean id="provisionUploadListCtrl" class="com.pennanttech.pff.provision.upload.list.ProvisionUploadListCtrl"
+		parent="uploadList" />
 </beans>

@@ -1008,6 +1008,12 @@ public class FileUploadList extends Window implements Serializable {
 			return;
 		}
 
+		for (FileUploadHeader header : selectedHeaders) {
+			header.setLastMntBy(this.userId);
+			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			header.setProgress(UploadStatus.REJECTED.status());
+		}
+
 		uploadService.doReject(selectedHeaders);
 
 		doSearch(false);
