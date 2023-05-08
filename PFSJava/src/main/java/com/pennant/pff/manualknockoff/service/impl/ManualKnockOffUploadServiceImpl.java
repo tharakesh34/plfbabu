@@ -66,8 +66,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	
-	public ManualKnockOffUploadServiceImpl(){
+
+	public ManualKnockOffUploadServiceImpl() {
 		super();
 	}
 
@@ -199,6 +199,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			return;
 		}
 
+		BigDecimal alcamount = BigDecimal.ZERO;
+
 		for (ManualKnockOffUpload alloc : allocations) {
 			UploadAlloctionDetail uad = new UploadAlloctionDetail();
 
@@ -206,6 +208,14 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			uad.setAllocationType(allocationType);
 			uad.setReferenceCode(alloc.getCode());
 			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
+
+			BigDecimal strPaidAmount = new BigDecimal(uad.getStrPaidAmount());
+			alcamount = alcamount.add(strPaidAmount);
+
+			if (alcamount.compareTo(detail.getReceiptAmount()) > 0) {
+				setError(detail, ManualKnockOffUploadError.MKOU_1017);
+				return;
+			}
 
 			receiptDataValidator.validateAllocations(uad);
 

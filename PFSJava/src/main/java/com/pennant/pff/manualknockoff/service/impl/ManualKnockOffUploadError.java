@@ -37,7 +37,9 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_1015("Other Receipt is inprogress"),
 
-	MKOU_1016("Record is already initiated by other process, unable to proceed.");
+	MKOU_1016("Record is already initiated by other process, unable to proceed."),
+
+	MKOU_1017("Allocated Amount should not be less than Receipt Amount.");
 
 	private String description;
 
