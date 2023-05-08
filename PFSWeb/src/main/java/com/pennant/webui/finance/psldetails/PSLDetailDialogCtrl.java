@@ -228,9 +228,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
-			fillComboBox(this.categoryCode, "", categoryList, "");
-			fillComboBox(this.landArea, "", landAreaList, "");
-			fillComboBox(this.sector, "", sectorList, "");
+			fillComboBox(this.categoryCode, PennantConstants.List_Select, categoryList, "");
+			fillComboBox(this.landArea, PennantConstants.List_Select, landAreaList, "");
+			fillComboBox(this.sector, PennantConstants.List_Select, sectorList, "");
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.pSLDetail);
@@ -311,7 +311,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.subCategory.setVisible(true);
 			this.subCategory.setDisabled(false);
 			String excludeValues = ",MF,SF,OF,";
+			fillComboBox(this.landHolding, "", listLandHolding, "");
 			fillComboBox(this.subCategory, "", subCategoryList, excludeValues);
+			fillComboBox(this.landArea, "", landAreaList, "");
 			this.label_SubCategory.setVisible(true);
 			this.weakerSection.setVisible(true);
 			this.label_WeakerSection.setVisible(true);
@@ -329,6 +331,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.row_EndUse.setVisible(false);
 			this.subCategory.setVisible(true);
 			this.label_SubCategory.setVisible(true);
+			fillComboBox(this.sector, "", sectorList, "");
 			fillComboBox(this.subCategory, "", subSectorList, "");
 			this.subCategory.setDisabled(false);
 			this.weakerSection.setVisible(true);
@@ -1091,18 +1094,16 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		}
 
 		if (this.row_LandHolding.isVisible() && this.landArea.isVisible()
-				&& "Y".equals(landHolding.getSelectedItem().getValue())) {
+				&& landHolding.getSelectedItem().getValue() != null
+				&& PennantConstants.YES.equals(landHolding.getSelectedItem().getValue())) {
 			this.landArea.setConstraint(
 					new StaticListValidator(landAreaList, Labels.getLabel("label_PSLDetailDialog_LandArea.value")));
 		}
 
-		if (this.row_Sector.isVisible() && this.sector.isVisible()) {
-			this.sector.setConstraint(
-					new StaticListValidator(sectorList, Labels.getLabel("label_PSLDetailDialog_Sector.value")));
-		}
-
-		if (this.row_Sector.isVisible() && ("SVS".equals(this.sector.getSelectedItem().getValue())
-				|| "MNF".equals(this.sector.getSelectedItem().getValue())) && this.amount.isVisible()) {
+		if (this.row_Sector.isVisible() && this.sector.getSelectedItem().getValue() != null
+				&& ("SVS".equals(this.sector.getSelectedItem().getValue())
+						|| "MNF".equals(this.sector.getSelectedItem().getValue()))
+				&& this.amount.isVisible()) {
 			this.amount.setConstraint(
 					new PTDecimalValidator(Labels.getLabel("label_PSLDetailDialog_Amount.value"), 2, true, false, 0));
 		}
@@ -1124,6 +1125,11 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		if (this.row_LandHolding.isVisible() && this.landHolding.isVisible()) {
 			this.landHolding.setConstraint(new StaticListValidator(listLandHolding,
 					Labels.getLabel("label_PSLDetailDialog_LandHolding.value")));
+		}
+
+		if (this.row_Sector.isVisible() && this.sector.isVisible()) {
+			this.sector.setConstraint(
+					new StaticListValidator(sectorList, Labels.getLabel("label_PSLDetailDialog_Sector.value")));
 		}
 
 		logger.debug(Literal.LEAVING);
