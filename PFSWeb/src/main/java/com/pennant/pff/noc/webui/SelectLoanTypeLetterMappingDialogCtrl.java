@@ -159,8 +159,7 @@ public class SelectLoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeL
 
 		try {
 
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/LoanTypeLetterMappingDialog.zul",
-					null, aruments);
+			Executions.createComponents("/WEB-INF/pages/NOC/LoanTypeLetterMappingDialog.zul", null, aruments);
 			this.windowSelectLoanTypeLetterMappingDialog.onClose();
 		} catch (Exception e) {
 			MessageUtil.showError(e);

@@ -27,7 +27,9 @@ package com.pennant.pff.noc.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.DataAccessException;
@@ -43,6 +45,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -113,6 +116,36 @@ public class LoanTypeLetterMappingDAOImpl extends SequenceDao<LoanTypeLetterMapp
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), new LoanTypeLetterMappingRM(), finType);
+	}
+
+	@Override
+	public List<LoanTypeLetterMapping> getResult(ISearch search) {
+		List<Object> value = new ArrayList<>();
+
+		StringBuilder sql = new StringBuilder("Select Id, FinType, LetterType");
+		sql.append(", AutoGeneration, LetterMode, EmailTemplateId, AgreementCodeId");
+		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(" From (");
+		sql.append(getSqlQuery(TableType.TEMP_TAB));
+		sql.append(" Union All ");
+		sql.append(getSqlQuery(TableType.MAIN_TAB));
+		sql.append(" Where not exists (Select 1 From Loantype_Letter_Mapping_Temp Where FinType = ltlm.FinType)) ltlm");
+		sql.append(QueryUtil.buildWhereClause(search, value));
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		List<LoanTypeLetterMapping> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			for (Object object : value) {
+				ps.setObject(++index, object);
+			}
+		}, new LoanTypeLetterMappingRM());
+
+		return list.stream().sorted((l1, l2) -> l1.getFinType().compareTo(l2.getFinType()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -213,9 +246,7 @@ public class LoanTypeLetterMappingDAOImpl extends SequenceDao<LoanTypeLetterMapp
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			if (this.jdbcOperations.update(sql.toString(), ltlm.getId(), ltlm.getLetterType()) == 0) {
-				throw new ConcurrencyException();
-			}
+			this.jdbcOperations.update(sql.toString(), ltlm.getId(), ltlm.getLetterType());
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -316,7 +347,8 @@ public class LoanTypeLetterMappingDAOImpl extends SequenceDao<LoanTypeLetterMapp
 
 		}, new LoanTypeLetterMappingRM());
 
-		return list.stream().sorted((l1, l2) -> l1.getFinType().compareTo(l2.getFinType())).toList();
+		return list.stream().sorted((l1, l2) -> l1.getFinType().compareTo(l2.getFinType()))
+				.collect(Collectors.toList());
 	}
 
 	private StringBuilder getSqlQuery(TableType tableType) {

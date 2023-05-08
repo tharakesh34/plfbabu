@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
@@ -53,6 +54,9 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
+import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLetterMapping> {
@@ -66,6 +70,8 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 	protected Button buttonLoanTypeLetterMappingSearchDialog;
 	protected Uppercasebox finType;
 	protected Listheader listheaderFinType;
+	protected Listheader listheaderRecordStatus;
+	protected Listheader listheaderRecordType;
 	protected Listbox sortOperatorFinType;
 
 	private transient LoanTypeLetterMappingService loanTypeLetterMappingService;
@@ -120,17 +126,17 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 
 		letterMapping.removeAll(templetterMapping);
 
-		listBoxLoanTypeLetterMapping.setItemRenderer(new FTLPListModelItemRender());
+		listBoxLoanTypeLetterMapping.setItemRenderer(new LTLPListModelItemRender());
 
 		pagedListWrapper.initList(letterMapping, listBoxLoanTypeLetterMapping, pagingLoanTypeLetterMapping);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public class FTLPListModelItemRender implements ListitemRenderer<LoanTypeLetterMapping>, Serializable {
+	public class LTLPListModelItemRender implements ListitemRenderer<LoanTypeLetterMapping>, Serializable {
 		private static final long serialVersionUID = 1L;
 
-		public FTLPListModelItemRender() {
+		public LTLPListModelItemRender() {
 			super();
 		}
 
@@ -151,8 +157,39 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 		}
 	}
 
-	public void onClick$buttonFinTypeLetterMappingSearchDialog(Event event) {
-		fillListData();
+	public void onClick$buttonLoanTypeLetterMappingSearchDialog(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		List<LoanTypeLetterMapping> excludeCodes = this.loanTypeLetterMappingService.getResult(getSearchFilters());
+
+		this.listBoxLoanTypeLetterMapping.setItemRenderer(new LTLPListModelItemRender());
+
+		this.pagedListWrapper.initList(excludeCodes, listBoxLoanTypeLetterMapping, pagingLoanTypeLetterMapping);
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	private ISearch getSearchFilters() {
+		ISearch search = new Search();
+
+		String finType = this.finType.getValue();
+		if (StringUtils.isNotEmpty(finType)) {
+			search.getFilters().add(new Filter("ltlm.finType", finType, this.sortOperatorFinType.getSelectedIndex()));
+		}
+
+		String status = this.recordStatus.getValue();
+		if (StringUtils.isNotEmpty(status)) {
+			search.getFilters()
+					.add(new Filter("ltlm.RecordStatus", status, this.sortOperator_RecordStatus.getSelectedIndex()));
+		}
+
+		String recordType = this.recordType.getSelectedItem().getValue();
+		if (StringUtils.isNotEmpty(recordType)) {
+			search.getFilters()
+					.add(new Filter("ltlm.RecordType", recordType, this.sortOperator_RecordType.getSelectedIndex()));
+		}
+
+		return search;
 	}
 
 	public void onClick$btnRefresh(Event event) throws InterruptedException {

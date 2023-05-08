@@ -92,7 +92,6 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private LoanTypeLetterMapping loanTypeLetterMapping;
 	private boolean isLetterMappingNew = true;
 	private String filteremail = "";
-	private boolean autoGenerationVal = false;
 
 	private final List<ValueLabel> letterTypeList = PennantStaticListUtil.getFinTypeLetterType();
 	private final List<ValueLabel> letterModeList = PennantStaticListUtil.getFinTypeLetterMappingMode();
@@ -338,7 +337,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		switch (type) {
 		case LETTER_TYPE:
 			Combobox letterType = (Combobox) hbox.getLastChild();
-			Clients.clearWrongValue(letterType);
+			letterType.clearErrorMessage();
 			String letterTypeVal = letterType.getValue();
 			if (StringUtils.isEmpty(letterTypeVal) || PennantConstants.SELECT_LABEL.equals(letterTypeVal)) {
 				throw new WrongValueException(letterType,
@@ -349,20 +348,21 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		case AUTO_GENERATION:
 			Checkbox autoGeneration = (Checkbox) hbox.getLastChild();
 			Clients.clearWrongValue(autoGeneration);
-			autoGenerationVal = autoGeneration.isChecked();
 			break;
 		case MODE:
+			boolean isAutoGen = ((Checkbox) getComponent(listItem, ListFields.AUTO_GENERATION.index()).getLastChild())
+					.isChecked();
 			Combobox mode = (Combobox) hbox.getLastChild();
-			Clients.clearWrongValue(mode);
+			mode.clearErrorMessage();
 			String modeVal = mode.getValue();
-			if (autoGenerationVal && PennantConstants.SELECT_LABEL.equals(modeVal)) {
+			if (isAutoGen && PennantConstants.SELECT_LABEL.equals(modeVal)) {
 				throw new WrongValueException(mode, Labels.getLabel("FIELD_IS_MAND", new String[] { "Mode " }));
 			}
 			break;
 
 		case EMAIL_TEMPLATE:
 			ExtendedCombobox emailTemplate = (ExtendedCombobox) hbox.getLastChild();
-			Clients.clearWrongValue(emailTemplate);
+			emailTemplate.clearErrorMessage();
 			String emailTemplateVal = emailTemplate.getValue();
 
 			if (StringUtils.isEmpty(emailTemplateVal)) {
@@ -372,7 +372,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			break;
 		case AGREEMENT_CODE:
 			ExtendedCombobox agreementCode = (ExtendedCombobox) hbox.getLastChild();
-			Clients.clearWrongValue(agreementCode);
+			agreementCode.clearErrorMessage();
 			String agreementCodeVal = agreementCode.getValue();
 
 			if (StringUtils.isEmpty(agreementCodeVal)) {
@@ -605,11 +605,46 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private void doDelete() {
 		logger.debug(Literal.ENTERING);
 
-		final LoanTypeLetterMapping aLetterMapping = new LoanTypeLetterMapping();
-		BeanUtils.copyProperties(getLoanTypeLetterMapping(), aLetterMapping);
+		final LoanTypeLetterMapping aMapping = new LoanTypeLetterMapping();
+		BeanUtils.copyProperties(getLoanTypeLetterMapping(), aMapping);
 
-		doDelete(String.valueOf(aLetterMapping.getId()), aLetterMapping);
+		String tranType = PennantConstants.TRAN_WF;
 
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aMapping.getId();
+		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+			if (StringUtils.trimToEmpty(aMapping.getRecordType()).equals("")) {
+				aMapping.setVersion(aMapping.getVersion() + 1);
+				aMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+				if (isWorkFlowEnabled()) {
+					aMapping.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+					aMapping.setNewRecord(true);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aMapping.getNextTaskId(), aMapping);
+				} else {
+					tranType = PennantConstants.TRAN_DEL;
+				}
+				for (LoanTypeLetterMapping ltlm : aMapping.getLoanTypeLetterMappingList()) {
+					ltlm.setVersion(ltlm.getVersion() + 1);
+					ltlm.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+					if (isWorkFlowEnabled()) {
+						ltlm.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+						ltlm.setNewRecord(true);
+					}
+				}
+			}
+
+			try {
+				if (doProcess(aMapping, tranType)) {
+					refreshList();
+					closeDialog();
+				}
+			} catch (DataAccessException e) {
+				MessageUtil.showError(e);
+			}
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -674,7 +709,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		doSetValidation();
 
 		if (listBoxLoanTypeLetterMapping.getItems().isEmpty()) {
-			MessageUtil.showMessage("Please add atleast one Letter Mapping details.");
+			MessageUtil.showMessage("Please add atleast one Letter Mapping.");
 			return;
 		}
 

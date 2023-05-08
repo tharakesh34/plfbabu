@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 
 public interface LoanTypeLetterMappingService {
 
@@ -43,4 +44,6 @@ public interface LoanTypeLetterMappingService {
 	List<LoanTypeLetterMapping> getLoanTypeLetterMappingById(String finType);
 
 	List<LoanTypeLetterMapping> getLoanTypeLetterMapping(List<String> roleCodes);
+
+	List<LoanTypeLetterMapping> getResult(ISearch searchFilters);
 }

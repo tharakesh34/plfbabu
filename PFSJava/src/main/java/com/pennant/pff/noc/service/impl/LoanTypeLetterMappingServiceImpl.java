@@ -50,6 +50,7 @@ import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.LoanTypeLetterMappingService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 
 public class LoanTypeLetterMappingServiceImpl extends GenericService<LoanTypeLetterMapping>
@@ -566,6 +567,11 @@ public class LoanTypeLetterMappingServiceImpl extends GenericService<LoanTypeLet
 			lmd.setRoleCode(lm.getRoleCode());
 			lmd.setNextRoleCode(lm.getNextRoleCode());
 		}
+	}
+
+	@Override
+	public List<LoanTypeLetterMapping> getResult(ISearch searchFilters) {
+		return loanTypeLetterMappingDAO.getResult(searchFilters);
 	}
 
 	@Autowired

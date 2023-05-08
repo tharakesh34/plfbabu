@@ -62,19 +62,15 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_FinanceTypeLetterMappingSearch_FinType"
-										value="${c:l('label_LoanTypeLetterMappingSearch_FinType.value')}" />
+									<label value="${c:l('label_LoanTypeLetterMappingSearch_FinType.value')}" />
 									<listbox id="sortOperatorFinType" width="43px" mold="select" rows="1" />
 									<uppercasebox id="finType" width="100px" maxlength="8" />
 								</row>
 								<row id="row_AlwWorkflow">
-									<label id="label_FinanceTypeSearch_RecordStatus"
-										value="${c:l('label_FinanceTypeSearch_RecordStatus.value')}" />
+									<label value="${c:l('label_FinanceTypeSearch_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-
-									<label id="label_FinanceTypeSearch_RecordType"
-										value="${c:l('label_FinanceTypeSearch_RecordType.value')}" />
+									<label value="${c:l('label_FinanceTypeSearch_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>

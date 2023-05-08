@@ -28,6 +28,7 @@ package com.pennant.pff.noc.dao;
 import java.util.List;
 
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
+import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
 
 public interface LoanTypeLetterMappingDAO {
@@ -49,4 +50,6 @@ public interface LoanTypeLetterMappingDAO {
 	boolean isExistLetterType(String letterType, TableType tableType);
 
 	List<LoanTypeLetterMapping> getLoanTypeLetterMapping(List<String> roleCodes);
+
+	List<LoanTypeLetterMapping> getResult(ISearch search);
 }
