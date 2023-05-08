@@ -37,7 +37,7 @@
 							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" visible="false" />
 							<button id="btnClose" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
-								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" />
+								tooltiptext="${c:l('btnClose.tooltiptext')}" sclass="z-toolbarbutton" visible="false" />
 						</toolbar>
 					</hbox>
 				</div>
