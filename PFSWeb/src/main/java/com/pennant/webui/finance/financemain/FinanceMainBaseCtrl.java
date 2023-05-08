@@ -3315,9 +3315,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 											? this.finAssetValue.getActualValue()
 											: this.finAmount.getActualValue())
-													.subtract(this.downPayBank.getActualValue())
-													.subtract(this.downPaySupl.getActualValue()),
-											formatter)
+											.subtract(this.downPayBank.getActualValue())
+											.subtract(this.downPaySupl.getActualValue()), formatter)
 									.add(financeMain.getFeeChargeAmt());
 						} else {
 							utilizedAmt = PennantApplicationUtil
@@ -18021,8 +18020,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								? this.finAssetValue.getActualValue()
 								: this.finAmount.getActualValue()).subtract(this.downPayBank.getActualValue())
-										.subtract(this.downPaySupl.getActualValue()),
-								formatter)
+								.subtract(this.downPaySupl.getActualValue()), formatter)
 						.add(financeMain.getFeeChargeAmt());
 			} else {
 				UtilizedAmt = PennantApplicationUtil
@@ -18070,8 +18068,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.unFormateAmount((this.finAssetValue.getActualValue().compareTo(BigDecimal.ZERO) > 0
 								? this.finAssetValue.getActualValue()
 								: this.finAmount.getActualValue()).subtract(this.downPayBank.getActualValue())
-										.subtract(this.downPaySupl.getActualValue()),
-								formatter)
+								.subtract(this.downPaySupl.getActualValue()), formatter)
 						.add(fm.getFeeChargeAmt());
 			} else {
 				UtilizedAmt = PennantApplicationUtil
@@ -18139,8 +18136,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Commitment Stop draw down when rate Out of rage:
 				BigDecimal effRate = finMain.getEffectiveRateOfReturn() == null ? BigDecimal.ZERO
 						: finMain.getEffectiveRateOfReturn();
-				if (BigDecimal.ZERO.compareTo(new BigDecimal(
-						PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
+				if (BigDecimal.ZERO
+						.compareTo(new BigDecimal(
+								PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
 						&& BigDecimal.ZERO.compareTo(new BigDecimal(PennantApplicationUtil
 								.formatRate(commitment.getCmtPftRateMax().doubleValue(), 9))) != 0) {
 
@@ -20257,7 +20255,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							finScheduleData = CDScheduleCalculator.getCalSchd(finScheduleData);
 						} else {
 							finScheduleData.getFinanceMain().setModuleDefiner(financeDetail.getModuleDefiner());
-							finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, null);
+							finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
 							if ((StringUtils.isEmpty(moduleDefiner)
 									|| StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.RESCHD))
 									&& StringUtils.equals(PennantConstants.STEPPING_CALC_AMT,
@@ -20472,8 +20470,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								if (remStps > 0) {
 									spd.setInstallments(remStps);
 									tenorSplitPerc = (new BigDecimal(spd.getInstallments())
-											.multiply(new BigDecimal(100))).divide(new BigDecimal(curGrcTerms), 2,
-													RoundingMode.HALF_DOWN);
+											.multiply(new BigDecimal(100)))
+											.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
 									spd.setTenorSplitPerc(tenorSplitPerc);
 									newSpdList.add(spd);
 									noOfGrcStps = noOfGrcStps + 1;
