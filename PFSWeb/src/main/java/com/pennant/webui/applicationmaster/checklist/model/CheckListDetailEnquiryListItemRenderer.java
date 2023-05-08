@@ -18,7 +18,7 @@ public class CheckListDetailEnquiryListItemRenderer
 	private static final long serialVersionUID = 2744829555068348957L;
 
 	public CheckListDetailEnquiryListItemRenderer() {
-
+	    super();
 	}
 
 	@Override

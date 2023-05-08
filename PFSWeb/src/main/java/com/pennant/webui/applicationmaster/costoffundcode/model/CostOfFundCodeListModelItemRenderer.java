@@ -44,7 +44,7 @@ public class CostOfFundCodeListModelItemRenderer implements ListitemRenderer<Cos
 	private static final long serialVersionUID = -8176701674841176336L;
 
 	public CostOfFundCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

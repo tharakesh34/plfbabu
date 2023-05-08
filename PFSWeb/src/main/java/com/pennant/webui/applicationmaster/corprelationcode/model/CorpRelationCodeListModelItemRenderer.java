@@ -45,7 +45,7 @@ public class CorpRelationCodeListModelItemRenderer implements ListitemRenderer<C
 	private static final long serialVersionUID = -4992245602767405546L;
 
 	public CorpRelationCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

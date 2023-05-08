@@ -294,6 +294,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 		private static final long serialVersionUID = 1L;
 
 		public ChangeCustomerListModelItemRenderer() {
+		    super();
 		}
 
 		@Override

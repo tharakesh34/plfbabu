@@ -10,7 +10,7 @@ public class CustomerBalanceSheetComparator implements Comparator<Object>, Seria
 	private static final long serialVersionUID = 6780367280268538892L;
 
 	public CustomerBalanceSheetComparator() {
-
+	    super();
 	}
 
 	@Override

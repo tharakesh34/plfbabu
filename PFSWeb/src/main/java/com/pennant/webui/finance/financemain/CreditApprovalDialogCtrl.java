@@ -411,7 +411,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	class CompareCheckList implements Comparator<FinanceCheckListReference> {
 
 		public CompareCheckList() {
-
+		    super();
 		}
 
 		@Override

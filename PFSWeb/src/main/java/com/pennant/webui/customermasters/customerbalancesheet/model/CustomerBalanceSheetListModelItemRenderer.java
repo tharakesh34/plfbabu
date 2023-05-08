@@ -47,7 +47,7 @@ public class CustomerBalanceSheetListModelItemRenderer implements ListitemRender
 	private static final long serialVersionUID = -4954735333466148555L;
 
 	public CustomerBalanceSheetListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

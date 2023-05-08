@@ -45,7 +45,7 @@ public class CDSchemeListModelItemRenderer implements ListitemRenderer<Promotion
 	private static final long serialVersionUID = 1L;
 
 	public CDSchemeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

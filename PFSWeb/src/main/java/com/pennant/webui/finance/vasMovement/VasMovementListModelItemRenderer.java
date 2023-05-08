@@ -46,7 +46,7 @@ public class VasMovementListModelItemRenderer implements ListitemRenderer<VasMov
 	private static final long serialVersionUID = 1L;
 
 	public VasMovementListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

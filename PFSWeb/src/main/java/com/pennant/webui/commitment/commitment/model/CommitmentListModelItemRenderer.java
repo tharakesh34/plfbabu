@@ -48,7 +48,7 @@ public class CommitmentListModelItemRenderer implements ListitemRenderer<Commitm
 	private static final long serialVersionUID = 5487388031427098891L;
 
 	public CommitmentListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

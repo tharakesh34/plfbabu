@@ -23,7 +23,7 @@ public class CollateralDetail implements Serializable {
 	private WSReturnStatus returnStatus;
 
 	public CollateralDetail() {
-
+	    super();
 	}
 
 	public String getCif() {

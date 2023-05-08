@@ -3504,7 +3504,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		private static final long serialVersionUID = -3639465555049007637L;
 
 		public compareLinkedTransId() {
-
+		    super();
 		}
 
 		@Override
@@ -3524,7 +3524,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		private static final long serialVersionUID = 3413747054505038584L;
 
 		public postingGroupListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override

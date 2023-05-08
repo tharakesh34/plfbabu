@@ -908,7 +908,7 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 		private static final long serialVersionUID = 9112640872865877333L;
 
 		public VasMovementComparator() {
-
+		    super();
 		}
 
 		@Override
