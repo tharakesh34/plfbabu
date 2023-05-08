@@ -143,7 +143,7 @@ public class SummaryDetailService extends AbstractController {
 				Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 					@Override
 					public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-						return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+						return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 					}
 				});
 

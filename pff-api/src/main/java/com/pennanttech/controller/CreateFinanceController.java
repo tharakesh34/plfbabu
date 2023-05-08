@@ -1661,7 +1661,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
 					@Override
 					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
-						return (new Integer(b1.getStepNo()).compareTo(new Integer(b2.getStepNo())));
+						return (Integer.valueOf(b1.getStepNo()).compareTo(Integer.valueOf(b2.getStepNo())));
 					}
 				});
 
@@ -3212,7 +3212,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
 			@Override
 			public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-				return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+				return (Integer.valueOf(b1.getDisbSeq()).compareTo(Integer.valueOf(b2.getDisbSeq())));
 			}
 		});
 
@@ -3297,8 +3297,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// Fetch summary details
-		Date appDate = SysParamUtil.getAppDate();
-		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		FinanceSummary summary = getFinanceSummary(fd);
 
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
