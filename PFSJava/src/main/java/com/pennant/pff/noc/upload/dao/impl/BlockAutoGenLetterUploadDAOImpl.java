@@ -12,6 +12,7 @@ import com.pennant.pff.noc.upload.model.BlockAutoGenLetterUpload;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.file.UploadStatus;
 
 public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLetterUpload>
 		implements BlockAutoGenLetterUploadDAO {
@@ -124,12 +125,13 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 	}
 
 	@Override
-	public boolean isValidateAction(String reference, String action, int progressSuccess) {
-		String sql = "Select count(ID) From Block_Auto_Gen_Ltr_Upload Where FinReference = ? and Action = ? and Progress = ?";
+	public boolean isValidateAction(String reference, String action, long headerId) {
+		String sql = "Select count(ID) From Block_Auto_Gen_Ltr_Upload Where FinReference = ? and Action = ? and Progress not in (?, ?, ?) and HeaderId not in ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, reference, action, progressSuccess) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, reference, action, UploadStatus.APPROVED.status(),
+				UploadStatus.FAILED.status(), UploadStatus.REJECTED.status(), headerId) > 0;
 	}
 
 	@Override

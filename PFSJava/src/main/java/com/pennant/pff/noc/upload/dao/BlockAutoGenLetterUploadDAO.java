@@ -14,7 +14,7 @@ public interface BlockAutoGenLetterUploadDAO {
 
 	String getSqlQuery();
 
-	boolean isValidateAction(String reference, String action, int progressSuccess);
+	boolean isValidateAction(String reference, String action, long headerId);
 
 	int getReference(String reference, int progressSuccess);
 

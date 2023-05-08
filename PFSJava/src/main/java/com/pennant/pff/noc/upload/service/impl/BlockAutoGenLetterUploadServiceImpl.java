@@ -227,8 +227,7 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 			return;
 		}
 
-		if (blockAutoGenLetterUploadDAO.isValidateAction(detail.getReference(), action,
-				EodConstants.PROGRESS_SUCCESS)) {
+		if (blockAutoGenLetterUploadDAO.isValidateAction(detail.getReference(), action, detail.getHeaderId())) {
 			setError(detail, BlockAutoGenLetterUploadError.BALG_03);
 			return;
 		}
