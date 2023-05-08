@@ -15,7 +15,7 @@ public class SysNotificationDialogModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	public SysNotificationDialogModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -1300,6 +1300,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public final class onMultiSelectionItemSelected implements EventListener<Event> {
 
 		public onMultiSelectionItemSelected() {
+		    super();
 		}
 
 		@Override
@@ -1342,6 +1343,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public final class onMultiSelButtonClick implements EventListener<Event> {
 
 		public onMultiSelButtonClick() {
+		    super();
 		}
 
 		@Override

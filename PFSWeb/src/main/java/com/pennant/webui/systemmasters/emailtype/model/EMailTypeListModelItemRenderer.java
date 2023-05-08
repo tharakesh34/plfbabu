@@ -46,7 +46,7 @@ public class EMailTypeListModelItemRenderer implements ListitemRenderer<EMailTyp
 	private static final long serialVersionUID = 158114541693014078L;
 
 	public EMailTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -221,7 +221,7 @@ public class SearchFilterControl implements Serializable {
 		private static final long serialVersionUID = -6882191877151456253L;
 
 		public SearchFiltersRender() {
-
+		    super();
 		}
 
 		@Override

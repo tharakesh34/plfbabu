@@ -45,7 +45,7 @@ public class ExpenseTypeListModelItemRenderer implements ListitemRenderer<Expens
 	private static final long serialVersionUID = 1L;
 
 	public ExpenseTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

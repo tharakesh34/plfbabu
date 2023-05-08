@@ -17,7 +17,7 @@ public class ExcessTransferListModelItemRenderer implements ListitemRenderer<Fin
 	private static final long serialVersionUID = 6906998807263283546L;
 
 	public ExcessTransferListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

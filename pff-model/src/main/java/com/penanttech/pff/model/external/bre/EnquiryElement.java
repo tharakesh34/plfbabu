@@ -22,6 +22,7 @@ public class EnquiryElement implements Serializable {
 
 	@JsonCreator
 	public EnquiryElement() {
+	    super();
 	}
 
 	public String getDateOfEnquiry() {

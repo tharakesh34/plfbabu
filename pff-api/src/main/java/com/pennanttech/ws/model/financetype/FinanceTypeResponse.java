@@ -26,7 +26,7 @@ public class FinanceTypeResponse implements Serializable {
 	private static final long serialVersionUID = 4240224916197625490L;
 
 	public FinanceTypeResponse() {
-
+	    super();
 	}
 
 	// Response fields

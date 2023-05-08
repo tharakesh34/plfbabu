@@ -302,7 +302,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class OnCloseListener implements EventListener<Event> {
 
 		public OnCloseListener() {
-
+		    super();
 		}
 
 		@Override
@@ -319,7 +319,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-
+		    super();
 		}
 
 		@Override
@@ -336,7 +336,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-
+		    super();
 		}
 
 		@Override
@@ -389,7 +389,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class CustDedupBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public CustDedupBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -458,7 +458,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class DedupBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public DedupBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -564,7 +564,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override
@@ -736,7 +736,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	class CompareCustomer implements Comparator {
 
 		public CompareCustomer() {
-
+		    super();
 		}
 
 		@Override

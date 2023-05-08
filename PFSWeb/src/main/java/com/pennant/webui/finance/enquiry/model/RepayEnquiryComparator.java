@@ -10,7 +10,7 @@ public class RepayEnquiryComparator implements Comparator<Object>, Serializable 
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public RepayEnquiryComparator() {
-
+	    super();
 	}
 
 	@Override

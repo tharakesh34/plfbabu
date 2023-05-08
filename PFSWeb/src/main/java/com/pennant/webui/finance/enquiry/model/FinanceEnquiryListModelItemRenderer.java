@@ -20,7 +20,7 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 	private static final long serialVersionUID = 5574543684897936853L;
 
 	public FinanceEnquiryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

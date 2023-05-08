@@ -46,7 +46,7 @@ public class SplRateListModelItemRenderer implements ListitemRenderer<SplRate>, 
 	private static final long serialVersionUID = 8827094920109804515L;
 
 	public SplRateListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

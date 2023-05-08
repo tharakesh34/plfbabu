@@ -45,7 +45,7 @@ public class SalesOfficerListModelItemRenderer implements ListitemRenderer<Sales
 	private static final long serialVersionUID = 601020221986538839L;
 
 	public SalesOfficerListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

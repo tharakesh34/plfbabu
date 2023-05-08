@@ -45,7 +45,7 @@ public class SecurityUserListModelItemRenderer implements ListitemRenderer<Secur
 	private static final long serialVersionUID = 7204475649828613670L;
 
 	public SecurityUserListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

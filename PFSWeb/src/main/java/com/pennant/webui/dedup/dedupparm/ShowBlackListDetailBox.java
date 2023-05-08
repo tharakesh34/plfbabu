@@ -338,7 +338,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-
+		    super();
 		}
 
 		@Override
@@ -355,7 +355,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-
+		    super();
 		}
 
 		@Override
@@ -424,7 +424,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	final class BlackListBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public BlackListBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -528,7 +528,7 @@ public class ShowBlackListDetailBox extends Window implements Serializable {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override

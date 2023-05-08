@@ -46,7 +46,7 @@ public class SectorListModelItemRenderer implements ListitemRenderer<Sector>, Se
 	private static final long serialVersionUID = 2238613076188385979L;
 
 	public SectorListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

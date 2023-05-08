@@ -8,7 +8,7 @@ import com.pennanttech.external.mandate.errors.ExtMandateError;
 public class ExtErrorCodes {
 
 	private ExtErrorCodes() {
-
+	    super();
 	}
 
 	private List<InterfaceErrorCode> interfaceErrorsList = new ArrayList<InterfaceErrorCode>();

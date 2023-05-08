@@ -280,7 +280,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override

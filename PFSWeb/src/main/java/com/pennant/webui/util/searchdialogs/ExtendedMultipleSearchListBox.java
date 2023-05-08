@@ -291,7 +291,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	final class SearchBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public SearchBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override

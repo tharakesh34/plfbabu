@@ -12,7 +12,7 @@ public class LimitFldCriterias {
 	private String qbFldCriteriaValues;
 
 	public LimitFldCriterias() {
-
+	    super();
 	}
 
 	// ******************************************************//

@@ -44,7 +44,7 @@ public class ScoringSlabListModelItemRenderer implements ListitemRenderer<Scorin
 	private static final long serialVersionUID = 4953613230892783520L;
 
 	public ScoringSlabListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

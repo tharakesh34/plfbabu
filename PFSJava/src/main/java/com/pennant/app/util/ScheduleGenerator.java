@@ -61,6 +61,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 public class ScheduleGenerator {
 
 	public ScheduleGenerator() {
+	    super();
 	}
 
 	private static final Logger logger = LogManager.getLogger(ScheduleGenerator.class);

@@ -269,7 +269,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	final class ReturnedChequeItemRenderer implements ListitemRenderer<Object> {
 
 		public ReturnedChequeItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -343,7 +343,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-
+		    super();
 		}
 
 		@Override
@@ -359,7 +359,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-
+		    super();
 		}
 
 		@Override
@@ -373,7 +373,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override

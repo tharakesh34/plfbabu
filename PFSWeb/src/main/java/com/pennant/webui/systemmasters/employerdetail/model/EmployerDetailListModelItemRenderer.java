@@ -46,7 +46,7 @@ public class EmployerDetailListModelItemRenderer implements ListitemRenderer<Emp
 	private static final long serialVersionUID = 1L;
 
 	public EmployerDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

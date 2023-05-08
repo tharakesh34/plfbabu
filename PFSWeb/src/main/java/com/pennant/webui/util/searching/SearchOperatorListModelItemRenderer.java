@@ -50,7 +50,7 @@ public class SearchOperatorListModelItemRenderer implements ListitemRenderer<Sea
 	private static final long serialVersionUID = 1L;
 
 	public SearchOperatorListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
