@@ -139,6 +139,8 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	private List<ValueLabel> subCategoryListGeneral = PennantStaticListUtil.getSubCategoryGeneralList();
 	private List<ValueLabel> sectorList = PennantStaticListUtil.getPSLSectorList();
 	private List<ValueLabel> subSectorList = PennantStaticListUtil.getSubSectorList();
+	private List<ValueLabel> subCategoriesList = PennantStaticListUtil.getSubSectorList();
+
 	private Map<String, Object> rules = new HashMap<>();
 
 	/**
@@ -360,7 +362,6 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 			this.label_WeakerSection.setVisible(true);
 			this.landHolding.setValue("");
 			this.landArea.setValue("");
-			this.space_SubCategory.setSclass("mandatory");
 		} else if ("GNL".equals(value)) {
 			this.row_LandHolding.setVisible(false);
 			this.row_Sector.setVisible(false);
@@ -1108,9 +1109,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 					new PTDecimalValidator(Labels.getLabel("label_PSLDetailDialog_Amount.value"), 2, true, false, 0));
 		}
 
-		if (this.row_Subcategory.isVisible() && this.subCategory.isVisible()) {
-			this.subCategory.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_PSLDetailDialog_SubCategory.value"), null, true));
+		if (this.row_Subcategory.isVisible() && this.subCategory.isVisible() && !this.subCategory.isDisabled()) {
+			this.subCategory.setConstraint(new StaticListValidator(subCategoriesList,
+					Labels.getLabel("label_PSLDetailDialog_SubCategory.value")));
 		}
 		if (this.row_Purpose.isVisible() && this.purpose.isVisible()) {
 			this.purpose.setConstraint(

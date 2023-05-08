@@ -374,6 +374,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> sanctionStatusList;
 	private static List<ValueLabel> finTypeLetterType;
 	private static List<ValueLabel> finTypeLetterMappingMode;
+	private static List<ValueLabel> subCategory;
 
 	/**
 	 * Gets the list of applications.
@@ -1584,6 +1585,17 @@ public class PennantStaticListUtil {
 			subCategoryIdsList.add(new ValueLabel("subCategoryType", "Calculated"));
 		}
 		return subCategoryIdsList;
+	}
+
+	public static List<ValueLabel> getSubCategory() {
+		if (subCategory == null) {
+			subCategory = new ArrayList<>(5);
+			subCategory.addAll(getSubCategoryList());
+			subCategory.addAll(getSubCategoryGeneralList());
+			subCategory.addAll(getSubSectorList());
+		}
+		
+		return subCategory;
 	}
 
 	/**
@@ -5652,17 +5664,18 @@ public class PennantStaticListUtil {
 			finTypeLetterType = new ArrayList<>();
 
 			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_NOC_LTR, Labels.getLabel("label_NOC")));
-			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_CAN_LTR, Labels.getLabel("label_CancellationLetter")));
+			finTypeLetterType
+					.add(new ValueLabel(NOCConstants.TYPE_CAN_LTR, Labels.getLabel("label_CancellationLetter")));
 			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_CLOSE_LTR, Labels.getLabel("label_ClosureLetter")));
 		}
-		
+
 		return finTypeLetterType;
 	}
 
 	public static List<ValueLabel> getFinTypeLetterMappingMode() {
 		if (finTypeLetterMappingMode == null) {
 			finTypeLetterMappingMode = new ArrayList<>();
-			
+
 			finTypeLetterMappingMode.add(new ValueLabel(NOCConstants.MODE_COURIER, Labels.getLabel("label_Courier")));
 			finTypeLetterMappingMode.add(new ValueLabel(NOCConstants.MODE_EMAIL, Labels.getLabel("label_Email")));
 		}
