@@ -17740,6 +17740,27 @@
 		</sql>
 	</changeSet>
 	
+	
+	<changeSet id="ST#1561.57" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'ServiceBranch';
+				
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('ServiceBranch', 'ServiceBranch', 'listheaderServiceBranch_Code.label,listheaderServiceBranch_Description.label,listheaderServiceBranch_PinCode.label,listheaderServiceBranch_CityName.label', 'code,description,pinCode,city', 'String,String,String,String', '', 'ReportList04', 'Service Branch Enquiry', 'Application Masters', 1, 1001, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.58" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'ServiceBranch';
+				
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('LoanTypeLetterMapping', 'LoanTypeLetterMapping', 'listheaderFinType.label', 'finType', 'String', '', 'ReportList01', 'Letter Mapping Enquiry', 'Application Masters', 1, 1001, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#1684.1" author="saikiran.n">
 		<createTable tableName="Loan_Closure_Upload">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -17866,4 +17887,25 @@
  			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#225109_pre" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'write_off_upload_log');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#225109" author="saikrishna.b">
+		<modifyDataType tableName="WRITE_OFF_UPLOAD_LOG" columnName="Remarks" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="PSD#225109_post" author="saikrishna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'write_off_upload_log');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
