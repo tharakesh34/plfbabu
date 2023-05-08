@@ -13,9 +13,7 @@ public enum LoanClosureUploadError {
 
 	LCU_04("Closure type is not valid."),
 
-	LCU_05("Reason code is not valid."),
-
-	LCU_06("Paid amount should be less than or equal to receipt amount.");
+	LCU_05("Reason code is not valid.");
 
 	private String description;
 

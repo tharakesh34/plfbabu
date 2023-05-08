@@ -58,7 +58,7 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> imp
 	public long save(LoanClosureUpload lcu) {
 		StringBuilder sql = new StringBuilder("Insert into Loan_Closure_Upload");
 		sql.append(" (HeaderId, RecordSeq, FinID, FinReference, Remarks, ReasonCode, Closuretype, AllocationType)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

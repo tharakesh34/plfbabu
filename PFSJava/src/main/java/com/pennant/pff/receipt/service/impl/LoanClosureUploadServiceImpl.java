@@ -93,7 +93,8 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 		String closureType = detail.getClosureType();
 
-		if (closureType != null && !(ClosureType.isValid(closureType) || closureType.equalsIgnoreCase("SETTLEMENT"))) {
+		if (closureType != null && !(ClosureType.isValid(closureType) || closureType.equalsIgnoreCase("SETTLEMENT"))
+				&& StringUtils.isNotBlank(closureType)) {
 			setError(detail, LoanClosureUploadError.LCU_04);
 			return;
 		}
