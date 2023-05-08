@@ -11,7 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
@@ -330,33 +329,5 @@ public interface CustomerRESTService {
 	@Path("/customerService/getSRMCustDetails")
 	public List<CustomerDetails> getSRMCustDetails(@WebParam(name = "customer") SRMCustRequest srmCustRequest)
 			throws ServiceException;
-
-	@GET
-	@Path("/customerService/getCustomerDetailsByName/{custShrtName}")
-	public List<CustomerDetails> getByCustShrtName(@PathParam("custShrtName") String custShrtName);
-
-	@GET
-	@Path("/customerService/getCustomerDetailsByPAN/{custCRCPR}")
-	public List<CustomerDetails> getByCustCRCPR(@PathParam("custCRCPR") String custShrtName);
-
-	@GET
-	@Path("/customerService/getCustomerDetailsByAccNumber/{accNumber}")
-	public List<CustomerDetails> getByAccNumber(@PathParam("accNumber") String accNumber);
-
-	@GET
-	@Path("/customerService/getCustomerDetailsByPhoneNumber/{phoneNumber}")
-	public List<CustomerDetails> getByPhoneNumber(@PathParam("phoneNumber") String phoneNumber);
-
-	@POST
-	@Path("/customerService/getCustomerDetailsByNameAndPhoneNumber")
-	public List<CustomerDetails> getByCustShrtNameAndPhoneNumber(@WebParam(name = "customer") Customer customer);
-
-	@POST
-	@Path("/customerService/getCustomerDetailsByNameAndDOB")
-	public List<CustomerDetails> getByCustShrtNameAndDOB(@WebParam(name = "customer") Customer customer);
-
-	@POST
-	@Path("/customerService/getCustomerDetailsByNameAndEMIAmount")
-	public List<CustomerDetails> getByCustShrtNameAndEMIAmount(@WebParam(name = "customer") Customer customer);
 
 }

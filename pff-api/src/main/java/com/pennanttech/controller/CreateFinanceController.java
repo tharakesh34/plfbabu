@@ -127,7 +127,6 @@ import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
-import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.paymentmode.PaymentMode;
@@ -4521,52 +4520,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		ch.setTotalAmount(totalChequeAmount);
-	}
-
-	public LoanAuthentication getAuthenticationDetails(LoanAuthentication reqLa) {
-		logger.debug(Literal.ENTERING);
-
-		LoanAuthentication response = new LoanAuthentication();
-
-		String finReference = reqLa.getFinReference();
-		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.BOTH_TAB);
-
-		if (fm == null) {
-			response.setReturnStatus(getFailedStatus("90260", "FinReference"));
-			return response;
-		}
-
-		Date custDOb = customerDAO.getCustomerDOBByCustID(fm.getCustID());
-
-		if (DateUtil.compare(DateUtil.getDatePart(custDOb), DateUtil.getDatePart(reqLa.getDateOfBirth())) != 0) {
-			response.setValidFlag(PennantConstants.NO);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		Date businessDate = reqLa.getAppDate();
-		if (businessDate.compareTo(fm.getMaturityDate()) >= 0) {
-			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-		}
-
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinSchedules(fm.getFinID(),
-				TableType.MAIN_TAB);
-
-		BigDecimal loanEMI = SchdUtil.getNextEMI(businessDate, schedules);
-
-		if (loanEMI.compareTo(reqLa.getLoanEMI()) != 0) {
-			response.setValidFlag(PennantConstants.NO);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		response.setMobileEmailId("");
-		response.setValidFlag(PennantConstants.YES);
-
-		logger.debug(Literal.LEAVING);
-
-		return response;
-
 	}
 
 	public List<PaymentMode> getPDCEnquiry(FinanceMain fm) {

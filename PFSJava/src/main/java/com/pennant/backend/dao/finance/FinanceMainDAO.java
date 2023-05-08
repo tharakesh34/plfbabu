@@ -424,20 +424,6 @@ public interface FinanceMainDAO {
 
 	FinanceMain getBasicDetails(String finReference, TableType tableType);
 
-	List<Long> getByCustShrtName(String custShrtName, TableType tableType);
-
-	List<Long> getByPANNumber(String panNumber, TableType tableType);
-
-	List<Long> getByAccountNumber(String accNumber);
-
-	List<Long> getByPhoneNumber(String phoneNumber, TableType tableType);
-
-	List<Long> getByCustShrtNameAndPhoneNumber(String custShrtName, String phoneNumber, TableType tableType);
-
-	List<Long> getByCustShrtNameAndDateOfBirth(String custShrtName, Date dateOfBirth, TableType tableType);
-
-	List<Long> getByCustShrtNameAndEMIAmount(String custShrtName, BigDecimal repayAmount);
-
 	SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType);
 
 	List<Long> getFinIDsByCustID(Long custID, TableType tableType);
