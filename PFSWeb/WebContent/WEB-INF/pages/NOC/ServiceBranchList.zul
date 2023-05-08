@@ -66,11 +66,11 @@
 								</row>
 								<row>
 									<label value="${c:l('label_ServiceBranchList_RecordStatus.value')}" />
-									<listbox id="recordStatusSort" width="43px" mold="select" rows="1" />
+									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
 									<label value="${c:l('label_ServiceBranchList_RecordType.value')}" />
-									<listbox id="recordTypeSort" width="43px" mold="select" rows="1" />
-									<textbox id="recordType" width="100px" maxlength="50" />
+									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>

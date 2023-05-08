@@ -52,14 +52,10 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 	protected Listbox descriptionSort;
 	protected Listbox citySort;
 	protected Listbox pinCodeSort;
-	protected Listbox recordTypeSort;
-	protected Listbox recordStatusSort;
 	protected Textbox code;
 	protected Textbox description;
 	protected Textbox pinCode;
 	protected Textbox city;
-	protected Textbox recordStatus;
-	protected Textbox recordType;
 
 	private transient ServiceBranchService serviceBranchService;
 
@@ -87,8 +83,6 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 		registerField("description", descriptionHeader, SortOrder.NONE, description, descriptionSort, Operators.STRING);
 		registerField("pinCode", pinCodeHeader, SortOrder.NONE, pinCode, pinCodeSort, Operators.STRING);
 		registerField("city", cityHeader, SortOrder.NONE, city, citySort, Operators.STRING);
-		registerField("recordStatus", recordStatusHeader);
-		registerField("recordType", recordTypeHeader);
 
 		fillListData();
 
@@ -216,12 +210,14 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 
 		String status = this.recordStatus.getValue();
 		if (StringUtils.isNotEmpty(status)) {
-			search.getFilters().add(new Filter("csb.RecordStatus", status, this.recordStatusSort.getSelectedIndex()));
+			search.getFilters()
+					.add(new Filter("csb.RecordStatus", status, this.sortOperator_RecordStatus.getSelectedIndex()));
 		}
 
-		String recordType = this.recordType.getValue();
+		String recordType = this.recordType.getSelectedItem().getValue();
 		if (StringUtils.isNotEmpty(recordType)) {
-			search.getFilters().add(new Filter("csb.RecordType", recordType, this.recordTypeSort.getSelectedIndex()));
+			search.getFilters()
+					.add(new Filter("csb.RecordType", recordType, this.sortOperator_RecordType.getSelectedIndex()));
 		}
 
 		return search;

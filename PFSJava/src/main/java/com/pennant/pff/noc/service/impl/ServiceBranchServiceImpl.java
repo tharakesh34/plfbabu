@@ -455,7 +455,7 @@ public class ServiceBranchServiceImpl extends GenericService<ServiceBranch> impl
 			valueParm[0] = PennantJavaUtil.getLabel("label_ServiceBranchDialogLoanType.value");
 			valueParm[1] = PennantJavaUtil.getLabel("label_ServiceBranchDialogBranch.value");
 
-			ah.setErrorDetail(new ErrorDetail("90273", valueParm));
+			ah.setErrorDetail(new ErrorDetail("41015", valueParm));
 		}
 
 		ah.setErrorDetails(ErrorUtil.getErrorDetails(ah.getErrorDetails(), usrLanguage));
