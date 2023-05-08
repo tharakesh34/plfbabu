@@ -1700,7 +1700,7 @@ public class QueryBuilder extends Groupbox {
 	public class ListBoxItemRenderer implements ListitemRenderer {
 
 		public ListBoxItemRenderer() {
-
+		    super();
 		}
 
 		String[] str = queryModule.getResultColumns().split(",");

@@ -300,7 +300,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		private static final long serialVersionUID = -5988686000244488795L;
 
 		public FinanceCheckListReferenceListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -434,7 +434,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		private static final long serialVersionUID = 9112640872865877333L;
 
 		public CheckListComparator() {
-
+		    super();
 		}
 
 		@Override

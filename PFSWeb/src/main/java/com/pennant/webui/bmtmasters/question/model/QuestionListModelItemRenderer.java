@@ -45,7 +45,7 @@ public class QuestionListModelItemRenderer implements ListitemRenderer<Question>
 	private static final long serialVersionUID = 1L;
 
 	public QuestionListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

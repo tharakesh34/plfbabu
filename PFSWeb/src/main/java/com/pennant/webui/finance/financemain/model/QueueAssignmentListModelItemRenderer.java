@@ -16,7 +16,7 @@ public class QueueAssignmentListModelItemRenderer implements ListitemRenderer<Qu
 	private static final long serialVersionUID = -800292670064839471L;
 
 	public QueueAssignmentListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

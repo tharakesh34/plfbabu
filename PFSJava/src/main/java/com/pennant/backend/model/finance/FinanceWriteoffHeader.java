@@ -14,7 +14,7 @@ public class FinanceWriteoffHeader implements Serializable {
 	private String finSource;
 
 	public FinanceWriteoffHeader() {
-
+	    super();
 	}
 
 	public long getFinID() {

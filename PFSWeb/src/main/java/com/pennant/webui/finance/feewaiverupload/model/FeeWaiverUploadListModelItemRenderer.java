@@ -25,7 +25,7 @@ public class FeeWaiverUploadListModelItemRenderer implements ListitemRenderer<Fe
 	}
 
 	public FeeWaiverUploadListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

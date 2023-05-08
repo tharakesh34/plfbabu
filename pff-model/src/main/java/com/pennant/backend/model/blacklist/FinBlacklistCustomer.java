@@ -38,7 +38,7 @@ public class FinBlacklistCustomer implements Serializable {
 	private String sourceCIF;
 
 	public FinBlacklistCustomer() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

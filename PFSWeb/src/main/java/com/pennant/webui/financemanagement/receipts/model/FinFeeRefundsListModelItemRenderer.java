@@ -43,7 +43,7 @@ public class FinFeeRefundsListModelItemRenderer implements ListitemRenderer<FinF
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public FinFeeRefundsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

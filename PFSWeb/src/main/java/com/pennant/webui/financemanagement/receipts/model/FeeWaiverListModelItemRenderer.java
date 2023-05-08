@@ -44,7 +44,7 @@ public class FeeWaiverListModelItemRenderer implements ListitemRenderer<FeeWaive
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public FeeWaiverListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

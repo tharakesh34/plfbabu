@@ -43,7 +43,7 @@ public class FinanceStatusCodeListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = 1L;
 
 	public FinanceStatusCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

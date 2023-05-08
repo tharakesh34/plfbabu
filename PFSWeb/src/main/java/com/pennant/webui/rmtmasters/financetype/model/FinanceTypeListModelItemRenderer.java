@@ -53,7 +53,7 @@ public class FinanceTypeListModelItemRenderer implements ListitemRenderer<Financ
 	boolean isOverdraft = false;
 
 	public FinanceTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	public FinanceTypeListModelItemRenderer(boolean isOverdraft) {

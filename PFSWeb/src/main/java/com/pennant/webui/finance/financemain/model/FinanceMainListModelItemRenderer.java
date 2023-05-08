@@ -51,7 +51,7 @@ public class FinanceMainListModelItemRenderer implements ListitemRenderer<Financ
 	private static final long serialVersionUID = -4562142056572229437L;
 
 	public FinanceMainListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

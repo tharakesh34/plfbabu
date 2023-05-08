@@ -51,7 +51,7 @@ public class FeePostingsListModelItemRenderer implements ListitemRenderer<FeePos
 	private static final long serialVersionUID = 1L;
 
 	public FeePostingsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFl
 	private static final long serialVersionUID = -4562142056572229437L;
 
 	public FinFlagsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

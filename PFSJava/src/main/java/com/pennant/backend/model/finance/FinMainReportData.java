@@ -148,7 +148,7 @@ public class FinMainReportData implements Serializable {
 	private String custShrtName;
 
 	public FinMainReportData() {
-
+	    super();
 	}
 
 	// ******************************************************//

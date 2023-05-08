@@ -45,7 +45,7 @@ public class FinSuspHoldListModelItemRenderer implements ListitemRenderer<FinSus
 	private static final long serialVersionUID = -6336194516320385692L;
 
 	public FinSuspHoldListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

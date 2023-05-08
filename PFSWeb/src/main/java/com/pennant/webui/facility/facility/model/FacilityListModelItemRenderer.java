@@ -45,7 +45,7 @@ public class FacilityListModelItemRenderer implements ListitemRenderer<Facility>
 	private static final long serialVersionUID = 1L;
 
 	public FacilityListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

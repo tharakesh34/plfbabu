@@ -23,7 +23,7 @@ public class FinCollateralMark implements Serializable {
 	private boolean processed;
 
 	public FinCollateralMark() {
-
+	    super();
 	}
 
 	public long getId() {
