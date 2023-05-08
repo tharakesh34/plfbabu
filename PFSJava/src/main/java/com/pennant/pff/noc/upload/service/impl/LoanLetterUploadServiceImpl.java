@@ -77,7 +77,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		}
 
 		String mode = detail.getModeOfTransfer();
-		if (!NOCConstants.MODE_COURIER.equals(mode) && !NOCConstants.MODE_EMAIL.equals(letterType)) {
+		if (!NOCConstants.MODE_COURIER.equals(mode) && !NOCConstants.MODE_EMAIL.equals(mode)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_03);
 			return;
 		}

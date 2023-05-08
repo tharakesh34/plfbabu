@@ -21,7 +21,7 @@ public enum LoanLetterUploadError {
 
 	LOAN_LTR_10("Loan reference with 'CANCEL AND REBOOK' are not allowed to issue letter"),
 
-	LOAN_LTR_11("Duplicate data found loan reference or letter type or waiver charges or mode.");
+	LOAN_LTR_11("Duplicate data found with loan reference on same date");
 
 	private String description;
 
