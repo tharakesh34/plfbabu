@@ -54,7 +54,6 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -112,7 +111,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
@@ -176,7 +174,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
@@ -206,7 +203,6 @@ import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class CreateFinanceController extends SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
@@ -261,7 +257,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PromotionDAO promotionDAO;
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private CustomerDAO customerDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private BounceReasonDAO bounceReasonDAO;
@@ -2644,15 +2639,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
-			List<FinanceScheduleDetail> fsdl = schdData.getFinanceScheduleDetails();
-
-			FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
-
-			if (fpd == null) {
-				fpd = new FinanceProfitDetail();
-			}
-
-			schdData.setFinPftDeatil(fpd);
 
 			if (!fm.isFinIsActive()) {
 				fm.setClosedDate(financeMainService.getFinClosedDate(finID));
@@ -2702,20 +2688,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			prepareResponse(fd);
 
-			FinanceSummary financeSummary = schdData.getFinanceSummary();
-			Date businessDate = appDate;
-			if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
-				businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-			}
-
-			financeSummary.setLoanEMI(SchdUtil.getNextEMI(businessDate, fsdl));
-			financeSummary.setForeClosureAmount(getForeClosureAmount(fd));
-			financeSummary.setFutureInst(SchdUtil.getFutureInstalments(appDate, fsdl));
-
-			if (fpd != null) {
-				financeSummary.setFinCurODDays(fpd.getCurODDays());
-			}
-
 			List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 					ExtendedFieldConstants.MODULE_LOAN, finCategory, FinServiceEvent.ORG, finReference);
 			fd.setExtendedDetails(extData);
@@ -2731,12 +2703,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		logger.debug(Literal.LEAVING);
 		return fd;
-	}
-
-	private BigDecimal getForeClosureAmount(FinanceDetail fd) {
-		ReceiptDTO receiptDTO = financeDetailService.prepareReceiptDTO(fd);
-
-		return LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 	}
 
 	private void processPlanEmiDays(long finid, FinanceDetail fd) {
@@ -3206,10 +3172,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		if (fm.isAllowGrcPeriod()) {
-			fm.setGrcStartDate(fm.getFinStartDate());
-		}
-
 		List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
 		fd.setFinFeeDetails(getUpdatedFees(finFeeDetail));
 
@@ -3277,8 +3239,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// Fetch summary details
-		Date appDate = SysParamUtil.getAppDate();
-		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		FinanceSummary summary = getFinanceSummary(fd);
 
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
@@ -5056,11 +5016,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	@Autowired
-	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
-		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
 	@Autowired

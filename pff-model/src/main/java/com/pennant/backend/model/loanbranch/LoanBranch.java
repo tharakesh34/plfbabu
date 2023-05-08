@@ -35,6 +35,12 @@ public class LoanBranch {
 	private String branchTel;
 	@XmlElement(name = "mail")
 	private String branchMail;
+	@XmlElement
+	private String zipCode;
+	@XmlElement
+	private String branchAddrHNbr;
+	@XmlElement
+	private String branchAddrStreet;
 
 	public LoanBranch() {
 		super();
@@ -142,5 +148,29 @@ public class LoanBranch {
 
 	public void setBranchMail(String branchMail) {
 		this.branchMail = branchMail;
+	}
+
+	public String getBranchAddrHNbr() {
+		return branchAddrHNbr;
+	}
+
+	public void setBranchAddrHNbr(String branchAddrHNbr) {
+		this.branchAddrHNbr = branchAddrHNbr;
+	}
+
+	public String getBranchAddrStreet() {
+		return branchAddrStreet;
+	}
+
+	public void setBranchAddrStreet(String branchAddrStreet) {
+		this.branchAddrStreet = branchAddrStreet;
+	}
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 }

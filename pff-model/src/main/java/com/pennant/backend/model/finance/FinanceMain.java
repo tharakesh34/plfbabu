@@ -850,8 +850,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String reason;
 	private boolean underSettlement;
 	private boolean isEOD;
-	@XmlElement
-	private Date grcStartDate;
 	private String loanName;
 	private Date custDOB;
 
@@ -1099,7 +1097,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("holdStatus");
 		excludeFields.add("reason");
 		excludeFields.add("isEOD");
-		excludeFields.add("grcStartDate");
 		excludeFields.add("loanName");
 		excludeFields.add("custDOB");
 
@@ -5601,14 +5598,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setEOD(boolean isEOD) {
 		this.isEOD = isEOD;
-	}
-
-	public Date getGrcStartDate() {
-		return grcStartDate;
-	}
-
-	public void setGrcStartDate(Date grcStartDate) {
-		this.grcStartDate = grcStartDate;
 	}
 
 	public String getLoanName() {
