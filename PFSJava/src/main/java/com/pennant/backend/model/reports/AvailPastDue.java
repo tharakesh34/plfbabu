@@ -11,7 +11,7 @@ public class AvailPastDue {
 	private int dueDays = 0;
 
 	public AvailPastDue() {
-
+	    super();
 	}
 
 	// ******************************************************//

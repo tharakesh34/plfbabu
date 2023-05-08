@@ -49,7 +49,7 @@ public class ApplicationDetails implements Serializable {
 	private String lovValue;
 
 	public ApplicationDetails() {
-
+	    super();
 	}
 
 	public ApplicationDetails(long appId) {

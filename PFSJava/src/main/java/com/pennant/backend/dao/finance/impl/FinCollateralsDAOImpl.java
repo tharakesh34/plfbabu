@@ -241,6 +241,7 @@ public class FinCollateralsDAOImpl extends SequenceDao<FinCollaterals> implement
 	private class FinCollateralsRowMapper implements RowMapper<FinCollaterals> {
 
 		private FinCollateralsRowMapper() {
+		    super();
 		}
 
 		@Override

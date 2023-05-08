@@ -45,7 +45,7 @@ public class AuditTransaction implements java.io.Serializable {
 	private String recordType;
 
 	public AuditTransaction() {
-
+	    super();
 	}
 
 	public String getAuditReference() {

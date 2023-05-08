@@ -18,6 +18,7 @@ public class ApplicantOutElement implements Serializable {
 	private EligibilityApclOut eligApclOut;
 
 	public ApplicantOutElement() {
+	    super();
 	}
 
 	public ApplicantDetails getApplicantDetails() {

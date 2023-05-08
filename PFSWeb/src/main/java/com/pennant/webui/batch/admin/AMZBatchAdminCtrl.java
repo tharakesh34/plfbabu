@@ -138,6 +138,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public class AMZJob implements Runnable {
 
 		public AMZJob() {
+		    super();
 		}
 
 		@Override

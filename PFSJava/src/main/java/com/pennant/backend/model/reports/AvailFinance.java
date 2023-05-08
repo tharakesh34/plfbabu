@@ -27,6 +27,7 @@ public class AvailFinance {
 	private int noInst = 0;
 
 	public AvailFinance() {
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

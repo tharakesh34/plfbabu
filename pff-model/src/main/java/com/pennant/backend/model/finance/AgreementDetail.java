@@ -2730,7 +2730,7 @@ public class AgreementDetail {
 	private List<CheckListDetails> checkListDetails;
 
 	public AgreementDetail() {
-
+	    super();
 	}
 
 	public List<CheckListDetails> getCheckListDetails() {
@@ -2748,7 +2748,7 @@ public class AgreementDetail {
 		private List<CheckListAnsDetails> listquestionAns;
 
 		public CheckListDetails() {
-
+		    super();
 		}
 
 		public String getQuestion() {
@@ -2784,7 +2784,7 @@ public class AgreementDetail {
 		private String questionRem = "";
 
 		public CheckListAnsDetails() {
-
+		    super();
 		}
 
 		public void setQuestionId(long questionId) {
@@ -3256,7 +3256,7 @@ public class AgreementDetail {
 		private List<Recommendation> recommendations;
 
 		public GroupRecommendation() {
-
+		    super();
 		}
 
 		public void setUserRole(String userRole) {
@@ -3284,7 +3284,7 @@ public class AgreementDetail {
 		private String noteDesc = "";
 
 		public Recommendation() {
-
+		    super();
 		}
 
 		public String getUserName() {
@@ -3337,7 +3337,7 @@ public class AgreementDetail {
 		private String exceptionDesc = "";
 
 		public ExceptionList() {
-
+		    super();
 		}
 
 		public String getExceptionItem() {
@@ -3365,7 +3365,7 @@ public class AgreementDetail {
 		private String outstandingBalance = "";
 
 		public CustomerFinance() {
-
+		    super();
 		}
 
 		public String getDealDate() {
@@ -5400,7 +5400,7 @@ public class AgreementDetail {
 		private Map<String, String> extMap = new HashMap<>();
 
 		public CoApplicant() {
-
+		    super();
 		}
 
 		public String getCustName() {
@@ -5983,6 +5983,7 @@ public class AgreementDetail {
 		private String isDeductFromDisb = "";
 
 		public CusCharge() {
+		    super();
 		}
 
 		public String getFeeTreatmentDesc() {
@@ -6118,6 +6119,7 @@ public class AgreementDetail {
 		private String accountNumber = "";
 
 		public Disbursement() {
+		    super();
 		}
 
 		public String getScheduleDisbursementDate() {
@@ -7438,6 +7440,7 @@ public class AgreementDetail {
 		private String contactValue = "";
 
 		public ContactDetail() {
+		    super();
 		}
 
 		public String getContactType() {
@@ -7470,6 +7473,7 @@ public class AgreementDetail {
 	public class EmailDetail {
 
 		public EmailDetail() {
+		    super();
 		}
 
 		private String emailType = "";
@@ -7515,6 +7519,7 @@ public class AgreementDetail {
 		private String margin = "";
 
 		public AppIncDetail() {
+		    super();
 		}
 
 		public String getApplicantType() {
@@ -7612,6 +7617,7 @@ public class AgreementDetail {
 		private String margin = "";
 
 		public AppExpDetail() {
+		    super();
 		}
 
 		public String getApplicantType() {
@@ -7738,6 +7744,7 @@ public class AgreementDetail {
 		}
 
 		public ExternalLiabilityDetail() {
+		    super();
 		}
 
 		public String getAppType() {
@@ -8051,6 +8058,7 @@ public class AgreementDetail {
 		private String appType = "";
 
 		public InternalLiabilityDetail() {
+		    super();
 		}
 
 		public String getCustCIF() {
@@ -8158,6 +8166,7 @@ public class AgreementDetail {
 		private String noEMIBounce = "";
 
 		public BankingDetail() {
+		    super();
 		}
 
 		public String getApplicantType() {
@@ -8393,6 +8402,7 @@ public class AgreementDetail {
 		private String irrPercentage = "";
 
 		public IrrDetail() {
+		    super();
 		}
 
 		public String getIrrCode() {
@@ -8449,6 +8459,7 @@ public class AgreementDetail {
 		private String activityUser = "";
 
 		public ActivityDetail() {
+		    super();
 		}
 
 		public String getRole() {
@@ -8522,6 +8533,7 @@ public class AgreementDetail {
 		private String approvalStatus = "";
 
 		public LoanDeviation() {
+		    super();
 		}
 
 		public String getDeviationCode() {
@@ -8619,6 +8631,7 @@ public class AgreementDetail {
 		private String dmaName = "";
 
 		public SourcingDetail() {
+		    super();
 		}
 
 		public String getDsaNameDesc() {
@@ -8727,6 +8740,7 @@ public class AgreementDetail {
 		private String applicantType = "";
 
 		public ExtendedDetail() {
+		    super();
 		}
 
 		/**
@@ -8951,6 +8965,7 @@ public class AgreementDetail {
 		private String actualScore = "";
 
 		public Score() {
+		    super();
 		}
 
 		public String getScoringMetrics() {
@@ -9003,6 +9018,7 @@ public class AgreementDetail {
 		private String eligibilityLimit = "";
 
 		public Eligibility() {
+		    super();
 		}
 
 		public String getRuleCode() {
@@ -9092,6 +9108,7 @@ public class AgreementDetail {
 		private String finalValAmt = "0.00";
 
 		public VerificationDetail() {
+		    super();
 		}
 
 		public String getApplicantName() {
@@ -9274,6 +9291,7 @@ public class AgreementDetail {
 		private String status = "";
 
 		public LoanQryDetails() {
+		    super();
 		}
 
 		public String getRaisedBy() {
@@ -10927,6 +10945,7 @@ public class AgreementDetail {
 		private String creditWorth = "";
 
 		public ScoreHeader() {
+		    super();
 		}
 
 		public String getCustomerType() {
@@ -10992,6 +11011,7 @@ public class AgreementDetail {
 		private String custAddrPhone = "";
 
 		public CustomerAddress() {
+		    super();
 		}
 
 		public String getCustAddrType() {
