@@ -379,7 +379,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			if (ImplementationConstants.ALLOW_LIEN) {
 				if (InstrumentType.isSI(changePayment.getFinRepayMethod())) {
-					lienService.save(fd);
+					lienService.save(fd, true);
 				} else {
 					lienService.update(fd);
 				}
