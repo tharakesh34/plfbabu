@@ -47,8 +47,8 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	private LienDetailsDAO lienDetailsDAO;
 	private LienHeaderDAO lienHeaderDAO;
 	private LienService lienService;
-	
-	public LienUploadServiceImpl(){
+
+	public LienUploadServiceImpl() {
 		super();
 	}
 
@@ -299,7 +299,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 		LienUpload details = (LienUpload) ObjectUtil.valueAsObject(paramSource, LienUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 

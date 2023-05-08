@@ -49,8 +49,8 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 	private CostCenterDAO costCenterDAO;
 	private ProfitCenterDAO profitCenterDAO;
 	private AccountMappingService accountMappingService;
-	
-	public HostGLMappingUploadServiceImpl(){
+
+	public HostGLMappingUploadServiceImpl() {
 		super();
 	}
 
@@ -308,8 +308,6 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 
 		HostGLMappingUpload details = (HostGLMappingUpload) ObjectUtil.valueAsObject(paramSource,
 				HostGLMappingUpload.class);
-
-		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 

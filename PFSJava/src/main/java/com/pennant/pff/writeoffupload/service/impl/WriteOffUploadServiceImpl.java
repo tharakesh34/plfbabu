@@ -462,7 +462,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
-		String finReference = ObjectUtil.valueAsString(paramSource.getValue("FINREFERENCE"));
+		String finReference = ObjectUtil.valueAsString(paramSource.getValue("finReference"));
 		boolean recordExist = isInProgress(headerID, finReference);
 
 		if (recordExist) {
@@ -472,7 +472,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 		WriteOffUploadDetail detail = new WriteOffUploadDetail();
 		detail.setHeaderId(headerID);
 		detail.setReference(finReference);
-		detail.setRemarks(ObjectUtil.valueAsString(paramSource.getValue("REMARKS")));
+		detail.setRemarks(ObjectUtil.valueAsString(paramSource.getValue("remarks")));
 
 		doValidate(header, detail);
 

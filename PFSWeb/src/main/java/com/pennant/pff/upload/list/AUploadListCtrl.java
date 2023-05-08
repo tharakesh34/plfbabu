@@ -1,8 +1,6 @@
 package com.pennant.pff.upload.list;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -52,17 +50,7 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 		uploadDTO.setDataSource(this.dataSource);
 		uploadDTO.setListWrapper(this.listWrapper);
 		uploadDTO.setStage(stage);
-		List<String> workFlowRoles = getWorkFlowRoles();
-
-		List<String> roles = new ArrayList<>();
-
-		for (String role : workFlowRoles) {
-			if (stage.equals("A") && role.contains("APPROVER")) {
-				roles.add(role);
-			}
-		}
-
-		uploadDTO.setRoleCodes(roles);
+		uploadDTO.setRoleCodes(getWorkFlowRoles());
 
 		FileUploadHeader header = new FileUploadHeader();
 
