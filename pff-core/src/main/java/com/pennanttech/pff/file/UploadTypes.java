@@ -11,7 +11,7 @@ public enum UploadTypes {
 
 	FATE_CORRECTION("Fate Correction Upload Details Screen"),
 
-	CHEQUE("Cheque Upload Details Screen"),
+	CHEQUES("Cheque Upload Details Screen"),
 
 	LPP("Bulk Overdue Penalty Upload Details"),
 

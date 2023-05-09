@@ -365,7 +365,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.CHEQUE.name(), this, "ChequeUpload");
+		uploadProcess(UploadTypes.CHEQUES.name(), this, "ChequeUpload");
 	}
 
 	@Override
