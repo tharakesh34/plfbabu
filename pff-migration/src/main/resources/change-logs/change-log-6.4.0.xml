@@ -18132,7 +18132,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1528.39" author="Sravani.S">
+	<changeSet id="ST#1528.39_1" author="Sravani.S">
 		<sql>
 		 	<![CDATA[ 
 		 		DELETE FROM JOB_DETAILS WHERE JOBKEY = 'EXCESS_TRANSFER_JOB';
