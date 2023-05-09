@@ -33,7 +33,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new DocumentStatusRowMapper());
+		return jdbcOperations.queryForObject(sql.toString(), new DocumentStatusRowMapper(), id);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 
 		try {
 
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, (rs, rowNum) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				DocumentStatus ds = new DocumentStatus();
 				ds.setId(rs.getLong("Id"));
 				ds.setFinReference(rs.getString("FinReference"));
@@ -101,7 +101,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 				ds.setWorkflowId(rs.getLong("WorkFlowId"));
 
 				return ds;
-			});
+			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -123,7 +123,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), new Object[] { finReferece }, (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			Document doc = new Document();
 			doc.setId(rs.getLong("Id"));
 			doc.setCustId(rs.getLong("CustId"));
@@ -133,7 +133,7 @@ public class DocumentDaoImpl extends SequenceDao<Document> implements DocumentDa
 			doc.setDocCategory(rs.getString("DocCategory"));
 
 			return doc;
-		});
+		}, finReferece);
 	}
 
 	@Override

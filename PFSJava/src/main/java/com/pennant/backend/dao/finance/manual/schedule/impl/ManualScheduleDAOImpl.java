@@ -157,7 +157,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ManualScheduleDetail msDtl = new ManualScheduleDetail();
 
 			msDtl.setId(rs.getLong("Id"));
@@ -170,7 +170,7 @@ public class ManualScheduleDAOImpl extends SequenceDao<ManualScheduleHeader> imp
 			msDtl.setReason(rs.getString("Reason"));
 
 			return msDtl;
-		});
+		}, headerId);
 	}
 
 	public void delete(ManualScheduleHeader uploadManualSchdHeader, TableType tableType) {

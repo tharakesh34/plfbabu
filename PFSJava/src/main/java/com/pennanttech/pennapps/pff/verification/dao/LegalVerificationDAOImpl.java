@@ -611,7 +611,7 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { keyReference }, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			LVDocument lv = new LVDocument();
 
 			lv.setSeqNo((rs.getInt("seqNo")));
@@ -620,6 +620,6 @@ public class LegalVerificationDAOImpl extends SequenceDao<LegalVerification> imp
 			lv.setVerificationId(rs.getLong("verificationId"));
 
 			return lv;
-		});
+		}, keyReference);
 	}
 }

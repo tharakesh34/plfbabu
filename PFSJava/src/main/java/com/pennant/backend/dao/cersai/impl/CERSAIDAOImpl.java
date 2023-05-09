@@ -192,7 +192,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { batchId }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CersaiHeader ch = new CersaiHeader();
 
 				ch.setBatchId(rs.getLong("BatchId"));
@@ -202,7 +202,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				ch.setFileDate(rs.getDate("FileDate"));
 
 				return ch;
-			});
+			}, batchId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -230,36 +230,34 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { collateralRef, collateralRef },
-					(rs, rowNum) -> {
-						CersaiBorrowers brrDtl = new CersaiBorrowers();
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				CersaiBorrowers brrDtl = new CersaiBorrowers();
 
-						brrDtl.setCustId(rs.getLong("CUSTID"));
-						brrDtl.setCustCif(rs.getString("CUSTCIF"));
-						brrDtl.setBorrowerType(rs.getString("CUSTTYPECODE"));
-						brrDtl.setCustCtgCode(rs.getString("CUSTCTGCODE"));
-						if (StringUtils.equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_INDIV,
-								rs.getString("CUSTCTGCODE"))) {
-							brrDtl.setIndividualPan(rs.getString("CUSTCRCPR"));
-							brrDtl.setIndividualName(rs.getString("CUSTSHRTNAME"));
-							brrDtl.setDob(rs.getDate("CUSTDOB"));
-							brrDtl.setGender(rs.getString("CUSTGENDERCODE"));
-							brrDtl.setFatherMotherName(rs.getString("CUSTMOTHERMAIDEN"));
-							brrDtl.setMobileNo(rs.getLong("PHONENUMBER"));
-							brrDtl.setEmail(rs.getString("CUSTEMAIL"));
-						} else {
-							brrDtl.setBorrowerPAN(rs.getString("CUSTCRCPR"));
-							brrDtl.setBorrowerName(rs.getString("CUSTSHRTNAME"));
-							brrDtl.setBorrowerRegDate(rs.getDate("CUSTDOB"));
-						}
-						brrDtl.setAddressLine1(rs.getString("CUSTADDRLINE1"));
-						brrDtl.setCity(rs.getString("CUSTADDRCITY"));
-						brrDtl.setState(rs.getString("CUSTADDRPROVINCE"));
-						brrDtl.setPincode(rs.getLong("CUSTADDRZIP"));
-						brrDtl.setDistrict(rs.getString("CUSTDISTRICT"));
+				brrDtl.setCustId(rs.getLong("CUSTID"));
+				brrDtl.setCustCif(rs.getString("CUSTCIF"));
+				brrDtl.setBorrowerType(rs.getString("CUSTTYPECODE"));
+				brrDtl.setCustCtgCode(rs.getString("CUSTCTGCODE"));
+				if (StringUtils.equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_INDIV, rs.getString("CUSTCTGCODE"))) {
+					brrDtl.setIndividualPan(rs.getString("CUSTCRCPR"));
+					brrDtl.setIndividualName(rs.getString("CUSTSHRTNAME"));
+					brrDtl.setDob(rs.getDate("CUSTDOB"));
+					brrDtl.setGender(rs.getString("CUSTGENDERCODE"));
+					brrDtl.setFatherMotherName(rs.getString("CUSTMOTHERMAIDEN"));
+					brrDtl.setMobileNo(rs.getLong("PHONENUMBER"));
+					brrDtl.setEmail(rs.getString("CUSTEMAIL"));
+				} else {
+					brrDtl.setBorrowerPAN(rs.getString("CUSTCRCPR"));
+					brrDtl.setBorrowerName(rs.getString("CUSTSHRTNAME"));
+					brrDtl.setBorrowerRegDate(rs.getDate("CUSTDOB"));
+				}
+				brrDtl.setAddressLine1(rs.getString("CUSTADDRLINE1"));
+				brrDtl.setCity(rs.getString("CUSTADDRCITY"));
+				brrDtl.setState(rs.getString("CUSTADDRPROVINCE"));
+				brrDtl.setPincode(rs.getLong("CUSTADDRZIP"));
+				brrDtl.setDistrict(rs.getString("CUSTDISTRICT"));
 
-						return brrDtl;
-					});
+				return brrDtl;
+			}, collateralRef, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -284,36 +282,34 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(),
-					new Object[] { collateralRef, collateralRef, BigDecimal.ONE }, (rs, rowNum) -> {
-						CersaiAssetOwners asstOwnDtl = new CersaiAssetOwners();
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				CersaiAssetOwners asstOwnDtl = new CersaiAssetOwners();
 
-						asstOwnDtl.setCustId(rs.getLong("CUSTID"));
-						asstOwnDtl.setCustCif(rs.getString("CUSTCIF"));
-						asstOwnDtl.setAssetOwnerType(rs.getString("CUSTTYPECODE"));
-						asstOwnDtl.setCustCtgCode(rs.getString("CUSTCTGCODE"));
-						if (StringUtils.equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_INDIV,
-								rs.getString("CUSTCTGCODE"))) {
-							asstOwnDtl.setIndividualPan(rs.getString("CUSTCRCPR"));
-							asstOwnDtl.setIndividualName(rs.getString("CUSTSHRTNAME"));
-							asstOwnDtl.setDob(rs.getDate("CUSTDOB"));
-							asstOwnDtl.setGender(rs.getString("CUSTGENDERCODE"));
-							asstOwnDtl.setFatherMotherName(rs.getString("CUSTMOTHERMAIDEN"));
-							asstOwnDtl.setMobileNo(rs.getLong("PHONENUMBER"));
-							asstOwnDtl.setEmail(rs.getString("CUSTEMAIL"));
-						} else {
-							asstOwnDtl.setAssetOwnerPAN(rs.getString("CUSTCRCPR"));
-							asstOwnDtl.setAssetOwnerName(rs.getString("CUSTSHRTNAME"));
-							asstOwnDtl.setAssetOwnerRegDate(rs.getDate("CUSTDOB"));
-						}
-						asstOwnDtl.setAddressLine1(rs.getString("CUSTADDRLINE1"));
-						asstOwnDtl.setCity(rs.getString("CUSTADDRCITY"));
-						asstOwnDtl.setState(rs.getString("CUSTADDRPROVINCE"));
-						asstOwnDtl.setPincode(rs.getLong("CUSTADDRZIP"));
-						asstOwnDtl.setDistrict(rs.getString("CUSTDISTRICT"));
+				asstOwnDtl.setCustId(rs.getLong("CUSTID"));
+				asstOwnDtl.setCustCif(rs.getString("CUSTCIF"));
+				asstOwnDtl.setAssetOwnerType(rs.getString("CUSTTYPECODE"));
+				asstOwnDtl.setCustCtgCode(rs.getString("CUSTCTGCODE"));
+				if (StringUtils.equalsIgnoreCase(PennantConstants.PFF_CUSTCTG_INDIV, rs.getString("CUSTCTGCODE"))) {
+					asstOwnDtl.setIndividualPan(rs.getString("CUSTCRCPR"));
+					asstOwnDtl.setIndividualName(rs.getString("CUSTSHRTNAME"));
+					asstOwnDtl.setDob(rs.getDate("CUSTDOB"));
+					asstOwnDtl.setGender(rs.getString("CUSTGENDERCODE"));
+					asstOwnDtl.setFatherMotherName(rs.getString("CUSTMOTHERMAIDEN"));
+					asstOwnDtl.setMobileNo(rs.getLong("PHONENUMBER"));
+					asstOwnDtl.setEmail(rs.getString("CUSTEMAIL"));
+				} else {
+					asstOwnDtl.setAssetOwnerPAN(rs.getString("CUSTCRCPR"));
+					asstOwnDtl.setAssetOwnerName(rs.getString("CUSTSHRTNAME"));
+					asstOwnDtl.setAssetOwnerRegDate(rs.getDate("CUSTDOB"));
+				}
+				asstOwnDtl.setAddressLine1(rs.getString("CUSTADDRLINE1"));
+				asstOwnDtl.setCity(rs.getString("CUSTADDRCITY"));
+				asstOwnDtl.setState(rs.getString("CUSTADDRPROVINCE"));
+				asstOwnDtl.setPincode(rs.getLong("CUSTADDRZIP"));
+				asstOwnDtl.setDistrict(rs.getString("CUSTDISTRICT"));
 
-						return asstOwnDtl;
-					});
+				return asstOwnDtl;
+			}, collateralRef, collateralRef, BigDecimal.ONE);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -334,7 +330,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { collateralRef }, (rs, rowNum) -> {
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 				CersaiAddCollDetails collDtl = new CersaiAddCollDetails();
 
 				collDtl.setTotalSecuredAmt(rs.getBigDecimal("FINASSETVALUE"));
@@ -342,7 +338,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				collDtl.setCollateralType(rs.getString("collateraltype"));
 
 				return collDtl;
-			});
+			}, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -581,7 +577,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collateralRef }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CersaiSatisfyCollDetails collDtl = new CersaiSatisfyCollDetails();
 
 				collDtl.setSiId(rs.getLong("SIID"));
@@ -589,7 +585,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 				collDtl.setSatisfactionDate(JdbcUtil.getDate(rs.getDate("satisfactionDate")));
 
 				return collDtl;
-			});
+			}, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -688,14 +684,14 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collateralRef }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CersaiModifyCollDetails collDtl = new CersaiModifyCollDetails();
 
 				collDtl.setSiId(rs.getLong("SIID"));
 				collDtl.setCollateralType(rs.getString("CollateralType"));
 
 				return collDtl;
-			});
+			}, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -776,7 +772,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -815,7 +811,7 @@ public class CERSAIDAOImpl extends SequenceDao<Object> implements CERSAIDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collateralRef }, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
