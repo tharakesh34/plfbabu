@@ -11189,6 +11189,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
+	public BigDecimal getDownPayRuleAmount(FinanceType ft, FinanceMain fm) {
+		Map<String, Object> dataMap = new HashMap<>();
+		Map<String, String> ruleSqlMap = new HashMap<>();
+		List<String> rules = new ArrayList<>();
+		dataMap.put("LOAN_LAP_LOANTYPE", fm.getFinType());
+
+		rules.add(ft.getDownPayRuleCode());
+		List<Rule> feeRules = ruleDAO.getRuleDetailList(rules, RuleConstants.MODULE_DOWNPAYRULE,
+				RuleConstants.MODULE_DOWNPAYRULE);
+
+		for (Rule feeRule : feeRules) {
+			ruleSqlMap.put(feeRule.getRuleCode(), feeRule.getSQLRule());
+		}
+
+		return this.finFeeDetailService.getFeeResult(ruleSqlMap.get(ft.getDownPayRuleCode()), dataMap, fm.getFinCcy());
+	}
+
+	@Override
 	public String getFinCategory(String finReference) {
 		return financeMainDAO.getFinCategory(finReference);
 	}

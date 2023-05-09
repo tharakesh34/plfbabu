@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
@@ -53,6 +54,7 @@ import com.pennant.backend.dao.loanquery.QueryCategoryDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.psl.PSLDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.dao.systemmasters.GenderDAO;
@@ -142,6 +144,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -3451,6 +3454,15 @@ public class FinanceDataValidation {
 				valueParm[0] = "Sum of Bank & Supplier Down payments";
 				valueParm[1] = String.valueOf(reqDwnPay);
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
+			}
+
+			BigDecimal feeResult = financeDetailService.getDownPayRuleAmount(finType, fm);
+
+			if (downPayment.compareTo(feeResult) < 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Down pay Amount";
+				valueParm[1] = feeResult.toString();
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
 			}
 
 		} else if (downPayBank.compareTo(BigDecimal.ZERO) != 0 || downPaySupl.compareTo(BigDecimal.ZERO) != 0) {

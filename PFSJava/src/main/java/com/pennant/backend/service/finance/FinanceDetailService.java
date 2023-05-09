@@ -310,4 +310,6 @@ public interface FinanceDetailService {
 	String getOrgFinCategory(String finReference);
 
 	ReceiptDTO prepareReceiptDTO(FinanceDetail fd);
+
+	BigDecimal getDownPayRuleAmount(FinanceType financeType, FinanceMain aFinanceMain);
 }

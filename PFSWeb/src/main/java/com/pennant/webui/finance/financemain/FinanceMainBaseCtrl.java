@@ -160,6 +160,7 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.delegationdeviation.DeviationUtil;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.model.ValueLabel;
@@ -7387,6 +7388,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.doWriteComponentsToBean(aSchdData);
 
+		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		FinanceMain aFinanceMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		if (financeType.isFinIsDwPayRequired()) {
+
+			BigDecimal feeResult = financeDetailService.getDownPayRuleAmount(financeType, aFinanceMain);
+
+			BigDecimal downPayment = this.downPaySupl.getActualValue().add(this.downPayBank.getActualValue());
+			if (downPayment.compareTo(feeResult) < 0) {
+				MessageUtil
+						.showError("minimum downpayment should be greater or equal to:".concat(feeResult.toString()));
+				return;
+			}
+		}
+
 		// LTD Detail
 		resetLowerTaxDeductionDetail(aSchdData);
 
@@ -7999,7 +8015,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 		// Vas Recording Details capturing
 		if (!StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, financeType.getFinSchdMthd())
 				&& isTabVisible(StageTabConstants.VAS) && finVasRecordingDialogCtrl != null) {
