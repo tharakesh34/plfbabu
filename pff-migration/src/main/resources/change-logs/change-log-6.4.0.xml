@@ -17916,24 +17916,24 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1469.25.14" author="nagavamsi.p">
+	<changeSet id="ST#1469.25.14_1" author="nagavamsi.p">
 		<addColumn tableName="Loan_Provisions">
 			<column name="ManualAssetClassID" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.15" author="nagavamsi.p">
+	<changeSet id="ST#1469.25.15_1" author="nagavamsi.p">
 		<addColumn tableName="Loan_Provisions_Temp">
 			<column name="ManualAssetClassID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="ST#1469.25.28" author="nagavamsi.p">
+	<changeSet id="ST#1469.25.28_1" author="nagavamsi.p">
 		<addColumn tableName="Loan_Provisions">
 			<column name="ManualAssetSubClassID" type="bigint" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#1469.25.29" author="nagavamsi.p">
+	<changeSet id="ST#1469.25.29_1" author="nagavamsi.p">
 		<addColumn tableName="Loan_Provisions_Temp">
 			<column name="ManualAssetSubClassID" type="bigint" />
 		</addColumn>

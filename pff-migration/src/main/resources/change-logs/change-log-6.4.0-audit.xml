@@ -546,14 +546,5 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="ST#1469.25.27" author="nagavamsi.p">
-		<sql>
-			<![CDATA[
-				UPDATE AdtAdtAdtLoan_Provisions_Temp SET OverRideProvision = 0;
-			]]>
-		</sql>
-	</changeSet>
-	
 	
 </databaseChangeLog>
