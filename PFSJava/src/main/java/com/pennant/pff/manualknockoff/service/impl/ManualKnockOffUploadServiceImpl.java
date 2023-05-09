@@ -258,8 +258,16 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 					fc.setAppDate(appDate);
 					fc.setAllocations(manualKnockOffUploadDAO.getAllocations(fc.getId(), header.getId()));
 					doValidate(header, fc);
-					fc.setUserDetails(header.getUserDetails());
 
+					LoggedInUser userDetails = fc.getUserDetails();
+
+					if (userDetails == null) {
+						userDetails = new LoggedInUser();
+						userDetails.setLoginUsrID(header.getApprovedBy());
+						userDetails.setUserName(header.getApprovedByName());
+					}
+
+					fc.setUserDetails(userDetails);
 					if (fc.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						createReceipt(fc, header);
 					}
@@ -366,7 +374,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
-			
+
 			return;
 		}
 
