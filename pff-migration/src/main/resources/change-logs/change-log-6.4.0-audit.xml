@@ -542,7 +542,7 @@
 	<changeSet id="ST#1469.25.26" author="nagavamsi.p">
 		<sql>
 			<![CDATA[
-				UPDATE AdtAdtLoan_Provisions SET OverRideProvision = 0;
+				UPDATE AdtLoan_Provisions SET OverRideProvision = 0;
 			]]>
 		</sql>
 	</changeSet>
