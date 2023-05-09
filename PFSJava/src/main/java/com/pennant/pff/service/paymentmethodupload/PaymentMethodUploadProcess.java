@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
@@ -378,6 +379,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			fd.setMandate(mandateService.getMandate(fd.getFinScheduleData().getFinanceMain().getMandateID()));
 
 			if (ImplementationConstants.ALLOW_LIEN) {
+				fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
 				if (InstrumentType.isSI(changePayment.getFinRepayMethod())) {
 					lienService.save(fd, true);
 				} else {

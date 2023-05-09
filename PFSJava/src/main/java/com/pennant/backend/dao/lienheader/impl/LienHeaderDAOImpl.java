@@ -32,11 +32,11 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		if (lu.getId() <= 0) {
-			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
 			lu.setLienID((getNextValue("SEQ_LIEN_HEADER_LIEN_ID")));
 			lu.setId((getNextValue("SEQ_LIEN_HEADER_ID")));
 		}
 
+		lu.setLienReference(String.valueOf(lu.getLienID()));
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {

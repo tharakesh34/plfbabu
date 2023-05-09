@@ -17,6 +17,7 @@ import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 
 public class LienServiceImpl implements LienService {
@@ -100,7 +101,7 @@ public class LienServiceImpl implements LienService {
 		if (fmBef.getMandateID() == null) {
 			return;
 		}
-
+		String accNum = fd.getMandate().getAccNumber();
 		List<LienHeader> lienheader = lienHeaderDAO.getLienHeaderList(fm.getFinReference());
 
 		if (lienheader == null) {
@@ -108,6 +109,11 @@ public class LienServiceImpl implements LienService {
 			return;
 		}
 		for (LienHeader lh : lienheader) {
+
+			if (!lh.getAccountNumber().equals(accNum)
+					&& fm.getModuleDefiner().equals(FinServiceEvent.RPYBASICMAINTAIN)) {
+				continue;
+			}
 
 			List<LienDetails> lienDetail = lienDetailsDAO.getLienListByLienId(lh.getLienID());
 
@@ -117,7 +123,8 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarkingDate(fm.getClosedDate());
-					lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
+
+					setLienStatus(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
 				}
@@ -163,6 +170,10 @@ public class LienServiceImpl implements LienService {
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 		long userId = 1000;
 
+		String moduleType = fm.getModuleDefiner();
+
+		setLienStatus(ld, moduleType);
+
 		ld.setLienID(lh.getLienID());
 		ld.setLienReference(lh.getLienReference());
 		if (!RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
@@ -170,9 +181,7 @@ public class LienServiceImpl implements LienService {
 		}
 		ld.setReference(fm.getFinReference());
 		ld.setMarkingDate(fm.getFinStartDate());
-		ld.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
 		ld.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
-		ld.setMarkingReason(Labels.getLabel("label_Lien_Type_MarkReason"));
 		ld.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 		ld.setDemarkingDate(null);
 		ld.setLienStatus(true);
@@ -185,6 +194,29 @@ public class LienServiceImpl implements LienService {
 		ld.setApprovedBy(userId);
 
 		return ld;
+	}
+
+	private void setLienStatus(LienDetails ld, String moduleType) {
+		switch (moduleType) {
+		case FinServiceEvent.ORG:
+			ld.setMarkingReason("Loan Creation");
+			break;
+		case FinServiceEvent.RPYBASICMAINTAIN:
+			ld.setMarkingReason("Repay method changed");
+			break;
+		case FinServiceEvent.RECEIPT:
+			ld.setDemarkingReason("Early settlement");
+			break;
+		case FinServiceEvent.CANCELFIN:
+			ld.setDemarkingReason("Loan cancelled");
+			break;
+		case "Mandate Creation":
+			ld.setMarkingReason("Mandate Creation");
+			break;
+		default:
+			ld.setMarkingReason(" ");
+			break;
+		}
 	}
 
 	@Autowired

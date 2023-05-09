@@ -939,6 +939,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		if (ImplementationConstants.ALLOW_LIEN) {
+			fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
 			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
 				lienService.save(fd, true);
 			} else {

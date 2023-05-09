@@ -65,7 +65,6 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.FinMandateService;
-import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -98,7 +97,6 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	private BankBranchDAO bankBranchDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private LienService lienService;
-	private MandateService mandateService;
 	@Autowired(required = false)
 	private MandateProcesses mandateProcesses;
 
@@ -743,7 +741,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 			fd.getFinScheduleData().setFinanceMain(fm);
 			fd.getFinScheduleData().getFinanceMain().setBefImage(fm);
-			fd.setMandate(mandateService.getMandate(fd.getFinScheduleData().getFinanceMain().getMandateID()));
+
+			fd.setMandate(mandate);
 
 			boolean securityMandate = mandate.isSecurityMandate();
 			if (securityMandate) {
@@ -868,10 +867,5 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	@Autowired
 	public void setLienService(LienService lienService) {
 		this.lienService = lienService;
-	}
-
-	@Autowired
-	public void setMandateService(MandateService mandateService) {
-		this.mandateService = mandateService;
 	}
 }

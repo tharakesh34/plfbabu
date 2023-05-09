@@ -835,15 +835,5 @@
 		parent="sequenceDao" />
 
 	<bean id="loanTypeWriteOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeWriteOffDAOImpl"
-		parent="basicDao" />
-
-	<bean name="mandateService" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl" />
-
-	<bean id="mandateStatusUpdateDAO" class="com.pennant.backend.dao.mandate.impl.MandateStatusUpdateDAOImpl"
-		parent="sequenceDao" />
-
-	<bean name="bankDetailService" class="com.pennant.backend.service.applicationmaster.impl.BankDetailServiceImpl" />
-	
-	<bean name="bankBranchService" class="com.pennant.backend.service.bmtmasters.impl.BankBranchServiceImpl" />
-	
+		parent="basicDao" />	
 </beans>
