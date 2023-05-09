@@ -37,7 +37,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 	@Override
 	public void clearStage() {
-		jdbcOperations.update("Truncate table NPA_PROVISION_STAGE");
+		// jdbcOperations.update("Truncate table NPA_PROVISION_STAGE");
 	}
 
 	@Override
@@ -49,7 +49,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", TotPriBal, TotPriPaid, TotPftPaid, TotPftAccrued, AmzTillLBDate, TillDateSchdPri");
 		sql.append(", PastDueDays, PastDueDate, DerivedPastDueDate, EffFinID, EffFinReference, LinkedLoan");
 		sql.append(")");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(
+				" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 

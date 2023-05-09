@@ -50,6 +50,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -673,6 +674,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			finServiceInstructionDAO.saveList(schdData.getFinServiceInstructions(), "");
 		}
 
+		if (ImplementationConstants.ALLOW_NPA && FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
+			assetClassificationService.doCloseLoan(fm.getFinID());
+		}
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], fm.getBefImage(), fm));
@@ -1010,6 +1015,11 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	@Autowired
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
+	}
+
+	@Autowired
+	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
+		this.assetClassificationService = assetClassificationService;
 	}
 
 }
