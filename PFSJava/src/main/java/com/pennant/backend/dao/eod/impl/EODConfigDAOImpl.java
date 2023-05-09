@@ -70,7 +70,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 		EODConfigRowMapper rowMapper = new EODConfigRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { eodConfigId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, eodConfigId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

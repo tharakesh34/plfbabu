@@ -2608,14 +2608,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custCIF, custCIF },
-					new RowMapper<Long>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<Long>() {
 
-						@Override
-						public Long mapRow(ResultSet rs, int arg1) throws SQLException {
-							return rs.getLong("CustId");
-						}
-					});
+				@Override
+				public Long mapRow(ResultSet rs, int arg1) throws SQLException {
+					return rs.getLong("CustId");
+				}
+			}, custCIF, custCIF);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
@@ -2680,13 +2679,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custId }, new RowMapper<String>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<String>() {
 
 				@Override
 				public String mapRow(ResultSet rs, int arg1) throws SQLException {
 					return rs.getString("CustCIF");
 				}
-			});
+			}, custId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2705,7 +2704,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Customer>() {
+			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<Customer>() {
 
 				@Override
 				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2715,7 +2714,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 					return c;
 				}
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
