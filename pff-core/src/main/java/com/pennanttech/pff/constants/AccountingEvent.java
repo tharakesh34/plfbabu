@@ -42,8 +42,14 @@ import com.pennant.app.constants.ImplementationConstants;
 
 public class AccountingEvent {
 
-	public AccountingEvent() {
-		super();
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
+	 */
+	private AccountingEvent() throws IllegalAccessException {
+		throw new IllegalAccessException();
 	}
 
 	public static final String ADDDBSF = "ADDDBSF";
@@ -156,7 +162,7 @@ public class AccountingEvent {
 	}
 
 	public static List<String> getExcludedAccEvents() {
-		List<String> excludeEvents = new ArrayList<String>();
+		List<String> excludeEvents = new ArrayList<>();
 
 		if (!ImplementationConstants.ALLOW_ADDDBSF) {
 			excludeEvents.add(AccountingEvent.ADDDBSF);
