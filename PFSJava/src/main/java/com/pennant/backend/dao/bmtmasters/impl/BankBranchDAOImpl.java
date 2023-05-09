@@ -737,7 +737,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { ifscCode, bankCode }, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, ifscCode, bankCode);
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}

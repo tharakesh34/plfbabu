@@ -334,7 +334,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql, new Object[] { code }, String.class);
+			return jdbcOperations.queryForObject(sql, String.class, code);
 		} catch (EmptyResultDataAccessException e) {
 			logger.debug(Message.NO_RECORD_FOUND);
 		}

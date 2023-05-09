@@ -81,7 +81,7 @@ public class AssignmentDAOImpl extends SequenceDao<Assignment> implements Assign
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Assignment>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<Assignment>() {
 				@Override
 				public Assignment mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Assignment a = new Assignment();
@@ -112,7 +112,7 @@ public class AssignmentDAOImpl extends SequenceDao<Assignment> implements Assign
 
 					return a;
 				}
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -73,7 +73,7 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				BaseRateCode brc = new BaseRateCode();
 
 				brc.setBRType(rs.getString("BRType"));
@@ -92,7 +92,7 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 				brc.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return brc;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

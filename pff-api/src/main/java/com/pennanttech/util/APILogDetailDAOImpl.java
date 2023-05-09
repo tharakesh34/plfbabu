@@ -78,19 +78,18 @@ public class APILogDetailDAOImpl extends SequenceDao<APILogDetail> implements AP
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { messageId, true, entityCode },
-					(rs, rowNum) -> {
-						APILogDetail ld = new APILogDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				APILogDetail ld = new APILogDetail();
 
-						ld.setSeqId(rs.getLong("Id"));
-						ld.setResponse(rs.getString("Response"));
-						ld.setReference(rs.getString("Reference"));
-						ld.setKeyFields(rs.getString("KeyFields"));
-						ld.setStatusCode(rs.getString("StatusCode"));
-						ld.setError(rs.getString("Error"));
+				ld.setSeqId(rs.getLong("Id"));
+				ld.setResponse(rs.getString("Response"));
+				ld.setReference(rs.getString("Reference"));
+				ld.setKeyFields(rs.getString("KeyFields"));
+				ld.setStatusCode(rs.getString("StatusCode"));
+				ld.setError(rs.getString("Error"));
 
-						return ld;
-					});
+				return ld;
+			}, messageId, true, entityCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

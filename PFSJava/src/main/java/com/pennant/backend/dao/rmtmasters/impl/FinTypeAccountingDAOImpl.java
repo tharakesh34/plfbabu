@@ -317,8 +317,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		Long accSetID = null;
 
 		try {
-			accSetID = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType, event, moduleId },
-					Long.class);
+			accSetID = this.jdbcOperations.queryForObject(sql.toString(), Long.class, finType, event, moduleId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

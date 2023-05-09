@@ -77,7 +77,7 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CustEmployeeDetail cmd = new CustEmployeeDetail();
 
 				cmd.setCustID(rs.getLong("CustID"));
@@ -117,7 +117,7 @@ public class CustEmployeeDetailDAOImpl extends BasicDao<CustEmployeeDetail> impl
 				}
 
 				return cmd;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in CustEmployeeDetail{} for CustID : {}", type, id);
 		}
