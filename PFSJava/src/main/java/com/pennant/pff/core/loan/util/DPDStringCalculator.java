@@ -40,15 +40,16 @@ public class DPDStringCalculator {
 			List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 			FinanceProfitDetail fpd = finEODEvent.getFinProfitDetail();
 
-			String dpdString = getDpdString(monthEnd, fm, schedules);
-			fpd.setCurDPDString(deriveDPDString(fpd.getCurDPDString(), dpdString));
+			String curDPDString = fpd.getCurDPDString();
+			String dpdString = getDpdString(monthEnd, fm, schedules, curDPDString);
+			fpd.setCurDPDString(deriveDPDString(curDPDString, dpdString));
 
 		}
 
 	}
 
 	private static String deriveDPDString(String curDPDStr, String dpdString) {
-		if (StringUtils.isEmpty(dpdString)) {
+		if (StringUtils.isEmpty(dpdString) && StringUtils.isEmpty(curDPDStr)) {
 			return curDPDStr;
 		}
 
@@ -63,11 +64,12 @@ public class DPDStringCalculator {
 		return curDPDStr.concat(dpdString);
 	}
 
-	private static String getDpdString(boolean monthEnd, FinanceMain fm, List<FinanceScheduleDetail> schedules) {
+	private static String getDpdString(boolean monthEnd, FinanceMain fm, List<FinanceScheduleDetail> schedules,
+			String curDPDStr) {
 		int dueBucket = fm.getDueBucket();
 
 		if (monthEnd) {
-			if (dueBucket == 0) {
+			if (dueBucket == 0 && StringUtils.isNotEmpty(curDPDStr)) {
 				return null;
 			}
 			return getDueBucket(dueBucket);
@@ -82,7 +84,7 @@ public class DPDStringCalculator {
 		}
 
 		if (frequencyDay == dueDay) {
-			if (dueBucket == 0) {
+			if (dueBucket == 0 && StringUtils.isNotEmpty(curDPDStr)) {
 				return null;
 			}
 

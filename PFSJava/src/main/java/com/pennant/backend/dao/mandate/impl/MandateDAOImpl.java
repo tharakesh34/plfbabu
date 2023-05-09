@@ -911,7 +911,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public List<Mandate> getMandatesForAutoSwap(long custID, Date appDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, m.MandateId, m.MandateType");
-		sql.append(", fm.MandateId OldMandateId, fm.SecuritymandateId OldSecMandateId, m.SecurityMandate");
+		sql.append(", fm.MandateId OldMandateId, fm.SecuritymandateId OldSecMandateId, m.SecurityMandate, m.AccNumber");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.CustID = ?");
 		sql.append(" Where SwapIsActive = ? and SwapEffectivedate = ?");
@@ -930,6 +930,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
 			m.setOldSecMandate(JdbcUtil.getLong(rs.getObject("OldSecMandateId")));
 			m.setSecurityMandate(rs.getBoolean("SecurityMandate"));
+			m.setAccNumber(rs.getString("AccNumber"));
 			m.setMandateType(rs.getString("MandateType"));
 
 			return m;

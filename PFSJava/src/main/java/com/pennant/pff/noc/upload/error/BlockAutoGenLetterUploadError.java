@@ -4,7 +4,7 @@ public enum BlockAutoGenLetterUploadError {
 
 	BALG_01("Loan Reference is In-valid."),
 
-	BALG_02("The Possible values should be (B/U) Only."),
+	BALG_02("Action Possible values should be (B/R) Only."),
 
 	BALG_03("Flag already exists against the Loan."),
 

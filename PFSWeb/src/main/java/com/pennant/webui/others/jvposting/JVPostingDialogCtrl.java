@@ -1751,14 +1751,24 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		BigDecimal debitAmount = BigDecimal.ZERO;
 		int creditCount = 0;
 		int debitCount = 0;
+		int count = 0;
 		this.listBoxJVPostingEntry.getItems().clear();
+		JVPostingEntry newJvPostingEntry = new JVPostingEntry();
+		newJvPostingEntry.setDaySeqDate(DateUtil.getDatePart(DateUtil.getSysDate()));
+		count = jVPostingService.getMaxSeqNumForCurrentDay(newJvPostingEntry);
 		Listitem item = null;
 		Listcell lc;
 		for (JVPostingEntry jvPostingEntry : entryList) {
 			if (jvPostingEntry.isExternalAccount()) {
-				item = new Listitem();
-				lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
-				lc.setParent(item);
+				if (jvPostingEntry.getRecordStatus() != null) {
+					item = new Listitem();
+					lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
+					lc.setParent(item);
+				} else if (count != 0) {
+					item = new Listitem();
+					lc = new Listcell(String.valueOf(++count));
+					lc.setParent(item);
+				}
 				lc = new Listcell(String.valueOf(AccountingConfigCache.getAccountMapping(jvPostingEntry.getAccount())));
 				lc.setParent(item);
 

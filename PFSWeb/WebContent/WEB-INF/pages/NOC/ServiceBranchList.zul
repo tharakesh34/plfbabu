@@ -39,12 +39,11 @@
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="border:0px; padding-left:5px; padding-right:5px;">
 							<columns>
-								<column width="15%" />
-								<column width="5%" />
-								<column width="30%" />
-								<column width="15%" />
-								<column width="5%" />
-								<column width="30%" />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
 								<column />
 							</columns>
 							<rows>
@@ -64,7 +63,7 @@
 									<listbox id="citySort" width="43px" mold="select" rows="1" />
 									<textbox id="city" width="80px" maxlength="8" />
 								</row>
-								<row>
+								<row id="row_AlwWorkflow">
 									<label value="${c:l('label_ServiceBranchList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
@@ -87,10 +86,10 @@
 									sort="auto" hflex="min" />
 								<listheader id="cityHeader" label="${c:l('listheaderServiceBranch_CityName.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="recordStatusHeader" label="${c:l('label.RecordStatus')}" sort="auto"
-									hflex="min" />
-								<listheader id="recordTypeHeader" label="${c:l('label.RecordType')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}"
+									sort="auto" hflex="min" />
 							</listhead>
 
 						</listbox>

@@ -8304,6 +8304,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData.setValueDate(rch.getReceiptDate());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_TEXCESS);
+		rch.setClosureType(PennantConstants.List_Select);
 
 		rch.getAllocations().removeIf(al -> Allocation.FEE.equals(al.getAllocationType()));
 
@@ -8315,6 +8316,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		receiptData.getFinanceDetail().setFinTypeFeesList(finTypeFeesList);
 		receiptData.getFinanceDetail().getFinScheduleData().setFinFeeDetailList(finFeeDetailList);
+		receiptData.getFinanceDetail().getFinFeeConfigList()
+				.removeIf(al -> RuleConstants.EVENT_EARLYSTL.equals(al.getFinEvent()));
 
 		resetAllocationPayments();
 	}

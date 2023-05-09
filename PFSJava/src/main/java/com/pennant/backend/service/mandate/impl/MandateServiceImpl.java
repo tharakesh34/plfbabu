@@ -321,6 +321,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				FinanceDetail fd = new FinanceDetail();
 				fd.setMandate(mandate);
 				fd.getFinScheduleData().setFinanceMain(fm);
+				fd.setModuleDefiner("Mandate Creation");
 				lienService.save(fd, true);
 			}
 

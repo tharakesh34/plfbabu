@@ -2343,6 +2343,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		// delete lien
 		// =======================================
 		if (ImplementationConstants.ALLOW_LIEN && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			fd.setModuleDefiner(FinServiceEvent.RECEIPT);
 			lienService.update(fd);
 		}
 
@@ -7525,6 +7526,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 				break;
 			case RepayConstants.EXCESSADJUSTTO_SETTLEMENT:
 				rcd.setPaymentType(RepayConstants.EXCESSADJUSTTO_SETTLEMENT);
+				break;
 			default:
 				rcd.setPaymentType(ReceiptMode.PAYABLE);
 				break;

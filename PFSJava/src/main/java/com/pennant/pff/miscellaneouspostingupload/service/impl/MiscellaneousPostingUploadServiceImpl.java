@@ -122,7 +122,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 			return;
 		}
 
-		if (!accountMappingDAO.isValidAccount(detail.getCreditGL(), AccountConstants.TRANTYPE_BOTH,
+		if (!accountMappingDAO.isValidAccount(detail.getDebitGL(), AccountConstants.TRANTYPE_BOTH,
 				AccountConstants.TRANTYPE_CREDIT, HostAccountStatus.OPEN.code())) {
 			setError(detail, MiscellaneousPostingUploadError.MP05);
 			return;
