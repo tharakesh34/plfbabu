@@ -7,6 +7,7 @@ import java.util.List;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.npa.model.AssetClassCode;
 import com.pennanttech.pff.npa.model.AssetSubClassCode;
+import com.pennanttech.pff.provision.model.NpaProvisionStage;
 import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.provision.model.ProvisionRuleData;
 
@@ -51,4 +52,6 @@ public interface ProvisionDAO {
 	List<AssetSubClassCode> getAssetSubClassCodes(Long classId);
 
 	boolean isRecordExists(long finID);
+
+	List<NpaProvisionStage> getNPAProvisionDetails(long finID);
 }

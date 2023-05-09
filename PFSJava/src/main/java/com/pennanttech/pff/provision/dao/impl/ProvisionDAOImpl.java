@@ -22,6 +22,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.npa.model.AssetClassCode;
 import com.pennanttech.pff.npa.model.AssetSubClassCode;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
+import com.pennanttech.pff.provision.model.NpaProvisionStage;
 import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.provision.model.ProvisionRuleData;
 
@@ -836,6 +837,40 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
+	}
+
+	@Override
+	public List<NpaProvisionStage> getNPAProvisionDetails(long finID) {
+		StringBuilder sql = new StringBuilder("Select fm.custID, c.CustCtgCode, c.CustCoreBank");
+		sql.append(", fm.FinType, pd.FinCategory");
+		sql.append(", pd.FinCcy, fm.FinBranch, fm.FinCurrAssetValue");
+		sql.append(", pd.TotalPriBal, pd.OdProfit, pd.TotalPriPaid, pd.TotalPftPaid");
+		sql.append(", pd.PftAccrued From FinanceMain fm");
+		sql.append(" Inner Join Customers c on c.custid = fm.custid");
+		sql.append(" Inner Join FinPftDetails pd on pd.finReference=fm.finreference");
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			NpaProvisionStage pu = new NpaProvisionStage();
+
+			pu.setCustID(rs.getLong("custID"));
+			pu.setCustCategoryCode(rs.getString("CustCtgCode"));
+			pu.setCustCoreBank(rs.getString("CustCoreBank"));
+			pu.setFinType(rs.getString("FinType"));
+			pu.setCustCoreBank(rs.getString("CustCoreBank"));
+			pu.setProduct(rs.getString("FinCategory"));
+			pu.setFinCcy(rs.getString("FinCcy"));
+			pu.setFinBranch(rs.getString("FinBranch"));
+			pu.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			pu.setTotPriBal(rs.getBigDecimal("TotalPriBal"));
+			pu.setOdProfit(rs.getBigDecimal("OdProfit"));
+			pu.setTotPriPaid(rs.getBigDecimal("TotalPriPaid"));
+			pu.setTotPftAccrued(rs.getBigDecimal("PftAccrued"));
+
+			return pu;
+		}, finID);
 	}
 
 }
