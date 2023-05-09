@@ -279,6 +279,8 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 		ExtendedCombobox email = (ExtendedCombobox) (getComponent(listitem, ListFields.EMAIL_TEMPLATE.index()))
 				.getLastChild();
+		email.setValue(null);
+		email.setDescription(null);
 
 		if (StringUtils.isNotEmpty(this.filteremail)) {
 			Filter[] codeFilter = new Filter[1];
