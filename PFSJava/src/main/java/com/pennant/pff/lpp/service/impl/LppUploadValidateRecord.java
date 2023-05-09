@@ -42,12 +42,16 @@ public class LppUploadValidateRecord implements ValidateRecord {
 		LPPUpload details = new LPPUpload();
 		details.setHeaderId(headerID);
 		details.setReference(ObjectUtil.valueAsString(record.getValue("FINREFERENCE")));
+		details.setApplyToExistingLoans(ObjectUtil.valueAsString(record.getValue("APPLYTOEXISTINGLOANS")));
+		details.setLoanType(ObjectUtil.valueAsString(record.getValue("LOANTYPE")));
 		details.setApplyOverDue(ObjectUtil.valueAsString(record.getValue("APPLYOVERDUE")));
 		details.setPenaltyType(ObjectUtil.valueAsString(record.getValue("PENALTYTYPE")));
 		details.setIncludeGraceDays(ObjectUtil.valueAsString(record.getValue("INCLUDEGRACEDAYS")));
-		details.setHoldStatus(ObjectUtil.valueAsString(record.getValue("HOLDSTATUS")));
-		details.setReason(ObjectUtil.valueAsString(record.getValue("REASON")));
-		details.setRemarks(ObjectUtil.valueAsString(record.getValue("REMARKS")));
+		details.setGraceDays(ObjectUtil.valueAsInt(record.getValue("GRACEDAYS")));
+		details.setCalculatedOn(ObjectUtil.valueAsString(record.getValue("CALCULATEDON")));
+		details.setAmountOrPercent(ObjectUtil.valueAsBigDecimal(record.getValue("AMOUNTORPERCENT")));
+		details.setAllowWaiver(ObjectUtil.valueAsString(record.getValue("ALLOWWAIVER")));
+		details.setMaxWaiver(ObjectUtil.valueAsBigDecimal(record.getValue("MAXWAIVER")));
 
 		lPPUploadService.doValidate(header, details);
 

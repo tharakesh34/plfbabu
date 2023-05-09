@@ -11,6 +11,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.cronutils.utils.StringUtils;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.mandate.MandateUploadDAO;
 import com.pennant.backend.model.mandate.Mandate;
@@ -174,8 +175,22 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 		String extMndt = mandate.getStrExternalMandate();
 		String swapMndt = mandate.getStrSwapIsActive();
 		String openMndt = mandate.getStrOpenMandate();
+		String secMndt = mandate.getStrSecurityMandate();
+		String mandateType = mandate.getMandateType();
 
-		InstrumentType instrumentType = InstrumentType.getType(mandate.getMandateType());
+		if ("T".equals(secMndt) && (InstrumentType.isDAS(mandateType) || InstrumentType.isSI(mandateType))) {
+			setError(mu, MandateUploadError.MANUP_016);
+		}
+
+		if ("T".equals(swapMndt) && mandate.getSwapEffectiveDate() == null) {
+			setError(mu, MandateUploadError.MANUP_018);
+		}
+
+		if ("T".equals(swapMndt) && mandate.getSwapEffectiveDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
+			setError(mu, MandateUploadError.MANUP_019);
+		}
+
+		InstrumentType instrumentType = InstrumentType.getType(mandateType);
 
 		switch (instrumentType) {
 		case ECS:
@@ -189,11 +204,11 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 
 			openMandateRequired(mu, mandate, openMndt);
 
+			securityMandateRequired(mu, mandate, secMndt);
+
 			break;
 
 		case SI:
-			break;
-
 		case DAS:
 			swapMandateRequired(mu, mandate, swapMndt);
 			break;
@@ -205,6 +220,10 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void openMandateRequired(MandateUpload mu, Mandate mandate, String openMndt) {
+		if (StringUtils.isEmpty(openMndt)) {
+			return;
+		}
+
 		if ("T".equals(openMndt)) {
 			mandate.setOpenMandate(true);
 		} else if ("F".equals(openMndt)) {
@@ -215,6 +234,10 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void swapMandateRequired(MandateUpload mu, Mandate mandate, String swapMndt) {
+		if (StringUtils.isEmpty(swapMndt)) {
+			return;
+		}
+
 		if ("T".equals(swapMndt)) {
 			mandate.setSwapIsActive(true);
 		} else if ("F".equals(swapMndt)) {
@@ -225,6 +248,10 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void externalMandateRequired(MandateUpload mu, Mandate mandate, String extMndt) {
+		if (StringUtils.isEmpty(extMndt)) {
+			return;
+		}
+
 		if ("T".equals(extMndt)) {
 			mandate.setExternalMandate(true);
 		} else if ("F".equals(extMndt)) {
@@ -232,6 +259,21 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl {
 		} else {
 			setError(mu, MandateUploadError.MANUP_015);
 		}
+	}
+
+	private void securityMandateRequired(MandateUpload mu, Mandate mandate, String secMndt) {
+		if (StringUtils.isEmpty(secMndt)) {
+			return;
+		}
+
+		if ("T".equals(secMndt)) {
+			mandate.setSecurityMandate(true);
+		} else if ("F".equals(secMndt)) {
+			mandate.setSecurityMandate(false);
+		} else {
+			setError(mu, MandateUploadError.MANUP_017);
+		}
+
 	}
 
 	private void setError(MandateUpload detail, MandateUploadError error) {

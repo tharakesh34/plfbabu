@@ -86,6 +86,7 @@ import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennant.validation.DeleteValidationGroup;
 import com.pennant.validation.PersionalInfoGroup;
 import com.pennant.validation.ProspectCustDetailsGroup;
@@ -95,11 +96,9 @@ import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.CustomerController;
 import com.pennanttech.controller.CustomerDetailsController;
-import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.CustomerRESTService;
 import com.pennanttech.pffws.CustomerSOAPService;
 import com.pennanttech.util.APIConstants;
@@ -127,7 +126,7 @@ import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CustomerWebServiceImpl extends ExtendedTestClass implements CustomerRESTService, CustomerSOAPService {
+public class CustomerWebServiceImpl extends AbstractController implements CustomerRESTService, CustomerSOAPService {
 	private static final Logger logger = LogManager.getLogger(CustomerWebServiceImpl.class);
 
 	private CustomerController customerController;
@@ -3989,6 +3988,10 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 		response.setCustomerPhoneNumList(null);
 		response.setCustomerEMailList(null);
 		response.setCustomerIncomeList(null);
+		response.setCustomerGstList(null);
+		response.setPrimaryRelationOfficer(null);
+		response.setDedupReq(null);
+		response.setBlackListReq(null);
 	}
 
 	/**

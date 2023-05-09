@@ -933,4 +933,32 @@
 
 	<jaxws:endpoint id="securityUserSoapService" implementor="#securityUserService" address="/securityUserSoap"
 		publish="false" />
+		
+		
+	<!-- Finance Enquiry/Loan API gateway -->
+	<bean id="wsFinanceEnquiryService" class="com.pennanttech.service.impl.FinanceEnquiryWebServiceImpl" />
+	<!-- rest container -->
+	<jaxrs:server id="financeEnquiryRestService" address="/financeEnquiryRest">
+		<jaxrs:serviceBeans>
+			<ref bean="wsFinanceEnquiryService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="financeEnquiryService" implementor="#wsFinanceEnquiryService"
+		address="/financeEnquirySoap" publish="false" />
 </beans>

@@ -35,6 +35,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.ScheduleDueTaxDetail;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceScheduleDetailDAO {
 
@@ -47,6 +48,8 @@ public interface FinanceScheduleDetailDAO {
 	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF, long logKey);
 
 	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, boolean isWIF);
+
+	List<FinanceScheduleDetail> getFinSchedules(long finID, TableType tableType);
 
 	void delete(FinanceScheduleDetail schedule, String type, boolean isWIF);
 
@@ -144,4 +147,6 @@ public interface FinanceScheduleDetailDAO {
 	Date getSchdDateForKnockOff(long finID, Date appDate);
 
 	FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate);
+
+	List<FinanceScheduleDetail> getBasicDetails(long finID);
 }

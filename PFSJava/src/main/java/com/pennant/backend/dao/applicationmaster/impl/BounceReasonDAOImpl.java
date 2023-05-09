@@ -368,4 +368,22 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 			return br;
 		}
 	}
+
+	@Override
+	public String getReasonByReceiptId(long receiptId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" br.Reason From BounceReasons br");
+		sql.append(" Inner Join ManualAdvise ma On ma.BounceID = br.BounceID");
+		sql.append(" Inner Join FinReceiptHeader frh On frh.ReceiptID = ma.ReceiptID");
+		sql.append(" Where ma.ReceiptID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, receiptId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

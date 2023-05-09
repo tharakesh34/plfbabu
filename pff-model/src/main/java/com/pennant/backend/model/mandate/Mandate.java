@@ -202,6 +202,9 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String strExternalMandate;
 	private String strOpenMandate;
 	private String strSwapIsActive;
+	private Date schdDate;
+	private int instalmentNo;
+	private String strSecurityMandate;
 
 	private ErrorDetail error;
 
@@ -272,6 +275,9 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("strExternalMandate");
 		excludeFields.add("strOpenMandate");
 		excludeFields.add("strSwapIsActive");
+		excludeFields.add("schdDate");
+		excludeFields.add("instalmentNo");
+		excludeFields.add("strSecurityMandate");
 
 		return excludeFields;
 	}
@@ -1085,6 +1091,30 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setStrSwapIsActive(String strSwapIsActive) {
 		this.strSwapIsActive = strSwapIsActive;
+	}
+
+	public Date getSchdDate() {
+		return schdDate;
+	}
+
+	public void setSchdDate(Date schdDate) {
+		this.schdDate = schdDate;
+	}
+
+	public int getInstalmentNo() {
+		return instalmentNo;
+	}
+
+	public void setInstalmentNo(int instalmentNo) {
+		this.instalmentNo = instalmentNo;
+	}
+
+	public String getStrSecurityMandate() {
+		return strSecurityMandate;
+	}
+
+	public void setStrSecurityMandate(String strSecurityMandate) {
+		this.strSecurityMandate = strSecurityMandate;
 	}
 
 }

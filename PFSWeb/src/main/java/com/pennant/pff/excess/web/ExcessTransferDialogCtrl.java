@@ -262,9 +262,9 @@ public class ExcessTransferDialogCtrl extends GFCBaseCtrl<FinExcessTransfer> {
 
 		this.btnCancel.setVisible(!this.finExcessTransfer.isNewRecord());
 		this.excessReference.setReadonly(isReadOnly("ExcessTransferDialog_ExcessReference"));
-		this.transferDate.setReadonly(isReadOnly("ExcessTransferDialog_TransferDate"));
-		this.transferFrom.setReadonly(isReadOnly("ExcessTransferDialog_TransferFrom"));
-		this.transferTo.setReadonly(isReadOnly("ExcessTransferDialog_FinReference"));
+		this.transferDate.setDisabled(isReadOnly("ExcessTransferDialog_TransferDate"));
+		this.transferFrom.setDisabled(isReadOnly("ExcessTransferDialog_TransferFrom"));
+		this.transferTo.setDisabled(isReadOnly("ExcessTransferDialog_FinReference"));
 		this.transferAmount.setReadonly(isReadOnly("ExcessTransferDialog_TransferAmount"));
 
 		if (isWorkFlowEnabled()) {

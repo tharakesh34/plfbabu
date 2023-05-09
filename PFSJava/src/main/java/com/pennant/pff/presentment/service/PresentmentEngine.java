@@ -28,7 +28,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -1031,6 +1030,18 @@ public class PresentmentEngine {
 			emiInAdvance.add(pd.getEmiInAdvance());
 		}
 
+		if (CollectionUtils.isNotEmpty(pd.getExcessMovements())) {
+			for (FinExcessMovement fem : pd.getExcessMovements()) {
+				if ("R".equals(fem.getTranType())) {
+					FinExcessAmount fea = new FinExcessAmount();
+					fea.setExcessID(fem.getExcessID());
+					fea.setAmount(fem.getAmount());
+
+					emiInAdvance.add(fea);
+				}
+			}
+		}
+
 		if (FinanceConstants.PRODUCT_ODFACILITY.equals(pd.getProductCategory())) {
 			odPresentments.put(pd.getFinReference(), pd);
 		}
@@ -1132,9 +1143,10 @@ public class PresentmentEngine {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void approve(ReceiptDTO receiptDTO, Map<String, String> bounceForPD) {
+	public void approve(ReceiptDTO receiptDTO) {
 		logger.debug(Literal.ENTERING);
 
+		Map<String, String> bounceForPD = receiptDTO.getBounceForPD();
 		boolean upfronBounceRequired = MapUtils.isNotEmpty(bounceForPD);
 		PresentmentDetail pd = receiptDTO.getPresentmentDetail();
 
@@ -1725,7 +1737,7 @@ public class PresentmentEngine {
 		long finID = pd.getFinID();
 
 		try {
-			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null, false);
+			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}

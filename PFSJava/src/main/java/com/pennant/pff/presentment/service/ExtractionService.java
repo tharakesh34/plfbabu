@@ -156,6 +156,7 @@ public class ExtractionService {
 		try {
 			extractionJob.start(jobParameters);
 		} catch (Exception e) {
+			logger.warn(Literal.EXCEPTION, e.getMessage());
 			throw e;
 		}
 

@@ -230,7 +230,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 				FinExcessTransfer transfer = new FinExcessTransfer();
 
-				transfer.setId(excess.getReceiptID());
+				transfer.setId(excessTransferUploadDAO.getNextValue());
 				transfer.setFinId(exc.getReferenceID());
 				transfer.setFinReference(exc.getReference());
 				transfer.setTransferFromType(exc.getTransferFromType());

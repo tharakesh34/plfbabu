@@ -419,32 +419,9 @@ public class FinStatementController extends SummaryDetailService {
 			schdData.setFeeDues(null);
 		}
 
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
-
-		schedules.forEach(schd -> schd.setLoanEMIStatus(SchdUtil.getRepaymentStatus(schd).repaymentStatus()));
-
-		schdData.setFinanceScheduleDetails(schedules);
-
 		FinanceSummary summary = getFinanceSummary(fd);
 		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
 		summary.setOutStandPrincipal(schdData.getOutstandingPri());
-		summary.setTotalPriSchd(SchdUtil.getTotalPrincipalSchd(schdData.getFinanceScheduleDetails()));
-
-		Date businessDate = appDate;
-		if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
-			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-		}
-
-		FinanceScheduleDetail curSchd = SchdUtil.getNextInstalment(businessDate, schedules);
-
-		if (curSchd != null) {
-			summary.setInstallmentNo(curSchd.getInstNumber());
-			summary.setLoanEMI(curSchd.getRepayAmount());
-			summary.setDueDate(curSchd.getSchDate());
-			summary.setLoanTotPrincipal(curSchd.getPrincipalSchd());
-			summary.setLoanTotInterest(curSchd.getProfitSchd());
-		}
-
 		schdData.setFinanceSummary(summary);
 
 		schdData.setDisbursementDetails(null);
@@ -464,7 +441,6 @@ public class FinStatementController extends SummaryDetailService {
 		CustomerDetails cd = fd.getCustomerDetails();
 		Customer customer = cd.getCustomer();
 
-		customer.setLoanName(CustomerUtil.getCustomerFullName(customer));
 
 		cd.setCustCIF(customer.getCustCIF());
 		cd.setCustCoreBank(customer.getCustCoreBank());

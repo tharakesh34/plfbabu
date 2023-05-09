@@ -101,6 +101,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	private boolean isDelete = false;
 	private boolean oldCheque;
 	private String chequeSerialNumber;
+	private Date schdDate;
 
 	public ChequeDetail() {
 		super();
@@ -131,6 +132,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("isDelete");
 		excludeFields.add("oldCheque");
 		excludeFields.add("chequeSerialNumber");
+		excludeFields.add("schdDate");
 		return excludeFields;
 	}
 
@@ -203,7 +205,7 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getAmount() {
-		return amount;
+		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
 	public void setAmount(BigDecimal amount) {
@@ -438,4 +440,11 @@ public class ChequeDetail extends AbstractWorkflowEntity {
 		this.oldCheque = oldCheque;
 	}
 
+	public Date getSchdDate() {
+		return schdDate;
+	}
+
+	public void setSchdDate(Date schdDate) {
+		this.schdDate = schdDate;
+	}
 }

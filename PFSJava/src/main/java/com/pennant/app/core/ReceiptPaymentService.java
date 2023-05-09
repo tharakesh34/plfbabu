@@ -85,8 +85,6 @@ public class ReceiptPaymentService {
 			pd = preparePD(receiptDTO, idxPresentment);
 			receiptDTO.setPresentmentDetail(pd);
 		} else {
-			receiptDTO.getEmiInAdvance().clear();
-
 			List<FinExcessMovement> excessMovements = pd.getExcessMovements();
 
 			for (FinExcessMovement fem : excessMovements) {
@@ -176,7 +174,6 @@ public class ReceiptPaymentService {
 			try {
 				repaymentProcessUtil.calcualteAndPayReceipt(receiptDTO);
 			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
 				throw new AppException();
 			}
 
@@ -244,12 +241,20 @@ public class ReceiptPaymentService {
 
 		EventProperties ep = fm.getEventProperties();
 		Map<String, String> excludeMap = ep.getUpfrontBounceCodes();
+		Map<String, String> bounceForPD = receiptDTO.getBounceForPD();
 
-		if (MapUtils.isEmpty(excludeMap)) {
+		if (MapUtils.isEmpty(excludeMap) && MapUtils.isEmpty(bounceForPD)) {
 			return;
 		}
 
-		String returnCode = excludeMap.get(resonCode.concat("$").concat(instrumentType));
+		RequestSource requestSource = receiptDTO.getRequestSource();
+
+		String returnCode = "";
+		if (requestSource == RequestSource.EOD) {
+			returnCode = excludeMap.get(resonCode.concat("$").concat(instrumentType));
+		} else {
+			returnCode = bounceForPD.get(resonCode.concat("$").concat(instrumentType));
+		}
 
 		if (returnCode == null) {
 			return;

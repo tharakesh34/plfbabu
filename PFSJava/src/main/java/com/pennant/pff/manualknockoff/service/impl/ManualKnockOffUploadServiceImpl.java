@@ -37,7 +37,6 @@ import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ProcessRecord;
-import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -57,7 +56,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private ReceiptService receiptService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private ValidateRecord manualKnockOffUploadValidateRecord;
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
@@ -387,11 +385,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		return manualKnockOffUploadProcessRecord;
 	}
 
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return manualKnockOffUploadValidateRecord;
-	}
-
 	@Autowired
 	public void setManualKnockOffUploadDAO(ManualKnockOffUploadDAO manualKnockOffUploadDAO) {
 		this.manualKnockOffUploadDAO = manualKnockOffUploadDAO;
@@ -426,12 +419,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
-	public void setManualKnockOffUploadValidateRecord(
-			ManualKnockOffUploadValidateRecord manualKnockOffUploadValidateRecord) {
-		this.manualKnockOffUploadValidateRecord = manualKnockOffUploadValidateRecord;
 	}
 
 }

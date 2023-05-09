@@ -3578,7 +3578,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				wve.add(we);
 			}
 
-			if (AdvanceType.UT.name().equals(aFinanceType.getAdvType())) {
+			if (AdvanceType.UT.name().equals(aFinanceType.getAdvType())
+					|| AdvanceType.AE.name().equals(aFinanceType.getAdvType())) {
 				String advMinLabel = "Minimum Advance Terms";
 				String advMaxLabel = "Maximum Advance Terms";
 				String advDftLabel = "Default Advance Terms";
@@ -7670,6 +7671,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			this.advType.setSelectedIndex(0);
 			this.advType.setDisabled(true);
+			this.advType.setErrorMessage("");
 		}
 
 		doChangeAdvTypes();
@@ -7680,7 +7682,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void doChangeAdvTypes() {
-		if (AdvanceType.UT.getCode().equals(getComboboxValue(this.advType))) {
+		if (AdvanceType.UT.getCode().equals(getComboboxValue(this.advType))
+				|| AdvanceType.AE.getCode().equals(getComboboxValue(this.advType))) {
 			this.advDefaultTerms.setDisabled(isCompReadonly);
 			this.advMinTerms.setDisabled(isCompReadonly);
 			this.advMaxTerms.setDisabled(isCompReadonly);

@@ -522,8 +522,8 @@ public class MandateEnquiryDialogCtrl extends GFCBaseCtrl<Mandate> {
 		// Entity
 		this.entityCode.setValue(aMandate.getEntityCode(), aMandate.getEntityDesc());
 
-		if (this.label_PartnerBank.isVisible() && aMandate.getPartnerBankId() != Long.MIN_VALUE
-				&& aMandate.getPartnerBankId() != 0) {
+		if (this.label_PartnerBank.isVisible() && mandate.getPartnerBankId() != null
+				&& aMandate.getPartnerBankId() != Long.MIN_VALUE && aMandate.getPartnerBankId() != 0) {
 			this.partnerBank.setAttribute("partnerBankId", aMandate.getPartnerBankId());
 			this.partnerBank.setValue(StringUtils.trimToEmpty(aMandate.getPartnerBankCode()),
 					StringUtils.trimToEmpty(aMandate.getPartnerBankName()));

@@ -552,10 +552,12 @@ public class FileUploadList extends Window implements Serializable {
 			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
 			this.fileName.setFilters(filters);
 		} else {
+
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("Type", this.fileUploadHeader.getType(), Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", this.workflowRoles, Filter.OP_IN);
 			this.fileName.setFilters(filters);
+
 		}
 
 		if (!"M".equals(this.stage)) {
@@ -1377,6 +1379,9 @@ public class FileUploadList extends Window implements Serializable {
 				break;
 			case IMPORT_FAILED:
 				lc = new Listcell("Failed");
+				break;
+			case DOWNLOADED:
+				lc = new Listcell("Downloaded");
 				break;
 			default:
 				lc = new Listcell("");

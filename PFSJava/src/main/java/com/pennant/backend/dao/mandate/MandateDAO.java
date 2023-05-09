@@ -128,4 +128,6 @@ public interface MandateDAO {
 	void updateFinMandateId(Long mandateId, String finreference);
 
 	Long getSecurityMandateIdByRef(String finreference);
+
+	String getAccNumber(Long mandateID);
 }
