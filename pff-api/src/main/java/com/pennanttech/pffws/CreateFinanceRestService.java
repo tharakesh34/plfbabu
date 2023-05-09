@@ -11,16 +11,13 @@ import javax.ws.rs.Produces;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinReqParams;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
-import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.sourcingdetails.SourcingDetails;
@@ -36,8 +33,6 @@ import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
-
-import jakarta.jws.WebParam;
 
 @Produces("application/json")
 public interface CreateFinanceRestService {
@@ -151,39 +146,6 @@ public interface CreateFinanceRestService {
 	@Path("/finance/getFinDetailsByFinReference/{finReference}")
 	public FinanceDetail getFinDetailsByFinReference(@PathParam("finReference") String finReference)
 			throws ServiceException;
-
-	@GET
-	@Path("/finance/getFinanceByName/{custShrtName}")
-	List<FinanceDetail> getByCustShrtName(@PathParam("custShrtName") String shrtName);
-
-	@GET
-	@Path("/finance/getFinanceByPAN/{custCRCPR}")
-	List<FinanceDetail> getByPANNumber(@PathParam("custCRCPR") String custCRCPR);
-
-	@GET
-	@Path("/finance/getFinanceByAccNumber/{accNumber}")
-	List<FinanceDetail> getByAccountNumber(@PathParam("accNumber") String accNumber);
-
-	@GET
-	@Path("/finance/getFinanceByMobileNumber/{phoneNumber}")
-	List<FinanceDetail> getByPhoneNumber(@PathParam("phoneNumber") String phoneNumber);
-
-	@POST
-	@Path("/finance/getFinanceByNameAndMobileNumber")
-	List<FinanceDetail> getByCustShrtNameAndPhoneNumber(@WebParam(name = "customer") Customer customer);
-
-	@POST
-	@Path("/finance/getFinanceByNameAndDateOfBirth")
-	List<FinanceDetail> getByCustShrtNameAndDateOfBirth(@WebParam(name = "customer") Customer customer);
-
-	@POST
-	@Path("/finance/getFinanceByNameAndEMIAmount")
-	List<FinanceDetail> getFinIdsByNameAndEMIAmount(@WebParam(name = "financeDetail") FinanceMain financeMain);
-
-	@POST
-	@Path("/finance/loanAuthentication")
-	LoanAuthentication getAuthenticationDetails(
-			@WebParam(name = "loanAuthentication") LoanAuthentication loanAuthentication);
 
 	@GET
 	@Path("/finance/getPDCEnquiry/{finReference}")

@@ -173,6 +173,9 @@ public class AbstractResponse extends AbstractController {
 		loanBranch.setBranchFax("1");
 		loanBranch.setBranchTel(branch.getBranchTel());
 		loanBranch.setBranchMail("loansupport@hdfcbank.com");
+		loanBranch.setZipCode(branch.getPinCode());
+		loanBranch.setBranchAddrHNbr(branch.getBranchAddrHNbr());
+		loanBranch.setBranchAddrStreet(branch.getBranchAddrStreet());
 
 		ld.setLoanBranch(loanBranch);
 

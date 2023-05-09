@@ -858,7 +858,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String reason;
 	private boolean underSettlement;
 	private boolean isEOD;
-	@XmlElement
 	private Date grcStartDate;
 	private boolean underNpa;
 	private String custCoreBank;

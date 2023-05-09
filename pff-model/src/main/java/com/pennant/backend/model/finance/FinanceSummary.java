@@ -36,14 +36,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "effectiveRateOfReturn", "totalPriSchd", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft",
+@XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft",
 		"totalCpz", "totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate",
 		"firstDisbDate", "lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst",
 		"futureTenor", "firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate",
 		"totalOutStanding", "outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
 		"overDueInstlments", "overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus",
-		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt", "finCurODDays", "foreClosureAmount", "installmentNo",
-		"dueDate", "overDueEMI" })
+		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -52,7 +51,6 @@ public class FinanceSummary implements Serializable {
 	private long finID;
 	private String finReference;
 	private BigDecimal totalDisbursement = BigDecimal.ZERO;
-	@XmlElement(name = "loanPrincipal")
 	private BigDecimal totalPriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
@@ -69,7 +67,6 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 
-	@XmlElement(name = "DPD")
 	private int finCurODDays = 0;
 	private String assetCode;
 	private BigDecimal finODTotPenaltyAmt = BigDecimal.ZERO;
@@ -187,7 +184,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal nextRepayAmount;
 	@XmlElement
 	private BigDecimal firstEmiAmount;
-	@XmlElement(name = "loanBalanceTenure")
+	@XmlElement
 	private int futureInst;
 	@XmlElement
 	private int futureTenor;

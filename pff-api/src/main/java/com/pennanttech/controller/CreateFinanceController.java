@@ -48,14 +48,12 @@ import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -116,7 +114,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
@@ -133,7 +130,6 @@ import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
-import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.masters.Locality;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -182,7 +178,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
@@ -217,7 +212,6 @@ import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class CreateFinanceController extends SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
@@ -272,12 +266,10 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PromotionDAO promotionDAO;
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private TechnicalVerificationDAO technicalVerificationDAO;
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private PinCodeDAO pinCodeDAO;
 	private LocalityDAO localityDAO;
-	private CustomerDAO customerDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private BounceReasonDAO bounceReasonDAO;
 	private MandateDAO mandateDAO;
@@ -2665,15 +2657,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
-			List<FinanceScheduleDetail> fsdl = schdData.getFinanceScheduleDetails();
-
-			FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
-
-			if (fpd == null) {
-				fpd = new FinanceProfitDetail();
-			}
-
-			schdData.setFinPftDeatil(fpd);
 
 			if (!fm.isFinIsActive()) {
 				fm.setClosedDate(financeMainService.getFinClosedDate(finID));
@@ -2723,20 +2706,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			prepareResponse(fd);
 
-			FinanceSummary financeSummary = schdData.getFinanceSummary();
-			Date businessDate = appDate;
-			if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
-				businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-			}
-
-			financeSummary.setLoanEMI(SchdUtil.getNextEMI(businessDate, fsdl));
-			financeSummary.setForeClosureAmount(getForeClosureAmount(fd));
-			financeSummary.setFutureInst(SchdUtil.getFutureInstalments(appDate, fsdl));
-
-			if (fpd != null) {
-				financeSummary.setFinCurODDays(fpd.getCurODDays());
-			}
-
 			List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 					ExtendedFieldConstants.MODULE_LOAN, finCategory, FinServiceEvent.ORG, finReference);
 			fd.setExtendedDetails(extData);
@@ -2752,12 +2721,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		logger.debug(Literal.LEAVING);
 		return fd;
-	}
-
-	private BigDecimal getForeClosureAmount(FinanceDetail fd) {
-		ReceiptDTO receiptDTO = financeDetailService.prepareReceiptDTO(fd);
-
-		return LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 	}
 
 	private void processPlanEmiDays(long finid, FinanceDetail fd) {
@@ -3224,10 +3187,6 @@ public class CreateFinanceController extends SummaryDetailService {
 				fm.setFirstDisbDate(disbList.get(0).getDisbDate());
 				fm.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 			}
-		}
-
-		if (fm.isAllowGrcPeriod()) {
-			fm.setGrcStartDate(fm.getFinStartDate());
 		}
 
 		List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
@@ -4873,52 +4832,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		ch.setTotalAmount(totalChequeAmount);
 	}
 
-	public LoanAuthentication getAuthenticationDetails(LoanAuthentication reqLa) {
-		logger.debug(Literal.ENTERING);
-
-		LoanAuthentication response = new LoanAuthentication();
-
-		String finReference = reqLa.getFinReference();
-		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.BOTH_TAB);
-
-		if (fm == null) {
-			response.setReturnStatus(getFailedStatus("90260", "FinReference"));
-			return response;
-		}
-
-		Date custDOb = customerDAO.getCustomerDOBByCustID(fm.getCustID());
-
-		if (DateUtil.compare(DateUtil.getDatePart(custDOb), DateUtil.getDatePart(reqLa.getDateOfBirth())) != 0) {
-			response.setValidFlag(PennantConstants.NO);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		Date businessDate = reqLa.getAppDate();
-		if (businessDate.compareTo(fm.getMaturityDate()) >= 0) {
-			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-		}
-
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinSchedules(fm.getFinID(),
-				TableType.MAIN_TAB);
-
-		BigDecimal loanEMI = SchdUtil.getNextEMI(businessDate, schedules);
-
-		if (loanEMI.compareTo(reqLa.getLoanEMI()) != 0) {
-			response.setValidFlag(PennantConstants.NO);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		response.setMobileEmailId("");
-		response.setValidFlag(PennantConstants.YES);
-
-		logger.debug(Literal.LEAVING);
-
-		return response;
-
-	}
-
 	public List<PaymentMode> getPDCEnquiry(FinanceMain fm) {
 		logger.debug(Literal.ENTERING);
 
@@ -5369,9 +5282,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	@Autowired
-	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
-		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
 
 	public void setTechnicalVerificationDAO(TechnicalVerificationDAO technicalVerificationDAO) {
 		this.technicalVerificationDAO = technicalVerificationDAO;
@@ -5390,11 +5300,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setLocalityDAO(LocalityDAO localityDAO) {
 		this.localityDAO = localityDAO;
-	}
-
-	@Autowired
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
 	}
 
 	@Autowired

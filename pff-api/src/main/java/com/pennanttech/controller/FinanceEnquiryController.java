@@ -204,6 +204,7 @@ public class FinanceEnquiryController extends AbstractController {
 			summary.setLoanTotInterest(curSchd.getProfitSchd());
 		}
 
+		summary.setTotalPriSchd(SchdUtil.getTotalPrincipalSchd(schedules));
 		summary.setForeClosureAmount(getForeClosureAmount(fd));
 		summary.setFutureInst(SchdUtil.getFutureInstalments(appDate, schedules));
 		summary.setLastInstDate(schedules.get(schedules.size() - 1).getSchDate());
