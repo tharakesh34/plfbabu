@@ -135,7 +135,6 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		AuditHeader auditHeader;
 		try {
 
-			assetClassificationDAO.deleteStage();
 			List<NpaProvisionStage> npaDetails = provisionDao.getNPAProvisionDetails(mp.getFinID());
 
 			assetClassificationDAO.saveStage(npaDetails);
