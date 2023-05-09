@@ -388,6 +388,11 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 					return;
 				}
 
+				if (StringUtils.isNotBlank(detail.getIncludeGraceDays())) {
+					setError(detail, LPPUploadError.LPP27);
+					return;
+				}
+
 				break;
 			case PERC_ONE_TIME, PERC_ON_PD_MTH, PERC_ON_DUE_DAYS, PERC_ON_EFF_DUE_DAYS:
 				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
@@ -425,6 +430,10 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 			if (isLppType && StringUtils.isBlank(String.valueOf(detail.getODMinAmount()))) {
 				setError(detail, LPPUploadError.LPP26);
+			}
+
+			if (isLppType && StringUtils.isNotBlank(detail.getIncludeGraceDays())) {
+				setError(detail, LPPUploadError.LPP27);
 			}
 		}
 	}

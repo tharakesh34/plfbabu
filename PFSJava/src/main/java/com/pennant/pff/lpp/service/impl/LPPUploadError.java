@@ -54,7 +54,9 @@ public enum LPPUploadError {
 
 	LPP25("Calculated On value 'INST' is allowed only If penalty types captured as 'P' OR 'M'. "),
 
-	LPP26("For Penalty type 'P' OR 'M' Minimum Amount should not be Blank ");
+	LPP26("For Penalty type 'P' OR 'M' Minimum Amount should not be Blank "),
+
+	LPP27("IncludeGraceDays should be blank for Penalty type 'F', 'A', 'P' OR 'M'");
 
 	private String description;
 
