@@ -2,7 +2,6 @@ package com.pennant.pff.core.engine.accounting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +32,7 @@ import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class AccountingEngine {
 	private static final Logger logger = LogManager.getLogger(AccountingEngine.class);
+
 	private static PostingEventFactory factory;
 	private static PostingsDAO postingsDAO;
 	private static AccountEngineExecution engineExecution;
@@ -173,7 +173,7 @@ public class AccountingEngine {
 
 		for (Long linkedTranId : excdTranIdList) {
 			getReversalsByLinkedTranID(linkedTranId);
-			logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranId);
+			logger.debug("Reverse Transaction Success for Transaction ID : {}", linkedTranId);
 		}
 	}
 
@@ -201,7 +201,7 @@ public class AccountingEngine {
 			derivedEventCode = eventCode + "_S";
 		} else if (fm.isUnderNpa()) {
 			derivedEventCode = eventCode + "_N";
-		} else if (fm.isWifLoan()) {
+		} else if (fm.isWriteoffLoan()) {
 			derivedEventCode = eventCode + "_W";
 		}
 
@@ -221,10 +221,8 @@ public class AccountingEngine {
 	public static List<AccountEngineEvent> getEvents() {
 		List<AccountEngineEvent> list = accountEngineEventDAO.getAccountEngineEvents();
 
-		List<AccountEngineEvent> tempList = list
-				.stream().filter(aeEvent -> aeEvent.getAEEventCode().endsWith("_S")
-						|| aeEvent.getAEEventCode().endsWith("_N") || aeEvent.getAEEventCode().endsWith("_W"))
-				.collect(Collectors.toList());
+		List<AccountEngineEvent> tempList = list.stream().filter(aeEvent -> aeEvent.getAEEventCode().endsWith("_S")
+				|| aeEvent.getAEEventCode().endsWith("_N") || aeEvent.getAEEventCode().endsWith("_W")).toList();
 
 		list.removeAll(tempList);
 
@@ -235,12 +233,11 @@ public class AccountingEngine {
 		List<AccountEngineEvent> list = getEvents();
 
 		List<AccountEngineEvent> tempList = list.stream()
-				.filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSP))
-				.collect(Collectors.toList());
+				.filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSP)).toList();
 
 		if (!ImplementationConstants.ALLOW_ADDDBSF) {
 			tempList = list.stream().filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSF))
-					.collect(Collectors.toList());
+					.toList();
 		}
 
 		list.removeAll(tempList);
@@ -253,14 +250,14 @@ public class AccountingEngine {
 		List<AccountEngineEvent> tempList = getEvents();
 
 		for (AccountEngineEvent aevent : tempList) {
-			if (aevent.getAEEventCode().equals(AccountingEvent.ADDDBSP)) {
+			String aeEventCode = aevent.getAEEventCode();
+			if (aeEventCode.equals(AccountingEvent.ADDDBSP)) {
 				list.add(aevent);
 			}
 
-			if (ImplementationConstants.ALLOW_ADDDBSF) {
-				if (aevent.getAEEventCode().equals(AccountingEvent.ADDDBSN) || aevent.equals(AccountingEvent.ADDDBSF)) {
-					list.add(aevent);
-				}
+			if (ImplementationConstants.ALLOW_ADDDBSF
+					&& (aeEventCode.equals(AccountingEvent.ADDDBSN) || aeEventCode.equals(AccountingEvent.ADDDBSF))) {
+				list.add(aevent);
 			}
 		}
 
@@ -284,7 +281,7 @@ public class AccountingEngine {
 		List<AccountingSet> list = accountEngineEventDAO.getAccountSetEvents();
 
 		List<AccountingSet> tempList = list.stream().filter(as -> as.getEventCode().endsWith("_S")
-				|| as.getEventCode().endsWith("_N") || as.getEventCode().endsWith("_W")).collect(Collectors.toList());
+				|| as.getEventCode().endsWith("_N") || as.getEventCode().endsWith("_W")).toList();
 
 		list.removeAll(tempList);
 

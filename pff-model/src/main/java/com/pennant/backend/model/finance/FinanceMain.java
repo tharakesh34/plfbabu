@@ -1620,6 +1620,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setCpzPosIntact(this.cpzPosIntact);
 		entity.setModuleDefiner(this.moduleDefiner);
 		entity.setUnderNpa(this.underNpa);
+		entity.setUnderSettlement(this.underSettlement);
 		entity.setCreatedBy(this.createdBy);
 		entity.setCreatedOn(this.createdOn);
 		entity.setApprovedBy(this.approvedBy);
