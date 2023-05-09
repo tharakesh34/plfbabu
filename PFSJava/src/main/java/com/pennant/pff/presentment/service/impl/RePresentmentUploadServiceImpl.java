@@ -222,12 +222,6 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 			return;
 		}
 
-		Date nextSchdDate = financeScheduleDetailDAO.getNextSchdDate(fm.getFinID(), dueDate);
-
-		if (nextSchdDate != null && nextSchdDate.compareTo(appDate) <= 0) {
-			setError(detail, PresentmentError.REPRMNT522);
-			return;
-		}
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		detail.setErrorCode("");

@@ -1067,6 +1067,8 @@ public class PresentmentEngine {
 
 			financeMainDAO.updateSchdVersion(fm, false);
 
+			pd.setSchdVersion(pd.getSchdVersion() + 1);
+
 			if (!excess.isEmpty()) {
 				finExcessAmountDAO.updateExcessAmtList(excess);
 			}
