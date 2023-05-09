@@ -1313,8 +1313,8 @@
 	<changeSet id="ST#103.8" author="vasudevarao.s" dbms="postgresql, oracle">
 		<addDefaultValue columnName="RecvFeeTypeId" tableName="FEETYPES_TEMP" defaultValue="0" />
 	</changeSet>
-
-	<changeSet id="ST#103.9_pre" author="vasudevarao.s" dbms="postgresql">
+	
+	<changeSet id="ST#3007.37.0_pre" author="vasudevarao.s" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies ('plf', 'feetypes_aview');
@@ -1322,7 +1322,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.9" author="vasudevarao.s">
+	<changeSet id="ST#3007.37.0" author="vasudevarao.s">
 		<createView viewName="FEETYPES_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FEETYPEID
@@ -1354,7 +1354,6 @@
 	        		, T3.ACCOUNTSETCODE DUEACCTSETCODE
 					, T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
 					, T1.TDSREQ
-					, T1.FEEINCOMEOREXPENSE 
 		    		, T1.ACTYPE 
 		    		, T4.ACTYPEDESC
 					, T1.PAYABLELINKTO
@@ -1367,7 +1366,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#103.9_post" author="vasudevarao.s" dbms="postgresql">
+	<changeSet id="ST#3007.37.0_post" author="vasudevarao.s" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_aview');
@@ -1375,7 +1374,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.10_pre" author="vasudevarao.s" dbms="postgresql">
+	<changeSet id="ST#3007.37.1_pre" author="vasudevarao.s" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feetypes_tview');
@@ -1383,7 +1382,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.10" author="vasudevarao.s">
+	<changeSet id="ST#3007.37.1" author="vasudevarao.s">
 		<createView viewName="FEETYPES_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FEETYPEID
@@ -1415,7 +1414,6 @@
 	        		, T3.ACCOUNTSETCODE DUEACCTSETCODE
 					, T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
 					, T1.TDSREQ
-					, T1.FEEINCOMEOREXPENSE 
 		    		, T1.ACTYPE 
 		    		, T4.ACTYPEDESC
 					, T1.PAYABLELINKTO
@@ -1428,7 +1426,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#103.10_post" author="vasudevarao.s" dbms="postgresql">
+	<changeSet id="ST#3007.37.1_post" author="vasudevarao.s" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_tview');
@@ -1436,7 +1434,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.11_pre" author="vasudevarao.s" dbms="postgresql">
+	<changeSet id="ST#3007.37.2_pre" author="vasudevarao.s" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feetypes_view');
@@ -1444,7 +1442,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#103.11" author="vasudevarao.s">
+	<changeSet id="ST#3007.37.2" author="vasudevarao.s">
 		<createView viewName="FEETYPES_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FEETYPEID
@@ -1476,7 +1474,6 @@
 					, T3.ACCOUNTSETCODE DUEACCTSETCODE
 					, T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
 					, T1.TDSREQ
-					, T1.FEEINCOMEOREXPENSE 
 					, T1.ACTYPE 
 					, T4.ACTYPEDESC
 					, T1.PAYABLELINKTO
@@ -1518,7 +1515,6 @@
 					, T3.ACCOUNTSETCODE DUEACCTSETCODE
 					, T3.ACCOUNTSETCODENAME DUEACCTSETCODENAME
 					, T1.TDSREQ
-					, T1.FEEINCOMEOREXPENSE 
 					, T1.ACTYPE 
 					, T4.ACTYPEDESC
 					, T1.PAYABLELINKTO
@@ -1535,7 +1531,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#103.11_post" author="vasudevarao.s" dbms="postgresql">
+	<changeSet id="ST#3007.37.2_post" author="vasudevarao.s" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_view');
@@ -3741,11 +3737,6 @@
 		<addPrimaryKey tableName="Presentment_Exclude_Codes" columnNames="ID" constraintName="pk_Pec" />
 	</changeSet>
 
-	<changeSet id="ST#112.3.1" author="saikrishna.b">
-		<dropUniqueConstraint tableName="Presentment_Exclude_Codes" uniqueColumns="Code"
-			constraintName="uk_pec_code" />
-	</changeSet>
-
 	<changeSet id="ST#112.3.2" author="sandeepkumar.m">
 		<addUniqueConstraint tableName="Presentment_Exclude_Codes" columnNames="Code,InstrumentType"
 			constraintName="uk_pec_codeinstrumentType" />
@@ -3845,11 +3836,6 @@
 		<addPrimaryKey tableName="Presentment_Exclude_Codes_temp" columnNames="ID" constraintName="pk_pec_t_id" />
 	</changeSet>
 
-	<changeSet id="ST#112.9.1" author="saikrishna.b">
-		<dropUniqueConstraint tableName="Presentment_Exclude_Codes_temp" uniqueColumns="Code"
-			constraintName="uk_pec_t_code" />
-	</changeSet>
-
 	<changeSet id="ST#112.9.2" author="sandeepkumar.m">
 		<addUniqueConstraint tableName="Presentment_Exclude_Codes_temp" columnNames="Code,InstrumentType"
 			constraintName="uk_pec_t_codeinstrumentType" />
@@ -3945,41 +3931,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#112.17" author="sandeepkumar.m">
-		<addColumn tableName="INSTRUMENT_TYPES">
-			<column name="BatchSize" type="int" />
-		</addColumn>
-	</changeSet>
+	
 
-	<changeSet id="ST#112.18" author="sandeepkumar.m">
-		<addColumn tableName="Instrument_Types_Temp">
-			<column name="BatchSize" type="int" />
-		</addColumn>
-	</changeSet>
+	
 
-	<changeSet id="ST#112.19" author="saikrishna.b" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#112.19" author="saikrishna.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="BatchSize" tableName="INSTRUMENT_TYPES" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="ST#112.20" author="saikrishna.b" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#112.20" author="saikrishna.b" dbms="postgresql, oracle">
-		<addDefaultValue columnName="BatchSize" tableName="Instrument_Types_Temp" defaultValue="0" />
-	</changeSet>
+	
 	
 	<changeSet id="ST#112.21_pre" author="saikrishna.b" dbms="mssql">
 		<sql>
@@ -3992,10 +3948,6 @@
 	
 	<changeSet id="ST#112.21" author="sandeepkumar.m">
 		<dropColumn tableName="Presentment_Exclude_Codes" columnName="CreateBounceOnDueDate" />
-	</changeSet>
-
-	<changeSet id="ST#112.22" author="sandeepkumar.m">
-		<dropColumn tableName="Presentment_Exclude_Codes_TEMP" columnName="CreateBounceOnDueDate" />
 	</changeSet>
 
 	<changeSet id="ST#112.23" author="saikrishna.b">
@@ -4074,7 +4026,7 @@
 	<changeSet id="ST#90.2" author="Alekhya.T">
 		<addUniqueConstraint tableName="Instrument_Types" columnNames="Code" constraintName="UK_Codes" />
 	</changeSet>
-
+	
 	<changeSet id="ST#90.3" author="Alekhya.T" dbms="posgres,oracle">
 		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="Internal" defaultValue="0" />
 		<addDefaultValue tableName="INSTRUMENT_TYPES" columnName="Enabled" defaultValue="0" />
@@ -4096,6 +4048,24 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#112.17" author="sandeepkumar.m">
+		<addColumn tableName="INSTRUMENT_TYPES">
+			<column name="BatchSize" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#112.19" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BatchSize" tableName="INSTRUMENT_TYPES" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#112.19" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE INSTRUMENT_TYPES ADD CONSTRAINT DF_IT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
+			]]>
+		</sql>
+	</changeSet>	
 
 	<changeSet id="ST#90.4" author="Alekhya.T">
 		<createTable tableName="Instrument_Types_Temp">
@@ -4178,6 +4148,28 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#112.18" author="sandeepkumar.m">
+		<addColumn tableName="Instrument_Types_Temp">
+			<column name="BatchSize" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#112.20" author="saikrishna.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="BatchSize" tableName="Instrument_Types_Temp" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#112.20" author="saikrishna.b" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE INSTRUMENT_TYPES_TEMP ADD CONSTRAINT DF_ITT_BATCHSIZE DEFAULT 0 FOR BATCHSIZE;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#112.22" author="sandeepkumar.m">
+		<dropColumn tableName="Presentment_Exclude_Codes_TEMP" columnName="CreateBounceOnDueDate" />
+	</changeSet>	
 
 	<changeSet id="ST#90.8" author="Alekhya.T">
 		<createSequence sequenceName="Seq_Due_Extraction_Header" minValue="1" maxValue="999999999999999999"
