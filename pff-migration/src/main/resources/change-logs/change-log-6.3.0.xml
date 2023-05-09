@@ -14586,7 +14586,7 @@
 					(Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
 							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
 							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
-							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef not null) t2
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef is not null) t2
 					where M.MandateID = t2.MandateID;	
 			]]>
 		</sql>
@@ -14600,7 +14600,7 @@
 					INNER JOIN (Select MandateID, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
 							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
 							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
-							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef not null) t2 on M.MandateID = t2.MandateID;
+							else 0 end EXTMAN From MANDATES_TEMP Where MandateRef is not null) t2 on M.MandateID = t2.MandateID;
 			]]>
 		</sql>
 	</changeSet>
