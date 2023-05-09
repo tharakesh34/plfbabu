@@ -527,6 +527,6 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 	public boolean getExtendedComboData(String sql, String code) {
 		logger.trace(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, new Object[] { code, 1 }, Integer.class) > 0;
+		return jdbcOperations.queryForObject(sql, Integer.class, code, 1) > 0;
 	}
 }

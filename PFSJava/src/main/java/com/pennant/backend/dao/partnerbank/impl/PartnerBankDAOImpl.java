@@ -560,8 +560,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		sql.append(type);
 		sql.append(" WHERE ENTITY = ? AND PARTNERBANKCODE = ?");
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entity, partnerbankCode },
-				Integer.class) > 0 ? true : false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, entity, partnerbankCode) > 0 ? true
+				: false;
 	}
 
 	@Override

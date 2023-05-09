@@ -282,7 +282,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, obj, Integer.class) > 0;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
@@ -306,7 +306,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, obj, Integer.class) > 0;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	public Map<String, Object> getGSTDataMapForMerch(long mId) {
