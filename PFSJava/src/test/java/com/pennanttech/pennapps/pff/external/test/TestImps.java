@@ -37,8 +37,8 @@ public class TestImps {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, new Long(1000),
-					new Date(), new Date());
+			DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, 1000L, new Date(),
+					new Date());
 			List<String> list = new ArrayList<>();
 			list.add("175");
 			// impsRequest.setDisbursments(list);

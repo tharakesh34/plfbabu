@@ -38,7 +38,7 @@ public class TestControlDumpRequestService {
 	public void process() {
 		try {
 			Date date = DateUtil.getDate(2017, 9, 3);
-			new ControlDumpExtract(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
+			new ControlDumpExtract(dataSource, 1000L, date, date).process("CONTROL_DUMP_REQUEST");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

@@ -22,8 +22,10 @@ public class TestPosidexRequestService {
 	@BeforeTest
 	@Test(enabled = false)
 	public void start() {
+		ApplicationContext context;
+
 		try {
-			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -33,7 +35,7 @@ public class TestPosidexRequestService {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new PosidexDataExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate())
+			new PosidexDataExtarct(dataSource, 1000L, DateUtil.getSysDate(), DateUtil.getSysDate())
 					.process("POSIDEX_CUSTOMER_UPDATE_REQUEST");
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
