@@ -59,10 +59,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "applicationNo", "lovDescCustCIF", "finType", "finCcy", "finBranch", "finReference",
 		"profitDaysBasis", "finAmount", "finAssetValue", "downPayBank", "downPaySupl", "finRepayMethod", "finStartDate",
 		"firstDroplineDate", "allowGrcPeriod", "tDSApplicable", "manualSchedule", "planDeferCount", "stepFinance",
-		"alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcPeriodEndDate", "grcRateBasis", "grcPftRate",
-		"graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq", "nextGrcPftDate",
-		"grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay", "grcSchdMthd",
-		"grcMinRate", "grcMaxRate", "grcMaxAmount", "numberOfTerms", "reqRepayAmount", "repayRateBasis",
+		"alwManualSteps", "stepPolicy", "stepType", "graceTerms", "grcStartDate", "grcPeriodEndDate", "grcRateBasis",
+		"grcPftRate", "graceBaseRate", "graceSpecialRate", "grcMargin", "grcProfitDaysBasis", "grcPftFrq",
+		"nextGrcPftDate", "grcPftRvwFrq", "nextGrcPftRvwDate", "grcCpzFrq", "nextGrcCpzDate", "allowGrcRepay",
+		"grcSchdMthd", "grcMinRate", "grcMaxRate", "grcMaxAmount", "numberOfTerms", "reqRepayAmount", "repayRateBasis",
 		"repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq",
 		"nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq",
 		"nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "finContractDate",
@@ -89,6 +89,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String investmentRef = "";
 	@XmlElement
 	private String finType;
+	@XmlElement(name = "finTypeDesc")
 	private String lovDescFinTypeName;
 	@XmlElement
 	private String promotionCode;
@@ -99,6 +100,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private long custID;
 	@XmlElement(name = "cif")
 	private String lovDescCustCIF;
+	@XmlElement(name = "shortName")
 	private String lovDescCustShrtName;
 	@XmlElement
 	private String finBranch;
@@ -693,6 +695,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String processAttributes;
 	private String higherDeviationApprover;
 	private Map<String, String> attributes = new HashMap<>();
+	@XmlElement
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	private String entityCode;
 	// ### 10-09-2018,Ticket id:124998
@@ -847,6 +850,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String reason;
 	private boolean underSettlement;
 	private boolean isEOD;
+	private String loanName;
+	private Date custDOB;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1092,6 +1097,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("holdStatus");
 		excludeFields.add("reason");
 		excludeFields.add("isEOD");
+		excludeFields.add("loanName");
+		excludeFields.add("custDOB");
+
 		return excludeFields;
 	}
 
@@ -5590,5 +5598,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setEOD(boolean isEOD) {
 		this.isEOD = isEOD;
+	}
+
+	public String getLoanName() {
+		return loanName;
+	}
+
+	public void setLoanName(String loanName) {
+		this.loanName = loanName;
+	}
+
+	public Date getCustDOB() {
+		return custDOB;
+	}
+
+	public void setCustDOB(Date custDOB) {
+		this.custDOB = custDOB;
 	}
 }

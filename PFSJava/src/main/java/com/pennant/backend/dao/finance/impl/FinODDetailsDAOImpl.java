@@ -1214,4 +1214,20 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 	}
+
+	@Override
+	public List<FinODDetails> getLPPDueAmount(long finID) {
+		String sql = "Select LppDueAmt, LppDueTillDate From FinODDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinODDetails od = new FinODDetails();
+
+			od.setLppDueAmt(rs.getBigDecimal("LppDueAmt"));
+			od.setLppDueTillDate(rs.getDate("LppDueTillDate"));
+
+			return od;
+		}, finID);
+	}
 }

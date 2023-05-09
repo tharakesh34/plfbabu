@@ -41,6 +41,7 @@ import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
@@ -420,4 +421,10 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMainForExcessTransfer(long finId);
 
 	List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank);
+
+	FinanceMain getBasicDetails(String finReference, TableType tableType);
+
+	SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType);
+
+	List<Long> getFinIDsByCustID(Long custID, TableType tableType);
 }

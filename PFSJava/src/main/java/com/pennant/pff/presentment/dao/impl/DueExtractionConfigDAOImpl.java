@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
@@ -304,6 +305,10 @@ public class DueExtractionConfigDAOImpl extends SequenceDao<InstrumentTypes> imp
 		List<Long> list = jdbcOperations.query(sql, (rs, rowNum) -> {
 			return rs.getLong(1);
 		}, extractionDate);
+
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
 
 		sql = "Delete from Due_Extraction_Config Where MonthID in (" + JdbcUtil.getInCondition(list) + ")";
 

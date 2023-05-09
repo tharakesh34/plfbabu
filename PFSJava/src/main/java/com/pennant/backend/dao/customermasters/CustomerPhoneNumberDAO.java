@@ -54,4 +54,6 @@ public interface CustomerPhoneNumberDAO {
 	int getPhoneTypeCodeCount(String phoneTypeCode);
 
 	List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type);
+
+	String getPhoneNumberByCustID(long custID);
 }

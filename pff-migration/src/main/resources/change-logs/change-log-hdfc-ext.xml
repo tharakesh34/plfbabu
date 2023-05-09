@@ -340,4 +340,21 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="002.5" author="goutham.ch">
+		<addColumn tableName="FILE_INTERFACE_CONFIG">
+			<column name="BACKUP_LOCATION" type="varchar(2000)" />
+			<column name="ACCESS_KEY" type="varchar(50)" />
+			<column name="SECRET_KEY" type="varchar(200)" />
+			<column name="HOST_NAME" type="varchar(200)" />
+			<column name="PORT" type="int" />
+			<column name="PRIVATE_KEY" type="varchar(255)" />
+			<column name="SSE_ALGORITHM" type="varchar(50)" />
+			<column name="PREFIX" type="varchar(100)" />
+			<column name="SFTP_LOCATION" type="varchar(2000)" />
+			<column name="IS_SFTP" type="varchar(10)" />
+			<column name="LOCAL_BACKUP_LOCATION" type="varchar(2000)" />
+			<column name="SFTP_BUCKET" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

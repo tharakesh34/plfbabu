@@ -65,6 +65,7 @@ public class MandateUploadValidateRecord implements ValidateRecord {
 		mndts.setIFSC(ObjectUtil.valueAsString(record.getValue("IFSC")));
 		mndts.setMICR(ObjectUtil.valueAsString(record.getValue("MICR")));
 		mndts.setStrExternalMandate(ObjectUtil.valueAsString(record.getValue("EXTERNALMANDATE")));
+		mndts.setStrSecurityMandate(ObjectUtil.valueAsString(record.getValue("SECURITYMANDATE")));
 
 		detail.setMandate(mndts);
 

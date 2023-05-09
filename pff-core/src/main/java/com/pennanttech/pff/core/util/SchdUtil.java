@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.schdule.RepaymentStatus;
@@ -98,5 +99,29 @@ public class SchdUtil {
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		return overDueEMI.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : overDueEMI;
+	}
+
+	public static int getPaidInstalments(List<FinanceScheduleDetail> schedules) {
+
+		schedules.forEach(schd -> {
+			if (schd.isRepayOnSchDate())
+				schd.setLoanEMIStatus(SchdUtil.getRepaymentStatus(schd).repaymentStatus());
+		});
+
+		return schedules.stream().filter(schd -> "Paid".equals(schd.getLoanEMIStatus())).collect(Collectors.toList())
+				.size();
+	}
+
+	public static BigDecimal getOutStandingPrincipal(List<FinanceScheduleDetail> schedules, Date businessDate) {
+		return schedules.stream()
+				.filter(schd -> businessDate.compareTo(schd.getSchDate()) <= 0 && schd.isRepayOnSchDate())
+				.collect(Collectors.toList()).stream().map(FinanceScheduleDetail::getPrincipalSchd)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public static BigDecimal getLPPDueAmount(List<FinODDetails> odDetails) {
+
+		return odDetails.stream().map(FinODDetails::getLppDueAmt).reduce(BigDecimal.ZERO, BigDecimal::add);
+
 	}
 }

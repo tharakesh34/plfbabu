@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
+import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -27,6 +30,8 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 	private static final Logger logger = LogManager.getLogger(ManualKnockOffUploadProcessRecord.class);
 
 	private ManualKnockOffUploadDAO manualKnockOffUploadDAO;
+	@Autowired
+	private UploadService manualKnockOffUploadServiceImpl;
 
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
@@ -48,6 +53,8 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		}
 
 		mku.setHeaderId(headerID);
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
 		int readColumn = 0;
 
@@ -97,6 +104,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		}
 
 		long uploadID = manualKnockOffUploadDAO.save(mku);
+		mku.setId(uploadID);
 
 		List<ManualKnockOffUpload> allocations = new ArrayList<>();
 
@@ -149,6 +157,19 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		}
 
 		manualKnockOffUploadDAO.saveAllocations(allocations);
+		mku.setAllocations(allocations);
+
+		manualKnockOffUploadServiceImpl.doValidate(header, mku);
+
+		if (mku.getProgress() == EodConstants.PROGRESS_FAILED) {
+			record.addValue("ERRORCODE", mku.getErrorCode());
+			record.addValue("ERRORDESC", mku.getErrorDesc());
+
+			List<ManualKnockOffUpload> details = new ArrayList<>();
+			details.add(mku);
+
+			manualKnockOffUploadDAO.update(details);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

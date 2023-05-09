@@ -191,6 +191,24 @@ public class APIServices {
 		services.add("enableUser");
 		services.add("expireUser");
 		services.add("getCustomerEmployment");
+		services.add("getPDCEnquiry");
+		services.add("getPDCDetails");
+		services.add("getGuarantorDetails");
+		services.add("getSourcingDetails");
+		services.add("getLoanBalanceDetails");
+		services.add("getLoanBasicDetails");
+		services.add("getRepaymetDetails");
+		services.add("getCustomerData");
+		services.add("getLoansByPhoneNumber");
+		services.add("getLoansByAccountNumber");
+		services.add("getLoansByCustomerName");
+		services.add("getLoansByNameAndMobileNumber");
+		services.add("getLoansByNameAndDateOfBirth");
+		services.add("getLoansByPANNumber");
+		services.add("getLoansByNameAndPanNumber");
+		services.add("getLoansByProductShrtNameAndDateOfBirth");
+		services.add("getCustomerDataByCIF");
+		services.add("getLoansByNameAndEMIAmount");
 
 		return services;
 	}

@@ -40,10 +40,12 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.util.APIConstants;
 
-public class SummaryDetailService extends ExtendedTestClass {
+public class SummaryDetailService extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(SummaryDetailService.class);
 
 	protected FinanceDisbursementDAO financeDisbursementDAO;
@@ -66,6 +68,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		FinanceSummary summary = new FinanceSummary();
+		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 
 		fd.setFinID(finID);
 		fd.setFinReference(finReference);
@@ -82,8 +85,8 @@ public class SummaryDetailService extends ExtendedTestClass {
 		FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
 		fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		FinScheduleData curSchd = resetScheduleDetail(fd.getFinScheduleData());
-		finPftDetail = accrualService.calProfitDetails(fm, curSchd.getFinanceScheduleDetails(), finPftDetail,
-				SysParamUtil.getAppDate());
+		Date appDate = SysParamUtil.getAppDate();
+		finPftDetail = accrualService.calProfitDetails(fm, curSchd.getFinanceScheduleDetails(), finPftDetail, appDate);
 
 		// override repay profit rate with FinProfitdetail calculated value(which is latest).
 		fm.setRepayProfitRate(finPftDetail.getCurReducingRate());
@@ -186,6 +189,10 @@ public class SummaryDetailService extends ExtendedTestClass {
 			summary.setFinODDetail(finODDetailsList);
 			summary.setOverDueInstlments(odInst);
 			summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
+			summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+			summary.setOverDueEMI(SchdUtil.getOverDueEMI(appDate, schedules));
+			summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+
 			fd.getFinScheduleData().setFinODDetails(finODDetailsList);
 		}
 		logger.debug("Leaving");

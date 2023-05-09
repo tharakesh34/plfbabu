@@ -86,7 +86,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private String custBaseCcy;
 
 	@XmlElement
-	private long primaryRelationOfficer;
+	private Long primaryRelationOfficer = (long) 0;
 
 	private String sourceId;
 
@@ -176,9 +176,9 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElement
 	public WSReturnStatus returnStatus = null;
 	@XmlElement
-	private boolean dedupReq;
+	private Boolean dedupReq = false;
 	@XmlElement
-	private boolean blackListReq;
+	private Boolean blackListReq = false;
 
 	private boolean cibilExecuted = false;
 	private boolean cibilALreadyRun = false;
@@ -192,8 +192,6 @@ public class CustomerDetails implements java.io.Serializable {
 
 	private boolean reInitiateCibil = true;
 	private String actualError;
-	@XmlElement
-	private String fullAddress;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -243,11 +241,11 @@ public class CustomerDetails implements java.io.Serializable {
 		this.custBaseCcy = custBaseCcy;
 	}
 
-	public long getPrimaryRelationOfficer() {
+	public Long getPrimaryRelationOfficer() {
 		return primaryRelationOfficer;
 	}
 
-	public void setPrimaryRelationOfficer(long primaryRelationOfficer) {
+	public void setPrimaryRelationOfficer(Long primaryRelationOfficer) {
 		this.primaryRelationOfficer = primaryRelationOfficer;
 	}
 
@@ -527,11 +525,11 @@ public class CustomerDetails implements java.io.Serializable {
 		this.customerFinance = customerFinance;
 	}
 
-	public boolean isDedupReq() {
+	public Boolean isDedupReq() {
 		return dedupReq;
 	}
 
-	public void setDedupReq(boolean dedupReq) {
+	public void setDedupReq(Boolean dedupReq) {
 		this.dedupReq = dedupReq;
 	}
 
@@ -621,11 +619,11 @@ public class CustomerDetails implements java.io.Serializable {
 		this.balckListCustomers = balckListCustomers;
 	}
 
-	public boolean isBlackListReq() {
+	public Boolean isBlackListReq() {
 		return blackListReq;
 	}
 
-	public void setBlackListReq(boolean blackListReq) {
+	public void setBlackListReq(Boolean blackListReq) {
 		this.blackListReq = blackListReq;
 	}
 
@@ -692,13 +690,4 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setGstDetailsList(List<GSTDetail> gstDetailsList) {
 		this.gstDetailsList = gstDetailsList;
 	}
-
-	public String getFullAddress() {
-		return fullAddress;
-	}
-
-	public void setFullAddress(String fullAddress) {
-		this.fullAddress = fullAddress;
-	}
-
 }

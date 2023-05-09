@@ -28,7 +28,6 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.impl.FinanceDeviationsDAOImpl;
 import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.dao.perfios.PerfiosTransactionDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.ValueLabel;
@@ -53,8 +52,10 @@ import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -63,6 +64,7 @@ import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennant.validation.CreateFinanceGroup;
 import com.pennant.validation.CreateFinanceWithCollateral;
 import com.pennant.validation.CreateFinancewithWIFGroup;
@@ -71,7 +73,6 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.controller.CreateFinanceController;
-import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -97,7 +98,7 @@ import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 @Service
-public class CreateFinanceWebServiceImpl extends ExtendedTestClass
+public class CreateFinanceWebServiceImpl extends AbstractController
 		implements CreateFinanceSoapService, CreateFinanceRestService {
 
 	private static final Logger logger = LogManager.getLogger(CreateFinanceWebServiceImpl.class);
@@ -115,7 +116,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	private FinanceDeviationsDAO financeDeviationsDAO;
 	private DeviationHelper deviationHelper;
 	private SecurityUserDAO securityUserDAO;
-	private PerfiosTransactionDAO perfiosTransactionDAO;
 	private DedupFieldsDAO dedupFieldsDAO;
 	private DedupParmDAO dedupParmDAO;
 	private FinanceDedupeDAO financeDedupeDAO;
@@ -789,6 +789,13 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		fd.setCollateralAssignmentList(null);
 		fd.setFinFlagsDetails(null);
 		fd.setCustomerDetails(null);
+		fd.setInterfaceDetailList(null);
+		fd.setLegalDetailsList(null);
+		fd.setReturnDataSetList(null);
+		fd.setStp(null);
+		fd.setReceiptId(null);
+		fd.setDisbStp(null);
+		fd.setOrigination(null);
 	}
 
 	/**
@@ -1863,6 +1870,133 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		return writeOffAmount;
 	}
 
+	@Override
+	public List<PaymentMode> getPDCEnquiry(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		List<PaymentMode> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(wsrs);
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logKeyFields(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(getFailedStatus("90201", "FinReference"));
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return createFinanceController.getPDCEnquiry(fm);
+	}
+
+	@Override
+	public List<PaymentMode> getPDCDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		List<PaymentMode> response = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(wsrs);
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logKeyFields(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			PaymentMode paymentMode = new PaymentMode();
+			paymentMode.setReturnStatus(getFailedStatus("90201", "FinReference"));
+			response.add(paymentMode);
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return createFinanceController.getPDCDetails(fm);
+	}
+
+	@Override
+	public SourcingDetails getSourcingDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		SourcingDetails response;
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		if (finID == null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(getFailedStatus("90201", finReference));
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		response = financeMainDAO.getSourcingDetailsByFinReference(finID, TableType.MAIN_TAB);
+		if (response == null) {
+			response = new SourcingDetails();
+			response.setPrimaryRelationOfficer(null);
+			response.setReturnStatus(getFailedStatus("90266", finReference));
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+		response.setFinalSource("");
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
+	}
+
+	private WSReturnStatus validateFinReference(String finReference) {
+		return StringUtils.isEmpty(finReference) ? getFailedStatus("90502", "FinReference") : null;
+	}
+
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
 		this.createFinanceController = createFinanceController;
@@ -1929,11 +2063,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	}
 
 	@Autowired
-	public void setPerfiosTransactionDAO(PerfiosTransactionDAO perfiosTransactionDAO) {
-		this.perfiosTransactionDAO = perfiosTransactionDAO;
-	}
-
-	@Autowired
 	public void setDedupFieldsDAO(DedupFieldsDAO dedupFieldsDAO) {
 		this.dedupFieldsDAO = dedupFieldsDAO;
 	}
@@ -1965,4 +2094,5 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	public void setForeClosureService(ForeClosureService foreClosureService) {
 		this.foreClosureService = foreClosureService;
 	}
+
 }

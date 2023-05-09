@@ -1358,7 +1358,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	@Override
 	public ManualAdviseMovements getAdvMovByReceiptSeq(long receiptID, long receiptSeqID, long adviseId, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" mam.MovementID, mam.AdviseID, mam.MovementDate, mam.MovementAmount, mam.PaidAmount, mam.WaivedAmount");
+		sql.append(
+				" mam.MovementID, mam.AdviseID, mam.MovementDate, mam.MovementAmount, mam.PaidAmount, mam.WaivedAmount");
 		sql.append(", mam.Status, mam.ReceiptID, mam.ReceiptSeqID, mam.TaxHeaderId");
 		sql.append(", ft.FeeTypeCode, ft.FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent");
 		sql.append(" from ManualAdviseMovements");
@@ -1383,7 +1384,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				mam.setReceiptID(rs.getLong("ReceiptID"));
 				mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
 				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
-            	mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				mam.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
 				mam.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 				mam.setTaxComponent(rs.getString("TaxComponent"));
@@ -1843,7 +1844,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_CANCELLED);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
-			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setInt(index++, 0);
 		});
 	}
@@ -1869,7 +1870,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_CANCELLED);
 			ps.setString(index++, FinanceConstants.CLOSE_STATUS_MATURED);
-			ps.setString(index, PennantConstants.MANUALADVISE_MAINTAIN);
+			ps.setString(index++, PennantConstants.MANUALADVISE_MAINTAIN);
 			ps.setInt(index++, 0);
 		});
 	}

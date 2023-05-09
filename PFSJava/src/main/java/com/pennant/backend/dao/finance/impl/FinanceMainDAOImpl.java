@@ -75,6 +75,7 @@ import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
@@ -4376,7 +4377,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ScheduleMaintained, FinPurpose, ScheduleRegenerated, SecurityCollateral, RcdMaintainSts");
 			sql.append(", MaxUnplannedEmi, DsaCode, ReferralId, InitiateDate, ProcessAttributes");
 			sql.append(", VanReq, InvestmentRef, FinPreApprovedRef, EmployeeName, OverrideLimit, TdsStartDate");
-			sql.append(", MandateID, LimitValid, ApplicationNo, EligibilityMethod, PftServicingODLimit");
+			sql.append(", MandateID, SecurityMandateID");
+			sql.append(", LimitValid, ApplicationNo, EligibilityMethod, PftServicingODLimit");
 			sql.append(", BusinessVertical, ReAgeBucket, JointCustId, InitiateUser, Approved");
 			sql.append(", JointAccount, FinStatus, AvailedUnPlanEmi, PlanEMIHAlwInGrace, SchdVersion");
 			sql.append(", SubVentionFrom, ManufacturerDealerId, Escrow, CustBankId");
@@ -4644,6 +4646,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setOverrideLimit(rs.getBoolean("OverrideLimit"));
 				fm.setTdsStartDate(rs.getDate("TdsStartDate"));
 				fm.setMandateID(JdbcUtil.getLong(rs.getObject("MandateID")));
+				fm.setSecurityMandateID(JdbcUtil.getLong(rs.getObject("SecurityMandateID")));
 				fm.setLimitValid(rs.getBoolean("LimitValid"));
 				fm.setApplicationNo(rs.getString("ApplicationNo"));
 				fm.setEligibilityMethod(rs.getLong("EligibilityMethod"));
@@ -5682,6 +5685,54 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
+	public FinanceMain getBasicDetails(String finReference, TableType tableType) {
+		Object[] object = new Object[] { finReference };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" From FinanceMain fm Where FinReference = ?");
+			break;
+		case TEMP_TAB:
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { finReference, finReference };
+
+			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID From (");
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
+			sql.append(" Union All");
+			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append("  From FinanceMain fm Where FinReference = ?");
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+			sql.append(" ) fm");
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setMaturityDate(rs.getDate("MaturityDate"));
+				fm.setMandateID(rs.getLong("MandateID"));
+				fm.setSecurityMandateID(rs.getLong("SecurityMandateID"));
+
+				return fm;
+			}, object);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 	public Long getActiveFinID(String finReference, TableType tableType) {
 		Object[] object = new Object[] { finReference, 1 };
 
@@ -6292,7 +6343,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, Long.class, finReference);
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return null;
 	}
 
 	@Override
@@ -6691,4 +6748,102 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return rs.getLong("FinId");
 		});
 	}
+
+	@Override
+	public SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType) {
+		Object[] object = new Object[] { finID };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain fm");
+			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ? ");
+			break;
+		case TEMP_TAB:
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain_Temp fm");
+			sql.append(" Inner Join");
+			sql.append(" (Select CustID, CustRO1  From (");
+			sql.append(" Select CustID, CustRO1 From Customers_Temp c");
+			sql.append(" Union All");
+			sql.append(" Select CustID, CustRO1 From Customers c ");
+			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+			sql.append(" )) c on  c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { finID, finID };
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain fm");
+			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ? ");
+			sql.append(" Union All");
+			sql.append(" Select fm.DMACode, pd.CategoryCode, c.CustRO1");
+			sql.append(" From FinanceMain_Temp fm");
+			sql.append(" Inner Join");
+			sql.append(" (Select CustID, CustRO1  From (");
+			sql.append(" Select CustID, CustRO1 From Customers_Temp c");
+			sql.append(" Union All");
+			sql.append(" Select CustID, CustRO1 From Customers c ");
+			sql.append(" Where not exists (Select 1 From Customers_Temp Where CustID = c.CustID)");
+			sql.append(" )) c on  c.CustID = fm.CustID");
+			sql.append(" Inner Join PSLDetail pd on pd.FinID = fm.FinID");
+			sql.append(" Where fm.FinID = ?");
+			sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				SourcingDetails sd = new SourcingDetails();
+
+				sd.setDmaCode(rs.getString("DMACode"));
+				sd.setPrimaryRelationOfficer(rs.getLong("CustRO1"));
+				sd.setPslCategory(rs.getString("CategoryCode"));
+
+				return sd;
+			}, object);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+
+	}
+
+	@Override
+	public List<Long> getFinIDsByCustID(Long custID, TableType tableType) {
+		Object[] object = new Object[] { custID, 1 };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+			sql.append(" Select FinID From FinanceMain fm Where CustID = ? and FinIsActive = ?");
+			break;
+		case TEMP_TAB:
+			object = new Object[] { custID };
+			sql.append(" Select FinID From FinanceMain_Temp fm Where CustID = ?");
+			break;
+		case BOTH_TAB:
+			object = new Object[] { custID, 1, custID };
+			sql.append(" Select FinID From FinanceMain_Temp fm Where CustID = ?");
+			sql.append(" Union All");
+			sql.append(" Select FinID From FinanceMain fm Where CustID = ? and FinIsActive = ?");
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+			break;
+		default:
+			break;
+		}
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.queryForList(sql.toString(), Long.class, object);
+	}
+
 }
