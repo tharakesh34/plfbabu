@@ -479,4 +479,14 @@ public class AssetClassSetupDAOImpl extends SequenceDao<AssetClassSetupHeader> i
 		}, 1);
 	}
 
+	@Override
+	public boolean checkDependency(long assetClassSetupId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Count(ID) From RMTfinanceTypes");
+		sql.append(" Where AssetClassSetup = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), assetClassSetupId) > 0;
+	}
 }

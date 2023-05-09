@@ -259,6 +259,14 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 			}
 		}
 
+		boolean checkDependency = assetClassSetupDAO.checkDependency(ach.getId());
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(ach.getRecordType())) {
+			if (checkDependency) {
+				auditDetail.setErrorDetail(new ErrorDetail("90290", null));
+			}
+		}
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
