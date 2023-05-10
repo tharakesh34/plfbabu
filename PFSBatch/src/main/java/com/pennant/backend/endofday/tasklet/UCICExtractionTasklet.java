@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class EOMSPExtarctionsQueue implements Tasklet {
+public class UCICExtractionTasklet implements Tasklet {
 
-	private static Logger logger = LogManager.getLogger(EOMSPExtarctionsQueue.class);
+	private static Logger logger = LogManager.getLogger(UCICExtractionTasklet.class);
 	private EODExtractionsHook extExtractionHook;
 
-	public EOMSPExtarctionsQueue() {
+	public UCICExtractionTasklet() {
 		super();
 	}
 
@@ -26,10 +26,9 @@ public class EOMSPExtarctionsQueue implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		if (extExtractionHook != null) {
-			extExtractionHook.processEOMSP();
+			extExtractionHook.processUCICExtraction();
 		}
 
-		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;
 	}
 

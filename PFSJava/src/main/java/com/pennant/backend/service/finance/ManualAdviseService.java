@@ -28,8 +28,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;

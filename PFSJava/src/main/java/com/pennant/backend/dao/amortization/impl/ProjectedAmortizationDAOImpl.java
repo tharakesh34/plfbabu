@@ -41,8 +41,8 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.amortization.AmortizationQueuing;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;

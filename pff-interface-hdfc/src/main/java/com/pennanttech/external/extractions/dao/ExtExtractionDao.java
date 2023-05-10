@@ -8,4 +8,6 @@ public interface ExtExtractionDao {
 
 	public String executeSp(String spName, String fileName);
 
+	void truncateTable(String tableName);
+
 }

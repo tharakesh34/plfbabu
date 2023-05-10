@@ -11,11 +11,11 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.dao.finance.AutoRefundDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;

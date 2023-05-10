@@ -50,6 +50,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;

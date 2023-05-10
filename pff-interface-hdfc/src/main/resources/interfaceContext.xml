@@ -51,6 +51,10 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
 
 	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
 		<property name="extDataSource" ref="extDataSource" />
@@ -133,12 +137,26 @@
 		<property name="siInternalService" ref="siInternalService" />
 		<property name="extPdcService" ref="extPdcService" />
 	</bean>
-	<bean id="extApiDao" class="com.pennanttech.external.api.casavalidation.dao.impl.ExtApiDaoImpl">
-		<property name="extDataSource" ref="extDataSource" />
-	</bean>
-
 	<bean id="bankAccountValidationService"
 		class="com.pennanttech.external.api.casavalidation.service.CasaAccountValidationService">
-		<property name="extApiDao" ref="extApiDao" />
+		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
+	</bean>
+
+
+	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="almDumpService" class="com.pennanttech.external.extractions.service.ALMDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="microEodExternalProcessHook" class="com.pennanttech.external.extractions.service.ExtExtractionDumpService">
+		<property name="baselOneDumpService" ref="baselOneDumpService" />
+		<property name="almDumpService" ref="almDumpService" />
+	</bean>
+	
+	<bean id="beforeEodExternalProcessHook" class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
+		<property name="extStageDao" ref="extStageDao" />
 	</bean>
 </beans>

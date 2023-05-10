@@ -14,10 +14,9 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
-import com.pennanttech.external.extractions.service.ExtractionConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
-public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDao, ExtractionConstants {
+public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDao {
 	private static final Logger logger = LogManager.getLogger(ExtExtractionDaoImpl.class);
 
 	private NamedParameterJdbcTemplate mainNamedJdbcTemplate;
@@ -88,6 +87,11 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 
 	public void setMainDataSource(DataSource mainDataSource) {
 		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(mainDataSource);
+	}
+
+	@Override
+	public void truncateTable(String tableName) {
+		mainNamedJdbcTemplate.getJdbcOperations().update("TRUNCATE TABLE " + tableName);
 	}
 
 }

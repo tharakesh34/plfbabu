@@ -54,11 +54,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;

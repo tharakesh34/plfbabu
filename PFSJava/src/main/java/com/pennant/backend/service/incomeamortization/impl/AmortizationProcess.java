@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.resource.Literal;

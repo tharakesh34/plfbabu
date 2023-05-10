@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.sql.Timestamp;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -24,95 +25,108 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-import com.pennanttech.external.api.casavalidation.dao.ExtApiDao;
 import com.pennanttech.external.api.casavalidation.model.CasaAccountValidationReq;
 import com.pennanttech.external.api.casavalidation.model.CasaAccountValidationResp;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.BankAccountValidationService;
+import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 
 public class CasaAccountValidationService implements BankAccountValidationService {
 
 	private static final Logger logger = LogManager.getLogger(CasaAccountValidationService.class);
-	private ExtApiDao extApiDao;
+	private InterfaceLoggingDAO interfaceLoggingDAO;
+	private static final String CASA_ACC_VALIDATILON = "CASA_ACC_VALIDATION_INTERFACE";
 
-	public boolean validateBankAccount(BankAccountValidation bankAccountValidations) {
+	public boolean validateBankAccount(BankAccountValidation bankAccountValidation) {
+		boolean accStatus = false;
 		logger.debug(Literal.ENTERING);
-
-		// Load properties from ExtApi properties file
-		Properties prop = loadProperties();
-
-		// Create Request Object
-		CasaAccountValidationReq request = getRequestObject(bankAccountValidations.getAcctNum(), prop);
-
-		// Log Request into EXTAPILOG table
-		long id = logRequest(request.toString());
-
-		// Get URL from properties file
-		String url = (String) prop.get("WSDL_URL");
-
-		// Call Rest API
-		CasaAccountValidationResp resp = postRequest(request, url);
-
-		// Log Response into EXTAPILOG table by Id
-
+		InterfaceLogDetail logDetails = new InterfaceLogDetail();
+		CasaAccountValidationResp resp = null;
+		String errorDesc = null;
+		String errorCode = null;
+		Properties hdfcErrorCodeprop = null;
 		try {
-			logResp(resp.getXmlResponse(), id);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			Properties hdfcInterfaceProp = new Properties();
+			InputStream inputStream = this.getClass().getResourceAsStream("/properties/HDFCInterface.properties");
+			hdfcInterfaceProp.load(inputStream);
+			hdfcErrorCodeprop = new Properties();
+			InputStream errorCodesinputStream = this.getClass()
+					.getResourceAsStream("/properties/HDFCInterefaceErrorCodes.properties");
+			hdfcErrorCodeprop.load(errorCodesinputStream);
+			CasaAccountValidationReq request = getRequestObject(bankAccountValidation.getAcctNum(), hdfcInterfaceProp);
+			String url = (String) hdfcInterfaceProp.get("CASACCVALIDATION.WSDL_URL");
+			logDetails.setEndPoint(url);
+			logDetails.setRequest(request.toString());
+			logDetails.setReference(bankAccountValidation.getAcctNum());
+			logDetails.setServiceName(CASA_ACC_VALIDATILON);
+			logDetails.setReqSentOn(new Timestamp(System.currentTimeMillis()));
+			// Call Rest API
+			resp = postRequest(request, url);
+			logDetails.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
+			logDetails.setResponse(resp.getXmlResponse());
+			if (resp != null && resp.getResponseCodes() != null && resp.getResponseCodes().getErrorCode() != null
+					&& resp.getResponseCodes().getErrorCode().equals("0")) {
 
-		logger.debug(Literal.LEAVING);
-		// Creating response to send
-		return getAccountStatus(resp, (String) prop.get("ACCOUNT_STATUS"), bankAccountValidations);
+				String[] params = Pattern.compile("\\|")
+						.split(hdfcInterfaceProp.getProperty("CASACCVALIDATION.ACCOUNT_STATUS"));
+				if (params != null) {
+					for (String st : params) {
+						String[] accStat = st.split("~");
+						if (accStat != null && accStat.length >= 3) {
+							if (accStat[0].equals(
+									resp.getRespData().getCustDetails().getCasaAcc().getAccDtls().getAccountStatus())) {
+								bankAccountValidation.setReason(accStat[1]);
 
-	}
-
-	private boolean getAccountStatus(CasaAccountValidationResp resp, String prop,
-			BankAccountValidation bankAccValidations) {
-		logger.debug(Literal.ENTERING);
-		if (resp != null && resp.getResponseCodes() != null && resp.getResponseCodes().getErrorCode() != null
-				&& resp.getResponseCodes().getErrorCode().equals("0")) {
-			return createResponse(resp, prop, bankAccValidations);
-		}
-		bankAccValidations.setReason(resp.getXmlResponse());
-		return false;
-
-	}
-
-	protected boolean createResponse(CasaAccountValidationResp resp, String prop,
-			BankAccountValidation bankAccValidations) {
-		String[] params = Pattern.compile("\\|").split(prop);
-		if (params != null) {
-			for (String st : params) {
-				String[] accStat = st.split("~");
-				if (accStat[0]
-						.equals(resp.getRespData().getCustDetails().getCasaAcc().getAccDtls().getAccountStatus())) {
-					bankAccValidations.setReason(accStat[1]);
-
-					if ("Y".equals(accStat[2])) {
-						return true;
+								if ("Y".equals(accStat[2])) {
+									accStatus = true;
+								}
+							}
+						} else {
+							errorCode = "CASA.E505";
+							errorDesc = hdfcErrorCodeprop.getProperty(errorCode);
+							bankAccountValidation.setReason(errorDesc);
+							return accStatus;
+						}
 					}
+				} else {
+					errorCode = "CASA.E504";
+					errorDesc = hdfcErrorCodeprop.getProperty(errorCode);
+					logger.debug(errorDesc);
+					bankAccountValidation.setReason(errorDesc);
+					return accStatus;
 				}
 			}
+		} catch (IOException e) {
+			logger.error(Literal.EXCEPTION, e);
+			errorCode = "CASA.E502";
+			errorDesc = hdfcErrorCodeprop.getProperty(errorCode);
+			logDetails.setResponse(e.getMessage());
+			bankAccountValidation.setReason(errorDesc);
+		} catch (JAXBException e) {
+			errorCode = "CASA.E503";
+			errorDesc = hdfcErrorCodeprop.getProperty(errorCode);
+			logDetails.setResponse(e.getMessage());
+			logger.error(Literal.EXCEPTION, e);
+			bankAccountValidation.setReason(errorDesc);
+		} catch (RestClientException e) {
+			errorCode = "CASA.E501";
+			errorDesc = hdfcErrorCodeprop.getProperty(errorCode);
+			logDetails.setResponse(e.getMessage());
+			logger.error(Literal.EXCEPTION, e);
+			bankAccountValidation.setReason(errorDesc);
+		} finally {
+			logDetails.setErrorCode(errorCode);
+			logDetails.setErrorDesc(errorDesc);
+			interfaceLoggingDAO.save(logDetails);
 		}
 		logger.debug(Literal.LEAVING);
-		return false;
+		return accStatus;
 	}
 
-	private Properties loadProperties() {
-		logger.debug(Literal.ENTERING);
-		Properties prop = new Properties();
-		try (InputStream inputStream = this.getClass().getResourceAsStream("/properties/ExtApi.properties")) {
-			prop.load(inputStream);
-		} catch (IOException ioException) {
-			logger.debug(ioException.getMessage());
-		}
-		logger.debug(Literal.LEAVING);
-		return prop;
-	}
-
-	private CasaAccountValidationResp postRequest(CasaAccountValidationReq req, String url) {
+	private CasaAccountValidationResp postRequest(CasaAccountValidationReq req, String url)
+			throws JAXBException, RestClientException {
 		logger.debug(Literal.ENTERING);
 		CasaAccountValidationResp resp = null;
 		HttpHeaders headers = new HttpHeaders();
@@ -120,35 +134,21 @@ public class CasaAccountValidationService implements BankAccountValidationServic
 		headers.setContentType(org.springframework.http.MediaType.APPLICATION_XML);
 		HttpEntity<String> request = new HttpEntity<>(req.toString(), headers);
 		ResponseEntity<String> respEntity = null;
-		try {
-			respEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-			JAXBContext jaxbContext = JAXBContext.newInstance(CasaAccountValidationResp.class);
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			resp = (CasaAccountValidationResp) jaxbUnmarshaller.unmarshal(new StringReader(respEntity.getBody()));
-			resp.setXmlResponse(respEntity.getBody());
-		} catch (JAXBException | RestClientException jae) {
-			logger.error(Literal.EXCEPTION, jae);
-			resp = getResponseData(jae.toString());
-		}
+		respEntity = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+		JAXBContext jaxbContext = JAXBContext.newInstance(CasaAccountValidationResp.class);
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		resp = (CasaAccountValidationResp) jaxbUnmarshaller.unmarshal(new StringReader(respEntity.getBody()));
+		resp.setXmlResponse(respEntity.getBody());
 		logger.debug(Literal.LEAVING);
 		return resp;
-	}
-
-	private long logRequest(String request) {
-		return extApiDao.insertReqData(request);
-	}
-
-	private void logResp(String resp, long id) throws Exception {
-		extApiDao.logResponseById(id, resp);
-
 	}
 
 	private CasaAccountValidationReq getRequestObject(String accNo, Properties prop) {
 		logger.debug(Literal.ENTERING);
 		CasaAccountValidationReq accValidationReq = new CasaAccountValidationReq();
-		accValidationReq.setExtsysname(prop.getProperty("EXTSYSNAME"));
-		accValidationReq.setIdtxn(prop.getProperty("IDTXN"));
-		accValidationReq.setIduser(prop.getProperty("IDUSER"));
+		accValidationReq.setExtsysname(prop.getProperty("CASACCVALIDATION.EXTSYSNAME"));
+		accValidationReq.setIdtxn(prop.getProperty("CASACCVALIDATION.IDTXN"));
+		accValidationReq.setIduser(prop.getProperty("CASACCVALIDATION.IDUSER"));
 		CasaAccountValidationReq.CustAcctDetails accDetails = accValidationReq.new CustAcctDetails();
 		accDetails.setAccountNo(accNo);
 		accValidationReq.setCustacctdetails(accDetails);
@@ -171,17 +171,7 @@ public class CasaAccountValidationService implements BankAccountValidationServic
 		return restTemplate;
 	}
 
-	private CasaAccountValidationResp getResponseData(String msg) {
-		logger.debug(Literal.ENTERING);
-		CasaAccountValidationResp excResp = new CasaAccountValidationResp();
-		excResp.setException(true);
-		excResp.setXmlResponse(msg);
-		logger.debug(Literal.LEAVING);
-		return excResp;
+	public void setInterfaceLoggingDAO(InterfaceLoggingDAO interfaceLoggingDAO) {
+		this.interfaceLoggingDAO = interfaceLoggingDAO;
 	}
-
-	public void setExtApiDao(ExtApiDao extApiDao) {
-		this.extApiDao = extApiDao;
-	}
-
 }

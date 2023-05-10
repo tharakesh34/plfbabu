@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.LookupMethods;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;

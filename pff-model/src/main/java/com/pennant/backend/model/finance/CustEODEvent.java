@@ -1,4 +1,4 @@
-package com.pennant.app.core;
+package com.pennant.backend.model.finance;
 
 import java.util.ArrayList;
 import java.util.Date;

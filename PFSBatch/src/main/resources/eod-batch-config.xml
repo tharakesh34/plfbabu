@@ -60,16 +60,10 @@
 			<partition step="microEOD" partitioner="partitioningMaster">
 				<handler task-executor="taskExecutor" />
 			</partition>
-			<next on="*" to="SPExtractions" />
-			<fail on="FAILED" />
-		</step>
-		
-		<step id="SPExtractions">
-			<tasklet ref="spExtractionQueueTaskLet" />
 			<next on="*" to="autoKnockOffDataBackUp" />
 			<fail on="FAILED" />
 		</step>
-		
+
 		<step id="autoKnockOffDataBackUp">
 			<tasklet ref="autoKnockOffDataBackUpTasklet" />
 			<next on="*" to="notifyLoanClosureDetailsToEFS" />
@@ -99,19 +93,19 @@
 			<next on="*" to="excessKnockOffLoading" />
 			<fail on="FAILED" />
 		</step>
-		
+
 		<step id="excessKnockOffLoading">
 			<tasklet ref="excessKnockOffLoadingTaskLet" />
 			<next on="*" to="excessKnockOffQueuing" />
 			<fail on="FAILED" />
 		</step>
-		
+
 		<step id="excessKnockOffQueuing">
 			<tasklet ref="excessKnockOffQueuingTaskLet" />
 			<next on="*" to="excessKnockOffMaster" />
 			<fail on="FAILED" />
 		</step>
-		
+
 		<step id="excessKnockOffMaster">
 			<partition step="excessKnockOff" partitioner="excessKnockOffPartition">
 				<handler task-executor="taskExecutor" />
@@ -299,6 +293,16 @@
 		</step>
 		<step id="waiverCancellation">
 			<tasklet ref="waiverCancellationTasklet" />
+			<next on="*" to="finconGLExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="finconGLExtraction">
+			<tasklet ref="finconGLExtractionTasklet" />
+			<next on="*" to="ucicExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="ucicExtraction">
+			<tasklet ref="ucicExtractionTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
@@ -314,11 +318,6 @@
 		</step>
 		<step id="corporatecibil">
 			<tasklet ref="corporatecibilTaskLet" />
-			<next on="*" to="baselExtarctions" />
-			<fail on="FAILED" />	
-		</step>
-			<step id="baselExtarctions">
-			<tasklet ref="baselExtarctionsTasklet" />	
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>
@@ -328,13 +327,13 @@
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
-	
+
 	<step id="oTSMaster" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="oTSTaskLet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
-	
+
 	<step id="excessKnockOff" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="excessKnockOffTasklet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
@@ -370,7 +369,7 @@
 	<bean id="effAssetClassificationPartition"
 		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationPartition" />
 	<bean id="provisionCalcPartition" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcPartition" />
-	
+
 	<bean id="autoWriteOffCalcPartition"
 		class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcPartition" />
 	<step id="autoWriteOffCalc" xmlns="http://www.springframework.org/schema/batch">
@@ -387,8 +386,32 @@
 	</step>
 
 	<bean id="ledgerDownloadPartition" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition" />
+
+	<bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
+
+	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
+
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
+
 	
-	 <bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
-	 
-	 <bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
+	
+	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="almDumpService" class="com.pennanttech.external.extractions.service.ALMDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="microEodExternalProcessHook" class="com.pennanttech.external.extractions.service.ExtExtractionDumpService">
+		<property name="baselOneDumpService" ref="baselOneDumpService" />
+		<property name="almDumpService" ref="almDumpService" />
+	</bean>
+	
+	<bean id="beforeEodExternalProcessHook" class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
 </beans>

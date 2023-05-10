@@ -38,8 +38,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -55,7 +53,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;

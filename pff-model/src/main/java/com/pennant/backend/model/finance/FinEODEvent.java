@@ -1,4 +1,4 @@
-package com.pennant.app.core;
+package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -6,22 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.amortization.ProjectedAmortization;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinFeeScheduleDetail;
-import com.pennant.backend.model.finance.FinODDetails;
-import com.pennant.backend.model.finance.FinODPenaltyRate;
-import com.pennant.backend.model.finance.FinOverDueCharges;
-import com.pennant.backend.model.finance.FinServiceInstruction;
-import com.pennant.backend.model.finance.FinanceDisbursement;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
-import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.finance.ProjectedAccrual;
-import com.pennant.backend.model.finance.RepayInstruction;
-import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.rmtmasters.FinanceType;

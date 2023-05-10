@@ -9,10 +9,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.core.FinEODEvent;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.eod.constants.EodConstants;

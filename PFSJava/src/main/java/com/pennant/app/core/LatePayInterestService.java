@@ -44,6 +44,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinanceMain;

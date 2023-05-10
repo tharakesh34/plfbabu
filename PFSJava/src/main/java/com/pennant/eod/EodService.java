@@ -16,9 +16,7 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.AutoKnockOffService;
 import com.pennant.app.core.ChangeGraceEndService;
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayBucketService;
 import com.pennant.app.core.LatePayDueCreationService;
@@ -31,6 +29,8 @@ import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -43,6 +43,7 @@ import com.pennant.pff.core.loan.util.DPDStringCalculator;
 import com.pennant.pff.extension.DPDExtension;
 import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennanttech.external.MicroEodExternalProcessHook;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.closure.service.impl.ClosureService;
@@ -78,6 +79,7 @@ public class EodService {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ClosureService closureService;
 	private AutoRefundService autoRefundService;
+	private MicroEodExternalProcessHook microEodExternalProcessHook;
 
 	public EodService() {
 		super();
@@ -237,6 +239,11 @@ public class EodService {
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
 		autoRefundService.executeRefund(custEODEvent);
+
+		// ExtractionDumpHook
+		if (microEodExternalProcessHook != null) {// microEodExtranalProcessHook
+			microEodExternalProcessHook.saveExtractionData(custEODEvent, eventProperties.getBusinessDate());
+		}
 
 		/**************** SOD ***********/
 		// moving customer date to sod
@@ -480,6 +487,11 @@ public class EodService {
 	@Autowired
 	public void setAutoRefundService(AutoRefundService autoRefundService) {
 		this.autoRefundService = autoRefundService;
+	}
+
+	@Autowired(required = false)
+	public void setMicroEodExternalProcessHook(MicroEodExternalProcessHook microEodExternalProcessHook) {
+		this.microEodExternalProcessHook = microEodExternalProcessHook;
 	}
 
 }

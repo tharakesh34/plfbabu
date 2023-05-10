@@ -1,7 +1,13 @@
 package com.pennanttech.external;
 
 public interface EODExtractionsHook {
-	public void processEODSP();
 
-	public void processEOMSP();
+	void processFinconGLExtraction();
+
+	void processUCICExtraction();
+
+	void processBaselOneExtarction();
+
+	void processALMReportExtarction();
+
 }

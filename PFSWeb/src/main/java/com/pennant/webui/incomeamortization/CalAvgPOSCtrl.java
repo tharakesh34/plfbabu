@@ -22,11 +22,11 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.service.incomeamortization.impl.CalAvgPOSProcess;
 import com.pennant.backend.util.AmortizationConstants;

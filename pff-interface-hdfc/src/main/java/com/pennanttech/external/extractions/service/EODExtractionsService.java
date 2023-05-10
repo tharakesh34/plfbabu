@@ -73,50 +73,52 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 		String status = extExtractionDao.executeSp(SP_FINCON_WRITE_FILE, fileName);
 
-		if ("SUCCESS".equals(status)) {
+		if (!"SUCCESS".equals(status)) {
+			logger.debug("EXT_FINCONGL: Fincon File writing SP failed.");
+			return;
+		}
 
-			String baseFilePath = App.getResourcePath(finconGLConfig.getFileLocation());
+		String baseFilePath = App.getResourcePath(finconGLConfig.getFileLocation());
 
-			if (baseFilePath == null || "".equals(baseFilePath)) {
-				logger.debug("Ext_Warning: Local file path not found for config. So returning.");
-				return;
-			}
+		if (baseFilePath == null || "".equals(baseFilePath)) {
+			logger.debug("Ext_Warning: Local file path not found for config. So returning.");
+			return;
+		}
 
-			// Fetch request file from DB Server location to local and the upload it in client SFTP
-			ExternalConfig dbServerConfig = getDataFromList(configList, "PLF_DB_SERVER");
+		// Fetch request file from DB Server location to local and the upload it in client SFTP
+		ExternalConfig dbServerConfig = getDataFromList(configList, "PLF_DB_SERVER");
 
-			if (dbServerConfig == null) {
-				logger.debug("Ext_Warning: DB Server config not found. So returning.");
-				return;
-			}
+		if (dbServerConfig == null) {
+			logger.debug("Ext_Warning: DB Server config not found. So returning.");
+			return;
+		}
 
-			FtpClient ftpClient = null;
-			String host = dbServerConfig.getHostName();
-			int port = dbServerConfig.getPort();
-			String accessKey = dbServerConfig.getAccessKey();
-			String secretKey = dbServerConfig.getSecretKey();
-			try {
-				ftpClient = new SftpClient(host, port, accessKey, secretKey);
-			} catch (Exception e) {
-				logger.debug("Unable to connect to SFTP.");
-				return;
-			}
-			// Now get remote file to local base location using SERVER config
-			String remoteFilePath = dbServerConfig.getFileSftpLocation();
-			try {
-				ftpClient.download(remoteFilePath, baseFilePath, fileName);
-			} catch (Exception e) {
-				logger.debug("Unable to download file from DB Server to local path.");
-				return;
-			}
+		FtpClient ftpClient = null;
+		String host = dbServerConfig.getHostName();
+		int port = dbServerConfig.getPort();
+		String accessKey = dbServerConfig.getAccessKey();
+		String secretKey = dbServerConfig.getSecretKey();
+		try {
+			ftpClient = new SftpClient(host, port, accessKey, secretKey);
+		} catch (Exception e) {
+			logger.debug("Unable to connect to SFTP.");
+			return;
+		}
+		// Now get remote file to local base location using SERVER config
+		String remoteFilePath = dbServerConfig.getFileSftpLocation();
+		try {
+			ftpClient.download(remoteFilePath, baseFilePath, fileName);
+		} catch (Exception e) {
+			logger.debug("Unable to download file from DB Server to local path.");
+			return;
+		}
 
-			if ("Y".equals(finconGLConfig.getIsSftp())) {
-				// Now upload file to SFTP of client location as per configuration
-				File mainFile = new File(baseFilePath + File.separator + fileName);
-				ftpClient.upload(mainFile, finconGLConfig.getFileSftpLocation());
-				fileBackup(finconGLConfig, mainFile);
-				mainFile.delete();
-			}
+		if ("Y".equals(finconGLConfig.getIsSftp())) {
+			// Now upload file to SFTP of client location as per configuration
+			File mainFile = new File(baseFilePath + File.separator + fileName);
+			ftpClient.upload(mainFile, finconGLConfig.getFileSftpLocation());
+			fileBackup(finconGLConfig, mainFile);
+			mainFile.delete();
 		}
 	}
 
@@ -168,17 +170,27 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	@Override
-	public void processEODSP() {
+	public void processFinconGLExtraction() {
 		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL);
-		if (finconSPStatus != null && "SUCCESS".equals(finconSPStatus)) {
-			processFinconFileSP();
+		if (!"SUCCESS".equals(finconSPStatus)) {
+			logger.debug("EXT_FINCONGL: SP extraction failed.");
+			return;
 		}
+		processFinconFileSP();
+	}
+
+	@Override
+	public void processUCICExtraction() {
 		processUcicRequest();
 	}
 
 	@Override
-	public void processEOMSP() {
+	public void processBaselOneExtarction() {
 		extExtractionDao.executeSp(SP_BASEL_ONE);
+	}
+
+	@Override
+	public void processALMReportExtarction() {
 		extExtractionDao.executeSp(SP_ALM_REPORT);
 	}
 
