@@ -42,4 +42,6 @@ public interface CityDAO extends BasicCrudDao<City> {
 	int getPCProvinceCount(String pcProvince, String type);
 
 	boolean isDuplicateKey(String city, String district, TableType tableType);
+
+	boolean isActiveCity(String city);
 }
