@@ -22,7 +22,6 @@ public class SubventionProcessDAOImpl extends SequenceDao<SubventionProcess> imp
 
 	@Override
 	public void saveSubventionProcessRequest(MapSqlParameterSource settlementMapdata) {
-		// TODO Auto-generated method stub
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Insert into Subvention_Request");
 		sql.append(" ( Hostreference, Issuer, Acquirer, Merchantusername, Manufacturername, Storename, Storecity");

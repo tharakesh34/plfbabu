@@ -102,18 +102,17 @@ public class LimitReferenceMappingDAOImpl extends SequenceDao<LimitReferenceMapp
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, headerId },
-					(rs, rowNum) -> {
-						LimitReferenceMapping fee = new LimitReferenceMapping();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				LimitReferenceMapping fee = new LimitReferenceMapping();
 
-						fee.setReferenceId(rs.getLong("ReferenceId"));
-						fee.setReferenceCode(rs.getString("ReferenceCode"));
-						fee.setReferenceNumber(rs.getString("ReferenceNumber"));
-						fee.setHeaderId(rs.getLong("HeaderId"));
-						fee.setLimitLine(rs.getString("LimitLine"));
+				fee.setReferenceId(rs.getLong("ReferenceId"));
+				fee.setReferenceCode(rs.getString("ReferenceCode"));
+				fee.setReferenceNumber(rs.getString("ReferenceNumber"));
+				fee.setHeaderId(rs.getLong("HeaderId"));
+				fee.setLimitLine(rs.getString("LimitLine"));
 
-						return fee;
-					});
+				return fee;
+			}, reference, headerId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Limit mapping details not available for the specified Reference {}, HeaderId {}", reference,
 					headerId);

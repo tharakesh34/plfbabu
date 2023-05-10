@@ -1110,8 +1110,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	}
 
 	@Override
-	public void deleteStage() {
-		jdbcOperations.update("Delete From NPA_Provision_Stage");
+	public void deleteStage(long finID) {
+		String sql = "Delete From NPA_Provision_Stage Where FinID = ?";
+		jdbcOperations.update(sql, finID);
 	}
 
 }

@@ -293,8 +293,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			Object[] object = new Object[] { finReference, startDate, endDate };
-			return this.jdbcOperations.queryForObject(sql.toString(), object, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				InterestCertificate ic = new InterestCertificate();
 
 				ic.setRepayPriAmt(rs.getBigDecimal("RepayPriAmt"));
@@ -303,7 +302,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 				ic.setSchdPrinciplePaid(rs.getBigDecimal("SchdPrinciplePaid"));
 
 				return ic;
-			});
+			}, finReference, startDate, endDate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in FINSCHEDULEDETAILS for the  finreference >> {}");
 		}
@@ -324,18 +323,17 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finReference, finStartDate, finEndDate }, (rs, i) -> {
-						FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinanceScheduleDetail fsd = new FinanceScheduleDetail();
 
-						fsd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
-						fsd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
-						fsd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
-						fsd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
-						fsd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+				fsd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+				fsd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+				fsd.setPartialPaidAmt(rs.getBigDecimal("PartialPaidAmt"));
+				fsd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+				fsd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
 
-						return fsd;
-					});
+				return fsd;
+			}, finReference, finStartDate, finEndDate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record is not found in FinScheduleDetails table for the specified FinReference = {} and schdate >= {} and schdate <= {}",
@@ -354,16 +352,15 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { finReference, startDate, endDate, endDate }, (rs, i) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 
-						InterestCertificate ic = new InterestCertificate();
+				InterestCertificate ic = new InterestCertificate();
 
-						ic.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
-						ic.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
+				ic.setFinSchdPftPaid(rs.getBigDecimal("FinSchdPftPaid"));
+				ic.setFinSchdPriPaid(rs.getBigDecimal("FinSchdPriPaid"));
 
-						return ic;
-					});
+				return ic;
+			}, finReference, startDate, endDate, endDate);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record is not found in FinRepayDetails for the specified FinReference = {} and FinSchdDate >= {} and FinSchdDate <= {} and FinValueDate > {}",

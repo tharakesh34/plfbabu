@@ -183,7 +183,6 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 
 	@Override
 	public List<CustomerGSTDetails> getCustomerGstDeatailsByCustomerId(long id, String type) {
-		// TODO Auto-generated method stub
 		return customerGstDetailDAO.getCustomerGSTDetailsByCustomer(id, "_View");
 	}
 

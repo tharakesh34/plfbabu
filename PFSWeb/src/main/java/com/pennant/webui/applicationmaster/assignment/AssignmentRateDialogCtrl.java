@@ -442,7 +442,6 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 	}
 
 	private void doWriteComponentsToBean(AssignmentRate aAssignmentRate) {
-		// TODO Auto-generated method stub
 		logger.debug(Literal.ENTERING);
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {

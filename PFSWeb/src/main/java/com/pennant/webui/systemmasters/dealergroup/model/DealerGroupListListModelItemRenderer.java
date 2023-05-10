@@ -20,7 +20,6 @@ public class DealerGroupListListModelItemRenderer implements ListitemRenderer<De
 
 	@Override
 	public void render(Listitem item, DealerGroup dealerGroup, int index) {
-		// TODO Auto-generated method stub
 		Listcell lc;
 		lc = new Listcell(dealerGroup.getDealerCode());
 		lc.setParent(item);

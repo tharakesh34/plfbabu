@@ -78,7 +78,6 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 
 	@Override
 	public List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear) {
-		// TODO Auto-generated method stub
 		return getCustomerBankInfoDAO().getBankInfoSubDetailById(id, monthYear, "_AView");
 	}
 
@@ -205,7 +204,6 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 
 	@Override
 	public List<BankInfoDetail> getBankInfoDetailById(long id) {
-		// TODO Auto-generated method stub
 		return customerBankInfoDAO.getBankInfoDetailById(id, "_AView");
 	}
 

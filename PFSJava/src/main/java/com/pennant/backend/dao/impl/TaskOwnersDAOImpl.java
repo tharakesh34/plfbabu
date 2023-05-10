@@ -202,21 +202,20 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, roleCode },
-					new RowMapper<TaskOwners>() {
-						@Override
-						public TaskOwners mapRow(ResultSet rs, int rowNum) throws SQLException {
-							TaskOwners to = new TaskOwners();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<TaskOwners>() {
+				@Override
+				public TaskOwners mapRow(ResultSet rs, int rowNum) throws SQLException {
+					TaskOwners to = new TaskOwners();
 
-							to.setReference(rs.getString("Reference"));
-							to.setRoleCode(rs.getString("RoleCode"));
-							to.setActualOwner(rs.getLong("ActualOwner"));
-							to.setCurrentOwner(rs.getLong("CurrentOwner"));
-							to.setProcessed(rs.getBoolean("Processed"));
+					to.setReference(rs.getString("Reference"));
+					to.setRoleCode(rs.getString("RoleCode"));
+					to.setActualOwner(rs.getLong("ActualOwner"));
+					to.setCurrentOwner(rs.getLong("CurrentOwner"));
+					to.setProcessed(rs.getBoolean("Processed"));
 
-							return to;
-						}
-					});
+					return to;
+				}
+			}, finReference, roleCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

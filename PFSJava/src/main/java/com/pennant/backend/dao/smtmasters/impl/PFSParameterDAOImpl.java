@@ -78,7 +78,7 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				PFSParameter smtp = new PFSParameter();
 
 				smtp.setSysParmCode(rs.getString("SysParmCode"));
@@ -103,7 +103,7 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 				smtp.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return smtp;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in SMTParameters{} for the specified SysParmCode >> {}", type, id);
 		}

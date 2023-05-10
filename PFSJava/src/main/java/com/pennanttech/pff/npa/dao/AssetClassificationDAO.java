@@ -80,5 +80,5 @@ public interface AssetClassificationDAO {
 
 	void updatePrvPastDuedays(AssetClassification ac);
 
-	void deleteStage();
+	void deleteStage(long finID);
 }

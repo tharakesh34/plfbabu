@@ -80,44 +80,43 @@ public class LegalDetailDAOImpl extends SequenceDao<LegalDetail> implements Lega
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { legalId },
-					new RowMapper<LegalDetail>() {
-						@Override
-						public LegalDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							LegalDetail ld = new LegalDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<LegalDetail>() {
+				@Override
+				public LegalDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+					LegalDetail ld = new LegalDetail();
 
-							ld.setLegalId(rs.getLong("LegalId"));
-							ld.setLegalReference(rs.getString("LegalReference"));
-							ld.setLoanReference(rs.getString("LoanReference"));
-							ld.setCollateralReference(rs.getString("CollateralReference"));
-							ld.setBranch(rs.getString("Branch"));
-							ld.setLegalDate(rs.getTimestamp("LegalDate"));
-							ld.setSchedulelevelArea(rs.getString("SchedulelevelArea"));
-							ld.setLegalDecision(rs.getString("LegalDecision"));
-							ld.setLegalRemarks(rs.getString("LegalRemarks"));
-							ld.setPropertyDetailModt(rs.getString("PropertyDetailModt"));
-							ld.setPropertyDetailECDate(rs.getTimestamp("PropertyDetailECDate"));
-							ld.setEcPropertyOwnerName(rs.getString("EcPropertyOwnerName"));
-							ld.setActive(rs.getBoolean("Active"));
-							ld.setModule(rs.getString("Module"));
-							ld.setVersion(rs.getInt("Version"));
-							ld.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							ld.setLastMntBy(rs.getLong("LastMntBy"));
-							ld.setRecordStatus(rs.getString("RecordStatus"));
-							ld.setRoleCode(rs.getString("RoleCode"));
-							ld.setNextRoleCode(rs.getString("NextRoleCode"));
-							ld.setTaskId(rs.getString("TaskId"));
-							ld.setNextTaskId(rs.getString("NextTaskId"));
-							ld.setRecordType(rs.getString("RecordType"));
-							ld.setWorkflowId(rs.getLong("WorkflowId"));
+					ld.setLegalId(rs.getLong("LegalId"));
+					ld.setLegalReference(rs.getString("LegalReference"));
+					ld.setLoanReference(rs.getString("LoanReference"));
+					ld.setCollateralReference(rs.getString("CollateralReference"));
+					ld.setBranch(rs.getString("Branch"));
+					ld.setLegalDate(rs.getTimestamp("LegalDate"));
+					ld.setSchedulelevelArea(rs.getString("SchedulelevelArea"));
+					ld.setLegalDecision(rs.getString("LegalDecision"));
+					ld.setLegalRemarks(rs.getString("LegalRemarks"));
+					ld.setPropertyDetailModt(rs.getString("PropertyDetailModt"));
+					ld.setPropertyDetailECDate(rs.getTimestamp("PropertyDetailECDate"));
+					ld.setEcPropertyOwnerName(rs.getString("EcPropertyOwnerName"));
+					ld.setActive(rs.getBoolean("Active"));
+					ld.setModule(rs.getString("Module"));
+					ld.setVersion(rs.getInt("Version"));
+					ld.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					ld.setLastMntBy(rs.getLong("LastMntBy"));
+					ld.setRecordStatus(rs.getString("RecordStatus"));
+					ld.setRoleCode(rs.getString("RoleCode"));
+					ld.setNextRoleCode(rs.getString("NextRoleCode"));
+					ld.setTaskId(rs.getString("TaskId"));
+					ld.setNextTaskId(rs.getString("NextTaskId"));
+					ld.setRecordType(rs.getString("RecordType"));
+					ld.setWorkflowId(rs.getLong("WorkflowId"));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								ld.setBranchDesc(rs.getString("BranchDesc"));
-							}
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						ld.setBranchDesc(rs.getString("BranchDesc"));
+					}
 
-							return ld;
-						}
-					});
+					return ld;
+				}
+			}, legalId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
