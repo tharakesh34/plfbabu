@@ -966,7 +966,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.accDetailsGroupbox.setVisible(false);
 			this.mandateSwapGroupbox.setVisible(false);
 			this.mandateDetailsGroupbox.setVisible(false);
-			this.otherDetailsGroupbox.setVisible(false);
 			this.openMandate.setChecked(false);
 			this.useExisting.setChecked(false);
 		} else if (!enqModule || !fromLoanEnquiry) {
@@ -982,6 +981,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (instrumentType == InstrumentType.DAS) {
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
+			this.otherDetailsGroupbox.setVisible(false);
 
 			if (fromLoan) {
 				this.mandateSwapGroupbox.setVisible(false);
@@ -999,6 +999,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (InstrumentType.SI == instrumentType) {
 			this.mandateSwapGroupbox.setVisible(!fromLoan);
 			this.accDetailsGroupbox.setVisible(true);
+			this.otherDetailsGroupbox.setVisible(true);
+			this.partnerBankRow.setVisible(false);
 
 			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
 			readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
