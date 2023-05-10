@@ -1141,7 +1141,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 								radList.add(rad);
 								radMap.put(rad.getReceiptID(), radList);
 							}
-							// TODO Auto-generated method stub
+
 							return radMap;
 						}
 					});
@@ -1252,13 +1252,12 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { stateCode, entityCode },
-					new RowMapper<String>() {
-						@Override
-						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-							return rs.getString("ProviderGSTIN");
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<String>() {
+				@Override
+				public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return rs.getString("ProviderGSTIN");
+				}
+			}, stateCode, entityCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1279,20 +1278,19 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finType },
-					new RowMapper<StatementOfAccount>() {
-						@Override
-						public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
-							StatementOfAccount soa = new StatementOfAccount();
+			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<StatementOfAccount>() {
+				@Override
+				public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
+					StatementOfAccount soa = new StatementOfAccount();
 
-							soa.setEntityCode(rs.getString("EntityCode"));
-							soa.setEntityDesc(rs.getString("EntityDesc"));
-							soa.setStateCode(rs.getString("StateCode"));
+					soa.setEntityCode(rs.getString("EntityCode"));
+					soa.setEntityDesc(rs.getString("EntityDesc"));
+					soa.setStateCode(rs.getString("StateCode"));
 
-							return soa;
-						}
+					return soa;
+				}
 
-					});
+			}, finType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return new StatementOfAccount();
@@ -1312,18 +1310,17 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<StatementOfAccount>() {
-						@Override
-						public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
-							StatementOfAccount soa = new StatementOfAccount();
+			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<StatementOfAccount>() {
+				@Override
+				public StatementOfAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
+					StatementOfAccount soa = new StatementOfAccount();
 
-							soa.setCustGSTIN(rs.getString("CustGSTIN"));
-							soa.setPlaceOfSupply(rs.getString("PlaceOfSupply"));
+					soa.setCustGSTIN(rs.getString("CustGSTIN"));
+					soa.setPlaceOfSupply(rs.getString("PlaceOfSupply"));
 
-							return soa;
-						}
-					});
+					return soa;
+				}
+			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return new StatementOfAccount();
