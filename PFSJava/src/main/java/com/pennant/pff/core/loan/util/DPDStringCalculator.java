@@ -49,16 +49,16 @@ public class DPDStringCalculator {
 	}
 
 	private static String deriveDPDString(String curDPDStr, String dpdString) {
-		if (StringUtils.isEmpty(dpdString) && StringUtils.isEmpty(curDPDStr)) {
+		if (StringUtils.isEmpty(dpdString)) {
 			return curDPDStr;
-		}
-
-		if (StringUtils.isNotEmpty(curDPDStr) && curDPDStr.length() == DPDExtension.DPD_STRING_LENGTH) {
-			curDPDStr = curDPDStr.substring(1);
 		}
 
 		if (StringUtils.isEmpty(curDPDStr)) {
 			return dpdString;
+		}
+
+		if (curDPDStr.length() == DPDExtension.DPD_STRING_LENGTH) {
+			curDPDStr = curDPDStr.substring(1);
 		}
 
 		return curDPDStr.concat(dpdString);
