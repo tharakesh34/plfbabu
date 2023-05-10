@@ -5692,20 +5692,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		switch (tableType) {
 		case MAIN_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate");
 			sql.append(" From FinanceMain fm Where FinReference = ?");
 			break;
 		case TEMP_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { finReference, finReference };
 
-			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID From (");
+			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate From(");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			sql.append(" Union All");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate");
 			sql.append("  From FinanceMain fm Where FinReference = ?");
 			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 			sql.append(" ) fm");
@@ -5724,6 +5729,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setMaturityDate(rs.getDate("MaturityDate"));
 				fm.setMandateID(rs.getLong("MandateID"));
 				fm.setSecurityMandateID(rs.getLong("SecurityMandateID"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
 
 				return fm;
 			}, object);
@@ -6750,7 +6757,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType) {
+	public SourcingDetails getSourcingDetails(long finID, TableType tableType) {
 		Object[] object = new Object[] { finID };
 
 		StringBuilder sql = new StringBuilder();

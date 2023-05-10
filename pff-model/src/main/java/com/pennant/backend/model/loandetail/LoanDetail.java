@@ -132,7 +132,7 @@ public class LoanDetail {
 	@XmlElement
 	private Date maturityDate;
 	@XmlElement
-	private int noOfMonths;
+	private Integer noOfMonths;
 	@XmlElement
 	private Boolean finRepayPftOnFrq;
 	@XmlElement(name = "repayMinRate")
@@ -140,7 +140,7 @@ public class LoanDetail {
 	@XmlElement(name = "repayMaxRate")
 	private BigDecimal rpyMaxRate;
 	@XmlElement(name = "alwBpiTreatment")
-	private boolean alwBPI;
+	private Boolean alwBPI;
 	@XmlElement(name = "dftBpiTreatment")
 	private String bpiTreatment;
 	@XmlElement(name = "bpiPftDaysBasis")
@@ -176,7 +176,7 @@ public class LoanDetail {
 	@XmlElement(name = "connector")
 	private String connectorReference;
 	@XmlElement
-	private int fixedRateTenor;
+	private Integer fixedRateTenor;
 	@XmlElement
 	private BigDecimal fixedTenorRate;
 	@XmlElement
@@ -184,7 +184,7 @@ public class LoanDetail {
 	@XmlElement
 	private String advType;
 	@XmlElement(name = "advEMITerms")
-	private int advTerms;
+	private Integer advTerms;
 	@XmlElement
 	private Date closedDate;
 	@XmlElement
@@ -198,7 +198,7 @@ public class LoanDetail {
 	@XmlElement
 	private Long custBankId;
 	@XmlElement(name = "txnChrgReq")
-	private boolean overdraftTxnChrgReq;
+	private Boolean overdraftTxnChrgReq;
 	@XmlElement(name = "oDCalculatedCharge")
 	private String overdraftCalcChrg;
 	@XmlElement(name = "oDChargeCalOn")
@@ -224,6 +224,10 @@ public class LoanDetail {
 	private WSReturnStatus returnStatus;
 	@XmlElement
 	private BigDecimal netDisbursementAmount;
+	@XmlElement
+	private Date fromDate;
+	@XmlElement
+	private Date toDate;
 
 	public LoanDetail() {
 		super();
@@ -613,11 +617,11 @@ public class LoanDetail {
 		this.rpyMaxRate = rpyMaxRate;
 	}
 
-	public boolean isAlwBPI() {
+	public Boolean isAlwBPI() {
 		return alwBPI;
 	}
 
-	public void setAlwBPI(boolean alwBPI) {
+	public void setAlwBPI(Boolean alwBPI) {
 		this.alwBPI = alwBPI;
 	}
 
@@ -757,11 +761,11 @@ public class LoanDetail {
 		this.connectorReference = connectorReference;
 	}
 
-	public int getFixedRateTenor() {
+	public Integer getFixedRateTenor() {
 		return fixedRateTenor;
 	}
 
-	public void setFixedRateTenor(int fixedRateTenor) {
+	public void setFixedRateTenor(Integer fixedRateTenor) {
 		this.fixedRateTenor = fixedRateTenor;
 	}
 
@@ -789,11 +793,11 @@ public class LoanDetail {
 		this.advType = advType;
 	}
 
-	public int getAdvTerms() {
+	public Integer getAdvTerms() {
 		return advTerms;
 	}
 
-	public void setAdvTerms(int advTerms) {
+	public void setAdvTerms(Integer advTerms) {
 		this.advTerms = advTerms;
 	}
 
@@ -845,11 +849,11 @@ public class LoanDetail {
 		this.custBankId = custBankId;
 	}
 
-	public boolean isOverdraftTxnChrgReq() {
+	public Boolean isOverdraftTxnChrgReq() {
 		return overdraftTxnChrgReq;
 	}
 
-	public void setOverdraftTxnChrgReq(boolean overdraftTxnChrgReq) {
+	public void setOverdraftTxnChrgReq(Boolean overdraftTxnChrgReq) {
 		this.overdraftTxnChrgReq = overdraftTxnChrgReq;
 	}
 
@@ -941,11 +945,11 @@ public class LoanDetail {
 		this.returnStatus = returnStatus;
 	}
 
-	public int getNoOfMonths() {
+	public Integer getNoOfMonths() {
 		return noOfMonths;
 	}
 
-	public void setNoOfMonths(int noOfMonths) {
+	public void setNoOfMonths(Integer noOfMonths) {
 		this.noOfMonths = noOfMonths;
 	}
 
@@ -971,5 +975,21 @@ public class LoanDetail {
 
 	public void setCustDOB(Date custDOB) {
 		this.custDOB = custDOB;
+	}
+
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
 	}
 }

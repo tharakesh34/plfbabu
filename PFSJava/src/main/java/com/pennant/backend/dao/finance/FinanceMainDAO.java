@@ -424,7 +424,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain getBasicDetails(String finReference, TableType tableType);
 
-	SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType);
+	SourcingDetails getSourcingDetails(long finID, TableType tableType);
 
 	List<Long> getFinIDsByCustID(Long custID, TableType tableType);
 }

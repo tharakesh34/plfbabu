@@ -52,10 +52,8 @@ import com.pennant.backend.model.finance.UserActions;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.model.finance.UserPendingCasesResponse;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -1868,133 +1866,6 @@ public class CreateFinanceWebServiceImpl extends AbstractController
 		writeOffAmount = writeOffAmount.add(fse.getPenaltyDue());
 
 		return writeOffAmount;
-	}
-
-	@Override
-	public List<PaymentMode> getPDCEnquiry(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		List<PaymentMode> response = new ArrayList<>();
-
-		WSReturnStatus wsrs = validateFinReference(finReference);
-
-		if (wsrs != null) {
-			PaymentMode paymentMode = new PaymentMode();
-			paymentMode.setReturnStatus(wsrs);
-			response.add(paymentMode);
-
-			logger.debug(Literal.LEAVING);
-
-			return response;
-		}
-
-		logKeyFields(finReference);
-
-		logger.debug("FinReference {}", finReference);
-
-		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
-
-		if (fm == null) {
-			PaymentMode paymentMode = new PaymentMode();
-			paymentMode.setReturnStatus(getFailedStatus("90201", "FinReference"));
-			response.add(paymentMode);
-
-			logger.debug(Literal.LEAVING);
-
-			return response;
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return createFinanceController.getPDCEnquiry(fm);
-	}
-
-	@Override
-	public List<PaymentMode> getPDCDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		List<PaymentMode> response = new ArrayList<>();
-
-		WSReturnStatus wsrs = validateFinReference(finReference);
-
-		if (wsrs != null) {
-			PaymentMode paymentMode = new PaymentMode();
-			paymentMode.setReturnStatus(wsrs);
-			response.add(paymentMode);
-
-			logger.debug(Literal.LEAVING);
-
-			return response;
-		}
-
-		logKeyFields(finReference);
-
-		logger.debug("FinReference {}", finReference);
-
-		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
-
-		if (fm == null) {
-			PaymentMode paymentMode = new PaymentMode();
-			paymentMode.setReturnStatus(getFailedStatus("90201", "FinReference"));
-			response.add(paymentMode);
-
-			logger.debug(Literal.LEAVING);
-
-			return response;
-		}
-
-		logger.debug(Literal.LEAVING);
-
-		return createFinanceController.getPDCDetails(fm);
-	}
-
-	@Override
-	public SourcingDetails getSourcingDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		SourcingDetails response;
-
-		WSReturnStatus wsrs = validateFinReference(finReference);
-
-		if (wsrs != null) {
-			response = new SourcingDetails();
-			response.setReturnStatus(wsrs);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		logReference(finReference);
-
-		logger.debug("FinReference {}", finReference);
-
-		Long finID = financeMainDAO.getFinID(finReference);
-
-		if (finID == null) {
-			response = new SourcingDetails();
-			response.setReturnStatus(getFailedStatus("90201", finReference));
-
-			logger.debug(Literal.LEAVING);
-
-			return response;
-		}
-
-		response = financeMainDAO.getSourcingDetailsByFinReference(finID, TableType.MAIN_TAB);
-		if (response == null) {
-			response = new SourcingDetails();
-			response.setPrimaryRelationOfficer(null);
-			response.setReturnStatus(getFailedStatus("90266", finReference));
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-		response.setFinalSource("");
-
-		logger.debug(Literal.LEAVING);
-
-		return response;
-	}
-
-	private WSReturnStatus validateFinReference(String finReference) {
-		return StringUtils.isEmpty(finReference) ? getFailedStatus("90502", "FinReference") : null;
 	}
 
 	@Autowired
