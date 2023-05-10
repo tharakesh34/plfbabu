@@ -1760,12 +1760,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		Listcell lc;
 		for (JVPostingEntry jvPostingEntry : entryList) {
 			if (jvPostingEntry.isExternalAccount()) {
+				item = new Listitem();
 				if (jvPostingEntry.getRecordStatus() != null) {
-					item = new Listitem();
 					lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
 					lc.setParent(item);
-				} else if (count != 0) {
-					item = new Listitem();
+				} else {
 					lc = new Listcell(String.valueOf(++count));
 					lc.setParent(item);
 				}
