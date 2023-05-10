@@ -121,6 +121,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		detail.setExcessList(excessList);
 		detail.setAdvises(maList);
 		detail.setAmount(balanceAmount);
+		detail.setReferenceID(fm.getFinID());
 	}
 
 	protected void setError(LoanClosureUpload detail, LoanClosureUploadError error) {
@@ -206,8 +207,8 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		rud.setReceivedDate(appDate);
 		rud.setReceiptAmount(lcu.getAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptPurpose("ES");
-		rud.setReceiptMode("E");
+		rud.setReceiptPurpose(FinanceConstants.EARLYSETTLEMENT);
+		rud.setReceiptMode(PennantConstants.List_Select);
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
 
@@ -231,9 +232,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		fsi.setReceiptUpload(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		LoggedInUser userDetails = lcu.getUserDetails();
-		if (FinanceConstants.EARLYSETTLEMENT.equals("ES")) {
-			fsi.setClosureType(lcu.getClosureType());
-		}
+		fsi.setClosureType(lcu.getClosureType());
 
 		if (userDetails == null) {
 			userDetails = new LoggedInUser();
