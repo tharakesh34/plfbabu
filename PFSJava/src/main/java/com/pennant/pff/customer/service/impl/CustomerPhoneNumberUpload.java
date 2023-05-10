@@ -85,6 +85,10 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 	}
 
 	public void validate(CustomerKycDetail detail) {
+		if (detail.getPhoneTypeCode() == null) {
+			return;
+		}
+		
 		PhoneType phoneType = phoneTypeDAO.getPhoneTypeById(detail.getPhoneTypeCode(), "");
 		if (phoneType != null) {
 			String regex = phoneType.getPhoneTypeRegex();

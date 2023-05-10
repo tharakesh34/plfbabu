@@ -22,5 +22,5 @@ public interface KycDetailsUploadDAO {
 
 	boolean isInLoanQueue(long custId);
 
-	boolean isInReceiptQueue(long custId);
+	List<String> getReceiptQueueList(long custId);
 }

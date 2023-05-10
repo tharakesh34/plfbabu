@@ -3,6 +3,7 @@ package com.pennant.pff.customer.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -246,8 +247,19 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
-		if (kycDetailsUploadDAO.isInReceiptQueue(custId)) {
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, detail.getFinReference());
+		List<String> references = kycDetailsUploadDAO.getReceiptQueueList(custId);
+
+		if (CollectionUtils.isNotEmpty(references)) {
+			StringBuilder message = new StringBuilder();
+			for (String ref : references) {
+				if (message.length() > 0) {
+					message.append(", ");
+				}
+
+				message.append(ref);
+			}
+
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, message.toString());
 			return;
 		}
 

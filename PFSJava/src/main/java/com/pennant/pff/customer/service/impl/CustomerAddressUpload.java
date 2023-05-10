@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
+import com.pennant.backend.dao.smtmasters.CountryDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -30,6 +31,8 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 	private PinCodeDAO pinCodeDAO;
 	@Autowired
 	private ProvinceDAO provinceDAO;
+	@Autowired
+	private CountryDAO countryDAO;
 
 	public CustomerAddressUpload() {
 		super();
@@ -152,6 +155,17 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 					break;
 				case 1:
 					pincode = pinCodeDAO.getPinCode(custAddrZIP);
+
+					if (!pincode.isActive()) {
+						setError(detail, "81004", "PinCode :", custAddrZIP);
+						break;
+					}
+
+					if (!pincode.isServiceable()) {
+						setError(detail, "81005", "PinCode :" + custAddrZIP);
+						break;
+					}
+
 					detail.setPinCodeId(pincode.getPinCodeId());
 					break;
 				default:
@@ -163,6 +177,16 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 
 				if (pincode == null) {
 					setError(detail, "RU0040", "PinCodeId" + String.valueOf(pinCodeId));
+					return pincode;
+				}
+
+				if (!pincode.isActive()) {
+					setError(detail, "81004", "PinCode :", custAddrZIP);
+					return pincode;
+				}
+
+				if (!pincode.isServiceable()) {
+					setError(detail, "81005", "PinCode :" + custAddrZIP);
 					return pincode;
 				}
 
@@ -183,6 +207,11 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
+		if (isNotActiveCountry(custAddrCountry)) {
+			setError(detail, "81004", "Country :", custAddrCountry);
+			return;
+		}
+
 		detail.setCustAddrCountry(pincode.getpCCountry());
 
 		Province province = provinceDAO.getProvinceById(custAddrCountry, pincode.getpCProvince(), "");
@@ -190,6 +219,11 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 		if (province != null && StringUtils.isNotBlank(custAddrProvince)
 				&& !custAddrProvince.equalsIgnoreCase(province.getCPProvince())) {
 			setError(detail, "90701", custAddrProvince, custAddrZIP);
+			return;
+		}
+
+		if (!province.iscPIsActive()) {
+			setError(detail, "81004", "province :", custAddrProvince);
 			return;
 		}
 
@@ -201,6 +235,10 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 		}
 
 		detail.setCustAddrCity(pincode.getCity());
+	}
+
+	private boolean isNotActiveCountry(String custAddrCountry) {
+		return !countryDAO.isActiveCountry(custAddrCountry);
 	}
 
 	private CustomerAddres prepareCA(CustomerKycDetail detail) {
