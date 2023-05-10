@@ -69,7 +69,7 @@ public class DPDStringCalculator {
 		int dueBucket = fm.getDueBucket();
 
 		if (monthEnd) {
-			if (dueBucket == 0 && StringUtils.isNotEmpty(curDPDStr)) {
+			if (dueBucket == 0 && StringUtils.isEmpty(curDPDStr)) {
 				return null;
 			}
 			return getDueBucket(dueBucket);
@@ -84,7 +84,7 @@ public class DPDStringCalculator {
 		}
 
 		if (frequencyDay == dueDay) {
-			if (dueBucket == 0 && StringUtils.isNotEmpty(curDPDStr)) {
+			if (dueBucket == 0 && StringUtils.isEmpty(curDPDStr)) {
 				return null;
 			}
 
