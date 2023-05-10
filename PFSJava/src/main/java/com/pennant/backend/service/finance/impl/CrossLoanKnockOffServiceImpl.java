@@ -76,6 +76,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader);
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
@@ -118,6 +119,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			transfer.setLastMntOn(clk.getLastMntOn());
 			transfer.setRecordStatus(clk.getRecordStatus());
 			transfer.setUserDetails(clk.getUserDetails());
+
+			clk.setKnockOffId(rch.getReceiptID());
+			clk.setReceiptMode(rch.getReceiptMode());
+			clk.setSubReceiptMode(rch.getSubReceiptMode());
 		}
 
 		AuditHeader ah = getAuditHeader(frd, PennantConstants.TRAN_WF);
@@ -182,11 +187,22 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
+
 		CrossLoanKnockOff clk = new CrossLoanKnockOff();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), clk);
 		CrossLoanTransfer clt = clk.getCrossLoanTransfer();
 		clt.setUserDetails(clk.getUserDetails());
 		clk.getCrossLoanTransfer().setValueDate(clk.getValueDate());
+
+		FinReceiptData frd = clk.getFinReceiptData();
+
+		if (frd != null) {
+			FinReceiptHeader rch = frd.getReceiptHeader();
+
+			clk.setKnockOffId(rch.getReceiptID());
+			clk.setReceiptMode(rch.getReceiptMode());
+			clk.setSubReceiptMode(rch.getSubReceiptMode());
+		}
 
 		if (crossLoanKnockOffDAO.cancelReferenceID(clk.getKnockOffId())) {
 			auditHeader.setErrorDetails(new ErrorDetail("30550", "Excess Receipt is cancelled", null));
@@ -310,6 +326,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			rch.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 			rch.setLastMntOn(ckk.getLastMntOn());
 			rch.setRecordStatus(ckk.getRecordStatus());
+
+			ckk.setKnockOffId(rch.getReceiptID());
+			ckk.setReceiptMode(rch.getReceiptMode());
+			ckk.setSubReceiptMode(rch.getSubReceiptMode());
 		}
 
 		AuditHeader ah = getAuditHeader(frd, PennantConstants.TRAN_WF);
