@@ -627,6 +627,10 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setValue("", "");
 		}
 
+		if (StringUtils.isNotBlank(this.entityCode.getValue())) {
+			Clients.clearWrongValue(entityCode);
+		}
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 

@@ -6266,10 +6266,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (rch.getPartnerBankCode() == null || StringUtils.isBlank(rch.getPartnerBankCode())) {
-			rch.setPartnerBankCode("HDFC");
-			rch.setPartnerBankId(Long.parseLong("621"));
-		}
 		return rcd;
 	}
 

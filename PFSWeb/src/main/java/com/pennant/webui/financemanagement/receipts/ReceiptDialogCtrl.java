@@ -8319,6 +8319,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptData.getFinanceDetail().getFinFeeConfigList()
 				.removeIf(al -> RuleConstants.EVENT_EARLYSTL.equals(al.getFinEvent()));
 
+		if (!FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			this.row_closuretype.setVisible(false);
+		}
+
 		resetAllocationPayments();
 	}
 
