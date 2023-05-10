@@ -478,7 +478,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	@Override
 	public List<ReturnDataSet> getDisbursementPostings(long finID) {
 		StringBuilder sql = getSelectQuery();
-		sql.append(" Where FinReference = ? AND FinEvent in (?, ?)");
+		sql.append(" Where FinID = ? AND FinEvent in (?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 		List<ReturnDataSet> list = null;

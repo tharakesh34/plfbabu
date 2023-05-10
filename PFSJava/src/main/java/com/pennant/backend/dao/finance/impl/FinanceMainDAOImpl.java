@@ -231,7 +231,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.DeductFeeDisb, fm.BpiAmount, fm.FinIsActive");
 		sql.append(", fm.BpiTreatment, fm.QuickDisb, fm.InstBasedSchd, fm.FinAssetValue, fm.FinCurrAssetValue");
 		sql.append(", c.CustCIF, c.CustShrtName, ft.alwMultiPartyDisb, ft.FinTypeDesc");
-		sql.append(", PromotionCode, e.EntityCode");
+		sql.append(", PromotionCode, e.EntityCode, fm.DownPayBank, fm.DownPaySupl");
 		sql.append(" From FinanceMain");
 		sql.append(tableType.getSuffix());
 		sql.append(" fm");
@@ -273,6 +273,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setEntityCode(rs.getString("EntityCode"));
 			fm.setLovDescEntityCode(rs.getString("EntityCode"));
 			fm.setPromotionCode(rs.getString("PromotionCode"));
+			fm.setDownPayBank(rs.getBigDecimal("DownPayBank"));
+			fm.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
 
 			return fm;
 		}
