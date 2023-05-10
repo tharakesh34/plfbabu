@@ -166,7 +166,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { groupCode }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				LimitHeader lh = new LimitHeader();
 
 				lh.setHeaderId(rs.getLong("HeaderId"));
@@ -203,7 +203,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 				}
 
 				return lh;
-			});
+			}, groupCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in LimitHeader{} for the specified CustomerGroup >> {}", type, groupCode);
 		}

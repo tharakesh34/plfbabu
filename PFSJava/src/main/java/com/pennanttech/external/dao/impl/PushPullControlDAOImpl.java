@@ -103,21 +103,20 @@ public class PushPullControlDAOImpl extends BasicDao<PushPullControl> implements
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { name, type },
-					new RowMapper<PushPullControl>() {
-						@Override
-						public PushPullControl mapRow(ResultSet rs, int rowNum) throws SQLException {
-							PushPullControl pc = new PushPullControl();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<PushPullControl>() {
+				@Override
+				public PushPullControl mapRow(ResultSet rs, int rowNum) throws SQLException {
+					PushPullControl pc = new PushPullControl();
 
-							pc.setID(rs.getLong("Id"));
-							pc.setName(rs.getString("Name"));
-							pc.setType(rs.getString("Type"));
-							pc.setStatus(rs.getString("Status"));
-							pc.setLastRunDate(rs.getTimestamp("LastRunDate"));
+					pc.setID(rs.getLong("Id"));
+					pc.setName(rs.getString("Name"));
+					pc.setType(rs.getString("Type"));
+					pc.setStatus(rs.getString("Status"));
+					pc.setLastRunDate(rs.getTimestamp("LastRunDate"));
 
-							return pc;
-						}
-					});
+					return pc;
+				}
+			}, name, type);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
