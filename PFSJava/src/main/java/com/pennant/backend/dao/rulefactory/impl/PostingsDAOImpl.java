@@ -329,7 +329,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = p.FinID");
 		sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		sql.append(" and fm.FinBranch = ?");
-		sql.append(") temp order by p.Account, p.FinReference, p.TranCode");
+		sql.append(") temp order by temp.Account, temp.FinReference, temp.TranCode");
 
 		logger.debug(Literal.SQL + sql);
 
