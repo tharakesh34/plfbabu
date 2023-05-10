@@ -96,12 +96,11 @@
 								<row>
 									<label value="${c:l('label_ServiceBranchDialog_Street.value')}" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory" />
 										<textbox id="street" width="200px" />
 									</hbox>
 									<label value="${c:l('label_ServiceBranchDialog_AddrLine1.value')}" />
 									<hbox>
-										<space spacing="2px" />
+										<space spacing="2px" sclass="mandatory" />
 										<textbox id="addrLine1" maxlength="50" width="200px" />
 									</hbox>
 								</row>

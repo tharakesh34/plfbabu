@@ -1147,9 +1147,10 @@ public class ServiceBranchDialogCtrl extends GFCBaseCtrl<ServiceBranch> {
 							PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
 
-		if (!this.street.isReadonly()) {
-			this.street.setConstraint(new PTStringValidator(Labels.getLabel("label_ServiceBranchDialog_Street.value"),
-					PennantRegularExpressions.REGEX_ADDRESS, true));
+		if (!this.addrLine1.isReadonly()) {
+			this.addrLine1
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ServiceBranchDialog_AddrLine1.value"),
+							PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
 
 		if (!this.folderPath.isReadonly()) {
