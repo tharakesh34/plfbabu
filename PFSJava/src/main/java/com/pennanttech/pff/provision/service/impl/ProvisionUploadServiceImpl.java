@@ -137,7 +137,7 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 
 			List<NpaProvisionStage> npaDetails = provisionDao.getNPAProvisionDetails(mp.getFinID());
 
-			assetClassificationDAO.deleteStage();
+			assetClassificationDAO.deleteStage(detail.getReferenceID());
 
 			assetClassificationDAO.saveStage(npaDetails);
 
