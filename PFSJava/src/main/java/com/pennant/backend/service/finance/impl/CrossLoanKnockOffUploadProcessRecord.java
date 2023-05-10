@@ -13,8 +13,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffUploadDAO;
 import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -33,6 +35,8 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 
 	@Autowired
 	private UploadService crossLoanKnockOffUploadService;
+	@Autowired
+	private FinanceMainDAO financeMainDAO;
 
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
 			throws Exception {
@@ -126,10 +130,10 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
-				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
-						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
-						|| "Status".equals(allocationType) || "ErrorCode".equals(allocationType)
-						|| "ErrorDesc".equals(allocationType)) {
+				if ("Created By".equals(allocationType) || "Created On".equals(allocationType)
+						|| "Approved By".equals(allocationType) || "Approved On".equals(allocationType)
+						|| "Status".equals(allocationType) || "Error Code".equals(allocationType)
+						|| "Error Desc".equals(allocationType)) {
 					continue;
 				}
 
@@ -166,6 +170,13 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 			}
 
 			crossLoanKnockOffUploadDAO.saveAllocations(allocations);
+
+			FinanceMain fromFm = financeMainDAO.getFinanceMainByRef(clku.getFromFinReference(), "", false);
+			FinanceMain toFm = financeMainDAO.getFinanceMainByRef(clku.getToFinReference(), "", false);
+			clku.setFromFm(fromFm);
+			clku.setFromFinID(fromFm.getFinID());
+			clku.setToFm(toFm);
+			clku.setToFinID(toFm.getFinID());
 
 			crossLoanKnockOffUploadService.doValidate(header, clku);
 

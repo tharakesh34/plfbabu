@@ -90,7 +90,6 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		CrossLoanKnockoffUpload clk = getDetail(detail);
 
 		if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
-			doValidate(header, clk);
 			doBasicValidations(clk);
 		}
 

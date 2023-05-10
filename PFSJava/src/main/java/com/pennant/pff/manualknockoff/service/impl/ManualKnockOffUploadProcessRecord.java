@@ -51,7 +51,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		if (headerID == null) {
 			return;
 		}
-		
+
 		Long recordSeq = (Long) record.getValue("RecordSeq");
 
 		mku.setHeaderId(headerID);
@@ -125,10 +125,10 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
-				if ("CreatedBy".equals(allocationType) || "CreatedOn".equals(allocationType)
-						|| "ApprovedBy".equals(allocationType) || "ApprovedOn".equals(allocationType)
-						|| "Status".equals(allocationType) || "ErrorCode".equals(allocationType)
-						|| "ErrorDesc".equals(allocationType)) {
+				if ("Created By".equals(allocationType) || "Created On".equals(allocationType)
+						|| "Approved By".equals(allocationType) || "Approved On".equals(allocationType)
+						|| "Status".equals(allocationType) || "Error Code".equals(allocationType)
+						|| "Error Desc".equals(allocationType)) {
 					continue;
 				}
 
