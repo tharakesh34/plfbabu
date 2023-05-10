@@ -9599,7 +9599,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.08_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.08_01_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_tview'); 
@@ -9607,7 +9607,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.08" author="Somasekhar.P">
+	<changeSet id="ST#722.08_01" author="Somasekhar.P">
 		<createView viewName="CROSS_LOAN_KNOCKOFF_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T4.CUSTCIF,
@@ -9658,7 +9658,7 @@
 					CF.TOFINREFERENCE
 				FROM CROSS_LOAN_KNOCKOFF_TEMP CH
 				INNER JOIN CROSS_LOAN_TRANSFER_TEMP CF ON CH.TRANSFERID = CF.ID
-				INNER JOIN FINRECEIPTHEADER_TEMP T1 ON CH.KNOCKOFFID = T1.RECEIPTID
+				INNER JOIN FINRECEIPTHEADER_TEMP T1 ON CF.RECEIPTID = T1.RECEIPTID
 				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
 				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE  = T3.FINTYPE 
 				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
@@ -9667,7 +9667,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#722.08_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.08_01_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_tview');
@@ -9675,7 +9675,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.10.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.10.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_view'); 
@@ -9683,7 +9683,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.10.1" author="Somu">
+	<changeSet id="ST#722.10.2" author="Somu">
 		<createView viewName="CROSS_LOAN_KNOCKOFF_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -9708,7 +9708,7 @@
 					RH.RECEIPTMODESTATUS  
 				FROM CROSS_LOAN_KNOCKOFF_TEMP T1
 				INNER JOIN CROSS_LOAN_TRANSFER_TEMP CF ON T1.TRANSFERID = CF.ID
-				INNER JOIN FINRECEIPTHEADER_TEMP RH ON T1.KNOCKOFFID = RH.RECEIPTID
+				INNER JOIN FINRECEIPTHEADER_TEMP RH ON CF.RECEIPTID = RH.RECEIPTID
 				UNION ALL
 				SELECT T1.ID,
 					T1.TRANSFERID,
@@ -9732,13 +9732,13 @@
 					RH.RECEIPTMODESTATUS 
 				FROM CROSS_LOAN_KNOCKOFF T1
 				INNER JOIN CROSS_LOAN_TRANSFER CF ON T1.TRANSFERID = CF.ID
-				INNER JOIN FINRECEIPTHEADER RH ON T1.KNOCKOFFID = RH.RECEIPTID
+				INNER JOIN FINRECEIPTHEADER RH ON CF.RECEIPTID = RH.RECEIPTID
 				WHERE NOT EXISTS (SELECT 1 FROM CROSS_LOAN_KNOCKOFF_TEMP WHERE ID = T1.ID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#722.10.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.10.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_view');
@@ -9746,7 +9746,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.11_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.11.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_tview'); 
@@ -9754,7 +9754,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.11" author="Somasekhar.P">
+	<changeSet id="ST#722.11.1" author="Somasekhar.P">
 		<createView viewName="CROSS_LOAN_KNOCKOFF_TVIEW" replaceIfExists="true">
 			<![CDATA[
 	     		SELECT T4.CUSTCIF,
@@ -9807,7 +9807,7 @@
                     CH.KNOCKOFFID
 				FROM CROSS_LOAN_KNOCKOFF_TEMP CH
 				INNER JOIN CROSS_LOAN_TRANSFER_TEMP CF ON CH.TRANSFERID = CF.ID
-				INNER JOIN FINRECEIPTHEADER_TEMP T1 ON CH.KNOCKOFFID = T1.RECEIPTID
+				INNER JOIN FINRECEIPTHEADER_TEMP T1 ON CF.RECEIPTID = T1.RECEIPTID
 				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
 				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE  = T3.FINTYPE 
 				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
@@ -9816,7 +9816,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#722.11_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.11.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_tview');
@@ -9824,7 +9824,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.13_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.13.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cross_loan_knockoff_aview'); 
@@ -9832,7 +9832,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.13" author="Somasekhar.P">
+	<changeSet id="ST#722.13.1" author="Somasekhar.P">
 		<createView viewName="CROSS_LOAN_KNOCKOFF_AVIEW" replaceIfExists="true">
 			<![CDATA[
 		    	SELECT T4.CUSTCIF,
@@ -9884,7 +9884,7 @@
                     CH.KNOCKOFFID
 				FROM CROSS_LOAN_KNOCKOFF CH
 				INNER JOIN CROSS_LOAN_TRANSFER CF ON CH.TRANSFERID = CF.ID
-				INNER JOIN FINRECEIPTHEADER T1 ON CH.KNOCKOFFID = T1.RECEIPTID
+				INNER JOIN FINRECEIPTHEADER T1 ON CF.RECEIPTID = T1.RECEIPTID
 				INNER JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
 				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE  = T3.FINTYPE 
 				INNER JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
@@ -9892,7 +9892,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#722.13_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.13.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cross_loan_knockoff_aview');
