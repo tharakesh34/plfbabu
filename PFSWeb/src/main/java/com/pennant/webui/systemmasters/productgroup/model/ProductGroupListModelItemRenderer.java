@@ -20,7 +20,6 @@ public class ProductGroupListModelItemRenderer implements ListitemRenderer<Produ
 
 	@Override
 	public void render(Listitem item, ProductGroup productGroup, int index) {
-		// TODO Auto-generated method stub
 		Listcell lc;
 		lc = new Listcell(productGroup.getModelId());
 		lc.setParent(item);

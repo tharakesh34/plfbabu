@@ -59,13 +59,11 @@ public class ProductGroupServiceImpl extends GenericService<ProductGroup> implem
 
 	@Override
 	public ProductGroup getProductGroup(long id) {
-		// TODO Auto-generated method stub
 		return getProductGroupDAO().getProductGroup(id, "_View");
 	}
 
 	@Override
 	public ProductGroup getApprovedProductGroup(long id) {
-		// TODO Auto-generated method stub
 		return getProductGroupDAO().getProductGroup(id, "_AView");
 	}
 

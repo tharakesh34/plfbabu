@@ -3037,7 +3037,6 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
-		// TODO Auto-generated method stub
 		return collateralAssignmentDAO.getCollateralAssignmentByFinRef(reference, moduleName, type);
 	}
 

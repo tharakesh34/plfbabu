@@ -2251,8 +2251,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public int getCustomerCountByCustID(long custID, String type) {
-		// TODO Auto-generated method stub
-
 		Customer customer = new Customer();
 		customer.setCustID(custID);
 
