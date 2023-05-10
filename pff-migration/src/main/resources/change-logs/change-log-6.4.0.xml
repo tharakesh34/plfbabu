@@ -18214,7 +18214,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1528.47" author="Sravani.s">
+	<changeSet id="ST#1528.47_1" author="Sravani.s">
 		<renameColumn tableName="CHEQUES_UPLOAD" oldColumnName="IfscCode" newColumnName="Ifsc"/>
 	</changeSet>
 	
