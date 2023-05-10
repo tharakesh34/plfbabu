@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.smtmasters.CountryDAO;
+import com.pennant.backend.dao.systemmasters.CityDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -33,6 +34,8 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 	private ProvinceDAO provinceDAO;
 	@Autowired
 	private CountryDAO countryDAO;
+	@Autowired
+	private CityDAO cityDAO;
 
 	public CustomerAddressUpload() {
 		super();
@@ -234,7 +237,16 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 			return;
 		}
 
+		if (isNotActiveCity(custAddrCity)) {
+			setError(detail, "81004", "City :", custAddrCity);
+			return;
+		}
+
 		detail.setCustAddrCity(pincode.getCity());
+	}
+
+	private boolean isNotActiveCity(String custAddrCity) {
+		return !cityDAO.isActiveCity(custAddrCity);
 	}
 
 	private boolean isNotActiveCountry(String custAddrCountry) {
