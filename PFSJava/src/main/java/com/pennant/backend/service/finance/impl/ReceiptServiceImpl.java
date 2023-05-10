@@ -3603,6 +3603,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			fsi.setAllocationType(AllocationType.AUTO);
 			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		}
+
+		validateClosureType(schdData, fsi);
 	}
 
 	private void validateCheque(FinScheduleData schdData, String favourNumber) {
@@ -5901,6 +5903,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setValueDate(fsi.getValueDate());
 		rch.setSource(fsi.getRequestSource().name());
 		rch.setFinType(fm.getFinType());
+		rch.setClosureType(fsi.getClosureType());
 
 		if (fsi.isKnockOffReceipt()) {
 			rch.setKnockOffType(fsi.getKnockoffType());
@@ -6344,6 +6347,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		logMsg.append("Receipt-Channel: ").append(fsi.getReceiptChannel()).append("\n");
 		logMsg.append("Allocation-Type: ").append(fsi.getAllocationType()).append("\n");
 		logMsg.append("Excess-Adjust-To: ").append(fsi.getExcessAdjustTo()).append("\n");
+		logMsg.append("Closure-Type: ").append(fsi.getClosureType()).append("\n");
 
 		logMsg.append(" Defaulting empty data...");
 
@@ -6400,6 +6404,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 							.concat(DateUtil.format(fsi.getValueDate(), DateFormat.FULL_DATE.getPattern()).toString()),
 					"Loan StartDate: ".concat(fm.getFinStartDate().toString()));
 			logger.info(Literal.LEAVING);
+			return fd;
+		}
+
+		if (receiptPurpose != ReceiptPurpose.EARLYSETTLE && StringUtils.isNotBlank(fsi.getClosureType())) {
+			setError(schdData, "STP0012", "Closure Type :" +fsi.getClosureType(), " in request body ");
 			return fd;
 		}
 
@@ -8799,6 +8808,41 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setReceivedDate(valueDate);
 
 		return calcuateDues(receiptData);
+	}
+
+	private void validateClosureType(FinScheduleData schdData, FinServiceInstruction fsi) {
+		if (StringUtils.isBlank(fsi.getClosureType())) {
+			setError(schdData, "90502", "Closure Type");
+			return;
+		}
+
+		String closuretype = fsi.getClosureType();
+		String errCode = "Closure Type : " + closuretype;
+
+		if (ClosureType.getTypes().stream().noneMatch(c -> c.getValue().equals(closuretype))) {
+			setError(schdData, "90337", errCode, ClosureType.allowedTypes(null));
+			return;
+		}
+
+		FinanceMain fm = schdData.getFinanceMain();
+		boolean isMatured = fm.getMaturityDate().compareTo(fm.getAppDate()) <= 0;
+
+		if (isMatured) {
+			if (closuretype == ClosureType.CANCEL.code()) {
+				setError(schdData, "90337", errCode, ClosureType.allowedTypes(ClosureType.CANCEL));
+				return;
+			}
+
+			if (closuretype == ClosureType.FORE_CLOSURE.code()) {
+				setError(schdData, "90337", errCode, ClosureType.allowedTypes(ClosureType.FORE_CLOSURE));
+				return;
+			}
+		}
+
+		if (!isMatured && closuretype == ClosureType.CLOSURE.code()) {
+			setError(schdData, "90337", errCode, ClosureType.allowedTypes(ClosureType.CLOSURE));
+			return;
+		}
 	}
 
 	@Autowired

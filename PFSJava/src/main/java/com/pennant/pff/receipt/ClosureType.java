@@ -77,4 +77,38 @@ public enum ClosureType {
 
 		return closureTypes;
 	}
+
+	public static String allowedTypes(ClosureType closureType) {
+		StringBuilder values = new StringBuilder();
+
+		if (closureType == null) {
+			values.append(ClosureType.CLOSURE.code()).append(", ");
+			values.append(ClosureType.FORE_CLOSURE.code()).append(", ");
+			values.append(ClosureType.TOP_UP.code()).append(", ");
+			values.append(ClosureType.RE_POSSESSION.code()).append(", ");
+			values.append(ClosureType.CANCEL.code());
+			return values.toString();
+		}
+
+		switch (closureType) {
+		case CLOSURE:
+			values.append(ClosureType.FORE_CLOSURE.code()).append(", ");
+			values.append(ClosureType.TOP_UP.code()).append(", ");
+			values.append(ClosureType.RE_POSSESSION.code()).append(", ");
+			values.append(ClosureType.CANCEL.code());
+			return values.toString();
+		case CANCEL, FORE_CLOSURE:
+			values.append(ClosureType.CLOSURE.code()).append(", ");
+			values.append(ClosureType.TOP_UP.code()).append(", ");
+			values.append(ClosureType.RE_POSSESSION.code());
+			return values.toString();
+		default:
+			values.append(ClosureType.CLOSURE.code()).append(", ");
+			values.append(ClosureType.FORE_CLOSURE.code()).append(", ");
+			values.append(ClosureType.TOP_UP.code()).append(", ");
+			values.append(ClosureType.RE_POSSESSION.code()).append(", ");
+			values.append(ClosureType.CANCEL.code());
+			return values.toString();
+		}
+	}
 }
