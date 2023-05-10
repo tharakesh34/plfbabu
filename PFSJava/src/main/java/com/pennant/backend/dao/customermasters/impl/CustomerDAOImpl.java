@@ -3375,14 +3375,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
-			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(" Select c.CustCIF, c.CustID, c.CustSalutationCode, c.CustFName");
 			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers c");
 			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
 			sql.append(" Inner Join FinJointAccountDetails ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
 			sql.append(" Where fm.finID = ?");
 			break;
 		case TEMP_TAB:
-			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(" Select c.CustCIF, c.CustID, c.CustSalutationCode, c.CustFName");
 			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers_Temp c");
 			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
 			sql.append(" Inner Join FinJointAccountDetails_Temp ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
@@ -3391,7 +3391,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		case BOTH_TAB:
 			object = new Object[] { 1, finID, 1, finID };
 
-			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(" Select c.CustCIF, c.CustID, c.CustSalutationCode, c.CustFName");
 			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers_Temp c");
 			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
 			sql.append(" Inner Join FinJointAccountDetails_Temp ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
@@ -3412,6 +3412,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			Customer c = new Customer();
+			c.setCustCIF(rs.getString("CustCIF"));
 			c.setCustID(rs.getLong("CustID"));
 			c.setCustSalutationCode(rs.getString("CustSalutationCode"));
 			c.setCustFName(rs.getString("CustFName"));

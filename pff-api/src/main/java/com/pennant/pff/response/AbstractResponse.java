@@ -87,6 +87,7 @@ public class AbstractResponse extends AbstractController {
 		cd.setCustEmployments(details.getEmploymentDetailsList());
 		cd.setCustMotherMaiden(c.getCustMotherMaiden());
 		cd.setCustFNameLclLng(c.getCustFNameLclLng());
+		cd.setGender(c.getCustGenderCode());
 	}
 
 	private void setEMIHolidayDetails(LoanDetail ld, FinanceMain fm) {
@@ -170,9 +171,9 @@ public class AbstractResponse extends AbstractController {
 		loanBranch.setLovDescBranchProvinceName(branch.getLovDescBranchProvinceName());
 		loanBranch.setBranchCountry(branch.getBranchCountry());
 		loanBranch.setLovDescBranchCountryName(branch.getLovDescBranchCountryName());
-		loanBranch.setBranchFax("1");
+		loanBranch.setBranchFax("");
 		loanBranch.setBranchTel(branch.getBranchTel());
-		loanBranch.setBranchMail("loansupport@hdfcbank.com");
+		loanBranch.setBranchMail("");
 		loanBranch.setZipCode(branch.getPinCode());
 		loanBranch.setBranchAddrHNbr(branch.getBranchAddrHNbr());
 		loanBranch.setBranchAddrStreet(branch.getBranchAddrStreet());

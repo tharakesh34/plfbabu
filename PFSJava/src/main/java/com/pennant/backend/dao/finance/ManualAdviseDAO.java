@@ -204,4 +204,5 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	List<ManualAdviseMovements> getAdvisePaidAmount(long receiptId, String finReference);
 
+	List<BigDecimal> getBounceChargesByFinID(long finID);
 }

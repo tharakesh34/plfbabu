@@ -2552,4 +2552,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			return mam;
 		});
 	}
+
+	@Override
+	public List<BigDecimal> getBounceChargesByFinID(long finID) {
+		String sql = "Select AdviseAmount From ManualAdvise Where BounceID > ? and FinId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForList(sql, BigDecimal.class, 0, finID);
+	}
 }

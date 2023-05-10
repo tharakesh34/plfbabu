@@ -20,9 +20,11 @@ public class ApplicantDetails {
 	@XmlElement
 	private String relation;
 	@XmlElement
-	private Long custID = (long) 0;
+	private Long custID;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+	@XmlElement
+	private String custCIF;
 
 	public ApplicantDetails() {
 		super();
@@ -74,5 +76,13 @@ public class ApplicantDetails {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
 	}
 }
