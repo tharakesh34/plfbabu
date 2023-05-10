@@ -79,4 +79,6 @@ public interface AssetClassificationDAO {
 	AssetClassification getNpaMovemnt(long finID);
 
 	void updatePrvPastDuedays(AssetClassification ac);
+
+	void deleteStage();
 }

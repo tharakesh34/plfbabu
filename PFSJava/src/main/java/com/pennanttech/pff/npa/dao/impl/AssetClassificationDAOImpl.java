@@ -37,7 +37,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 	@Override
 	public void clearStage() {
-		// jdbcOperations.update("Truncate table NPA_PROVISION_STAGE");
+		jdbcOperations.update("Truncate table NPA_PROVISION_STAGE");
 	}
 
 	@Override
@@ -1107,6 +1107,11 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public void deleteStage() {
+		jdbcOperations.update("Delete From NPA_Provision_Stage");
 	}
 
 }
