@@ -125,8 +125,24 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 
 		if (hostGLMappingUploadDAO.isDuplicateKey(glcode, TableType.BOTH_TAB)) {
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode("HGL_999");
+			detail.setErrorCode("HGL_101");
 			detail.setErrorDesc("System GL Code" + ":" + glcode + " " + "already exists.");
+			return;
+		}
+
+		String hostAccount = detail.getHostGLCode();
+		boolean isExistingHostAccount = accountMappingService.isExistingHostAccount(hostAccount);
+
+		if (isExistingHostAccount) {
+			detail.setProgress(EodConstants.PROGRESS_FAILED);
+			detail.setErrorCode("HGL_102");
+			detail.setErrorDesc("Host GL Code" + ":" + hostAccount + " " + "already exists.");
+			return;
+		}
+
+		String hostAccountregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM);
+		if (StringUtils.isNotBlank(hostAccount) && !Pattern.compile(hostAccountregex).matcher(hostAccount).matches()) {
+			setError(detail, HostGLMappingUploadError.HGL11);
 			return;
 		}
 
