@@ -5520,7 +5520,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
 
 				getFinanceDetail().setFinScheduleData(
-						ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), null));
+						ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
 
 				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
 

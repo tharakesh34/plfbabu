@@ -9727,9 +9727,9 @@ public class ScheduleCalculator {
 			FinScheduleData fsDataCopy = fsData.copyEntity();
 			FinanceMain fm = fsDataCopy.getFinanceMain();
 
-			fsDataCopy.setRepayInstructions(new ArrayList<RepayInstruction>());
-			fsDataCopy.setFinanceScheduleDetails(new ArrayList<FinanceScheduleDetail>());
-			fsDataCopy.setDisbursementDetails(new ArrayList<FinanceDisbursement>());
+			fsDataCopy.setRepayInstructions(new ArrayList<>());
+			fsDataCopy.setFinanceScheduleDetails(new ArrayList<>());
+			fsDataCopy.setDisbursementDetails(new ArrayList<>());
 
 			// Set Disbursement Details with total loan amount
 			FinanceDisbursement fddCopy = new FinanceDisbursement();
@@ -9742,7 +9742,7 @@ public class ScheduleCalculator {
 			fsDataCopy.getDisbursementDetails().add(fddCopy);
 
 			fsDataCopy = ScheduleGenerator.getNewSchd(fsDataCopy);
-			fsDataCopy = getCalSchd(fsDataCopy, null);
+			fsDataCopy = getCalSchd(fsDataCopy, BigDecimal.ZERO);
 
 			if (CollectionUtils.isNotEmpty(fsDataCopy.getPlanEMIHmonths())) {
 				fsDataCopy.setPlanEMIHmonths(fsDataCopy.getPlanEMIHmonths());

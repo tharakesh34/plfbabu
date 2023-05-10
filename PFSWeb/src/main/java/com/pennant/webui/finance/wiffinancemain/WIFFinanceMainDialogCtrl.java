@@ -5305,88 +5305,79 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * @throws Exception
 	 */
 	public void onClick$btnValidate(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering");
 		buildEvent = false;
 		validate();
-		logger.debug("Leaving" + event.toString());
+		logger.debug("Leaving");
 	}
 
-	/**
-	 * when the "buildSchedule" button is clicked. <br>
-	 * Stores the default values, sets the validation, validates the given finance details, builds the schedule.
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
 	public void onClick$btnBuildSchedule(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug("Entering");
 
 		this.buildEvent = true;
 
-		if (validate() != null) {
-			this.buildEvent = false;
-
-			// Setting Finance Step Policy Details to Finance Schedule Data Object
-			if (getStepDetailDialogCtrl() != null) {
-				validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
-				this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
-			}
-
-			// Prepare Finance Schedule Generator Details List
-			getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
-			getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleMaintained(false);
-			getFinanceDetail().getFinScheduleData().getFinanceMain().setMigratedFinance(false);
-			getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleRegenerated(false);
-
-			// Build Finance Schedule Details List
-			if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
-
-				getFinanceDetail().setFinScheduleData(
-						ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), null));
-
-				getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
-				getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
-
-				// Fill Finance Schedule details List data into ListBox
-				if (getScheduleDetailDialogCtrl() != null) {
-					getScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
-					getScheduleDetailDialogCtrl().setPlanEMIHDateList(new ArrayList<Date>());
-					getScheduleDetailDialogCtrl().effectiveRateOfReturn
-							.setValue(
-									PennantApplicationUtil.formatRate(
-											getFinanceDetail().getFinScheduleData().getFinanceMain()
-													.getEffectiveRateOfReturn().doubleValue(),
-											PennantConstants.rateFormate) + "%");
-
-				} else {
-					appendScheduleDetailTab(false);
-				}
-			}
-
-			// Schedule tab Selection After Schedule Re-modified
-			Tab tab = null;
-			if (tabsIndexCenter.getFellowIfAny("scheduleDetailsTab") != null) {
-				tab = (Tab) tabsIndexCenter.getFellowIfAny("scheduleDetailsTab");
-				tab.setSelected(true);
-			}
-
-			// Indicative Term Sheet Detail
-			if (tabsIndexCenter.getFellowIfAny("indicativeTermTab") != null) {
-				tab = (Tab) tabsIndexCenter.getFellowIfAny("indicativeTermTab");
-				tab.setDisabled(false);
-			}
-
-			if (getIndicativeTermDetailDialogCtrl() != null) {
-				getIndicativeTermDetailDialogCtrl().doFillScheduleData(getFinanceDetail());
-			}
-
-			if (getStepDetailDialogCtrl() != null) {
-				getStepDetailDialogCtrl()
-						.doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
-			}
-
+		if (validate() == null) {
+			return;
 		}
-		logger.debug("Leaving" + event.toString());
+
+		this.buildEvent = false;
+
+		// Setting Finance Step Policy Details to Finance Schedule Data Object
+		if (getStepDetailDialogCtrl() != null) {
+			validFinScheduleData.setStepPolicyDetails(getStepDetailDialogCtrl().getFinStepPoliciesList());
+			this.oldVar_finStepPolicyList = getStepDetailDialogCtrl().getFinStepPoliciesList();
+		}
+
+		// Prepare Finance Schedule Generator Details List
+		getFinanceDetail().setFinScheduleData(ScheduleGenerator.getNewSchd(validFinScheduleData));
+		getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleMaintained(false);
+		getFinanceDetail().getFinScheduleData().getFinanceMain().setMigratedFinance(false);
+		getFinanceDetail().getFinScheduleData().getFinanceMain().setScheduleRegenerated(false);
+
+		// Build Finance Schedule Details List
+		if (getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().size() != 0) {
+
+			getFinanceDetail().setFinScheduleData(
+					ScheduleCalculator.getCalSchd(getFinanceDetail().getFinScheduleData(), BigDecimal.ZERO));
+
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
+			getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
+
+			// Fill Finance Schedule details List data into ListBox
+			if (getScheduleDetailDialogCtrl() != null) {
+				getScheduleDetailDialogCtrl().doFillScheduleList(getFinanceDetail().getFinScheduleData());
+				getScheduleDetailDialogCtrl().setPlanEMIHDateList(new ArrayList<>());
+				getScheduleDetailDialogCtrl().effectiveRateOfReturn.setValue(
+						PennantApplicationUtil.formatRate(getFinanceDetail().getFinScheduleData().getFinanceMain()
+								.getEffectiveRateOfReturn().doubleValue(), PennantConstants.rateFormate) + "%");
+
+			} else {
+				appendScheduleDetailTab(false);
+			}
+		}
+
+		// Schedule tab Selection After Schedule Re-modified
+		Tab tab = null;
+		if (tabsIndexCenter.getFellowIfAny("scheduleDetailsTab") != null) {
+			tab = (Tab) tabsIndexCenter.getFellowIfAny("scheduleDetailsTab");
+			tab.setSelected(true);
+		}
+
+		// Indicative Term Sheet Detail
+		if (tabsIndexCenter.getFellowIfAny("indicativeTermTab") != null) {
+			tab = (Tab) tabsIndexCenter.getFellowIfAny("indicativeTermTab");
+			tab.setDisabled(false);
+		}
+
+		if (getIndicativeTermDetailDialogCtrl() != null) {
+			getIndicativeTermDetailDialogCtrl().doFillScheduleData(getFinanceDetail());
+		}
+
+		if (getStepDetailDialogCtrl() != null) {
+			getStepDetailDialogCtrl().doFillStepDetais(getFinanceDetail().getFinScheduleData().getStepPolicyDetails());
+		}
+
+		logger.debug("Leaving");
 	}
 
 	/**
