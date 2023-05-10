@@ -4856,7 +4856,9 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Source',  	                0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Reference',  	            0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'AccNumber',               	0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Action',  	                0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'CHECK:Y,N');						
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Action',  	                0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'CHECK:Y,N');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'remarks',                      0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+								
 			]]>
 		</sql>
 	</changeSet>
@@ -9968,7 +9970,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="TK#4753.6" author="sampath.d">
 		<sql>
 			<![CDATA[
@@ -12419,6 +12421,8 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'reference',     0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'M');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'accNumber',     0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'action',        0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'CHECK:Y,N');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'remarks',       0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+				
 			]]>
 		</sql>
 	</changeSet>
@@ -15700,7 +15704,7 @@
 	<changeSet id="ST#1528.44.3" author="Sravani.S" dbms="postgresql, oracle">
 		<addDefaultValue tableName="CROSS_LOAN_KNOCKOFF_UPLOAD" columnName="RecordSeq" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.45.1" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -15844,7 +15848,7 @@
 			<column name="EffManualAssetSubClass" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#225974_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16455,7 +16459,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="FWV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16611,13 +16615,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="ST#1561.1" author="Mounika.M">
 		<createSequence sequenceName="SEQ_Service_Branches" minValue="1" maxValue="9223372036854775807"
 			incrementBy="1" startValue="1" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.2" author="Mounika.M">
 		<createTable tableName="Service_Branches">
 			<column name="Id" type="bigint">
@@ -16634,7 +16638,7 @@
 			</column>
 			<column name="FlatNum" type="varchar(50)" />
 			<column name="Street" type="varchar(50)" />
-			<column name="AddrLine1" type="varchar(50)"/>
+			<column name="AddrLine1" type="varchar(50)" />
 			<column name="AddrLine2" type="varchar(50)" />
 			<column name="PoBox" type="varchar(50)" />
 			<column name="Country" type="varchar(2)">
@@ -16688,9 +16692,8 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.6" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="fk_SB_City"
-			referencedTableName="RMTProvinceVSCity" baseColumnNames="City" baseTableName="Service_Branches"
-			referencedColumnNames="PCCITY" />
+		<addForeignKeyConstraint constraintName="fk_SB_City" referencedTableName="RMTProvinceVSCity"
+			baseColumnNames="City" baseTableName="Service_Branches" referencedColumnNames="PCCITY" />
 	</changeSet>
 
 	<changeSet id="ST#1561.7" author="Mounika.M">
@@ -16763,11 +16766,10 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.11" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="fk_SBT_City"
-			referencedTableName="RMTProvinceVSCity" baseColumnNames="City" baseTableName="Service_Branches_Temp"
-			referencedColumnNames="PCCITY" />
+		<addForeignKeyConstraint constraintName="fk_SBT_City" referencedTableName="RMTProvinceVSCity"
+			baseColumnNames="City" baseTableName="Service_Branches_Temp" referencedColumnNames="PCCITY" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.12" author="Mounika.M">
 		<createSequence sequenceName="SEQ_Service_Branches_LoanType" minValue="1"
 			maxValue="9223372036854775807" incrementBy="1" startValue="1" />
@@ -17059,7 +17061,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.26" author="sainaveen.y">
 		<sql>
 			 <![CDATA[
@@ -17071,7 +17073,7 @@
              ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.27" author="vasudevarao.S">
 		<sql>
             <![CDATA[
@@ -17105,7 +17107,7 @@
             ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.29" author="vasudevarao.S">
 		<sql>
             <![CDATA[
@@ -17122,7 +17124,7 @@
             ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.30" author="vasudevarao.S">
 		<sql>
 			<![CDATA[
@@ -17135,7 +17137,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.31" author="vasudevarao.S">
 		<sql>
 			<![CDATA[
@@ -17148,7 +17150,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.32" author="vasudevarao.S">
 		<sql>
 			<![CDATA[
@@ -17161,15 +17163,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.33" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_LOANTYPE_LETTER_MAPPING" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.34" author="saikrishna.b">
 		<createTable tableName="LOANTYPE_LETTER_MAPPING">
-			<column name="Id" type="bigint" >
+			<column name="Id" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="FinType" type="varchar(20)" />
@@ -17193,12 +17195,13 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
-	 </changeSet>
-	
-	<changeSet id="ST#1561.35" author="saikrishna.b">
-		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_ID" tableName="LOANTYPE_LETTER_MAPPING" columnNames="Id" />
 	</changeSet>
-	
+
+	<changeSet id="ST#1561.35" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_ID" tableName="LOANTYPE_LETTER_MAPPING"
+			columnNames="Id" />
+	</changeSet>
+
 	<changeSet id="ST#1561.36" author="saikrishna.b">
 		<createTable tableName="LOANTYPE_LETTER_MAPPING_TEMP">
 			<column name="Id" type="bigint">
@@ -17226,11 +17229,12 @@
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-    <changeSet id="ST#1561.37" author="saikrishna.b">
-		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_TID" tableName="LOANTYPE_LETTER_MAPPING_TEMP" columnNames="Id" />
+
+	<changeSet id="ST#1561.37" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_TID" tableName="LOANTYPE_LETTER_MAPPING_TEMP"
+			columnNames="Id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.38" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -17297,7 +17301,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.39" author="ramya.v">
 		<createTable tableName="LOAN_LETTER_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -17316,11 +17320,11 @@
 			<column name="ErrorDesc" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.40" author="ramya.v">
 		<addPrimaryKey constraintName="PK_LOAN_LETTER_UPLOAD_ID" tableName="LOAN_LETTER_UPLOAD" columnNames="id" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.41" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -17367,7 +17371,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.42" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -17390,7 +17394,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.43" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -17413,7 +17417,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.44" author="VinayKumar.K">
 		<createTable tableName="COURIER_DETAILS_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -17437,7 +17441,8 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.45" author="VinayKumar.K">
-		<addPrimaryKey constraintName="PK_COURIER_DETAILS_UPLOAD_ID" tableName="COURIER_DETAILS_UPLOAD" columnNames="ID" />
+		<addPrimaryKey constraintName="PK_COURIER_DETAILS_UPLOAD_ID" tableName="COURIER_DETAILS_UPLOAD"
+			columnNames="ID" />
 	</changeSet>
 
 	<changeSet id="ST#1561.46" author="VinayKumar.K">
@@ -17538,7 +17543,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.49" author="sainaveen.y">
 		<createTable tableName="BLOCK_AUTO_GEN_LTR_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -17558,9 +17563,10 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.50" author="sainaveen.y">
-		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_UPLOAD" columnNames="Id" constraintName="PK_BCK_AUTO_GEN_LTR_UPLOAD_ID" />
+		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_UPLOAD" columnNames="Id"
+			constraintName="PK_BCK_AUTO_GEN_LTR_UPLOAD_ID" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.51" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -17650,7 +17656,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.54" author="sainaveen.y">
 		<createTable tableName="BLOCK_AUTO_GEN_LTR_LOG">
 			<column name="Id" type="bigint">
@@ -17673,9 +17679,10 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.55" author="sainaveen.y">
-		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_LOG" columnNames="Id" constraintName="PK_BLOCK_AUTO_GEN_LTR_LOG_ID" />
+		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_LOG" columnNames="Id"
+			constraintName="PK_BLOCK_AUTO_GEN_LTR_LOG_ID" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.56" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -17689,8 +17696,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="ST#1561.57" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17700,7 +17707,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1561.58" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17710,32 +17717,31 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1684.1" author="saikiran.n">
 		<createTable tableName="Loan_Closure_Upload">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name ="HeaderId" type="bigint" />
-			<column name ="RecordSeq" type="bigint" />
-			<column name ="FinId" type="bigint" />
-			<column name ="FinReference" type="varchar(20)" />
-			<column name ="Remarks" type="varchar(500)" />
-			<column name ="ReasonCode" type="varchar(20)" />
-			<column name ="Closuretype" type="varchar(20)" />
-			<column name ="AllocationType" type="varchar(30)" />
-			<column name ="Progress" type="int" />
-			<column name ="Status" type="char(1)" />
-			<column name ="ErrorCode" type="varchar(20)" />
-			<column name ="ErrorDesc" type="varchar(2000)" />
+			<column name="HeaderId" type="bigint" />
+			<column name="RecordSeq" type="bigint" />
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
+			<column name="Remarks" type="varchar(500)" />
+			<column name="ReasonCode" type="varchar(20)" />
+			<column name="Closuretype" type="varchar(20)" />
+			<column name="AllocationType" type="varchar(30)" />
+			<column name="Progress" type="int" />
+			<column name="Status" type="char(1)" />
+			<column name="ErrorCode" type="varchar(20)" />
+			<column name="ErrorDesc" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="ST#1684.2" author="saikiran.n">
-		<addPrimaryKey constraintName="PK_LOAN_CLOSURE_UPLD_ID" tableName="Loan_Closure_Upload"
-			columnNames="Id" />
+		<addPrimaryKey constraintName="PK_LOAN_CLOSURE_UPLD_ID" tableName="Loan_Closure_Upload" columnNames="Id" />
 	</changeSet>
- 
+
 	<changeSet id="ST#1684.3" author="saikiran.n">
 		<sql>
 			<![CDATA[		
@@ -17783,7 +17789,7 @@
 		</sql>
 	</changeSet>
 
- 	<changeSet id="ST#1684.5" author="saikiran.n">
+	<changeSet id="ST#1684.5" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_CLOSURE_UPLOAD_MAKER');
@@ -17837,7 +17843,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#225109_pre" author="saikrishna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17857,7 +17863,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1469.25.14_1" author="nagavamsi.p">
 		<addColumn tableName="Loan_Provisions">
 			<column name="ManualAssetClassID" type="bigint" />
@@ -18073,7 +18079,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.39_2" author="Sravani.S">
 		<sql>
 		<![CDATA[
@@ -18153,7 +18159,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.14_2" author="Sravani.S">
 		<sql>
 		 	<![CDATA[ 
@@ -18183,7 +18189,7 @@
 		  	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.47" author="Sravani.s">
 		<sql>
 			<![CDATA[
@@ -18213,11 +18219,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.47_1" author="Sravani.s">
-		<renameColumn tableName="CHEQUES_UPLOAD" oldColumnName="IfscCode" newColumnName="Ifsc"/>
+		<renameColumn tableName="CHEQUES_UPLOAD" oldColumnName="IfscCode" newColumnName="Ifsc" />
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.10.2" author="Sravani.S">
 		<sql> 
 			<![CDATA[ 
@@ -18244,4 +18250,60 @@
   			]]>
 		</sql>
 	</changeSet>
+
+
+	<changeSet id="ST#1526.1" author="sandeepkumar.m">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_TEMPLATE');
+				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_TEMPLATE');
+				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_TEMPLATE';
+											
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID IN (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE';
+											
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LIEN_TEMPLATE', 'LIEN UPLOAD TEMPLATE DOWNLOAD', 3, 'LIENUPLOAD', NULL, NULL, ',' , 0, 0, NULL, 'ROW:{Source, Reference, AccountNumber, Action, Remarks}',  NULL, 'A', '/opt/pff/hdfc/Lien/template', 'LienUpload_', '.xlsx', 0, current_timestamp, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1);
+				
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE'), 'LIEN_UPLOAD',  1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, 0, 0);
+								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Source',  	                0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Reference',  	            0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'AccNumber',               	0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'Action',  	                0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'CHECK:Y,N');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_TEMPLATE')), 'remarks',                    0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="ST#1526.2" author="sandeepkumar.m" >
+		<sql>
+			<![CDATA[			
+	              DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_UPLOAD');
+			      DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_UPLOAD');
+			      DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_UPLOAD';
+			 				
+			      DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD'));
+			      DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD');
+			      DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD';
+							
+			      INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'LIEN_UPLOAD', 'LIEN UPLOAD FILE.', 12, 'LIENUPLOAD', null, null, ',', 1, 1, null, 'ROW:{Source, Reference, AccountNumber, Action, Remarks}', null, 'C', '\\pennantsrv02\File_Sharing\Projects\HDFC\Uploads', 'LienUpload_', '.xlsx', 0, CURRENT_TIMESTAMP, '${ddmm},.${SEQ_DATE_FILE}', NULL, '0', NULL, 1, 1);
+					
+			      INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD'), 'LIEN_UPLOAD', 1, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 0, 0);
+							
+			     INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'source',        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'M');
+			     INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'reference',     0, 'N', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, 'M');
+			     INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'accNumber',     0, 'N', NULL, NULL, NULL, NULL, '2', NULL, NULL, NULL, NULL, 'O');
+			     INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'action',        0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, NULL, 'CHECK:Y,N');
+			     INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'LIEN_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'LIEN_UPLOAD')), 'remarks',       0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'O');					
+          	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1526.3" author="sandeepkumar.m">
+		<modifyDataType tableName="LIEN_UPLOAD" columnName="REMARKS" newDataType="varchar(1000)"/>
+	</changeSet>
+
+
 </databaseChangeLog> 

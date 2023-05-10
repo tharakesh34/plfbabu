@@ -201,27 +201,11 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 			lienup.setUserDetails(header.getUserDetails());
 
-			if (lienup.getAction().equals("Y")) {
-				lienup.setLienstatus(true);
-				lienup.setMarking(Labels.getLabel("label_Lien_Type_Manual"));
-				lienup.setMarkingDate(header.getAppDate());
-				lienup.setMarkingReason(header.getRemarks());
-				lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-			} else {
-				lienup.setLienstatus(false);
-				lienup.setDemarkingReason(header.getRemarks());
-				lienup.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
-				lienup.setDemarkingDate(header.getAppDate());
-				lienup.setReference(lienup.getReference());
-				lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
-			}
-
 			String accNumber = lienup.getAccNumber();
 			LienHeader lienheader = lienHeaderDAO.getLienByAcc(accNumber);
 
 			TransactionStatus txStatus = getTransactionStatus();
 			try {
-				lienUploadDAO.update(lienup, lienup.getId());
 
 				if (lienheader != null) {
 					lienup.setLienID(lienheader.getLienID());
@@ -242,6 +226,34 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				lienhead.setId(lienup.getId());
 				lienhead.setSource(lienup.getSource());
 				fd.setLienHeader(lienhead);
+
+				if (lienup.getAction().equals("Y")) {
+					lienup.setLienstatus(true);
+					lienup.setMarking(Labels.getLabel("label_Lien_Type_Manual"));
+					lienup.setMarkingDate(header.getAppDate());
+					lienup.setMarkingReason(header.getRemarks());
+					lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+
+					lienhead.setMarking(Labels.getLabel("label_Lien_Type_Manual"));
+					lienhead.setMarkingDate(header.getAppDate());
+					lienhead.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+					lienhead.setLienStatus(true);
+
+				} else {
+					lienup.setLienstatus(false);
+					lienup.setDemarkingReason(header.getRemarks());
+					lienup.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
+					lienup.setDemarkingDate(header.getAppDate());
+					lienup.setReference(lienup.getReference());
+					lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
+
+					lienhead.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
+					lienhead.setDemarkingDate(header.getAppDate());
+					lienhead.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
+					lienhead.setLienStatus(false);
+
+				}
+				lienUploadDAO.update(lienup, lienup.getId());
 
 				lienService.save(fd, true);
 

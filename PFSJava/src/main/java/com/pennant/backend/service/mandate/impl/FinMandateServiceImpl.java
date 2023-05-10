@@ -766,7 +766,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			}
 
 			if (ImplementationConstants.ALLOW_LIEN) {
-				if (InstrumentType.isSI(finRepayMethod)) {
+				if (InstrumentType.isSI(mandateType)) {
 					lienService.save(fd, true);
 				} else {
 					lienService.update(fd);

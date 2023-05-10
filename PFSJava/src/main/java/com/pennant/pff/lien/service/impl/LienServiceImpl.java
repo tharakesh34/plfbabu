@@ -12,6 +12,8 @@ import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.model.lien.LienDetails;
@@ -25,6 +27,7 @@ public class LienServiceImpl implements LienService {
 
 	private LienHeaderDAO lienHeaderDAO;
 	private LienDetailsDAO lienDetailsDAO;
+	private MandateService mandateService;
 
 	public LienServiceImpl() {
 		super();
@@ -36,9 +39,24 @@ public class LienServiceImpl implements LienService {
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
-		String accNumber = fd.getMandate().getAccNumber();
+		fm.setModuleDefiner(fd.getModuleDefiner());
 
-		LienHeader lh = lienHeaderDAO.getLienByAcc(accNumber);
+		FinanceMain fmBef = fm.getBefImage();
+		String accNumber = "";
+		if (fmBef != null && fmBef.getMandateID() != null) {
+			Mandate m = mandateService.getMandate(fmBef.getMandateID());
+			if (m != null) {
+				accNumber = m.getAccNumber();
+			}
+		} else {
+			accNumber = fd.getMandate().getAccNumber();
+		}
+
+		LienHeader lh = fd.getLienHeader();
+
+		if (!RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
+			lh = lienHeaderDAO.getLienByAcc(accNumber);
+		}
 
 		long headerID = 0;
 
@@ -58,7 +76,7 @@ public class LienServiceImpl implements LienService {
 		} else {
 			headerID = lh.getId();
 			if (isMandate) {
-				FinanceMain fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
+				fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
 
 				if (fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
 						&& InstrumentType.isSI(fm.getFinRepayMethod())) {
@@ -71,11 +89,18 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarkingDate(fm.getClosedDate());
-					lu.setDemarkingReason(Labels.getLabel("label_Lien_Type_DemarkReason"));
+					setLienDeMarkStatus(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
 				}
+			} else if (RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
+				lienHeaderDAO.update(lh);
 			}
+		}
+		if ((fmBef != null && fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
+				&& InstrumentType.isSI(fm.getFinRepayMethod())
+				&& FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner()))) {
+			return;
 		}
 
 		LienDetails lu = getLienDetails(lh, fm);
@@ -83,8 +108,9 @@ public class LienServiceImpl implements LienService {
 		lu.setLienID(lh.getLienID());
 		lu.setLienReference(lh.getLienReference());
 		lh.setMarkingDate(fd.getMandate().getStartDate());
-		lu.setDemarking("");
-		lu.setDemarkingDate(null);
+		lu.setDemarking(lh.getDemarking());
+		lu.setDemarkingDate(lh.getDemarkingDate());
+		lu.setMarking(lh.getMarking());
 		lu.setDemarkingReason("");
 
 		lienDetailsDAO.save(lu);
@@ -96,12 +122,20 @@ public class LienServiceImpl implements LienService {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		String accNum = "";
+		FinanceMain fmBef = fm.getBefImage();
+		fm.setModuleDefiner(fd.getModuleDefiner());
+		if (fmBef != null) {
+			if (fmBef.getMandateID() == null) {
+				return;
+			}
 
-		FinanceMain fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
-		if (fmBef.getMandateID() == null) {
-			return;
+			Mandate m = mandateService.getMandate(fmBef.getMandateID());
+
+			if (m != null) {
+				accNum = m.getAccNumber();
+			}
 		}
-		String accNum = fd.getMandate().getAccNumber();
 		List<LienHeader> lienheader = lienHeaderDAO.getLienHeaderList(fm.getFinReference());
 
 		if (lienheader == null) {
@@ -110,8 +144,8 @@ public class LienServiceImpl implements LienService {
 		}
 		for (LienHeader lh : lienheader) {
 
-			if (!lh.getAccountNumber().equals(accNum)
-					&& fm.getModuleDefiner().equals(FinServiceEvent.RPYBASICMAINTAIN)) {
+			if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())
+					&& !lh.getAccountNumber().equals(accNum)) {
 				continue;
 			}
 
@@ -124,7 +158,7 @@ public class LienServiceImpl implements LienService {
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarkingDate(fm.getClosedDate());
 
-					setLienStatus(lu, fm.getModuleDefiner());
+					setLienDeMarkStatus(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
 				}
@@ -144,6 +178,24 @@ public class LienServiceImpl implements LienService {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setLienDeMarkStatus(LienDetails lu, String moduleDefiner) {
+		switch (moduleDefiner) {
+		case FinServiceEvent.RPYBASICMAINTAIN:
+			lu.setDemarkingReason("Repay method changed");
+			break;
+		case FinServiceEvent.RECEIPT:
+			lu.setDemarkingReason("Early settlement");
+			break;
+		case FinServiceEvent.CANCELFIN:
+			lu.setDemarkingReason("Loan cancelled");
+			break;
+		default:
+			lu.setMarkingReason("");
+			break;
+		}
+
 	}
 
 	private LienHeader getLienHeader(FinanceMain fm, FinanceDetail fd) {
@@ -172,7 +224,7 @@ public class LienServiceImpl implements LienService {
 
 		String moduleType = fm.getModuleDefiner();
 
-		setLienStatus(ld, moduleType);
+		setLienMarkStatus(ld, moduleType);
 
 		ld.setLienID(lh.getLienID());
 		ld.setLienReference(lh.getLienReference());
@@ -196,7 +248,7 @@ public class LienServiceImpl implements LienService {
 		return ld;
 	}
 
-	private void setLienStatus(LienDetails ld, String moduleType) {
+	private void setLienMarkStatus(LienDetails ld, String moduleType) {
 		switch (moduleType) {
 		case FinServiceEvent.ORG:
 			ld.setMarkingReason("Loan Creation");
@@ -227,5 +279,10 @@ public class LienServiceImpl implements LienService {
 	@Autowired
 	public void setLienDetailsDAO(LienDetailsDAO lienDetailsDAO) {
 		this.lienDetailsDAO = lienDetailsDAO;
+	}
+
+	@Autowired
+	public void setMandateService(MandateService mandateService) {
+		this.mandateService = mandateService;
 	}
 }
