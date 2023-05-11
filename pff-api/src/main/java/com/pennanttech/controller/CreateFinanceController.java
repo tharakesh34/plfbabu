@@ -3914,8 +3914,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (error != null) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
-			String description = financeCancelValidator.getOverrideDescription(error, financeMain);
-			fd.setReturnStatus(getFailedStatus(error.name(), description));
+			WSReturnStatus failedStatus = getFailedStatus(error.name(), "");
+			failedStatus.setReturnText(financeCancelValidator.getOverrideDescription(error, financeMain));
+			fd.setReturnStatus(failedStatus);
 			logger.debug(Literal.LEAVING);
 			return fd;
 		}
