@@ -1,15 +1,10 @@
 package com.pennant.pff.lien.dao.impl;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lien.dao.LienUploadDAO;
@@ -27,13 +22,13 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 
 	@Override
 	public List<LienUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HEADERID, RECORDSEQ");
-		sql.append(" LIENID, SOURCE, REFERENCE, ACCNUMBER, MARKING, MARKINGDATE, MARKINGREASON,");
-		sql.append(" DEMARKING, DEMARKINGREASON, DEMARKINGDATE, LIENREFERENCE, LIENSTATUS, INTERFACESTATUS,");
-		sql.append(" REMARKS, STATUS, ACTION,");
-		sql.append(" PROGRESS, ERRORCODE, ERRORDESC");
-		sql.append(" From LIEN_UPLOAD");
-		sql.append(" Where HEADERID = ?");
+		StringBuilder sql = new StringBuilder("Select Id, HeaderId, RecordSeq,");
+		sql.append(" LienId, Source, Reference, AccNumber, Marking, MarkingDate, MarkingReason,");
+		sql.append(" DeMarking, DeMarkingReason, DeMarkingDate, LienReference, LienStatus, InterFaceStatus,");
+		sql.append(" Remarks, Status, Action,");
+		sql.append(" Progress, ErrorCode, ErrorDesc");
+		sql.append(" From Lien_Upload");
+		sql.append(" Where HeaderId = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -42,99 +37,45 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 		}, (rs, rownum) -> {
 			LienUpload lu = new LienUpload();
 
-			lu.setId(rs.getLong("ID"));
-			lu.setHeaderId(rs.getLong("HEADERID"));
-			lu.setRecordSeq(rs.getLong("RECORDSEQ"));
-			lu.setLienID(rs.getLong("LIENID"));
-			lu.setSource(rs.getString("SOURCE"));
-			lu.setReference(rs.getString("REFERENCE"));
-			lu.setAccNumber(rs.getString("ACCNUMBER"));
-			lu.setMarking(rs.getString("MARKING"));
-			lu.setMarkingDate(rs.getTimestamp("MARKINGDATE"));
-			lu.setMarkingReason(rs.getString("MARKINGREASON"));
-			lu.setDemarking(rs.getString(("DEMARKING")));
-			lu.setDemarkingReason(rs.getString("DEMARKINGREASON"));
-			lu.setDemarkingDate(rs.getDate("DEMARKINGDATE"));
-			lu.setLienReference(rs.getString("LIENREFERENCE"));
-			lu.setLienstatus(rs.getBoolean("LIENSTATUS"));
-			lu.setInterfaceStatus(rs.getString("INTERFACESTATUS"));
-			lu.setRemarks(rs.getString("REMARKS"));
-			lu.setStatus(rs.getString("STATUS"));
-			lu.setAction(rs.getString("ACTION"));
-			lu.setProgress(rs.getInt("PROGRESS"));
-			lu.setErrorCode(rs.getString("ERRORCODE"));
-			lu.setErrorDesc(rs.getString("ERRORDESC"));
+			lu.setId(rs.getLong("Id"));
+			lu.setHeaderId(rs.getLong("HeaderId"));
+			lu.setRecordSeq(rs.getLong("RecordSeq"));
+			lu.setLienID(rs.getLong("LienId"));
+			lu.setSource(rs.getString("Source"));
+			lu.setReference(rs.getString("Reference"));
+			lu.setAccNumber(rs.getString("AccNumber"));
+			lu.setMarking(rs.getString("Marking"));
+			lu.setMarkingDate(rs.getTimestamp("MarkingDate"));
+			lu.setMarkingReason(rs.getString("MarkingReason"));
+			lu.setDemarking(rs.getString(("DeMarking")));
+			lu.setDemarkingReason(rs.getString("DeMarkingReason"));
+			lu.setDemarkingDate(rs.getDate("DeMarkingDate"));
+			lu.setLienReference(rs.getString("LienReference"));
+			lu.setLienstatus(rs.getBoolean("LienStatus"));
+			lu.setInterfaceStatus(rs.getString("InterFaceStatus"));
+			lu.setRemarks(rs.getString("Remarks"));
+			lu.setStatus(rs.getString("Status"));
+			lu.setAction(rs.getString("Action"));
+			lu.setProgress(rs.getInt("Progress"));
+			lu.setErrorCode(rs.getString("ErrorCode"));
+			lu.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return lu;
 		});
 	}
 
 	@Override
-	public long save(LienUpload lu) {
-		StringBuilder sql = new StringBuilder("Insert into LIEN_UPLOAD");
-		sql.append(" (HEADERID, LIENID, SOURCE, REFERENCE, ACCNUMBER, ACTION, MARKING, MARKINGDATE, MARKINGREASON,");
-		sql.append(" DEMARKING, DEMARKINGREASON, DEMARKINGDATE, LIENREFERENCE, LIENSTATUS, INTERFACESTATUS,");
-		sql.append(" REMARKS, STATUS )");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?,");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?,");
-		sql.append(" ?, ?, ?)");
-
-		lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_REF"))));
-
-		lu.setLienID((getNextValue("SEQ_LIEN_ID")));
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			KeyHolder keyHolder = new GeneratedKeyHolder();
-
-			this.jdbcOperations.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
-					int index = 1;
-
-					ps.setLong(index++, lu.getHeaderId());
-					ps.setLong(index++, lu.getLienID());
-					ps.setString(index++, lu.getSource());
-					ps.setString(index++, lu.getReference());
-					ps.setString(index++, lu.getAccNumber());
-					ps.setString(index++, lu.getAction());
-					ps.setString(index++, lu.getMarking());
-					ps.setDate(index++, JdbcUtil.getDate(lu.getMarkingDate()));
-					ps.setString(index++, lu.getMarkingReason());
-					ps.setString(index++, lu.getDemarking());
-					ps.setDate(index++, JdbcUtil.getDate(lu.getDemarkingDate()));
-					ps.setString(index++, lu.getDemarkingReason());
-					ps.setString(index++, lu.getLienReference());
-					ps.setBoolean(index++, lu.getLienstatus());
-					ps.setString(index++, lu.getInterfaceStatus());
-					ps.setString(index++, lu.getRemarks());
-					ps.setString(index++, lu.getStatus());
-
-					return ps;
-				}
-			}, keyHolder);
-
-			return keyHolder.getKey().longValue();
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-	}
-
-	@Override
 	public void update(LienUpload lu, long id) {
 
-		StringBuilder sql = new StringBuilder("Update LIEN_UPLOAD");
-		sql.append(" Set HeaderID = ?, LIENID = ?, SOURCE = ?, REFERENCE = ?,");
-		sql.append(" ACCNUMBER = ?, ACTION = ?, MARKING = ?, MARKINGDATE = ?,");
-		sql.append(" MARKINGREASON = ?, DEMARKING = ?, DEMARKINGREASON = ?,");
-		sql.append(" DEMARKINGDATE = ?, LIENREFERENCE = ?, LIENSTATUS = ?,");
-		sql.append(" INTERFACESTATUS = ?,");
-		sql.append(" REMARKS = ?, STATUS = ?,");
-		sql.append(" PROGRESS = ?, ERRORCODE = ?, ERRORDESC = ?");
-		sql.append(" Where ID = ?");
+		StringBuilder sql = new StringBuilder("Update Lien_Upload");
+		sql.append(" Set HeaderID = ?, LienId = ?, Source = ?, Reference = ?,");
+		sql.append(" AccNumber = ?, Action = ?, Marking = ?, MarkingDate = ?,");
+		sql.append(" MarkingReason = ?, DeMarking = ?, DeMarkingReason = ?,");
+		sql.append(" DeMarkingDate = ?, LienReference = ?, LienStatus = ?,");
+		sql.append(" InterFaceStatus = ?,");
+		sql.append(" Remarks = ?, Status = ?,");
+		sql.append(" Progress = ?, ErrorCode = ?, ErrorDesc = ?");
+		sql.append(" Where Id = ?");
 
 		if (lu.getLienID() <= 0) {
 			lu.setLienReference(String.valueOf((getNextValue("SEQ_LIEN_HEADER_LIEN_REF"))));
@@ -244,10 +185,10 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("  lu.Source, lu.Reference, lu.AccNumber,");
 		sql.append("  lu.Action, lu.Status,");
-		sql.append("  lu.ERRORCODE, lu.ERRORDESC");
-		sql.append("  From LIEN_UPLOAD lu");
-		sql.append("  Inner Join FILE_UPLOAD_HEADER uh on uh.ID = lu.HeaderID");
-		sql.append("  Where uh.ID = :HEADER_ID");
+		sql.append("  lu.ErrorCode, lu.ErrorDesc");
+		sql.append("  From Lien_Upload lu");
+		sql.append("  Inner Join File_Upload_Header uh on uh.ID = lu.HeaderId");
+		sql.append("  Where uh.ID = :Header_Id");
 
 		return sql.toString();
 	}

@@ -1,5 +1,6 @@
 package com.pennant.pff.lien.service.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lien.dao.LienUploadDAO;
-import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -46,7 +46,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	private FinanceMainDAO financeMainDAO;
 	private LienDetailsDAO lienDetailsDAO;
 	private LienHeaderDAO lienHeaderDAO;
-	private LienService lienService;
 
 	public LienUploadServiceImpl() {
 		super();
@@ -100,9 +99,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 	}
 
 	@Override
@@ -210,22 +207,23 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				if (lienheader != null) {
 					lienup.setLienID(lienheader.getLienID());
 					lienup.setLienReference(lienheader.getLienReference());
+				} else {
+					lienheader = new LienHeader();
 				}
 
 				FinanceMain fm = lienup.getFinanceMain();
 				fm.setFinSourceID(RequestSource.UPLOAD.name());
 
 				FinanceDetail fd = new FinanceDetail();
-				LienHeader lienhead = new LienHeader();
 				fd.getFinScheduleData().setFinanceMain(fm);
 				Mandate mandate = new Mandate();
 				mandate.setAccNumber(lienup.getAccNumber());
 				fd.setMandate(mandate);
-				lienhead.setLienID(lienup.getLienID());
-				lienhead.setLienReference(lienup.getLienReference());
-				lienhead.setId(lienup.getId());
-				lienhead.setSource(lienup.getSource());
-				fd.setLienHeader(lienhead);
+				lienheader.setLienID(lienup.getLienID());
+				lienheader.setLienReference(lienup.getLienReference());
+				lienheader.setId(lienup.getId());
+				lienheader.setSource(lienup.getSource());
+				fd.setLienHeader(lienheader);
 
 				if (lienup.getAction().equals("Y")) {
 					lienup.setLienstatus(true);
@@ -234,10 +232,12 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienup.setMarkingReason(header.getRemarks());
 					lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 
-					lienhead.setMarking(Labels.getLabel("label_Lien_Type_Manual"));
-					lienhead.setMarkingDate(header.getAppDate());
-					lienhead.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-					lienhead.setLienStatus(true);
+					lienheader.setMarking(Labels.getLabel("label_Lien_Type_Manual"));
+					lienheader.setMarkingDate(header.getAppDate());
+					lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+					lienheader.setLienStatus(true);
+					lienheader.setAccountNumber(lienup.getAccNumber());
+					lienheader.setReference(lienup.getReference());
 
 				} else {
 					lienup.setLienstatus(false);
@@ -247,16 +247,22 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienup.setReference(lienup.getReference());
 					lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
 
-					lienhead.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
-					lienhead.setDemarkingDate(header.getAppDate());
-					lienhead.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
-					lienhead.setLienStatus(false);
+					lienheader.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
+					lienheader.setDemarkingDate(header.getAppDate());
+					lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
+					lienheader.setLienStatus(false);
 
 				}
 				lienUploadDAO.update(lienup, lienup.getId());
 
-				lienService.save(fd, true);
-
+				LienDetails lu = getLienDetails(header, lienup);
+				if (lienheader.getLienID() <= 0) {
+					lienHeaderDAO.save(lienheader);
+					lienDetailsDAO.save(lu);
+				} else {
+					lienHeaderDAO.update(lienheader);
+					lienDetailsDAO.update(lu);
+				}
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -333,6 +339,42 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 		detail.setErrorDesc(error.description());
 	}
 
+	private LienDetails getLienDetails(FileUploadHeader header, LienUpload lienup) {
+
+		LienDetails lu = new LienDetails();
+
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+		if (lienup.getAction().equals("Y")) {
+			lu.setMarking(Labels.getLabel("label_Lien_Type_Manual"));
+			lu.setMarkingDate(SysParamUtil.getAppDate());
+			lu.setMarkingReason(lienup.getRemarks());
+			lu.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+			lu.setLienStatus(true);
+		} else {
+			lu.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
+			lu.setDemarkingDate(SysParamUtil.getAppDate());
+			lu.setDemarkingReason(lienup.getRemarks());
+			lu.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
+			lu.setLienStatus(false);
+
+		}
+		lu.setLienID(lienup.getLienID());
+		lu.setSource(RequestSource.UPLOAD.name());
+		lu.setReference(lienup.getReference());
+		lu.setAccountNumber(lienup.getAccNumber());
+		lu.setLienReference(lienup.getLienReference());
+
+		lu.setVersion(1);
+		lu.setCreatedBy(header.getCreatedBy());
+		lu.setCreatedOn(currentTime);
+		lu.setApprovedOn(currentTime);
+		lu.setApprovedBy(header.getApprovedBy());
+		lu.setLastMntBy(header.getLastMntBy());
+		lu.setLastMntOn(currentTime);
+		return lu;
+	}
+
 	@Autowired
 	public void setLienuploaddao(LienUploadDAO lienuploaddao) {
 		this.lienUploadDAO = lienuploaddao;
@@ -351,10 +393,5 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	@Autowired
 	public void setLienHeaderDAO(LienHeaderDAO lienHeaderDAO) {
 		this.lienHeaderDAO = lienHeaderDAO;
-	}
-
-	@Autowired
-	public void setLienService(LienService lienService) {
-		this.lienService = lienService;
 	}
 }
