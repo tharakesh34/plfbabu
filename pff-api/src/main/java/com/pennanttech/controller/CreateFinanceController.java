@@ -284,6 +284,15 @@ public class CreateFinanceController extends SummaryDetailService {
 		String finType = financeType.getFinType();
 		String entityCode = financeType.getLovDescEntityCode();
 
+		Mandate mandate = fd.getMandate();
+
+		if (InstrumentType.isECS(mandate.getMandateType()) || InstrumentType.isNACH(mandate.getMandateType())
+				|| InstrumentType.isEMandate(mandate.getMandateType())) {
+			if (StringUtils.isNotEmpty(mandate.getExternalRef())) {
+				mandate.setExternalMandate(true);
+			}
+		}
+
 		fm.setFinType(finType);
 		fm.setEntityCode(entityCode);
 		fm.setLovDescEntityCode(entityCode);
