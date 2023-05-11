@@ -175,7 +175,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 
 	@Override
 	public boolean isInLoanQueue(long custId) {
-		String sql = "Select Count(FinReference) From Financemain_Temp where CustId = ?";
+		String sql = "Select Count(FinID) From Financemain_Temp where CustId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -192,6 +192,15 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getString(1), custId);
+	}
+
+	@Override
+	public List<String> getMaintainStatus(long finID) {
+		String sql = "Select FinEvent From FinServiceInstruction Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.query(sql, (rs, rowNum) -> rs.getString(1), finID);
 	}
 
 	@Override
