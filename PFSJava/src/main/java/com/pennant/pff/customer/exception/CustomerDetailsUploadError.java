@@ -17,6 +17,8 @@ public enum CustomerDetailsUploadError {
 
 	CUST_MNTS_04("Selected Loan Reference is In-Maintanance on : "),
 
+	CUST_MNTS_05("Selected Loan Reference is Initiated for Settlement. "),
+
 	KYC_ADD_01("CustCif should not be empty."),
 
 	KYC_ADD_02("FinReference is not valid."),

@@ -288,6 +288,11 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
+		if (fm.isUnderSettlement()) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_05);
+			return;
+		}
+
 		if (!fm.isFinIsActive()) {
 			setError(detail, CustomerDetailsUploadError.KYC_ADD_03);
 			return;
