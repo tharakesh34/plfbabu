@@ -1436,8 +1436,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		if (UploadConstants.FINSOURCE_ID_API.equals(mandate.getSourceId())) {
-			if (StringUtils.isNotBlank(mandate.getMandateRef())
-					&& !InstrumentType.isEMandate(mandate.getMandateType())) {
+			if (StringUtils.isNotBlank(mandate.getMandateRef()) && !InstrumentType.isEMandate(mandate.getMandateType())
+					&& !mandate.isExternalMandate()) {
 				response.setError(getError("90329", "mandateRef", "createMandate"));
 				return response;
 			}
@@ -1494,6 +1494,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				return getError("90224", pbLabel, mandate.getPartnerBankCode());
 			} else {
 				mandate.setPartnerBankId(partnerBankID);
+			}
+		}
+
+		if (InstrumentType.isECS(mandate.getMandateType()) || InstrumentType.isNACH(mandate.getMandateType())
+				|| InstrumentType.isEMandate(mandate.getMandateType())) {
+			if (StringUtils.isNotEmpty(mandate.getMandateRef())) {
+				mandate.setExternalMandate(true);
 			}
 		}
 
