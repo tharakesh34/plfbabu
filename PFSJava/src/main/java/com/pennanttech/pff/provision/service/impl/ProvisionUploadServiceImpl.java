@@ -283,6 +283,12 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		}
 
 		doValidateAssetClassifications(detail);
+
+		if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
+			return;
+		}
+
+		setSuccesStatus(detail);
 	}
 
 	private void doValidateAssetClassifications(ProvisionUpload detail) {

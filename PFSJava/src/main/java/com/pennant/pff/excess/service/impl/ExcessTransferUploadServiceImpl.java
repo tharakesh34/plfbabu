@@ -44,8 +44,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ExcessTransferService excessTransferService;
-	
-	public ExcessTransferUploadServiceImpl(){
+
+	public ExcessTransferUploadServiceImpl() {
 		super();
 	}
 
@@ -116,10 +116,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
-
+		setSuccesStatus(detail);
 	}
 
 	private void setError(ExcessTransferUpload detail, ExcessTransferError error) {

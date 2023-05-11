@@ -125,8 +125,10 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		String cancelType = loanLetterUploadDAO.getCanceltype(reference);
 		if (LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(cancelType)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_10);
+			return;
 		}
 
+		setSuccesStatus(detail);
 	}
 
 	@Override

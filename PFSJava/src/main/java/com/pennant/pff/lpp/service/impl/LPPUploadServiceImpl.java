@@ -185,7 +185,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
 			detail.setErrorDesc(ERR_CODE);
 			detail.setErrorCode(e.getMessage());
-			
+
 			return;
 		}
 
@@ -430,12 +430,15 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 			if (isLppType && StringUtils.isBlank(String.valueOf(detail.getODMinAmount()))) {
 				setError(detail, LPPUploadError.LPP26);
+				return;
 			}
 
 			if (isLppType && StringUtils.isNotBlank(detail.getIncludeGraceDays())) {
 				setError(detail, LPPUploadError.LPP27);
+				return;
 			}
 		}
+		setSuccesStatus(detail);
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {

@@ -53,11 +53,11 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 	private CustomerPhoneNumberUpload customerPhoneNumberUpload;
 	@Autowired
 	private CustomerEmailUpload customerEmailUpload;
-	
-	public KycDetailsUploadServiceImpl(){
+
+	public KycDetailsUploadServiceImpl() {
 		super();
 	}
-	
+
 	@Override
 	protected CustomerKycDetail getDetail(Object object) {
 		if (object instanceof CustomerKycDetail detail) {
@@ -326,9 +326,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 	}
 
 	private void validateMandatory(CustomerKycDetail detail) {

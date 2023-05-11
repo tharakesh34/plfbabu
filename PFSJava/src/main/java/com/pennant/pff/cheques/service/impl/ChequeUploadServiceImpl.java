@@ -306,6 +306,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 		}
 
 		cd.setBankBranchID(bankBranch.getBankBranchID());
+
+		setSuccesStatus(upload);
 	}
 
 	@Override

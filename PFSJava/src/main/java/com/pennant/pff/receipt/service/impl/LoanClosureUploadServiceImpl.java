@@ -122,6 +122,8 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		detail.setAdvises(maList);
 		detail.setAmount(balanceAmount);
 		detail.setReferenceID(fm.getFinID());
+
+		setSuccesStatus(detail);
 	}
 
 	protected void setError(LoanClosureUpload detail, LoanClosureUploadError error) {
@@ -157,7 +159,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 						failRecords++;
 					} else {
 						sucessRecords++;
-						lcu.setProgress(EodConstants.PROGRESS_SUCCESS);
 					}
 
 					if (lcu.getProgress() == EodConstants.PROGRESS_SUCCESS) {

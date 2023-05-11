@@ -164,6 +164,8 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 		if (detail.getOpenedDate().compareTo(header.getAppDate()) > 0) {
 			setError(detail, HostGLMappingUploadError.HGL10);
 		}
+
+		setSuccesStatus(detail);
 	}
 
 	@Override
@@ -187,9 +189,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 					if (detail.getErrorCode() != null) {
 						detail.setProgress(EodConstants.PROGRESS_FAILED);
 					} else {
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-						detail.setErrorCode("");
-						detail.setErrorDesc("");
+						setSuccesStatus(detail);
 
 						LoggedInUser userDetails = header.getUserDetails();
 
@@ -287,9 +287,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
 			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
 		} else {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode("");
-			detail.setErrorDesc("");
+			setSuccesStatus(detail);
 		}
 
 	}

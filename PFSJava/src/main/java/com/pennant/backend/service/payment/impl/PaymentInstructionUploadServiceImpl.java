@@ -264,9 +264,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 
 		logger.info("Validated the Data for the reference {}", detail.getReference());
 	}

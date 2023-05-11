@@ -77,6 +77,12 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 		}
 
 		validateAction(detail, action);
+
+		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+			return;
+		}
+
+		setSuccesStatus(detail);
 	}
 
 	@Override

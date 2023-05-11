@@ -33,8 +33,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 
 	private PresentmentRespUploadDAO presentmentRespUploadDAO;
 	private FinanceMainDAO financeMainDAO;
-	
-	public FateCorrectionUploadServiceImpl(){
+
+	public FateCorrectionUploadServiceImpl() {
 		super();
 	}
 
@@ -120,10 +120,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 		detail.setBounceCode(detail.getBounceCode());
 		detail.setBounceRemarks(detail.getBounceRemarks());
 		detail.setAccountNumber(pd.getAccountNo());
-
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 	}
 
 	private void setError(PresentmentRespUpload detail, PresentmentError error) {

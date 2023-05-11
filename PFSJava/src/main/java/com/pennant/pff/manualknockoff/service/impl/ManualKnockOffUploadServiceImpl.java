@@ -210,13 +210,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
 
 			BigDecimal strPaidAmount = new BigDecimal(uad.getStrPaidAmount());
-			alcamount = alcamount.add(strPaidAmount);
-
-			if (alcamount.compareTo(detail.getReceiptAmount()) > 0) {
-				setError(detail, ManualKnockOffUploadError.MKOU_1017);
-				return;
-			}
-
+			// alcamount = alcamount.add(strPaidAmount);
+			alcamount = PennantApplicationUtil.unFormateAmount(alcamount.add(strPaidAmount), 2);
 			receiptDataValidator.validateAllocations(uad);
 
 			if (!uad.getErrorDetails().isEmpty()) {
@@ -227,10 +222,12 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			}
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		if (alcamount.compareTo(detail.getReceiptAmount()) > 0) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1017);
+			return;
+		}
 
+		setSuccesStatus(detail);
 	}
 
 	private void setError(ManualKnockOffUpload detail, ManualKnockOffUploadError error) {

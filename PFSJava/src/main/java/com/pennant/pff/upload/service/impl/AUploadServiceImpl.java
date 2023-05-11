@@ -129,8 +129,6 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 				header.setProgress(UploadStatus.APPROVED.status());
 			} else {
 				header.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
-				header.setFailureRecords(header.getTotalRecords());
-				header.setSuccessRecords(0);
 				header.setApprovedBy(null);
 				header.setApprovedOn(null);
 				header.setProgress(UploadStatus.REJECTED.status());
@@ -311,6 +309,12 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 		return message;
 	}
 
+	protected void setSuccesStatus(UploadDetails detail) {
+		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+		detail.setErrorCode("");
+		detail.setErrorDesc("");
+	}
+
 	@Override
 	public String isValidateApprove(List<FileUploadHeader> selectedHeaders) {
 		StringBuilder builder = new StringBuilder();
@@ -335,31 +339,40 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 	@Override
 	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource paramSource,
 			String successStatus, String failureStatus) {
+		int progress = detail.getProgress();
 
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+		if (progress != EodConstants.PROGRESS_FAILED || progress != EodConstants.PROGRESS_SUCCESS) {
+			paramSource.addValue("ERRORCODE", "");
+			paramSource.addValue("ERRORDESC", "Record is not properly validated.");
+		}
+
+		if (progress == EodConstants.PROGRESS_FAILED) {
 			if (paramSource != null) {
 				paramSource.addValue("ERRORCODE", detail.getErrorCode());
 				paramSource.addValue("ERRORDESC", detail.getErrorDesc());
 			}
 
-			header.setFailureRecords(header.getFailureRecords() + 1);
 			detail.setStatus(failureStatus);
 			detail.setProgress(EodConstants.PROGRESS_FAILED);
 
 		} else {
-			header.setSuccessRecords(header.getSuccessRecords() + 1);
 			detail.setStatus(successStatus);
 			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
 		}
 
 		if (UploadTypes.EXCESS_TRANSFER.name().equals(header.getType())) {
-			detail.setStatus(detail.getProgress() == EodConstants.PROGRESS_FAILED ? "R" : "C");
+			detail.setStatus(progress == EodConstants.PROGRESS_FAILED ? "R" : "C");
 		}
 
 		if (paramSource != null) {
 			paramSource.addValue("STATUS", detail.getStatus());
-			paramSource.addValue("PROGRESS", detail.getProgress());
+			paramSource.addValue("PROGRESS", progress);
 		}
+	}
+
+	@Override
+	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource paramSource) {
+		updateProcess(header, detail, paramSource, "S", "F");
 	}
 
 	protected TransactionStatus getTransactionStatus() {
@@ -377,11 +390,6 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 		remarks.append(" Total Records : ").append(header.getTotalRecords());
 		remarks.append(" Success Records : ").append(sucessRecords);
 		remarks.append(" Failed Records : ").append(failRecords);
-	}
-
-	@Override
-	public void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource paramSource) {
-		updateProcess(header, detail, paramSource, "S", "F");
 	}
 
 	private WorkFlowDetails getWorkflow(String moduleCode) {

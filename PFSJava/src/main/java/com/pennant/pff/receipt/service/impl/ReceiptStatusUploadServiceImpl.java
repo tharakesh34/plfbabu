@@ -221,7 +221,10 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 
 		if (StringUtils.isNotBlank(borCRemarks) && borCRemarks.length() > 50) {
 			setError(detail, ReceiptStatusUploadError.RU012);
+			return;
 		}
+
+		setSuccesStatus(detail);
 	}
 
 	private void setError(ReceiptStatusUpload detail, ReceiptStatusUploadError error) {

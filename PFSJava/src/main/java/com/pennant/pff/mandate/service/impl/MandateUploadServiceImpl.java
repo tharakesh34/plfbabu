@@ -205,6 +205,9 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 			break;
 		}
 
+		if (mu.getProgress() != EodConstants.PROGRESS_FAILED) {
+			setSuccesStatus(mu);
+		}
 	}
 
 	private void openMandateRequired(MandateUpload mu, Mandate mandate, String openMndt) {

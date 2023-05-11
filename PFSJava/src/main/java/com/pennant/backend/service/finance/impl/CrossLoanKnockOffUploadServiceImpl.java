@@ -113,9 +113,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			if (clk.getErrorCode() != null) {
 				clk.setProgress(EodConstants.PROGRESS_FAILED);
 			} else {
-				clk.setProgress(EodConstants.PROGRESS_SUCCESS);
-				clk.setErrorCode("");
-				clk.setErrorDesc("");
+				setSuccesStatus(clk);
 			}
 		}
 	}

@@ -58,8 +58,8 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 	private AccountMappingDAO accountMappingDAO;
 	private JVPostingService jVPostingService;
 	private JVPostingDAO jVPostingDAO;
-	
-	public MiscellaneousPostingUploadServiceImpl(){
+
+	public MiscellaneousPostingUploadServiceImpl() {
 		super();
 	}
 
@@ -130,7 +130,10 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 
 		if (BigDecimal.ZERO.compareTo(txnamt) >= 0) {
 			setError(detail, MiscellaneousPostingUploadError.MP010);
+			return;
 		}
+
+		setSuccesStatus(detail);
 	}
 
 	private void validateValueDate(MiscellaneousPostingUpload detail, Date valueDate, Date appdate) {
@@ -321,7 +324,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 				if (txStatus != null) {
 					transactionManager.rollback(txStatus);
 				}
-				
+
 				++failureCount;
 				continue;
 			}

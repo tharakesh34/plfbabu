@@ -104,6 +104,8 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		}
 
 		detail.setOldBranch(fm.getFinBranch());
+
+		setSuccesStatus(detail);
 	}
 
 	@Override
