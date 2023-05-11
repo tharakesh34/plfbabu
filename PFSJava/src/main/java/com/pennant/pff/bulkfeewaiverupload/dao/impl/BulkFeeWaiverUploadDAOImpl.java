@@ -24,7 +24,7 @@ public class BulkFeeWaiverUploadDAOImpl extends SequenceDao<BulkFeeWaiverUpload>
 		sql.append(", FinID, FinReference, RecordSeq, FeeTypeCode, WaivedAmount, Remarks, Progress, Status");
 		sql.append(", ErrorCode, ErrorDesc");
 		sql.append(" From FEE_WAIVER_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -45,7 +45,7 @@ public class BulkFeeWaiverUploadDAOImpl extends SequenceDao<BulkFeeWaiverUpload>
 			fw.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return fw;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

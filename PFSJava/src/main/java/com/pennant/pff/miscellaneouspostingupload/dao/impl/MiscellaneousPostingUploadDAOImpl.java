@@ -23,7 +23,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 		sql.append(", TxnAmount, ValueDate, NarrLine1, NarrLine2, NarrLine3, NarrLine4");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From MISCELLANEOUS_POSTING_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -52,7 +52,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 			mp.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return mp;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

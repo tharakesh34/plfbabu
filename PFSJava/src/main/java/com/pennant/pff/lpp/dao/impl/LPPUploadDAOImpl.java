@@ -23,7 +23,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, HoldStatus");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc, Reason, Remarks, ODMinAmount");
 		sql.append(" From LPP_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -53,7 +53,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 			lpp.setODMinAmount(rs.getBigDecimal("ODMinAmount"));
 
 			return lpp;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

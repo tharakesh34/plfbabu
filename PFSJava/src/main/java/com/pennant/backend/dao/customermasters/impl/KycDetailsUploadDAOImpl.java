@@ -30,11 +30,11 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		sql.append(", PhoneNumber, CustEMailTypeCode, CustEMailPriority, CustEMail");
 		sql.append(", Status, Progress, ErrorCode, ErrorDesc");
 		sql.append(" From Customer_kyc_details_upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			CustomerKycDetail ckc = new CustomerKycDetail();
 
 			ckc.setId(rs.getLong("Id"));
@@ -70,7 +70,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 			ckc.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return ckc;
-		});
+		}, headerID, "S");
 	}
 
 	@Override

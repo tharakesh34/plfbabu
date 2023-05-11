@@ -28,7 +28,7 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 		sql.append(", FinID, FinReference, LetterType, ModeOfTransfer, WaiverCharges");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Loan_Letter_Upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -49,7 +49,7 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 			noc.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return noc;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

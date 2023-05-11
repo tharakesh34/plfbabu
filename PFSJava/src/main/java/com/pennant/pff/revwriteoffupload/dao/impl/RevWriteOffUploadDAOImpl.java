@@ -29,11 +29,15 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 
 	@Override
 	public List<RevWriteOffUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, Remarks, Progress, ErrorCode, ErrorDesc, Status From REV_WRITE_OFF_UPLOAD Where HeaderId = ?";
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, Id, FinID, FinReference, RecordSeq, Remarks");
+		sql.append(", Progress, ErrorCode, ErrorDesc, Status");
+		sql.append(" From REV_WRITE_OFF_UPLOAD");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
-		logger.debug(Literal.SQL.concat(sql));
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			RevWriteOffUploadDetail rwud = new RevWriteOffUploadDetail();
 
 			rwud.setHeaderId(rs.getLong("HeaderId"));
@@ -47,7 +51,7 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 			rwud.setErrorDesc(rs.getString("ErrorDesc"));
 			rwud.setStatus(rs.getString("Status"));
 			return rwud;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

@@ -24,11 +24,15 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 	@Override
 	public List<RePresentmentUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, RecordSeq, DueDate, Progress, ErrorCode, ErrorDesc From REPRESENT_UPLOADS Where HeaderId = ?";
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, Id, FinID, FinReference");
+		sql.append(", RecordSeq, DueDate, Progress, ErrorCode, ErrorDesc");
+		sql.append(" From REPRESENT_UPLOADS ");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			RePresentmentUploadDetail rpud = new RePresentmentUploadDetail();
 
 			rpud.setHeaderId(rs.getLong("HeaderId"));
@@ -41,7 +45,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 			rpud.setErrorCode(rs.getString("ErrorCode"));
 			rpud.setErrorDesc(rs.getString("ErrorDesc"));
 			return rpud;
-		});
+		}, headerID, "S");
 	}
 
 	@Override

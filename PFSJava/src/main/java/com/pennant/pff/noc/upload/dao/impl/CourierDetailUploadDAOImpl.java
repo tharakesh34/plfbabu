@@ -27,7 +27,7 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 		sql.append(", FinID, FinReference, LetterType, LetterDate, DispatchDate, CourierAgency, DeliveryStatus");
 		sql.append(", DeliveryDate, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Courier_Details_Upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -51,7 +51,7 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 			cd.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return cd;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

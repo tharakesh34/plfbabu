@@ -26,41 +26,32 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 		sql.append(", fh.CreatedOn, fh.CreatedBy, fh.ApprovedOn, fh.ApprovedBy");
 		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD eu");
 		sql.append(" Inner Join File_Upload_Header fh on fh.ID = eu.HeaderID");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and eu.Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
-		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
-				ExcessTransferUpload rpud = new ExcessTransferUpload();
 
-				rpud.setHeaderId(rs.getLong("HeaderId"));
-				rpud.setId(rs.getLong("Id"));
-				rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
-				rpud.setReference(rs.getString("FinReference"));
-				rpud.setRecordSeq(rs.getLong("RecordSeq"));
-				rpud.setTransferFromType(rs.getString("TransferFromType"));
-				rpud.setTransferToType(rs.getString("TransferToType"));
-				rpud.setTransferAmount(rs.getBigDecimal("TransferAmount"));
-				rpud.setStatus(rs.getString("Status"));
-				rpud.setProgress(rs.getInt("Progress"));
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			ExcessTransferUpload rpud = new ExcessTransferUpload();
 
-				try {
-					rpud.setErrorCode(rs.getString("ErrorCode"));
-					rpud.setErrorDesc(rs.getString("ErrorDesc"));
-					rpud.setCreatedOn(rs.getTimestamp("CreatedOn"));
-					rpud.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
-					rpud.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-					rpud.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			rpud.setHeaderId(rs.getLong("HeaderId"));
+			rpud.setId(rs.getLong("Id"));
+			rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
+			rpud.setReference(rs.getString("FinReference"));
+			rpud.setRecordSeq(rs.getLong("RecordSeq"));
+			rpud.setTransferFromType(rs.getString("TransferFromType"));
+			rpud.setTransferToType(rs.getString("TransferToType"));
+			rpud.setTransferAmount(rs.getBigDecimal("TransferAmount"));
+			rpud.setStatus(rs.getString("Status"));
+			rpud.setProgress(rs.getInt("Progress"));
+			rpud.setErrorCode(rs.getString("ErrorCode"));
+			rpud.setErrorDesc(rs.getString("ErrorDesc"));
+			rpud.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			rpud.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
+			rpud.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			rpud.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
 
-				return rpud;
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+			return rpud;
+		}, headerID, "C");
 	}
 
 	@Override

@@ -1383,6 +1383,7 @@ public class FileUploadList extends Window implements Serializable {
 			} catch (AppException e) {
 				MessageUtil.showError(e.getMessage());
 			}
+
 			if ("A".equals(fuph.getStage())) {
 				uploadService.updateDownloadStatus(fuph.getId(), UploadStatus.DOWNLOADED.status());
 			}

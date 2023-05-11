@@ -40,7 +40,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 		sql.append(", ReceivedFrom, BounceDate, BounceReason, BounceRemarks, PartnerBankCode, Status, Progress");
 		sql.append(", ErrorCode, ErrorDesc, PartnerBankCode, ClosureType, Reason, ReceiptID");
 		sql.append(" From CREATE_RECEIPT_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -88,7 +88,7 @@ public class CreateReceiptUploadDAOImpl extends SequenceDao<ExcessTransferUpload
 			receipt.setReceiptID(rs.getLong("ReceiptID"));
 
 			return receipt;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

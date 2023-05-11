@@ -27,7 +27,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 		sql.append(", FinID, FinReference, Action, Remarks");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Block_Auto_Gen_Ltr_Upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -47,7 +47,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 			bg.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return bg;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

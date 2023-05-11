@@ -23,11 +23,11 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 		sql.append(", EmiRefNo, Amount, ChequeCcy,Active, DocumentName, DocumentRef, ChequeType, ChequeStatus");
 		sql.append(", AccountType, AccHolderName, Action, IfscCode, Micr, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CHEQUES_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ChequeUpload pdc = new ChequeUpload();
 
 			pdc.setId(rs.getLong("ID"));
@@ -66,7 +66,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 			pdc.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return pdc;
-		});
+		}, headerID, "S");
 
 	}
 

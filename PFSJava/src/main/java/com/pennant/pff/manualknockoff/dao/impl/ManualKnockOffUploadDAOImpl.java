@@ -32,13 +32,11 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 		sql.append(", FinID, FinReference, RecordSeq, ExcessType, AllocationType, ReceiptAmount, FeeTypeCode");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From MANUAL_KNOCKOFF_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, headerID);
-		}, (rs, rownum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ManualKnockOffUpload fc = new ManualKnockOffUpload();
 
 			fc.setId(rs.getLong("Id"));
@@ -56,7 +54,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 			fc.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return fc;
-		});
+		}, headerID, "S");
 	}
 
 	public List<ManualKnockOffUpload> getAllocations(long uploadID, long headerID) {

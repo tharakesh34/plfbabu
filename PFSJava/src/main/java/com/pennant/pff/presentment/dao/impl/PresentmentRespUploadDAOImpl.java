@@ -37,13 +37,11 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
 		sql.append(", FateCorrection, ErrorCode, ErrorDesc, Progress, Status");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
-		sql.append(" Where Header_ID = ?");
+		sql.append(" Where Header_ID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, headerID);
-		}, (rs, rownum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			PresentmentRespUpload fc = new PresentmentRespUpload();
 
 			fc.setId(rs.getLong("Id"));
@@ -86,7 +84,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 			fc.setStatus(rs.getString("Status"));
 
 			return fc;
-		});
+		}, headerID, "S");
 
 	}
 

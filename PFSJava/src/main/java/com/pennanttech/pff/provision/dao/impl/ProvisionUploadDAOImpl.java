@@ -24,7 +24,7 @@ public class ProvisionUploadDAOImpl extends SequenceDao<ProvisionUpload> impleme
 		sql.append(", AssetSubClassCode, OverrideProvision, ProvisionPercentage");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Provision_Upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -46,7 +46,7 @@ public class ProvisionUploadDAOImpl extends SequenceDao<ProvisionUpload> impleme
 			pu.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return pu;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

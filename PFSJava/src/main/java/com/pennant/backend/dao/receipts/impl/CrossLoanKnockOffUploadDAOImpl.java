@@ -28,13 +28,11 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 		sql.append("Select Id, HeaderID, FromFinID, ToFinID, FromFinReference, TOFinReference, RecordSeq, ExcessType");
 		sql.append(", ExcessAmount, AllocationType, FeeTypeCode, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CROSS_LOAN_KNOCKOFF_UPLOAD");
-		sql.append(" Where HeaderID = ?");
+		sql.append(" Where HeaderID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rownum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rownum) -> {
 			CrossLoanKnockoffUpload upload = new CrossLoanKnockoffUpload();
 
 			upload.setId(rs.getLong("Id"));
@@ -54,7 +52,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 			upload.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return upload;
-		});
+		}, id, "S");
 	}
 
 	@Override

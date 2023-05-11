@@ -28,13 +28,11 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 		sql.append(" Remarks, Status, Action,");
 		sql.append(" Progress, ErrorCode, ErrorDesc");
 		sql.append(" From Lien_Upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, headerID);
-		}, (rs, rownum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			LienUpload lu = new LienUpload();
 
 			lu.setId(rs.getLong("Id"));
@@ -61,7 +59,7 @@ public class LienUploadDAOImpl extends SequenceDao<LienUpload> implements LienUp
 			lu.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return lu;
-		});
+		}, headerID, "S");
 	}
 
 	@Override

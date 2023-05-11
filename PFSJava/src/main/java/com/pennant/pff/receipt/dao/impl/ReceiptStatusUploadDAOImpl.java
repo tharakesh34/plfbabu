@@ -24,7 +24,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 		sql.append(" ID, HeaderId, ReceiptId, RecordSeq, StatusRM, RealizationDate ");
 		sql.append(", BounceDate, BounceReason, BounceRemarks");
 		sql.append(" From Receipt_Status_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -42,7 +42,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 			rsu.setBounceRemarks(rs.getString("BounceRemarks"));
 
 			return rsu;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

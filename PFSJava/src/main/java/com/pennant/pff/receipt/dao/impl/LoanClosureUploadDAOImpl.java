@@ -29,11 +29,11 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> imp
 		sql.append(", ReasonCode, Closuretype, AllocationType");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Loan_Closure_Upload");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			LoanClosureUpload lcu = new LoanClosureUpload();
 
 			lcu.setId(rs.getLong("Id"));
@@ -51,7 +51,7 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> imp
 			lcu.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return lcu;
-		});
+		}, headerID, "S");
 	}
 
 	@Override

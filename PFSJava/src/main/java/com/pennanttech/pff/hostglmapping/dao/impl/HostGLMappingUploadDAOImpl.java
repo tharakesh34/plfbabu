@@ -23,7 +23,7 @@ public class HostGLMappingUploadDAOImpl extends SequenceDao<HostGLMappingUpload>
 		sql.append(", ProfitCentreCode, OpenedDate, AllowManualEntries, GLDescription");
 		sql.append(", Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From HOST_GL_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -47,7 +47,7 @@ public class HostGLMappingUploadDAOImpl extends SequenceDao<HostGLMappingUpload>
 			hg.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return hg;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override

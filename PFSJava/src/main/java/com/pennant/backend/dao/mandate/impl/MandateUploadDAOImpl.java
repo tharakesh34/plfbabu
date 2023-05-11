@@ -27,7 +27,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 		sql.append(", EmandateReferenceNo, SwapEffectiveDate, HoldReason, SecurityMandate, EmployerID, EmployeeNo");
 		sql.append(", Ifsc, Micr, ExternalMandate, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Mandates_Upload");
-		sql.append(" Where HeaderID = ?");
+		sql.append(" Where HeaderID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -93,7 +93,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			upload.setMandate(mndts);
 
 			return upload;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override
