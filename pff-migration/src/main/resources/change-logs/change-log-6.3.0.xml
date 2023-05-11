@@ -2551,7 +2551,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.8_pre" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.8_1_pre" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feetypes_view');
@@ -2559,7 +2559,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.8" author="AnilKumar.G">
+	<changeSet id="TK#2509.8_1" author="AnilKumar.G">
 		<createView replaceIfExists="true" viewName="FEETYPES_VIEW">
 			<![CDATA[
 			   SELECT T1.FEETYPEID
@@ -2654,7 +2654,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2509.8_post" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.8_1_post" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_view');
@@ -2662,7 +2662,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.9_pre" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.9_1_pre" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feetypes_aview');
@@ -2670,7 +2670,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.9" author="AnilKumar.G">
+	<changeSet id="TK#2509.9_1" author="AnilKumar.G">
 		<createView replaceIfExists="true" viewName="FEETYPES_AVIEW">
 			<![CDATA[
 			   SELECT T1.FEETYPEID
@@ -2717,7 +2717,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2509.9_post" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.9_1_post" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_aview');
@@ -2725,7 +2725,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.10_pre" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.10_1_pre" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feetypes_tview');
@@ -2733,7 +2733,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="TK#2509.10" author="AnilKumar.G">
+	<changeSet id="TK#2509.10_1" author="AnilKumar.G">
 		<createView replaceIfExists="true" viewName="FEETYPES_TVIEW">
 			<![CDATA[
 			   SELECT T1.FEETYPEID
@@ -2780,7 +2780,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="TK#2509.10_post" author="AnilKumar.G" dbms="postgresql">
+	<changeSet id="TK#2509.10_1_post" author="AnilKumar.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feetypes_tview');
