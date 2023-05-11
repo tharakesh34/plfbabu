@@ -156,4 +156,93 @@
 		</createTable>
 	</changeSet>
 
+<changeSet id="005" author="r.sreeram">
+		<createTable tableName="BASELTWO">
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="ICN_STATUS" type="VARCHAR(1)" />
+			<column name="ICN_ACQUIRED" type="datetime" />
+			<column name="LOAN_APPL_DT" type="datetime" />
+			<column name="TOTAL_EMIS" type="bigint" />
+			<column name="DND" type="VARCHAR(1)" />
+			<column name="APPLIED_BEFORE" type="VARCHAR(1)" />
+			<column name="OLD_AGMTNO" type="VARCHAR(50)" />
+			<column name="MICR_LOCATION" type="VARCHAR(50)" />
+			<column name="FEES" type="bigint" />
+			<column name="FIXED_FLOAT" type="varchar(1)" />
+			<column name="DEALER_COMM" type="bigint" />
+			<column name="MANF_DISC" type="bigint" />
+			<column name="PROMOTION_CODE" type="varchar(20)" />
+			<column name="RC_AVAIL_STATUS" type="varchar(1)" />
+			<column name="RC_ACQUIRED" type="datetime" />
+			<column name="EMI_TYPE" type="varchar(5)" />
+			<column name="REST" type="varchar(5)" />
+			<column name="CUST_ACCOUNT" type="varchar(50)" />
+			<column name="NO_BOUNCES" type="bigint" />
+			<column name="CHARGES_PAID" type="bigint" />
+			<column name="PREV_NPA" type="datetime" />
+			<column name="SECURT_FLAG" type="varchar(1)" />
+			<column name="SECURT_DT" type="datetime" />
+			<column name="DPD_STRING" type="VARCHAR(250)" />
+			<column name="TOT_AMT_PAID_MNTH_CHQ" type="bigint" />
+			<column name="TOT_AMT_PAID_MNTH_CASH" type="bigint" />
+			<column name="RESCHEDULED" type="varchar(1)" />
+			<column name="RESCHEDULE_EFF_DT" type="datetime" />
+			<column name="CLOSURE_TYPE" type="varchar(10)" />
+			<column name="PRIN_LOSS_CLOSURE" type="bigint" />
+			<column name="IBPC_START" type="datetime" />
+			<column name="IBPC_END" type="datetime" />
+			<column name="MONTHS_IN_PREV_JOB" type="int" />
+			<column name="MONTHS_IN_CURR_JOB" type="int" />
+			<column name="MONTHS_IN_CURR_RESIDENCE" type="int" />
+			<column name="RENT_PM" type="bigint" />
+			<column name="DEVIATION" type="VARCHAR(1)" />
+			<column name="VEHICLE_AGE" type="int" />
+			<column name="APP_SCORE" type="int" />
+			<column name="RIC_SCORE" type="int" />
+			<column name="INCOME_PROOF_RECEIVED" type="VARCHAR(1)" />
+			<column name="TOTAL_EXPERIENCE" type="bigint" />
+			<column name="EMPLOYER_CATEGORY" type="VARCHAR(1)" />
+			<column name="MONTHS_IN_CITY" type="int" />
+			<column name="ELIGIBILITY" type="VARCHAR(1)" />
+			<column name="OBLIGATIONS" type="bigint" />
+			<column name="OBLIGATIONS_N" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="006" author="r.sreeram">
+		<createTable tableName="RPMSEXTRACT">
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="STATUS" type="VARCHAR(1)" />
+			<column name="MULTI_LINK_LOAN_FLAG" type="VARCHAR(1)" />
+			<column name="PARENT_LOAN_NO" type="bigint" />
+			<column name="CUSTOMER_SEGMENT" type="bigint" />
+			<column name="GROUPID" type="bigint" />
+			<column name="GROUPDESC" type="VARCHAR(105)" />
+			<column name="GROUPCODE" type="VARCHAR(10)" />
+			<column name="REPO_SETTLED_FLAG" type="VARCHAR(2)" />
+			<column name="CLOSURE_REASON" type="VARCHAR(200)" />
+			<column name="CLOSURE_DATE" type="datetime" />
+			<column name="POS_ON_CLOSURE" type="bigint" />
+			<column name="PDC_FLAG" type="VARCHAR(1)" />
+			<column name="TOT_PRIN_WAIVE_OFF" type="bigint" />
+			<column name="TOT_INT_WAIVE_OFF" type="bigint" />
+			<column name="WOFF_CHQBOUNCE_CHARGES" type="bigint" />
+			<column name="WOFF_OVERDUE_CHARGE" type="bigint" />
+			<column name="WOFF_OTHERS" type="bigint" />
+			<column name="RAM_ID" type="varchar(18)" />
+			<column name="TURNOVER_IN_YEAR_ONE" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_ONE" type="bigint" />
+			<column name="TURNOVER_IN_YEAR_TWO" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_TWO" type="bigint" />
+			<column name="TURNOVER_IN_YEAR_THREE" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_THREE" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet author="goutham.ch" id="004.1">
+		<renameColumn newColumnName="ACCRUED_INTEREST" oldColumnName="ACCRUED_INTERESTNUMBER" tableName="ALM_REPORT" />
+	</changeSet>
+
 </databaseChangeLog>

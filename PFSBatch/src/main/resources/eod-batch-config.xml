@@ -406,9 +406,20 @@
 		<property name="extStageDao" ref="extStageDao" />
 	</bean>
 
-	<bean id="microEodExternalProcessHook" class="com.pennanttech.external.extractions.service.ExtExtractionDumpService">
+	<bean id="baselTwoDumpService" class="com.pennanttech.external.extractions.service.BaselTwoDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="rpmsDumpService" class="com.pennanttech.external.extractions.service.RPMSDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="microEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.ExtExtractionDumpService">
 		<property name="baselOneDumpService" ref="baselOneDumpService" />
 		<property name="almDumpService" ref="almDumpService" />
+		<property name="baselTwoDumpService" ref="baselTwoDumpService" />
+		<property name="rpmsDumpService" ref="rpmsDumpService" />
 	</bean>
 	
 	<bean id="beforeEodExternalProcessHook" class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">

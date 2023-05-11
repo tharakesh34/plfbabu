@@ -15,6 +15,8 @@ public class ExtExtractionDumpService implements MicroEodExternalProcessHook {
 
 	private BaselOneDumpService baselOneDumpService;
 	private ALMDumpService almDumpService;
+	private BaselTwoDumpService baselTwoDumpService;
+	private RPMSDumpService rpmsDumpService;
 
 	@Override
 	public void saveExtractionData(CustEODEvent custEODEvent, Date appdate) {
@@ -36,6 +38,14 @@ public class ExtExtractionDumpService implements MicroEodExternalProcessHook {
 				almDumpService.processALM(custEODEvent);
 			}
 
+			if (baselTwoDumpService != null) {
+				baselTwoDumpService.processBaselTwoDump(custEODEvent);
+			}
+
+			if (rpmsDumpService != null) {
+				rpmsDumpService.processRPMSDump(custEODEvent);
+			}
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -47,6 +57,14 @@ public class ExtExtractionDumpService implements MicroEodExternalProcessHook {
 
 	public void setAlmDumpService(ALMDumpService almDumpService) {
 		this.almDumpService = almDumpService;
+	}
+
+	public void setBaselTwoDumpService(BaselTwoDumpService baselTwoDumpService) {
+		this.baselTwoDumpService = baselTwoDumpService;
+	}
+
+	public void setRpmsDumpService(RPMSDumpService rpmsDumpService) {
+		this.rpmsDumpService = rpmsDumpService;
 	}
 
 }

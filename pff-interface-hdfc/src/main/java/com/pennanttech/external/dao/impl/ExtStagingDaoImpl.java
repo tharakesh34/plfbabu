@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import com.pennanttech.external.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.AlmExtract;
 import com.pennanttech.external.extractions.model.BaselOne;
+import com.pennanttech.external.extractions.model.BaselTwoExtract;
+import com.pennanttech.external.extractions.model.RPMSExtract;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -179,7 +181,127 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 
 			ps.setLong(index++, almExtract.getPslctgid());
 			ps.setString(index++, almExtract.getNpaStageId());
-			ps.setString(index++, almExtract.getWeakerSectionDesc());
+			ps.setString(index, almExtract.getWeakerSectionDesc());
+
+		});
+
+	}
+
+	@Override
+	public void saveBaselTwoExtractionDataToTable(BaselTwoExtract baselTwo) {
+		String sql = "INSERT INTO BASELTWO " + " ( AGREEMENTID,CUSTOMERID,ICN_STATUS,ICN_ACQUIRED,LOAN_APPL_DT,"
+				+ "TOTAL_EMIS,DND,APPLIED_BEFORE,OLD_AGMTNO,MICR_LOCATION,FEES,"
+				+ "FIXED_FLOAT,DEALER_COMM,MANF_DISC,PROMOTION_CODE,RC_AVAIL_STATUS,"
+				+ "RC_ACQUIRED,EMI_TYPE,REST,CUST_ACCOUNT,NO_BOUNCES,CHARGES_PAID,"
+				+ "PREV_NPA,SECURT_FLAG,SECURT_DT,DPD_STRING,TOT_AMT_PAID_MNTH_CHQ,"
+				+ "TOT_AMT_PAID_MNTH_CASH,RESCHEDULED,RESCHEDULE_EFF_DT,CLOSURE_TYPE,"
+				+ "PRIN_LOSS_CLOSURE,IBPC_START,IBPC_END,MONTHS_IN_PREV_JOB,MONTHS_IN_CURR_JOB,"
+				+ "MONTHS_IN_CURR_RESIDENCE,RENT_PM,DEVIATION,VEHICLE_AGE,APP_SCORE,RIC_SCORE,"
+				+ "INCOME_PROOF_RECEIVED,TOTAL_EXPERIENCE,EMPLOYER_CATEGORY,MONTHS_IN_CITY,"
+				+ "ELIGIBILITY,OBLIGATIONS,OBLIGATIONS_N) "
+				+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+				+ "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, baselTwo.getAgreementId());
+			ps.setLong(index++, baselTwo.getCustomerId());
+			ps.setString(index++, baselTwo.getIcnStatus());
+			ps.setDate(index++, (Date) baselTwo.getIcnAcquired());
+			ps.setDate(index++, (Date) baselTwo.getLoanApplDate());
+			ps.setInt(index++, baselTwo.getTotalEmis());
+			ps.setString(index++, baselTwo.getDnd());
+			ps.setString(index++, baselTwo.getAppliedBefore());
+			ps.setString(index++, baselTwo.getOldAgmtNo());
+			ps.setString(index++, baselTwo.getMicrLocation());
+			ps.setBigDecimal(index++, baselTwo.getFees());
+			ps.setString(index++, baselTwo.getFixedFloat());
+			ps.setBigDecimal(index++, baselTwo.getDealerComm());
+			ps.setBigDecimal(index++, baselTwo.getManfDisc());
+			ps.setString(index++, baselTwo.getPromotionCode());
+			ps.setString(index++, baselTwo.getRcAvailStatus());
+			ps.setDate(index++, (Date) baselTwo.getRcAcquired());
+			ps.setString(index++, baselTwo.getEmiType());
+			ps.setString(index++, baselTwo.getRest());
+			ps.setString(index++, baselTwo.getCustAccount());
+			ps.setInt(index++, baselTwo.getNoBounces());
+			ps.setBigDecimal(index++, baselTwo.getChargesPaid());
+			ps.setDate(index++, (Date) baselTwo.getPrevNPA());
+			ps.setString(index++, baselTwo.getSecurtFlag());
+			ps.setDate(index++, (Date) baselTwo.getSecurtDt());
+			ps.setString(index++, baselTwo.getDpdString());
+			ps.setBigDecimal(index++, baselTwo.getTotAmtPaidMnthChq());
+			ps.setBigDecimal(index++, baselTwo.getTotAmtPaidMnthCash());
+			ps.setString(index++, baselTwo.getRescheduled());
+			ps.setDate(index++, (Date) baselTwo.getRescheduleEffDt());
+			ps.setString(index++, baselTwo.getClosureType());
+			ps.setBigDecimal(index++, baselTwo.getPrinLossClosure());
+			ps.setDate(index++, (Date) baselTwo.getIbpcStart());
+			ps.setDate(index++, (Date) baselTwo.getIbpcEnd());
+			ps.setInt(index++, baselTwo.getMonthsInPrevJob());
+			ps.setInt(index++, baselTwo.getMonthsIncurrJob());
+			ps.setInt(index++, baselTwo.getMonthsInCurrResidence());
+			ps.setBigDecimal(index++, baselTwo.getRentPM());
+			ps.setString(index++, baselTwo.getDeviation());
+			ps.setInt(index++, baselTwo.getVehicleAge());
+			ps.setInt(index++, baselTwo.getAppScore());
+			ps.setInt(index++, baselTwo.getRicScore());
+			ps.setString(index++, baselTwo.getIncomeProofReceived());
+			ps.setBigDecimal(index++, baselTwo.getTotalExperience());
+			ps.setString(index++, baselTwo.getEmployerCategory());
+			ps.setInt(index++, baselTwo.getMonthsInCity());
+			ps.setString(index++, baselTwo.getEligibility());
+			ps.setBigDecimal(index++, baselTwo.getObligations());
+			ps.setBigDecimal(index, baselTwo.getObligationsn());
+
+		});
+
+	}
+
+	@Override
+	public void saveRPMSExtractExtractionDataToTable(RPMSExtract rpmsExtract) {
+
+		String sql = "INSERT INTO RPMSEXTRACT "
+				+ " ( AGREEMENTID,CUSTOMERID,STATUS,MULTI_LINK_LOAN_FLAG,PARENT_LOAN_NO,"
+				+ "CUSTOMER_SEGMENT,GROUPID,GROUPDESC,GROUPCODE,REPO_SETTLED_FLAG,"
+				+ "CLOSURE_REASON,CLOSURE_DATE,POS_ON_CLOSURE,PDC_FLAG,TOT_PRIN_WAIVE_OFF,"
+				+ "TOT_INT_WAIVE_OFF,WOFF_CHQBOUNCE_CHARGES,WOFF_OVERDUE_CHARGE,WOFF_OTHERS,"
+				+ "RAM_ID,TURNOVER_IN_YEAR_ONE,TURNOVER_AMT_YEAR_ONE,TURNOVER_IN_YEAR_TWO,"
+				+ "TURNOVER_AMT_YEAR_TWO,TURNOVER_IN_YEAR_THREE,TURNOVER_AMT_YEAR_THREE ) "
+				+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, rpmsExtract.getAgreementId());
+			ps.setLong(index++, rpmsExtract.getCustomerId());
+			ps.setString(index++, rpmsExtract.getStatus());
+			ps.setString(index++, rpmsExtract.getMultiLinkLoanFlag());
+			ps.setLong(index++, rpmsExtract.getParentLoanNo());
+			ps.setString(index++, rpmsExtract.getCustomerSegment());
+			ps.setLong(index++, rpmsExtract.getGroupId());
+			ps.setString(index++, rpmsExtract.getGroupDesc());
+			ps.setString(index++, rpmsExtract.getGroupCode());
+			ps.setString(index++, rpmsExtract.getRepoSettledFlag());
+			ps.setString(index++, rpmsExtract.getClosureReason());
+			ps.setDate(index++, (Date) rpmsExtract.getClosureDate());
+			ps.setBigDecimal(index++, rpmsExtract.getPosOnClosure());
+			ps.setString(index++, rpmsExtract.getPdcFlag());
+			ps.setBigDecimal(index++, rpmsExtract.getTotPrinWaiveOff());
+			ps.setBigDecimal(index++, rpmsExtract.getTotIntWaiveOff());
+			ps.setBigDecimal(index++, rpmsExtract.getWoffChqBounceCharges());
+			ps.setBigDecimal(index++, rpmsExtract.getWoffOverDueCharge());
+			ps.setBigDecimal(index++, rpmsExtract.getWoffOthers());
+			ps.setString(index++, rpmsExtract.getRamId());
+			ps.setString(index++, rpmsExtract.getTurnOverInYearOne());
+			ps.setBigDecimal(index++, rpmsExtract.getTurnOverAmtYearOne());
+			ps.setString(index++, rpmsExtract.getTurnOverInYearTwo());
+			ps.setBigDecimal(index++, rpmsExtract.getTurnOverAmtYearTwo());
+			ps.setString(index++, rpmsExtract.getTurnOverInYearThree());
+			ps.setBigDecimal(index++, rpmsExtract.getTurnOverAmtYearThree());
 
 		});
 
@@ -193,4 +315,5 @@ public class ExtStagingDaoImpl implements ExtStagingDao {
 	public void setStagingDataSource(DataSource stagingDataSource) {
 		this.extNamedJdbcTemplate = new NamedParameterJdbcTemplate(stagingDataSource);
 	}
+
 }

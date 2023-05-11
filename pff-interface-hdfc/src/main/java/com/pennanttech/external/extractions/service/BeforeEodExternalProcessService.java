@@ -18,6 +18,8 @@ public class BeforeEodExternalProcessService implements BeforeEodExternalProcess
 		if (appDate.compareTo(DateUtil.getMonthEnd(appDate)) == 0) {
 			extStageDao.truncateTable("EXT_BASEL_ONE");
 			extStageDao.truncateTable("ALM_REPORT");
+			extStageDao.truncateTable("BASELTWO");
+			extStageDao.truncateTable("RPMSEXTRACT");
 		}
 
 	}

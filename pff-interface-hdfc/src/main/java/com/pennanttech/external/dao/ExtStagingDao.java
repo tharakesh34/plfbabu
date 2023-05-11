@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.pennanttech.external.extractions.model.AlmExtract;
 import com.pennanttech.external.extractions.model.BaselOne;
+import com.pennanttech.external.extractions.model.BaselTwoExtract;
+import com.pennanttech.external.extractions.model.RPMSExtract;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 
 public interface ExtStagingDao {
@@ -18,4 +20,8 @@ public interface ExtStagingDao {
 	void saveBaselOneExtractionDataToTable(BaselOne baselOne);
 
 	void saveAlmExtractionDataToTable(AlmExtract almExtract);
+
+	void saveBaselTwoExtractionDataToTable(BaselTwoExtract baselTwo);
+
+	void saveRPMSExtractExtractionDataToTable(RPMSExtract rpmsExtract);
 }
