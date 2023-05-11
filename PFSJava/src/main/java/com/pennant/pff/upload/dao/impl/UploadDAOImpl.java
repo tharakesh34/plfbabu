@@ -202,7 +202,13 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId, su.UsrLogin");
 		sql.append(" From FILE_UPLOAD_HEADER uh");
 		sql.append(" Inner Join SecUsers su on su.UsrID = uh.CreatedBy");
-		sql.append(" Where uh.Type = ? and uh.Progress != ?");
+		sql.append(" Where uh.Type = ?");
+
+		if ("M".equals(stage)) {
+			sql.append(" and uh.Progress in (?, ?, ?, ?)");
+		} else {
+			sql.append(" and uh.Progress in (?, ?)");
+		}
 
 		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate, stage, usrLogin);
 
@@ -218,7 +224,16 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			int index = 0;
 
 			ps.setString(++index, type);
-			ps.setInt(++index, UploadStatus.APPROVE.status());
+
+			if ("M".equals(stage)) {
+				ps.setInt(++index, UploadStatus.APPROVED.status());
+				ps.setInt(++index, UploadStatus.REJECTED.status());
+				ps.setInt(++index, UploadStatus.INITIATED.status());
+				ps.setInt(++index, UploadStatus.FAILED.status());
+			} else {
+				ps.setInt(++index, UploadStatus.IMPORTED.status());
+				ps.setInt(++index, UploadStatus.DOWNLOADED.status());
+			}
 
 			if (CollectionUtils.isNotEmpty(roleCodes)) {
 				for (String roleCode : roleCodes) {
