@@ -547,4 +547,24 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1561.4_pre" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'adtloantype_letter_mapping');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.4" author="saikrihna.b">
+		<modifyDataType tableName="ADTLOANTYPE_LETTER_MAPPING" columnName="LetterMode" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="ST#1561.4_post" author="saikrihna.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'adtloantype_letter_mapping');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -196,7 +196,7 @@ public class SelectLoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeL
 
 		try {
 			String finTypeValue = this.finType.getValue().toUpperCase();
-			boolean finTypeExist = this.loanTypeLetterMappingDAO.isDuplicateKey(finTypeValue, TableType.MAIN_TAB);
+			boolean finTypeExist = this.loanTypeLetterMappingDAO.isDuplicateKey(finTypeValue, TableType.BOTH_TAB);
 			if (finTypeExist) {
 				throw new WrongValueException(this.finType,
 						Labels.getLabel("label_SelectFinanceTypeDialog_finTypeExist.value"));
