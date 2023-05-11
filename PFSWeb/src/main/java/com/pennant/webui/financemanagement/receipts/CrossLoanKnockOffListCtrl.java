@@ -201,7 +201,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		doRenderPage();
 
 		search();
-		
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -536,7 +536,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		CrossLoanTransfer clt = crossLoanKnockOffService.getCrossLoanTransferById(clk.getTransferID(), "_View");
 		clk.setCrossLoanTransfer(clt);
 
-		long id = clk.getKnockOffId();
+		long id = clt.getReceiptId();
 		FinReceiptHeader frh = receiptService.getFinReceiptHeaderById(id, false, "_View");
 
 		frh.setValueDate(frh.getValueDate());

@@ -1425,15 +1425,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			wve.add(we);
 		}
 
-		long finID = ComponentUtil.getFinID(finReference);
-
-		Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finID);
-
-		if (DateUtil.compare(maxValueDate, this.receiptDate.getValue()) > 0) {
-			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
-					Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), maxValueDate.toString() }));
-		}
-
 		if (isMatured && maturityDate != null && DateUtil.compare(receiptDate.getValue(), maturityDate) < 0) {
 			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
 					Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), maturityDate.toString() }));
