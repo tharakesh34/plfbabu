@@ -1172,6 +1172,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(calType)
 				&& PennantConstants.PERC_TYPE_VARIABLE.equals(perType)) {
 			this.percRule.setVisible(true);
+			this.percRule.setReadonly(false);
 			this.percRule.clearErrorMessage();
 			this.feeOrder.setErrorMessage("");
 			this.label_FinTypeFeesDialog_PercRule.setVisible(true);
