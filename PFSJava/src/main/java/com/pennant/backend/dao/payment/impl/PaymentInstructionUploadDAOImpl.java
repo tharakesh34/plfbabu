@@ -19,7 +19,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
-		String sql = "Update PAYMINS_UPLOADS set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
+		String sql = "Update PAYMINS_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -51,7 +51,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" HeaderId, Id, FinID, FinReference, RecordSeq, ExcessType");
 		sql.append(", FeeType, PayAmount, Remarks, OverRideOverDue, Progress, Status, ErrorCode, ErrorDesc");
-		sql.append(" From PAYMINS_UPLOADS");
+		sql.append(" From PAYMINS_UPLOAD");
 		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -82,7 +82,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" HeaderId, Id, FinReference, FinId, ExcessType, FeeType, PayAmount, Remarks");
 		sql.append(", OverRideOverDue, Progress, ErrorCode, ErrorDesc");
-		sql.append(" From PAYMINS_UPLOADS");
+		sql.append(" From PAYMINS_UPLOAD");
 		sql.append(" Where HeaderId = ? and id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -108,7 +108,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public void update(List<PaymentInstUploadDetail> detailsList) {
-		String sql = "Update PAYMINS_UPLOADS set Progress = ?, FinId = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update PAYMINS_UPLOAD set Progress = ?, FinId = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -137,7 +137,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public void update(PaymentInstUploadDetail detail) {
-		String sql = "Update PAYMINS_UPLOADS set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
+		String sql = "Update PAYMINS_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where ID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -157,7 +157,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" pu.FinReference, pu.ExcessType, pu.FeeType, pu.PayAmount");
 		sql.append(", pu.Remarks, pu.OverRideOverDue, pu.Status, pu.ErrorDesc");
-		sql.append(" From PAYMINS_UPLOADS pu");
+		sql.append(" From PAYMINS_UPLOAD pu");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = pu.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");
 
@@ -166,7 +166,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 
 	@Override
 	public List<Integer> getHeaderStatusCnt(long uploadId) {
-		String sql = "Select Progress From PAYMINS_UPLOADS Where HeaderId = ?";
+		String sql = "Select Progress From PAYMINS_UPLOAD Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

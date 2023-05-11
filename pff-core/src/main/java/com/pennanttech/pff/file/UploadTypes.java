@@ -5,7 +5,7 @@ public enum UploadTypes {
 
 	HOLD_REFUND(""),
 
-	PAYINS_REFUND("Payment Instruction Refund"),
+	PAYMINS("Payment Instruction Refund"),
 
 	MANDATES("Mandate Upload Details Screen"),
 

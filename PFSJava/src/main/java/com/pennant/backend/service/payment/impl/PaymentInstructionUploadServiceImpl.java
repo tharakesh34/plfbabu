@@ -517,7 +517,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.PAYINS_REFUND.name(), this, "PaymentInstructionUploadHeader");
+		uploadProcess(UploadTypes.PAYMINS.name(), this, "PaymentInstructionUploadHeader");
 	}
 
 	@Override

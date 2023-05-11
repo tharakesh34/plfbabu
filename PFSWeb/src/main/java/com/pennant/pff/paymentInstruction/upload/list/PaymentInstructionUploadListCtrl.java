@@ -15,7 +15,7 @@ public class PaymentInstructionUploadListCtrl extends AUploadListCtrl {
 	protected Window window;
 
 	protected PaymentInstructionUploadListCtrl(@Autowired UploadService paymentInstructionUploadService) {
-		super(paymentInstructionUploadService, UploadTypes.PAYINS_REFUND);
+		super(paymentInstructionUploadService, UploadTypes.PAYMINS);
 	}
 
 	@Override
