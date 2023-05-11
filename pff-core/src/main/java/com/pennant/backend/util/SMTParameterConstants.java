@@ -449,4 +449,6 @@ public class SMTParameterConstants {
 	public static final String OTS_THREAD_COUNT = "OTS_THREAD_COUNT";
 	public static final String ALW_CREDIT_EDIT_DATA_STAGES = "ALW_CREDIT_EDIT_DATA_STAGES";
 	public static final String MAINTAIN_CANFIN_BACK_DATE = "MAINTAIN_CANFIN_BACK_DATE";
+	public static final String PSL_DATA_REQUIRED = "PSL_DATA_REQUIRED";
+
 }

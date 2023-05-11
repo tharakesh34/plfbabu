@@ -1903,11 +1903,25 @@ public class FinanceDataValidation {
 				return schdData;
 			}
 
-			if (fd.getPslDetail() != null) {
-				errorDetails = pslValidation(fd);
-				if (!CollectionUtils.isEmpty(errorDetails)) {
+			if (StringUtils.equalsIgnoreCase(PennantConstants.YES,
+					SysParamUtil.getValueAsString(SMTParameterConstants.PSL_DATA_REQUIRED))) {
+				if (fd.getPslDetail() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "PSL Details";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+				}
+
+				if (!errorDetails.isEmpty()) {
 					schdData.setErrorDetails(errorDetails);
 					return schdData;
+				}
+
+				if (fd.getPslDetail() != null) {
+					errorDetails = pslValidation(fd);
+					if (!CollectionUtils.isEmpty(errorDetails)) {
+						schdData.setErrorDetails(errorDetails);
+						return schdData;
+					}
 				}
 			}
 			// ExtendedFieldDetails Validation
