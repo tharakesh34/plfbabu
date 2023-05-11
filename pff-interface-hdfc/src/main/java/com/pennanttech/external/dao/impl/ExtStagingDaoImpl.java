@@ -12,9 +12,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennant.backend.model.finance.AlmExtract;
-import com.pennant.backend.model.finance.BaselOne;
 import com.pennanttech.external.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.model.AlmExtract;
+import com.pennanttech.external.extractions.model.BaselOne;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;

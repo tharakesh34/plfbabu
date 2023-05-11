@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.model.finance.AlmExtract;
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennanttech.external.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.model.AlmExtract;
 
 public class ALMDumpService {
 	private ExtStagingDao extStageDao;

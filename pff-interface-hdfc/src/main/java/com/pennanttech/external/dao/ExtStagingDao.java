@@ -2,8 +2,8 @@ package com.pennanttech.external.dao;
 
 import java.util.List;
 
-import com.pennant.backend.model.finance.AlmExtract;
-import com.pennant.backend.model.finance.BaselOne;
+import com.pennanttech.external.extractions.model.AlmExtract;
+import com.pennanttech.external.extractions.model.BaselOne;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 
 public interface ExtStagingDao {

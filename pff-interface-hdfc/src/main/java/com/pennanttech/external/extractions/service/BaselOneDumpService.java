@@ -3,11 +3,11 @@ package com.pennanttech.external.extractions.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.pennant.backend.model.finance.BaselOne;
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennanttech.external.dao.ExtStagingDao;
+import com.pennanttech.external.extractions.model.BaselOne;
 
 public class BaselOneDumpService {
 
