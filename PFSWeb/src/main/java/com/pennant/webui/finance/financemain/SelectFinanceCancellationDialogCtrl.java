@@ -146,7 +146,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 		this.finReference.setButtonDisabled(false);
 		this.finReference.setTextBoxWidth(155);
 		this.finReference.setMandatoryStyle(true);
-		this.finReference.setModuleName("FinanceMaintenance");
+		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });

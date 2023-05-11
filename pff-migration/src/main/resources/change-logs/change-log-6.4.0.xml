@@ -12779,7 +12779,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#4875.1999_pre" author="Poojitha.M" dbms="postgresql">
+	<changeSet id="ST#4875.1999_1_pre" author="Poojitha.M" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'financemain_aview'); 
@@ -12787,7 +12787,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#4875.1999" author="Poojitha.M">
+	<changeSet id="ST#4875.1999_1" author="Poojitha.M">
 		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
 			 <![CDATA[ 
 				SELECT T1.FINID
@@ -13097,6 +13097,7 @@
 					, T1.CREATEDON
 					, T1.APPROVEDBY
 					, T1.APPROVEDON
+					, T7.ALLOWCANCELFIN
 				FROM FINANCEMAIN T1
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE 
 				LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH  = T12.BRANCHCODE 
@@ -13123,7 +13124,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#4875.1999_post" author="Poojitha.M" dbms="postgresql">
+	<changeSet id="ST#4875.1999_1_post" author="Poojitha.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_aview');	
@@ -18225,6 +18226,8 @@
 	<changeSet id="ST#1526.3" author="sandeepkumar.m">
 		<modifyDataType tableName="LIEN_UPLOAD" columnName="REMARKS" newDataType="varchar(1000)"/>
 	</changeSet>
+
+
 
 
 </databaseChangeLog> 
