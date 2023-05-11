@@ -519,37 +519,60 @@ public class FinanceEnquiryController extends AbstractController {
 	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, LoanDetail ld,
 			List<FinServiceInstruction> fsiList) {
 
-		setRateCahngeDetails(fm, ld);
-
 		FinServiceInstruction fsi = null;
-		for (int i = 0; i <= fsiList.size(); i++) {
-			LoanDetail loanDetail = new LoanDetail();
+		for (int i = 0; i < fsiList.size(); i++) {
+			LoanDetail loanDetail = null;
 
 			fsi = fsiList.get(i);
 			Date fromDate = fsi.getRecalFromDate();
 			Date toDate = null;
 
+			if (i == 0) {
+				loanDetail = new LoanDetail();
+				loanDetail.setFromDate(fm.getFinStartDate());
+				loanDetail.setToDate(fromDate == null ? fsi.getFromDate() : fromDate);
+				loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
+				ldList.add(loanDetail);
+			}
+
 			if (fsiList.size() - 1 > i) {
 				toDate = fsiList.get(i + 1).getRecalFromDate();
 			}
 
+			loanDetail = new LoanDetail();
 			switch (fsi.getRecalType()) {
 			case CalculationConstants.RPYCHG_TILLMDT:
 				loanDetail.setFromDate(fromDate);
 				loanDetail.setToDate(toDate == null ? fm.getMaturityDate() : toDate);
+				loanDetail.setRepayProfitRate(fsi.getActualRate());
+				break;
 			case CalculationConstants.RPYCHG_TILLDATE:
 				loanDetail.setFromDate(fromDate);
-				loanDetail.setToDate(toDate == null ? fsi.getRecalToDate() : toDate);
+				loanDetail.setToDate(toDate);
+				loanDetail.setRepayProfitRate(fsi.getActualRate());
+				break;
 			default:
-				ld.setFromDate(fsi.getFromDate());
-				ld.setToDate(toDate == null ? fsi.getToDate() : toDate);
+				loanDetail.setFromDate(fsi.getFromDate());
+				loanDetail.setToDate(toDate == null ? fsi.getToDate() : toDate);
+				loanDetail.setRepayProfitRate(fsi.getActualRate());
+				break;
 			}
 
 			ldList.add(loanDetail);
 		}
 
+		if ((CalculationConstants.RPYCHG_TILLMDT.equals(fsi.getRecalType())
+				&& fm.getMaturityDate().compareTo(fsi.getToDate()) == 0)
+				|| (CalculationConstants.RPYCHG_TILLDATE.equals(fsi.getRecalType())
+						&& fm.getMaturityDate().compareTo(fsi.getRecalToDate()) == 0)
+				|| fm.getMaturityDate().compareTo(fsi.getToDate()) == 0) {
+
+			return;
+		}
+
 		LoanDetail loanDetail = new LoanDetail();
 		loanDetail.setFromDate(fsi.getRecalToDate() == null ? fsi.getToDate() : fsi.getRecalToDate());
+		loanDetail.setToDate(fm.getMaturityDate());
 		loanDetail.setRepayProfitRate(fm.getRepayProfitRate());
 		ldList.add(loanDetail);
 	}
