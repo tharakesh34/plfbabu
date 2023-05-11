@@ -162,6 +162,19 @@ public class LoanTypeLetterMappingListCtrl extends GFCBaseListCtrl<LoanTypeLette
 
 		List<LoanTypeLetterMapping> excludeCodes = this.loanTypeLetterMappingService.getResult(getSearchFilters());
 
+		List<LoanTypeLetterMapping> templetterMapping = new ArrayList<>();
+		List<String> loanType = new ArrayList<>();
+
+		for (LoanTypeLetterMapping lm : excludeCodes) {
+			if (loanType.contains(lm.getFinType())) {
+				templetterMapping.add(lm);
+			}
+
+			loanType.add(lm.getFinType());
+		}
+
+		excludeCodes.removeAll(templetterMapping);
+
 		this.listBoxLoanTypeLetterMapping.setItemRenderer(new LTLPListModelItemRender());
 
 		this.pagedListWrapper.initList(excludeCodes, listBoxLoanTypeLetterMapping, pagingLoanTypeLetterMapping);
