@@ -366,6 +366,7 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 
 		doWriteBeanToComponents(aBounceCode);
 		setDialog(DialogType.EMBEDDED);
+		onChangeInstrumentType();
 
 		logger.debug(Literal.LEAVING);
 	}
