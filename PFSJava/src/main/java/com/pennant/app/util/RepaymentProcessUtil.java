@@ -524,7 +524,7 @@ public class RepaymentProcessUtil {
 			receiptAmount = receiptAmount.add(rcd.getAmount());
 			String paymentType = rcd.getPaymentType();
 			movements.addAll(rcd.getAdvMovements());
-			if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(paymentType))
+			if (StringUtils.isNotEmpty(StringUtils.trimToEmpty(paymentType)) && !"#".equals(paymentType)
 					&& !ReceiptMode.EMIINADV.equals(paymentType) && !ReceiptMode.EXCESS.equals(paymentType)
 					&& !ReceiptMode.TEXCESS.equals(paymentType) && !ReceiptMode.PAYABLE.equals(paymentType)
 					&& !ReceiptMode.ADVINT.equals(paymentType) && !ReceiptMode.ADVEMI.equals(paymentType)

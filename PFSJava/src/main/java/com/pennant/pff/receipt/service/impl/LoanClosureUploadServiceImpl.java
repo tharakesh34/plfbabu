@@ -206,6 +206,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		rud.setValueDate(appDate);
 		rud.setRealizationDate(appDate);
 		rud.setReceivedDate(appDate);
+		rud.setDepositDate(appDate);
 		rud.setReceiptAmount(lcu.getAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		rud.setReceiptPurpose(FinanceConstants.EARLYSETTLEMENT);
