@@ -70,6 +70,7 @@ public class ExcessKnockOffUtil {
 		clko.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		clko.setRequestSource(RequestSource.EOD.name());
 		clko.setNewRecord(true);
+		clko.setKnockOffId(ako.getReceiptID());
 
 		return clko;
 	}

@@ -243,7 +243,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 				ps.setInt(3, EodConstants.PROGRESS_FAILED);
 				ps.setLong(4, ccb.getCustID());
 				if (CustomerExtension.CUST_CORE_BANK_ID) {
-					ps.setString(5, ccb.getCustCoreBank());
+					ps.setString(4, ccb.getCustCoreBank());
 				}
 			});
 		}

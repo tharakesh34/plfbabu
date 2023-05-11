@@ -847,4 +847,16 @@
 	<bean name="bankDetailService" class="com.pennant.backend.service.applicationmaster.impl.BankDetailServiceImpl" />
 
 	<bean name="bankBranchService" class="com.pennant.backend.service.bmtmasters.impl.BankBranchServiceImpl" />
+	
+	<bean name="crossLoanKnockOffService"
+		class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffServiceImpl" />
+	
+	<bean name="financeMainService" class="com.pennant.backend.service.finance.impl.FinanceMainServiceImpl" >
+		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
+	
+	<bean name="receiptDataValidator" class="com.pennanttech.pff.receipt.upload.ReceiptDataValidator" />
+	
+	<bean name="rejectDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.RejectDetailDAOImpl" />
+	
 </beans>

@@ -15,6 +15,8 @@ import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.finance.AutoKnockOffExcess;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.service.finance.CrossLoanKnockOffService;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.knockoff.ExcessKnockOffUtil;
 import com.pennanttech.pff.knockoff.dao.ExcessKnockOffDAO;
 import com.pennanttech.pff.knockoff.model.ExcessKnockOff;
@@ -28,6 +30,7 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 	private CrossLoanTransferDAO crossLoanTransferDAO;
 
 	private AutoKnockOffService autoKnockOffService;
+	private CrossLoanKnockOffService crossLoanKnockOffService;
 
 	public ExcessKnockOffServiceImpl() {
 		super();
@@ -96,6 +99,8 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 		List<AutoKnockOffExcessDetails> excessDetails = ake.getExcessDetails();
 		List<CrossLoanKnockOff> clkoList = new ArrayList<>();
 
+		LoggedInUser userDetails = new LoggedInUser();
+
 		for (AutoKnockOffExcessDetails ako : excessDetails) {
 			if (ako.getReceiptID() > 0) {
 				CrossLoanKnockOff clko = ExcessKnockOffUtil.getCrossLoanKnockOff(ako, ekf, fm);
@@ -103,6 +108,9 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 				clko.getCrossLoanTransfer().setReceiptId(ako.getReceiptID());
 				clko.setReceiptID(ako.getReceiptID());
 				clko.setValueDate(clko.getCrossLoanTransfer().getValueDate());
+				clko.setUserDetails(userDetails);
+				clko.getCrossLoanTransfer().setUserDetails(userDetails);
+				crossLoanKnockOffService.executeAccounting(clko.getCrossLoanTransfer());
 				clko.setTransferID(this.crossLoanTransferDAO.save(clko.getCrossLoanTransfer(), ""));
 				clkoList.add(clko);
 			}
@@ -135,4 +143,10 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 	public void setAutoKnockOffService(AutoKnockOffService autoKnockOffService) {
 		this.autoKnockOffService = autoKnockOffService;
 	}
+
+	@Autowired
+	public void setCrossLoanKnockOffService(CrossLoanKnockOffService crossLoanKnockOffService) {
+		this.crossLoanKnockOffService = crossLoanKnockOffService;
+	}
+
 }

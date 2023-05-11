@@ -189,12 +189,12 @@ public class EodService {
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
 		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF && !ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
-			processAutoKnockOff(custEODEvent, eventProperties);
+			Date appDate = DateUtil.addDays(eventProperties.getAppDate(), 1);
+			processAutoKnockOff(custEODEvent, eventProperties, appDate);
 		}
 	}
 
-	private void processAutoKnockOff(CustEODEvent custEODEvent, EventProperties eventProperties) {
-		Date appDate = DateUtil.addDays(eventProperties.getAppDate(), 1);
+	private void processAutoKnockOff(CustEODEvent custEODEvent, EventProperties eventProperties, Date appDate) {
 		long custId = custEODEvent.getCustomer().getCustID();
 
 		logger.info("Auto-Knock-Off process started for the Customer ID >> {} ", custId);
@@ -211,7 +211,7 @@ public class EodService {
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
 		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF && ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
-			processAutoKnockOff(custEODEvent, eventProperties);
+			processAutoKnockOff(custEODEvent, eventProperties, eventProperties.getAppDate());
 		}
 
 		if (!eventProperties.isSkipLatePay()) {
