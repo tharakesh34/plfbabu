@@ -97,6 +97,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
@@ -762,8 +763,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		this.lbl_CustCIF.setValue(financeMain.getLovDescCustCIF() + " - " + financeMain.getLovDescCustShrtName());
 		this.lbl_FinAmount.setValue(PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
-		this.lbl_startDate
-				.setValue(DateUtil.format(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_startDate.setValue(DateUtil.format(financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
 				.setValue(DateUtil.format(financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
@@ -1068,6 +1068,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			if (StringUtils.isNotEmpty(aManualAdvise.getReason())) {
 				if (PennantConstants.MANUALADVISE_CANCEL_MODULE.equals(this.module)) {
 					aManualAdvise.setBalanceAmt(BigDecimal.ZERO);
+					aManualAdvise.setFinSource(UploadConstants.FINSOURCE_ID_PFF);
 				}
 				aManualAdvise.setStatus(PennantConstants.MANUALADVISE_CANCEL);
 			} else {
