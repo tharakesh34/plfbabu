@@ -28,6 +28,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
@@ -93,7 +94,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		int finTypeLtrmap = loanLetterUploadDAO.getFinTypeLtrMap(reference);
+		int finTypeLtrmap = loanLetterUploadDAO.getFinTypeLtrMap(fm.getFinType());
 		if (finTypeLtrmap < 0) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_08);
 			return;
@@ -126,6 +127,16 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		if (LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(cancelType)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_10);
 			return;
+		}
+
+		LoanLetterUpload noc = loanLetterUploadDAO.getByReference(detail.getReference());
+
+		if (noc != null && EodConstants.PROGRESS_SUCCESS == noc.getProgress()) {
+			Date valueDate = DateUtil.getSysDate();
+			if (noc.getReference().equals(detail.getReference())) {
+				setError(detail, LoanLetterUploadError.LOAN_LTR_11);
+				return;
+			}
 		}
 
 		setSuccesStatus(detail);
