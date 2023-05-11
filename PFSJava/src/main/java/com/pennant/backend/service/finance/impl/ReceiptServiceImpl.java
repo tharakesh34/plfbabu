@@ -3882,10 +3882,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
-		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
-		if (!isTerminationEvent(fsi) && !ReceiptMode.isOfflineMode(receiptMode) && !fsi.isKnockOffReceipt()
-				&& !autoReceipt && StringUtils.isBlank(rcd.getTransactionRef())) {
-			setError(schdData, "90281", "Transaction Reference");
+		if (ReceiptUtil.isTransactionRefMandatory(fsi, productCategory)
+				&& StringUtils.isBlank(rcd.getTransactionRef())) {
+			setError(schdData, "90502", "Transaction Reference");
 		}
 
 		logger.info(Literal.LEAVING);
@@ -6408,7 +6407,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (receiptPurpose != ReceiptPurpose.EARLYSETTLE && StringUtils.isNotBlank(fsi.getClosureType())) {
-			setError(schdData, "STP0012", "Closure Type :" +fsi.getClosureType(), " in request body ");
+			setError(schdData, "STP0012", "Closure Type :" + fsi.getClosureType(), " in request body ");
 			return fd;
 		}
 

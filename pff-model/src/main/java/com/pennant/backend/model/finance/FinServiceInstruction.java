@@ -366,6 +366,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String division;
 	private boolean knockOffReceipt;
 	private String knockoffType;
+	private boolean loanCancellation;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -555,7 +556,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setFinAssetValue(this.finAssetValue);
 		fsi.setNumberOfTerms(this.numberOfTerms);
 		fsi.setKnockOffReceipt(this.knockOffReceipt);
-
+		fsi.setLoanCancellation(this.loanCancellation);
 		fsi.setRecordStatus(super.getRecordStatus());
 		fsi.setRoleCode(super.getRoleCode());
 		fsi.setNextRoleCode(super.getNextRoleCode());
@@ -1852,6 +1853,14 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 
 	public void setKnockoffType(String knockoffType) {
 		this.knockoffType = knockoffType;
+	}
+
+	public boolean isLoanCancellation() {
+		return loanCancellation;
+	}
+
+	public void setLoanCancellation(boolean loanCancellation) {
+		this.loanCancellation = loanCancellation;
 	}
 
 }

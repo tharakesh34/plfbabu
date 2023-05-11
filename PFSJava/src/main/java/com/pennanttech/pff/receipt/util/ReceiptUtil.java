@@ -1,8 +1,10 @@
 package com.pennanttech.pff.receipt.util;
 
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
@@ -63,6 +65,38 @@ public class ReceiptUtil {
 		}
 
 		return receiptPurposeCtg;
+	}
+
+	public static boolean isTransactionRefMandatory(FinServiceInstruction fsi, String productCategory) {
+		String receiptMode = fsi.getPaymentMode();
+
+		if (isAutoReceipt(receiptMode, productCategory)) {
+			return false;
+		}
+
+		if (isTerminationEvent(fsi)) {
+			return false;
+		}
+
+		if (ReceiptMode.isOfflineMode(receiptMode)) {
+			return false;
+		}
+
+		if (fsi.isKnockOffReceipt()) {
+			return false;
+		}
+
+		if (fsi.isLoanCancellation()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static boolean isTerminationEvent(FinServiceInstruction fsi) {
+		return RequestSource.EOD.equals(fsi.getRequestSource())
+				&& (ReceiptPurpose.EARLYSETTLE.equals(fsi.getReceiptPurpose())
+						|| ReceiptPurpose.SCHDRPY.equals(fsi.getReceiptPurpose()));
 	}
 
 }
