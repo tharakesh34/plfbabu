@@ -1358,7 +1358,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Date.class, finID, appDate, 0, 0, 0);
+		return this.jdbcOperations.queryForObject(sql, Date.class, finID, JdbcUtil.getDate(appDate), 0, 0, 0);
 	}
 
 	@Override

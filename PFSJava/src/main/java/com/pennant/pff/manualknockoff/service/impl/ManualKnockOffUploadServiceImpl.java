@@ -209,10 +209,9 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			uad.setReferenceCode(alloc.getCode());
 			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
 
-			BigDecimal strPaidAmount = new BigDecimal(uad.getStrPaidAmount());
-			// alcamount = alcamount.add(strPaidAmount);
-			alcamount = PennantApplicationUtil.unFormateAmount(alcamount.add(strPaidAmount), 2);
 			receiptDataValidator.validateAllocations(uad);
+
+			alcamount = alcamount.add(uad.getPaidAmount());
 
 			if (!uad.getErrorDetails().isEmpty()) {
 				detail.setProgress(EodConstants.PROGRESS_FAILED);
@@ -302,14 +301,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		String entityCode = header.getEntityCode();
 
 		ReceiptUploadDetail rud = new ReceiptUploadDetail();
-		Date receiptDt = fillValueDate(fc);
 
 		rud.setReference(fc.getReference());
 		rud.setFinID(fc.getReferenceID());
 		rud.setAllocationType(fc.getAllocationType());
-		rud.setValueDate(receiptDt);
-		rud.setRealizationDate(receiptDt);
-		rud.setReceivedDate(receiptDt);
+		rud.setValueDate(fc.getAppDate());
+		rud.setRealizationDate(fc.getAppDate());
+		rud.setReceivedDate(fc.getAppDate());
 		rud.setReceiptAmount(fc.getReceiptAmount());
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
@@ -354,6 +352,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		} else {
 			fsi.setReceiptDetails(receiptService.prepareRCDForMA(fc.getAdvises(), rud));
 		}
+
+		Date receiptDt = fillValueDate(fc,
+				fsi.getReceiptDetails().get(fsi.getReceiptDetails().size() - 1).getValueDate());
+		fsi.setValueDate(receiptDt);
+		fsi.setRealizationDate(receiptDt);
+		fsi.setReceivedDate(receiptDt);
+		fsi.getReceiptDetails().forEach(rcd -> rcd.setReceivedDate(receiptDt));
 
 		FinanceDetail fd = null;
 		TransactionStatus txStatus = getTransactionStatus();
@@ -474,10 +479,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		return true;
 	}
 
-	private Date fillValueDate(ManualKnockOffUpload fc) {
+	private Date fillValueDate(ManualKnockOffUpload fc, Date valueDate) {
 		Date receiptDt = fc.getAppDate();
 
 		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+			receiptDt = valueDate;
 			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(fc.getReferenceID(), receiptDt);
 			if (DateUtil.compare(receiptDt, schDate) < 0) {
 				receiptDt = schDate;
