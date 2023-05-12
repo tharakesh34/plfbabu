@@ -24,7 +24,7 @@ public class RPMSDumpService {
 			FinanceMain fm = finEOD.getFinanceMain();
 			RPMSExtract rpmsExtract = new RPMSExtract();
 			rpmsExtract.setAgreementId(Long.parseLong(fpd.getFinReference()));
-			rpmsExtract.setCustomerId(Long.parseLong(fpd.getCustCIF()));
+			rpmsExtract.setCustomerId(fpd.getCustId());
 			rpmsExtract.setStatus(fm.getClosingStatus());
 
 			rpmsExtract.setMultiLinkLoanFlag(null); // FIXME

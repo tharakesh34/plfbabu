@@ -25,7 +25,7 @@ public class BaselTwoDumpService {
 			FinanceMain fm = finEOD.getFinanceMain();
 			BaselTwoExtract baselTwo = new BaselTwoExtract();
 			baselTwo.setAgreementId(Long.parseLong(fpd.getFinReference()));
-			baselTwo.setCustomerId(Long.parseLong(fpd.getCustCIF()));
+			baselTwo.setCustomerId(fpd.getCustId());
 			baselTwo.setLoanApplDate(fm.getFinStartDate());
 			baselTwo.setTotalEmis(fm.getNumberOfTerms());
 			baselTwo.setEmiType("E");
