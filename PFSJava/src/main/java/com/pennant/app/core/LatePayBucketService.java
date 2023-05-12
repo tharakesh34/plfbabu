@@ -184,6 +184,10 @@ public class LatePayBucketService extends ServiceHelper {
 		// calculate DueBucket
 		int newDueBucket = (new BigDecimal(newCurODDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
 
+		if (pfd.getCurODDays() == 0) {
+			newDueBucket = 0;
+		}
+
 		// for due percentage calculation
 		if (netSchdAmount.compareTo(BigDecimal.ZERO) > 0) {
 			duePercentage = (netSchdDue.multiply(new BigDecimal(100))).divide(netSchdAmount, 2, RoundingMode.HALF_DOWN);
