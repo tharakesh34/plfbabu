@@ -17833,7 +17833,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(isLoadProcess)
 					.getCustomerEligibilityCheck();
-			String sqlRule = getRuleService().getAmountRule(financeType.getDownPayRuleDesc(),
+			String sqlRule = getRuleService().getAmountRule(financeType.getDownPayRuleCode(),
 					RuleConstants.MODULE_DOWNPAYRULE, RuleConstants.EVENT_DOWNPAYRULE);
 			BigDecimal downpayPercentage = BigDecimal.ZERO;
 			if (StringUtils.isNotEmpty(sqlRule)) {

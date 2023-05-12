@@ -3467,12 +3467,13 @@ public class FinanceDataValidation {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
 			}
 
-			BigDecimal feeResult = financeDetailService.getDownPayRuleAmount(finType, fm);
+			BigDecimal feeResult = PennantApplicationUtil
+					.unFormateAmount(financeDetailService.getDownPayRuleAmount(finType, fm), 2);
 
 			if (downPayment.compareTo(feeResult) < 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Down pay Amount";
-				valueParm[1] = feeResult.toString();
+				valueParm[1] = PennantApplicationUtil.amountFormate(feeResult, CurrencyUtil.getFormat(fm.getFinCcy()));
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
 			}
 
@@ -3642,7 +3643,7 @@ public class FinanceDataValidation {
 
 			CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(false, finDetail)
 					.getCustomerEligibilityCheck();
-			String sqlRule = ruleService.getAmountRule(finType.getDownPayRuleDesc(), RuleConstants.MODULE_DOWNPAYRULE,
+			String sqlRule = ruleService.getAmountRule(finType.getDownPayRuleCode(), RuleConstants.MODULE_DOWNPAYRULE,
 					RuleConstants.EVENT_DOWNPAYRULE);
 			BigDecimal downpayPercentage = BigDecimal.ZERO;
 			if (StringUtils.isNotEmpty(sqlRule)) {
