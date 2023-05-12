@@ -46,8 +46,10 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.core.FinOverDueService;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -73,6 +75,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	private FinanceDetailService financeDetailService;
 	private FeeRefundHeaderService feeRefundHeaderService;
 	private FinOverDueService finOverDueService;
+	private ManualAdviseService manualAdviseService;
 
 	List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
@@ -162,6 +165,11 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		logger.debug("Leaving");
 	}
 
+	private boolean isValidateCancelManualAdvise(long finID) {
+		List<ManualAdvise> list = manualAdviseService.getCancelledManualAdvise(finID);
+		return list.stream().anyMatch(m -> m.getStatus() == null);
+	}
+
 	/**
 	 * When user clicks on button "btnProceed" button
 	 * 
@@ -188,7 +196,8 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 
 		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.PAYMENTINST.equals(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts)
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) ? isValidateCancelManualAdvise(finID) : true)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}
@@ -295,6 +304,11 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 	@Autowired
 	public void setFinOverDueService(FinOverDueService finOverDueService) {
 		this.finOverDueService = finOverDueService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 
 }
