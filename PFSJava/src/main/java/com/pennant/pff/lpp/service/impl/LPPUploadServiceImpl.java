@@ -81,9 +81,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 					if (detail.getErrorCode() != null) {
 						detail.setProgress(EodConstants.PROGRESS_FAILED);
 					} else {
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-						detail.setErrorCode("");
-						detail.setErrorDesc("");
+						setSuccesStatus(detail);
 						detail.setUserDetails(header.getUserDetails());
 						process(detail, header);
 					}
@@ -201,9 +199,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
 			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
 		} else {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode("");
-			detail.setErrorDesc("");
+			setSuccesStatus(detail);
 		}
 	}
 

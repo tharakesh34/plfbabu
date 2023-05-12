@@ -349,12 +349,14 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		if (FinanceConstants.EARLYSETTLEMENT.equals(purpose) || FinanceConstants.PARTIALSETTLEMENT.equals(purpose)) {
 			if (StringUtils.isNotBlank(createReceiptUploadDAO.getLoanReference(reference, header.getFileName()))) {
 				setError(rud, "90273", "Receipt In process for " + reference);
+				return;
 			}
 		}
 
 		if (FinanceConstants.EARLYSETTLEMENT.equals(purpose)) {
 			if (finAdvancePaymentsDAO.getStatusCountByFinRefrence(rud.getReferenceID()) > 0) {
 				setError(rud, "90508", rud.getReference());
+				return;
 			}
 		}
 
@@ -865,6 +867,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		if (DisbursementConstants.PAYMENT_TYPE_ONLINE.equalsIgnoreCase(receiptMode)
 				&& this.finReceiptHeaderDAO.isOnlineExists(rud)) {
 			setError(rud, "90273", "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey);
+			return;
 		}
 	}
 
@@ -927,6 +930,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 	public void setError(CreateReceiptUpload rud, String message) {
 		setError(rud, "RU0040", message);
+		return;
 	}
 
 	public void setError(CreateReceiptUpload rud, String code, String message) {
@@ -948,12 +952,14 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (StringUtils.isBlank(allocationType)) {
 			setError(uad, "Allocation Sheet: [ALLOCATIONTYPE] with blank value ");
+			return;
 		}
 
 		String referenceCode = uad.getCode();
 		if (StringUtils.isNotBlank(referenceCode)) {
 			if (referenceCode.length() > 8) {
 				setError(uad, "Allocation Sheet: [REFERENCECODE] with lenght more than 8 characters ");
+				return;
 			}
 		}
 
@@ -968,16 +974,19 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
 				setError(uad, "Allocation Sheet: Minor Currency (Decimals) in [PAIDAMOUNT] ");
 				uad.setPaidAmount(actualAmount);
+				return;
 			} else {
 				uad.setPaidAmount(precisionAmount);
 			}
 
 			if (precisionAmount.compareTo(BigDecimal.ZERO) < 0) {
 				setError(uad, "Allocation Sheet: [PAIDAMOUNT] with value <0 ");
+				return;
 			}
 		} catch (Exception e) {
 			uad.setPaidAmount(BigDecimal.ZERO);
 			setError(uad, "Allocation Sheet: [PAIDAMOUNT] ");
+			return;
 		}
 	}
 

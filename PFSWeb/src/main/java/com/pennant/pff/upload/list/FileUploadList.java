@@ -916,6 +916,10 @@ public class FileUploadList extends Window implements Serializable {
 	private void uploadRefresh() {
 		headerRefresh();
 
+		this.fileUploadHeader.setMedia(null);
+		this.fileUploadHeader.setFileName(null);
+		this.fileUploadHeader.setFile(null);
+
 		if (!this.entityCode.isReadonly()) {
 			this.entityCode.clearErrorMessage();
 			this.entityCode.setConstraint("");
@@ -984,9 +988,7 @@ public class FileUploadList extends Window implements Serializable {
 
 	private void headerRefresh() {
 		this.fileUploadHeader.setId(Long.MIN_VALUE);
-		this.fileUploadHeader.setFileName(null);
-		this.fileUploadHeader.setFile(null);
-		this.fileUploadHeader.setMedia(null);
+
 		this.fileUploadHeader.setTotalRecords(0);
 		this.fileUploadHeader.setSuccessRecords(0);
 		this.fileUploadHeader.setFailureRecords(0);
