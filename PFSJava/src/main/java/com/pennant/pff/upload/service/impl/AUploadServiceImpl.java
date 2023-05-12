@@ -341,7 +341,7 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 			String successStatus, String failureStatus) {
 		int progress = detail.getProgress();
 
-		if (progress != EodConstants.PROGRESS_FAILED || progress != EodConstants.PROGRESS_SUCCESS) {
+		if (progress != EodConstants.PROGRESS_FAILED && progress != EodConstants.PROGRESS_SUCCESS) {
 			if (paramSource != null) {
 				paramSource.addValue("ERRORCODE", "");
 				paramSource.addValue("ERRORDESC", "Record is not properly validated.");
