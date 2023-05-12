@@ -104,6 +104,7 @@ public class AutoKnockOffService {
 			ad.setPayableType(knockOffData.getAmountType());
 			ad.setPayableId(knockOffData.getPayableID());
 			ad.setEventProperties(EODUtil.EVENT_PROPS);
+			ad.setCrossLoanAutoKnockOff(knockOffData.isCrossLoanAutoKnockOff());
 
 			for (Entry<Long, List<AutoKnockOffFeeMapping>> entry : knockOffMap.entrySet()) {
 				ad.setBalAmount(ad.getAmount().subtract(ad.getUtilzedAmount()));
