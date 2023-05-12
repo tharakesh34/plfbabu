@@ -62,6 +62,7 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.pff.accounting.TransactionType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -433,13 +434,18 @@ public class PostingsPreparationUtil implements Serializable {
 			returnDataSet.setAppDate(appDate);
 			returnDataSet.setAppValueDate(appDate);
 			returnDataSet.setTranCode(jvPostingEntry.getTxnCode());
-			returnDataSet.setRevTranCode(jvPostingEntry.getRevTxnCode());
 			returnDataSet.setDrOrCr(jvPostingEntry.getTxnEntry());
 			returnDataSet.setShadowPosting(false);
 			returnDataSet.setFlagCreateIfNF(true);
 			returnDataSet.setFlagCreateNew(false);
 			returnDataSet.setPostBranch(jVPosting.getBranch());
-			returnDataSet.setRevTranCode("010");
+
+			if (TransactionType.CREDIT.code().equals(jvPostingEntry.getTxnEntry())) {
+				returnDataSet.setRevTranCode(AccountConstants.TRANCODE_DEBIT);
+			} else {
+				returnDataSet.setRevTranCode(AccountConstants.TRANCODE_CREDIT);
+			}
+
 			returnDataSet.setPostToSys("E");
 			returnDataSet.setAmountType("D");
 			returnDataSet.setUserBranch(jVPosting.getUserDetails().getBranchCode());
