@@ -237,7 +237,7 @@ public class ServiceBranchListCtrl extends GFCBaseListCtrl<ServiceBranch> {
 			lc.setParent(item);
 			lc = new Listcell(csb.getDescription());
 			lc.setParent(item);
-			lc = new Listcell(String.valueOf(csb.getPinCodeId()));
+			lc = new Listcell(String.valueOf(csb.getPinCode()));
 			lc.setParent(item);
 			lc = new Listcell(csb.getCity());
 			lc.setParent(item);
