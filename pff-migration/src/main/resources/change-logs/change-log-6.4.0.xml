@@ -16935,7 +16935,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1561.27" author="vasudevarao.S">
+	<changeSet id="ST#1561.27.1" author="vasudevarao.S">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'NOCLTR';
@@ -16946,13 +16946,13 @@
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanClosureAge',         		'Days between Closure date and Application Date',       'bigint',       8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanCancellationAge',    		'Days between Cancellation Date and Application Date',  'bigint',       8,   '0', '1', 'LoanCancellationAge',       'static,global,dbvalue', ''			  );
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'ClosureType',     				'ClosureType',                							'nvarchar',  	12,  '0', '1', 'Closure_Types',    			'static,global,dbvalue', 'ClosureType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'Sequence No',    				'same letter type is being issued for the same loan ',  'bigint',		8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''   		  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'Status of previous letters',     'Status of previous letters',                 			'nvarchar',  	12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'SequenceNo',    				    'same letter type is being issued for the same loan ',  'bigint',		8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''   		  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'StatusOfpreviousletters',        'Status of previous letters',                 			'nvarchar',  	12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
             ]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1561.28" author="vasudevarao.S">
+	<changeSet id="ST#1561.28.1" author="vasudevarao.S">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'CANCLLTR';
@@ -16963,13 +16963,13 @@
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanClosureAge',         	      'Days between Closure date and Application Date',          'bigint',         	8,  '0', '1', 'LoanClosureAge',        'static,global,dbvalue', ''			 );
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanCancellationAge',   		  'Days between Cancellation Date and Application Date',     'bigint',        	8,  '0', '1', 'LoanCancellationAge',   'static,global,dbvalue', ''			 );
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'ClosureType',     				  'ClosureType',                							 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'Sequence No',    				  'same letter type is being issued for the same loan ',     'bigint', 			8,  '0', '1', 'Sequence No',           'static,global,dbvalue', ''			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'Status of previous letters',     'Status of previous letter’s',               				 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'SequenceNo',    				  'same letter type is being issued for the same loan ',     'bigint', 			8,  '0', '1', 'Sequence No',           'static,global,dbvalue', ''			 );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'StatusOfpreviousletters',        'Status of previous letter’s',               				 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
             ]]>
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1561.29" author="vasudevarao.S">
+	<changeSet id="ST#1561.29.1" author="vasudevarao.S">
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE = 'FEES' and RBEVENT = 'CLOSELTR';
@@ -16980,8 +16980,8 @@
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanClosureAge',          		  'Days between Closure date and Application Date',         'bigint',    8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanCancellationAge',      	  'Days between Cancellation Date and Application Date',    'bigint',    8,   '0', '1', 'LoanCancellationAge',      'static,global,dbvalue', ''			  );
 				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'ClosureType',     				  'ClosureType',                							'nvarchar',  12,  '0', '1', 'Closure_Types',    		'static,global,dbvalue', 'ClosureType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'Sequence No',    				  'same letter type is being issued for the same loan ',    'bigint', 	 8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'Status of previous letters',     'Status of previous letter’s',                 			'nvarchar',  12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'SequenceNo',    				  'same letter type is being issued for the same loan ',    'bigint', 	 8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''			  );
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'StatusOfpreviousletters',        'Status of previous letter’s',                 			'nvarchar',  12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
             ]]>
 		</sql>
 	</changeSet>
@@ -18268,6 +18268,17 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'PAYMINS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PAYINS_TEMPLATE')), 'PAYAMOUNT',0, 'N', NULL, NULL, NULL, NULL, '3', NULL, NULL, NULL, 'AMOUNT_MINOR:0.00', 'M');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'PAYMINS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PAYINS_TEMPLATE')), 'REMARKS',0, 'N', NULL, NULL, NULL, NULL, '4', NULL, NULL, NULL, NULL, 'M');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'PAYMINS_UPLOAD' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'PAYINS_TEMPLATE')), 'OVERRIDEOVERDUE',0, 'N', NULL, NULL, NULL, NULL, '5', NULL, NULL, NULL, NULL, 'M');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1470.23" author="saikrihna.b">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAEEVENTS WHERE AEEVENTCODE in ('REVWRITE_S', 'REVWRITE_N');
+			
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES  ('REVWRITE_S', 	'Reverse WriteOff accounting For Settlement', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
+				INSERT INTO BMTAEEVENTS (AEEVENTCODE, AEEVENTCODEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, ACTIVE) VALUES  ('REVWRITE_N', 	'Reverse WriteOff accounting For NPA', 			1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 1);
 			]]>
 		</sql>
 	</changeSet>
