@@ -332,9 +332,9 @@ public class RepaymentProcessUtil {
 			repaymentPostingsUtil.recalOldestDueKnockOff(fm, profitDetail, valuedate, scheduleDetails);
 		}
 
+		boolean oldFinActive = fm.isFinIsActive();
 		// If all presentment also Approved and upload status is succeed then only need to check the case
 		if (presentmentDetailDAO.getApprovedPresentmentCount(fm.getFinReference()) == 0) {
-			boolean oldFinActive = fm.isFinIsActive();
 			LoanPayment lp = new LoanPayment(fm.getFinID(), fm.getFinReference(), scheduleDetails, rch.getValueDate());
 			boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
@@ -355,7 +355,7 @@ public class RepaymentProcessUtil {
 				fm.setFinIsActive(true);
 			}
 		} else {
-			fm.setFinIsActive(true);
+			fm.setFinIsActive(oldFinActive);
 		}
 
 		profitDetail = accrualService.calProfitDetails(fm, scheduleDetails, profitDetail, valuedate);
