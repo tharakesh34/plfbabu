@@ -171,6 +171,7 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 
 			if (!AccountConstants.TRANTYPE_CREDIT.equals(jve.getTxnEntry())) {
 				jve.setDerivedTxnRef(jve.getTxnReference() - 1);
+				jve.setAccount(jve.getDebitAccount());
 			}
 		}
 
