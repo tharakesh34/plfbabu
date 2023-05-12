@@ -286,8 +286,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		Mandate mandate = fd.getMandate();
 
-		if (InstrumentType.isECS(mandate.getMandateType()) || InstrumentType.isNACH(mandate.getMandateType())
-				|| InstrumentType.isEMandate(mandate.getMandateType())) {
+		if (mandate != null
+				&& (InstrumentType.isECS(mandate.getMandateType()) || InstrumentType.isNACH(mandate.getMandateType())
+						|| InstrumentType.isEMandate(mandate.getMandateType()))) {
 			if (StringUtils.isNotEmpty(mandate.getExternalRef())) {
 				mandate.setExternalMandate(true);
 			}
