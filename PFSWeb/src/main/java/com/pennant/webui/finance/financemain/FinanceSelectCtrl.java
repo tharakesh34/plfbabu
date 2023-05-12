@@ -498,9 +498,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onClick$btnSearchFinRef(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if (this.searchObject == null) {
-			doSearch(false);
-		}
+		doSearch(false);
 
 		Filter[] filters = this.searchObject.getFilters().toArray(new Filter[this.searchObject.getFilters().size()]);
 		if (this.oldVar_sortOperator_finReference == Filter.OP_IN
