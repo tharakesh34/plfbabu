@@ -200,6 +200,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 			String accNumber = lienup.getAccNumber();
 			LienHeader lienheader = lienHeaderDAO.getLienByAcc(accNumber);
+			boolean isNew = false;
 
 			TransactionStatus txStatus = getTransactionStatus();
 			try {
@@ -209,6 +210,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienup.setLienReference(lienheader.getLienReference());
 				} else {
 					lienheader = new LienHeader();
+					isNew = true;
 				}
 
 				FinanceMain fm = lienup.getFinanceMain();
@@ -219,10 +221,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				Mandate mandate = new Mandate();
 				mandate.setAccNumber(lienup.getAccNumber());
 				fd.setMandate(mandate);
-				lienheader.setLienID(lienup.getLienID());
-				lienheader.setLienReference(lienup.getLienReference());
-				lienheader.setId(lienup.getId());
-				lienheader.setSource(lienup.getSource());
 				fd.setLienHeader(lienheader);
 
 				if (lienup.getAction().equals("Y")) {
@@ -255,8 +253,13 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				}
 				lienUploadDAO.update(lienup, lienup.getId());
 
+				lienheader.setLienID(lienup.getLienID());
+				lienheader.setLienReference(lienup.getLienReference());
+				lienheader.setId(lienup.getId());
+				lienheader.setSource(lienup.getSource());
+
 				LienDetails lu = getLienDetails(header, lienup);
-				if (lienheader.getLienID() <= 0) {
+				if (isNew) {
 					lienHeaderDAO.save(lienheader);
 					lienDetailsDAO.save(lu);
 				} else {
@@ -360,7 +363,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 		}
 		lu.setLienID(lienup.getLienID());
-		lu.setSource(RequestSource.UPLOAD.name());
+		lu.setSource(lienup.getSource());
 		lu.setReference(lienup.getReference());
 		lu.setAccountNumber(lienup.getAccNumber());
 		lu.setLienReference(lienup.getLienReference());

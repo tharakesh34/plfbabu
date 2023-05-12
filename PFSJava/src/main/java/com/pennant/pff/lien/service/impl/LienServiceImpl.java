@@ -155,6 +155,10 @@ public class LienServiceImpl implements LienService {
 				continue;
 			}
 
+			if ((Labels.getLabel("label_Lien_Type_Manual")).equals(lh.getMarking())) {
+				continue;
+			}
+
 			List<LienDetails> lienDetail = lienDetailsDAO.getLienListByLienId(lh.getLienID());
 
 			boolean isAllInActive = true;
@@ -293,7 +297,6 @@ public class LienServiceImpl implements LienService {
 		}
 
 	}
-
 
 	private void setLienDeMarkReason(LienDetails lu, String moduleDefiner) {
 		switch (moduleDefiner) {

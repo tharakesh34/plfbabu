@@ -182,13 +182,15 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (!this.finReference.isButtonDisabled())
+			this.finRefValue = "";
+			if (!this.finReference.isReadonly())
 				this.finRefValue = this.finReference.getValidatedValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
+			this.accountNumber = "";
 			if (!this.accNumber.isDisabled())
 				this.accountNumber = this.accNumber.getValue();
 		} catch (WrongValueException we) {
@@ -226,13 +228,11 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		doClearMessage();
 		doRemoveValidation();
 
-		this.finReference.getButton().setDisabled(true);
-		this.finReference.getTextbox().setReadonly(true);
 		this.accNumber.setReadonly(false);
-
 		this.accNumber.setDisabled(false);
 		this.finReference.setValue("");
 		this.finReference.setConstraint("");
+		this.finReference.setReadonly(true);
 
 		logger.debug(Literal.LEAVING);
 	}
