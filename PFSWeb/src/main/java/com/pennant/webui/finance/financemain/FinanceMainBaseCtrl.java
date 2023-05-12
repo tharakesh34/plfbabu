@@ -7391,7 +7391,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 		FinanceMain aFinanceMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		if (financeType.isFinIsDwPayRequired()) {
+		if (FinServiceEvent.ORG.equals(moduleDefiner) && financeType.isFinIsDwPayRequired()) {
 
 			BigDecimal feeResult = financeDetailService.getDownPayRuleAmount(financeType, aFinanceMain);
 
