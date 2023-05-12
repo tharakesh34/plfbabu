@@ -64,7 +64,9 @@ public class LienServiceImpl implements LienService {
 			lh = getLienHeader(fm, fd);
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
-			lh.setMarkingDate(fd.getMandate().getStartDate());
+			if (!FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
+				lh.setMarkingDate(fd.getMandate().getStartDate());
+			}
 
 			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
 				lh.setLienID(fd.getLienHeader().getLienID());
@@ -90,6 +92,7 @@ public class LienServiceImpl implements LienService {
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 					lu.setDemarkingDate(fm.getClosedDate());
 					setLienDeMarkStatus(lu, fm.getModuleDefiner());
+					setLienDeMarkReason(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
 				}
@@ -107,7 +110,9 @@ public class LienServiceImpl implements LienService {
 		lu.setHeaderID(headerID);
 		lu.setLienID(lh.getLienID());
 		lu.setLienReference(lh.getLienReference());
-		lh.setMarkingDate(fd.getMandate().getStartDate());
+		if (!FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
+			lu.setMarkingDate(fd.getMandate().getStartDate());
+		}
 		lu.setDemarking(lh.getDemarking());
 		lu.setDemarkingDate(lh.getDemarkingDate());
 		lu.setMarking(lh.getMarking());
@@ -125,6 +130,7 @@ public class LienServiceImpl implements LienService {
 		String accNum = "";
 		FinanceMain fmBef = fm.getBefImage();
 		fm.setModuleDefiner(fd.getModuleDefiner());
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 		if (fmBef != null) {
 			if (fmBef.getMandateID() == null) {
 				return;
@@ -156,8 +162,16 @@ public class LienServiceImpl implements LienService {
 				if (lu.getReference().equals(fm.getFinReference())) {
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-					lu.setDemarkingDate(fm.getClosedDate());
-
+					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						if (fd.getMandate().getSwapEffectiveDate() != null) {
+							lu.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
+						} else {
+							lu.setDemarkingDate(currentTime);
+						}
+					} else {
+						lu.setDemarkingDate(fm.getClosedDate());
+					}
+					setLienDeMarkReason(lu, fm.getModuleDefiner());
 					setLienDeMarkStatus(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
@@ -172,30 +186,21 @@ public class LienServiceImpl implements LienService {
 				lh.setLienStatus(false);
 				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 				lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-				lh.setDemarkingDate(fm.getClosedDate());
+				if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+					if (fd.getMandate().getSwapEffectiveDate() != null) {
+						lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
+					} else {
+						lh.setDemarkingDate(currentTime);
+					}
+				} else {
+					lh.setDemarkingDate(fm.getClosedDate());
+				}
+
 				lienHeaderDAO.update(lh);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void setLienDeMarkStatus(LienDetails lu, String moduleDefiner) {
-		switch (moduleDefiner) {
-		case FinServiceEvent.RPYBASICMAINTAIN:
-			lu.setDemarkingReason("Repay method changed");
-			break;
-		case FinServiceEvent.RECEIPT:
-			lu.setDemarkingReason("Early settlement");
-			break;
-		case FinServiceEvent.CANCELFIN:
-			lu.setDemarkingReason("Loan cancelled");
-			break;
-		default:
-			lu.setMarkingReason("");
-			break;
-		}
-
 	}
 
 	private LienHeader getLienHeader(FinanceMain fm, FinanceDetail fd) {
@@ -269,6 +274,43 @@ public class LienServiceImpl implements LienService {
 			ld.setMarkingReason(" ");
 			break;
 		}
+	}
+
+	private void setLienDeMarkStatus(LienDetails lu, String moduleDefiner) {
+		switch (moduleDefiner) {
+		case FinServiceEvent.RPYBASICMAINTAIN:
+			lu.setDemarkingReason("Repay method changed");
+			break;
+		case FinServiceEvent.RECEIPT:
+			lu.setDemarkingReason("Early settlement");
+			break;
+		case FinServiceEvent.CANCELFIN:
+			lu.setDemarkingReason("Loan cancelled");
+			break;
+		default:
+			lu.setMarkingReason("");
+			break;
+		}
+
+	}
+
+
+	private void setLienDeMarkReason(LienDetails lu, String moduleDefiner) {
+		switch (moduleDefiner) {
+		case FinServiceEvent.RPYBASICMAINTAIN:
+			lu.setDemarkingReason("Repay method changed");
+			break;
+		case FinServiceEvent.RECEIPT:
+			lu.setDemarkingReason("Early settlement");
+			break;
+		case FinServiceEvent.CANCELFIN:
+			lu.setDemarkingReason("Loan cancelled");
+			break;
+		default:
+			lu.setMarkingReason("");
+			break;
+		}
+
 	}
 
 	@Autowired
