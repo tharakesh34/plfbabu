@@ -1206,7 +1206,7 @@ public class ServiceBranchDialogCtrl extends GFCBaseCtrl<ServiceBranch> {
 		readOnlyComponent(isReadOnly, fintypes);
 
 		fintypes.setWidth("80px");
-		fintypes.setModuleName("FinanceType");
+		fintypes.setModuleName("CSDFinanceType");
 		fintypes.setValueColumn("FinType");
 		fintypes.setDescColumn("FinTypeDesc");
 		fintypes.setValidateColumns(new String[] { "FinType" });
@@ -1248,7 +1248,7 @@ public class ServiceBranchDialogCtrl extends GFCBaseCtrl<ServiceBranch> {
 		readOnlyComponent(isReadOnly, barnches);
 
 		barnches.setWidth("80px");
-		barnches.setModuleName("Branch");
+		barnches.setModuleName("CSDBranch");
 		barnches.setValueColumn("BranchCode");
 		barnches.setDescColumn("BranchDesc");
 		barnches.setValidateColumns(new String[] { "BranchCode" });

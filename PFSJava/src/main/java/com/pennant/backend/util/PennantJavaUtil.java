@@ -965,6 +965,10 @@ public class PennantJavaUtil {
 						new String[] { "BranchCode", "BranchDesc" }, new Object[][] { { "BranchIsActive", "0", 1 } },
 						350));
 
+		ModuleUtil.register("CSDBranch",
+				new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches", "RMTBranches_AView" }, masterWF,
+						new String[] { "BranchCode", "BranchDesc" }, null, 350));
+
 		ModuleUtil.register("NonSelectAllBranch",
 				new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches", "RMTBranches_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, new Object[][] { { "BranchIsActive", "0", 1 } },
@@ -1457,6 +1461,11 @@ public class PennantJavaUtil {
 						new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF,
 						new String[] { "FinType", "FinCategory", "FinTypeDesc", "FinDivision" },
 						new Object[][] { { "FinIsActive", "0", 1 }, { "Product", "0", "" } }, 600));
+
+		ModuleUtil.register("CSDFinanceType",
+				new ModuleMapping("FinanceType", FinanceType.class,
+						new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF,
+						new String[] { "FinType", "FinCategory", "FinTypeDesc", "FinDivision" }, null, 600));
 
 		ModuleUtil.register("CMTFinanceType",
 				new ModuleMapping("FinanceType", FinanceType.class,
