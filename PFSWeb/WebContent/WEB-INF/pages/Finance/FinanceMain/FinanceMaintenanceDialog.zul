@@ -182,7 +182,7 @@
 													<label id="label_FinanceMainDialog_DownPayBank" value="${c:l('label_FinanceMainDialog_DownPayBank.value')}" />
 													<currencyBox id="downPayBank" />
 												</row>
-												<row id="row_downPaySupl" visible="false">
+												<row id="row_downPaySupl">
 													<label id="label_FinanceMainDialog_DownPaySupl" value="${c:l('label_FinanceMainDialog_DownPaySupl.value')}" />
 													<currencyBox id="downPaySupl" />
 												</row>
