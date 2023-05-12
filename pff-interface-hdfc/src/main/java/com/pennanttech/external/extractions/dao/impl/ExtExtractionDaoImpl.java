@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.sql.DataSource;
 
@@ -43,6 +44,31 @@ public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDa
 				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
 
 					CallableStatement callableStatement = connection.prepareCall("{ call " + spName + "() }");
+					return callableStatement;
+
+				}
+			}, new ArrayList<SqlParameter>());
+			status = "SUCCESS";
+		} catch (Exception e) {
+			e.printStackTrace();
+			status = "Error In Calling Procedure";
+		}
+		logger.info("SP Execution Completed.");
+		return status;
+	}
+
+	@Override
+	public String executeSp(String spName, Date appDate) {
+		logger.info("SP Execution Started.");
+		String status = "FAIL";
+		try {
+			mainNamedJdbcTemplate.getJdbcOperations().call(new CallableStatementCreator() {
+
+				@Override
+				public CallableStatement createCallableStatement(Connection connection) throws SQLException {
+
+					CallableStatement callableStatement = connection
+							.prepareCall("{ call " + spName + "(" + appDate + ") }");
 					return callableStatement;
 
 				}

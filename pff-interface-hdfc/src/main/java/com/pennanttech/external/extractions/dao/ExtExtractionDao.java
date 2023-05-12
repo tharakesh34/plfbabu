@@ -1,5 +1,7 @@
 package com.pennanttech.external.extractions.dao;
 
+import java.util.Date;
+
 public interface ExtExtractionDao {
 
 	long getSeqNumber(String tableName);
@@ -9,5 +11,7 @@ public interface ExtExtractionDao {
 	public String executeSp(String spName, String fileName);
 
 	void truncateTable(String tableName);
+
+	String executeSp(String spName, Date appDate);
 
 }

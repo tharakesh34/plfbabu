@@ -171,7 +171,8 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	@Override
 	public void processFinconGLExtraction() {
-		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL);
+		Date appDate = SysParamUtil.getAppDate();
+		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL, appDate);
 		if (!"SUCCESS".equals(finconSPStatus)) {
 			logger.debug("EXT_FINCONGL: SP extraction failed.");
 			return;

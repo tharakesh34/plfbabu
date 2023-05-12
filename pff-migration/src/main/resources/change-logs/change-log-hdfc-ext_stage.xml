@@ -39,7 +39,7 @@
 			<column name="TYPE_OF_LIQUIDATION" type="VARCHAR(1)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="002" author="goutham.ch">
 		<createTable tableName="FINCON_GL_STG">
 			<column name="ACCOUNT" type="VARCHAR(50)" />
@@ -142,7 +142,7 @@
 			<column name="REPRICE_INDEX" type="VARCHAR(13)" />
 			<column name="DPD" type="bigint" />
 			<column name="TOTAL_INTEREST" type="bigint" />
-     		<column name="BILLED_INTEREST" type="bigint" />
+			<column name="BILLED_INTEREST" type="bigint" />
 			<column name="BILLED_NOT_RECEIVED_INTEREST" type="bigint" />
 			<column name="BILLED_NOT_RECEIVED_PRINCIPAL" type="bigint" />
 			<column name="CUSTOMERNAME" type="VARCHAR(50)" />
@@ -156,7 +156,7 @@
 		</createTable>
 	</changeSet>
 
-<changeSet id="005" author="r.sreeram">
+	<changeSet id="005" author="r.sreeram">
 		<createTable tableName="BASELTWO">
 			<column name="AGREEMENTID" type="bigint" />
 			<column name="CUSTOMERID" type="bigint" />
@@ -240,9 +240,64 @@
 			<column name="TURNOVER_AMT_YEAR_THREE" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet author="goutham.ch" id="004.1">
-		<renameColumn newColumnName="ACCRUED_INTEREST" oldColumnName="ACCRUED_INTERESTNUMBER" tableName="ALM_REPORT" />
+		<renameColumn newColumnName="ACCRUED_INTEREST" oldColumnName="ACCRUED_INTERESTNUMBER"
+			tableName="ALM_REPORT" />
+	</changeSet>
+
+
+	<changeSet id="007" author="SREERAM.R" dbms="oracle">
+		<createProcedure>
+			CREATE OR REPLACE procedure SP_FINCON_GL(exe_postdate date) AS
+			BEGIN
+			execute immediate 'truncate table
+			FINCON_GL_STG';
+			DECLARE
+			PERIOD VARCHAR2(20 CHAR);
+			ACC_DATE VARCHAR2(20 CHAR);
+			BATCH_NAME VARCHAR2(20 CHAR);
+
+
+			Begin
+			SELECT
+			TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'Mon-yy') into PERIOD FROM SMTPARAMETERS where SYSPARMCODE='APP_DATE';
+			SELECT TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'DD-Mon-YY') into ACC_DATE FROM SMTPARAMETERS where
+			SYSPARMCODE='APP_DATE';
+			SELECT TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'DD-Mon-yyyy') into BATCH_NAME FROM
+			SMTPARAMETERS where
+			SYSPARMCODE='APP_DATE';
+
+			INSERT INTO FINCON_GL_STG
+			(BRANCH,CURRENCY,CURRENCYCODE,DR_AMOUNT,CR_AMOUNT,JOURNAL_SOURCE,JOURNAL_CATEGORY,SOURCE_GL_CODE,BOOKS,CONST1,CONST2,PERIOD,ACC_DATE,BATCH_NAME,
+			JOURNAL_NAME)
+			select
+			po.postbranch AS BRANCH,
+			'INR' AS CURRENCY,
+			'INR' AS CURRENCYCODE,
+			CASE WHEN PO.DRORCR='D' THEN
+			SUM(PO.POSTAMOUNT) ELSE 0 END AS DR_AMOUNT,
+			CASE WHEN PO.DRORCR='C' THEN SUM(PO.POSTAMOUNT) ELSE 0 END AS CR_AMOUNT,
+			'PN' AS JOURNAL_SOURCE,
+			'File 1: Closing TB' AS JOURNAL_CATEGORY,
+			PERIOD,
+			ACC_DATE,
+			'PNFile 1: Closing TB'||BATCH_NAME,
+			'PNFile 1: Closing TB'|| TO_CHAR((TO_DATE((ACC_DATE),'DD-Mon-yyyy')-1),'DD-Mon-yyyy') JOURNAL_NAME,
+			AM.HOSTACCOUNT AS
+			SOURCE_GL_CODE,
+			'1' AS BOOKS,
+			'NEW' AS CONST1,
+			'A' AS CONST2
+			From postings PO
+			INNER JOIN ACCOUNTMAPPING AM ON PO.ACCOUNT =
+			AM.ACCOUNT
+			WHERE PO.POSTDATE = exe_postdate GROUP BY
+			po.postbranch,PO.DRORCR,AM.HOSTACCOUNT;
+			END;
+			COMMIT;
+			end SP_FINCON_GL;
+		</createProcedure>
 	</changeSet>
 
 </databaseChangeLog>
