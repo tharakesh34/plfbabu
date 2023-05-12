@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -83,21 +84,23 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 	}
 
 	public void validate(CustomerKycDetail detail) {
-		if (detail.getCustEMailTypeCode() != null) {
-			if (customerEMailDAO.getEMailTypeCount(detail.getCustEMailTypeCode()) <= 0) {
-				setError(detail, "90701", "EMailType", detail.getCustEMailTypeCode());
-				return;
-			}
+		if (StringUtils.isEmpty(detail.getCustEMailTypeCode())) {
+			return;
+		}
+		
+		if (customerEMailDAO.getEMailTypeCount(detail.getCustEMailTypeCode()) <= 0) {
+			setError(detail, "90701", "EMailType", detail.getCustEMailTypeCode());
+			return;
+		}
 
-			if (!(detail.getCustEMailPriority() >= 1 && detail.getCustEMailPriority() <= 5)) {
-				setError(detail, "90110", String.valueOf(detail.getCustEMailPriority()));
-				return;
-			}
+		if (!(detail.getCustEMailPriority() >= 1 && detail.getCustEMailPriority() <= 5)) {
+			setError(detail, "90110", String.valueOf(detail.getCustEMailPriority()));
+			return;
+		}
 
-			if (!EmailValidator.getInstance().isValid(detail.getCustEMail())) {
-				setError(detail, "90237", detail.getCustEMail());
-				return;
-			}
+		if (!EmailValidator.getInstance().isValid(detail.getCustEMail())) {
+			setError(detail, "90237", detail.getCustEMail());
+			return;
 		}
 	}
 

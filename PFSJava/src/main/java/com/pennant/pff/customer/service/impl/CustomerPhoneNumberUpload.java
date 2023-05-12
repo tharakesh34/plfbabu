@@ -3,6 +3,7 @@ package com.pennant.pff.customer.service.impl;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
@@ -85,10 +86,10 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 	}
 
 	public void validate(CustomerKycDetail detail) {
-		if (detail.getPhoneTypeCode() == null) {
+		if (StringUtils.isEmpty(detail.getPhoneTypeCode())) {
 			return;
 		}
-		
+
 		PhoneType phoneType = phoneTypeDAO.getPhoneTypeById(detail.getPhoneTypeCode(), "");
 		if (phoneType != null) {
 			String regex = phoneType.getPhoneTypeRegex();

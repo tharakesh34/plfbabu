@@ -247,22 +247,6 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
-		List<String> mntstsList = kycDetailsUploadDAO.getMaintainStatus(finID);
-
-		if (CollectionUtils.isNotEmpty(mntstsList)) {
-			StringBuilder msg = new StringBuilder();
-			for (String ref : mntstsList) {
-				if (msg.length() > 0) {
-					msg.append(", ");
-				}
-
-				msg.append(ref);
-			}
-
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_04, msg.toString());
-			return;
-		}
-
 		List<String> references = kycDetailsUploadDAO.getReceiptQueueList(custId);
 
 		if (CollectionUtils.isNotEmpty(references)) {
@@ -285,6 +269,11 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 
 		if (fm == null) {
 			setError(detail, CustomerDetailsUploadError.KYC_ADD_02);
+			return;
+		}
+
+		if (fm.getRcdMaintainSts() != null) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_04, fm.getRcdMaintainSts());
 			return;
 		}
 

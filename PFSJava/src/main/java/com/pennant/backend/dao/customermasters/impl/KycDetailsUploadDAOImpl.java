@@ -195,15 +195,6 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 	}
 
 	@Override
-	public List<String> getMaintainStatus(long finID) {
-		String sql = "Select FinEvent From FinServiceInstruction Where FinID = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return jdbcOperations.query(sql, (rs, rowNum) -> rs.getString(1), finID);
-	}
-
-	@Override
 	public String getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" bcd.CustCif, bcd.FinReference, bcd.CustAddrType, bcd.CustAddrPriority");

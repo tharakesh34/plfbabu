@@ -24,5 +24,4 @@ public interface KycDetailsUploadDAO {
 
 	List<String> getReceiptQueueList(long custId);
 
-	List<String> getMaintainStatus(long finID);
 }
