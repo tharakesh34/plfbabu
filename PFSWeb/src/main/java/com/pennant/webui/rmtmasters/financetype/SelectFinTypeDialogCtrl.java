@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -41,6 +42,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.systemmasters.DivisionDetailDAO;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
@@ -71,6 +73,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private FinanceTypeListCtrl financeTypeListCtrl;
 	private FinanceType financeType;
 	private FinanceTypeService financeTypeService;
+	private DivisionDetailDAO divisionDetailDAO;
 
 	private boolean isCopyProcess;
 	private boolean isPromotion;
@@ -334,6 +337,8 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setFinIsGenRef(true);
 		}
 
+		aFinanceType.setLovDescEntityCode(divisionDetailDAO.getEntityCodeByDivision(aFinanceType.getFinDivision(), ""));
+
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
@@ -373,5 +378,10 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
 		this.financeTypeService = financeTypeService;
+	}
+
+	@Autowired
+	public void setDivisionDetailDAO(DivisionDetailDAO divisionDetailDAO) {
+		this.divisionDetailDAO = divisionDetailDAO;
 	}
 }
