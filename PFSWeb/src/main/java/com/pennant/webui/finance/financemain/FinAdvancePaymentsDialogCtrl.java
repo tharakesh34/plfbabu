@@ -645,7 +645,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						aFinAdvancePayments.getBeneficiaryAccNo(), aFinAdvancePayments.getiFSC());
 			}
 			doWriteBeanToComponents(aFinAdvancePayments);
-			if (poIssued) {
+			if (!enqModule && poIssued) {
 				doReadOnly();
 				this.btnSave.setVisible(true);
 				this.btnGetCustBeneficiary.setVisible(false);
@@ -783,8 +783,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.vasReference.setDisabled(true);
 		if (enqModule) {
 			this.btnPennyDropResult.setVisible(false);
+			this.btnUploadDoc.setVisible(false);
+			this.btnGetCustBeneficiary.setVisible(false);
 		}
-
+		this.pennyDropResult.setReadonly(true);
+		this.txnDetails.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
