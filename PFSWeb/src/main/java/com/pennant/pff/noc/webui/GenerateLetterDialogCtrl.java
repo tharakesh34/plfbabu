@@ -1,34 +1,60 @@
 package com.pennant.pff.noc.webui;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.util.ErrorControl;
+import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.receipt.constants.Allocation;
 
 public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	private static final long serialVersionUID = 3293101778075270047L;
@@ -50,6 +76,9 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	protected Textbox closureType;
 	protected Textbox letterType;
 	protected Textbox closureReason;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tab letterLogDetailTab;
 
 	protected Label totalPriSchd;
 	protected Label priPaid;
@@ -70,9 +99,16 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	protected Label feePaid;
 	protected Label feeWaived;
 
+	protected Listbox listBoxPaybles;
+
+	protected String selectMethodName = "onSelectTab";
+
 	private GenerateLetter generateLetter;
 	private transient GenerateLetterService generateLetterService;
 	private transient GenerateLetterListCtrl generateLetterListCtrl;
+	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
+	private FinanceDetail financeDetail;
+	private int ccyFormatter = 0;
 
 	public GenerateLetterDialogCtrl() {
 		super();
@@ -91,7 +127,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		try {
 
 			this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
-
+			this.moduleCode = (String) arguments.get("moduleCode");
 			if (this.generateLetter == null) {
 				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
@@ -112,7 +148,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			}
 
 			doSetFieldProperties();
-			doCheckRights();
 			doShowDialog(this.generateLetter);
 
 		} catch (Exception e) {
@@ -320,16 +355,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		return processCompleted;
 	}
 
-	public void onClick$btnDelete(Event event) throws InterruptedException {
-		logger.debug(Literal.ENTERING.concat(event.toString()));
-
-		final GenerateLetter gl = new GenerateLetter();
-		BeanUtils.copyProperties(this.generateLetter, gl);
-		doDelete(String.valueOf(gl.getId()), gl);
-
-		logger.debug(Literal.LEAVING.concat(event.toString()));
-	}
-
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
@@ -397,12 +422,20 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	private void doWriteBeanToComponents(GenerateLetter gl) {
 		logger.debug(Literal.ENTERING);
+		this.ccyFormatter = CurrencyUtil
+				.getFormat(gl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		FinanceMain fm = gl.getReceiptDTO().getFinanceMain();
+		FinanceMain fm = gl.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		dofillDetails(gl.getFinanceDetail());
+
+		appendFeeDetailTab(true);
+
+		appendGenerateLetterEnquiryTab(true);
 
 		this.finReference.setValue(fm.getFinReference());
-		this.custCIF.setValue(fm.getCustCIF());
-		this.custName.setValue(fm.getCustAcctHolderName());
+		this.custCIF.setValue(gl.getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
+		this.custName.setValue(gl.getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
 		this.finType.setValue(fm.getFinType());
 		this.finStatus.setValue(fm.getFinStatus());
 		this.finStatusReason.setValue(fm.getFinStsReason());
@@ -420,6 +453,262 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.recordStatus.setValue(gl.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void appendFeeDetailTab(boolean isLoadProcess) {
+		logger.debug(Literal.ENTERING);
+
+		try {
+
+			if (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE)) == null) {
+				createTab(AssetConstants.UNIQUE_ID_FEE, isLoadProcess);
+			} else {
+				if (!isLoadProcess) {
+					Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
+					tab.setVisible(false);
+				}
+			}
+
+			if (isLoadProcess) {
+
+				Tabpanel tabPanel = getTabpanel(AssetConstants.UNIQUE_ID_FEE);
+				if (tabPanel != null) {
+					tabPanel.getChildren().clear();
+				}
+				Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_FEE));
+				tab.setVisible(true);
+
+				Map<String, Object> map = getDefaultArguments();
+				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
+				map.put("moduleDefiner", this.moduleCode);
+				map.put("eventCode", "GENERLTR");
+				map.put("isReceiptsProcess", false);
+				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",
+						getTabpanel(AssetConstants.UNIQUE_ID_FEE), map);
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void appendGenerateLetterEnquiryTab(boolean isLoadProcess) {
+		logger.debug(Literal.ENTERING);
+
+		try {
+
+			if (tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_LETTERLOG)) == null) {
+				createTab(AssetConstants.UNIQUE_ID_LETTERLOG, isLoadProcess);
+			} else {
+				if (!isLoadProcess) {
+					Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_LETTERLOG));
+					tab.setVisible(false);
+				}
+			}
+
+			if (isLoadProcess) {
+
+				Tabpanel tabPanel = getTabpanel(AssetConstants.UNIQUE_ID_LETTERLOG);
+				if (tabPanel != null) {
+					tabPanel.getChildren().clear();
+				}
+				Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_LETTERLOG));
+				tab.setVisible(true);
+
+				Map<String, Object> map = getDefaultArguments();
+				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_LETTERLOG));
+				map.put("moduleDefiner", this.moduleCode);
+				map.put("eventCode", "GENERLTR");
+				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
+				Executions.createComponents(getLetterLogPageName(), getTabpanel(AssetConstants.UNIQUE_ID_LETTERLOG),
+						map);
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public static String getLetterLogPageName() {
+		StringBuilder builder = new StringBuilder("/WEB-INF/pages/NOC/LetterLogEnquiryDialog");
+		builder.append(".zul");
+		return builder.toString();
+	}
+
+	private void dofillDetails(FinanceDetail findetail) {
+		FinanceSummary financeSummary = findetail.getFinScheduleData().getFinanceSummary();
+		if (financeSummary != null) {
+
+			BigDecimal priWaived = BigDecimal.ZERO;
+			BigDecimal pftWaived = BigDecimal.ZERO;
+
+			List<ReceiptAllocationDetail> waiver = generateLetterService
+					.getPrinAndPftWaiver(financeSummary.getFinReference());
+
+			if (waiver != null) {
+				for (ReceiptAllocationDetail al : waiver) {
+					if (al.getAllocationType().equals(Allocation.PRI)
+							|| al.getAllocationType().equals(Allocation.FUT_PRI)) {
+						priWaived = priWaived.add(al.getWaivedAmount());
+					}
+					if (al.getAllocationType().equals(Allocation.PFT)
+							|| al.getAllocationType().equals(Allocation.FUT_PFT)) {
+						pftWaived = pftWaived.add(al.getWaivedAmount());
+					}
+				}
+			}
+
+			this.totalPriSchd.setValue(CurrencyUtil.format(financeSummary.getOutStandPrincipal(), ccyFormatter));
+			this.priPaid.setValue(CurrencyUtil.format(financeSummary.getSchdPriPaid(), ccyFormatter));
+			this.priWaived.setValue(CurrencyUtil.format(priWaived, ccyFormatter));
+
+			this.totalProfitSchd.setValue(CurrencyUtil.format(financeSummary.getTotalProfit(), ccyFormatter));
+			this.profitPaid.setValue(CurrencyUtil.format(financeSummary.getSchdPftPaid(), ccyFormatter));
+			this.profitWaived.setValue(CurrencyUtil.format(pftWaived, ccyFormatter));
+
+			this.totalLPP.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
+			this.lPPWaived.setValue(CurrencyUtil.format(financeSummary.getFinODTotWaived(), ccyFormatter));
+			this.lPPPaid.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
+
+			this.totalLPI.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
+			this.lPIPaid.setValue(CurrencyUtil.format(financeSummary.getFinODTotWaived(), ccyFormatter));
+			this.lPIWaived.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
+
+			this.totalOtherFee.setValue(CurrencyUtil.format(financeSummary.getTotalFees(), ccyFormatter));
+			this.feePaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
+			this.feeWaived.setValue(CurrencyUtil.format(financeSummary.getTotalWaiverFee(), ccyFormatter));
+
+			this.totalBounces.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
+			this.bouncesPaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
+			this.bouncesWaived.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
+
+			dofillPaybleDetails(financeSummary.getFinID());
+
+		}
+	}
+
+	private void dofillPaybleDetails(long finID) {
+		List<FinExcessAmount> excessAvailable = generateLetterService.getExcessAvailable(finID);
+
+		if (CollectionUtils.isEmpty(excessAvailable)) {
+			return;
+		}
+
+		BigDecimal amount = BigDecimal.ZERO;
+		BigDecimal inProgressAmt = BigDecimal.ZERO;
+		BigDecimal adjustAmt = BigDecimal.ZERO;
+		BigDecimal balanceAmt = BigDecimal.ZERO;
+
+		for (FinExcessAmount e : excessAvailable) {
+			amount = amount.add(e.getAmount());
+			inProgressAmt = inProgressAmt.add(e.getReservedAmt());
+			adjustAmt = adjustAmt.add(e.getUtilisedAmt());
+			balanceAmt = balanceAmt.add(e.getBalanceAmt());
+		}
+
+		Listitem item = new Listitem();
+
+		Listcell lc;
+
+		lc = new Listcell("Excess");
+		lc.setSpan(2);
+		lc.setStyle("text-align:left");
+		lc.setParent(item);
+
+		lc = new Listcell(CurrencyUtil.format(amount, ccyFormatter));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
+
+		lc = new Listcell(CurrencyUtil.format(inProgressAmt, ccyFormatter));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
+
+		lc = new Listcell(CurrencyUtil.format(adjustAmt, ccyFormatter));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
+
+		lc = new Listcell(CurrencyUtil.format(balanceAmt, ccyFormatter));
+		lc.setStyle("text-align:right");
+		lc.setParent(item);
+
+		this.listBoxPaybles.appendChild(item);
+
+		// set Total
+		Listitem totitem = new Listitem();
+		totitem.setStyle("background-color: #C0EBDF;align:bottom;");
+
+		Listcell lcell;
+
+		lcell = new Listcell("TOTALS");
+		lcell.setSpan(2);
+		lcell.setStyle("text-align:left");
+		lcell.setParent(totitem);
+
+		lcell = new Listcell(CurrencyUtil.format(amount, ccyFormatter));
+		lcell.setStyle("text-align:right");
+		lcell.setParent(totitem);
+
+		lcell = new Listcell(CurrencyUtil.format(inProgressAmt, ccyFormatter));
+		lcell.setStyle("text-align:right");
+		lcell.setParent(totitem);
+
+		lcell = new Listcell(CurrencyUtil.format(adjustAmt, ccyFormatter));
+		lcell.setStyle("text-align:right");
+		lcell.setParent(totitem);
+
+		lcell = new Listcell(CurrencyUtil.format(balanceAmt, ccyFormatter));
+		lcell.setStyle("text-align:right");
+		lcell.setParent(totitem);
+
+		this.listBoxPaybles.appendChild(totitem);
+
+	}
+
+	private Map<String, Object> getDefaultArguments() {
+		this.financeDetail = this.generateLetter.getFinanceDetail();
+
+		final Map<String, Object> map = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("generateLetter", this.generateLetter);
+		map.put("financeMainDialogCtrl", this);
+		map.put("finHeaderList", getFinBasicDetails());
+		map.put("financeDetail", getFinanceDetail());
+		map.put("ccyFormatter", CurrencyUtil
+				.getFormat(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+
+		return map;
+	}
+
+	private Object getFinBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		FinanceMain financeMain = this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		arrayList.add(0, financeMain.getFinType());
+		arrayList.add(1, financeMain.getFinCcy());
+		arrayList.add(2, financeMain.getScheduleMethod());
+		arrayList.add(3, financeMain.getFinReference());
+		arrayList.add(4, financeMain.getProfitDaysBasis());
+		arrayList.add(5, financeMain.getGrcPeriodEndDate());
+		arrayList.add(6, financeMain.isAllowGrcPeriod());
+		FinanceType fianncetype = getFinanceDetail().getFinScheduleData().getFinanceType();
+		if (fianncetype != null && StringUtils.isNotEmpty(fianncetype.getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory());
+		if (getFinanceDetail().getCustomerDetails() != null
+				&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
+			arrayList.add(9, getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
+		} else {
+			arrayList.add(9, "");
+		}
+		arrayList.add(10, false);
+		arrayList.add(11, this.moduleCode);
+		return arrayList;
 	}
 
 	private void doRemoveValidation() {
@@ -444,25 +733,17 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doCheckRights() {
+	public void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_CustomerServiceBranch_btnNew"));
-		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerServiceBranchDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerServiceBranchDialog_btnDelete"));
-		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerServiceBranchDialog_btnSave"));
+		int finCcy = CurrencyUtil
+				.getFormat(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		this.btnCancel.setVisible(false);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void doSetFieldProperties() {
-		logger.debug(Literal.ENTERING);
-
-		this.finReference.setMaxlength(6);
+		this.finReference.setMaxlength(15);
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finClosureDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		this.finAmount.setProperties(false, finCcy);
 
 		setStatusDetails();
 
@@ -494,6 +775,55 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+		String tabName = "";
+		if (StringUtils.equals(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, moduleID)) {
+			tabName = Labels.getLabel("tab_Co-borrower&Gurantors");
+		} else if (StringUtils.equals(AssetConstants.UNIQUE_ID_ADDITIONALFIELDS, moduleID)) {
+			tabName = "Fees";
+		} else {
+			tabName = Labels.getLabel("tab_label_" + moduleID);
+		}
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
+		logger.debug("Leaving");
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	private Tab getTab(String id) {
+		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
+	}
+
+	private Decimalbox getDecimalbox(BigDecimal amount) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
+		decimalbox.setStyle("text-align:right; ");
+		decimalbox.setReadonly(true);
+		decimalbox.setValue(PennantApplicationUtil.formateAmount(amount, ccyFormatter));
+
+		return decimalbox;
+	}
+
 	private AuditHeader getAuditHeader(GenerateLetter csb, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, csb.getBefImage(), csb);
 		return new AuditHeader(String.valueOf(csb.getId()), null, null, null, auditDetail, csb.getUserDetails(),
@@ -507,5 +837,21 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	public void setGenerateLetterListCtrl(GenerateLetterListCtrl generateLetterListCtrl) {
 		this.generateLetterListCtrl = generateLetterListCtrl;
+	}
+
+	public FinFeeDetailListCtrl getFinFeeDetailListCtrl() {
+		return finFeeDetailListCtrl;
+	}
+
+	public void setFinFeeDetailListCtrl(FinFeeDetailListCtrl finFeeDetailListCtrl) {
+		this.finFeeDetailListCtrl = finFeeDetailListCtrl;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
 	}
 }

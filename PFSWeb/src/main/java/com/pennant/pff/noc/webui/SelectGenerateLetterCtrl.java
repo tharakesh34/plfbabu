@@ -4,11 +4,13 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -20,17 +22,13 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
@@ -45,7 +43,8 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	private GenerateLetterListCtrl generateLetterListCtrl;
 	private GenerateLetter generateLetter;
 	private GenerateLetterService generateLetterService;
-	private FinanceMainService financeMainService;
+
+	private final List<ValueLabel> letterTypeList = PennantStaticListUtil.getFinTypeLetterType();
 
 	public SelectGenerateLetterCtrl() {
 		super();
@@ -54,7 +53,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "GenerateLetter";
-		super.pageRightName = "GenerateLetterDialog";
+		super.pageRightName = "GenerateLetterMaker";
 	}
 
 	public void onCreate$windowSelectGenerateLetter(Event event) throws Exception {
@@ -65,49 +64,41 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
 		this.generateLetterListCtrl = (GenerateLetterListCtrl) arguments.get("generateLetterListCtrl");
 
+		fillComboBox(this.letterType, "", letterTypeList, "");
+		this.letterType.setReadonly(true);
+
 		this.windowSelectGenerateLetter.doModal();
-		logger.debug(Literal.ENTERING + event.toString());
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
 
-		validateReference();
-		doSetValidation();
 		doWriteComponentsToBean();
+		if (!validateReference()) {
+			return;
+		}
 
 		doShowDialog();
 		this.windowSelectGenerateLetter.onClose();
 
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	private void validateReference() throws Exception {
+	private boolean validateReference() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		try {
-			boolean isDataExists = generateLetterService.isReferenceExist(this.finReference.getValue());
+		boolean isDataExists = generateLetterService.isReferenceExist(this.finReference.getValue());
 
-			if (isDataExists) {
-				throw new AppException("");
-			}
-		} catch (Exception e) {
-			MessageUtil.showError(Labels.getLabel("label_GenarateLetter_Validation"));
-			this.finReference.setValue("");
-			logger.debug(Literal.LEAVING);
-			return;
+		if (!isDataExists) {
+			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_Finreference")
+					+ " :".concat(this.finReference.getValue()));
+			return isDataExists;
 		}
-
 		logger.debug(Literal.LEAVING);
-	}
 
-	private void doSetValidation() {
-
-		this.letterType.setConstraint(new PTStringValidator(Labels.getLabel("label_GenerateLetterDialog_LetterType"),
-				PennantRegularExpressions.REGEX_NUMERIC, true));
-
-		this.finReference.setConstraint(new PTStringValidator(Labels.getLabel("label_listheader_Finreference"),
-				PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+		return true;
 	}
 
 	public void doWriteComponentsToBean() throws Exception {
@@ -161,27 +152,22 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 		GenerateLetter geneLtr = new GenerateLetter();
-		FinanceMain financeMain = financeMainService.getFinanceMainByFinRef(this.finReference.getValue());
 
-		ReceiptDTO receiptDTO = new ReceiptDTO();
-		receiptDTO.setFinanceMain(financeMain);
-
-		geneLtr.setReceiptDTO(receiptDTO);
+		geneLtr.setFinanceDetail(
+				generateLetterService.getFinanceDetailById(this.finReference.getValue(), this.letterType.getValue()));
 		geneLtr.setFinReference(this.finReference.getValue());
 		geneLtr.setLetterType(this.letterType.getValue());
 		geneLtr.setCreatedOn(appDate);
 		geneLtr.setCreatedDate(appDate);
-		geneLtr.setGeneratedDate(appDate);
-		geneLtr.setGeneratedOn(appDate);
 		geneLtr.setGeneratedBy(getUserWorkspace().getUserId());
 		geneLtr.setWorkflowId(this.generateLetter.getWorkflowId());
 		geneLtr.setNewRecord(this.generateLetter.isNewRecord());
 
 		map.put("generateLetter", geneLtr);
+		map.put("moduleCode", this.moduleCode);
 		map.put("generateLetterListCtrl", generateLetterListCtrl);
 
-		Executions.createComponents("/PFSWeb/WebContent/WEB-INF/pages/GenerateLetter/GenerateLetterDialog.zul", null,
-				map);
+		Executions.createComponents("/WEB-INF/pages/NOC/GenerateLetterDialog.zul", null, map);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -192,5 +178,14 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		this.windowSelectGenerateLetter.onClose();
 
 		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void setGenerateLetterListCtrl(GenerateLetterListCtrl generateLetterListCtrl) {
+		this.generateLetterListCtrl = generateLetterListCtrl;
+	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
 	}
 }

@@ -1,10 +1,13 @@
 package com.pennant.pff.noc.model;
 
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class GenerateLetter extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -19,13 +22,44 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private Date generatedDate;
 	private Date generatedOn;
 	private long generatedBy;
-	private char requestType;
+	private String requestType;
 	private GenerateLetter befImage;
 	private LoggedInUser userDetails;
-	private ReceiptDTO receiptDTO;
+	private FinanceDetail financeDetail;
+	private String custAcctHolderName;
+	private String custCoreBank;
+	private String finBranch;
+	private String product;
+	private long createdBy;
+	private long approvedBy;
+	private Timestamp approvedOn;
+	private String modeofTransfer;
+	private String courierAgencyName;
+	private String status;
+	private String email;
+	private String fileName;
+	private long trackingID;
+	private String remarks;
+	private long adviseID;
 
 	public GenerateLetter() {
 		super();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("custAcctHolderName");
+		excludeFields.add("custCoreBank");
+		excludeFields.add("finBranch");
+		excludeFields.add("product");
+		excludeFields.add("modeofTransfer");
+		excludeFields.add("courierAgencyName");
+		excludeFields.add("status");
+		excludeFields.add("email");
+		excludeFields.add("fileName");
+		excludeFields.add("trackingID");
+		excludeFields.add("remarks");
+		return excludeFields;
 	}
 
 	public long getId() {
@@ -108,11 +142,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.generatedBy = generatedBy;
 	}
 
-	public char getRequestType() {
+	public String getRequestType() {
 		return requestType;
 	}
 
-	public void setRequestType(char requestType) {
+	public void setRequestType(String requestType) {
 		this.requestType = requestType;
 	}
 
@@ -132,11 +166,131 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.userDetails = userDetails;
 	}
 
-	public ReceiptDTO getReceiptDTO() {
-		return receiptDTO;
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
 	}
 
-	public void setReceiptDTO(ReceiptDTO receiptDTO) {
-		this.receiptDTO = receiptDTO;
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public String getCustAcctHolderName() {
+		return custAcctHolderName;
+	}
+
+	public void setCustAcctHolderName(String custAcctHolderName) {
+		this.custAcctHolderName = custAcctHolderName;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
+	}
+
+	public String getFinBranch() {
+		return finBranch;
+	}
+
+	public void setFinBranch(String finBranch) {
+		this.finBranch = finBranch;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
+	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
+
+	public String getModeofTransfer() {
+		return modeofTransfer;
+	}
+
+	public void setModeofTransfer(String modeofTransfer) {
+		this.modeofTransfer = modeofTransfer;
+	}
+
+	public String getCourierAgencyName() {
+		return courierAgencyName;
+	}
+
+	public void setCourierAgencyName(String courierAgencyName) {
+		this.courierAgencyName = courierAgencyName;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public long getTrackingID() {
+		return trackingID;
+	}
+
+	public void setTrackingID(long trackingID) {
+		this.trackingID = trackingID;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public long getAdviseID() {
+		return adviseID;
+	}
+
+	public void setAdviseID(long adviseID) {
+		this.adviseID = adviseID;
 	}
 }

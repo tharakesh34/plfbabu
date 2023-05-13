@@ -446,6 +446,7 @@ import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.model.ServiceBranch;
 import com.pennant.pff.noc.model.ServiceBranchesLoanType;
@@ -4051,6 +4052,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("ProvisionUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("GenerateLetter",
+				new ModuleMapping("GenerateLetter", GenerateLetter.class,
+						new String[] { "LETTER_GENERATE_MANUAL", "LETTER_GENERATE_MANUAL" }, masterWF,
+						new String[] { "Id", "FinID" }, null, 600));
 
 		registerCustomModules();
 	}

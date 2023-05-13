@@ -43,7 +43,7 @@
 									<combobox id="letterType" width="180px"  />
 								</row>
 								<row>
-									<label value="${c:l('label_ExcessTransferMaker_LoanReference')}"
+									<label value="${c:l('label_ExcessTransferMaker_LoanReference.value')}"
 										style="padding-left:12px;" />
 									<textbox id="finReference" width="250px" />
 								</row>
