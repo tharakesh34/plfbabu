@@ -1515,10 +1515,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			}
 		}
 
-		if (!finIsActive) {
-			MessageUtil.showError(Labels.getLabel("label_ManualAdviseDialog_Cancel_LoanClosed.ErrMsg"));
-			return true;
-		}
 		return false;
 	}
 
