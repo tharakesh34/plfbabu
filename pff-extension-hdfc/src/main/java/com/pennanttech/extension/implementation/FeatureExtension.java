@@ -18,6 +18,7 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> partnerBankExtensions = new HashMap<>();
 	static Map<String, Object> receiptExtensions = new HashMap<>();
 	static Map<String, Object> lppExtensions = new HashMap<>();
+	static Map<String, Object> npaAndProvisionExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -113,18 +114,6 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_ESCROW_MODE", true);
 
-		customConstants.put("ALLOW_NPA", true);
-
-		customConstants.put("ALLOW_PROVISION", false);
-
-		customConstants.put("PROVISION_REVERSAL_REQ", false);
-
-		customConstants.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
-
-		customConstants.put("NPA_SCOPE", NpaScope.LOAN);
-
-		customConstants.put("PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
-
 		customConstants.put("ALLOW_MANUAL_SCHEDULE", true);
 
 		customConstants.put("RETAIL_CUST_PAN_MANDATORY", false);
@@ -164,6 +153,8 @@ public class FeatureExtension implements IFeatureExtension {
 		receiptExtensions();
 
 		lppExtensions();
+
+		npaAndProvisionExtensions();
 	}
 
 	@Override
@@ -217,6 +208,11 @@ public class FeatureExtension implements IFeatureExtension {
 		return lppExtensions;
 	}
 
+	@Override
+	public Map<String, Object> getNpaAndProvisionExtensions() {
+		return npaAndProvisionExtensions;
+	}
+
 	private void customerExtensions() {
 		customerExtensions.put("CUST_CORE_BANK_ID", true);
 		customerExtensions.put("ALLOW_DUPLICATE_PAN", true);
@@ -267,6 +263,24 @@ public class FeatureExtension implements IFeatureExtension {
 
 	private void lppExtensions() {
 		lppExtensions.put("LPP_DUE_CREATION_REQ", true);
+	}
+
+	private void npaAndProvisionExtensions() {
+		npaAndProvisionExtensions.put("ALLOW_NPA", true);
+
+		npaAndProvisionExtensions.put("ALLOW_PROVISION", false);
+
+		npaAndProvisionExtensions.put("PROVISION_REVERSAL_REQ", false);
+
+		npaAndProvisionExtensions.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
+
+		npaAndProvisionExtensions.put("NPA_SCOPE", NpaScope.LOAN);
+
+		npaAndProvisionExtensions.put("PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
+
+		npaAndProvisionExtensions.put("ALLOW_MANUAL_PROVISION", true);
+
+		npaAndProvisionExtensions.put("NPA_FOR_WRIREOFF_LOANS", true);
 	}
 
 }

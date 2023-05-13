@@ -11,8 +11,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -425,7 +425,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(tableType.getSuffix());
 		sql.append(" Set ProvisionDate = ?");
 
-		if (ImplementationConstants.PROVISION_REVERSAL_REQ) {
+		if (NpaAndProvisionExtension.PROVISION_REVERSAL_REQ) {
 			sql.append(", RegProvsnPer = ?, RegProvsnAmt =  ?, RegSecProvsnPer = ?, RegSecProvsnAmt = ?");
 			sql.append(", RegUnSecProvsnPer = ?, RegUnSecProvsnAmt = ?, TotRegProvsnAmt = ?");
 			sql.append(", IntProvsnPer = ?, IntProvsnAmt = ?, IntSecProvsnPer = ?, IntSecProvsnAmt = ?");

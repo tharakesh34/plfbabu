@@ -17,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -31,6 +30,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -74,7 +74,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 
-			if (fm.isWriteoffLoan()) {
+			if (fm.isWriteoffLoan() && !NpaAndProvisionExtension.NPA_FOR_WRIREOFF_LOANS) {
 				continue;
 			}
 
@@ -217,7 +217,7 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		long custID = ca.getCustID();
 		String custCoreBank = ca.getCustCoreBank();
 
-		switch (ImplementationConstants.NPA_SCOPE) {
+		switch (NpaAndProvisionExtension.NPA_SCOPE) {
 		case CUSTOMER:
 			list.addAll(getPrimaryLoans(finID, custID, custCoreBank));
 			break;
@@ -690,9 +690,14 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		List<FinanceMain> list = assetClassificationDAO.getPrimaryLoans(custID, custCoreBank);
 
 		list.forEach(fm -> {
-			if (fm.getFinID() != finID && !fm.isWriteoffLoan()) {
-				primaryLoans.add(fm);
+			if (fm.isWriteoffLoan() && !NpaAndProvisionExtension.NPA_FOR_WRIREOFF_LOANS) {
+				return;
+			} else {
+				if (fm.getFinID() != finID) {
+					primaryLoans.add(fm);
+				}
 			}
+
 		});
 
 		return primaryLoans;
@@ -703,9 +708,14 @@ public class AssetClassificationServiceImpl implements AssetClassificationServic
 		List<FinanceMain> list = assetClassificationDAO.getCoApplicantLoans(finID);
 
 		list.forEach(fm -> {
-			if (fm.getFinID() != finID && !fm.isWriteoffLoan()) {
-				coApplicantLoans.add(fm);
+			if (fm.isWriteoffLoan() && !NpaAndProvisionExtension.NPA_FOR_WRIREOFF_LOANS) {
+				return;
+			} else {
+				if (fm.getFinID() != finID) {
+					coApplicantLoans.add(fm);
+				}
 			}
+
 		});
 
 		return coApplicantLoans;

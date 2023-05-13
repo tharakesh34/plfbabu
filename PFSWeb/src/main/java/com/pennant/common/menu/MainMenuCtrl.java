@@ -62,6 +62,7 @@ import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.extension.Services;
@@ -255,9 +256,11 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_AssetSubClassCodes":
 		case "menu_Item_AssetClassSetup":
 		case "menu_Item_NPA_Report":
-			return ImplementationConstants.ALLOW_NPA;
+			return NpaAndProvisionExtension.ALLOW_NPA;
+		case "menu_Item_ManualProvisioning":
+			return NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION ;
 		case "menu_Item_Provision_Report":
-			return ImplementationConstants.ALLOW_PROVISION;
+			return NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION;
 		case "menu_Item_LoanDownSizing":
 			return ImplementationConstants.ALLOW_LOAN_DOWNSIZING;
 		case "menu_Item_PMAY":

@@ -42,6 +42,7 @@ import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.core.loan.util.DPDStringCalculator;
 import com.pennant.pff.extension.DPDExtension;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.PresentmentExtension;
 import com.pennanttech.external.MicroEodExternalProcessHook;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -341,7 +342,7 @@ public class EodService {
 		overdrafLoanService.closeByMaturity(custEODEvent);
 		logger.info("Updating the OverDraft loans closing status process completed.");
 
-		if (ImplementationConstants.ALLOW_NPA) {
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			assetClassificationService.process(custEODEvent);
 		}
 

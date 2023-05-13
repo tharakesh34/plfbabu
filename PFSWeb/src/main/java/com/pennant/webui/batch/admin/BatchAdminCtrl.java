@@ -64,6 +64,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -835,12 +836,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		appendRow(Step.processInActiveFinances.name(), StepUtil.PROCESS_INACTIVE_FINANCES.getName());
 
-		if (ImplementationConstants.ALLOW_NPA) {
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			appendRow(Step.assetClassification.name(), StepUtil.NPA_CLASSIFICATION.getName());
 			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());
 		}
 
-		if (ImplementationConstants.ALLOW_PROVISION) {
+		if (NpaAndProvisionExtension.ALLOW_PROVISION) {
 			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
 		}
 		// Auto Write Off

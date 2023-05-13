@@ -24,5 +24,7 @@ public enum Module {
 
 	RECEIPT,
 
-	LPP
+	LPP,
+
+	NPA_PROVISION
 }

@@ -50,7 +50,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -88,6 +87,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -673,7 +673,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			finServiceInstructionDAO.saveList(schdData.getFinServiceInstructions(), "");
 		}
 
-		if (ImplementationConstants.ALLOW_NPA && FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
+		if (NpaAndProvisionExtension.ALLOW_NPA && FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())
+				&& !NpaAndProvisionExtension.NPA_FOR_WRIREOFF_LOANS) {
 			assetClassificationService.doCloseLoan(fm.getFinID());
 		}
 

@@ -28,6 +28,7 @@ import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -1329,11 +1330,11 @@ public class PennantStaticListUtil {
 
 			enquiryTypes.add(new ValueLabel("LMTENQ", Labels.getLabel("label_OverDraftLimitEnquiry")));
 
-			if (ImplementationConstants.ALLOW_NPA) {
+			if (NpaAndProvisionExtension.ALLOW_NPA) {
 				enquiryTypes.add(new ValueLabel("NPAENQ", Labels.getLabel("label_NPAEnquiry")));
 			}
 
-			if (ImplementationConstants.ALLOW_PROVISION) {
+			if (NpaAndProvisionExtension.ALLOW_PROVISION) {
 				enquiryTypes.add(new ValueLabel("PROVSNENQ", Labels.getLabel("label_ProvisionEnquiry")));
 			}
 
@@ -1594,7 +1595,7 @@ public class PennantStaticListUtil {
 			subCategory.addAll(getSubCategoryGeneralList());
 			subCategory.addAll(getSubSectorList());
 		}
-		
+
 		return subCategory;
 	}
 

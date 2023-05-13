@@ -39,6 +39,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 
 public class AccountingEvent {
 
@@ -173,11 +174,11 @@ public class AccountingEvent {
 			excludeEvents.add(AccountingEvent.INDAS);
 		}
 
-		if (!ImplementationConstants.ALLOW_NPA) {
+		if (!NpaAndProvisionExtension.ALLOW_NPA) {
 			excludeEvents.add(AccountingEvent.NPACHNG);
 		}
 
-		if (!ImplementationConstants.ALLOW_PROVISION) {
+		if (!NpaAndProvisionExtension.ALLOW_PROVISION) {
 			excludeEvents.add(AccountingEvent.PROVSN);
 			excludeEvents.add(AccountingEvent.PRVSN_MN);
 			excludeEvents.add(AccountingEvent.PROVCHG);

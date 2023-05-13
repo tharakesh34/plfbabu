@@ -20,10 +20,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -95,9 +95,9 @@ public class ProvisionClacTaskLet implements Tasklet {
 		TransactionStatus txStatus = null;
 
 		List<Exception> exceptions = new ArrayList<>(1);
-		boolean reversalReq = ImplementationConstants.PROVISION_REVERSAL_REQ;
-		boolean reveralOnSOM = ImplementationConstants.PROVISION_REVERSAL_STAGE == ProvisionReversalStage.SOM;
-		boolean reveralOnEOM = ImplementationConstants.PROVISION_REVERSAL_STAGE == ProvisionReversalStage.EOM;
+		boolean reversalReq = NpaAndProvisionExtension.PROVISION_REVERSAL_REQ;
+		boolean reveralOnSOM = NpaAndProvisionExtension.PROVISION_REVERSAL_STAGE == ProvisionReversalStage.SOM;
+		boolean reveralOnEOM = NpaAndProvisionExtension.PROVISION_REVERSAL_STAGE == ProvisionReversalStage.EOM;
 
 		Long finID = null;
 
@@ -111,7 +111,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 					if (reversalReq && reveralOnSOM && linkedTranId != null) {
 						txStatus = transactionManager.getTransaction(txDef);
 
-						if (ImplementationConstants.PROVISION_POSTINGS_REQ) {
+						if (NpaAndProvisionExtension.PROVISION_POSTINGS_REQ) {
 							provisionService.doReversal(linkedTranId);
 						}
 
@@ -129,7 +129,7 @@ public class ProvisionClacTaskLet implements Tasklet {
 				if (provision != null) {
 					txStatus = transactionManager.getTransaction(txDef);
 
-					if (ImplementationConstants.PROVISION_POSTINGS_REQ) {
+					if (NpaAndProvisionExtension.PROVISION_POSTINGS_REQ) {
 						if (reversalReq && reveralOnEOM && linkedTranId != null) {
 							provisionService.doReversal(linkedTranId);
 						}

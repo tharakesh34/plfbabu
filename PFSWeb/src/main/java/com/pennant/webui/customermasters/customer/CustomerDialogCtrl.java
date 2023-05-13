@@ -1598,7 +1598,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			aCustomer.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 			aCustomer.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1912,11 +1912,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					&& StringUtils.isNotBlank(aCustomer.getCustTypeCode())) {
 
 				String panFourthLetter = StringUtils.substring(aCustomer.getCustCRCPR(), 3, 4);
-				if (!custTypePANMappingService.isValidPANLetter(aCustomer.getCustTypeCode(), aCustomer.getCustCtgCode(),
-						panFourthLetter)) {
-					throw new WrongValueException(this.eidNumber,
-							aCustomer.getCustCRCPR() + Labels.getLabel("label_CustTypePANMapping_panValidation.value"));
-				}
+				/*
+				 * if (!custTypePANMappingService.isValidPANLetter(aCustomer.getCustTypeCode(),
+				 * aCustomer.getCustCtgCode(), panFourthLetter)) { throw new WrongValueException(this.eidNumber,
+				 * aCustomer.getCustCRCPR() + Labels.getLabel("label_CustTypePANMapping_panValidation.value")); }
+				 */
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

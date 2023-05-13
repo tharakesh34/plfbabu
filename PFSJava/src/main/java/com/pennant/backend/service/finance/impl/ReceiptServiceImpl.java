@@ -230,6 +230,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.ReceiptExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.knockoff.KnockOffType;
@@ -2333,7 +2334,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			advancePaymentService.setAdvancePaymentDetails(scheduleData.getFinanceMain(), scheduleData);
 		}
 
-		if (ImplementationConstants.ALLOW_NPA && !fm.isFinIsActive()) {
+		if (NpaAndProvisionExtension.ALLOW_NPA && !fm.isFinIsActive()) {
 			assetClassificationService.doCloseLoan(fm.getFinID());
 		}
 

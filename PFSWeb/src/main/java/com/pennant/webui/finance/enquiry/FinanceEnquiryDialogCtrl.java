@@ -124,6 +124,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.service.SettlementService;
@@ -809,7 +810,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.availableAmt.setMaxlength(18);
 		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.sourcingBranch.setMandatoryStyle(true);
-		this.provision_AssetStage.setVisible(ImplementationConstants.ALLOW_NPA);
+		this.provision_AssetStage.setVisible(NpaAndProvisionExtension.ALLOW_NPA);
 		// Field visibility & Naming for FinAsset value and finCurrent asset
 		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);

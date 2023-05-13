@@ -4704,13 +4704,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			String[] errorParameters = new String[2];
 
 			String panFourthLetter = StringUtils.substring(customer.getCustCRCPR(), 3, 4);
-			if (!custTypePANMappingService.isValidPANLetter(customer.getCustTypeCode(), customer.getCustCtgCode(),
-					panFourthLetter)) {
-
-				errorParameters[0] = Labels.getLabel("label_PAN_FourthLetter.label");
-				errorParameters[1] = panFourthLetter;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41000", errorParameters)));
-			}
+			/*
+			 * if (!custTypePANMappingService.isValidPANLetter(customer.getCustTypeCode(), customer.getCustCtgCode(),
+			 * panFourthLetter)) {
+			 * 
+			 * errorParameters[0] = Labels.getLabel("label_PAN_FourthLetter.label"); errorParameters[1] =
+			 * panFourthLetter; auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41000",
+			 * errorParameters))); }
+			 */
 		}
 		// Employment type other than NON-WORKING setting below fields as Mandatory
 		if (StringUtils.isNotBlank(customer.getSubCategory()) && !"#".equals(customer.getSubCategory())) {

@@ -111,6 +111,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1438,7 +1439,7 @@ public class RepaymentPostingsUtil {
 			}
 		}
 
-		if (ImplementationConstants.ALLOW_NPA) {
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			long finID = fm.getFinID();
 
 			amountCodes.setNpa(assetClassificationService.isEffNpaStage(finID));

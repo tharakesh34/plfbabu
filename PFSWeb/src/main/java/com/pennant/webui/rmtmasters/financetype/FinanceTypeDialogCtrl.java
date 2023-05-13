@@ -122,6 +122,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.PTCKeditor;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateUtil;
@@ -783,11 +784,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			doCheckRights();
 
 			if (gb_ProvisionRules.isVisible()) {
-				if (ImplementationConstants.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
+				if (NpaAndProvisionExtension.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
 					this.space_RegProvRule.setSclass("mandatory");
 				}
 
-				if (ImplementationConstants.PROVISION_BOOKS == ProvisionBook.INTERNAL) {
+				if (NpaAndProvisionExtension.PROVISION_BOOKS == ProvisionBook.INTERNAL) {
 					this.space_IntProvRule.setSclass("mandatory");
 				}
 			}
@@ -1073,9 +1074,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		if (isOverdraft || consumerDurable) {
-			this.extendedDetails.setVisible(ImplementationConstants.ALLOW_PROVISION);
+			this.extendedDetails.setVisible(NpaAndProvisionExtension.ALLOW_PROVISION);
 		}
-		this.gb_ProvisionRules.setVisible(ImplementationConstants.ALLOW_PROVISION);
+		this.gb_ProvisionRules.setVisible(NpaAndProvisionExtension.ALLOW_PROVISION);
 
 		if (isOverdraft && ImplementationConstants.ALLOW_OD_EQUATED_STRUCTURED_DROPLINE_METHODS) {
 			this.row_DroppingMethod.setVisible(true);
@@ -4879,14 +4880,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		if (gb_ProvisionRules.isVisible()) {
-			if (ImplementationConstants.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
+			if (NpaAndProvisionExtension.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
 				if (!this.regProvRule.isDisabled()) {
 					this.regProvRule.setConstraint(new StaticListValidator(provisionRules,
 							Labels.getLabel("label_FinanceTypeDialog_FinTypeIntProvRule.value")));
 				}
 			}
 
-			if (ImplementationConstants.PROVISION_BOOKS == ProvisionBook.INTERNAL) {
+			if (NpaAndProvisionExtension.PROVISION_BOOKS == ProvisionBook.INTERNAL) {
 				if (!this.intProvRule.isDisabled()) {
 					this.intProvRule.setConstraint(new StaticListValidator(provisionRules,
 							Labels.getLabel("label_FinanceTypeDialog_FinTypeRegProvRule.value")));

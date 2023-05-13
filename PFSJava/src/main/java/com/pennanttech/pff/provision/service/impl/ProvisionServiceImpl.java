@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -31,6 +30,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -223,7 +223,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		BigDecimal provsnAmt = BigDecimal.ZERO;
 		if (p.isManualProvision()) {
 			provsnAmt = p.getManProvsnAmt();
-		} else if (ImplementationConstants.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
+		} else if (NpaAndProvisionExtension.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
 			provsnAmt = p.getRegProvsnAmt();
 		} else {
 			provsnAmt = p.getIntProvsnAmt();
@@ -437,9 +437,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 		String finReference = provisionData.getFinReference();
 		String finType = provisionData.getFinType();
 
-		String provisionBook = ImplementationConstants.PROVISION_BOOKS.description();
+		String provisionBook = NpaAndProvisionExtension.PROVISION_BOOKS.description();
 
-		switch (ImplementationConstants.PROVISION_BOOKS) {
+		switch (NpaAndProvisionExtension.PROVISION_BOOKS) {
 		case REGULATORY:
 			if (regProvsnRule == null) {
 				throw new AppException(String.format(RULE_ERR, provisionBook, finType));
@@ -472,7 +472,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		BigDecimal intProvsnPer = getResult(intRuleResult.getProvPercentage());
 		BigDecimal intProvsnAmt = getResult(intRuleResult.getProvAmount());
 
-		if (!ImplementationConstants.PROVISION_REVERSAL_REQ) {
+		if (!NpaAndProvisionExtension.PROVISION_REVERSAL_REQ) {
 			regProvsnAmt = regProvsnAmt.subtract(p.getRegProvsnAmt());
 			if (regProvsnAmt.compareTo(BigDecimal.ZERO) < 0) {
 				regProvsnAmt = BigDecimal.ZERO;

@@ -4,9 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.pennanttech.extension.FeatureExtension;
 import com.pennanttech.pff.Module;
-import com.pennanttech.pff.npa.NpaScope;
-import com.pennanttech.pff.provision.ProvisionBook;
-import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 @Component
 public class ImplementationConstants {
@@ -281,15 +278,6 @@ public class ImplementationConstants {
 		ALLOW_STEP_RECAL_PRORATA = getValueAsBoolean("ALLOW_STEP_RECAL_PRORATA", false);
 		RECEIPT_DUPLICATE_FORMAT = getValueAsString("RECEIPT_DUPLICATE_FORMAT", "TR_VD_AMT");
 		CUSTOMER_PAN_VALIDATION_STOP = getValueAsBoolean("CUSTOMER_PAN_VALIDATION_STOP", false);
-		ALLOW_NPA = getValueAsBoolean("ALLOW_NPA", false);
-		ALLOW_PROVISION = getValueAsBoolean("ALLOW_PROVISION", false);
-		NPA_SCOPE = (NpaScope) getValueAsObject("NPA_SCOPE", NpaScope.LOAN);
-		PROVISION_REVERSAL_REQ = getValueAsBoolean("PROVISION_REVERSAL_REQ", false);
-		PROVISION_BOOKS = (ProvisionBook) getValueAsObject("PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
-		PROVISION_REVERSAL_STAGE = (ProvisionReversalStage) getValueAsObject("PROVISION_REVERSAL_STAGE",
-				ProvisionReversalStage.SOM);
-		ALLOW_EXTENDEDFIELDS_IN_WORKFLOW = getValueAsBoolean("ALLOW_EXTENDEDFIELDS_IN_WORKFLOW", false);
-		PROVISION_POSTINGS_REQ = getValueAsBoolean("PROVISION_POSTINGS_REQ", true);
 		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT",
 				true);
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER", false);
@@ -590,14 +578,6 @@ public class ImplementationConstants {
 	 * Parameter for to allow the 'DISBINS' postings while disbursement instructions download.
 	 */
 	public static boolean DISB_INST_POST_DWNLD;
-	public static boolean ALLOW_NPA;
-	public static boolean ALLOW_PROVISION;
-	public static NpaScope NPA_SCOPE;
-	public static ProvisionBook PROVISION_BOOKS;
-	public static boolean PROVISION_REVERSAL_REQ;
-	public static ProvisionReversalStage PROVISION_REVERSAL_STAGE;
-	public static boolean ALLOW_EXTENDEDFIELDS_IN_WORKFLOW;
-	public static boolean PROVISION_POSTINGS_REQ;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 	public static boolean ALLOW_CERSAI;
