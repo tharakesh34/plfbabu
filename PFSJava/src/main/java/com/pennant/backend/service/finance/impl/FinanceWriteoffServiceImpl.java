@@ -541,7 +541,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
 		Date appDate = SysParamUtil.getAppDate();
-		Date curBDay = appDate;
 
 		FinanceDetail fd = header.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
