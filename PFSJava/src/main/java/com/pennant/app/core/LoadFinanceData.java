@@ -39,6 +39,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -82,6 +83,11 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinType(getFinanceType(fm.getFinType()));
 
 			FinanceProfitDetail pfd = getFinPftDetailRef(finID, custpftDet);
+
+			if (pfd == null) {
+				throw new AppException(String.format("%d FinID is not in Active State in FinPftDetails table.", finID));
+			}
+
 			pfd.setEventProperties(eventProperties);
 
 			finEODEvent.setFinProfitDetail(pfd);
