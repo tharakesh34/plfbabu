@@ -336,8 +336,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 			if (auditHeader.getErrorMessage() != null) {
 				headerIDs.add(upload.getUploadID());
 				ErrorDetail ed = auditHeader.getErrorMessage().get(0);
-				miscellaneousPostingUploadDAO.update(headerIDs, ed.getCode(), ed.getMessage(),
-						EodConstants.PROGRESS_FAILED);
+				miscellaneousPostingUploadDAO.update(headerIDs, ed.getCode(), ed.getMessage());
 				failureCount++;
 			}
 		}

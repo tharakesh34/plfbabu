@@ -44,6 +44,10 @@ public class FinanceCancelValidator {
 		Date backValueDate = DateUtil.addDays(appDate,
 				SysParamUtil.getValueAsInt(SMTParameterConstants.MAINTAIN_CANFIN_BACK_DATE));
 
+		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
+			return FinCancelUploadError.LANCLUP020;
+		}
+
 		if (DateUtil.compare(backValueDate, fm.getFinStartDate()) > 0) {
 			return FinCancelUploadError.LANCLUP018;
 		}
@@ -150,6 +154,8 @@ public class FinanceCancelValidator {
 					SysParamUtil.getValueAsInt(SMTParameterConstants.MAINTAIN_CANFIN_BACK_DATE));
 			return FinCancelUploadError.getOverrideDescription(error,
 					DateUtil.format(backValueDate, DateFormat.LONG_DATE));
+		case LANCLUP020:
+			return FinCancelUploadError.getOverrideDescription(error, fm.getRcdMaintainSts());
 		default:
 			return description;
 		}

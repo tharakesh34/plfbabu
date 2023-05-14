@@ -34,7 +34,7 @@ public enum FinCancelUploadError {
 	LANCLUP014("Settlement is initiated for this Finance. Cannot Proceed Further For Cancellation"),
 
 	LANCLUP015(
-			"Cannot Proceed Further For Cancellation, as Cross Loan Trnasfers are done for this Finance, need to cancel the transfers before cancelling the Finance."),
+			"Cannot Proceed Further For Cancellation, as Cross Loan Transfer's are done for this Finance, need to cancel the transfers before cancelling the Finance."),
 
 	LANCLUP016("Duplicate Record is found in File for the Reference"),
 
@@ -42,7 +42,9 @@ public enum FinCancelUploadError {
 
 	LANCLUP018("Loan Start Date before %s are not allowed for cancellation."),
 
-	LANCLUP019("InValid Data, For Cancel Type : only C and CR are Allowed");
+	LANCLUP019("InValid Data, For Cancel Type : only C and CR are Allowed"),
+
+	LANCLUP020("Cannot proceed further for cancellation, as record is already initiated in %s");
 
 	private String description;
 
