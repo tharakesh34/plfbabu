@@ -38,6 +38,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.finance.CrossLoanKnockOffService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -91,7 +92,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		CrossLoanKnockoffUpload clk = getDetail(detail);
 
 		if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
-			doBasicValidations(clk);
+			doBasicValidations(clk, header.getEntityCode());
 		}
 
 		if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
@@ -290,11 +291,46 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		return sum;
 	}
 
-	private void doBasicValidations(CrossLoanKnockoffUpload clk) {
+	private void doBasicValidations(CrossLoanKnockoffUpload clk, String entityCode) {
 		if (StringUtils.isBlank(clk.getFromFinReference()) || StringUtils.isBlank(clk.getToFinReference())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_001);
 			return;
 		}
+
+		FinanceMain toFm = financeMainDAO.getFinanceMain(clk.getToFinReference(), entityCode);
+
+		FinanceMain fromFm = financeMainDAO.getFinanceMain(clk.getFromFinReference(), entityCode);
+
+		if (fromFm == null) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_023);
+			return;
+		}
+
+		if (toFm == null) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_024);
+			return;
+		}
+
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fromFm.getClosingStatus())) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_027);
+			return;
+
+		}
+
+		if (!fromFm.isFinIsActive()) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_025);
+			return;
+		}
+
+		if (!toFm.isFinIsActive()) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_026);
+			return;
+		}
+
+		clk.setFromFm(fromFm);
+		clk.setFromFinID(fromFm.getFinID());
+		clk.setToFm(toFm);
+		clk.setToFinID(toFm.getFinID());
 
 		if (StringUtils.isBlank(clk.getExcessType())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_002);

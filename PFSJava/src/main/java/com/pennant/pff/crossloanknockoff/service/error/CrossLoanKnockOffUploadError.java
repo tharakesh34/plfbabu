@@ -47,7 +47,17 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_021("AdviseId is mandatory if Excess Type is P(Payable)"),
 
-	CLKU_022("Either principal or interest amount should be given or only emi");
+	CLKU_022("Either principal or interest amount should be given or only emi"),
+
+	CLKU_023("From Loan Reference is not valid."),
+
+	CLKU_024("To Loan Reference is not valid."),
+
+	CLKU_025("From Fin Reference is not in active."),
+
+	CLKU_026("To Fin Reference is not in active."),
+
+	CLKU_027("From Fin Reference is already cancelled, cross loan knockoff is not allowed.");
 
 	private String description;
 
