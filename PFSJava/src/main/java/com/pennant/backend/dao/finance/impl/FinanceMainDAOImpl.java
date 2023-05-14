@@ -1641,7 +1641,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(++index, fm.getManualSchdType());
 				ps.setLong(++index, fm.getCreatedBy());
 				ps.setTimestamp(++index, fm.getCreatedOn());
-				ps.setLong(++index, fm.getApprovedBy());
+				ps.setObject(++index, fm.getApprovedBy());
 				ps.setTimestamp(++index, fm.getApprovedOn());
 			}
 		});
@@ -2793,7 +2793,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<FinanceMain> getUnApprovedFinances() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinType, AutoRejectionDays, FinID, FinReference, FinStartDate");
+		sql.append(" fm.FinType, AutoRejectionDays, FinID, FinReference, FinStartDate, fm.CreatedBy, fm.CreatedOn");
 		sql.append(" From FinanceMain_Temp fm");
 		sql.append(" Inner join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" where ft.AutoRejectionDays > ? and fm.RecordType = ? and fm.FinIsActive = ?");
@@ -2815,6 +2815,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinStartDate(rs.getDate("FinStartDate"));
+			fm.setCreatedBy(rs.getLong("CreatedBy"));
+			fm.setCreatedOn(rs.getTimestamp("CreatedOn"));
 
 			return fm;
 		});
@@ -4819,7 +4821,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setOverdraftChrCalOn(rs.getString("OverdraftChrCalOn"));
 			fm.setCreatedBy(rs.getLong("CreatedBy"));
 			fm.setCreatedOn(rs.getTimestamp("CreatedOn"));
-			fm.setApprovedBy(rs.getLong("ApprovedBy"));
+			fm.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
 			fm.setApprovedOn(rs.getTimestamp("ApprovedOn"));
 
 			if (!wIf) {

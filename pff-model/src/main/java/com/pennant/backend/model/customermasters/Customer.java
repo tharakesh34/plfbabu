@@ -359,7 +359,7 @@ public class Customer extends AbstractWorkflowEntity {
 	private boolean prospectAsCIF = false;
 	private long createdBy;
 	private Timestamp createdOn;
-	private long approvedBy;
+	private Long approvedBy;
 	private Timestamp approvedOn;
 	private String loanName;
 	@XmlElement
@@ -2290,11 +2290,11 @@ public class Customer extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public long getApprovedBy() {
+	public Long getApprovedBy() {
 		return approvedBy;
 	}
 
-	public void setApprovedBy(long approvedBy) {
+	public void setApprovedBy(Long approvedBy) {
 		this.approvedBy = approvedBy;
 	}
 

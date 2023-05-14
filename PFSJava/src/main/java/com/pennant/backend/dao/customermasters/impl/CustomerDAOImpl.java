@@ -354,7 +354,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setResidentialStatus(rs.getString("ResidentialStatus"));
 				c.setCreatedBy(rs.getLong("CreatedBy"));
 				c.setCreatedOn(rs.getTimestamp("CreatedOn"));
-				c.setApprovedBy(rs.getLong("ApprovedBy"));
+				c.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
 				c.setApprovedOn(rs.getTimestamp("ApprovedOn"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {

@@ -18282,4 +18282,37 @@
 		  	]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#4876.22_01" author="Gopal.P" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO REJECTFINANCEMAIN  T1
+					USING(SELECT FINID, CREATEDBY, CREATEDON FROM FINANCEMAIN_TEMP) T2
+					ON (T1.FINID = T2.FINID)
+					WHEN MATCHED THEN UPDATE SET T1.CREATEDBY = T2.CREATEDBY, T1.CREATEDON = T2.CREATEDON;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4876.22_01" author="Gopal.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				UPDATE REJECTFINANCEMAIN T1 SET CREATEDBY = T2.CREATEDBY, CREATEDON = T2.CREATEDON 
+				FROM (SELECT T3.FINID, T3.CREATEDBY, T3.CREATEDON FROM FINANCEMAIN_TEMP T3
+				WHERE T3.CNT = 1) T2 WHERE T1.FINID = T2.FINID;	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#4876.22_01" author="Gopal.P" dbms="mssql">
+		<sql>
+			<![CDATA[
+				UPDATE T1 SET T1.CREATEDBY = T3.CREATEDBY, T1.CREATEDON = T3.CREATEDON 
+				FROM REJECTFINANCEMAIN T1 
+				INNER JOIN (SELECT FINID, CREATEDBY, CREATEDON FROM FINANCEMAIN_TEMP T2
+				WHERE CNT = 1) T3 ON T1.FINID = T3.FINID;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

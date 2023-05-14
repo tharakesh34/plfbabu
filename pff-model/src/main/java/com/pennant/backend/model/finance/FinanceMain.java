@@ -864,7 +864,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String closureType;
 	private long createdBy;
 	private Timestamp createdOn;
-	private long approvedBy;
+	private Long approvedBy;
 	private Timestamp approvedOn;
 	private String loanName;
 	private Date custDOB;
@@ -5675,11 +5675,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public long getApprovedBy() {
+	public Long getApprovedBy() {
 		return approvedBy;
 	}
 
-	public void setApprovedBy(long approvedBy) {
+	public void setApprovedBy(Long approvedBy) {
 		this.approvedBy = approvedBy;
 	}
 
