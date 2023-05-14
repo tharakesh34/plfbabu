@@ -32,7 +32,6 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
@@ -182,8 +181,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		if (AllocationType.MANUAL.equals(detail.getAllocationType()) && list != null
 				&& !(detail.getReceiptAmount().equals(getSumOfAllocations(list)))) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+			setFailureStatus(detail, "", "RECEIPT Amount and Allocations amount should be same");
 			return;
 		}
 
@@ -215,33 +213,26 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 			fd = receiptService.receiptTransaction(fsi);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
-			
+
 			return;
 		}
 
 		if (fd == null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorCode("Finance Detail is null.");
+			setFailureStatus(detail, "Finance Detail is null.");
 			return;
 		}
 
 		FinScheduleData schd = fd.getFinScheduleData();
 		if (!schd.getErrorDetails().isEmpty()) {
-			ErrorDetail error = schd.getErrorDetails().get(0);
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(error.getCode());
-			detail.setErrorDesc(error.getError());
+			setFailureStatus(detail, schd.getErrorDetails().get(0));
 		} else {
 			detail.setReceiptID(fd.getReceiptId());
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+			setSuccesStatus(detail);
 		}
 	}
 
@@ -252,12 +243,12 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			createReceiptUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(createReceiptUploadDAO.getDetails(h1.getId()));
 			});
+
+			createReceiptUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 

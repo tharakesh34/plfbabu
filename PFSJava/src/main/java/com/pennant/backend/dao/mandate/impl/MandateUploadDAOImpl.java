@@ -16,6 +16,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements MandateUploadDAO {
 
+	public MandateUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<MandateUpload> loadRecordData(long headerID) {
 		StringBuilder sql = new StringBuilder("Select Id, HeaderID");
@@ -97,7 +101,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update Mandates_Upload set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -110,8 +114,8 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

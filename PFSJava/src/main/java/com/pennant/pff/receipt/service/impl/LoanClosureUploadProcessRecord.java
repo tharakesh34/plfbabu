@@ -19,6 +19,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.receipt.dao.LoanClosureUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.CommonHeader;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -114,10 +115,7 @@ public class LoanClosureUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
-				if ("Created By".equals(allocationType) || "Created On".equals(allocationType)
-						|| "Approved By".equals(allocationType) || "Approved On".equals(allocationType)
-						|| "Status".equals(allocationType) || "Error Code".equals(allocationType)
-						|| "Error Desc".equals(allocationType)) {
+				if (CommonHeader.isValid(allocationType)) {
 					continue;
 				}
 
@@ -161,14 +159,8 @@ public class LoanClosureUploadProcessRecord implements ProcessRecord {
 			if (lcu.getProgress() == EodConstants.PROGRESS_FAILED) {
 				record.addValue("ERRORCODE", lcu.getErrorCode());
 				record.addValue("ERRORDESC", lcu.getErrorDesc());
-
-				List<LoanClosureUpload> details = new ArrayList<>();
-				details.add(lcu);
-
-				loanClosureUploadDAO.update(details);
 			}
 		} catch (AppException e) {
-			header.setFailureRecords(header.getFailureRecords() + 1);
 			lcu.setStatus("F");
 			lcu.setProgress(EodConstants.PROGRESS_FAILED);
 
@@ -179,7 +171,14 @@ public class LoanClosureUploadProcessRecord implements ProcessRecord {
 			record.addValue("PROGRESS", lcu.getProgress());
 		}
 
+		List<LoanClosureUpload> details = new ArrayList<>();
+		details.add(lcu);
+
+		loanClosureUploadDAO.update(details);
+
 		loanClosureUploadService.updateProcess(header, lcu, record);
+
+		header.getUploadDetails().add(lcu);
 
 		logger.debug(Literal.LEAVING);
 	}

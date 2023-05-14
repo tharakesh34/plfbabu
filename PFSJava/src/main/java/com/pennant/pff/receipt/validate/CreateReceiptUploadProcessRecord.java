@@ -45,6 +45,7 @@ import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.CommonHeader;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -252,10 +253,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
-				if ("Created By".equals(allocationType) || "Created On".equals(allocationType)
-						|| "Approved By".equals(allocationType) || "Approved On".equals(allocationType)
-						|| "Status".equals(allocationType) || "Error Code".equals(allocationType)
-						|| "Error Desc".equals(allocationType)) {
+				if (CommonHeader.isValid(allocationType)) {
 					continue;
 				}
 
@@ -297,14 +295,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			if (cru.getProgress() == EodConstants.PROGRESS_FAILED) {
 				record.addValue("ERRORCODE", cru.getErrorCode());
 				record.addValue("ERRORDESC", cru.getErrorDesc());
-
-				List<CreateReceiptUpload> details = new ArrayList<>();
-				details.add(cru);
-
-				createReceiptUploadDAO.update(details);
 			}
 		} catch (AppException e) {
-			header.setFailureRecords(header.getFailureRecords() + 1);
 			cru.setStatus("F");
 			cru.setProgress(EodConstants.PROGRESS_FAILED);
 
@@ -315,7 +307,13 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			record.addValue("PROGRESS", cru.getProgress());
 		}
 
+		List<CreateReceiptUpload> details = new ArrayList<>();
+		details.add(cru);
+
+		createReceiptUploadDAO.update(details);
 		createReceiptUploadService.updateProcess(header, cru, record);
+
+		header.getUploadDetails().add(cru);
 
 		logger.debug(Literal.LEAVING);
 	}

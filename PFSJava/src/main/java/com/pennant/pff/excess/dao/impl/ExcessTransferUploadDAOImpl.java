@@ -18,6 +18,10 @@ import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUpload> implements ExcessTransferUploadDAO {
 
+	public ExcessTransferUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<ExcessTransferUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select eu.HeaderId, eu.Id, eu.FinID, eu.FinReference, eu.RecordSeq");
@@ -87,7 +91,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update EXCESS_TRANSFER_DETAILS_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -100,8 +104,8 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "C" : "R");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

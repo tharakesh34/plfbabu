@@ -124,9 +124,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 	}
 
 	private void setError(PresentmentRespUpload detail, PresentmentError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -202,12 +200,13 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			presentmentRespUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(presentmentRespUploadDAO.getDetails(h1.getId()));
 			});
+
+			presentmentRespUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -249,6 +248,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 		doValidate(header, presentment);
 
 		updateProcess(header, presentment, paramSource);
+
+		header.getUploadDetails().add(presentment);
 
 		logger.debug(Literal.LEAVING);
 	}

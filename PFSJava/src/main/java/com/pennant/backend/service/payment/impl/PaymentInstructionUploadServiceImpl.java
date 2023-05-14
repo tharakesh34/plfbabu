@@ -46,7 +46,6 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.autorefund.RefundBeneficiary;
 import com.pennanttech.pff.file.UploadTypes;
@@ -154,12 +153,13 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			paymentInstructionUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(paymentInstructionUploadDAO.getDetails(h1.getId()));
 			});
+
+			paymentInstructionUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -319,9 +319,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 				error = error.substring(0, 1999);
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(error);
+			setFailureStatus(detail, error);
 		}
 	}
 
@@ -350,8 +348,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		List<ManualAdvise> malist = paymentHeaderService.getManualAdvise(bud.getReferenceID());
 
 		if (CollectionUtils.isEmpty(malist)) {
-			bud.setProgress(EodConstants.PROGRESS_FAILED);
-			bud.setErrorDesc("Payable Advises are not found for the Loan Reference");
+			setFailureStatus(bud, "", "Payable Advises are not found for the Loan Reference");
 		}
 
 		boolean payableExists = false;
@@ -367,14 +364,12 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 			payableExists = true;
 
 			if (!ma.isRefundable()) {
-				bud.setProgress(EodConstants.PROGRESS_FAILED);
-				bud.setErrorDesc("Payable Advise Fee is not a Refundable fee");
+				setFailureStatus(bud, "", "Payable Advise Fee is not a Refundable fee");
 				continue;
 			}
 
 			if (ma.isHoldDue()) {
-				bud.setProgress(EodConstants.PROGRESS_FAILED);
-				bud.setErrorDesc("Payable Advise is a Hold Due");
+				setFailureStatus(bud, "", "Payable Advise is a Hold Due");
 				continue;
 			}
 
@@ -382,17 +377,15 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 			if (pd.getAvailableAmount().compareTo(bud.getPayAmount()) >= 0) {
 				pd.setAmount(bud.getPayAmount());
-				bud.setProgress(EodConstants.PROGRESS_SUCCESS);
+				setSuccesStatus(bud);
 				pdList.add(pd);
 			} else {
-				bud.setProgress(EodConstants.PROGRESS_FAILED);
-				bud.setErrorDesc("Receipt Amount Should not be greater than Payable Amount");
+				setFailureStatus(bud, "", "Receipt Amount Should not be greater than Payable Amount");
 			}
 		}
 
 		if (!payableExists) {
-			bud.setProgress(EodConstants.PROGRESS_FAILED);
-			bud.setErrorDesc("Payable Advises are not found for the Loan Reference : " + finreference
+			setFailureStatus(bud, "", "Payable Advises are not found for the Loan Reference : " + finreference
 					+ " and Fee Type Code : " + feeType);
 		}
 
@@ -461,12 +454,9 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		}
 
 		if (!excessExists || balAmt.compareTo(BigDecimal.ZERO) > 0) {
-			bud.setProgress(EodConstants.PROGRESS_FAILED);
-			bud.setErrorDesc("Excess Details are not found for the Loan Reference :" + bud.getReference());
+			setFailureStatus(bud, "Excess Details are not found for the Loan Reference :" + bud.getReference());
 		} else {
-			bud.setProgress(EodConstants.PROGRESS_SUCCESS);
-			bud.setErrorCode("");
-			bud.setErrorDesc("");
+			setSuccesStatus(bud);
 		}
 
 		return pdList;
@@ -495,11 +485,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 		AuditHeader audH = paymentHeaderService.doApprove(ah);
 		if (audH.getErrorMessage() != null) {
-			pid.setProgress(EodConstants.PROGRESS_FAILED);
-			for (ErrorDetail errorDetail : audH.getErrorMessage()) {
-				pid.setErrorCode(errorDetail.getCode());
-				pid.setErrorDesc(errorDetail.getMessage());
-			}
+			setFailureStatus(pid, audH.getErrorMessage().get(0));
 		}
 	}
 
@@ -510,9 +496,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 	}
 
 	private void setError(PaymentInstUploadDetail detail, PaymentUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -539,6 +523,8 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 		doValidate(header, pd);
 
 		updateProcess(header, pd, paramSource);
+
+		header.getUploadDetails().add(pd);
 
 		logger.debug(Literal.LEAVING);
 	}

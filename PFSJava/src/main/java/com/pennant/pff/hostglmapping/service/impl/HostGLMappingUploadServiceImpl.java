@@ -124,9 +124,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 		detail.setGLCode(glcode);
 
 		if (hostGLMappingUploadDAO.isDuplicateKey(glcode, TableType.BOTH_TAB)) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode("HGL_101");
-			detail.setErrorDesc("System GL Code" + ":" + glcode + " " + "already exists.");
+			setFailureStatus(detail, "HGL_101", "System GL Code" + ":" + glcode + " " + "already exists.");
 			return;
 		}
 
@@ -134,9 +132,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 		boolean isExistingHostAccount = accountMappingService.isExistingHostAccount(hostAccount);
 
 		if (isExistingHostAccount) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode("HGL_102");
-			detail.setErrorDesc("Host GL Code" + ":" + hostAccount + " " + "already exists.");
+			setFailureStatus(detail, "HGL_102", "Host GL Code" + ":" + hostAccount + " " + "already exists.");
 			return;
 		}
 
@@ -187,7 +183,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 					doValidate(header, detail);
 
 					if (detail.getErrorCode() != null) {
-						detail.setProgress(EodConstants.PROGRESS_FAILED);
+						setFailureStatus(detail);
 					} else {
 						setSuccesStatus(detail);
 
@@ -269,23 +265,17 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 				transactionManager.rollback(txStatus);
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 			return;
 		}
 
 		if (auditHeader == null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc("");
+			setFailureStatus(detail, "Audit Header is null.");
 			return;
 		}
 
 		if (auditHeader.getErrorMessage() != null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
-			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
+			setFailureStatus(detail, auditHeader.getErrorMessage().get(0));
 		} else {
 			setSuccesStatus(detail);
 		}
@@ -303,12 +293,14 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 
 		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			hostGLMappingUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(hostGLMappingUploadDAO.getDetails(h1.getId()));
 			});
+
+			hostGLMappingUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -330,27 +322,27 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		HostGLMappingUpload details = (HostGLMappingUpload) ObjectUtil.valueAsObject(paramSource,
+		HostGLMappingUpload detail = (HostGLMappingUpload) ObjectUtil.valueAsObject(paramSource,
 				HostGLMappingUpload.class);
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHeaderId(header.getId());
-		details.setAppDate(header.getAppDate());
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
 
-		doValidate(header, details);
+		doValidate(header, detail);
 
-		updateProcess(header, details, paramSource);
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(HostGLMappingUpload detail, HostGLMappingUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override

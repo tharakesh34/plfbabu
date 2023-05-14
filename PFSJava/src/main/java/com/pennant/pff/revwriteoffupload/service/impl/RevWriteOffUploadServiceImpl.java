@@ -171,14 +171,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 					transactionManager.rollback(txnStatus);
 				}
 
-				String error = StringUtils.trimToEmpty(e.getMessage());
-
-				if (error.length() > 1999) {
-					error = error.substring(0, 1999);
-				}
-
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorDesc(error);
+				setFailureStatus(detail, e.getMessage());
 			}
 		}
 	}
@@ -274,12 +267,12 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			revWriteOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(revWriteOffUploadDAO.getDetails(h1.getId()));
 			});
+
+			revWriteOffUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -332,9 +325,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 
 		detail.setReferenceID(fm.getFinID());
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 
 		logger.info("Validated the Data for the reference {}", reference);
 	}
@@ -377,13 +368,13 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 
 		updateProcess(header, detail, paramSource);
 
+		header.getUploadDetails().add(detail);
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(RevWriteOffUploadDetail detail, WriteOffUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override

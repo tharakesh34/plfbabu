@@ -113,7 +113,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	}
 
 	@Override
-	public void update(List<Long> headerIdList, String errorCode, String errorDesc, int progressFailed) {
+	public void update(List<Long> headerIdList, String errorCode, String errorDesc) {
 		String sql = "Update CROSS_LOAN_KNOCKOFF_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -126,8 +126,8 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 
 				long headerID = headerIdList.get(i);
 
-				ps.setInt(++index, progressFailed);
-				ps.setString(++index, (progressFailed == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

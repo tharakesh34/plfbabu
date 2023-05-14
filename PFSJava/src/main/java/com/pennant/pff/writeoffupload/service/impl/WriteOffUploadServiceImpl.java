@@ -199,14 +199,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 					transactionManager.rollback(transactionStatus);
 				}
 
-				String error = StringUtils.trimToEmpty(e.getMessage());
-
-				if (error.length() > 1999) {
-					error = error.substring(0, 1999);
-				}
-
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorDesc(error);
+				setFailureStatus(detail, e.getMessage());
 				this.writeOffUploadDAO.update(detail);
 			}
 
@@ -312,12 +305,13 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			writeOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(writeOffUploadDAO.getDetails(h1.getId()));
 			});
+
+			writeOffUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -334,6 +328,8 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
 		WriteOffUploadDetail detail = getDetail(object);
+
+		logger.info("Validating the Data for the reference {}", detail.getReference());
 
 		detail.setHeaderId(header.getId());
 
@@ -376,10 +372,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 
 		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, FinServiceEvent.WRITEOFF)) {
-			String reason = Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts);
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode("WOUP006");
-			detail.setErrorDesc(reason);
+			setFailureStatus(detail, "WOUP006", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return;
 		}
 
@@ -392,10 +385,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 		if (CollectionUtils.isNotEmpty(finEvents)) {
 			rcdMaintainSts = finEvents.get(0);
 			if (!rcdMaintainSts.equals(FinServiceEvent.WRITEOFF)) {
-				String reason = Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts);
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorCode("WOUP006");
-				detail.setErrorDesc(reason);
+				setFailureStatus(detail, "WOUP006", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 				return;
 			}
 		}
@@ -414,10 +404,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 
 		detail.setReferenceID(finID);
 
-		logger.info("Validating the Data for the reference {}", detail.getReference());
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 
 		logger.info("Validated the Data for the reference {}", detail.getReference());
 	}
@@ -428,9 +415,7 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 	}
 
 	private void setError(WriteOffUploadDetail detail, WriteOffUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	private AuditHeader getAuditHeader(FinanceWriteoffHeader header, String tranType) {
@@ -477,6 +462,8 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 		doValidate(header, detail);
 
 		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}

@@ -75,7 +75,7 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 	}
 
 	@Override
-	public void update(List<Long> headerIdList, String errCode, String errDesc, int progress) {
+	public void update(List<Long> headerIdList, String errCode, String errDesc) {
 		String sql = "Update Receipt_Status_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -88,8 +88,8 @@ public class ReceiptStatusUploadDAOImpl extends SequenceDao<ReceiptStatusUpload>
 
 				long headerID = headerIdList.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errCode);
 				ps.setString(++index, errDesc);
 

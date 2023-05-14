@@ -9,7 +9,7 @@ public interface BranchChangeUploadDAO {
 
 	void update(List<BranchChangeUpload> details);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 }

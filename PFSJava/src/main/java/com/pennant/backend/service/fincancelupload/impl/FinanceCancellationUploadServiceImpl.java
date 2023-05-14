@@ -56,8 +56,8 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceCancelValidator financeCancelValidator;
-	
-	public FinanceCancellationUploadServiceImpl(){
+
+	public FinanceCancellationUploadServiceImpl() {
 		super();
 	}
 
@@ -124,9 +124,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 
 		logger.info("Validated the Data for the reference {}", detail.getReference());
 	}
@@ -202,12 +200,12 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			financeCancellationUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(financeCancellationUploadDAO.getDetails(h1.getId()));
 			});
+
+			financeCancellationUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -263,22 +261,15 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 				transactionManager.rollback(txnStatus);
 			}
 
-			String error = StringUtils.trimToEmpty(e.getMessage());
-
-			if (error.length() > 1999) {
-				error = error.substring(0, 1999);
-			}
-
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(error);
+			setFailureStatus(detail, e.getMessage());
 		}
 	}
 
 	private ReasonHeader processReasonHeader(FinCancelUploadDetail detail) {
 		ReasonCode reasonCode = reasonDetailDAO.getCancelReasonByCode(detail.getReason(), "_AView");
 		if (reasonCode == null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc("Reason Code is not Valid");
+			setFailureStatus(detail, "Reason Code is not Valid");
+
 			return null;
 		}
 
@@ -296,17 +287,12 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 		return rh;
 	}
 
-	private void processLoanCancel(FinanceDetail financeDetail, FinCancelUploadDetail fcud) {
-		AuditHeader ah = getAuditDetail(financeDetail);
-
-		AuditHeader audH = financeCancellationService.doApprove(ah, true);
+	private void processLoanCancel(FinanceDetail fd, FinCancelUploadDetail fcud) {
+		AuditHeader audH = financeCancellationService.doApprove(getAuditDetail(fd), true);
 
 		if (audH.getErrorMessage() != null) {
-			fcud.setProgress(EodConstants.PROGRESS_FAILED);
-			for (ErrorDetail errorDetail : audH.getErrorMessage()) {
-				fcud.setErrorCode(errorDetail.getCode());
-				fcud.setErrorDesc(errorDetail.getError());
-			}
+			ErrorDetail ed = audH.getErrorMessage().get(0);
+			setFailureStatus(fcud, ed.getCode(), ed.getError());
 		}
 	}
 
@@ -317,9 +303,8 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 	}
 
 	private void setError(FinCancelUploadDetail detail, FinCancelUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(financeCancelValidator.getOverrideDescription(error, detail.getFm()));
+		String desc = financeCancelValidator.getOverrideDescription(error, detail.getFm());
+		setFailureStatus(detail, error.name(), desc);
 	}
 
 	@Override
@@ -331,21 +316,23 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinCancelUploadDetail details = (FinCancelUploadDetail) ObjectUtil.valueAsObject(paramSource,
+		FinCancelUploadDetail detail = (FinCancelUploadDetail) ObjectUtil.valueAsObject(paramSource,
 				FinCancelUploadDetail.class);
 
-		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHeaderId(header.getId());
-		details.setAppDate(header.getAppDate());
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
 
-		doValidate(header, details);
+		doValidate(header, detail);
 
-		updateProcess(header, details, paramSource);
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}

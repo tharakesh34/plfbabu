@@ -80,7 +80,7 @@ public class BulkFeeWaiverUploadDAOImpl extends SequenceDao<BulkFeeWaiverUpload>
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update FEE_WAIVER_UPLOAD Set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -91,8 +91,8 @@ public class BulkFeeWaiverUploadDAOImpl extends SequenceDao<BulkFeeWaiverUpload>
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				int index = 0;
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

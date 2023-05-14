@@ -10,7 +10,7 @@ public interface KycDetailsUploadDAO {
 
 	void update(List<CustomerKycDetail> details);
 
-	void update(List<Long> headerIdList, String errorCode, String errorDesc, int progressFailed);
+	void update(List<Long> headerIdList, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 
@@ -23,5 +23,4 @@ public interface KycDetailsUploadDAO {
 	boolean isInLoanQueue(long custId);
 
 	List<String> getReceiptQueueList(long custId);
-
 }

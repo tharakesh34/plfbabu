@@ -127,11 +127,9 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 					doValidate(header, bcu);
 
 					if (bcu.getErrorCode() != null) {
-						bcu.setProgress(EodConstants.PROGRESS_FAILED);
+						setFailureStatus(bcu);
 					} else {
-						bcu.setProgress(EodConstants.PROGRESS_SUCCESS);
-						bcu.setErrorCode("");
-						bcu.setErrorDesc("");
+						setSuccesStatus(bcu);
 						bcu.setUserDetails(header.getUserDetails());
 
 						process(appDate, bcu);
@@ -188,9 +186,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 				transactionManager.rollback(txStatus);
 			}
 
-			bcu.setProgress(EodConstants.PROGRESS_FAILED);
-			bcu.setErrorCode(ERR_CODE);
-			bcu.setErrorDesc(e.getMessage());
+			setFailureStatus(bcu, e.getMessage());
 		}
 	}
 
@@ -201,12 +197,12 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			branchChangeUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(branchChangeUploadDAO.getDetails(h1.getId()));
 			});
+
+			branchChangeUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -287,29 +283,32 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource parameterSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		BranchChangeUpload details = (BranchChangeUpload) ObjectUtil.valueAsObject(parameterSource,
+		BranchChangeUpload detail = (BranchChangeUpload) ObjectUtil.valueAsObject(parameterSource,
 				BranchChangeUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(parameterSource.getValue("finReference")));
+		detail.setReference(ObjectUtil.valueAsString(parameterSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHeaderId(header.getId());
-		details.setAppDate(header.getAppDate());
+		Long recordSeq = (Long) parameterSource.getValue("RecordSeq");
 
-		doValidate(header, details);
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
+		detail.setRecordSeq(recordSeq);
 
-		updateProcess(header, details, parameterSource);
+		doValidate(header, detail);
+
+		updateProcess(header, detail, parameterSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(BranchChangeUpload detail, BranchChangeUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Autowired

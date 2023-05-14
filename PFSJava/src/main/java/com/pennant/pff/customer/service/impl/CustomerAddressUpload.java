@@ -89,7 +89,7 @@ public class CustomerAddressUpload extends KycDetailsUploadServiceImpl {
 				processNSAandNSP(address);
 			}
 		} catch (Exception e) {
-			setError(detail, ERR_CODE, getErrorMessage(e));
+			setError(detail, "9999", getErrorMessage(e));
 			kycDetailsUploadDAO.update(detail);
 		}
 	}

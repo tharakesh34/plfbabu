@@ -117,12 +117,12 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 		}
 
 		setSuccesStatus(detail);
+		detail.setStatus("C");
 	}
 
 	private void setError(ExcessTransferUpload detail, ExcessTransferError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
+		detail.setStatus("R");
 	}
 
 	@Override
@@ -261,9 +261,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 			try {
 				excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
 			} catch (Exception e) {
-				exc.setErrorCode(ERR_CODE);
-				exc.setErrorDesc(getErrorMessage(e));
-				exc.setProgress(EodConstants.PROGRESS_FAILED);
+				setFailureStatus(exc, getErrorMessage(e));
+				exc.setStatus("R");
 			}
 		}
 	}
@@ -280,12 +279,13 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			excessTransferUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(excessTransferUploadDAO.getDetails(h1.getId()));
 			});
+
+			excessTransferUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -326,7 +326,9 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 
 		doValidate(header, transfer);
 
-		updateProcess(header, transfer, paramSource, "C", "R");
+		updateProcess(header, transfer, paramSource);
+
+		header.getUploadDetails().add(transfer);
 
 		logger.debug(Literal.LEAVING);
 	}

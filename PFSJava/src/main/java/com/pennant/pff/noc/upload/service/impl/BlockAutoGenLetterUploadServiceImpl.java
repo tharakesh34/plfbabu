@@ -111,11 +111,9 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 					doValidate(header, detail);
 
 					if (detail.getErrorCode() != null) {
-						detail.setProgress(EodConstants.PROGRESS_FAILED);
+						setFailureStatus(detail);
 					} else {
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-						detail.setErrorCode("");
-						detail.setErrorDesc("");
+						setSuccesStatus(detail);
 						process(detail);
 					}
 
@@ -153,12 +151,12 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			blockAutoGenLetterUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(blockAutoGenLetterUploadDAO.getDetails(h1.getId()));
 			});
+
+			blockAutoGenLetterUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -202,6 +200,8 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 
 		updateProcess(header, genLetter, paramSource);
 
+		header.getUploadDetails().add(genLetter);
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -221,9 +221,7 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 				transactionManager.rollback(txnStatus);
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 		}
 	}
 
@@ -245,9 +243,7 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 	}
 
 	private void setError(BlockAutoGenLetterUpload detail, BlockAutoGenLetterUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Autowired

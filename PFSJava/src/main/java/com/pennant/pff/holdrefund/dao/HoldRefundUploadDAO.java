@@ -14,7 +14,7 @@ public interface HoldRefundUploadDAO {
 
 	void update(List<HoldRefundUploadDetail> detailsList);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

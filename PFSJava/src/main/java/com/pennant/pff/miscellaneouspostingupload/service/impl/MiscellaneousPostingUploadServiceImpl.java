@@ -16,9 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.SysParamUtil;
@@ -179,9 +177,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 						continue;
 					}
 
-					detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-					detail.setErrorCode("");
-					detail.setErrorDesc("");
+					setSuccesStatus(detail);
 					detail.setUserDetails(header.getUserDetails());
 
 					mList.add(detail);
@@ -380,15 +376,16 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 	public void doReject(List<FileUploadHeader> headers) {
 		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
+			headers.forEach(h1 -> {
+				h1.setRemarks(REJECT_DESC);
+				h1.getUploadDetails().addAll(miscellaneousPostingUploadDAO.getDetails(h1.getId()));
+			});
 
-			miscellaneousPostingUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+			miscellaneousPostingUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -448,9 +445,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 	}
 
 	private void setError(MiscellaneousPostingUpload detail, MiscellaneousPostingUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -483,21 +478,23 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		MiscellaneousPostingUpload details = (MiscellaneousPostingUpload) ObjectUtil.valueAsObject(paramSource,
+		MiscellaneousPostingUpload detail = (MiscellaneousPostingUpload) ObjectUtil.valueAsObject(paramSource,
 				MiscellaneousPostingUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
+		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHeaderId(header.getId());
-		details.setAppDate(header.getAppDate());
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
 
-		doValidate(header, details);
+		doValidate(header, detail);
 
-		updateProcess(header, details, paramSource);
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}

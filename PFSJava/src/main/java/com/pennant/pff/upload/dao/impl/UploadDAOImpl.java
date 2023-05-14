@@ -487,7 +487,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	@Override
 	public List<FileUploadHeader> loadData(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.UploadPath, uh.Progress");
+		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.UploadPath, uh.Progress, uh.TotalRecords");
 		sql.append(", uh.CreatedBy, uh.CreatedOn, uh.ApprovedBy, uh.ApprovedOn, uh.LastMntOn, uh.LastMntBy");
 		sql.append(", uh.Version, uh.RecordStatus, uh.RoleCode, uh.NextRoleCode");
 		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId");
@@ -508,6 +508,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			ruh.setFileName(rs.getString("FileName"));
 			ruh.setUploadPath(rs.getString("UploadPath"));
 			ruh.setProgress(rs.getInt("Progress"));
+			ruh.setTotalRecords(rs.getInt("TotalRecords"));
 			ruh.setCreatedBy(rs.getLong("CreatedBy"));
 			ruh.setCreatedOn(rs.getTimestamp("CreatedOn"));
 			ruh.setApprovedBy(rs.getLong("ApprovedBy"));

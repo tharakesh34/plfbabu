@@ -33,8 +33,8 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private LovFieldDetailDAO lovFieldDetailDAO;
-	
-	public HoldRefundUploadServiceImpl(){
+
+	public HoldRefundUploadServiceImpl() {
 		super();
 	}
 
@@ -116,12 +116,12 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 
 		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			holdRefundUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(holdRefundUploadDAO.getDetails(h1.getId()));
 			});
+
+			holdRefundUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -222,9 +222,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 	}
 
 	public void uploadProcess() {
@@ -237,9 +235,7 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 	}
 
 	private void setError(HoldRefundUploadDetail detail, PaymentUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -276,6 +272,8 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 		doValidate(header, detail);
 
 		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 	}
 
 	@Autowired

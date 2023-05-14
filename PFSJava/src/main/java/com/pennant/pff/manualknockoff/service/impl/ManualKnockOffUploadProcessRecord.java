@@ -18,6 +18,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.CommonHeader;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -125,10 +126,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
-				if ("Created By".equals(allocationType) || "Created On".equals(allocationType)
-						|| "Approved By".equals(allocationType) || "Approved On".equals(allocationType)
-						|| "Status".equals(allocationType) || "Error Code".equals(allocationType)
-						|| "Error Desc".equals(allocationType)) {
+				if (CommonHeader.isValid(allocationType)) {
 					continue;
 				}
 
@@ -172,15 +170,8 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			if (mku.getProgress() == EodConstants.PROGRESS_FAILED) {
 				record.addValue("ERRORCODE", mku.getErrorCode());
 				record.addValue("ERRORDESC", mku.getErrorDesc());
-
-				List<ManualKnockOffUpload> details = new ArrayList<>();
-				details.add(mku);
-
-				manualKnockOffUploadDAO.update(details);
 			}
 		} catch (AppException e) {
-
-			header.setFailureRecords(header.getFailureRecords() + 1);
 			mku.setStatus("F");
 			mku.setProgress(EodConstants.PROGRESS_FAILED);
 
@@ -191,7 +182,14 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			record.addValue("PROGRESS", mku.getProgress());
 		}
 
+		List<ManualKnockOffUpload> details = new ArrayList<>();
+		details.add(mku);
+
+		manualKnockOffUploadDAO.update(details);
+
 		manualKnockOffUploadService.updateProcess(header, mku, record);
+
+		header.getUploadDetails().add(mku);
 
 		logger.debug(Literal.LEAVING);
 	}

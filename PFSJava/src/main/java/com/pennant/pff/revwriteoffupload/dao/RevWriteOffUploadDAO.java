@@ -11,7 +11,7 @@ public interface RevWriteOffUploadDAO {
 
 	void update(List<RevWriteOffUploadDetail> detailsList);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

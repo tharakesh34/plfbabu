@@ -96,9 +96,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 
 					if (finID == null) {
 						for (ChequeUpload detail : chequeUploads) {
-							detail.setProgress(EodConstants.PROGRESS_FAILED);
-							detail.setErrorCode("9999");
-							detail.setErrorDesc("Fin Reference is not valid.");
+							setFailureStatus(detail, "Fin Reference is not valid.");
 						}
 						continue;
 					}
@@ -249,12 +247,13 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			chequeUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(chequeUploadDAO.getDetails(h1.getId()));
 			});
+
+			chequeUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -277,9 +276,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 		String action = upload.getAction();
 
 		if (!("A".equals(action) || "D".equals(action))) {
-			upload.setProgress(EodConstants.PROGRESS_FAILED);
-			upload.setErrorCode("999");
-			upload.setErrorDesc("Action is invalid.");
+			setFailureStatus(upload, "Action is invalid.");
 		}
 
 		String ifsc = cd.getIfsc();
@@ -358,9 +355,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 		}
 
 		for (ChequeUpload detail : uploads) {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode("");
-			detail.setErrorDesc("");
+			setSuccesStatus(detail);
 		}
 
 	}
@@ -404,6 +399,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 		doValidate(header, detail);
 
 		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 	}
 
 	private int fetchChequeSize(List<ChequeDetail> cheques) {
@@ -418,9 +415,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 	}
 
 	private void setError(ChequeUpload detail, ErrorDetail error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.getCode());
-		detail.setErrorDesc(error.getError());
+		setFailureStatus(detail, error.getCode(), error.getError());
 	}
 
 	private void setError(List<ChequeUpload> uploads, ErrorDetail error) {

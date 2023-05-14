@@ -22,6 +22,10 @@ import com.pennanttech.pff.file.UploadStatus;
 
 public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> implements LoanClosureUploadDAO {
 
+	public LoanClosureUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<LoanClosureUpload> loadRecordData(long headerID) {
 		StringBuilder sql = new StringBuilder("Select");
@@ -170,7 +174,7 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> imp
 	}
 
 	@Override
-	public void update(List<Long> headerIdList, String errorCode, String errorDesc, int progressFailed) {
+	public void update(List<Long> headerIdList, String errorCode, String errorDesc) {
 		String sql = "Update Loan_Closure_Upload set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -183,8 +187,8 @@ public class LoanClosureUploadDAOImpl extends SequenceDao<LoanClosureUpload> imp
 
 				long headerID = headerIdList.get(i);
 
-				ps.setInt(++index, progressFailed);
-				ps.setString(++index, (progressFailed == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

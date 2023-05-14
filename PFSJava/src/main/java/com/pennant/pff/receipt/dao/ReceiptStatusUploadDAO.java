@@ -10,7 +10,7 @@ public interface ReceiptStatusUploadDAO {
 
 	void update(List<ReceiptStatusUpload> details);
 
-	public void update(List<Long> headerIdList, String errCode, String errDesc, int progressFailed);
+	public void update(List<Long> headerIdList, String errCode, String errDesc);
 
 	public String getSqlQuery();
 }

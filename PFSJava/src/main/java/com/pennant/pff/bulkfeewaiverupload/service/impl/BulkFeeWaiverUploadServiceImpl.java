@@ -50,11 +50,11 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 	private FinanceMainDAO financeMainDAO;
 	private FeeWaiverUploadHeaderService feeWaiverUploadHeaderService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
-	
-	public BulkFeeWaiverUploadServiceImpl(){
+
+	public BulkFeeWaiverUploadServiceImpl() {
 		super();
 	}
-	
+
 	@Override
 	protected BulkFeeWaiverUpload getDetail(Object object) {
 		if (object instanceof BulkFeeWaiverUpload detail) {
@@ -135,7 +135,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 						failRecords++;
 					} else {
 						sucessRecords++;
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+						setSuccesStatus(detail);
 					}
 				}
 
@@ -165,30 +165,24 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			ah = feeWaiverHeaderService.doApprove(ah);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
-			
+
 			return;
 		}
 
 		if (ah == null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorCode("Audit Header is null.");
+			setFailureStatus(detail, "Audit Header is null.");
 			return;
 		}
 
 		if (ah.getErrorMessage() != null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(ah.getErrorMessage().get(0).getMessage());
-			detail.setErrorCode(ah.getErrorMessage().get(0).getCode());
+			setFailureStatus(detail, ah.getErrorMessage().get(0));
 		}
 	}
 
@@ -199,12 +193,12 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			bulkFeeWaiverUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(bulkFeeWaiverUploadDAO.getDetails(h1.getId()));
 			});
+
+			bulkFeeWaiverUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -251,17 +245,13 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 		String rcdMaintainSts = detail.getFinanceMain().getRcdMaintainSts();
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode("FWU_999");
-			detail.setErrorDesc(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			setFailureStatus(detail, "FWU_999", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return fwh;
 		}
 
 		prepareFWD(fwh, detail);
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 
 		return fwh;
 	}
@@ -372,9 +362,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 	}
 
 	private void setError(BulkFeeWaiverUpload detail, BulkFeeWaiverUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -410,6 +398,8 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		details.add(bfee);
 
 		bulkFeeWaiverUploadDAO.update(details);
+
+		header.getUploadDetails().add(bfee);
 
 		logger.debug(Literal.LEAVING);
 	}

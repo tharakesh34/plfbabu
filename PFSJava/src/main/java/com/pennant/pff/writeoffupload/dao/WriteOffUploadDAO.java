@@ -10,7 +10,7 @@ public interface WriteOffUploadDAO {
 
 	void update(List<WriteOffUploadDetail> detailsList);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

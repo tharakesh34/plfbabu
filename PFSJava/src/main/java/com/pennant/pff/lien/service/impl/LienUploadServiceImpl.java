@@ -139,9 +139,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 					if (fm != null && !fm.isFinIsActive()) {
 						for (LienUpload lienUpload : lienUploads) {
-							lienUpload.setProgress(EodConstants.PROGRESS_FAILED);
-							lienUpload.setErrorCode("9999");
-							lienUpload.setErrorDesc("Fin Reference is not active.");
+							setFailureStatus(lienUpload, "Fin Reference is not active.");
 						}
 
 						continue;
@@ -284,12 +282,13 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			lienUploadDAO.updateRejectStatus(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(lienUploadDAO.getDetails(h1.getId()));
 			});
+
+			lienUploadDAO.updateRejectStatus(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -318,28 +317,28 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		LienUpload details = (LienUpload) ObjectUtil.valueAsObject(paramSource, LienUpload.class);
+		LienUpload detail = (LienUpload) ObjectUtil.valueAsObject(paramSource, LienUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
+		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHeaderId(header.getId());
-		details.setAppDate(header.getAppDate());
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
 
-		doValidate(header, details);
+		doValidate(header, detail);
 
-		updateProcess(header, details, paramSource);
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(LienUpload detail, LienUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	private LienDetails getLienDetails(FileUploadHeader header, LienUpload lienup) {

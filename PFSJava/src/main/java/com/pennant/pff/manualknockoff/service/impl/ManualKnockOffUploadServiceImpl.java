@@ -214,9 +214,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			alcamount = alcamount.add(uad.getPaidAmount());
 
 			if (!uad.getErrorDetails().isEmpty()) {
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorCode(uad.getErrorDetails().get(0).getCode());
-				detail.setErrorDesc(uad.getErrorDetails().get(0).getError());
+				setFailureStatus(detail, uad.getErrorDetails().get(0));
 				return;
 			}
 		}
@@ -230,9 +228,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	}
 
 	private void setError(ManualKnockOffUpload detail, ManualKnockOffUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -367,35 +363,28 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			fd = receiptService.receiptTransaction(fsi);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			fc.setProgress(EodConstants.PROGRESS_FAILED);
-			fc.setErrorCode(ERR_CODE);
-			fc.setErrorDesc(e.getMessage());
-
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
 
+			setFailureStatus(fc, e.getMessage());
 			return;
 		}
 
 		if (fd == null) {
-			fc.setProgress(EodConstants.PROGRESS_FAILED);
-			fc.setErrorCode(ERR_CODE);
-			fc.setErrorCode("Finance Detail is null.");
+			setFailureStatus(fc, "Finance Detail is null.");
 			return;
 		}
 
 		FinScheduleData schd = fd.getFinScheduleData();
 		if (!schd.getErrorDetails().isEmpty()) {
 			ErrorDetail error = schd.getErrorDetails().get(0);
-			fc.setProgress(EodConstants.PROGRESS_FAILED);
-			fc.setErrorCode(error.getCode());
-			fc.setErrorDesc(error.getError());
+			setFailureStatus(fc, error.getCode(), error.getError());
 		} else {
 			fc.setReceiptID(fd.getReceiptId());
-			fc.setProgress(EodConstants.PROGRESS_SUCCESS);
+			setSuccesStatus(fc);
 		}
 	}
 
@@ -406,12 +395,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			manualKnockOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(manualKnockOffUploadDAO.getDetails(h1.getId()));
 			});
+
+			manualKnockOffUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 

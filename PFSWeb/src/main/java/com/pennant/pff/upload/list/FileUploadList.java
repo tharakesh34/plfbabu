@@ -1286,6 +1286,7 @@ public class FileUploadList extends Window implements Serializable {
 			long id = uph.getId();
 
 			if (id <= 0) {
+				fileName.setValue("", "");
 				return;
 			}
 

@@ -12,7 +12,7 @@ public interface LienUploadDAO {
 
 	void update(LienUpload lu, long headerID);
 
-	void updateRejectStatus(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void updateRejectStatus(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

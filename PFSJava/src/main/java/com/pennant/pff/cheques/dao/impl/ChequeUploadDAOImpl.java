@@ -16,6 +16,10 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements ChequeUploadDAO {
 
+	public ChequeUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<ChequeUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq, ChequeDetailsId");
@@ -100,7 +104,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update CHEQUES_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -113,8 +117,8 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

@@ -17,6 +17,10 @@ import com.pennanttech.pff.provision.model.ProvisionUpload;
 
 public class ProvisionUploadDAOImpl extends SequenceDao<ProvisionUpload> implements ProvisionUploadDAO {
 
+	public ProvisionUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<ProvisionUpload> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq");
@@ -79,7 +83,7 @@ public class ProvisionUploadDAOImpl extends SequenceDao<ProvisionUpload> impleme
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update Provision_Upload set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -92,8 +96,8 @@ public class ProvisionUploadDAOImpl extends SequenceDao<ProvisionUpload> impleme
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

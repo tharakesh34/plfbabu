@@ -78,7 +78,7 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 				processNSEandNSP(email);
 			}
 		} catch (Exception e) {
-			setError(detail, ERR_CODE, getErrorMessage(e));
+			setError(detail, "9999", getErrorMessage(e));
 			kycDetailsUploadDAO.update(detail);
 		}
 	}
@@ -87,7 +87,7 @@ public class CustomerEmailUpload extends KycDetailsUploadServiceImpl {
 		if (StringUtils.isEmpty(detail.getCustEMailTypeCode())) {
 			return;
 		}
-		
+
 		if (customerEMailDAO.getEMailTypeCount(detail.getCustEMailTypeCode()) <= 0) {
 			setError(detail, "90701", "EMailType", detail.getCustEMailTypeCode());
 			return;

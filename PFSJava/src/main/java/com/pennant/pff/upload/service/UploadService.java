@@ -60,8 +60,5 @@ public interface UploadService {
 
 	void uploadProcess(String type, UploadService uploadService, String moduleCode);
 
-	void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record,
-			String successStatus, String failureStatus);
-
 	void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record);
 }

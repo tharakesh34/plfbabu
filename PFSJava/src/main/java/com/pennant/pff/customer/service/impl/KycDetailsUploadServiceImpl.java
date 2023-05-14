@@ -124,9 +124,7 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 						}
 
 						sucessRecords++;
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-						detail.setErrorCode("");
-						detail.setErrorDesc("");
+						setSuccesStatus(detail);
 					}
 
 					txStatus = transactionManager.getTransaction(txDef);
@@ -184,12 +182,12 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			kycDetailsUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(kycDetailsUploadDAO.loadRecordData(h1.getId()));
 			});
+
+			kycDetailsUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -494,27 +492,21 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 
 		updateProcess(header, detail, paramSource);
 
+		header.getUploadDetails().add(detail);
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	protected void setError(CustomerKycDetail detail, String code, String... parms) {
-		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(code, parms));
-
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(errorDetail.getCode());
-		detail.setErrorDesc(errorDetail.getError());
+		setFailureStatus(detail, ErrorUtil.getErrorDetail(new ErrorDetail(code, parms)));
 	}
 
 	protected void setError(CustomerKycDetail detail, CustomerDetailsUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	protected void setError(CustomerKycDetail detail, CustomerDetailsUploadError error, String arg) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description().concat(arg));
+		setFailureStatus(detail, error.name(), error.description().concat(arg));
 	}
 
 	private int getLength(String str) {

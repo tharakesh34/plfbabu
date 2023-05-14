@@ -40,7 +40,6 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
@@ -127,9 +126,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	}
 
 	protected void setError(LoanClosureUpload detail, LoanClosureUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -256,33 +253,25 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 			fd = receiptService.receiptTransaction(fsi);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			lcu.setProgress(EodConstants.PROGRESS_FAILED);
-			lcu.setErrorCode(ERR_CODE);
-			lcu.setErrorDesc(e.getMessage());
-
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
 
+			setFailureStatus(lcu, e.getMessage());
 			return;
 		}
 
 		if (fd == null) {
-			lcu.setProgress(EodConstants.PROGRESS_FAILED);
-			lcu.setErrorCode(ERR_CODE);
-			lcu.setErrorCode("Finance Detail is null.");
+			setFailureStatus(lcu, "Finance Detail is null.");
 			return;
 		}
 
 		FinScheduleData schd = fd.getFinScheduleData();
 		if (!schd.getErrorDetails().isEmpty()) {
-			ErrorDetail error = schd.getErrorDetails().get(0);
-			lcu.setProgress(EodConstants.PROGRESS_FAILED);
-			lcu.setErrorCode(error.getCode());
-			lcu.setErrorDesc(error.getError());
+			setFailureStatus(lcu, schd.getErrorDetails().get(0));
 		} else {
 			lcu.setReceiptID(fd.getReceiptId());
-			lcu.setProgress(EodConstants.PROGRESS_SUCCESS);
+			setSuccesStatus(lcu);
 		}
 	}
 
@@ -293,12 +282,12 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		TransactionStatus txStatus = getTransactionStatus();
 		try {
 
-			loanClosureUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(loanClosureUploadDAO.loadRecordData(h1.getId()));
 			});
+
+			loanClosureUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 

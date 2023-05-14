@@ -59,9 +59,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 		}
 		return response;
 	}
@@ -96,23 +94,17 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 						Mandate response = process(detail, mandate);
 
 						if (response == null) {
-							detail.setProgress(EodConstants.PROGRESS_FAILED);
-							detail.setErrorCode(ERR_CODE);
-							detail.setErrorDesc("");
+							setFailureStatus(detail, "Mandate is null");
 							continue;
 						}
 
 						ErrorDetail error = response.getError();
 						if (error != null) {
 							failRecords++;
-							detail.setProgress(EodConstants.PROGRESS_FAILED);
-							detail.setErrorCode(error.getCode());
-							detail.setErrorDesc(error.getError());
+							setFailureStatus(detail, error.getCode(), error.getError());
 						} else {
 							sucessRecords++;
-							detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-							detail.setErrorCode("");
-							detail.setErrorDesc("");
+							setSuccesStatus(detail);
 							detail.setReferenceID(response.getMandateID());
 						}
 
@@ -145,12 +137,14 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 
 		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			mandateUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(mandateUploadDAO.loadRecordData(h1.getId()));
 			});
+
+			mandateUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -268,10 +262,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 	}
 
 	private void setError(MandateUpload detail, MandateUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setStatus("F");
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -333,6 +324,8 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 		doValidate(header, detail);
 
 		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}

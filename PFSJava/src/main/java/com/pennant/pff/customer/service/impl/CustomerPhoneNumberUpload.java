@@ -80,7 +80,7 @@ public class CustomerPhoneNumberUpload extends KycDetailsUploadServiceImpl {
 				proessNSPTandNSP(phone);
 			}
 		} catch (Exception e) {
-			setError(detail, ERR_CODE, getErrorMessage(e));
+			setError(detail, "9999", getErrorMessage(e));
 			kycDetailsUploadDAO.update(detail);
 		}
 	}

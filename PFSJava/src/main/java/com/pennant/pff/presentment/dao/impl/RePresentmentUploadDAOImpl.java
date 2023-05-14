@@ -22,6 +22,10 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadDetail>
 		implements RePresentmentUploadDAO {
 
+	public RePresentmentUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<RePresentmentUploadDetail> getDetails(long headerID) {
 		StringBuilder sql = new StringBuilder("Select");
@@ -152,7 +156,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update REPRESENT_UPLOADS set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -165,8 +169,8 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

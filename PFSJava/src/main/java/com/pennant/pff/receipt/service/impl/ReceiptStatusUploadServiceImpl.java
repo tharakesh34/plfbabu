@@ -228,9 +228,7 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 	}
 
 	private void setError(ReceiptStatusUpload detail, ReceiptStatusUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
@@ -252,11 +250,9 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 					doValidate(header, detail);
 
 					if (detail.getErrorCode() != null) {
-						detail.setProgress(EodConstants.PROGRESS_FAILED);
+						setFailureStatus(detail);
 					} else {
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-						detail.setErrorCode("");
-						detail.setErrorDesc("");
+						setSuccesStatus(detail);
 						detail.setUserDetails(header.getUserDetails());
 
 						updateReceipt(detail);
@@ -361,27 +357,19 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 				transactionManager.rollback(txStatus);
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 			return;
 		}
 
 		if (auditHeader == null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc("");
+			setFailureStatus(detail, "Audit Header is null");
 			return;
 		}
 
 		if (auditHeader.getErrorMessage() != null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
-			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
+			setFailureStatus(detail, auditHeader.getErrorMessage().get(0));
 		} else {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode("");
-			detail.setErrorDesc("");
+			setSuccesStatus(detail);
 		}
 	}
 
@@ -398,12 +386,12 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			receiptStatusUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(receiptStatusUploadDAO.getDetails(h1.getId()));
 			});
+
+			receiptStatusUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -431,21 +419,23 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		ReceiptStatusUpload details = (ReceiptStatusUpload) ObjectUtil.valueAsObject(paramSource,
+		ReceiptStatusUpload detail = (ReceiptStatusUpload) ObjectUtil.valueAsObject(paramSource,
 				ReceiptStatusUpload.class);
 
-		details.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
-		details.setHeaderId(header.getId());
-		details.setAppDate(header.getAppDate());
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
 
-		doValidate(header, details);
+		doValidate(header, detail);
 
-		updateProcess(header, details, paramSource);
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 
 		logger.debug(Literal.LEAVING);
 	}

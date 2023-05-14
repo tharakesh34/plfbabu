@@ -11,7 +11,7 @@ public interface HostGLMappingUploadDAO {
 
 	void update(List<HostGLMappingUpload> details);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

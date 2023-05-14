@@ -79,7 +79,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 					doValidate(header, detail);
 
 					if (detail.getErrorCode() != null) {
-						detail.setProgress(EodConstants.PROGRESS_FAILED);
+						setFailureStatus(detail);
 					} else {
 						setSuccesStatus(detail);
 						detail.setUserDetails(header.getUserDetails());
@@ -180,24 +180,18 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 				transactionManager.rollback(txStatus);
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(ERR_CODE);
-			detail.setErrorCode(e.getMessage());
+			setFailureStatus(detail, e.getMessage());
 
 			return;
 		}
 
 		if (auditHeader == null) {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc("Audit Header is null.");
+			setFailureStatus(detail, "Audit Header is null.");
 			return;
 		}
 
 		if (auditHeader.getErrorMessage() != null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
-			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
+			setFailureStatus(detail, auditHeader.getErrorMessage().get(0));
 		} else {
 			setSuccesStatus(detail);
 		}
@@ -209,12 +203,13 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 		TransactionStatus txStatus = getTransactionStatus();
 		try {
-			lppUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(lppUploadDAO.getDetails(h1.getId()));
 			});
+
+			lppUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -273,9 +268,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 			String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 			if (StringUtils.isNotEmpty(rcdMntnSts)) {
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorCode("LPP_999");
-				detail.setErrorDesc(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
+				setFailureStatus(detail, "LPP_999", Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 				return;
 			}
 		}
@@ -438,9 +431,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	private AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
@@ -477,6 +468,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		doValidate(header, lppUpload);
 
 		updateProcess(header, lppUpload, paramSource);
+
+		header.getUploadDetails().add(lppUpload);
 
 		logger.debug(Literal.LEAVING);
 	}

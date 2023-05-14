@@ -48,6 +48,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -111,7 +112,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			doReceiptValidations(clk, frh);
 
 			if (clk.getErrorCode() != null) {
-				clk.setProgress(EodConstants.PROGRESS_FAILED);
+				setFailureStatus(clk);
 			} else {
 				setSuccesStatus(clk);
 			}
@@ -224,12 +225,12 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			crossLoanKnockoffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(crossLoanKnockoffUploadDAO.loadRecordData(h1.getId()));
 			});
+
+			crossLoanKnockoffUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
 			updateHeader(headers, false);
 
@@ -252,38 +253,32 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			ah = crossLoanKnockOffService.doApprove(ah);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			clk.setProgress(EodConstants.PROGRESS_FAILED);
-			clk.setErrorCode(ERR_CODE);
-			clk.setErrorDesc(e.getMessage());
-
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
+
+			setFailureStatus(clk, e.getMessage());
 			return;
 		}
 
 		if (ah == null) {
-			clk.setProgress(EodConstants.PROGRESS_FAILED);
-			clk.setErrorCode(ERR_CODE);
-			clk.setErrorCode("Audit Header is null.");
+			setFailureStatus(clk, "Audit Header is null.");
 			return;
 		}
 
 		if (ah.getErrorMessage() != null) {
-			clk.setProgress(EodConstants.PROGRESS_FAILED);
-			clk.setErrorDesc(ah.getErrorMessage().get(0).getMessage());
-			clk.setErrorCode(ah.getErrorMessage().get(0).getCode());
+			ErrorDetail ed = ah.getErrorMessage().get(0);
+			setFailureStatus(clk, ed.getCode(), ed.getMessage());
 		} else {
 			clk.setCrossLoanId(((CrossLoanKnockOff) ah.getAuditDetail().getModelData()).getId());
+			setSuccesStatus(clk);
 		}
 	}
 
 	private void setError(CrossLoanKnockoffUpload detail, CrossLoanKnockOffUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	private BigDecimal getSumOfAllocations(List<CrossLoanKnockoffUpload> alloc) {

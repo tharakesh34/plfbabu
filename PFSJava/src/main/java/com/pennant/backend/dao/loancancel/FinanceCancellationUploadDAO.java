@@ -8,7 +8,7 @@ public interface FinanceCancellationUploadDAO {
 
 	String getSqlQuery();
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	List<FinCancelUploadDetail> getDetails(long id);
 

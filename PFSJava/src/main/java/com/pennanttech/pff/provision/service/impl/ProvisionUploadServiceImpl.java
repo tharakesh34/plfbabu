@@ -79,11 +79,9 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 					doValidate(header, detail);
 
 					if (detail.getErrorCode() != null) {
-						detail.setProgress(EodConstants.PROGRESS_FAILED);
+						setFailureStatus(detail);
 					} else {
-						detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-						detail.setErrorCode("");
-						detail.setErrorDesc("");
+						setSuccesStatus(detail);
 						process(header, detail);
 					}
 
@@ -176,21 +174,14 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 				transactionManager.rollback(txStatus);
 			}
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(ERR_CODE);
-			detail.setErrorDesc(e.getMessage());
-
+			setFailureStatus(detail, e.getMessage());
 			return;
 		}
 
 		if (auditHeader != null && auditHeader.getErrorMessage() != null) {
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorDesc(auditHeader.getErrorMessage().get(0).getMessage());
-			detail.setErrorCode(auditHeader.getErrorMessage().get(0).getCode());
+			setFailureStatus(detail, auditHeader.getErrorMessage().get(0));
 		} else {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode("");
-			detail.setErrorDesc("");
+			setSuccesStatus(detail);
 		}
 	}
 
@@ -206,12 +197,13 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			provisionUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
-
 			headers.forEach(h1 -> {
-				h1.setRemarks(ERR_DESC);
+				h1.setRemarks(REJECT_DESC);
 				h1.getUploadDetails().addAll(provisionUploadDAO.getDetails(h1.getId()));
 			});
+
+			provisionUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
@@ -252,6 +244,8 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		doValidate(header, provision);
 
 		updateProcess(header, provision, paramSource);
+
+		header.getUploadDetails().add(provision);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -357,9 +351,7 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 	}
 
 	private void setError(ProvisionUpload detail, ProvisionUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Autowired

@@ -21,6 +21,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.CommonHeader;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -130,10 +131,7 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 					break;
 				}
 
-				if ("Created By".equals(allocationType) || "Created On".equals(allocationType)
-						|| "Approved By".equals(allocationType) || "Approved On".equals(allocationType)
-						|| "Status".equals(allocationType) || "Error Code".equals(allocationType)
-						|| "Error Desc".equals(allocationType)) {
+				if (CommonHeader.isValid(allocationType)) {
 					continue;
 				}
 
@@ -183,15 +181,9 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 			if (clku.getProgress() == EodConstants.PROGRESS_FAILED) {
 				record.addValue("ERRORCODE", clku.getErrorCode());
 				record.addValue("ERRORDESC", clku.getErrorDesc());
-
-				List<CrossLoanKnockoffUpload> details = new ArrayList<>();
-				details.add(clku);
-
-				crossLoanKnockOffUploadDAO.update(details);
 			}
 
 		} catch (AppException e) {
-			header.setFailureRecords(header.getFailureRecords() + 1);
 			clku.setStatus("F");
 			clku.setProgress(EodConstants.PROGRESS_FAILED);
 
@@ -202,7 +194,14 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 			record.addValue("PROGRESS", clku.getProgress());
 		}
 
+		List<CrossLoanKnockoffUpload> details = new ArrayList<>();
+		details.add(clku);
+
+		crossLoanKnockOffUploadDAO.update(details);
+
 		crossLoanKnockOffUploadService.updateProcess(header, clku, record);
+
+		header.getUploadDetails().add(clku);
 
 		logger.debug(Literal.LEAVING);
 	}
