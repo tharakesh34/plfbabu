@@ -141,7 +141,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 						for (LienUpload lienUpload : lienUploads) {
 							setFailureStatus(lienUpload, "Fin Reference is not active.");
 						}
-
 						continue;
 					} else {
 						fm = new FinanceMain();
@@ -234,7 +233,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienheader.setLienStatus(true);
 					lienheader.setAccountNumber(lienup.getAccNumber());
 					lienheader.setReference(lienup.getReference());
-
 				} else {
 					lienup.setLienstatus(false);
 					lienup.setDemarkingReason(header.getRemarks());
@@ -247,8 +245,8 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienheader.setDemarkingDate(header.getAppDate());
 					lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
 					lienheader.setLienStatus(false);
-
 				}
+
 				lienUploadDAO.update(lienup, lienup.getId());
 
 				lienheader.setLienID(lienup.getLienID());
@@ -264,6 +262,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienHeaderDAO.update(lienheader);
 					lienDetailsDAO.update(lu);
 				}
+
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -305,7 +304,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	@Override
 	public void uploadProcess() {
 		uploadProcess(UploadTypes.LIEN.name(), this, "Lien");
-
 	}
 
 	@Override
@@ -342,7 +340,6 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 	}
 
 	private LienDetails getLienDetails(FileUploadHeader header, LienUpload lienup) {
-
 		LienDetails lu = new LienDetails();
 
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
@@ -359,14 +356,13 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 			lu.setDemarkingReason(lienup.getRemarks());
 			lu.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Success"));
 			lu.setLienStatus(false);
-
 		}
+
 		lu.setLienID(lienup.getLienID());
 		lu.setSource(lienup.getSource());
 		lu.setReference(lienup.getReference());
 		lu.setAccountNumber(lienup.getAccNumber());
 		lu.setLienReference(lienup.getLienReference());
-
 		lu.setVersion(1);
 		lu.setCreatedBy(header.getCreatedBy());
 		lu.setCreatedOn(currentTime);
@@ -374,6 +370,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 		lu.setApprovedBy(header.getApprovedBy());
 		lu.setLastMntBy(header.getLastMntBy());
 		lu.setLastMntOn(currentTime);
+
 		return lu;
 	}
 
