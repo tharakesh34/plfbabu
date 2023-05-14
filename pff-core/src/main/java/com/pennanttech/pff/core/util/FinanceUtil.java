@@ -50,10 +50,13 @@ public class FinanceUtil {
 			return false;
 		}
 
-		return DisbursementConstants.STATUS_REVERSED.equals(status)
-				|| DisbursementConstants.STATUS_REJECTED.equals(status)
-				|| DisbursementConstants.STATUS_APPROVED.equals(status)
-				|| DisbursementConstants.STATUS_CANCEL.equals(status);
+		switch (status) {
+		case DisbursementConstants.STATUS_REVERSED, DisbursementConstants.STATUS_REJECTED,
+				DisbursementConstants.STATUS_APPROVED, DisbursementConstants.STATUS_CANCEL:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	public static boolean isInValidDisbStatus(String status) {
@@ -68,17 +71,6 @@ public class FinanceUtil {
 
 		String loanType = "[" + fm.getFinType() + "]";
 
-		if (fm.isUnderNpa()) {
-			rpyHierarchy = finType.getNpaRpyHierarchy();
-
-			if (rpyHierarchy == null) {
-				throw new AppException(
-						"Repayment Hierarchy for [NPA Loans] not configured for the Loan Type " + loanType);
-			}
-
-			return rpyHierarchy;
-		}
-
 		if (fm.isWriteoffLoan()) {
 			rpyHierarchy = finType.getWriteOffRepayHry();
 
@@ -90,7 +82,30 @@ public class FinanceUtil {
 			return rpyHierarchy;
 		}
 
+		if (fm.isUnderNpa()) {
+			rpyHierarchy = finType.getNpaRpyHierarchy();
+
+			if (rpyHierarchy == null) {
+				throw new AppException(
+						"Repayment Hierarchy for [NPA Loans] not configured for the Loan Type " + loanType);
+			}
+
+			return rpyHierarchy;
+		}
+
 		if (fm.isFinIsActive() && fm.getMaturityDate().compareTo(valueDate) <= 0) {
+			if (rd.isPresentment()) {
+				rpyHierarchy = finType.getPresentmentRepayHry();
+
+				if (rpyHierarchy == null) {
+					throw new AppException(
+							"Repayment Hierarchy for [Presentment Receipts] not configured for the Loan Type "
+									+ loanType);
+				}
+
+				return rpyHierarchy;
+			}
+
 			rpyHierarchy = finType.getMatureRepayHry();
 
 			if (rpyHierarchy == null) {
