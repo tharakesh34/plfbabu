@@ -1,22 +1,20 @@
 package com.pennant.pff.lpp.service.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
-import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
@@ -24,12 +22,13 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lpp.upload.LPPUpload;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
-import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.constants.EodConstants;
-import com.pennant.pff.lpp.PenaltyTypes;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
+import com.pennant.pff.lpp.upload.validate.LPPUploadProcessRecord;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
@@ -38,7 +37,6 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
-import com.pennapps.core.util.ObjectUtil;
 
 public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	private static final Logger logger = LogManager.getLogger(LPPUploadServiceImpl.class);
@@ -46,6 +44,9 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceMaintenanceService financeMaintenanceService;
+	private FinanceTypeDAO financeTypeDAO;
+	private FinanceTypeService financeTypeService;
+	private LPPUploadProcessRecord lPPUploadProcessRecord;
 
 	public LPPUploadServiceImpl() {
 		super();
@@ -113,6 +114,82 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	}
 
 	private void process(LPPUpload detail, FileUploadHeader header) {
+		if (StringUtils.isBlank(detail.getReference())) {
+			processLoanType(detail, header);
+		} else {
+			processByFinRef(detail, header);
+		}
+
+	}
+
+	private void processLoanType(LPPUpload detail, FileUploadHeader header) {
+		FinanceType ft = financeTypeDAO.getFinanceTypeByID(detail.getLoanType(), "");
+		AuditHeader auditHeader = null;
+
+		if (PennantConstants.NO.equals(detail.getApplyOverDue())) {
+			ft.setODAllowWaiver(false);
+			ft.setODIncGrcDays(false);
+			ft.setApplyODPenalty(false);
+		} else {
+			ft.setApplyODPenalty(true);
+		}
+
+		if (PennantConstants.YES.equals(detail.getApplyOverDue())) {
+			ft.setODIncGrcDays(PennantConstants.YES.equals(detail.getIncludeGraceDays()));
+			ft.setODAllowWaiver(PennantConstants.YES.equals(detail.getAllowWaiver()));
+		}
+
+		ft.setODChargeType(detail.getPenaltyType());
+		ft.setODChargeAmtOrPerc(detail.getAmountOrPercent());
+		ft.setODChargeCalOn(detail.getCalculatedOn());
+		ft.setODGraceDays(detail.getGraceDays());
+		ft.setODMaxWaiverPerc(detail.getMaxWaiver());
+		ft.setRequestSource(RequestSource.UPLOAD);
+		LoggedInUser userDetails = detail.getUserDetails();
+
+		if (userDetails == null) {
+			userDetails = new LoggedInUser();
+			userDetails.setLoginUsrID(header.getApprovedBy());
+			userDetails.setUserName(header.getApprovedByName());
+		}
+
+		ft.setUserDetails(userDetails);
+		ft.setNewRecord(false);
+		ft.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+		ft.setVersion(ft.getVersion() + 1);
+
+		auditHeader = getAuditHeader(ft, PennantConstants.TRAN_WF);
+		auditHeader.getAuditDetail().setModelData(ft);
+
+		TransactionStatus txStatus = getTransactionStatus();
+
+		try {
+			auditHeader = financeTypeService.doApprove(auditHeader);
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+
+			setFailureStatus(detail, e.getMessage());
+
+			return;
+		}
+
+		if (auditHeader == null) {
+			setFailureStatus(detail, "Audit Header is null.");
+			return;
+		}
+
+		if (auditHeader.getErrorMessage() != null) {
+			setFailureStatus(detail, auditHeader.getErrorMessage().get(0));
+		} else {
+			setSuccesStatus(detail);
+		}
+
+	}
+
+	private void processByFinRef(LPPUpload detail, FileUploadHeader header) {
 		FinODPenaltyRate pr = new FinODPenaltyRate();
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = new FinScheduleData();
@@ -147,7 +224,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
 
 		if (fm == null) {
-			setError(detail, LPPUploadError.LPP02);
+			setError(detail, LPPUploadError.LPP_02);
 			return;
 		}
 
@@ -227,207 +304,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	public void doValidate(FileUploadHeader header, Object object) {
 		LPPUpload detail = getDetail(object);
 
-		String reference = detail.getReference();
-
-		logger.info("Validating the Data for the reference {}", reference);
-
-		detail.setHeaderId(header.getId());
-
-		Long finID = financeMainDAO.getFinID(reference);
-		detail.setReferenceID(finID);
-
-		String loanType = detail.getLoanType();
-
-		if (StringUtils.isBlank(reference) && StringUtils.isBlank(loanType)) {
-			setError(detail, LPPUploadError.LPP01);
-			return;
-		}
-
-		if (StringUtils.isNotBlank(reference) && finID == null) {
-			setError(detail, LPPUploadError.LPP02);
-			return;
-		}
-
-		if (StringUtils.isNotBlank(reference)) {
-			FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
-
-			if (StringUtils.isNotBlank(reference) && fm == null) {
-				setError(detail, LPPUploadError.LPP02);
-				return;
-			}
-
-			if (StringUtils.isNotBlank(reference) && !fm.isFinIsActive()) {
-				setError(detail, LPPUploadError.LPP12);
-				return;
-			}
-
-			if (StringUtils.isNotBlank(loanType) && !fm.getFinType().equals(loanType)) {
-				setError(detail, LPPUploadError.LPP13);
-				return;
-			}
-
-			String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
-			if (StringUtils.isNotEmpty(rcdMntnSts)) {
-				setFailureStatus(detail, "LPP_999", Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
-				return;
-			}
-		}
-
-		String existingLoans = detail.getApplyToExistingLoans();
-		if (StringUtils.isNotBlank(loanType) && StringUtils.isBlank(reference)
-				&& !(PennantConstants.NO.equals(existingLoans) || PennantConstants.YES.equals(existingLoans))) {
-			setError(detail, LPPUploadError.LPP14);
-			return;
-		}
-
-		if (StringUtils.isNotBlank(detail.getReference()) && StringUtils.isNotBlank(existingLoans)) {
-			setError(detail, LPPUploadError.LPP17);
-			return;
-		}
-
-		if (StringUtils.isBlank(detail.getApplyOverDue())) {
-			setError(detail, LPPUploadError.LPP03);
-			return;
-		}
-
-		boolean applyOverDue = PennantConstants.YES.equals(detail.getApplyOverDue());
-		if (!(PennantConstants.NO.equals(detail.getApplyOverDue()) || applyOverDue)) {
-			setError(detail, LPPUploadError.LPP04);
-			return;
-		}
-
-		String penaltyType = detail.getPenaltyType();
-		BigDecimal amountOrPercent = detail.getAmountOrPercent();
-		String calculatedOn = detail.getCalculatedOn();
-
-		BigDecimal maxWaiver = detail.getMaxWaiver();
-		BigDecimal minAmount = detail.getODMinAmount();
-
-		if (maxWaiver == null) {
-			maxWaiver = BigDecimal.ZERO;
-		}
-
-		if (amountOrPercent == null) {
-			amountOrPercent = BigDecimal.ZERO;
-		}
-
-		if (PennantConstants.NO.equals(detail.getApplyOverDue())
-				&& (StringUtils.isNotBlank(reference) || StringUtils.isNotBlank(loanType))) {
-			if (StringUtils.isNotBlank(calculatedOn) || (StringUtils.isNotBlank(detail.getIncludeGraceDays()))
-					|| (StringUtils.isNotBlank(penaltyType)) || StringUtils.isNotBlank(detail.getAllowWaiver())
-					|| (maxWaiver.compareTo(BigDecimal.ZERO)) > 0 || detail.getGraceDays() > 0
-					|| amountOrPercent.compareTo(BigDecimal.ZERO) > 0 || minAmount.compareTo(BigDecimal.ZERO) > 0) {
-				setError(detail, LPPUploadError.LPP09);
-				return;
-			}
-		}
-
-		if (PennantConstants.YES.equals(detail.getApplyOverDue())) {
-			boolean allowWaiver = PennantConstants.YES.equals(detail.getAllowWaiver());
-			boolean includeGraceDays = PennantConstants.YES.equals(detail.getIncludeGraceDays());
-
-			if (!(PennantConstants.NO.equals(detail.getAllowWaiver()) || allowWaiver)) {
-				setError(detail, LPPUploadError.LPP20);
-				return;
-			}
-
-			if (!(PennantConstants.NO.equals(detail.getIncludeGraceDays()) || includeGraceDays)) {
-				setError(detail, LPPUploadError.LPP19);
-				return;
-			}
-
-			if (includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
-				setError(detail, LPPUploadError.LPP15);
-				return;
-			}
-
-			if (allowWaiver && StringUtils.isBlank(String.valueOf(maxWaiver))) {
-				setError(detail, LPPUploadError.LPP18);
-				return;
-			} else if (allowWaiver
-					&& (maxWaiver.compareTo(BigDecimal.ZERO) <= 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
-				setError(detail, LPPUploadError.LPP10);
-				return;
-			}
-
-			if (StringUtils.isNotBlank(String.valueOf(maxWaiver)) && !allowWaiver
-					&& maxWaiver.compareTo(BigDecimal.ZERO) > 0) {
-				setError(detail, LPPUploadError.LPP11);
-				return;
-			}
-
-			PenaltyTypes lppType = PenaltyTypes.getTypes(penaltyType);
-
-			if (lppType == null) {
-				setError(detail, LPPUploadError.LPP05);
-				return;
-			}
-
-			switch (lppType) {
-			case FLAT, FLAT_ON_PD_MTH:
-				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
-				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) < 0
-						|| (amountOrPercent.compareTo(new BigDecimal(9999999)) > 0)) {
-					setError(detail, LPPUploadError.LPP07);
-					return;
-				}
-
-				if (StringUtils.isNotBlank(calculatedOn)) {
-					setError(detail, LPPUploadError.LPP22);
-					return;
-				}
-
-				if (StringUtils.isNotBlank(detail.getIncludeGraceDays())) {
-					setError(detail, LPPUploadError.LPP27);
-					return;
-				}
-
-				break;
-			case PERC_ONE_TIME, PERC_ON_PD_MTH, PERC_ON_DUE_DAYS, PERC_ON_EFF_DUE_DAYS:
-				amountOrPercent = amountOrPercent.divide(new BigDecimal(100));
-				if ((amountOrPercent.compareTo(BigDecimal.ZERO)) <= 0
-						|| (amountOrPercent.compareTo(new BigDecimal(100)) > 0)) {
-					setError(detail, LPPUploadError.LPP08);
-					return;
-				}
-
-				if (StringUtils.isBlank(calculatedOn)) {
-					setError(detail, LPPUploadError.LPP23);
-					return;
-				}
-
-				if (!(FinanceConstants.ODCALON_STOT.equals(calculatedOn)
-						|| FinanceConstants.ODCALON_SPRI.equals(calculatedOn)
-						|| FinanceConstants.ODCALON_SPFT.equals(calculatedOn)
-						|| FinanceConstants.ODCALON_INST.equals(calculatedOn))) {
-					setError(detail, LPPUploadError.LPP06);
-					return;
-				}
-
-				break;
-			default:
-				break;
-			}
-
-			boolean isLppType = PenaltyTypes.PERC_ONE_TIME.equals(lppType)
-					|| PenaltyTypes.PERC_ON_PD_MTH.equals(lppType);
-
-			if (!isLppType && FinanceConstants.ODCALON_INST.equals(calculatedOn)) {
-				setError(detail, LPPUploadError.LPP25);
-				return;
-			}
-
-			if (isLppType && StringUtils.isBlank(String.valueOf(detail.getODMinAmount()))) {
-				setError(detail, LPPUploadError.LPP26);
-				return;
-			}
-
-			if (isLppType && StringUtils.isNotBlank(detail.getIncludeGraceDays())) {
-				setError(detail, LPPUploadError.LPP27);
-				return;
-			}
-		}
-		setSuccesStatus(detail);
+		lPPUploadProcessRecord.validate(header, detail);
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {
@@ -442,7 +319,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.LPP.name(), this, "LPPUploadHeader");
+		uploadProcess(UploadTypes.LPP.name(), lPPUploadProcessRecord, this, "LPPUploadHeader");
 	}
 
 	@Override
@@ -451,27 +328,13 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	}
 
 	@Override
+	public LPPUploadProcessRecord getProcessRecord() {
+		return lPPUploadProcessRecord;
+	}
+
+	@Override
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		LPPUpload lppUpload = (LPPUpload) ObjectUtil.valueAsObject(paramSource, LPPUpload.class);
-
-		lppUpload.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
-
-		Map<String, Object> parameterMap = attributes.getParameterMap();
-
-		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
-
-		lppUpload.setHeaderId(header.getId());
-		lppUpload.setAppDate(header.getAppDate());
-
-		doValidate(header, lppUpload);
-
-		updateProcess(header, lppUpload, paramSource);
-
-		header.getUploadDetails().add(lppUpload);
-
-		logger.debug(Literal.LEAVING);
+		// Implemented in process record
 	}
 
 	@Autowired
@@ -485,8 +348,28 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	}
 
 	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	@Autowired
+	public void setFinanceTypeService(FinanceTypeService financeTypeService) {
+		this.financeTypeService = financeTypeService;
+	}
+
+	@Autowired
 	public void setFinanceMaintenanceService(FinanceMaintenanceService financeMaintenanceService) {
 		this.financeMaintenanceService = financeMaintenanceService;
+	}
+
+	@Autowired
+	public void setLPPUploadProcessRecord(LPPUploadProcessRecord lPPUploadProcessRecord) {
+		this.lPPUploadProcessRecord = lPPUploadProcessRecord;
+	}
+
+	private AuditHeader getAuditHeader(FinanceType financetype, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, financetype.getBefImage(), financetype);
+		return new AuditHeader(null, null, null, null, auditDetail, financetype.getUserDetails(), new HashMap<>());
 	}
 
 }

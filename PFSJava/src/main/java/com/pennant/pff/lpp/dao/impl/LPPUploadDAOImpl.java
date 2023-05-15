@@ -4,11 +4,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.model.lpp.upload.LPPUpload;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -132,6 +134,98 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 		sql.append(" Where uh.Id = :HEADER_ID");
 
 		return sql.toString();
+	}
+
+	@Override
+	public void save(LPPUpload lpp) {
+		StringBuilder sql = new StringBuilder("Insert into LPP_UPLOAD");
+		sql.append(" (HeaderId, RecordSeq, LoanType, ApplyToExistingLoans");
+		sql.append(", ApplyOverDue, FinID, FinReference, PenaltyType");
+		sql.append(", IncludeGraceDays, GraceDays, CalculatedOn");
+		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, ODMinAmount, Progress, Status)");
+		sql.append("  Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+
+				ps.setLong(++index, lpp.getHeaderId());
+				ps.setLong(++index, lpp.getRecordSeq());
+				ps.setString(++index, lpp.getLoanType());
+				ps.setString(++index, lpp.getApplyToExistingLoans());
+				ps.setString(++index, lpp.getApplyOverDue());
+				ps.setObject(++index, lpp.getReferenceID());
+				ps.setString(++index, lpp.getReference());
+				ps.setString(++index, lpp.getPenaltyType());
+				ps.setString(++index, lpp.getIncludeGraceDays());
+				ps.setInt(++index, lpp.getGraceDays());
+				ps.setString(++index, lpp.getCalculatedOn());
+				ps.setBigDecimal(++index, lpp.getAmountOrPercent());
+				ps.setString(++index, lpp.getAllowWaiver());
+				ps.setBigDecimal(++index, lpp.getMaxWaiver());
+				ps.setBigDecimal(++index, lpp.getODMinAmount());
+				ps.setInt(++index, lpp.getProgress());
+				ps.setString(++index, lpp.getStatus());
+
+			});
+
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
+	@Override
+	public void saveByFinType(LPPUpload lpp) {
+		StringBuilder sql = new StringBuilder("Insert into LPP_UPLOAD");
+		sql.append(" (HeaderId, RecordSeq, LoanType, ApplyToExistingLoans");
+		sql.append(", ApplyOverDue, FinID, FinReference, PenaltyType");
+		sql.append(", IncludeGraceDays, GraceDays, CalculatedOn");
+		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, ODMinAmount,Progress, Status)");
+		sql.append(" Select ?, ?, ?, ?, ?, FinID, FinReference, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ");
+		sql.append(" From FinanceMain Where FinType = ? and FinIsActive = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+
+				ps.setLong(++index, lpp.getHeaderId());
+				ps.setLong(++index, lpp.getRecordSeq());
+				ps.setString(++index, lpp.getLoanType());
+				ps.setString(++index, lpp.getApplyToExistingLoans());
+				ps.setString(++index, lpp.getApplyOverDue());
+				ps.setString(++index, lpp.getPenaltyType());
+				ps.setString(++index, lpp.getIncludeGraceDays());
+				ps.setInt(++index, lpp.getGraceDays());
+				ps.setString(++index, lpp.getCalculatedOn());
+				ps.setBigDecimal(++index, lpp.getAmountOrPercent());
+				ps.setString(++index, lpp.getAllowWaiver());
+				ps.setBigDecimal(++index, lpp.getMaxWaiver());
+				ps.setBigDecimal(++index, lpp.getODMinAmount());
+				ps.setInt(++index, lpp.getProgress());
+				ps.setString(++index, lpp.getStatus());
+
+				ps.setString(++index, lpp.getLoanType());
+				ps.setInt(++index, 1);
+			});
+
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
+	@Override
+	public boolean isValidFinType(String fintype) {
+		String sql = "select Count(FinType) from RMTFinanceTypes where FinType= ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, fintype) > 0;
 	}
 
 }
