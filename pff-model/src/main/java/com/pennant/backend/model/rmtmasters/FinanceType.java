@@ -43,6 +43,7 @@ import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Model class for the <b>FinanceType table</b>.<br>
@@ -365,6 +366,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String writeOffRepayHry;
 	private String matureRepayHry;
 	private String presentmentRepayHry;
+	private RequestSource requestSource = RequestSource.UI;
 
 	public FinanceType() {
 		super();
@@ -672,6 +674,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
 		entity.setOdMinAmount(this.odMinAmount);
+		entity.setRequestSource(this.requestSource);
 
 		return entity;
 	}
@@ -721,6 +724,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("feetype");
 		excludeFields.add("assetClassSetupCode");
 		excludeFields.add("assetClassSetupDesc");
+		excludeFields.add("requestSource");
 		return excludeFields;
 	}
 
@@ -2943,4 +2947,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setPresentmentRepayHry(String presentmentRepayHry) {
 		this.presentmentRepayHry = presentmentRepayHry;
 	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
 }

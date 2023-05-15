@@ -1,6 +1,7 @@
 package com.pennant.pff.lien.service.impl;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -38,6 +40,7 @@ public class LienServiceImpl implements LienService {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		Date appDate = SysParamUtil.getAppDate();
 
 		fm.setModuleDefiner(fd.getModuleDefiner());
 
@@ -65,7 +68,8 @@ public class LienServiceImpl implements LienService {
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
 			if (!FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
-				lh.setMarkingDate(fd.getMandate().getStartDate());
+				Date startDate = fd.getMandate().getStartDate();
+				lh.setMarkingDate(startDate == null ? appDate : startDate);
 			}
 
 			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
@@ -167,7 +171,7 @@ public class LienServiceImpl implements LienService {
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-						if (fd.getMandate().getSwapEffectiveDate() != null) {
+						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
 							lu.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
 						} else {
 							lu.setDemarkingDate(currentTime);
@@ -191,7 +195,7 @@ public class LienServiceImpl implements LienService {
 				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 				lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 				if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-					if (fd.getMandate().getSwapEffectiveDate() != null) {
+					if (fd.getMandate()!=null &&fd.getMandate().getSwapEffectiveDate() != null) {
 						lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
 					} else {
 						lh.setDemarkingDate(currentTime);
