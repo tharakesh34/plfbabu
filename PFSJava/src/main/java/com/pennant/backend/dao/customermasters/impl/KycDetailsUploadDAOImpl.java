@@ -231,7 +231,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 	@Override
 	public List<String> isInSettlement(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference From Fin_Settlement_Header_Temp sh");
+		sql.append(" fm.FinReference From Fin_Settlement_Header_Temp sh");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = sh.FinID");
 		sql.append(" Where fm.CustId = ?");
 
@@ -243,7 +243,7 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 	@Override
 	public List<String> isInlinkingDelinking(long custId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference From LinkedFinances_Temp lf");
+		sql.append(" fm.FinReference From LinkedFinances_Temp lf");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = lf.FinID");
 		sql.append(" Where fm.CustId = ?");
 

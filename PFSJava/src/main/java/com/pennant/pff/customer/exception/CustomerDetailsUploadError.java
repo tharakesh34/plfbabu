@@ -23,6 +23,8 @@ public enum CustomerDetailsUploadError {
 
 	CUST_MNTS_07("Linking/Delinking is under maintenance for selected Customer's Loan : "),
 
+	CUST_MNTS_08(""),
+
 	KYC_ADD_01("CustCif should not be empty."),
 
 	KYC_ADD_02("FinReference is not valid."),

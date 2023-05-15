@@ -30,6 +30,7 @@ import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
@@ -240,11 +241,6 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
-		if (kycDetailsUploadDAO.isInLoanQueue(custId)) {
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_02, reference);
-			return;
-		}
-
 		List<FinanceMain> fmList = kycDetailsUploadDAO.isInMaintanance(custId);
 
 		if (CollectionUtils.isNotEmpty(fmList)) {
@@ -255,10 +251,16 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 					message.append(", ");
 				}
 
-				message.append(fm.getFinReference() + " is in maintainance on  :" + fm.getRcdMaintainSts());
+				String rcdMaintainSts = fm.getRcdMaintainSts();
+
+				if (StringUtils.isEmpty(rcdMaintainSts)) {
+					rcdMaintainSts = FinServiceEvent.ORG;
+				}
+
+				message.append(fm.getFinReference() + " is in maintainance on  :" + rcdMaintainSts);
 			}
 
-			setFailureStatus(detail, message.toString());
+			setFailureStatus(detail, "CUST_MNTS_08", message.toString());
 			return;
 		}
 
