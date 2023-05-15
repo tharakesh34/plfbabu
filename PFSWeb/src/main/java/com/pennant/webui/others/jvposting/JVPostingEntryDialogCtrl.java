@@ -1526,7 +1526,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 					jvPostingEntryList.add(jvPostingEntry);
 					JVPostingEntry otherentry = doCheckAndPrepareOtherLeg(jvPostingEntry, list);
 					if (StringUtils.equals(otherentry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)) {
-						otherentry.setAccount(otherentry.getDebitAccount());
+						otherentry.setDebitAccount(otherentry.getAccount());
 					} else {
 						otherentry.setAccount(otherentry.getAccount());
 					}
@@ -1580,10 +1580,8 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	public JVPostingEntry doCheckAndPrepareOtherLeg(JVPostingEntry aJVPostingEntry, List<JVPostingEntry> list) {
 		JVPostingEntry otherentry = getEntryList(aJVPostingEntry.getTxnReference(), list);
 		if (otherentry != null) {
-			BeanUtils.copyProperties(aJVPostingEntry, otherentry);
 			otherentry.setTxnReference(aJVPostingEntry.getTxnReference() + 1);
 			otherentry.setTxnEntry(AccountConstants.TRANTYPE_DEBIT);
-			otherentry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.debitAccount.getValue()));
 			otherentry.setTxnCode(this.debitTxnCode.getValidatedValue());
 			otherentry.setDerivedTxnRef(aJVPostingEntry.getTxnReference());
 		}

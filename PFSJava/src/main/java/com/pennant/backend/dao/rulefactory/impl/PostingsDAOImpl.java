@@ -316,8 +316,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sql.append(", p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId, p.ErrorMsg, p.AcCcy");
 		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch, p.PostBranch");
 		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
+		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount GlCode");
 		sql.append(" From Postings p");
 		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinID = p.FinID");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		sql.append(" Where fm.FinBranch = ?");
 		sql.append(" Union All ");
 		sql.append(" Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
@@ -325,8 +327,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sql.append(", p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId, p.ErrorMsg, p.AcCcy");
 		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch, p.PostBranch");
 		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
+		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount GlCode");
 		sql.append(" From Postings p");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = p.FinID");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		sql.append(" and fm.FinBranch = ?");
 		sql.append(") temp order by temp.Account, temp.FinReference, temp.TranCode");
