@@ -44,7 +44,7 @@ public class FinanceCancelValidator {
 		Date backValueDate = DateUtil.addDays(appDate,
 				SysParamUtil.getValueAsInt(SMTParameterConstants.MAINTAIN_CANFIN_BACK_DATE));
 
-		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
+		if ("API".equals(fm.getFinSourceID()) && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 			return FinCancelUploadError.LANCLUP020;
 		}
 
