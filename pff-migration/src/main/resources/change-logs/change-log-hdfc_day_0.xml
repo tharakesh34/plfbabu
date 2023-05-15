@@ -52,12 +52,12 @@
 	<!-- <changeSet id="3.0" author="murthy.y"> <sql> <![CDATA[ Alter sequence SeqProspectCustomer restart start with 1000000001; 
 		]]> </sql> </changeSet> -->
 		
-	<changeSet id="4.0_3" author="gopal.p">
+	<changeSet id="4.0_4" author="gopal.p">
 		<comment>UPLOAD PATH value need to change as per client configuration</comment>
 		<sql>
 			<![CDATA[
-				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '/SharedResources/HDFC/QC/PFF/BASE/Uploads' WHERE NAME in (
-						'RE_PRESENTMENT_UPLOAD'
+				UPDATE DATA_ENGINE_CONFIG SET UPLOADPATH = '/opt/PFF/BASE/Uploads' WHERE NAME in (
+						  'RE_PRESENTMENT_UPLOAD'
 						, 'HOLD_REFUND_UPLOAD'
 						, 'PAYMINS_UPLOAD'
 						, 'MANDATES_UPLOAD'
