@@ -2402,6 +2402,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mndt.setCustCIF(mandate.getCustCIF());
 		mndt.setUserDetails(mandate.getUserDetails());
 		mndt.setSourceId(mandate.getSourceId());
+		mndt.setExternalMandate(mandate.isExternalMandate());
 	}
 
 	private void setMandateDetails(Mandate mandate, Mandate mndt) {
