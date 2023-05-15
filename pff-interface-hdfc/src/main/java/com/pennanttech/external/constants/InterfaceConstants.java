@@ -105,6 +105,10 @@ public interface InterfaceConstants {
 	int INPROCESS = 1;
 	int COMPLETED = 2;
 	int FAILED = 3;
+	int EXCEPTION = 4;
+
+	int ENABLED = 1;
+	int DISABLED = 0;
 
 	int ACK_PENDING = 0;
 	int ACK_SENT = 1;
@@ -136,6 +140,11 @@ public interface InterfaceConstants {
 	String F606 = "F606";
 	String F607 = "F607";
 	String F500 = "F500";
+	String F400 = "F400";
+	String F401 = "F401";
+	String F402 = "F402";
+	String F403 = "F403";
+	String F404 = "F404";
 	// ----------------------------- ERROR CODES ------------------------------
 
 	default ExternalConfig getDataFromList(List<ExternalConfig> mainConfig, String key) {
