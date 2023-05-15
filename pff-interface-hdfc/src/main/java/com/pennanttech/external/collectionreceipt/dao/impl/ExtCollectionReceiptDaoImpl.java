@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -21,6 +22,7 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtCollectionReceiptDao {
 
@@ -84,7 +86,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public void updateFileExtraction(CollReceiptHeader header) {
 		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_HEADER");
-		sql.append(" SET EXTRACTION = ?, STATUS = ?, ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ? ");
+		sql.append(" SET EXTRACTION = ?, STATUS = ?, WRITE_RESPONSE=?, ERROR_CODE=?,ERROR_MESSAGE=? WHERE ID= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -92,6 +94,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 			int index = 1;
 			ps.setInt(index++, header.getExtraction());
 			ps.setInt(index++, header.getStatus());
+			ps.setInt(index++, header.getWriteResponse());
 			ps.setString(index++, header.getErrorCode());
 			ps.setString(index++, header.getErrorMessage());
 			ps.setLong(index, header.getId());
@@ -149,7 +152,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 
 		StringBuilder query = new StringBuilder();
 		query.append(
-				" SELECT ID,HEADER_ID,RECORD_DATA,RECEIPT_ID,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE FROM COLL_RECEIPT_DETAIL ");
+				" SELECT ID,HEADER_ID,RECORD_DATA,RECEIPT_ID,RECEIPT_CREATED_DATE,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE FROM COLL_RECEIPT_DETAIL ");
 		query.append(" WHERE  HEADER_ID= ? AND RECEIPT_ID=0");
 
 		logger.debug(Literal.SQL + query.toString());
@@ -161,8 +164,8 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 			details.setId(rs.getLong("ID"));
 			details.setHeaderId(rs.getLong("HEADER_ID"));
 			details.setRecordData(rs.getString("RECORD_DATA"));
-			details.setReceiptId(rs.getInt("RECEIPT_ID"));
-			details.setReceiptCreatedDate(rs.getDate("RECEIPT_ID"));
+			details.setReceiptId(rs.getLong("RECEIPT_ID"));
+			details.setReceiptCreatedDate((Date) rs.getDate("RECEIPT_CREATED_DATE"));
 			details.setCreatedDate(rs.getDate("CREATED_DATE"));
 			details.setErrorCode(rs.getString("ERROR_CODE"));
 			details.setErrorMessage(rs.getString("ERROR_MESSAGE"));
@@ -194,8 +197,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public void updateExtCollectionRespFileWritingStatus(CollReceiptHeader collectionReceiptFile) {
 		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_HEADER");
-		sql.append(
-				" SET RESP_FILE_NAME, RESP_FILE_LOCATION=?,RESP_FILE_STATUS=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
+		sql.append(" SET RESP_FILE_NAME=?, RESP_FILE_LOCATION=?,RESP_FILE_STATUS=? WHERE ID= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -204,8 +206,6 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 			ps.setString(index++, collectionReceiptFile.getRespFileName());
 			ps.setString(index++, collectionReceiptFile.getRespFileLocation());
 			ps.setInt(index++, collectionReceiptFile.getRespFileStatus());
-			ps.setString(index++, collectionReceiptFile.getErrorCode());
-			ps.setString(index++, collectionReceiptFile.getErrorMessage());
 			ps.setLong(index, collectionReceiptFile.getId());
 		});
 
@@ -227,5 +227,26 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 			ps.setString(index++, collectionReceiptDetail.getErrorMessage());
 			ps.setLong(index, collectionReceiptDetail.getId());
 		});
+	}
+
+	@Override
+	public CollReceiptHeader getErrorFromHeader(long p_id) {
+		logger.debug(Literal.ENTERING);
+
+		String sql = "SELECT  ERROR_CODE, ERROR_MESSAGE FROM COLL_RECEIPT_HEADER  WHERE ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+		Object[] parameters = new Object[] { p_id };
+		try {
+			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, (rs, rowNum) -> {
+				CollReceiptHeader collReceiptHeader = new CollReceiptHeader();
+				collReceiptHeader.setErrorCode(rs.getString("ERROR_CODE"));
+				collReceiptHeader.setErrorMessage(rs.getString("ERROR_MESSAGE"));
+				return collReceiptHeader;
+			}, parameters);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

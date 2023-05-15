@@ -24,4 +24,6 @@ public interface ExtCollectionReceiptDao {
 	void updateExtCollectionRespFileWritingStatus(CollReceiptHeader collectionReceiptFile);
 
 	void updateFileExtraction(CollReceiptHeader header);
+
+	CollReceiptHeader getErrorFromHeader(long p_id);
 }

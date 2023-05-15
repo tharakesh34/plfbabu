@@ -32,6 +32,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
@@ -234,6 +235,108 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 			detail.setReceiptID(fd.getReceiptId());
 			setSuccesStatus(detail);
 		}
+	}
+
+	public void createExtReceipt(CreateReceiptUpload reaceipt, String entityCode) {
+
+		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+
+		rud.setReference(reaceipt.getReference());
+		rud.setFinID(reaceipt.getReferenceID());
+		rud.setAllocationType(reaceipt.getAllocationType());
+		rud.setValueDate(reaceipt.getAppDate());
+		rud.setRealizationDate(reaceipt.getAppDate());
+		rud.setReceivedDate(reaceipt.getAppDate());
+		rud.setReceiptAmount(reaceipt.getReceiptAmount());
+		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setReceiptMode(reaceipt.getReceiptMode());
+		rud.setSubReceiptMode(reaceipt.getSubReceiptMode());
+		rud.setReceiptPurpose(reaceipt.getReceiptPurpose());
+		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rud.setReceiptChannel(PennantConstants.List_Select);
+		rud.setDepositDate(reaceipt.getDepositDate());
+		rud.setBankCode(reaceipt.getBankCode());
+		rud.setEffectSchdMethod(reaceipt.getEffectSchdMethod());
+		String receiptMode = reaceipt.getReceiptMode();
+		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
+			rud.setTransactionRef(reaceipt.getChequeNumber());
+			rud.setFavourNumber(reaceipt.getChequeNumber());
+		}
+
+		List<UploadAlloctionDetail> list = new ArrayList<>();
+
+		Map<String, BigDecimal> waivedAmounts = new HashMap<>();
+		for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
+			if (alloc.getCode().contains("_W")) {
+				String code = alloc.getCode().split("_")[0];
+
+				waivedAmounts.put(code, alloc.getAmount());
+			}
+		}
+
+		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType())) {
+			for (CreateReceiptUpload alloc : reaceipt.getAllocations()) {
+				UploadAlloctionDetail uad = new UploadAlloctionDetail();
+
+				uad.setRootId(String.valueOf(alloc.getFeeId()));
+				uad.setAllocationType(Allocation.getCode(alloc.getCode()));
+				uad.setReferenceCode(alloc.getCode());
+				uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
+				uad.setPaidAmount(alloc.getAmount());
+				if (waivedAmounts.get(alloc.getCode()) != null) {
+					uad.setWaivedAmount(waivedAmounts.get(alloc.getCode()));
+				}
+
+				list.add(uad);
+			}
+		}
+
+		rud.setListAllocationDetails(list);
+
+		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType()) && list != null) {
+			logger.debug("reaceipt.getReceiptAmount()::" + reaceipt.getReceiptAmount());
+			logger.debug("getSumOfAllocations(list)::" + getSumOfAllocations(list));
+			if (!(reaceipt.getReceiptAmount().equals(getSumOfAllocations(list)))) {
+				reaceipt.setProgress(EodConstants.PROGRESS_FAILED);
+				reaceipt.setErrorDesc("RECEIPT Amount and Allocations amount should be same");
+				return;
+			}
+		}
+
+		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
+
+		fsi.setReqType("Post");
+		fsi.setReceiptUpload(true);
+		fsi.setRequestSource(RequestSource.UPLOAD);
+		LoggedInUser userDetails = reaceipt.getUserDetails();
+
+		if (userDetails == null) {
+			userDetails = new LoggedInUser();
+			// userDetails.setLoginUsrID();
+			userDetails.setUserName("");
+		}
+
+		fsi.setLoggedInUser(userDetails);
+
+		fsi.setKnockOffReceipt(true);
+		if (FinanceConstants.EARLYSETTLEMENT.equals(reaceipt.getReceiptPurpose())) {
+			fsi.setClosureType(reaceipt.getClosureType());
+		}
+
+		FinanceDetail fd = receiptService.receiptTransaction(fsi);
+
+		FinScheduleData schd = fd.getFinScheduleData();
+
+		if (!schd.getErrorDetails().isEmpty()) {
+			ErrorDetail error = schd.getErrorDetails().get(0);
+			reaceipt.setProgress(EodConstants.PROGRESS_FAILED);
+			reaceipt.setErrorCode(error.getCode());
+			reaceipt.setErrorDesc(error.getError());
+		} else {
+			reaceipt.setReceiptID(fd.getReceiptId());
+			reaceipt.setProgress(EodConstants.PROGRESS_SUCCESS);
+		}
+
 	}
 
 	@Override

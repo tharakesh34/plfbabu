@@ -13275,6 +13275,10 @@
 	<bean id="createReceiptUploadService" class="com.pennant.pff.receipt.service.impl.CreateReceiptUploadServiceImpl"
 		parent="aUploadService" />
 
+	<bean id="extReceiptServiceHook" class="com.pennant.pff.receipt.service.impl.ExtReceiptService">
+		<property name="createReceiptUploadService" ref="createReceiptUploadService" />
+	</bean>
+
 	<bean id="createReceiptUploadProcessRecord"
 		class="com.pennant.pff.receipt.validate.CreateReceiptUploadProcessRecord" />
 
@@ -13360,10 +13364,9 @@
 
 	<bean id="accountEngineEventDAO" class="com.pennant.backend.dao.bmtmasters.impl.AccountEngineEventDAOImpl"
 		parent="basicDao" />
-	
-	<bean id="serviceBranchDAO" class="com.pennant.pff.noc.dao.impl.ServiceBranchDAOImpl"
-		parent="sequenceDao" />
-		
+
+	<bean id="serviceBranchDAO" class="com.pennant.pff.noc.dao.impl.ServiceBranchDAOImpl" parent="sequenceDao" />
+
 	<bean id="serviceBranchService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -13381,31 +13384,32 @@
 			</props>
 		</property>
 	</bean>
-	
-	<bean name="serviceBranchServiceTarget" class="com.pennant.pff.noc.service.impl.ServiceBranchServiceImpl"/>
+
+	<bean name="serviceBranchServiceTarget" class="com.pennant.pff.noc.service.impl.ServiceBranchServiceImpl" />
 
 	<bean id="blockAutoGenLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.BlockAutoGenLetterUploadDAOImpl"
 		parent="sequenceDao" />
-			
+
 	<bean id="blockAutoGenLetterUploadService"
 		class="com.pennant.pff.noc.upload.service.impl.BlockAutoGenLetterUploadServiceImpl" parent="aUploadService" />
-		
-		<bean id="loanLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.LoanLetterUploadDAOImpl"
+
+	<bean id="loanLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.LoanLetterUploadDAOImpl"
 		parent="sequenceDao" />
-		
-	<bean id="loanLetterUploadService"
-		class="com.pennant.pff.noc.upload.service.impl.LoanLetterUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="loanLetterUploadService" class="com.pennant.pff.noc.upload.service.impl.LoanLetterUploadServiceImpl"
+		parent="aUploadService" />
 
 	<bean id="courierDetailUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.CourierDetailUploadDAOImpl"
-	 parent="sequenceDao"/>	
-	 
-	<bean id="courierDetailUploadService" class="com.pennant.pff.noc.upload.service.impl.CourierDetailUploadServiceImpl"
-	 parent="aUploadService"/>
+		parent="sequenceDao" />
+
+	<bean id="courierDetailUploadService"
+		class="com.pennant.pff.noc.upload.service.impl.CourierDetailUploadServiceImpl" parent="aUploadService" />
 
 	<bean id="loanTypeLetterMappingDAO" class="com.pennant.pff.noc.dao.impl.LoanTypeLetterMappingDAOImpl"
-		parent="sequenceDao" />	 
+		parent="sequenceDao" />
 
-	<bean id="loanTypeLetterMappingService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="loanTypeLetterMappingService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>
@@ -13422,13 +13426,12 @@
 			</props>
 		</property>
 	</bean>
-	
-	 <bean id="loanTypeLetterMappingServiceTarget"
+
+	<bean id="loanTypeLetterMappingServiceTarget"
 		class="com.pennant.pff.noc.service.impl.LoanTypeLetterMappingServiceImpl" />
-	
-	<bean id="generateLetterDAO" class="com.pennant.pff.noc.dao.impl.GenerateLetterDAOImpl"
-		parent="sequenceDao" />
-		
+
+	<bean id="generateLetterDAO" class="com.pennant.pff.noc.dao.impl.GenerateLetterDAOImpl" parent="sequenceDao" />
+
 	<bean id="generateLetterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -13446,21 +13449,21 @@
 			</props>
 		</property>
 	</bean>
-	
-	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl"/>
-	
+
+	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl" />
+
 	<bean id="loanClosureUploadService" class="com.pennant.pff.receipt.service.impl.LoanClosureUploadServiceImpl"
 		parent="aUploadService" />
 
 	<bean id="loanClosureUploadDAO" class="com.pennant.pff.receipt.dao.impl.LoanClosureUploadDAOImpl"
 		parent="sequenceDao" />
-		
+
 	<bean id="loanClosureUploadProcessRecord"
 		class="com.pennant.pff.receipt.service.impl.LoanClosureUploadProcessRecord" />
-		
-		<bean id="provisionUploadDAO" class="com.pennanttech.pff.provision.dao.impl.ProvisionUploadDAOImpl"
+
+	<bean id="provisionUploadDAO" class="com.pennanttech.pff.provision.dao.impl.ProvisionUploadDAOImpl"
 		parent="sequenceDao" />
-		
-	<bean id="provisionUploadService"
-		class="com.pennanttech.pff.provision.service.impl.ProvisionUploadServiceImpl" parent="aUploadService" />
+
+	<bean id="provisionUploadService" class="com.pennanttech.pff.provision.service.impl.ProvisionUploadServiceImpl"
+		parent="aUploadService" />
 </beans>

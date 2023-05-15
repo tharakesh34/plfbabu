@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
+import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.external.config.ExternalConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
@@ -26,7 +28,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	private static final String VALID_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
 
 	public void processCollectionResponseFileWriting(String fileName, Date appDate,
-			List<CollReceiptDetail> fileRecordsList, ExternalConfig respConfig) {
+			List<CollReceiptDetail> fileRecordsList, CollReceiptHeader errorReceiptHeader, ExternalConfig respConfig) {
 		logger.debug(Literal.ENTERING);
 
 		if (fileRecordsList == null || fileRecordsList.isEmpty()) {
@@ -44,13 +46,13 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 			}
 		}
 
-		writeReponseFile(successList, failedList, fileName, appDate, respConfig);
+		writeReponseFile(successList, failedList, fileName, appDate, respConfig, errorReceiptHeader);
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void writeReponseFile(List<CollReceiptDetail> successList, List<CollReceiptDetail> failedList,
-			String fileName, Date appDate, ExternalConfig respConfig) {
+			String fileName, Date appDate, ExternalConfig respConfig, CollReceiptHeader errorReceiptHeader) {
 		logger.debug(Literal.ENTERING);
 
 		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
@@ -85,7 +87,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 
 			rejectRowNum = rejectRowNum + 1;
 			StringBuilder itemStr = getRejectItem(collectionReceiptData, appDate, rejectDetail.getErrorMessage(),
-					rejectRowNum);
+					rejectRowNum, errorReceiptHeader);
 			itemList.add(itemStr);
 		}
 
@@ -123,8 +125,8 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 			totalSChecksum = totalSChecksum + Integer.parseInt(qualifiedChk);
 
 			successRowNum = successRowNum + 1;
-			StringBuilder itemStr = getSuccessItem(collectionReceiptData, successDetail.getReceiptId(), appDate,
-					successRowNum, qualifiedChk);
+			StringBuilder itemStr = getSuccessItem(collectionReceiptData, successDetail.getReceiptId(),
+					successDetail.getReceiptCreatedDate(), successRowNum, qualifiedChk);
 			itemList.add(itemStr);
 
 		}
@@ -159,8 +161,9 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		ftpClient = extSFTPUtil.getSFTPConnection();
 		try {
 			// Now upload file to SFTP of client location as per configuration
-			File mainFile = new File(baseFilePath + File.separator + fileName);
-			ftpClient.upload(mainFile, respConfig.getFileSftpLocation());
+			File mainFile = new File(fileName);
+			String remPath = respConfig.getFileSftpLocation();
+			ftpClient.upload(mainFile, remPath);
 			logger.debug("EXT_COLLECTION:Resp File upload Successful to Destination");
 		} catch (Exception e) {
 			logger.debug("EXT_COLLECTION:Unable to upload files from local path to destination.", e);
@@ -393,7 +396,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	}
 
 	private StringBuilder getRejectItem(ExtCollectionReceiptData detail, Date appDate, String rejectReason,
-			int rejectRowNum) {
+			int rejectRowNum, CollReceiptHeader errorReceiptHeader) {
 		StringBuilder item = new StringBuilder();
 		item.append(detail.getAgreementNumber());
 		item.append(pipeSeperator);
@@ -457,7 +460,15 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(appDate);
 		item.append(pipeSeperator);
-		item.append("");// Reason
+
+		String reason = "";
+		if (!"".equals(StringUtils.stripToEmpty(errorReceiptHeader.getErrorMessage()))) {
+			reason = errorReceiptHeader.getErrorMessage();
+		} else {
+			reason = rejectReason;
+		}
+		reason = StringUtils.stripToEmpty(reason);
+		item.append(reason);// Reason
 		item.append(pipeSeperator);
 		item.append("");// Redepositing flag
 		item.append(pipeSeperator);

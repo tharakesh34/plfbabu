@@ -171,4 +171,11 @@
 		class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
 		<property name="extStageDao" ref="extStageDao" />
 	</bean>
+	
+	<bean id="collectionFileService" class="com.pennanttech.external.collectionreceipt.service.ExtCollectionFileService"/>
+	<bean id="extCollectionReceiptDao"
+		class="com.pennanttech.external.collectionreceipt.dao.impl.ExtCollectionReceiptDaoImpl">
+		<property name="mainDataSource" ref="dataSource" />
+		<property name="extDataSource" ref="extDataSource" />
+	</bean>
 </beans>

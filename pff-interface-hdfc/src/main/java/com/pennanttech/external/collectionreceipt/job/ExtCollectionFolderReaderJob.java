@@ -1,7 +1,14 @@
 package com.pennanttech.external.collectionreceipt.job;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -11,14 +18,19 @@ import org.springframework.context.ApplicationContext;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.config.ApplicationContextProvider;
+import com.pennanttech.external.config.ExtErrorCodes;
 import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.constants.ExtLogConstants;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.util.ExtSFTPUtil;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionFolderReaderJob extends AbstractJob implements InterfaceConstants {
+public class ExtCollectionFolderReaderJob extends AbstractJob implements InterfaceConstants, ExtLogConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFolderReaderJob.class);
 
@@ -44,85 +56,85 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 	private void fetchRemoteFiles() {
 		logger.debug(Literal.ENTERING);
 
-		// // Get main configuration for External Interfaces
-		// List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
-		//
-		// // Fetch Collection Receipt Request config from main configuration
-		// collectionReqConfig = getDataFromList(mainConfig, CONFIG_COLLECTION_REQ_CONF);
-		//
-		// // get error codes handy
-		// if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
-		// List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-		// ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		// }
-		//
-		// if (collectionReqConfig == null) {
-		// logger.debug(COLLECTION_REQ_CONFIG_MISSING);
-		// return;
-		// }
-		//
-		// String baseFilePath = collectionReqConfig.getFileLocation();
-		//
-		// if ("".equals(StringUtils.stripToEmpty(baseFilePath))) {
-		// logger.debug(COLLECTION_REQ_BASE_FILE_PATH_MISSING);
-		// return;
-		// }
-		//
-		// String remoteFilePath = collectionReqConfig.getFileSftpLocation();
-		//
-		// if ("".equals(StringUtils.stripToEmpty(remoteFilePath))) {
-		// logger.debug(COLLECTION_REQ_REMOTE_FILE_PATH_MISSING);
-		// return;
-		// }
-		//
-		// ExtSFTPUtil requestSFTPUtil = new ExtSFTPUtil(collectionReqConfig);
-		//
-		// // Get list of files in SFTP.
-		// List<String> fileNames = requestSFTPUtil.getFileListFromSFTP(remoteFilePath);
-		//
-		// String localFolderPath = App.getResourcePath(baseFilePath);
-		//
-		// List<String> filteredFileNames = new ArrayList<>();
-		// for (String fileName : fileNames) {
-		//
-		// if (fileName.contains(".inproc")) {
-		// logger.debug("EXT_WARN: File is having extension inproc, so returning.");
-		// continue;
-		// }
-		//
-		// try {
-		// // Download file from remote location
-		// FtpClient ftpClient = requestSFTPUtil.getSFTPConnection();
-		// ftpClient.download(remoteFilePath, localFolderPath, fileName);
-		//
-		// // Changing file to inproc in local folder
-		// String procName = fileName.substring(0, fileName.indexOf(collectionReqConfig.getFileExtension()));
-		// // Change Extension to .inproc
-		// procName = procName.concat(".inproc");
-		//
-		// Path srcPath = Paths.get(localFolderPath + File.separator + fileName);
-		// Path destPath = Paths.get(localFolderPath + File.separator + procName);
-		// Files.copy(srcPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
-		//
-		// // Push .inproc file to SFTP
-		// FtpClient sftpClient = requestSFTPUtil.getSFTPConnection();
-		// sftpClient.upload(localFolderPath, collectionReqConfig.getFileSftpLocation(), procName);
-		//
-		// // Checksum for file
-		//
-		// // Delete original file in SFTP
-		// String remFilePath = collectionReqConfig.getFileSftpLocation();
-		// requestSFTPUtil.deleteFile(remFilePath + "/" + fileName);
-		// filteredFileNames.add(fileName);
-		// } catch (Exception e) {
-		// logger.debug(Literal.EXCEPTION, e);
-		// }
-		//
-		// }
-		//
-		// if (filteredFileNames.size() > 0) {
-		// saveFetchedFiles();
-		// }
+		// Get main configuration for External Interfaces
+		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+
+		// Fetch Collection Receipt Request config from main configuration
+		collectionReqConfig = getDataFromList(mainConfig, CONFIG_COLLECTION_REQ_CONF);
+
+		// get error codes handy
+		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+		}
+
+		if (collectionReqConfig == null) {
+			logger.debug(COLLECTION_REQ_CONFIG_MISSING);
+			return;
+		}
+
+		String baseFilePath = collectionReqConfig.getFileLocation();
+
+		if ("".equals(StringUtils.stripToEmpty(baseFilePath))) {
+			logger.debug(COLLECTION_REQ_BASE_FILE_PATH_MISSING);
+			return;
+		}
+
+		String remoteFilePath = collectionReqConfig.getFileSftpLocation();
+
+		if ("".equals(StringUtils.stripToEmpty(remoteFilePath))) {
+			logger.debug(COLLECTION_REQ_REMOTE_FILE_PATH_MISSING);
+			return;
+		}
+
+		ExtSFTPUtil requestSFTPUtil = new ExtSFTPUtil(collectionReqConfig);
+
+		// Get list of files in SFTP.
+		List<String> fileNames = requestSFTPUtil.getFileListFromSFTP(remoteFilePath);
+
+		String localFolderPath = App.getResourcePath(baseFilePath);
+
+		List<String> filteredFileNames = new ArrayList<>();
+		for (String fileName : fileNames) {
+
+			if (fileName.contains(".inproc")) {
+				logger.debug("EXT_WARN: File is having extension inproc, so returning.");
+				continue;
+			}
+
+			try {
+				// Download file from remote location
+				FtpClient ftpClient = requestSFTPUtil.getSFTPConnection();
+				ftpClient.download(remoteFilePath, localFolderPath, fileName);
+
+				// Changing file to inproc in local folder
+				String procName = fileName.substring(0, fileName.indexOf(collectionReqConfig.getFileExtension()));
+				// Change Extension to .inproc
+				procName = procName.concat(".inproc");
+
+				Path srcPath = Paths.get(localFolderPath + File.separator + fileName);
+				Path destPath = Paths.get(localFolderPath + File.separator + procName);
+				Files.copy(srcPath, destPath, StandardCopyOption.COPY_ATTRIBUTES);
+
+				// Push .inproc file to SFTP
+				FtpClient sftpClient = requestSFTPUtil.getSFTPConnection();
+				sftpClient.upload(localFolderPath, collectionReqConfig.getFileSftpLocation(), procName);
+
+				// Checksum for file
+
+				// Delete original file in SFTP
+				String remFilePath = collectionReqConfig.getFileSftpLocation();
+				requestSFTPUtil.deleteFile(remFilePath + "/" + fileName);
+				filteredFileNames.add(fileName);
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+			}
+
+		}
+
+		if (filteredFileNames.size() > 0) {
+			saveFetchedFiles();
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
