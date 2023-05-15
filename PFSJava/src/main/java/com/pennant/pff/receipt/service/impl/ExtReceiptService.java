@@ -17,7 +17,6 @@ public class ExtReceiptService implements ExtReceiptServiceHook {
 		createReceiptUploadService.createExtReceipt(reaceipt, entityCode);
 		logger.debug(Literal.LEAVING);
 	}
-
 	public void setCreateReceiptUploadService(CreateReceiptUploadServiceImpl createReceiptUploadService) {
 		this.createReceiptUploadService = createReceiptUploadService;
 	}
