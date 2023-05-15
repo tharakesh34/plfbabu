@@ -8,11 +8,12 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.customermasters.KycDetailsUploadDAO;
 import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadStatus;
 
 public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> implements KycDetailsUploadDAO {
 
@@ -155,13 +156,12 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		StringBuilder sql = new StringBuilder("Select Count(custCif)");
 		sql.append(" From Customer_Kyc_Details_Upload bcd");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = bcd.HeaderID");
-		sql.append(" Where bcd.CustCif = ? and uh.Id <> ? and uh.progress in (?, ?, ?, ?)");
+		sql.append(" Where bcd.CustCif = ? and uh.Id <> ? and uh.progress not in (?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.queryForObject(sql.toString(), Integer.class, custCif, headerID,
-				Status.DOWNLOADED.getValue(), Status.IMPORT_IN_PROCESS.getValue(), Status.IMPORTED.getValue(),
-				Status.IN_PROCESS.getValue()) > 0;
+				UploadStatus.REJECTED.status(), UploadStatus.APPROVED.status(), UploadStatus.FAILED.status()) > 0;
 	}
 
 	@Override
@@ -211,5 +211,44 @@ public class KycDetailsUploadDAOImpl extends SequenceDao<CustomerKycDetail> impl
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
+	}
+
+	@Override
+	public List<FinanceMain> isInMaintanance(long custId) {
+		String sql = "Select RcdMaintainSts, FinReference From FinanceMain_Temp Where CustID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.query(sql, (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+
+			fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+			fm.setFinReference(rs.getString("FinReference"));
+			return fm;
+		}, custId);
+	}
+
+	@Override
+	public List<String> isInSettlement(long custId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference From Fin_Settlement_Header_Temp sh");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = sh.FinID");
+		sql.append(" Where fm.CustId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getString(1), custId);
+	}
+
+	@Override
+	public List<String> isInlinkingDelinking(long custId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference From LinkedFinances_Temp lf");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = lf.FinID");
+		sql.append(" Where fm.CustId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getString(1), custId);
 	}
 }

@@ -324,7 +324,7 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 	}
 
 	protected void setFailureStatus(UploadDetails detail, ErrorDetail ed) {
-		setFailureStatus(detail, ed.getCode(), ed.getMessage());
+		setFailureStatus(detail, ed.getCode(), ed.getError());
 	}
 
 	protected void setFailureStatus(UploadDetails detail, String errorCode, String errorDesc) {

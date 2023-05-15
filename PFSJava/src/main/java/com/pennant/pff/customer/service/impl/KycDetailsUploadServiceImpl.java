@@ -245,19 +245,41 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
-		List<String> references = kycDetailsUploadDAO.getReceiptQueueList(custId);
+		List<FinanceMain> fmList = kycDetailsUploadDAO.isInMaintanance(custId);
 
-		if (CollectionUtils.isNotEmpty(references)) {
+		if (CollectionUtils.isNotEmpty(fmList)) {
 			StringBuilder message = new StringBuilder();
-			for (String ref : references) {
+
+			for (FinanceMain fm : fmList) {
 				if (message.length() > 0) {
 					message.append(", ");
 				}
 
-				message.append(ref);
+				message.append(fm.getFinReference() + " is in maintainance on  :" + fm.getRcdMaintainSts());
 			}
 
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, message.toString());
+			setFailureStatus(detail, message.toString());
+			return;
+		}
+
+		List<String> references = kycDetailsUploadDAO.getReceiptQueueList(custId);
+
+		if (CollectionUtils.isNotEmpty(references)) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, references);
+			return;
+		}
+
+		references = kycDetailsUploadDAO.isInSettlement(custId);
+
+		if (CollectionUtils.isNotEmpty(references)) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_06, references);
+			return;
+		}
+
+		references = kycDetailsUploadDAO.isInlinkingDelinking(custId);
+
+		if (CollectionUtils.isNotEmpty(references)) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_07, references);
 			return;
 		}
 
@@ -335,6 +357,19 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 		}
 
 		setSuccesStatus(detail);
+	}
+
+	private void setError(CustomerKycDetail detail, CustomerDetailsUploadError error, List<String> references) {
+		StringBuilder message = new StringBuilder();
+		for (String ref : references) {
+			if (message.length() > 0) {
+				message.append(", ");
+			}
+
+			message.append(ref);
+		}
+
+		setError(detail, error.name(), message.toString());
 	}
 
 	private void validateMandatory(CustomerKycDetail detail) {

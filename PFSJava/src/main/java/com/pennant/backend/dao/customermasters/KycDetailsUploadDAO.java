@@ -3,6 +3,7 @@ package com.pennant.backend.dao.customermasters;
 import java.util.List;
 
 import com.pennant.backend.model.bulkAddressUpload.CustomerKycDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 
 public interface KycDetailsUploadDAO {
 
@@ -23,4 +24,10 @@ public interface KycDetailsUploadDAO {
 	boolean isInLoanQueue(long custId);
 
 	List<String> getReceiptQueueList(long custId);
+
+	List<FinanceMain> isInMaintanance(long custId);
+
+	List<String> isInSettlement(long custId);
+
+	List<String> isInlinkingDelinking(long custId);
 }
