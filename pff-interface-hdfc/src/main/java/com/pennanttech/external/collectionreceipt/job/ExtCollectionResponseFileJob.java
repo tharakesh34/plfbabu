@@ -1,16 +1,13 @@
 package com.pennanttech.external.collectionreceipt.job;
 
-import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -24,7 +21,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
-import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.service.ExtCollectionFileService;
 import com.pennanttech.external.config.ApplicationContextProvider;
@@ -34,9 +30,6 @@ import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
-import com.pennanttech.external.util.ExtSFTPUtil;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -103,78 +96,78 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-		CollReceiptHeader receiptHeader;
-		ExternalConfig reqConfig = getDataFromList(configList, CONFIG_COLLECTION_REQ_CONF);
-		ExternalConfig respConfig = getDataFromList(configList, CONFIG_COLLECTION_RESP_CONF);
-		try {
-			while ((receiptHeader = cursorItemReader.read()) != null) {
-				try {
-
-					receiptHeader.setRespFileStatus(INPROCESS);
-					extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(receiptHeader);
-
-					List<CollReceiptDetail> fileRecordsList = extCollectionReceiptDao
-							.fetchCollectionRecordsById(receiptHeader.getId());
-
-					if (fileRecordsList.size() > 0) {
-
-						long fileSeq = extPresentmentDAO.getSeqNumber(SEQ_COLLECTION_RECEIPT);
-						String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
-
-						String filePath = respConfig.getFileLocation();
-						String fileName = respConfig.getFilePrepend()
-								+ new SimpleDateFormat(respConfig.getDateFormat()).format(appDate)
-								+ respConfig.getFilePostpend() + fileSeqName + respConfig.getFileExtension();
-
-						String fileData = App.getResourcePath(filePath) + File.separator + fileName;
-
-						receiptHeader.setRespFileName(fileName);
-						receiptHeader.setRespFileLocation(filePath);
-
-						collectionFileService.processCollectionResponseFileWriting(fileData, appDate, fileRecordsList,
-								respConfig);
-					}
-
-					if ("Y".equals(StringUtils.stripToEmpty(respConfig.getIsSftp()))) {
-						try {
-							ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
-							String fileNamee = receiptHeader.getRequestFileName();
-							fileNamee = fileNamee.substring(0, fileNamee.indexOf(reqConfig.getFileExtension()));
-							File file = new File(
-									respConfig.getFileSftpLocation() + File.separator + fileNamee + ".inproc");
-
-							// Delete .inproc file
-							extSFTPUtil.deleteFile(file.getAbsolutePath());
-
-							// Backup now local file to SFTP backup location
-							File localFile = new File(respConfig.getFileLocation() + File.separator + fileNamee);
-							FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
-							ftpClient.upload(localFile, respConfig.getFileBackupLocation());
-
-						} catch (Exception e) {
-							logger.debug(Literal.EXCEPTION, e);
-						}
-					}
-
-					receiptHeader.setRespFileStatus(COMPLETED);
-					extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(receiptHeader);
-
-				} catch (Exception e) {
-					logger.debug(Literal.EXCEPTION, e);
-					receiptHeader.setRespFileStatus(EXCEPTION);
-					receiptHeader.setErrorCode(F400);
-					receiptHeader.setErrorMessage(e.getMessage());
-					extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(receiptHeader);
-				}
-			}
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-
-		} finally {
-			if (cursorItemReader != null) {
-				cursorItemReader.close();
-			}
-		}
+		// CollReceiptHeader receiptHeader;
+		// ExternalConfig reqConfig = getDataFromList(configList, CONFIG_COLLECTION_REQ_CONF);
+		// ExternalConfig respConfig = getDataFromList(configList, CONFIG_COLLECTION_RESP_CONF);
+		// try {
+		// while ((receiptHeader = cursorItemReader.read()) != null) {
+		// try {
+		//
+		// receiptHeader.setRespFileStatus(INPROCESS);
+		// extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(receiptHeader);
+		//
+		// List<CollReceiptDetail> fileRecordsList = extCollectionReceiptDao
+		// .fetchCollectionRecordsById(receiptHeader.getId());
+		//
+		// if (fileRecordsList.size() > 0) {
+		//
+		// long fileSeq = extPresentmentDAO.getSeqNumber(SEQ_COLLECTION_RECEIPT);
+		// String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
+		//
+		// String filePath = respConfig.getFileLocation();
+		// String fileName = respConfig.getFilePrepend()
+		// + new SimpleDateFormat(respConfig.getDateFormat()).format(appDate)
+		// + respConfig.getFilePostpend() + fileSeqName + respConfig.getFileExtension();
+		//
+		// String fileData = App.getResourcePath(filePath) + File.separator + fileName;
+		//
+		// receiptHeader.setRespFileName(fileName);
+		// receiptHeader.setRespFileLocation(filePath);
+		//
+		// collectionFileService.processCollectionResponseFileWriting(fileData, appDate, fileRecordsList,
+		// respConfig);
+		// }
+		//
+		// if ("Y".equals(StringUtils.stripToEmpty(respConfig.getIsSftp()))) {
+		// try {
+		// ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
+		// String fileNamee = receiptHeader.getRequestFileName();
+		// fileNamee = fileNamee.substring(0, fileNamee.indexOf(reqConfig.getFileExtension()));
+		// File file = new File(
+		// respConfig.getFileSftpLocation() + File.separator + fileNamee + ".inproc");
+		//
+		// // Delete .inproc file
+		// extSFTPUtil.deleteFile(file.getAbsolutePath());
+		//
+		// // Backup now local file to SFTP backup location
+		// File localFile = new File(respConfig.getFileLocation() + File.separator + fileNamee);
+		// FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
+		// ftpClient.upload(localFile, respConfig.getFileBackupLocation());
+		//
+		// } catch (Exception e) {
+		// logger.debug(Literal.EXCEPTION, e);
+		// }
+		// }
+		//
+		// receiptHeader.setRespFileStatus(COMPLETED);
+		// extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(receiptHeader);
+		//
+		// } catch (Exception e) {
+		// logger.debug(Literal.EXCEPTION, e);
+		// receiptHeader.setRespFileStatus(EXCEPTION);
+		// receiptHeader.setErrorCode(F400);
+		// receiptHeader.setErrorMessage(e.getMessage());
+		// extCollectionReceiptDao.updateExtCollectionRespFileWritingStatus(receiptHeader);
+		// }
+		// }
+		// } catch (Exception e) {
+		// logger.debug(Literal.EXCEPTION, e);
+		//
+		// } finally {
+		// if (cursorItemReader != null) {
+		// cursorItemReader.close();
+		// }
+		// }
 
 		logger.debug(Literal.LEAVING);
 	}
