@@ -66,7 +66,6 @@ public interface InterfaceConstants {
 	String CONFIG_IPDC_RESP = "IPDC_RESP";
 	String CONFIG_NACH_RESP = "NACH_RESP";
 	String CONFIG_LIEN_RESP = "SILIEN_RESP";
-	String SEQ_FINCON_GL = "SEQ_FINCON_GL";
 
 	String SIHOLD = "SIHOLD";
 
@@ -75,6 +74,8 @@ public interface InterfaceConstants {
 	String SEQ_PRMNT_ACH = "SEQ_PRMNT_ACH";
 	String SEQ_PRMNT_PDC = "SEQ_PRMNT_PDC";
 	String SEQ_SILIEN = "SEQ_SILIEN";
+	String SEQ_FINCON_GL = "SEQ_FINCON_GL";
+	String SEQ_COLLECTION_RECEIPT = "SEQ_COLLECTION_RECEIPT";
 
 	int ccyFromat = 2;
 	String fileSeperator = "~";

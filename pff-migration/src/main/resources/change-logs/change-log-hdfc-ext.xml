@@ -22,10 +22,11 @@
 			<column name="FAIL_INDICATOR" type="VARCHAR(100)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="001_post" author="goutham.ch">
-		<addNotNullConstraint tableName="FILE_INTERFACE_CONFIG" columnName="INTERFACE_TYPE" columnDataType="VARCHAR(100)" />
-	</changeSet>	
+		<addNotNullConstraint tableName="FILE_INTERFACE_CONFIG" columnName="INTERFACE_TYPE"
+			columnDataType="VARCHAR(100)" />
+	</changeSet>
 
 	<changeSet id="001.1" author="goutham.ch">
 		<addPrimaryKey tableName="FILE_INTERFACE_CONFIG " columnNames="INTERFACE_TYPE" />
@@ -141,12 +142,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="012" author="goutham.ch">
 		<createSequence sequenceName="SEQ_PRMNT_PDC" incrementBy="1" startValue="1" minValue="1"
 			maxValue="9223372036854775807" />
 	</changeSet>
-	
+
 	<changeSet id="002.3" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -154,7 +155,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.4" author="goutham.ch">
 		<sql>
 				<![CDATA[
@@ -166,8 +167,8 @@
 	</changeSet>
 
 
-	
-	
+
+
 	<changeSet id="013" author="goutham.ch">
 		<createTable tableName="EXT_MANDATE_ERRORS">
 			<column name="ID" type="bigint" autoIncrement="true">
@@ -178,7 +179,7 @@
 			<column name="STATUS" type="int" />
 		</createTable>
 	</changeSet>
-	
+
 
 	<changeSet id="014" author="goutham.ch">
 		<sql>
@@ -245,10 +246,10 @@
 
 
 
-				
-   
-   
-   <changeSet id="015" author="goutham.ch">
+
+
+
+	<changeSet id="015" author="goutham.ch">
 		<createSequence sequenceName="SEQ_SILIEN" incrementBy="1" startValue="1" minValue="1"
 			maxValue="9223372036854775807" />
 	</changeSet>
@@ -258,8 +259,8 @@
 
 	<changeSet id="016" author="goutham.ch">
 		<createTable tableName="LOAN_SILIEN">
-			<column name="FINID" type="VARCHAR(200)" >
-			<constraints nullable="false" />
+			<column name="FINID" type="VARCHAR(200)">
+				<constraints nullable="false" />
 			</column>
 			<column name="CUSTID" type="bigint" />
 			<column name="ACCNUMBER" type="VARCHAR(50)" />
@@ -275,7 +276,7 @@
 
 	<changeSet id="017" author="goutham.ch">
 		<createTable tableName="SILIEN_STATUS">
-			<column name="ACCNUMBER" type="VARCHAR(50)" >
+			<column name="ACCNUMBER" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
 			<column name="LIEN_MARK" type="VARCHAR(2)" />
@@ -302,7 +303,7 @@
 			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="011.01" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -310,19 +311,19 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="003.01" author="goutham.ch">
 		<addColumn tableName="PRMNT_HEADER">
 			<column name="ERROR_CODE" type="VARCHAR(200)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="003.02" author="goutham.ch">
 		<addColumn tableName="PRMNT_HEADER">
 			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="002.5" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -331,7 +332,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="011.02" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -339,224 +340,224 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.5.1" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="BACKUP_LOCATION" type="varchar(2000)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="002.5.2" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="ACCESS_KEY" type="varchar(50)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="002.5.3" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SECRET_KEY" type="varchar(200)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="002.5.4" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="HOST_NAME" type="varchar(200)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-			
+
 	<changeSet id="002.5.5" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="PORT" type="int" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="002.5.6" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="PRIVATE_KEY" type="varchar(255)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="002.5.7" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SSE_ALGORITHM" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="002.5.8" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="PREFIX" type="varchar(100)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-		
-		
+
+
 	<changeSet id="002.5.9" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SFTP_LOCATION" type="varchar(2000)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-		
-		
+
+
 	<changeSet id="002.5.10" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="IS_SFTP" type="varchar(10)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="002.5.11" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="LOCAL_BACKUP_LOCATION" type="varchar(2000)" />
-		</addColumn>	
+		</addColumn>
 	</changeSet>
-	
-			
+
+
 	<changeSet id="002.5.12" author="goutham.ch">
 		<addColumn tableName="FILE_INTERFACE_CONFIG">
 			<column name="SFTP_BUCKET" type="varchar(2000)" />
 		</addColumn>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="019" author="goutham.ch">
-	   <createTable tableName="UCIC_CUSTOMERS">
+		<createTable tableName="UCIC_CUSTOMERS">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-	      <column name="CUSTID" type="int" >
-		  <constraints primaryKey="true" nullable="false" />
-		  </column>
-	      <column name="FINID" type="int" />
-	      <column name="CUSTCIF" type="VARCHAR(20)" />
-	      <column name="FINREFERENCE" type="VARCHAR(20)" >
-		    <constraints primaryKey="true" nullable="false" />
-		  </column>	  
-	      <column name="CREATION_DATE" type="datetime" />
-	      <column name="CUSTCOREBANK" type="VARCHAR(50)" />
-	      <column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
-	      <column name="CUSTCTGCODE" type="VARCHAR(20)" />
-	      <column name="CUSTOMER_TYPE" type="VARCHAR(20)" />
-	      <column name="LASTMNTON" type="datetime" />
-	      <column name="SUBCATEGORY" type="VARCHAR(50)" />
-	      <column name="CUSTSHRTNAME" type="VARCHAR(200)" />
-	      <column name="CUSTDOB" type="datetime" />
-	      <column name="CUSTISBLOCKED" type="VARCHAR(2)" />
-	      <column name="CLOSEDDATE" type="datetime" />
-	      <column name="CLOSINGSTATUS" type="VARCHAR(100)" />
-	      <column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
-	      <column name="ACCNUMBER" type="VARCHAR(50)" />
-	      <column name="COMPANYNAME" type="VARCHAR(100)" />
-	      <column name="EMAIL1" type="VARCHAR(100)" />
-	      <column name="EMAIL2" type="VARCHAR(100)" />
-	      <column name="EMAIL3" type="VARCHAR(100)" />
-	      <column name="MOBILE1" type="VARCHAR(20)" />
-	      <column name="MOBILE2" type="VARCHAR(20)" />
-	      <column name="MOBILE3" type="VARCHAR(20)" />
-	      <column name="LANDLINE1" type="VARCHAR(50)" />
-	      <column name="LANDLINE2" type="VARCHAR(50)" />
-	      <column name="LANDLINE3" type="VARCHAR(50)" />
-	      <column name="PAN" type="VARCHAR(100)" />
-	      <column name="AADHAAR" type="VARCHAR(100)" />
-	      <column name="VOTER_ID" type="VARCHAR(100)" />
-	      <column name="DRIVING_LICENCE" type="VARCHAR(100)" />
-	      <column name="PASSPORT" type="VARCHAR(100)" />
-	      <column name="ADDR1TYPE" type="VARCHAR(10)" />
-	      <column name="ADDR1LINE1" type="VARCHAR(150)" />
-	      <column name="ADDR1LINE2" type="VARCHAR(150)" />
-	      <column name="ADDR1LINE3" type="VARCHAR(150)" />
-	      <column name="ADDR1LINE4" type="VARCHAR(150)" />
-	      <column name="ADDR1CITY" type="VARCHAR(150)" />
-	      <column name="ADDR1STATE" type="VARCHAR(150)" />
-	      <column name="ADDR1PIN" type="VARCHAR(10)" />
-	      <column name="ADDR2TYPE" type="VARCHAR(10)" />
-	      <column name="ADDR2LINE1" type="VARCHAR(150)" />
-	      <column name="ADDR2LINE2" type="VARCHAR(150)" />
-	      <column name="ADDR2LINE3" type="VARCHAR(150)" />
-	      <column name="ADDR2LINE4" type="VARCHAR(150)" />
-	      <column name="ADDR2CITY" type="VARCHAR(150)" />
-	      <column name="ADDR2STATE" type="VARCHAR(150)" />
-	      <column name="ADDR2PIN" type="VARCHAR(10)" />
-	      <column name="ADDR3TYPE" type="VARCHAR(10)" />
-	      <column name="ADDR3LINE1" type="VARCHAR(150)" />
-	      <column name="ADDR3LINE2" type="VARCHAR(150)" />
-	      <column name="ADDR3LINE3" type="VARCHAR(150)" />
-	      <column name="ADDR3LINE4" type="VARCHAR(150)" />
-	      <column name="ADDR3CITY" type="VARCHAR(150)" />
-	      <column name="ADDR3STATE" type="VARCHAR(150)" />
-	      <column name="ADDR3PIN" type="VARCHAR(10)" />
-	      <column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
-	      <column name="FILE_STATUS" type="decimal(2)" />
-	      <column name="PROCESS_FLAG" type="decimal(2)" />
-	      <column name="RESP_FLAG" type="decimal(2)" />
-	      <column name="ERROR_CODE" type="VARCHAR(100)" />
-	      <column name="ERROR_DESC" type="VARCHAR(4000)" />
-	   </createTable>
+			<column name="CUSTID" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FINID" type="int" />
+			<column name="CUSTCIF" type="VARCHAR(20)" />
+			<column name="FINREFERENCE" type="VARCHAR(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CREATION_DATE" type="datetime" />
+			<column name="CUSTCOREBANK" type="VARCHAR(50)" />
+			<column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
+			<column name="CUSTCTGCODE" type="VARCHAR(20)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(20)" />
+			<column name="LASTMNTON" type="datetime" />
+			<column name="SUBCATEGORY" type="VARCHAR(50)" />
+			<column name="CUSTSHRTNAME" type="VARCHAR(200)" />
+			<column name="CUSTDOB" type="datetime" />
+			<column name="CUSTISBLOCKED" type="VARCHAR(2)" />
+			<column name="CLOSEDDATE" type="datetime" />
+			<column name="CLOSINGSTATUS" type="VARCHAR(100)" />
+			<column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
+			<column name="ACCNUMBER" type="VARCHAR(50)" />
+			<column name="COMPANYNAME" type="VARCHAR(100)" />
+			<column name="EMAIL1" type="VARCHAR(100)" />
+			<column name="EMAIL2" type="VARCHAR(100)" />
+			<column name="EMAIL3" type="VARCHAR(100)" />
+			<column name="MOBILE1" type="VARCHAR(20)" />
+			<column name="MOBILE2" type="VARCHAR(20)" />
+			<column name="MOBILE3" type="VARCHAR(20)" />
+			<column name="LANDLINE1" type="VARCHAR(50)" />
+			<column name="LANDLINE2" type="VARCHAR(50)" />
+			<column name="LANDLINE3" type="VARCHAR(50)" />
+			<column name="PAN" type="VARCHAR(100)" />
+			<column name="AADHAAR" type="VARCHAR(100)" />
+			<column name="VOTER_ID" type="VARCHAR(100)" />
+			<column name="DRIVING_LICENCE" type="VARCHAR(100)" />
+			<column name="PASSPORT" type="VARCHAR(100)" />
+			<column name="ADDR1TYPE" type="VARCHAR(10)" />
+			<column name="ADDR1LINE1" type="VARCHAR(150)" />
+			<column name="ADDR1LINE2" type="VARCHAR(150)" />
+			<column name="ADDR1LINE3" type="VARCHAR(150)" />
+			<column name="ADDR1LINE4" type="VARCHAR(150)" />
+			<column name="ADDR1CITY" type="VARCHAR(150)" />
+			<column name="ADDR1STATE" type="VARCHAR(150)" />
+			<column name="ADDR1PIN" type="VARCHAR(10)" />
+			<column name="ADDR2TYPE" type="VARCHAR(10)" />
+			<column name="ADDR2LINE1" type="VARCHAR(150)" />
+			<column name="ADDR2LINE2" type="VARCHAR(150)" />
+			<column name="ADDR2LINE3" type="VARCHAR(150)" />
+			<column name="ADDR2LINE4" type="VARCHAR(150)" />
+			<column name="ADDR2CITY" type="VARCHAR(150)" />
+			<column name="ADDR2STATE" type="VARCHAR(150)" />
+			<column name="ADDR2PIN" type="VARCHAR(10)" />
+			<column name="ADDR3TYPE" type="VARCHAR(10)" />
+			<column name="ADDR3LINE1" type="VARCHAR(150)" />
+			<column name="ADDR3LINE2" type="VARCHAR(150)" />
+			<column name="ADDR3LINE3" type="VARCHAR(150)" />
+			<column name="ADDR3LINE4" type="VARCHAR(150)" />
+			<column name="ADDR3CITY" type="VARCHAR(150)" />
+			<column name="ADDR3STATE" type="VARCHAR(150)" />
+			<column name="ADDR3PIN" type="VARCHAR(10)" />
+			<column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
+			<column name="FILE_STATUS" type="decimal(2)" />
+			<column name="PROCESS_FLAG" type="decimal(2)" />
+			<column name="RESP_FLAG" type="decimal(2)" />
+			<column name="ERROR_CODE" type="VARCHAR(100)" />
+			<column name="ERROR_DESC" type="VARCHAR(4000)" />
+		</createTable>
 	</changeSet>
 
 	<changeSet id="020" author="goutham.ch">
-	   <createTable tableName="UCIC_CUSTOMERS_HISTORY">
+		<createTable tableName="UCIC_CUSTOMERS_HISTORY">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-	      <column name="CUSTID" type="int" />
-	      <column name="CUSTCIF" type="VARCHAR(20)" />
-	      <column name="FINREFERENCE" type="VARCHAR(20)" />
-	      <column name="CREATION_DATE" type="datetime" />
-	      <column name="CUSTCOREBANK" type="VARCHAR(50)" />
-	      <column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
-	      <column name="CUSTCTGCODE" type="VARCHAR(20)" />
-	      <column name="CUSTOMER_TYPE" type="VARCHAR(20)" />
-	      <column name="SUBCATEGORY" type="VARCHAR(50)" />
-	      <column name="CUSTSHRTNAME" type="VARCHAR(200)" />
-	      <column name="CUSTDOB" type="datetime" />
-	      <column name="CUSTISBLOCKED" type="VARCHAR(2)" />
-	      <column name="CLOSEDDATE" type="datetime" />
-	      <column name="CLOSINGSTATUS" type="VARCHAR(100)" />
-	      <column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
-	      <column name="ACCNUMBER" type="VARCHAR(50)" />
-	      <column name="COMPANYNAME" type="VARCHAR(100)" />
-	      <column name="EMAIL1" type="VARCHAR(100)" />
-	      <column name="EMAIL2" type="VARCHAR(100)" />
-	      <column name="EMAIL3" type="VARCHAR(100)" />
-	      <column name="MOBILE1" type="VARCHAR(20)" />
-	      <column name="MOBILE2" type="VARCHAR(20)" />
-	      <column name="MOBILE3" type="VARCHAR(20)" />
-	      <column name="LANDLINE1" type="VARCHAR(50)" />
-	      <column name="LANDLINE2" type="VARCHAR(50)" />
-	      <column name="LANDLINE3" type="VARCHAR(50)" />
-	      <column name="PAN" type="VARCHAR(100)" />
-	      <column name="AADHAAR" type="VARCHAR(100)" />
-	      <column name="VOTER_ID" type="VARCHAR(100)" />
-	      <column name="DRIVING_LICENCE" type="VARCHAR(100)" />
-	      <column name="PASSPORT" type="VARCHAR(100)" />
-	      <column name="ADDR1TYPE" type="VARCHAR(10)" />
-	      <column name="ADDR1LINE1" type="VARCHAR(150)" />
-	      <column name="ADDR1LINE2" type="VARCHAR(150)" />
-	      <column name="ADDR1LINE3" type="VARCHAR(150)" />
-	      <column name="ADDR1LINE4" type="VARCHAR(150)" />
-	      <column name="ADDR1CITY" type="VARCHAR(150)" />
-	      <column name="ADDR1STATE" type="VARCHAR(150)" />
-	      <column name="ADDR1PIN" type="VARCHAR(10)" />
-	      <column name="ADDR2TYPE" type="VARCHAR(10)" />
-	      <column name="ADDR2LINE1" type="VARCHAR(150)" />
-	      <column name="ADDR2LINE2" type="VARCHAR(150)" />
-	      <column name="ADDR2LINE3" type="VARCHAR(150)" />
-	      <column name="ADDR2LINE4" type="VARCHAR(150)" />
-	      <column name="ADDR2CITY" type="VARCHAR(150)" />
-	      <column name="ADDR2STATE" type="VARCHAR(150)" />
-	      <column name="ADDR2PIN" type="VARCHAR(10)" />
-	      <column name="ADDR3TYPE" type="VARCHAR(10)" />
-	      <column name="ADDR3LINE1" type="VARCHAR(150)" />
-	      <column name="ADDR3LINE2" type="VARCHAR(150)" />
-	      <column name="ADDR3LINE3" type="VARCHAR(150)" />
-	      <column name="ADDR3LINE4" type="VARCHAR(150)" />
-	      <column name="ADDR3CITY" type="VARCHAR(150)" />
-	      <column name="ADDR3STATE" type="VARCHAR(150)" />
-	      <column name="ADDR3PIN" type="VARCHAR(10)" />
-	      <column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
-		  <column name="LASTMNTON" type="datetime" />
-		  <column name="LASTMNTON2" type="datetime" />
-		  <column name="PROCESS_DATE" type="datetime" />
-	   </createTable>
+			<column name="CUSTID" type="int" />
+			<column name="CUSTCIF" type="VARCHAR(20)" />
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="CREATION_DATE" type="datetime" />
+			<column name="CUSTCOREBANK" type="VARCHAR(50)" />
+			<column name="SOURCE_SYSTEM" type="VARCHAR(10)" />
+			<column name="CUSTCTGCODE" type="VARCHAR(20)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(20)" />
+			<column name="SUBCATEGORY" type="VARCHAR(50)" />
+			<column name="CUSTSHRTNAME" type="VARCHAR(200)" />
+			<column name="CUSTDOB" type="datetime" />
+			<column name="CUSTISBLOCKED" type="VARCHAR(2)" />
+			<column name="CLOSEDDATE" type="datetime" />
+			<column name="CLOSINGSTATUS" type="VARCHAR(100)" />
+			<column name="CUSTMOTHERMAIDEN" type="VARCHAR(50)" />
+			<column name="ACCNUMBER" type="VARCHAR(50)" />
+			<column name="COMPANYNAME" type="VARCHAR(100)" />
+			<column name="EMAIL1" type="VARCHAR(100)" />
+			<column name="EMAIL2" type="VARCHAR(100)" />
+			<column name="EMAIL3" type="VARCHAR(100)" />
+			<column name="MOBILE1" type="VARCHAR(20)" />
+			<column name="MOBILE2" type="VARCHAR(20)" />
+			<column name="MOBILE3" type="VARCHAR(20)" />
+			<column name="LANDLINE1" type="VARCHAR(50)" />
+			<column name="LANDLINE2" type="VARCHAR(50)" />
+			<column name="LANDLINE3" type="VARCHAR(50)" />
+			<column name="PAN" type="VARCHAR(100)" />
+			<column name="AADHAAR" type="VARCHAR(100)" />
+			<column name="VOTER_ID" type="VARCHAR(100)" />
+			<column name="DRIVING_LICENCE" type="VARCHAR(100)" />
+			<column name="PASSPORT" type="VARCHAR(100)" />
+			<column name="ADDR1TYPE" type="VARCHAR(10)" />
+			<column name="ADDR1LINE1" type="VARCHAR(150)" />
+			<column name="ADDR1LINE2" type="VARCHAR(150)" />
+			<column name="ADDR1LINE3" type="VARCHAR(150)" />
+			<column name="ADDR1LINE4" type="VARCHAR(150)" />
+			<column name="ADDR1CITY" type="VARCHAR(150)" />
+			<column name="ADDR1STATE" type="VARCHAR(150)" />
+			<column name="ADDR1PIN" type="VARCHAR(10)" />
+			<column name="ADDR2TYPE" type="VARCHAR(10)" />
+			<column name="ADDR2LINE1" type="VARCHAR(150)" />
+			<column name="ADDR2LINE2" type="VARCHAR(150)" />
+			<column name="ADDR2LINE3" type="VARCHAR(150)" />
+			<column name="ADDR2LINE4" type="VARCHAR(150)" />
+			<column name="ADDR2CITY" type="VARCHAR(150)" />
+			<column name="ADDR2STATE" type="VARCHAR(150)" />
+			<column name="ADDR2PIN" type="VARCHAR(10)" />
+			<column name="ADDR3TYPE" type="VARCHAR(10)" />
+			<column name="ADDR3LINE1" type="VARCHAR(150)" />
+			<column name="ADDR3LINE2" type="VARCHAR(150)" />
+			<column name="ADDR3LINE3" type="VARCHAR(150)" />
+			<column name="ADDR3LINE4" type="VARCHAR(150)" />
+			<column name="ADDR3CITY" type="VARCHAR(150)" />
+			<column name="ADDR3STATE" type="VARCHAR(150)" />
+			<column name="ADDR3PIN" type="VARCHAR(10)" />
+			<column name="INSERT_UPDATE_FLAG" type="VARCHAR(2)" />
+			<column name="LASTMNTON" type="datetime" />
+			<column name="LASTMNTON2" type="datetime" />
+			<column name="PROCESS_DATE" type="datetime" />
+		</createTable>
 	</changeSet>
 
 	<changeSet id="021" author="goutham.ch">
@@ -582,7 +583,7 @@
 			<column name="ERROR_DESC" type="VARCHAR(2000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="023" author="sreeram.r">
 		<createTable tableName="EXTAPILOG">
 			<column name="ID" type="bigint" autoIncrement="true">
@@ -596,7 +597,7 @@
 			<column name="ERROR" type="VARCHAR(4000)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="024" author="goutham.ch">
 		<createTable tableName="FINCON_GL_STG">
 			<column name="ACCOUNT" type="VARCHAR(50)" />
@@ -699,7 +700,7 @@
 			<column name="REPRICE_INDEX" type="VARCHAR(13)" />
 			<column name="DPD" type="bigint" />
 			<column name="TOTAL_INTEREST" type="bigint" />
-     		<column name="BILLED_INTEREST" type="bigint" />
+			<column name="BILLED_INTEREST" type="bigint" />
 			<column name="BILLED_NOT_RECEIVED_INTEREST" type="bigint" />
 			<column name="BILLED_NOT_RECEIVED_PRINCIPAL" type="bigint" />
 			<column name="CUSTOMERNAME" type="VARCHAR(50)" />
@@ -712,7 +713,7 @@
 			<column name="WEAKER_SECTION_DESC" type="VARCHAR(50)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="002.6" author="sreeram.r">
 		<sql>
 				<![CDATA[
@@ -720,10 +721,77 @@
 				]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="027" author="goutham.ch">
+
+	<changeSet id="027" author="goutham.ch">
 		<createSequence sequenceName="SEQ_FINCON_GL" incrementBy="1" startValue="1" minValue="1"
 			maxValue="9223372036854775807" />
 	</changeSet>
-	
+
+	<changeSet id="011.03" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F400', 'Checksum verification failed.', 1, current_timestamp, 'CHECKSUM_VERIFICATION_FAILED');
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F401', 'Exception occured while extraction.', 1, current_timestamp, 'EXCEPTION_PROCESSING_FILE');
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F402', 'Row1 validation failed.', 1, current_timestamp, 'ROW1_VALIDATION_FAILED');
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F403', 'Row2 validation failed.', 1, current_timestamp, 'ROW2_VALIDATION_FAILED');
+				INSERT INTO INTERFACE_ERROR_CODES (ERROR_CODE, ERROR_MESSAGE, STATUS, CREATED_DATE, ERROR_DESC) VALUES ('F404', 'Header validation failed.', 1, current_timestamp, 'HEADER_VALIDATION_FAILED');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="028" author="goutham.ch">
+		<createSequence sequenceName="SEQ_COLLECTION_RECEIPT" incrementBy="1" startValue="1" minValue="1"
+			maxValue="9223372036854775807" />
+	</changeSet>
+
+	<changeSet id="029" author="goutham.ch">
+		<createTable tableName="COLL_RECEIPT_HEADER">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="REQ_FILE_NAME" type="VARCHAR(200)" />
+			<column name="REQ_FILE_LOCATION" type="VARCHAR(200)" />
+			<column name="EXTRACTION" type="int" />
+			<column name="STATUS" type="int" />
+			<column name="WRITE_RESPONSE" type="int" />
+			<column name="RESP_FILE_STATUS" type="int" />
+			<column name="RESP_FILE_NAME" type="VARCHAR(200)" />
+			<column name="RESP_FILE_LOCATION" type="VARCHAR(200)" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="ERROR_CODE" type="VARCHAR(200)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
+		</createTable>
+	</changeSet>
+
+
+	<changeSet id="030" author="goutham.ch">
+		<createTable tableName="COLL_RECEIPT_DETAIL">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="HEADER_ID" type="bigint" />
+			<column name="RECORD_DATA" type="VARCHAR(4000)" />
+			<column name="RECEIPT_ID" type="bigint" />
+			<column name="RECEIPT_CREATED_DATE" type="datetime" />
+			<column name="CREATED_DATE" type="datetime" />
+			<column name="ERROR_CODE" type="VARCHAR(200)" />
+			<column name="ERROR_MESSAGE" type="VARCHAR(4000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="002.7" author="sreeram.r">
+		<sql>
+			<![CDATA[
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_REQ_COMPLETE',1,'UCIC/REQUEST',202,'PLF_COMPLETE_',null,'.txt','MM-dd-yyyy',null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_RESP_COMPLETE',1,'UCIC/RESPONSE',202,'COMPLETE_',null,'.txt','ddMMMyyyy',null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_ACK_CONF',1,'UCIC/REQUEST/ACK',202,'CONF_Complete_',null,'.txt','ddMMyyyy',null,null,null,'sftpuser','Zxcvbn$@123','sftpserver',22,null,null,null,'/sftpuser/PLF/HDFC/QC/UCIC_REQ/ACK','Y',null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('PLF_DB_SERVER',1,'UCIC/REQUEST',202,null,null,null,'MM-dd-yyyy',null,null,null,'sftpuser','Zxcvbn$@123','sftpserver',22,null,null,null,'/tmp/PLF','Y',null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_REQ',1,'UCIC/REQUEST',202,'PLF_UCIC_REQ_',null,'.txt','MM-dd-yyyy',null,null,null,'sftpuser','Zxcvbn$@123','sftpserver',22,null,null,null,'/sftpuser/PLF/HDFC/QC/UCIC/REQUEST','Y',null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_RESP',1,'UCIC/RESPONSE',202,'PLF_UCIC_RES_',null,'.txt','ddMMMyyyy',null,null,null,'sftpuser','Zxcvbn$@123','sftpserver',22,null,null,null,'/sftpuser/PLF/HDFC/QC/UCIC/RESPONSE','Y',null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_ACK',1,'UCIC/RESPONSE/ACK',202,'PLF_CONF_','_1','.txt','ddMMyyyy',null,null,null,'sftpuser','Zxcvbn$@123','sftpserver',22,null,null,null,'/sftpuser/PLF/HDFC/QC/UCIC/RESPONSE/ACK','Y',null,null);
+					Insert into FILE_INTERFACE_CONFIG (INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR,BACKUP_LOCATION,ACCESS_KEY,SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET) values ('UCIC_WEEKLY',1,'UCIC/REQUEST/WEEKLY',202,'PLF_EXT_',null,'.txt','ddMMMyyyy',null,null,null,'sftpuser','Zxcvbn$@123','sftpserver',22,null,null,null,'/sftpuser/PLF/HDFC/QC/UCIC/WEEKLY/REQUEST','Y',null,null);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
