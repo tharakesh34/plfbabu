@@ -68,7 +68,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 			piud.setFeeType(rs.getString("FeeType"));
 			piud.setPayAmount(rs.getBigDecimal("PayAmount"));
 			piud.setRemarks(rs.getString("Remarks"));
-			piud.setOverRide(rs.getString("OverRideOverDue"));
+			piud.setOverRideOverDue(rs.getString("OverRideOverDue"));
 			piud.setProgress(rs.getInt("Progress"));
 			piud.setStatus(rs.getString("Status"));
 			piud.setErrorCode(rs.getString("ErrorCode"));
@@ -98,7 +98,7 @@ public class PaymentInstructionUploadDAOImpl extends SequenceDao<PaymentInstUplo
 			piud.setFeeType(rs.getString("FeeType"));
 			piud.setPayAmount(rs.getBigDecimal("PayAmount"));
 			piud.setRemarks(rs.getString("Remarks"));
-			piud.setOverRide(rs.getString("OverRideOverDue"));
+			piud.setOverRideOverDue(rs.getString("OverRideOverDue"));
 			piud.setProgress(rs.getInt("Progress"));
 			piud.setErrorCode(rs.getString("ErrorCode"));
 			piud.setErrorDesc(rs.getString("ErrorDesc"));
