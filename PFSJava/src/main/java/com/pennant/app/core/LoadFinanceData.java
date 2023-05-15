@@ -85,7 +85,8 @@ public class LoadFinanceData extends ServiceHelper {
 			FinanceProfitDetail pfd = getFinPftDetailRef(finID, custpftDet);
 
 			if (pfd == null) {
-				throw new AppException(String.format("%d FinID is not in Active State in FinPftDetails table.", finID));
+				throw new AppException(String.format("%s FinReference is not in active state in FinPftDetails table.",
+						fm.getFinReference()));
 			}
 
 			pfd.setEventProperties(eventProperties);

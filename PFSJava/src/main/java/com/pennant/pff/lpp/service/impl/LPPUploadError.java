@@ -4,59 +4,59 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum LPPUploadError {
-	LPP01(" Either FinReference or LoanType  is Mandatory. "),
+	LPP_01("Either [Loan Reference] or [LoanType]  is mandatory."),
 
-	LPP02(" FinReference is not valid. "),
+	LPP_02("[Loan Reference] is not valid."),
 
-	LPP03(" ApplyOverDue is Mandatory. "),
+	LPP_03("[Apply Overdue Penalty] is mandatory."),
 
-	LPP04(" ApplyOverDue Possible values should be 'Y' or 'N'. "),
+	LPP_04("[Apply Overdue Penalty] is not valid, possible value should be either of the following {Y/N}."),
 
-	LPP05(" PenaltyType Possible values should be 'F','A','P','M','D' Or 'E'. "),
+	LPP_05("[Penalty Type] is not valid, possible value should be either of the following {F/A/P/M/D/E}."),
 
-	LPP06(" Calculated On Possible values should be 'STOT','SPRI' Or 'SPFT'. If you are penalty type captured as 'P','D','M' OR 'E'. "),
+	LPP_06("[Calculated On] is invalid, possible value should be either of the following {STOT/SPRI/SPFT}, when [PenaltyType] is  either of the following {P/D/M/E}."),
 
-	LPP07(" Amount Possible values should be '0-9999999' if you are penalty type captured as 'F' OR 'A'. "),
+	LPP_07("[Amount/percentage] should be greater than ZERO, when PenaltyType either of following {F/A}."),
 
-	LPP08(" Percentage Possible values should be '1-100' if you are penalty type captured as 'P','D','M' OR 'E'. "),
+	LPP_08("[Amount/percentage] shold be between {1 to 100}, when PenaltyType either of following {P/D/M/E}."),
 
-	LPP09(" If ApplyOverDue captured as 'N' then following fields ( AmountOrPercent, GraceDays, MaxWaiver, AllowWaiver, Calculated On, IncludeGraceDays, PenaltyType) should  be kept as Blank. "),
+	LPP_09("When [Apply Overdue Penalty] is N then the following fields [Amount/Percent, GraceDays, MaxWaiver, AllowWaivers, Calculated On, Include Grace Days, Penalty Type] should  blank."),
 
-	LPP10(" MaxWaiver possible values should be '1 - 100 ' if AllowWaiver captured as 'Y.' "),
+	LPP_10("[MaxWaiver] should be between {1 to 100}, when [AllowWaivers] is Y."),
 
-	LPP11(" MaxWaiver should be blank if AllowWaiver captured as 'N'. "),
+	LPP_11("[MaxWaiver] should be blank, when [AllowWaivers] is N."),
 
-	LPP12(" Fin Reference is not in active."),
+	LPP_12("[Loan Reference] is not active."),
 
-	LPP13("Loan Type is invalid to the given Fin Reference."),
+	LPP_13("[Loan Type] is not valid."),
 
-	LPP14(" ApplyToExistingLoans Possible values should be 'Y' or 'N'. "),
+	LPP_14("[Apply To Existing Loans] is not valid, possible value should be either of the following {Y/N}."),
 
-	LPP15(" GraceDays Possible values should be '0 - 999' only. "),
+	LPP_15("[Grace Days] should be between {0 to 999}."),
 
-	LPP16(" GraceDays Should be Blank if includegracedays captured as 'N' "),
+	LPP_16("[Grace Days] should be blank, when [Include Grace Days] value is N"),
 
-	LPP17(" Apply to existing loans should be blank if you choose loan reference."),
+	LPP_17("[Apply To Existing Loans] should be blank, when [Loan Reference] is not blank."),
 
-	LPP18(" Max Waiver should not be blank if allow waiver captured as 'y'."),
+	LPP_18("[MaxWaiver] should not be blank, when [AllowWaivers] is Y."),
 
-	LPP19(" IncludeGraceDays Possible values should be 'Y' or 'N'. "),
+	LPP_19("[Include Grace Days] is not valid, possible value should be either of the following {Y/N}."),
 
-	LPP20("Allow Waivers Possible values should be 'Y' or 'N'."),
+	LPP_20("[AllowWaivers] is not valid, possible value should be either of the following {Y/N}."),
 
-	LPP21("Max Waiver should be 0, since Allow Waiver is N."),
+	LPP_21("[MaxWaiver] should be 0, when [AllowWaivers] is N"),
 
-	LPP22("Calculated On should be blank if you are penalty type captured as 'F' OR 'A'."),
+	LPP_22("[Calculated On] should be blank, when [Penalty Type] either of following {F/A}."),
 
-	LPP23("Calculated On should not blank if you are penalty type captured as 'P','D','M' OR 'E'."),
+	LPP_23("[Calculated On] should not blank, when [PenaltyType] either of following {P/D/M/E}."),
 
-	LPP24("Not allowed to maintain the LAN as It is already initiated."),
+	LPP_24("Not allowed to maintain the LAN as It is already initiated."),
 
-	LPP25("Calculated On value 'INST' is allowed only If penalty types captured as 'P' OR 'M'. "),
+	LPP_25("[Calculated On] is invalid, possible value should be {INST}, when PenaltyType either of following {P/M}."),
 
-	LPP26("For Penalty type 'P' OR 'M' Minimum Amount should not be Blank "),
+	LPP_26("[Minimum Amount] should not be Blank, when [Penalty Type] either of following {P/M}."),
 
-	LPP27("IncludeGraceDays should be blank for Penalty type 'F', 'A', 'P' OR 'M'");
+	LPP_27("[Include Grace Days] should be N, when [PenaltyType] either of following {F/A/P/M}.");
 
 	private String description;
 

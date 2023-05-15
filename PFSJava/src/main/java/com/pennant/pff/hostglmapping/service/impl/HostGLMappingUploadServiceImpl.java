@@ -159,6 +159,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 
 		if (detail.getOpenedDate().compareTo(header.getAppDate()) > 0) {
 			setError(detail, HostGLMappingUploadError.HGL10);
+			return;
 		}
 
 		setSuccesStatus(detail);

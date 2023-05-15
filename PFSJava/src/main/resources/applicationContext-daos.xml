@@ -13466,4 +13466,7 @@
 
 	<bean id="provisionUploadService" class="com.pennanttech.pff.provision.service.impl.ProvisionUploadServiceImpl"
 		parent="aUploadService" />
+		
+	<bean id="lPPUploadProcessRecord"
+		class="com.pennant.pff.lpp.upload.validate.LPPUploadProcessRecord" />
 </beans>
