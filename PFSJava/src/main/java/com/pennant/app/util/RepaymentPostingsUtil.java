@@ -1506,7 +1506,6 @@ public class RepaymentPostingsUtil {
 
 		if (rch != null) {
 			List<ReceiptAllocationDetail> radList = rch.getAllocations();
-			List<FeeType> feeTypesList = new ArrayList<>();
 			List<String> feeTypeCodes = new ArrayList<>();
 			for (ReceiptAllocationDetail rad : radList) {
 				if (rad.getAllocationType().equals(Allocation.MANADV)) {
@@ -1535,8 +1534,7 @@ public class RepaymentPostingsUtil {
 
 			}
 			if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-				feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
-				aeEvent.setFeesList(feeTypesList);
+				aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingByCode(feeTypeCodes));
 			}
 		}
 

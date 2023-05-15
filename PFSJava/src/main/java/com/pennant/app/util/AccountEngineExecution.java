@@ -33,14 +33,13 @@
  */
 package com.pennant.app.util;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -66,13 +65,11 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.SingleFee;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
-import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennapps.core.util.ObjectUtil;
 
-public class AccountEngineExecution implements Serializable {
-	private static final long serialVersionUID = 852062955563015315L;
+public class AccountEngineExecution {
 	private Logger logger = LogManager.getLogger(AccountEngineExecution.class);
 
 	private TransactionEntryDAO transactionEntryDAO;
@@ -115,7 +112,6 @@ public class AccountEngineExecution implements Serializable {
 			tranCode = returnDataSet.getTranCode();
 			returnDataSet.setTranCode(returnDataSet.getRevTranCode());
 			returnDataSet.setRevTranCode(tranCode);
-			// FIXME CH to be discussed with PV
 			returnDataSet.setPostDate(appDate);
 			returnDataSet.setDrOrCr(
 					returnDataSet.getDrOrCr().equals(AccountConstants.TRANTYPE_CREDIT) ? AccountConstants.TRANTYPE_DEBIT
@@ -161,7 +157,7 @@ public class AccountEngineExecution implements Serializable {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, HashMap<String, Object> dataMap) {
+	public List<ReturnDataSet> getVasExecResults(AEEvent aeEvent, Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
 		// Accounting Set Details
@@ -200,18 +196,15 @@ public class AccountEngineExecution implements Serializable {
 		return returnDataSets;
 	}
 
-	public List<ReturnDataSet> processAccountingByEvent(AEEvent aeEvent, HashMap<String, Object> dataMap)
-			throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public List<ReturnDataSet> processAccountingByEvent(AEEvent aeEvent, Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
 
 		String acSetEvent = (String) dataMap.get("ae_finEvent");
 
-		// Accounting Set Details
 		List<TransactionEntry> transactionEntries = null;
-		// Accounting set code will be hard coded
 		long accountingSetId = accountingSetDAO.getAccountingSetId(acSetEvent, acSetEvent);
+
 		if (accountingSetId != 0) {
-			// get List of transaction entries
 			transactionEntries = transactionEntryDAO.getListTransactionEntryById(accountingSetId, "_AEView", true);
 		}
 
@@ -228,8 +221,68 @@ public class AccountEngineExecution implements Serializable {
 
 	private void addTxnEntry(TransactionEntry txnEntry, List<TransactionEntry> txnEntries, List<FeeType> feeTypes) {
 		int index = txnEntries.indexOf(txnEntry);
-		txnEntries.addAll(index, getTxnEntries(txnEntry, feeTypes));
+		txnEntries.addAll(index, createEntries(txnEntry, feeTypes));
 		txnEntries.remove(txnEntry);
+	}
+
+	private List<TransactionEntry> getBulkingEntries(Map<String, List<TransactionEntry>> bulkingEntries) {
+		List<TransactionEntry> list = new ArrayList<>();
+
+		for (Entry<String, List<TransactionEntry>> items : bulkingEntries.entrySet()) {
+			TransactionEntry newTxnEntry = null;
+
+			StringBuilder tsb = new StringBuilder();
+			StringBuilder arsb = new StringBuilder();
+
+			for (TransactionEntry item : items.getValue()) {
+				if (newTxnEntry == null) {
+					newTxnEntry = ObjectUtil.clone(item);
+				}
+
+				String amountRule = item.getAmountRule();
+				tsb = tsb.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
+			}
+
+			arsb.append(PennantConstants.RESULT.concat(tsb.replace(tsb.length() - 1, tsb.length(), ";").toString()));
+
+			if (newTxnEntry != null) {
+				newTxnEntry.setAmountRule(arsb.toString());
+
+				list.add(newTxnEntry);
+			}
+
+		}
+
+		return list;
+	}
+
+	private List<TransactionEntry> getBulkingEntries(List<TransactionEntry> txnEntries) {
+		List<TransactionEntry> list = new ArrayList<>();
+
+		Map<String, List<TransactionEntry>> bulkingEntries = new HashMap<>();
+
+		for (TransactionEntry item : txnEntries) {
+			if (item.isBulking()) {
+				String key = item.getAccountType().concat(item.getTranscationCode());
+
+				List<TransactionEntry> entries = bulkingEntries.get(key);
+
+				if (entries == null) {
+					entries = new ArrayList<>();
+				}
+
+				entries.add(item);
+
+				bulkingEntries.put(key, entries);
+			} else {
+				list.add(item);
+			}
+		}
+
+		list.addAll(getBulkingEntries(bulkingEntries));
+
+		return list.stream().sorted((b1, b2) -> Integer.compare(b1.getTransOrder(), b2.getTransOrder())).toList();
+
 	}
 
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
@@ -257,18 +310,17 @@ public class AccountEngineExecution implements Serializable {
 					feeType.setAdviseType(AdviseType.RECEIVABLE.id());
 				}
 
-				if (singleFeeTxn.getReceivableOrPayable() != feeType.getAdviseType()) {
-					continue;
-				}
+				if (singleFeeTxn.getReceivableOrPayable() == feeType.getAdviseType()) {
+					String feeTypeCode = feeType.getFeeTypeCode();
 
-				String feeTypeCode = feeType.getFeeTypeCode();
+					if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode)
+							|| AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
+							|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode)
+							|| AdvanceRuleCode.DSF.name().equals(feeTypeCode)
+							|| FinanceConstants.SUBVEN_FEE.equals(feeTypeCode))) {
+						continue;
+					}
 
-				if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode)
-						|| AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
-						|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode)
-						|| AdvanceRuleCode.DSF.name().equals(feeTypeCode)
-						|| FinanceConstants.SUBVEN_FEE.equals(feeTypeCode))) {
-					continue;
 				}
 
 				if (feeType.isTaxApplicable()) {
@@ -327,8 +379,9 @@ public class AccountEngineExecution implements Serializable {
 			for (TransactionEntry tdsTxn : tdsTxnList) {
 				addTxnEntry(tdsTxn, txnEntries, feeTypes);
 			}
-
 		}
+
+		txnEntries = getBulkingEntries(txnEntries);
 
 		int transOrder = 10;
 
@@ -374,7 +427,6 @@ public class AccountEngineExecution implements Serializable {
 			setAccountNumber(aeEvent, txnEntry, dataMap);
 		}
 
-		ReturnDataSet returnDataSet;
 		int seq = aeEvent.getTransOrder();
 
 		if (!aeEvent.isEOD()) {
@@ -386,44 +438,45 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		for (TransactionEntry txnEntry : txnEntries) {
-			returnDataSet = new ReturnDataSet();
+			ReturnDataSet rds = new ReturnDataSet();
 
 			// Set Object Data of ReturnDataSet(s)
-			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
-			returnDataSet.setFinID(aeEvent.getFinID());
-			returnDataSet.setFinReference(aeEvent.getFinReference());
-			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
-			returnDataSet.setLovDescEventCodeName(txnEntry.getLovDescEventCodeDesc());
-			returnDataSet.setAccSetCodeName(txnEntry.getLovDescAccSetCodeName());
-			returnDataSet.setAccSetId(txnEntry.getAccountSetid());
-			returnDataSet.setCustId(aeEvent.getCustID());
-			returnDataSet.setTranDesc(txnEntry.getTransDesc());
-			returnDataSet.setPostDate(aeEvent.getPostDate());
-			returnDataSet.setValueDate(aeEvent.getValueDate());
-			returnDataSet.setShadowPosting(txnEntry.isShadowPosting());
-			returnDataSet.setPostToSys(txnEntry.getPostToSys());
-			returnDataSet.setDerivedTranOrder(txnEntry.getDerivedTranOrder());
-			returnDataSet.setTransOrder(++seq);
+			rds.setLinkedTranId(aeEvent.getLinkedTranId());
+			rds.setFinID(aeEvent.getFinID());
+			rds.setFinReference(aeEvent.getFinReference());
+			rds.setFinEvent(aeEvent.getAccountingEvent());
+			rds.setLovDescEventCodeName(txnEntry.getLovDescEventCodeDesc());
+			rds.setAccSetCodeName(txnEntry.getLovDescAccSetCodeName());
+			rds.setAccSetId(txnEntry.getAccountSetid());
+			rds.setCustId(aeEvent.getCustID());
+			rds.setTranDesc(txnEntry.getTransDesc());
+			rds.setPostDate(aeEvent.getPostDate());
+			rds.setValueDate(aeEvent.getValueDate());
+			rds.setShadowPosting(txnEntry.isShadowPosting());
+			rds.setPostToSys(txnEntry.getPostToSys());
+			rds.setDerivedTranOrder(txnEntry.getDerivedTranOrder());
+			rds.setTransOrder(++seq);
 			if (aeEvent.getPostingId() > 0) {
-				returnDataSet.setPostingId(String.valueOf(aeEvent.getPostingId()));
+				rds.setPostingId(String.valueOf(aeEvent.getPostingId()));
 			} else {
 				String ref = aeEvent.getFinReference() + "/" + aeEvent.getAccountingEvent() + "/"
 						+ txnEntry.getTransOrder();
-				returnDataSet.setPostingId(ref);
+				rds.setPostingId(ref);
 
 			}
 			String ccy = aeEvent.getCcy();
 			if (aeEvent.getPostRefId() <= 0) {
-				returnDataSet.setPostref(aeEvent.getBranch() + "-" + txnEntry.getAccountType() + "-" + ccy);
+				rds.setPostref(aeEvent.getBranch() + "-" + txnEntry.getAccountType() + "-" + ccy);
 			} else {
-				returnDataSet.setPostref(String.valueOf(aeEvent.getPostRefId()));
+				rds.setPostref(String.valueOf(aeEvent.getPostRefId()));
 			}
-			returnDataSet.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
-			returnDataSet.setAmountType(txnEntry.getChargeType());
-			returnDataSet.setUserBranch(aeEvent.getPostingUserBranch());
-			returnDataSet.setPostBranch(aeEvent.getBranch());
-			returnDataSet.setEntityCode(aeEvent.getEntityCode());
-			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), txnEntry, ccy, dataMap);
+			rds.setPostStatus(AccountConstants.POSTINGS_SUCCESS);
+			rds.setAmountType(txnEntry.getChargeType());
+			rds.setUserBranch(aeEvent.getPostingUserBranch());
+			rds.setPostBranch(aeEvent.getBranch());
+			rds.setEntityCode(aeEvent.getEntityCode());
+
+			BigDecimal postAmt = executeAmountRule(txnEntry, ccy, dataMap);
 
 			// If parameter flag is 'N' for zero postings not allow to insert zero postings
 			if (BigDecimal.ZERO.compareTo(postAmt) == 0 && !isPostZeroEntries) {
@@ -449,53 +502,54 @@ public class AccountEngineExecution implements Serializable {
 				aeEvent.setBpiIncomized(true);
 			}
 
-			returnDataSet.setTranOrderId(String.valueOf(txnEntry.getTransOrder()));
-			returnDataSet.setGlCode(txnEntry.getGlCode());
-			returnDataSet.setAccount(txnEntry.getAccount());
+			rds.setTranOrderId(String.valueOf(txnEntry.getTransOrder()));
+			rds.setGlCode(txnEntry.getGlCode());
+			rds.setAccount(txnEntry.getAccount());
 
-			returnDataSet.setAccountType(txnEntry.getAccountType());
-			returnDataSet.setFinType(aeEvent.getFinType());
+			rds.setAccountType(txnEntry.getAccountType());
+			rds.setFinType(aeEvent.getFinType());
 
-			returnDataSet.setCustCIF(aeEvent.getCustCIF());
-			returnDataSet.setPostBranch(aeEvent.getBranch());
-			returnDataSet.setInternalAc(true);
+			rds.setCustCIF(aeEvent.getCustCIF());
+			rds.setPostBranch(aeEvent.getBranch());
+			rds.setInternalAc(true);
 
 			// Amount Rule Execution for Amount Calculation
 			if (postAmt.compareTo(BigDecimal.ZERO) >= 0) {
-				returnDataSet.setPostAmount(postAmt);
-				returnDataSet.setTranCode(txnEntry.getTranscationCode());
-				returnDataSet.setRevTranCode(txnEntry.getRvsTransactionCode());
-				returnDataSet.setDrOrCr(txnEntry.getDebitcredit());
+				rds.setPostAmount(postAmt);
+				rds.setTranCode(txnEntry.getTranscationCode());
+				rds.setRevTranCode(txnEntry.getRvsTransactionCode());
+				rds.setDrOrCr(txnEntry.getDebitcredit());
 			} else {
-				returnDataSet.setPostAmount(postAmt.abs());
-				returnDataSet.setRevTranCode(txnEntry.getTranscationCode());
-				returnDataSet.setTranCode(txnEntry.getRvsTransactionCode());
+				rds.setPostAmount(postAmt.abs());
+				rds.setRevTranCode(txnEntry.getTranscationCode());
+				rds.setTranCode(txnEntry.getRvsTransactionCode());
 				if (txnEntry.getDebitcredit().equals(AccountConstants.TRANTYPE_CREDIT)) {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+					rds.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
 				} else {
-					returnDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+					rds.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
 				}
 			}
 
 			// post amount in Local currency
-			returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(ccy, appCurrency, postAmt));
-			returnDataSet.setExchangeRate(CurrencyUtil.getExChangeRate(ccy));
+			rds.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(ccy, appCurrency, postAmt));
+			rds.setExchangeRate(CurrencyUtil.getExChangeRate(ccy));
 
 			// Converting Post Amount Based on Account Currency
-			returnDataSet.setAcCcy(ccy);
-			returnDataSet.setFormatter(CurrencyUtil.getFormat(ccy));
+			rds.setAcCcy(ccy);
+			rds.setFormatter(CurrencyUtil.getFormat(ccy));
 
-			returnDataSet.setPostDate(aeEvent.getPostDate());
-			returnDataSet.setAppDate(aeEvent.getAppDate());
-			returnDataSet.setAppValueDate(aeEvent.getAppValueDate());
-			returnDataSet.setCustAppDate(aeEvent.getCustAppDate());
+			rds.setPostDate(aeEvent.getPostDate());
+			rds.setAppDate(aeEvent.getAppDate());
+			rds.setAppValueDate(aeEvent.getAppValueDate());
+			rds.setCustAppDate(aeEvent.getCustAppDate());
 
 			if (aeEvent.isEOD()) {
-				returnDataSet.setPostCategory(AccountConstants.POSTING_CATEGORY_EOD);
+				rds.setPostCategory(AccountConstants.POSTING_CATEGORY_EOD);
 			}
 
-			returnDataSets.add(returnDataSet);
+			returnDataSets.add(rds);
 		}
+
 		aeEvent.setTransOrder(seq);
 
 		return returnDataSets;
@@ -509,40 +563,6 @@ public class AccountEngineExecution implements Serializable {
 		singleFeeTxn.setSingleFeeCESSTxn(getSingleFeeTxn(SingleFee.CESS, txnEntries));
 	}
 
-	private TransactionEntry getSingleTxnEntry(List<TransactionEntry> txnEntries) {
-		TransactionEntry singleTxnEntry = null;
-
-		if (txnEntries.size() == 1) {
-			singleTxnEntry = txnEntries.get(0);
-			return singleTxnEntry;
-		}
-
-		if (txnEntries.size() > 1) {
-			singleTxnEntry = txnEntries.get(0);
-		}
-
-		singleTxnEntry = txnEntries.get(0);
-
-		StringBuilder tsb = new StringBuilder();
-		StringBuilder arsb = new StringBuilder();
-
-		for (TransactionEntry te : txnEntries) {
-			String amountRule = StringUtils.trim(te.getAmountRule());
-			amountRule = StringUtils.trim(amountRule.substring(7, amountRule.length() - 1));
-
-			tsb = tsb.append("(");
-			tsb = tsb.append(amountRule);
-			tsb = tsb.append(")+");
-		}
-
-		arsb.append(PennantConstants.RESULT.concat(tsb.replace(tsb.length() - 1, tsb.length(), ";").toString()));
-
-		singleTxnEntry.setAmountRule(arsb.toString());
-
-		return singleTxnEntry;
-
-	}
-
 	private void setSingleFeeTDSTxn(TransactionEntry singleFeeTxn, List<TransactionEntry> txnEntries) {
 		singleFeeTxn.setSingleFeeTDSTxn(getSingleFeeTxn(SingleFee.TDS, txnEntries));
 	}
@@ -551,17 +571,11 @@ public class AccountEngineExecution implements Serializable {
 		singleFeeTxn.setSingleFeeWaiverOrRefundTxn(getSingleFeeTxn(SingleFee.WR, txnEntries));
 	}
 
-	private List<TransactionEntry> getTxnEntries(TransactionEntry singleFeeTxn, List<FeeType> feeTypes) {
+	private List<TransactionEntry> createEntries(TransactionEntry singleFeeTxn, List<FeeType> feeTypes) {
 		List<TransactionEntry> list = new ArrayList<>();
 
-		if (singleFeeTxn.isBulking()) {
-			list.add(createBulkingTE(singleFeeTxn, feeTypes));
-		} else {
-			for (FeeType feeType : feeTypes) {
-				if (singleFeeTxn.getReceivableOrPayable() != feeType.getAdviseType()) {
-					continue;
-				}
-
+		for (FeeType feeType : feeTypes) {
+			if (singleFeeTxn.getReceivableOrPayable() == feeType.getAdviseType()) {
 				String feeTypeCode = feeType.getFeeTypeCode();
 
 				if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode)
@@ -572,8 +586,9 @@ public class AccountEngineExecution implements Serializable {
 					continue;
 				}
 
-				list.add(createNewTE(singleFeeTxn, feeType));
 			}
+
+			list.add(createNewTE(singleFeeTxn, feeType));
 		}
 
 		return list;
@@ -672,7 +687,7 @@ public class AccountEngineExecution implements Serializable {
 
 			String accountNumber = (String) RuleExecutionUtil.executeRule(sqlRule, dataMap, ccy, RuleReturnType.STRING);
 
-			if ("null".equals(accountNumber.toLowerCase())) {
+			if ("null".equalsIgnoreCase(accountNumber)) {
 				accountNumber = "";
 			}
 
@@ -686,81 +701,58 @@ public class AccountEngineExecution implements Serializable {
 		}
 	}
 
-	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry, String finCcy,
-			Map<String, Object> dataMap) {
-
-		BigDecimal amount = BigDecimal.ZERO;
-		if (event.startsWith(AccountingEvent.ADDDBS)) {
-			event = AccountingEvent.ADDDBS;
-		}
-
-		String amountRule = transactionEntry.getAmountRule();
-		amount = (BigDecimal) RuleExecutionUtil.executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
+	private BigDecimal executeAmountRule(TransactionEntry txnEntry, String finCcy, Map<String, Object> dataMap) {
+		String amountRule = txnEntry.getAmountRule();
+		BigDecimal amount = (BigDecimal) RuleExecutionUtil.executeRule(amountRule, dataMap, finCcy,
+				RuleReturnType.DECIMAL);
 
 		return amount == null ? BigDecimal.ZERO : amount;
 	}
 
-	private TransactionEntry createBulkingTE(final TransactionEntry txnEntry, final List<FeeType> feeList) {
-		TransactionEntry newTxnEntry = txnEntry.copyEntity();
-
-		StringBuilder tsb = new StringBuilder();
-		StringBuilder arsb = new StringBuilder();
-
-		for (FeeType feeType : feeList) {
-			String amountRule = newTxnEntry.getAmountRule();
-			amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
-			tsb = tsb.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
-		}
-
-		arsb.append(PennantConstants.RESULT.concat(tsb.replace(tsb.length() - 1, tsb.length(), ";").toString()));
-
-		newTxnEntry.setTransDesc(txnEntry.getAccountType().concat(" " + PennantConstants.BULKING));
-		newTxnEntry.setAmountRule(arsb.toString());
-
-		return newTxnEntry;
-	}
-
 	private TransactionEntry createNewTE(final TransactionEntry transactionEntry, final FeeType feeType) {
-		logger.debug("Creating transaction entry for feeCode - " + feeType.getFeeTypeCode());
+		String feeTypeCode = feeType.getFeeTypeCode();
 
-		TransactionEntry txnEntry = transactionEntry.copyEntity();
+		logger.debug("Creating transaction entry for feeCode - {}", feeTypeCode);
+
+		TransactionEntry txnEntry = ObjectUtil.clone(transactionEntry);
+
+		String transDesc = txnEntry.getTransDesc();
 
 		String accountType = StringUtils.trimToEmpty(txnEntry.getAccountType());
 
 		if (accountType.startsWith("FEE_IE")) {
 			switch (accountType) {
 			case SingleFee.CGST:
-				txnEntry.setAccountType(SingleFee.AT_CGST);
-				txnEntry.setTransDesc(SingleFee.AT_CGST + " Liability");
+				txnEntry.setAccountType(feeType.getCgstAcType());
+				transDesc = feeType.getCgstAcTypeDesc();
 				break;
 			case SingleFee.SGST:
-				txnEntry.setAccountType(SingleFee.AT_SGST);
-				txnEntry.setTransDesc(SingleFee.AT_SGST + " Liability");
+				txnEntry.setAccountType(feeType.getSgstAcType());
+				transDesc = feeType.getSgstAcTypeDesc();
 				break;
 			case SingleFee.IGST:
-				txnEntry.setAccountType(SingleFee.AT_IGST);
-				txnEntry.setTransDesc(SingleFee.AT_IGST + " Liability");
+				txnEntry.setAccountType(feeType.getIgstAcType());
+				transDesc = feeType.getIgstAcTypeDesc();
 				break;
 			case SingleFee.UGST:
-				txnEntry.setAccountType(SingleFee.AT_UGST);
-				txnEntry.setTransDesc(SingleFee.AT_UGST + " Liability");
+				txnEntry.setAccountType(feeType.getUgstAcType());
+				transDesc = feeType.getUgstAcTypeDesc();
 				break;
 			case SingleFee.CESS:
-				txnEntry.setAccountType(SingleFee.AT_CESS);
-				txnEntry.setTransDesc(SingleFee.AT_CESS + " Liability");
+				txnEntry.setAccountType(feeType.getCessAcType());
+				transDesc = feeType.getCessAcTypeDesc();
 				break;
 			case SingleFee.TDS:
-				txnEntry.setAccountType(SingleFee.AT_TDS);
+				txnEntry.setAccountType(feeType.getTdsAcType());
+				transDesc = feeType.getTdsAcTypeDesc();
 				break;
 			case SingleFee.WR:
 				txnEntry.setAccountType(feeType.getWaiverOrRefundAcType());
-				txnEntry.setTransDesc(
-						feeType.getFeeTypeDesc().concat(" (").concat(txnEntry.getAccountType()).concat(")"));
+				transDesc = feeType.getWaiverOrRefundAcTypeDesc();
 				break;
 			default:
 				txnEntry.setAccountType(feeType.getIncomeOrExpenseAcType());
-				txnEntry.setTransDesc(
-						feeType.getFeeTypeDesc().concat(" (").concat(txnEntry.getAccountType()).concat(")"));
+				transDesc = feeType.getIncomeOrExpenseAcTypeDesc();
 				break;
 			}
 		} else {
@@ -768,20 +760,22 @@ public class AccountEngineExecution implements Serializable {
 
 		}
 
+		txnEntry.setTransDesc(transDesc);
+
 		accountType = StringUtils.trimToNull(txnEntry.getAccountType());
 
 		if (accountType == null) {
-			throw new AppException("Account Type should configured for the Fee Type: " + feeType.getFeeTypeCode());
+			throw new AppException("Account Type should configured for the Fee Type: " + feeTypeCode);
 		}
 
 		String amountRule = txnEntry.getAmountRule();
 
 		if (isSingleFee(amountRule)) {
-			amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
+			amountRule = amountRule.replace("FEE", feeTypeCode.toUpperCase());
 		}
 
 		txnEntry.setAmountRule(amountRule);
-		txnEntry.setFeeCode(feeType.getFeeTypeCode());
+		txnEntry.setFeeCode(feeTypeCode);
 		return txnEntry;
 	}
 

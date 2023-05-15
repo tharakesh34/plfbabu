@@ -23780,19 +23780,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void setFeesesForAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		List<FeeType> feeTypesList = new ArrayList<>();
-		List<Long> feeTypeIds = new ArrayList<>();
+		List<FinFeeDetail> feeList = financeDetail.getFinScheduleData().getFinFeeDetailList();
 
-		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
-		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				feeTypeIds.add(finFeeDetail.getFeeTypeID());
+		if (feeList != null && !feeList.isEmpty()) {
+			List<Long> feeTypeIds = new ArrayList<>();
+
+			for (FinFeeDetail fee : feeList) {
+				feeTypeIds.add(fee.getFeeTypeID());
 			}
+
 			if (!feeTypeIds.isEmpty()) {
-				feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeIds, "");
-				aeEvent.setFeesList(feeTypesList);
+				aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingById(feeTypeIds));
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 

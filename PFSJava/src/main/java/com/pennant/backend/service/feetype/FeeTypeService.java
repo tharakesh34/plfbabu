@@ -50,9 +50,9 @@ public interface FeeTypeService {
 
 	List<FeeType> getAMZReqFeeTypes();
 
-	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
+	List<FeeType> getFeeTypesForAccountingById(List<Long> feeTypeIds);
 
-	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String string);
+	List<FeeType> getFeeTypesForAccountingByCode(List<String> feeTypeCodes);
 
 	FeeType getFeeTypeByRecvFeeTypeId(long recvFeeTypeId);
 

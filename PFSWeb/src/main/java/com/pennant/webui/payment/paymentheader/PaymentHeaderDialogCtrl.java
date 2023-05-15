@@ -77,7 +77,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -1181,15 +1180,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		List<PaymentDetail> paymentDetailsList = this.paymentHeader.getPaymentDetailList();
 		List<String> feeTypeCodes = new ArrayList<>();
-		List<FeeType> feeTypesList = new ArrayList<>();
 
 		for (PaymentDetail paymentDetail : paymentDetailsList) {
 			feeTypeCodes.add(paymentDetail.getFeeTypeCode());
 		}
 
 		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-			feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
-			aeEvent.setFeesList(feeTypesList);
+			aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingByCode(feeTypeCodes));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1999,7 +1996,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal availAmount = pd.getAvailableAmount();
 			BigDecimal paidAmount = pd.getAmount();
 			String desc = "";
-			
+
 			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pd.getAmountType())) {
 				desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
 				TaxHeader taxHeader = pd.getTaxHeader();
