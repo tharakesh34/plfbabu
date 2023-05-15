@@ -131,6 +131,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
@@ -2194,6 +2195,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		fm.setFinSourceID(RequestSource.UI.name());
 		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
 
 		if (error != null) {

@@ -25,6 +25,7 @@ import com.pennant.pff.settlement.service.SettlementService;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.FinanceUtil;
 
 public class FinanceCancelValidator {
@@ -44,7 +45,7 @@ public class FinanceCancelValidator {
 		Date backValueDate = DateUtil.addDays(appDate,
 				SysParamUtil.getValueAsInt(SMTParameterConstants.MAINTAIN_CANFIN_BACK_DATE));
 
-		if ("API".equals(fm.getFinSourceID()) && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
+		if (RequestSource.API.name().equals(fm.getFinSourceID()) && StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 			return FinCancelUploadError.LANCLUP020;
 		}
 

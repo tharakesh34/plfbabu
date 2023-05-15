@@ -45,6 +45,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
@@ -253,6 +254,7 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		schdData.getFinanceMain().setFinSourceID(RequestSource.UI.name());
 		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
 
 		if (error != null) {

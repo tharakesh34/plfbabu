@@ -42,6 +42,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
@@ -117,7 +118,7 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "",
 				false);
 		fm.setAppDate(header.getAppDate());
-
+		fm.setFinSourceID(RequestSource.UPLOAD.name());
 		FinCancelUploadError errorDetail = financeCancelValidator.validLoan(fm, schedules);
 		if (errorDetail != null) {
 			setError(detail, errorDetail);

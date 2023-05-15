@@ -3919,6 +3919,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		financeMain.setAppDate(SysParamUtil.getAppDate());
 		List<FinanceScheduleDetail> schedules = findetail.getFinScheduleData().getFinanceScheduleDetails();
+		financeMain.setFinSourceID(RequestSource.API.name());
 		FinCancelUploadError error = financeCancelValidator.validLoan(financeMain, schedules);
 
 		if (error != null) {
