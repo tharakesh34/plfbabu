@@ -12,7 +12,7 @@ public class PaymentInstUploadDetail extends UploadDetails {
 	private String feeType;
 	private BigDecimal payAmount;
 	private String remarks;
-	private String overRide;
+	private String overRideOverDue;
 	private FinanceMain fm;
 
 	public PaymentInstUploadDetail() {
@@ -51,20 +51,20 @@ public class PaymentInstUploadDetail extends UploadDetails {
 		this.remarks = remarks;
 	}
 
-	public String getOverRide() {
-		return overRide;
-	}
-
-	public void setOverRide(String overRide) {
-		this.overRide = overRide;
-	}
-
 	public FinanceMain getFm() {
 		return fm;
 	}
 
 	public void setFm(FinanceMain fm) {
 		this.fm = fm;
+	}
+
+	public String getOverRideOverDue() {
+		return overRideOverDue;
+	}
+
+	public void setOverRideOverDue(String overRideOverDue) {
+		this.overRideOverDue = overRideOverDue;
 	}
 
 }

@@ -9448,7 +9448,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.04_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.04_1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cross_loan_transfer_view'); 
@@ -9456,7 +9456,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#722.04" author="Rahul">
+	<changeSet id="ST#722.04_1" author="Rahul">
 		<createView viewName="CROSS_LOAN_TRANSFER_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID, 
@@ -9502,7 +9502,7 @@
 			  	INNER JOIN FINANCEMAIN T6 ON T1.TOFINID = T6.FINID 
 			  	INNER JOIN FINANCEMAIN T5 ON T1.FROMFINID = T5.FINID
 			  	INNER JOIN CUSTOMERS T4 ON T1.CUSTID  = T4.CUSTID
-				LEFT JOIN FINRECEIPTHEADER T2 ON T1.RECEIPTID = T2.RECEIPTID
+				LEFT JOIN FINRECEIPTHEADER_TEMP T2 ON T1.RECEIPTID = T2.RECEIPTID
 				UNION ALL
 				SELECT T1.ID, 
 					T4.CUSTID, 
@@ -9553,7 +9553,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#722.04_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#722.04_1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cross_loan_transfer_view');

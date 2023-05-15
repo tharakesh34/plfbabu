@@ -206,7 +206,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 			return;
 		}
 
-		if (!"N".equals(detail.getOverRide()) && !"Y".equals(detail.getOverRide())) {
+		if (!"N".equals(detail.getOverRideOverDue()) && !"Y".equals(detail.getOverRideOverDue())) {
 			setError(detail, PaymentUploadError.REFUP013);
 			return;
 		}
@@ -236,7 +236,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 		BigDecimal dueAganistCustomer = finOverDueService.getDueAgnistCustomer(fm.getFinID());
 
-		if (detail.getOverRide().equals("N") && dueAganistCustomer.compareTo(BigDecimal.ZERO) > 0) {
+		if (detail.getOverRideOverDue().equals("N") && dueAganistCustomer.compareTo(BigDecimal.ZERO) > 0) {
 			setError(detail, PaymentUploadError.REFUP009);
 			return;
 		}

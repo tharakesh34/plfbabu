@@ -375,6 +375,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		if (AllocationType.MANUAL.equals(clk.getAllocationType()) && !isValidAlloc(clk.getAllocations())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_022);
+			return;
 		}
 	}
 
@@ -404,6 +405,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		if (frmFin.isWriteoffLoan()) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_016);
+			return;
 		}
 	}
 
@@ -427,6 +429,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		if (AllocationType.MANUAL.equals(clk.getAllocationType()) && allocations != null
 				&& !(clk.getExcessAmount().equals(getSumOfAllocations(allocations)))) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_011);
+			return;
 		}
 	}
 
@@ -460,6 +463,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 	private void doReceiptValidations(CrossLoanKnockoffUpload clk, List<FinReceiptHeader> frh) {
 		if (CollectionUtils.isNotEmpty(frh)) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_012);
+			return;
 		}
 	}
 

@@ -14,11 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffUploadDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.CommonHeader;
@@ -32,12 +37,16 @@ import com.pennanttech.pff.receipt.constants.AllocationType;
 public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 	private static final Logger logger = LogManager.getLogger(CrossLoanKnockOffUploadProcessRecord.class);
 
+	@Autowired
 	private CrossLoanKnockOffUploadDAO crossLoanKnockOffUploadDAO;
-
 	@Autowired
 	private UploadService crossLoanKnockOffUploadService;
 	@Autowired
 	private FinanceMainDAO financeMainDAO;
+	@Autowired
+	private FinExcessAmountDAO finExcessAmountDAO;
+	@Autowired
+	private ManualAdviseDAO manualAdviseDAO;
 
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
 			throws Exception {
@@ -176,6 +185,20 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 			clku.setToFm(toFm);
 			clku.setToFinID(toFm.getFinID());
 
+			if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clku.getExcessType())) {
+				clku.setExcessList(
+						finExcessAmountDAO.getExcessAmountsByRefAndType(fromFm.getFinID(), clku.getExcessType()));
+			} else {
+				if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clku.getExcessType())) {
+					List<ManualAdvise> mbList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fromFm.getFinID(),
+							AdviseType.PAYABLE.id(), clku.getFeeTypeCode());
+
+					clku.setAdvises(mbList);
+				}
+			}
+
+			clku.setAllocations(crossLoanKnockOffUploadDAO.getAllocations(clku.getId(), clku.getHeaderId()));
+
 			crossLoanKnockOffUploadService.doValidate(header, clku);
 
 			if (clku.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -205,10 +228,4 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 
 		logger.debug(Literal.LEAVING);
 	}
-
-	@Autowired
-	public void setCrossLoanKnockOffUploadDAO(CrossLoanKnockOffUploadDAO crossLoanKnockOffUploadDAO) {
-		this.crossLoanKnockOffUploadDAO = crossLoanKnockOffUploadDAO;
-	}
-
 }
