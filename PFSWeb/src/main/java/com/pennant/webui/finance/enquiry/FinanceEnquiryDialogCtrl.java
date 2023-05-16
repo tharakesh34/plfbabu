@@ -1340,7 +1340,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.totalDownPayment.setValue(CurrencyUtil.parse(aFinanceMain.getDownPayment(), formatter));
 			} else {
 				this.totalDisb.setValue(CurrencyUtil.parse(aFinanceMain.getFinCurrAssetValue(), formatter));
-				this.totalDownPayment.setValue(CurrencyUtil.parse(financeSummary.getTotalDownPayment(), formatter));
+				this.totalDownPayment.setValue(CurrencyUtil.parse(aFinanceMain.getDownPayment(), formatter));
 			}
 			this.finCurrentAssetValue.setValue(CurrencyUtil
 					.parse(aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
