@@ -88,13 +88,31 @@ public class LienServiceImpl implements LienService {
 						&& InstrumentType.isSI(fm.getFinRepayMethod())) {
 					lh.setLienStatus(false);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+					lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
+					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
+							lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
+						} else {
+							lh.setDemarkingDate(appDate);
+						}
+					} else {
+						lh.setDemarkingDate(fm.getClosedDate());
+					}
 					lienHeaderDAO.update(lh);
 
 					LienDetails lu = getLienDetails(lh, fm);
 
 					lu.setLienStatus(false);
 					lu.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
-					lu.setDemarkingDate(fm.getClosedDate());
+					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
+							lu.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
+						} else {
+							lu.setDemarkingDate(appDate);
+						}
+					} else {
+						lu.setDemarkingDate(fm.getClosedDate());
+					}
 					setLienDeMarkStatus(lu, fm.getModuleDefiner());
 					setLienDeMarkReason(lu, fm.getModuleDefiner());
 
@@ -134,6 +152,9 @@ public class LienServiceImpl implements LienService {
 		String accNum = "";
 		FinanceMain fmBef = fm.getBefImage();
 		fm.setModuleDefiner(fd.getModuleDefiner());
+		if (fm.getClosureType() != null) {
+			fm.setModuleDefiner("Closure");
+		}
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 		if (fmBef != null) {
 			if (fmBef.getMandateID() == null) {
@@ -195,7 +216,7 @@ public class LienServiceImpl implements LienService {
 				lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 				lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
 				if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
-					if (fd.getMandate()!=null &&fd.getMandate().getSwapEffectiveDate() != null) {
+					if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
 						lh.setDemarkingDate(fd.getMandate().getSwapEffectiveDate());
 					} else {
 						lh.setDemarkingDate(currentTime);
@@ -295,8 +316,11 @@ public class LienServiceImpl implements LienService {
 		case FinServiceEvent.CANCELFIN:
 			lu.setDemarkingReason("Loan cancelled");
 			break;
+		case "Closure":
+			lu.setDemarkingReason("Loan Closed");
+			break;
 		default:
-			lu.setMarkingReason("");
+			lu.setDemarkingReason("");
 			break;
 		}
 
@@ -313,11 +337,14 @@ public class LienServiceImpl implements LienService {
 		case FinServiceEvent.CANCELFIN:
 			lu.setDemarkingReason("Loan cancelled");
 			break;
+
+		case "Closure":
+			lu.setDemarkingReason("Loan Closed");
+			break;
 		default:
-			lu.setMarkingReason("");
+			lu.setDemarkingReason("");
 			break;
 		}
-
 	}
 
 	@Autowired

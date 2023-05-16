@@ -78,6 +78,7 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.MandateProcesses;
 
 /**
@@ -766,6 +767,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			}
 
 			if (ImplementationConstants.ALLOW_LIEN) {
+				fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
 				if (InstrumentType.isSI(mandateType)) {
 					lienService.save(fd, true);
 				} else {

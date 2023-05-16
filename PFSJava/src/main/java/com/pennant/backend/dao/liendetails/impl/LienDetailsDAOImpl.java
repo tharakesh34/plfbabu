@@ -266,4 +266,47 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 		}
 	}
 
+	@Override
+	public LienDetails getLienByHeaderId(Long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
+		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
+		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
+		sql.append(", LastMntBy, LastMntOn ");
+		sql.append("  From  Lien_Details");
+		sql.append(" Where HeaderId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				LienDetails lu = new LienDetails();
+
+				lu.setLienID(rs.getLong("LienID"));
+				lu.setHeaderID(rs.getLong("HeaderID"));
+				lu.setReference(rs.getString("Reference"));
+				lu.setMarking(rs.getString("Marking"));
+				lu.setMarkingDate(rs.getTimestamp("MarkingDate"));
+				lu.setMarkingReason(rs.getString("MarkingReason"));
+				lu.setDemarking(rs.getString(("DeMarking")));
+				lu.setDemarkingReason(rs.getString("DemarkingReason"));
+				lu.setDemarkingDate(rs.getDate("DemarkingDate"));
+				lu.setLienReference(rs.getString("LienReference"));
+				lu.setLienStatus(rs.getBoolean("LienStatus"));
+				lu.setSource(rs.getString("Source"));
+				lu.setVersion(rs.getInt("Version"));
+				lu.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
+				lu.setCreatedOn(rs.getTimestamp("CreatedOn"));
+				lu.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+				lu.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+				lu.setLastMntBy(rs.getLong("LastMntBy"));
+				lu.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				return lu;
+			}, id);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }
