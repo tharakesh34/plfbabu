@@ -42,6 +42,7 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
@@ -178,8 +179,15 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 					}
 
 					setSuccesStatus(detail);
-					detail.setUserDetails(header.getUserDetails());
 
+					LoggedInUser userDetails = header.getUserDetails();
+
+					if (userDetails == null) {
+						userDetails = new LoggedInUser();
+						userDetails.setLoginUsrID(header.getApprovedBy());
+						userDetails.setUserName(header.getApprovedByName());
+					}
+					detail.setUserDetails(userDetails);
 					mList.add(detail);
 					sucessRecords++;
 				}
@@ -406,6 +414,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 		JVPostingEntry entry = new JVPostingEntry();
 		entry.setBatchReference(detail.getBatchReference());
 		entry.setAccount(account);
+		entry.setDebitAccount(detail.getDebitGL());
 		entry.setAccCCy(currency);
 		entry.setTxnCCy(currency);
 		entry.setTxnAmount(detail.getTxnAmount());
