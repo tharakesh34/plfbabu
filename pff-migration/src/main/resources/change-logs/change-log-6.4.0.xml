@@ -18143,7 +18143,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="TK#4753.5" author="sampath.d">
+	<changeSet id="TK#4753.5.1" author="sampath.d">
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='REV_WRITE_OFF_TEMPLATE');
@@ -18244,7 +18244,7 @@
 	<changeSet id="ST#1528.3.4" author="Sravani.S" dbms="mssql">
 		<sql>
 			<![CDATA[	
-				ALTER TABLE FILE_UPLOAD_HEADER ADD CONSTRAINT DF_FUH_SUCCESSRECORDS DEFAULT 0 FOR FAILURERECORDS;
+				ALTER TABLE FILE_UPLOAD_HEADER ADD CONSTRAINT DF_FUH_FAILURERECORDS DEFAULT 0 FOR FAILURERECORDS;
 			]]>
 		</sql>
 	</changeSet>
