@@ -14,11 +14,12 @@ public interface BlockAutoGenLetterUploadDAO {
 
 	String getSqlQuery();
 
-	boolean isValidateAction(String reference, String action, long headerId);
+	boolean isValidateAction(long finid);
 
-	int getReference(String reference, int progressSuccess);
+	void delete(long finid);
 
-	void delete(String reference, int progressSuccess);
+	void save(BlockAutoGenLetterUpload bagu);
 
-	long save(BlockAutoGenLetterUpload bagu);
+	void savebyLog(BlockAutoGenLetterUpload bu);
+
 }

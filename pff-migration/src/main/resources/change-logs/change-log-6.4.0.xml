@@ -18428,4 +18428,41 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	 <changeSet id="ST#1561.59" author="sainaveen.y">
+	  <createTable tableName="LETTER_BLOCKING">
+		 <column name="Id" type="bigint" autoIncrement="true">
+			<constraints nullable="false" />
+		</column>
+		<column name="FinID" type="bigint" />
+		<column name="CreatedOn" type="datetime" />
+	 </createTable>
+  </changeSet>
+  
+  <changeSet id="ST#1561.60" author="sainaveen.y">
+		<addPrimaryKey constraintName="PK_LETTER_BLOCKING_ID" tableName="LETTER_BLOCKING"
+			columnNames="id" />
+	</changeSet>
+	
+	<changeSet id="ST#1561.61" author="sainaveen.y">
+		<addUniqueConstraint tableName="LETTER_BLOCKING" columnNames="FinID"
+			constraintName="UK_LETTER_BLOCKINGR_FINID" />
+	</changeSet>
+  
+   <changeSet id="ST#1561.62" author="sainaveen.y">
+	  <createTable tableName="Letter_Blocking_Log">
+		 <column name="Id" type="bigint" autoIncrement="true">
+			<constraints nullable="false" />
+		</column>
+		<column name="FinID" type="bigint" />
+		<column name="BlockType" type="char(1)" />
+		<column name="UpdatedOn" type="datetime" />
+	 </createTable>
+  </changeSet>
+  
+  <changeSet id="ST#1561.63" author="sainaveen.y">
+		<addPrimaryKey constraintName="PK_LETTER_BLOCKING_LOG_ID" tableName="LETTER_BLOCKING_LOG"
+			columnNames="id" />
+	</changeSet>
+	
 </databaseChangeLog> 

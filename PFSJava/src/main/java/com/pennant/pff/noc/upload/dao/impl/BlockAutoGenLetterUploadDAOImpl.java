@@ -2,17 +2,19 @@ package com.pennant.pff.noc.upload.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.noc.upload.dao.BlockAutoGenLetterUploadDAO;
 import com.pennant.pff.noc.upload.model.BlockAutoGenLetterUpload;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.file.UploadStatus;
 
 public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLetterUpload>
 		implements BlockAutoGenLetterUploadDAO {
@@ -125,62 +127,63 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 	}
 
 	@Override
-	public boolean isValidateAction(String reference, String action, long headerId) {
-		String sql = "Select count(ID) From Block_Auto_Gen_Ltr_Upload Where FinReference = ? and Action = ? and Progress not in (?, ?, ?) and HeaderId not in ?";
+	public boolean isValidateAction(long finid) {
+		String sql = "Select count(FinID) From Letter_Blocking Where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, reference, action, UploadStatus.APPROVED.status(),
-				UploadStatus.FAILED.status(), UploadStatus.REJECTED.status(), headerId) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finid) > 0;
 	}
 
 	@Override
-	public int getReference(String reference, int progressSuccess) {
-		String sql = "Select count(ID) From Block_Auto_Gen_Ltr_Upload Where FinReference = ? and Progress = ?";
+	public void delete(long finid) {
+		String sql = "Delete from Letter_Blocking where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, reference, progressSuccess);
+		this.jdbcOperations.update(sql, finid);
 	}
 
 	@Override
-	public void delete(String reference, int progressSuccess) {
-		String sql = "Delete from Block_Auto_Gen_Ltr_Upload where FinReference = ? and Progress = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		this.jdbcOperations.update(sql, reference, progressSuccess);
-	}
-
-	@Override
-	public long save(BlockAutoGenLetterUpload bu) {
-		StringBuilder sql = new StringBuilder("Insert into Block_Auto_Gen_Ltr_Log");
-		sql.append(" (ID, HeaderId, FinID, FinReference, Action, Progress, Remarks, Status");
-		sql.append(", ErrorCode, ErrorDesc, CreatedOn, CreatedBy, ApprovedOn, ApprovedBy)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	public void save(BlockAutoGenLetterUpload bu) {
+		StringBuilder sql = new StringBuilder("Insert into Letter_Blocking");
+		sql.append(" (FinID, CreatedOn)");
+		sql.append(" Values(?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
+				ps.setObject(1, bu.getReferenceID());
+				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 
-			ps.setLong(++index, bu.getId());
-			ps.setLong(++index, bu.getHeaderId());
-			ps.setObject(++index, bu.getReferenceID());
-			ps.setString(++index, bu.getReference());
-			ps.setString(++index, bu.getAction());
-			ps.setInt(++index, bu.getProgress());
-			ps.setString(++index, bu.getRemarks());
-			ps.setString(++index, bu.getStatus());
-			ps.setString(++index, bu.getErrorCode());
-			ps.setString(++index, bu.getErrorDesc());
-			ps.setTimestamp(++index, bu.getCreatedOn());
-			ps.setLong(++index, bu.getCreatedBy());
-			ps.setTimestamp(++index, bu.getApprovedOn());
-			ps.setLong(++index, bu.getApprovedBy());
+			});
 
-		});
-
-		return bu.getId();
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
 	}
+
+	@Override
+	public void savebyLog(BlockAutoGenLetterUpload bu) {
+		StringBuilder sql = new StringBuilder("Insert into Letter_Blocking_Log");
+		sql.append(" (FinID, BlockType, UpdatedOn)");
+		sql.append(" Values(?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+
+				ps.setObject(++index, bu.getReferenceID());
+				ps.setString(++index, bu.getAction());
+				ps.setTimestamp(++index, new Timestamp(System.currentTimeMillis()));
+
+			});
+
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
 }

@@ -206,15 +206,19 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 	}
 
 	private void process(BlockAutoGenLetterUpload detail) {
-		int count = blockAutoGenLetterUploadDAO.getReference(detail.getReference(), EodConstants.PROGRESS_SUCCESS);
-
 		TransactionStatus txnStatus = getTransactionStatus();
+
 		try {
-			if (count > 0) {
-				blockAutoGenLetterUploadDAO.delete(detail.getReference(), EodConstants.PROGRESS_SUCCESS);
+			if (blockAutoGenLetterUploadDAO.isValidateAction(detail.getReferenceID())) {
+				blockAutoGenLetterUploadDAO.delete(detail.getReferenceID());
 			}
 
-			blockAutoGenLetterUploadDAO.save(detail);
+			if (NOCConstants.BLOCK.equals(detail.getAction())) {
+				blockAutoGenLetterUploadDAO.save(detail);
+			}
+
+			blockAutoGenLetterUploadDAO.savebyLog(detail);
+
 			transactionManager.commit(txnStatus);
 		} catch (Exception e) {
 			if (txnStatus != null) {
@@ -231,13 +235,14 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 			return;
 		}
 
-		if (blockAutoGenLetterUploadDAO.isValidateAction(detail.getReference(), action, detail.getHeaderId())) {
+		if (NOCConstants.BLOCK.equals(action)
+				&& blockAutoGenLetterUploadDAO.isValidateAction(detail.getReferenceID())) {
 			setError(detail, BlockAutoGenLetterUploadError.BALG_03);
 			return;
 		}
 
-		if (NOCConstants.REMOVE_BLOCK.equals(action) && !blockAutoGenLetterUploadDAO
-				.isValidateAction(detail.getReference(), NOCConstants.BLOCK, EodConstants.PROGRESS_SUCCESS)) {
+		if (NOCConstants.REMOVE_BLOCK.equals(action)
+				&& !blockAutoGenLetterUploadDAO.isValidateAction(detail.getReferenceID())) {
 			setError(detail, BlockAutoGenLetterUploadError.BALG_04);
 		}
 	}
