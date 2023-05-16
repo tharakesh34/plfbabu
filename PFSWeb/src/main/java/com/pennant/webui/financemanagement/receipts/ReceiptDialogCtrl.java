@@ -6979,10 +6979,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// in case of early settlement,do not allow before first installment
 		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe() && !isOverDraft) {
-			if (financeMain.getFinApprovedDate() != null
-					&& rch.getValueDate().compareTo(financeMain.getFinApprovedDate()) < 0) {
+			if (financeMain.getFinStartDate() != null
+					&& rch.getValueDate().compareTo(financeMain.getFinStartDate()) < 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_First_Inst_Date",
-						new String[] { DateUtil.formatToLongDate(financeMain.getFinApprovedDate()) }));
+						new String[] { DateUtil.formatToLongDate(financeMain.getFinStartDate()) }));
 				return false;
 			}
 		}
