@@ -8,16 +8,13 @@ import org.zkoss.zul.Window;
 import com.pennant.webui.util.GFCBaseCtrl;
 
 public class CibilReportViewCtrl extends GFCBaseCtrl<Object> {
-
 	private static final long serialVersionUID = 7219917076107821148L;
 
 	private Window window_Report;
 	private Iframe report;
-	public String data = null;
+	private String data = null;
 	Window dialogWindow = null;
 	private String name;
-	private String format;
-	private String ctype;
 
 	public void onCreate$window_Report(Event event) {
 
@@ -35,14 +32,6 @@ public class CibilReportViewCtrl extends GFCBaseCtrl<Object> {
 
 		if (arguments.containsKey("mediaName")) {
 			name = (String) arguments.get("mediaName");
-		}
-
-		if (arguments.containsKey("mediaFormat")) {
-			format = (String) arguments.get("mediaFormat");
-		}
-
-		if (arguments.containsKey("mediaCtype")) {
-			ctype = (String) arguments.get("mediaCtype");
 		}
 
 		// Prepare the AMedia for iFrame

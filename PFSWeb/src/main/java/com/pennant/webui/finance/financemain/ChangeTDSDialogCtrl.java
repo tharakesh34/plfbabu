@@ -124,8 +124,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	boolean userActivityLog = false;
 	protected Label label_windowTitle;
 	boolean isTDSChecked = false;
-	private Object financeMainDialogCtrl;
-	private boolean isEnquiry = false;
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
 	protected String menuItemRightName = null;
@@ -179,7 +177,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("financeSelectCtrl")) {
 				setFinanceSelectCtrl((FinanceSelectCtrl) arguments.get("financeSelectCtrl"));
-				this.financeMainDialogCtrl = arguments.get("financeSelectCtrl");
 			}
 
 			if (arguments.containsKey("moduleDefiner")) {
@@ -199,10 +196,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 			if (arguments.containsKey("financeMain")) {
 				this.financeMain = (FinanceMain) arguments.get("financeMain");
-			}
-
-			if (arguments.containsKey("isEnquiry")) {
-				isEnquiry = (Boolean) arguments.get("isEnquiry");
 			}
 
 			if (arguments.containsKey("roleCode")) {
