@@ -602,7 +602,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_MandateDialog_btnSave"));
 		}
 
-		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), btnCtroller_ClassPrefix, true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
 	}
 

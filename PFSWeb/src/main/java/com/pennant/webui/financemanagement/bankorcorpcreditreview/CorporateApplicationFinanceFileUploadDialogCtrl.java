@@ -647,7 +647,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				if (k >= 4) {
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(SysParamUtil.getAppDate());
-					double year = cal.get(cal.YEAR);
+					double year = cal.get(Calendar.YEAR);
 					plYearData = new HashSet<String>();
 					bsYearData = new HashSet<String>();
 					if (StringUtils.equalsIgnoreCase("P&L", sheetName)) {
