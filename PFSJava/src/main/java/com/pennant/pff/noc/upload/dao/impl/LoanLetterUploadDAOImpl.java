@@ -151,7 +151,7 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 	}
 
 	@Override
-	public LoanLetterUpload getByReference(String reference) {
+	public List<LoanLetterUpload> getByReference(String reference) {
 		StringBuilder sql = new StringBuilder("Select noc.ID, noc.HeaderId, noc.RecordSeq");
 		sql.append(", noc.FinID, noc.FinReference, noc.LetterType, noc.ModeOfTransfer, noc.WaiverCharges");
 		sql.append(", noc.Progress, uh.ApprovedOn");
@@ -162,7 +162,7 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 				LoanLetterUpload noc = new LoanLetterUpload();
 
 				noc.setId(rs.getLong("ID"));
@@ -204,5 +204,18 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isInProgress(String reference, long headerID) {
+		StringBuilder sql = new StringBuilder("Select Count(llu.ID)");
+		sql.append(" From Loan_Letter_Upload llu");
+		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.Id = llu.HeaderID");
+		sql.append(" Where llu.FinReference = ? and llu.Progress = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, reference,
+				EodConstants.PROGRESS_IN_PROCESS) > 0;
 	}
 }

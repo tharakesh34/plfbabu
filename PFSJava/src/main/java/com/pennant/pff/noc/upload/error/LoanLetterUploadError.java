@@ -23,7 +23,9 @@ public enum LoanLetterUploadError {
 
 	LOAN_LTR_11("Duplicate data found with loan reference on same date"),
 
-	LOAN_LTR_12("Record is already initiated by other process, unable to proceed.");
+	LOAN_LTR_12("Not allowed to generate CLOSELTR for this loan, {CANCLLTR} is already generated"),
+
+	LOAN_LTR_13("Not allowed to generate CANCLLTR for this loan, {CLOSELTR} is already generated");
 
 	private String description;
 
