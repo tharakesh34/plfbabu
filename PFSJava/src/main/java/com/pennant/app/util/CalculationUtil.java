@@ -1136,4 +1136,16 @@ public class CalculationUtil implements Serializable {
 		return Math
 				.round((endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (1000d * 60d * 60d * 24d));
 	}
+
+	public static void setODTotals(FinODDetails fod) {
+		BigDecimal totPenaltyBal = fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
+				.subtract(fod.getTotWaived());
+		if (totPenaltyBal.compareTo(BigDecimal.ZERO) >= 0) {
+			fod.setTotPenaltyBal(totPenaltyBal);
+			fod.setPayableAmount(BigDecimal.ZERO);
+		} else {
+			fod.setTotPenaltyBal(BigDecimal.ZERO);
+			fod.setPayableAmount(fod.getTotPenaltyPaid().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyAmt()));
+		}
+	}
 }

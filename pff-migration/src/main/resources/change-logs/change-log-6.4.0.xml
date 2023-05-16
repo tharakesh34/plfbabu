@@ -18332,4 +18332,100 @@
 		</sql>
 	</changeSet>
 	
+	
+	<changeSet id="ST#1495.10.1" author="Mounika.M">
+		<addColumn tableName="FinODDetails">
+			<column name="PayableAmount" type="decimal(18, 0)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1495.10.2" author="ramya.v">
+		<sql>
+			<![CDATA[	
+				UPDATE FINODDETAILS SET PAYABLEAMOUNT = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1495.10.3" author="ramya.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="PayableAmount" tableName="FINODDETAILS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1495.10.3" author="ramya.v" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE FINODDETAILS ADD CONSTRAINT DF_FOD_PAYABLEAMOUNT DEFAULT 0 FOR PAYABLEAMOUNT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1495.10.4_pre" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finoddetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1495.10.4" author="ramya.v">
+		<createView viewName="FINODDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					OD.FINODSCHDDATE,
+					OD.FINODFOR,
+					OD.FINBRANCH,
+					OD.FINTYPE,
+					OD.CUSTID,
+					OD.FINODTILLDATE,
+					OD.FINCURODAMT,
+					OD.FINCURODPRI,
+					OD.FINCURODPFT,
+					OD.FINMAXODAMT,
+					OD.FINMAXODPRI,
+					OD.FINMAXODPFT,
+					OD.GRACEDAYS,
+					OD.INCGRACEDAYS,
+					OD.FINCURODDAYS,
+					OD.TOTPENALTYAMT,
+					OD.TOTWAIVED,
+					OD.TOTPENALTYPAID,
+					OD.LPIAMT,
+					OD.LPIPAID,
+					OD.LPIBAL,
+					OD.TOTPENALTYBAL,
+					OD.FINLMDFDATE,
+					COALESCE(PR.APPLYODPENALTY, 0)  APPLYODPENALTY,
+					COALESCE(PR.ODINCGRCDAYS, 0)  ODINCGRCDAYS,
+					COALESCE(PR.ODCHARGETYPE, '')  ODCHARGETYPE,
+					COALESCE(PR.ODGRACEDAYS, 0)  ODGRACEDAYS,
+					COALESCE(PR.ODCHARGECALON, '')  ODCHARGECALON,
+					COALESCE(PR.ODCHARGEAMTORPERC, 0)  ODCHARGEAMTORPERC,
+					COALESCE(PR.ODALLOWWAIVER, 0)  ODALLOWWAIVER,
+					COALESCE(PR.ODMAXWAIVERPERC, 0)  ODMAXWAIVERPERC,
+					COALESCE(PR.ODRULECODE, '')  ODRULECODE,
+                    COALESCE(PR.ODMINAMOUNT, 0)  ODMINAMOUNT,
+					OD.LOCKODRECALCAL,
+					OD.LPPTDSPAID,
+					OD.LPCPZ,
+					OD.LPCPZAMOUNT,
+					OD.LPCURCPZBAL,
+					OD.PRESENTMENTID,
+					OD.CUROVERDRAFTTXNCHRG,
+					OD.MAXOVERDRAFTTXNCHRG,
+					OD.PAYABLEAMOUNT
+				FROM FINODDETAILS OD
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = OD.FINID
+				LEFT JOIN FINODPENALTY_LATEST_RATES_VIEW PR ON FM.FINID = PR.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#1495.10.4_post" author="ramya.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finoddetails_view');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog> 

@@ -123,11 +123,6 @@ public class FinODDetails implements Serializable {
 	private Date lpiDueTillDate;
 	private BigDecimal odMinAmount = BigDecimal.ZERO;
 
-	/*
-	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
-	 * inserted rcdAction = "U" record to be updated rcdAction = "D" record to be deleted
-	 * 
-	 */
 	private String rcdAction = "";
 
 	public FinODDetails() {

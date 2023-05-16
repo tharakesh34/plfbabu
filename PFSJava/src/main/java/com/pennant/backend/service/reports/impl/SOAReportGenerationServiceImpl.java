@@ -119,6 +119,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.dataengine.model.EventProperties;
@@ -2058,28 +2059,30 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 
 				if (StringUtils.isBlank(closingStatus)
-						|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
+						|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
+								&& LPPExtension.LPP_DUE_CREATION_REQ) {
 					String event = "";
-					for (FinOverDueCharges finODCAmount : odcAmounts) {
-						if (finODCAmount.getSchDate().compareTo(finSchdDetail.getSchDate()) == 0
-								&& finODCAmount.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-							event = finODCDue.concat(String.valueOf(finSchdDetail.getInstNumber()));
 
-							if ((StringUtils.equals(finSchdDetail.getSchdMethod(),
-									CalculationConstants.SCHMTHD_EQUAL))) {
-								// penality = stringReplacement(events.get("PENALTYDUE").toString(), placeHolderMap);
+					Date schdMonthEnd = DateUtil.getMonthEnd(finSchdDetail.getSchDate());
+
+					for (FinOverDueCharges odc : odcAmounts) {
+						Date valueDate = odc.getValueDate();
+
+						if (odc.getSchDate().compareTo(finSchdDetail.getSchDate()) == 0
+								&& odc.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+							BigDecimal debitAmount = BigDecimal.ZERO;
+							if (valueDate.compareTo(schdMonthEnd) == 0) {
+								debitAmount = odc.getAmount();
+							} else {
+								debitAmount = odc.getPaidAmount().add(odc.getWaivedAmount());
 							}
 
-							Date valueDate = finODCAmount.getPostDate();
-							if (finODCAmount.getValueDate() != null) {
-								valueDate = finODCAmount.getValueDate();
-							}
 							soaTranReport = new SOATransactionReport();
-							soaTranReport.setEvent(event);
-							soaTranReport.setTransactionDate(finODCAmount.getPostDate());
+							soaTranReport.setEvent(finODCDue.concat(String.valueOf(finSchdDetail.getInstNumber())));
+							soaTranReport.setTransactionDate(odc.getPostDate());
 							soaTranReport.setValueDate(valueDate);
 							soaTranReport.setCreditAmount(BigDecimal.ZERO);
-							soaTranReport.setDebitAmount(finODCAmount.getAmount());
+							soaTranReport.setDebitAmount(debitAmount);
 							soaTranReport.setPriority(19);
 							soaTransactionReports.add(soaTranReport);
 						}
@@ -2995,7 +2998,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 
 			// LPP Penalty UnAccrued Paid on Receipts
-			if (ImplementationConstants.SOA_SHOW_UNACCURED_PENALITY) {
+			if (ImplementationConstants.SOA_SHOW_UNACCURED_PENALITY && !LPPExtension.LPP_DUE_CREATION_REQ) {
 				List<FinTaxIncomeDetail> incomeList = finODAmzTaxDetailDAO.getFinTaxIncomeList(finMain.getFinID(),
 						"LPP");
 				if (incomeList != null && !incomeList.isEmpty()) {

@@ -3311,7 +3311,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		for (FinODDetails fod : overdueList) {
 			BigDecimal penalty = getPenaltyPaid(fod.getFinODSchdDate(), receiptData);
 			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().subtract(penalty));
-			fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyPaid()));
+			CalculationUtil.setODTotals(fod);
 		}
 
 		latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schdList, repayments, true, true);

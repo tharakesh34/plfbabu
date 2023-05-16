@@ -98,7 +98,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			// #PSD 137379
 			fod.setTotPenaltyAmt(penalty);
 			fod.setTotPenaltyBal(penalty);
-			setTotals(fod);
+			CalculationUtil.setODTotals(fod);
 			return;
 		}
 
@@ -193,19 +193,25 @@ public class LatePayPenaltyService extends ServiceHelper {
 			fod.setFinCurODDays(0);
 		}
 
-		setTotals(fod);
+		CalculationUtil.setODTotals(fod);
 
 		if (fod.getLppDueTillDate() != null && fod.getLppDueAmt().compareTo(fod.getTotPenaltyAmt()) > 0) {
 			if (fm.isEOD()) {
 				fod.setTotPenaltyBal(fod.getTotPenaltyAmt());
 				fod.setTotPenaltyAmt(fod.getLppDueAmt().add(fod.getTotPenaltyAmt()));
 			} else {
-				fod.setPayableAmount(fod.getLppDueAmt().subtract(fod.getTotPenaltyAmt()));
 				fod.setTotPenaltyAmt(fod.getLppDueAmt());
 				if (fod.getTotPenaltyPaid().compareTo(fod.getTotPenaltyAmt()) != 0) {
 					fod.setTotPenaltyBal(fod.getLppDueAmt());
 				}
 			}
+		}
+
+		BigDecimal totalPaidWaived = fod.getTotPenaltyPaid().add(fod.getTotWaived());
+		if (fod.getTotPenaltyAmt().compareTo(totalPaidWaived) > 0) {
+			fod.setPayableAmount(BigDecimal.ZERO);
+		} else {
+			fod.setPayableAmount((fod.getTotPenaltyAmt().subtract(totalPaidWaived)).negate());
 		}
 	}
 
@@ -282,18 +288,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 		finod.setChargeType(RepayConstants.FEE_TYPE_LPP);
 
 		return finod;
-	}
-
-	private void setTotals(FinODDetails fod) {
-		BigDecimal totPenaltyBal = fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
-				.subtract(fod.getTotWaived());
-		if (totPenaltyBal.compareTo(BigDecimal.ZERO) >= 0) {
-			fod.setTotPenaltyBal(totPenaltyBal);
-			fod.setPayableAmount(BigDecimal.ZERO);
-		} else {
-			fod.setTotPenaltyBal(BigDecimal.ZERO);
-			fod.setPayableAmount(fod.getTotPenaltyPaid().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyAmt()));
-		}
 	}
 
 	private BigDecimal getBalanceForCal(FinODDetails fod, List<FinanceScheduleDetail> schedules) {
