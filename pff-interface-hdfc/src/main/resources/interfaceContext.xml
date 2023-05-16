@@ -57,6 +57,7 @@
 	</bean>
 
 	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
+		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 

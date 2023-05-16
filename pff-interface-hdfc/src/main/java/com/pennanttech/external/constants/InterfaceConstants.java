@@ -41,7 +41,7 @@ public interface InterfaceConstants {
 	String CONFIG_IPDC_REQ = "IPDC";
 	String CONFIG_NACH_REQ = "NACH";
 	String CONFIG_PDC_REQ = "PDC";
-	String CONFIG_LIEN_REQ = "SILIEN";
+	String CONFIG_LIEN_REQ = "SILIEN_REQ";
 	String CONFIG_UCIC_REQ = "UCIC_REQ";
 	String CONFIG_UCIC_REQ_COMPLETE = "UCIC_REQ_COMPLETE";
 	String CONFIG_UCIC_RESP = "UCIC_RESP";
@@ -122,6 +122,11 @@ public interface InterfaceConstants {
 
 	int PROGRESS_INIT = 0;
 	int PROGRESS_DONE = 1;
+
+	String LIEN_PENDING = "PENDING";
+	String LIEN_SUCCESS = "SUCCESS";
+	String LIEN_AWAITING_CONF = "AC";
+	String LIEN_FAILED = "FAILED";
 
 	// ----------------------------- ERROR CODES ------------------------------
 	String F900 = "F900";
