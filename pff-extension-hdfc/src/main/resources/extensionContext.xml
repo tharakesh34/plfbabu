@@ -15,7 +15,7 @@
 	
 	<bean id="stagingDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
-		<property name="jndiName" value="jdbc/PFF_EXT_STAGE" />
+		<property name="jndiName" value="jdbc/PFF_HDFC_QC" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
 </beans>
