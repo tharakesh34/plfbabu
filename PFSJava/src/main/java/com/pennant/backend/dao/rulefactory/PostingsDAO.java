@@ -79,4 +79,8 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getInstDatePostings(String finReference, Date schdDate);
 
 	List<Long> getAMZPostings(String finReference, Date postDate);
+
+	List<ReturnDataSet> getPostingsByEnquiry(String reference, String finEvent, boolean showZeroBal,
+			String postingGroupBy);
+
 }
