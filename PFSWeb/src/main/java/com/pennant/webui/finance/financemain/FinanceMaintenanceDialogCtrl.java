@@ -3583,13 +3583,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		whereCaluse.append("' )) OR MANDATEID IN (SELECT MANDATEID FROM FINANCEMAIN FM ");
 		whereCaluse.append(" WHERE FM.FINREFERENCE='");
 		whereCaluse.append(getFinanceMain().getFinReference());
-		whereCaluse.append("')))");
+		whereCaluse.append("') OR MandateID In(Select MandateID From Mandates Where (CustID in (:CUSTID)");
+		whereCaluse.append(" and OrgReference ='");
+		whereCaluse.append(getFinanceMain().getFinReference());
+		whereCaluse.append("' and (MandateType = :MANDATETYPE))))");
 		whereCaluse.append(" AND STATUS != '");
 		whereCaluse.append(MandateStatus.REJECTED);
-		whereCaluse.append("'");
+		whereCaluse.append("')");
 
 		this.mandateRef.setWhereClause(whereCaluse.toString());
-
 	}
 
 	// ******************************************************//

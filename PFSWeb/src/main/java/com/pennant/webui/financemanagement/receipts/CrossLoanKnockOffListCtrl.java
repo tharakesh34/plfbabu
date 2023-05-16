@@ -187,7 +187,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		}
 
 		if (isKnockOffypeRequired()) {
-			registerField("knockOffType", lhKnockOffType);
+			registerField("knockoffType", lhKnockOffType, SortOrder.NONE);
 			this.lhKnockOffType.setVisible(true);
 		}
 
@@ -208,7 +208,10 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		return FinanceConstants.KNOCKOFFCAN_MAKER.equals(this.module)
 				|| FinanceConstants.KNOCKOFFCAN_APPROVER.equals(this.module) || StringUtils.equals(this.module, null)
 				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_MAKER.equals(this.module)
-				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module);
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_ENQUIRY.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_MAKER.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_APPROVER.equals(this.module);
 	}
 
 	@Override
