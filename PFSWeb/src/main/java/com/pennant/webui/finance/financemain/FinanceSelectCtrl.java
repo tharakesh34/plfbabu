@@ -1604,6 +1604,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceDetail financeDetail = getFinanceDetailService().getServicingFinance(aFinanceMain.getFinID(),
 					eventCodeRef, moduleDefiner, userRole);
 
+			financeDetail.getFinScheduleData().getFinanceMain().setFinSourceID(RequestSource.UI.name());
 			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			String[] errParm = new String[1];
