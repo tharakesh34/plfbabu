@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -510,6 +511,7 @@ public class ServiceBranchDialogCtrl extends GFCBaseCtrl<ServiceBranch> {
 						csbt.setFinType(StringUtils.trimToNull(cell.toString()));
 						break;
 					case 1:
+						cell.setCellType(CellType.STRING);
 						csbt.setBranch(StringUtils.trimToNull(cell.toString()));
 						break;
 					default:
@@ -543,6 +545,7 @@ public class ServiceBranchDialogCtrl extends GFCBaseCtrl<ServiceBranch> {
 			renderItem(serBranch);
 		}
 
+		loanTypeList.clear();
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
