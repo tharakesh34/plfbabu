@@ -34,7 +34,6 @@ import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.provision.ProvisionUploadError;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
 import com.pennanttech.pff.provision.dao.ProvisionUploadDAO;
-import com.pennanttech.pff.provision.model.NpaProvisionStage;
 import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.provision.model.ProvisionUpload;
 import com.pennanttech.pff.provision.service.ProvisionService;
@@ -128,16 +127,22 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 
 		mp.setOverrideProvision(PennantConstants.YES.equals(detail.getOverrideProvision()));
 		mp.setManProvsnPer(detail.getProvisionPercentage());
+		mp.setFinID(detail.getReferenceID());
 
 		TransactionStatus txStatus = getTransactionStatus();
 		AuditHeader auditHeader;
 		try {
 
-			List<NpaProvisionStage> npaDetails = provisionDao.getNPAProvisionDetails(mp.getFinID());
-
-			assetClassificationDAO.deleteStage(detail.getReferenceID());
-
-			assetClassificationDAO.saveStage(npaDetails);
+			/*
+			 * List<NpaProvisionStage> npaDetails = provisionDao.getNPAProvisionDetails(mp.getFinID());
+			 * 
+			 * 
+			 * for (NpaProvisionStage npa : npaDetails) { npa.setEffFinReference(npa.getFinReference()); }
+			 * 
+			 * assetClassificationDAO.deleteStage(detail.getReferenceID());
+			 * 
+			 * assetClassificationDAO.saveStage(npaDetails);
+			 */
 
 			Provision p = provisionService.getProvision(detail.getReferenceID(), header.getAppDate(), mp);
 
