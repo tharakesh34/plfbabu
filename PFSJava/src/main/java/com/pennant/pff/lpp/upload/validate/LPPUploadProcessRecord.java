@@ -108,7 +108,10 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 					lpp.setIncludeGraceDays(rowCell.toString());
 					break;
 				case 6:
-					lpp.setGraceDays(Integer.parseInt(rowCell.toString()));
+					String gracedays = rowCell.toString();
+					if (StringUtils.isNotEmpty(gracedays)) {
+						lpp.setGraceDays(Integer.parseInt(gracedays));
+					}
 					break;
 				case 7:
 					lpp.setCalculatedOn(rowCell.toString());
@@ -149,6 +152,14 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 			setSuccesStatus(lpp);
 
+			lppUploadDAO.save(lpp);
+
+			if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
+				int processrecordcount = lppUploadDAO.saveByFinType(lpp);
+
+				header.setTotalRecords(header.getTotalRecords() + processrecordcount);
+			}
+
 			if (lpp.getProgress() == EodConstants.PROGRESS_FAILED) {
 				record.addValue("ERRORCODE", lpp.getErrorCode());
 				record.addValue("ERRORDESC", lpp.getErrorDesc());
@@ -173,12 +184,6 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 		lPPUploadService.updateProcess(header, lpp, record);
 
 		header.getUploadDetails().add(lpp);
-
-		lppUploadDAO.save(lpp);
-
-		if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
-			lppUploadDAO.saveByFinType(lpp);
-		}
 
 		logger.debug(Literal.LEAVING);
 	}

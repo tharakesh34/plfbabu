@@ -17,5 +17,5 @@ public interface LPPUploadDAO {
 
 	boolean isValidFinType(String fintype);
 
-	void saveByFinType(LPPUpload lpp);
+	int saveByFinType(LPPUpload lpp);
 }

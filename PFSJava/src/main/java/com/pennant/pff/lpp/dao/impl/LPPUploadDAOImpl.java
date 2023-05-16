@@ -178,7 +178,7 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 	}
 
 	@Override
-	public void saveByFinType(LPPUpload lpp) {
+	public int saveByFinType(LPPUpload lpp) {
 		StringBuilder sql = new StringBuilder("Insert into LPP_UPLOAD");
 		sql.append(" (HeaderId, RecordSeq, LoanType, ApplyToExistingLoans");
 		sql.append(", ApplyOverDue, FinID, FinReference, PenaltyType");
@@ -188,10 +188,10 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 		sql.append(" From FinanceMain Where FinType = ? and FinIsActive = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
-
+		int count = 0;
 		try {
 
-			this.jdbcOperations.update(sql.toString(), ps -> {
+			count = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
 				ps.setLong(++index, lpp.getHeaderId());
@@ -212,11 +212,13 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 
 				ps.setString(++index, lpp.getLoanType());
 				ps.setInt(++index, 1);
+
 			});
 
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
+		return count;
 	}
 
 	@Override
