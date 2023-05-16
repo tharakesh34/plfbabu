@@ -1,25 +1,15 @@
 package com.pennanttech.external.silien.job;
 
 import java.io.File;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
-import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
 import com.pennanttech.external.config.ExtErrorCodes;
@@ -28,8 +18,6 @@ import com.pennanttech.external.config.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
 import com.pennanttech.external.dao.ExtInterfaceDao;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
-import com.pennanttech.external.silien.model.LienFileStatus;
-import com.pennanttech.external.silien.model.LienMarkDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -38,19 +26,9 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 
 	private static final Logger logger = LogManager.getLogger(LienFileReadingJob.class);
 
-	private static final String FETCH_QUERY = "Select * from SILIEN_FILE_STATUS  Where STATUS = ?";
-
-	private static final int SILIEN_RESP_NEGLECT_LINES = 13;
-	private static final String RESPONSE_END = "--------------";
-	private static final String CONTROL_SPACES = "      ";
-	private static final String RESP_SUCCESS = "SUCCESS";
-	private static final String RESP_REJECTED = "REJECTED";
-
 	private ExtLienMarkingDAO externalLienMarkingDAO;
 	private ExternalConfig lienConfig;
 	private ExternalConfig lienReqConfig;
-
-	private DataSource dataSource;
 	private ExtInterfaceDao extInterfaceDao;
 	private ApplicationContext applicationContext;
 
@@ -63,7 +41,6 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalLienMarkingDAO = applicationContext.getBean(ExtLienMarkingDAO.class);
 			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
-			dataSource = applicationContext.getBean("dataSource", DataSource.class);
 
 		}
 
@@ -93,10 +70,7 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 		}
 
 		try {
-			// Fetch all files from Configured folder and save names in a table
 			fetchAllFilesAndSave();
-			// Process each file saved in the table
-			processSavedFiles();
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -130,7 +104,6 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 		}
 
 		// load request folder file names as list of names
-
 		List<String> requestFileNames = fetchRequestFiles(lienReqConfig);
 
 		for (File file : filesList) {
@@ -172,232 +145,6 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void processSavedFiles() throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		// Read 10 files at a time using file status = 0
-		JdbcCursorItemReader<LienFileStatus> cursorItemReader = new JdbcCursorItemReader<LienFileStatus>();
-		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setFetchSize(10);
-		cursorItemReader.setSql(FETCH_QUERY);
-		cursorItemReader.setRowMapper(new RowMapper<LienFileStatus>() {
-			@Override
-			public LienFileStatus mapRow(ResultSet rs, int rowNum) throws SQLException {
-				LienFileStatus extPresentment = new LienFileStatus();
-				extPresentment.setId(rs.getLong("ID"));
-				extPresentment.setFileName(rs.getString("FILE_NAME"));
-				extPresentment.setStatus(rs.getInt("STATUS"));
-				return extPresentment;
-			}
-		});
-
-		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, UNPROCESSED);// STATUS = UnProcessed-0
-			}
-		});
-
-		ExecutionContext executionContext = new ExecutionContext();
-		cursorItemReader.open(executionContext);
-
-		String folderPath = App.getResourcePath(lienConfig.getFileLocation());
-
-		LienFileStatus lienFileStatus;
-
-		while ((lienFileStatus = cursorItemReader.read()) != null) {
-			try {
-				File file = new File(folderPath + File.separator + lienFileStatus.getFileName());
-
-				// Mark file processing status as INPROCESS
-				externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), INPROCESS, "", "");
-
-				// Verify if file is valid or not
-				boolean isValidFile = validateFile(file);
-
-				// Validate file
-				if (isValidFile) {
-
-					// get all the records from file in a list of objects
-					List<LienMarkDetail> lienDataList = getFileRecords(file);
-
-					// check if list is null
-					if (lienDataList == null) {
-						// Invalid file
-						InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-								ExtErrorCodes.getInstance().getInterfaceErrorsList(), F603);
-						externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED,
-								interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
-						continue;
-					}
-
-					// Process each record and save to PLF
-					for (LienMarkDetail lienMarkDetail : lienDataList) {
-
-						// Validate Account number in the record
-						if (lienMarkDetail.getAccNumber() == null || "".equals(lienMarkDetail.getAccNumber())) {
-							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F600);
-							externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), FILE_WRITTEN,
-									interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
-							continue;
-						}
-
-						// Validate Lien mark in the record
-						if (lienMarkDetail.getLienMark() == null || "".equals(lienMarkDetail.getLienMark())) {
-							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F601);
-							externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), FILE_WRITTEN,
-									interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
-							continue;
-						}
-
-						externalLienMarkingDAO.updateLienInterfaceStatus(lienMarkDetail);
-					}
-
-					// mark file processing status as completed
-					externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED, "", "");
-
-				} else {
-					// mark file processing status as completed with error
-					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F602);
-					externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED,
-							interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
-					continue;
-				}
-
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				// mark file processing status as completed with exception
-				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						ExtErrorCodes.getInstance().getInterfaceErrorsList(), F604);
-				externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED,
-						interfaceErrorCode.getErrorCode(), e.getMessage());
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	private boolean validateFile(File file) {
-		logger.debug(Literal.ENTERING);
-		String fileName = file.getName();
-		String filePrepend = lienConfig.getFilePrepend();
-		String fileExtension = lienConfig.getFileExtension();
-		if (fileName.startsWith(filePrepend) && fileName.endsWith(fileExtension)) {
-			return true;
-		}
-		logger.debug(Literal.LEAVING);
-		return false;
-	}
-
-	private List<LienMarkDetail> getFileRecords(File file) {
-		logger.debug(Literal.ENTERING);
-		String fileName = file.getName();
-		String filePrepend = lienConfig.getFilePrepend();
-		String fileExtension = lienConfig.getFileExtension();
-
-		if (fileName.startsWith(filePrepend.concat(lienConfig.getSuccessIndicator()))
-				&& fileName.endsWith(fileExtension)) {
-			// Parse success records
-			return prepareDataFromFile(file, true);
-		}
-
-		if (fileName.startsWith(filePrepend.concat(lienConfig.getFailIndicator()))
-				&& fileName.endsWith(fileExtension)) {
-			// Parse rejected records
-			return prepareDataFromFile(file, false);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	private List<LienMarkDetail> prepareDataFromFile(File file, boolean isSucessFile) {
-		logger.debug(Literal.ENTERING);
-		int cnt = 0;
-		List<LienMarkDetail> dataList = new ArrayList<LienMarkDetail>();
-		try (Scanner sc = new Scanner(file)) {
-
-			while (sc.hasNextLine()) {
-
-				LienMarkDetail data = null;
-				String lineData = sc.nextLine();
-
-				if (cnt == SILIEN_RESP_NEGLECT_LINES) {// Consider record after 13 lines.
-
-					if (lineData.contains(RESPONSE_END)) { // End of the line for response data.
-						return dataList;
-					} else {
-
-						if (isSucessFile) {
-							data = prepareSuccessResponse(lineData);
-						} else {
-							data = prepareRejectResponse(lineData);
-						}
-
-						dataList.add(data);
-					}
-
-				} else {
-					cnt = cnt + 1;
-				}
-			}
-
-			return dataList;
-		} catch (Exception e) {
-			logger.debug("Exception caught {}" + e);
-		}
-		logger.debug(Literal.LEAVING);
-		return dataList;
-	}
-
-	private LienMarkDetail prepareSuccessResponse(String lineData) {
-		logger.debug(Literal.ENTERING);
-
-		LienMarkDetail detail = new LienMarkDetail();
-
-		detail.setInterfaceStatus(RESP_SUCCESS);
-
-		String[] dataArray = lineData.toString().split(CONTROL_SPACES);
-
-		if (dataArray.length >= 1) {
-			detail.setAccNumber(dataArray[0]);
-		}
-
-		if (dataArray.length >= 2) {
-			detail.setLienMark(dataArray[1]);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return detail;
-	}
-
-	private LienMarkDetail prepareRejectResponse(String lineData) {
-		logger.debug(Literal.ENTERING);
-
-		LienMarkDetail detail = new LienMarkDetail();
-
-		detail.setInterfaceStatus(RESP_REJECTED);
-
-		String[] dataArray = lineData.toString().split(CONTROL_SPACES);
-
-		if (dataArray.length >= 1) {
-			detail.setAccNumber(dataArray[0]);
-		}
-
-		if (dataArray.length >= 2) {
-			detail.setLienMark(dataArray[1]);
-		}
-
-		if (dataArray.length >= 9) {
-			detail.setInterfaceReason(dataArray[8]);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return detail;
 	}
 
 	private List<String> fetchRequestFiles(ExternalConfig reqConfig) {

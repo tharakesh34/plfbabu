@@ -237,18 +237,18 @@ public class SelectFinanceCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain
 
 		fd.getFinScheduleData().setFinanceMain(fm);
 
+		String maintainSts = StringUtils.trimToEmpty(fm.getRcdMaintainSts());
+		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + maintainSts));
+			return;
+		}
+
 		String nextroleCode = fm.getNextRoleCode();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + fm.getFinReference();
 			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("41005", errParm)).getError());
 			logger.debug(Literal.LEAVING + event.toString());
-			return;
-		}
-
-		String maintainSts = StringUtils.trimToEmpty(fm.getRcdMaintainSts());
-		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
-			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + maintainSts));
 			return;
 		}
 

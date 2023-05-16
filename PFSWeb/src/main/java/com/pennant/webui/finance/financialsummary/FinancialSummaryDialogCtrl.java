@@ -45,7 +45,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Textarea;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -186,9 +185,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	ArrayList<ValueLabel> documentTypes = PennantAppUtil.getDocumentTypes();
 
 	private FinanceDetail financeDetail = null;
-	private boolean newFinance = false;
 	Tab parenttab = null;
-	private Component parent = null;
 	private boolean isFinanceProcess = false;
 	private Object financeMainDialogCtrl;
 
@@ -270,20 +267,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DeviationHelper deviationHelper;
 
 	private boolean isbasicDetailsVisible = false;
-	private boolean isbtDetailsVisible = false;
 	private boolean iscustomerDetailsVisible = false;
 	private boolean isdueDiligenceDetailsVisible = false;
 	private boolean isreferencesVisible = false;
 	private boolean iscollateralDetailsVisible = false;
-	private boolean isassetDetailsVisible = false;
-	private boolean issynopsisAndPdDetailsVisible = false;
 	private boolean isdeviationsDetailsVisible = false;
 	private boolean isrecommendationNoteDetailsVisible = false;
 	private boolean isdealRecommendationMeritsDetailsVisible = false;
 	private boolean issanctionConditionsDetailsVisible = false;
 	private boolean isrisksAndMitigantsDetailsVisible = false;
 	private boolean isinterfacesDetailsVisible = false;
-	private boolean isscoringDetailsVisible = false;
 	private boolean iseligibilityDetailsVisible = false;
 	private boolean isrecommendationsDetailsVisible = false;
 	private boolean isqueriesDetailsVisible = false;
@@ -321,14 +314,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		setPageComponents(window_financialSummaryDialog);
 
 		try {
-			if (event.getTarget().getParent() != null) {
-				parent = event.getTarget().getParent();
-			}
-
 			if (arguments.containsKey("financeDetail")) {
 				isFinanceProcess = true;
 				financeDetail = (FinanceDetail) arguments.get("financeDetail");
-				newFinance = true;
 			}
 			if (arguments.containsKey("tab")) {
 				parenttab = (Tab) arguments.get("tab");
@@ -345,8 +333,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
 					((FinanceMainBaseCtrl) financeMainDialogCtrl).setFinancialSummaryDialogCtrl(this);
 				}
-				newFinance = true;
-
 			}
 
 			if (arguments.containsKey("isEnquiry")) {
@@ -427,7 +413,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			gb_basicDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_btDetails")) {
-			isbtDetailsVisible = true;
 			imgBtDetails.setStyle("display:block");
 			gb_btDetails.setVisible(true);
 
@@ -452,11 +437,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			gb_collateralDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_assetDetails")) {
-			isassetDetailsVisible = true;
 			gb_assetDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_synopsisAndPdDetails")) {
-			issynopsisAndPdDetailsVisible = true;
 			imgSynopsisandpddetails.setStyle("display:block");
 			gb_synopsisAndPdDetails.setVisible(true);
 		}
@@ -493,7 +476,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			gb_interfacesDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_scoringDetails")) {
-			isscoringDetailsVisible = true;
 			imgScoring.setStyle("display:block");
 			gb_scoringDetails.setVisible(true);
 

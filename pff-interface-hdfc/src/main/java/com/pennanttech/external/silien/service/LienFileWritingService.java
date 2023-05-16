@@ -51,9 +51,8 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 				return;
 			}
 
-			// Fetch records where FILE_STATUS = 0 (Not written to request file)
-			List<LienMarkDetail> lienMarkingList = externalLienMarkingDAO
-					.fetchRecordsForLienFileWriting(FILE_NOT_WRITTEN);
+			// Fetch records where INTERFACESTATUS = PENDING (Not written to request file)
+			List<LienMarkDetail> lienMarkingList = externalLienMarkingDAO.fetchRecordsForLienFileWriting(LIEN_PENDING);
 
 			List<StringBuilder> itemList = new ArrayList<StringBuilder>();
 
@@ -64,25 +63,17 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 
 				// Prepare record item data
 				for (LienMarkDetail lienMarkDetail : lienMarkingList) {
+					String errCode = "";
 					try {
-						// update record status as in-process
-						externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), INPROCESS, "", "");
-
 						// Validate Account number in the record
 						if (lienMarkDetail.getAccNumber() == null || "".equals(lienMarkDetail.getAccNumber())) {
-							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F600);
-							externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), COMPLETED,
-									interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
+							logger.debug("EXT_SILIEN:Account number received is empty/null, So not Processing");
 							continue;
 						}
 
 						// Validate Lien mark in the record
-						if (lienMarkDetail.getLienMark() == null || "".equals(lienMarkDetail.getLienMark())) {
-							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F601);
-							externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), COMPLETED,
-									interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
+						if ("".equals(StringUtils.stripToEmpty(lienMarkDetail.getLienMark()))) {
+							logger.debug("EXT_SILIEN:Lien Status received is empty/null, So not Processing");
 							continue;
 						}
 
@@ -93,16 +84,18 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 						// Add item to list
 						itemList.add(item);
 
-						// update record status as success
-						externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), COMPLETED, "", "");
+						// update record status as in-process
+						lienMarkDetail.setInterfaceStatus(LIEN_AWAITING_CONF);
+						externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail);
 
 					} catch (Exception e) {
 						logger.debug("Exception caught {}" + e);
 						// update record status as in-process
-						InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-								ExtErrorCodes.getInstance().getInterfaceErrorsList(), F605);
-						externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail.getAccNumber(), UNPROCESSED,
-								interfaceErrorCode.getErrorCode(), e.getMessage());
+						errCode = F605;
+						lienMarkDetail.setInterfaceStatus(LIEN_FAILED);
+						lienMarkDetail.setErrCode(errCode);
+						lienMarkDetail.setErrMsg(e.getMessage());
+						externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail);
 					}
 				}
 			}

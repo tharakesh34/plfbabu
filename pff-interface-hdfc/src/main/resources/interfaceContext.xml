@@ -57,6 +57,7 @@
 	</bean>
 
 	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
+		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
@@ -78,11 +79,6 @@
 
 	<bean id="extPdcService" class="com.pennanttech.external.presentment.service.ExtPDCService">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
-	</bean>
-
-	<bean id="lienMarkingService" class="com.pennanttech.external.silien.service.LienMarkingService">
-		<property name="externalLienMarkingDAO" ref="externalLienMarkingDAO" />
-		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="lienFileWritingService" class="com.pennanttech.external.silien.service.LienFileWritingService">
