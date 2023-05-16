@@ -129,17 +129,35 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		LoanLetterUpload noc = loanLetterUploadDAO.getByReference(detail.getReference());
+		List<LoanLetterUpload> noc = loanLetterUploadDAO.getByReference(detail.getReference());
 
-		if (noc != null && EodConstants.PROGRESS_SUCCESS == noc.getProgress()) {
-			Date valueDate = DateUtil.getSysDate();
-			if (noc.getReference().equals(detail.getReference())) {
+		for (LoanLetterUpload llu : noc) {
+			if (isDuplicate(detail, llu)) {
 				setError(detail, LoanLetterUploadError.LOAN_LTR_11);
 				return;
 			}
-		}
 
+			if (NOCConstants.TYPE_CLOSE_LTR.equals(llu.getLetterType())
+					&& NOCConstants.TYPE_CAN_LTR.equals(letterType)) {
+				setError(detail, LoanLetterUploadError.LOAN_LTR_13);
+				return;
+			}
+
+			if (NOCConstants.TYPE_CAN_LTR.equals(llu.getLetterType())
+					&& NOCConstants.TYPE_CLOSE_LTR.equals(letterType)) {
+				setError(detail, LoanLetterUploadError.LOAN_LTR_12);
+				return;
+			}
+		}
 		setSuccesStatus(detail);
+	}
+
+	private boolean isDuplicate(LoanLetterUpload detail, LoanLetterUpload noc) {
+		Date valueDate = DateUtil.getSysDate();
+		int date = DateUtil.formatToLongDate(valueDate).compareTo(DateUtil.formatToLongDate(noc.getApprovedOn()));
+		return noc.getReference().equals(detail.getReference()) && date == 1
+				&& noc.getLetterType().equals(detail.getLetterType())
+				&& noc.getWaiverCharges().equals(detail.getWaiverCharges());
 	}
 
 	@Override
@@ -248,9 +266,15 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		LoanLetterUpload transfer = (LoanLetterUpload) ObjectUtil.valueAsObject(paramSource, LoanLetterUpload.class);
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
 
-		transfer.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		if (headerID == null) {
+			return;
+		}
+
+		String finReference = ObjectUtil.valueAsString(paramSource.getValue("finReference"));
+
+		LoanLetterUpload transfer = (LoanLetterUpload) ObjectUtil.valueAsObject(paramSource, LoanLetterUpload.class);
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -258,6 +282,13 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 		transfer.setHeaderId(header.getId());
 		transfer.setAppDate(header.getAppDate());
+		transfer.setReference(finReference);
+		
+		if (isInProgress(headerID, finReference)) {
+			setFailureStatus(transfer, "Record is already initiated, unable to proceed.");
+			updateProcess(header, transfer, paramSource);
+			return;
+		}
 
 		doValidate(header, transfer);
 
@@ -266,5 +297,10 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		header.getUploadDetails().add(transfer);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return loanLetterUploadDAO.isInProgress((String) args[0], headerID);
 	}
 }

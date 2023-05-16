@@ -19,7 +19,9 @@ public interface LoanLetterUploadDAO {
 
 	String getCanceltype(String finReference);
 
-	LoanLetterUpload getByReference(String reference);
+	List<LoanLetterUpload> getByReference(String reference);
 
 	FinTypeFees getFeeWaiverAllowed(String finType, String finEvent);
+
+	boolean isInProgress(String reference, long headerID);
 }
