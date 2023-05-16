@@ -18326,4 +18326,10 @@
 		<addDefaultValue tableName="FILE_UPLOAD_HEADER" columnName="FailureRecords" defaultValue="0" />
 	</changeSet>
 	
+	<changeSet id="ST#1526.4" author="Sandeepkumar.M">
+		<addColumn tableName="LIEN_HEADER">
+			<column name="Reject_Reason" type="varchar2(256)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog> 

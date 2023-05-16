@@ -81,11 +81,6 @@
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
 	</bean>
 
-	<bean id="lienMarkingService" class="com.pennanttech.external.silien.service.LienMarkingService">
-		<property name="externalLienMarkingDAO" ref="externalLienMarkingDAO" />
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
 	<bean id="lienFileWritingService" class="com.pennanttech.external.silien.service.LienFileWritingService">
 		<property name="externalLienMarkingDAO" ref="externalLienMarkingDAO" />
 		<property name="extInterfaceDao" ref="extInterfaceDao" />
