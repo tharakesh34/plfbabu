@@ -56,7 +56,6 @@ import com.pennant.backend.endofday.main.PFSBatchAdmin;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.AutoRefundLoan;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -659,15 +658,13 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		List<PaymentDetail> paymentDetailsList = ph.getPaymentDetailList();
 		List<String> feeTypeCodes = new ArrayList<>();
-		List<FeeType> feeTypesList = new ArrayList<>();
 
 		for (PaymentDetail paymentDetail : paymentDetailsList) {
 			feeTypeCodes.add(paymentDetail.getFeeTypeCode());
 		}
 
 		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-			feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
-			aeEvent.setFeesList(feeTypesList);
+			aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingByCode(feeTypeCodes));
 		}
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -1071,7 +1068,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		doReject(ah);
 
 	}
-	
+
 	@Override
 	public boolean isRefundProvided(long finId) {
 		return paymentHeaderDAO.isRefundProvided(finId);

@@ -27,6 +27,7 @@ package com.pennant.backend.dao.feetype.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +38,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.pff.accounting.SingleFee;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -246,8 +248,26 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	}
 
 	@Override
-	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
-		StringBuilder sql = getFeeTypeQuery(type);
+	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ft.FeeTypeCode, ft.FeeTypeDesc, ft.ManualAdvice, ft.AdviseType, ft.TaxApplicable, ft.TdsReq");
+		sql.append(", ft.IncomeOrExpenseAcType, ieat.AcTypeDesc IncomeOrExpenseAcTypeDesc");
+		sql.append(", ft.WaiverOrRefundAcType, wrat.AcTypeDesc WaiverOrRefundAcTypeDesc");
+		sql.append(", cgstat.AcType CgstAcType, cgstat.AcTypeDesc CgstAcTypeDesc");
+		sql.append(", sgstat.AcType SgstAcType, sgstat.AcTypeDesc SgstAcTypeDesc");
+		sql.append(", igstat.AcType IgstAcType, Igstat.AcTypeDesc IgstAcTypeDesc");
+		sql.append(", ugstat.AcType UgstAcType, ugstat.AcTypeDesc UgstAcTypeDesc");
+		sql.append(", cessat.AcType CessAcType, cessat.AcTypeDesc CessAcTypeDesc");
+		sql.append(", tdsat.AcType TdsAcType, tdsat.AcTypeDesc TdsAcTypeDesc");
+		sql.append(" From FeeTypes ft");
+		sql.append(" Left Join RMTAccountTypes ieat On ieat.AcType = ft.IncomeOrExpenseAcType");
+		sql.append(" Left Join RMTAccountTypes wrat On wrat.AcType = ft.WaiverOrRefundAcType");
+		sql.append(" Left Join RMTAccountTypes cgstat On cgstat.AcType = ?");
+		sql.append(" Left Join RMTAccountTypes sgstat On sgstat.AcType = ?");
+		sql.append(" Left Join RMTAccountTypes igstat On igstat.AcType = ?");
+		sql.append(" Left Join RMTAccountTypes ugstat On ugstat.AcType = ?");
+		sql.append(" Left Join RMTAccountTypes cessat On cessat.AcType = ?");
+		sql.append(" Left Join RMTAccountTypes tdsat On tdsat.AcType = ?");
 		sql.append(" Where FeeTypeID IN (");
 		sql.append(JdbcUtil.getInCondition(feeTypeIds));
 		sql.append(") and Active = ?");
@@ -255,32 +275,87 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
+
+			ps.setString(++index, SingleFee.AT_CGST);
+			ps.setString(++index, SingleFee.AT_SGST);
+			ps.setString(++index, SingleFee.AT_IGST);
+			ps.setString(++index, SingleFee.AT_UGST);
+			ps.setString(++index, SingleFee.AT_CESS);
+			ps.setString(++index, SingleFee.AT_TDS);
 
 			for (Long id : feeTypeIds) {
-				ps.setLong(index++, id);
+				ps.setLong(++index, id);
 			}
 
-			ps.setInt(index, 1);
-		}, new FeeTypeRM(type));
+			ps.setInt(++index, 1);
+		}, (rs, rowNum) -> {
+			FeeType ft = new FeeType();
+			ft.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ft.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			ft.setManualAdvice(rs.getBoolean("ManualAdvice"));
+			ft.setAdviseType(rs.getInt("AdviseType"));
+			ft.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			ft.setTdsReq(rs.getBoolean("TdsReq"));
+
+			ft.setIncomeOrExpenseAcType(rs.getString("IncomeOrExpenseAcType"));
+			ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
+
+			ft.setWaiverOrRefundAcType(rs.getString("WaiverOrRefundAcType"));
+			ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
+
+			ft.setCgstAcType(rs.getString("CgstAcType"));
+			ft.setCgstAcTypeDesc(rs.getString("CgstAcTypeDesc"));
+
+			ft.setSgstAcType(rs.getString("SgstAcType"));
+			ft.setSgstAcTypeDesc(rs.getString("SgstAcTypeDesc"));
+
+			ft.setIgstAcType(rs.getString("IgstAcType"));
+			ft.setIgstAcTypeDesc(rs.getString("IgstAcTypeDesc"));
+
+			ft.setUgstAcType(rs.getString("UgstAcType"));
+			ft.setUgstAcTypeDesc(rs.getString("UgstAcTypeDesc"));
+
+			ft.setCessAcType(rs.getString("CessAcType"));
+			ft.setCessAcTypeDesc(rs.getString("CessAcTypeDesc"));
+
+			ft.setTdsAcType(rs.getString("TdsAcType"));
+			ft.setTdsAcTypeDesc(rs.getString("TdsAcTypeDesc"));
+
+			return ft;
+		});
 	}
 
 	@Override
-	public List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type) {
-		StringBuilder sql = getFeeTypeQuery(type);
-		sql.append(" Where feeTypeCode in (");
+	public List<Long> getFeeTypeIDs(List<String> feeTypeCodes) {
+		StringBuilder sql = new StringBuilder("Select FeeTypeID From FeeTypes");
+		sql.append(" Where FeeTypeID IN (");
 		sql.append(JdbcUtil.getInCondition(feeTypeCodes));
 		sql.append(") and Active = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		List<Long> list = new ArrayList<>();
+
+		List<FeeType> feeTypes = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			for (String feeTypeCode : feeTypeCodes) {
 				ps.setString(index++, feeTypeCode);
 			}
 			ps.setInt(index, 1);
-		}, new FeeTypeRM(type));
+		}, (rs, rowNum) -> {
+			FeeType ft = new FeeType();
+
+			ft.setFeeTypeID(rs.getLong(1));
+
+			return ft;
+		});
+
+		for (FeeType feeType : feeTypes) {
+			list.add(feeType.getFeeTypeID());
+		}
+
+		return list;
 	}
 
 	@Override
@@ -563,6 +638,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		if (type.contains("View")) {
 			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
+			sql.append(", IncomeOrExpenseAcTypeDesc, WaiverOrRefundAcTypeDesc");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
@@ -611,6 +687,8 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				ft.setDueAcctSetCodeName(rs.getString("DueAcctSetCodeName"));
 				ft.setAcType(rs.getString("AcType"));
 				ft.setAcTypeDesc(rs.getString("AcTypeDesc"));
+				ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
+				ft.setWaiverOrRefundAcTypeDesc(rs.getString("WaiverOrRefundAcTypeDesc"));
 			}
 
 			ft.setVersion(rs.getInt("Version"));

@@ -64,13 +64,28 @@ public class FeeType extends AbstractWorkflowEntity {
 	private String acType;
 	private String acTypeDesc;
 	private String incomeOrExpenseAcType;
+	private String incomeOrExpenseAcTypeDesc;
 	private String payableLinkTo;
 	private Long recvFeeTypeId;
 	private String recvFeeTypeCode;
 	private String recvFeeTypeDesc;
 	private String allocationtype;
 	private String waiverOrRefundAcType;
+	private String waiverOrRefundAcTypeDesc;
 	private boolean allowAutoRefund;
+
+	private String cgstAcType;
+	private String cgstAcTypeDesc;
+	private String sgstAcType;
+	private String sgstAcTypeDesc;
+	private String igstAcType;
+	private String igstAcTypeDesc;
+	private String ugstAcType;
+	private String ugstAcTypeDesc;
+	private String cessAcType;
+	private String cessAcTypeDesc;
+	private String tdsAcType;
+	private String tdsAcTypeDesc;
 
 	public FeeType() {
 		super();
@@ -109,13 +124,28 @@ public class FeeType extends AbstractWorkflowEntity {
 		entity.setAcType(this.acType);
 		entity.setAcTypeDesc(this.acTypeDesc);
 		entity.setIncomeOrExpenseAcType(this.incomeOrExpenseAcType);
+		entity.setIncomeOrExpenseAcTypeDesc(this.incomeOrExpenseAcTypeDesc);
 		entity.setPayableLinkTo(this.payableLinkTo);
 		entity.setRecvFeeTypeId(this.recvFeeTypeId);
 		entity.setRecvFeeTypeCode(this.recvFeeTypeCode);
 		entity.setRecvFeeTypeDesc(this.recvFeeTypeDesc);
 		entity.setAllocationtype(this.allocationtype);
 		entity.setWaiverOrRefundAcType(this.waiverOrRefundAcType);
+		entity.setWaiverOrRefundAcTypeDesc(this.waiverOrRefundAcTypeDesc);
 		entity.setAllowAutoRefund(this.allowAutoRefund);
+		entity.setCgstAcType(this.cgstAcType);
+		entity.setCgstAcTypeDesc(this.cgstAcTypeDesc);
+		entity.setSgstAcType(this.sgstAcType);
+		entity.setSgstAcTypeDesc(this.sgstAcTypeDesc);
+		entity.setIgstAcType(this.igstAcType);
+		entity.setIgstAcTypeDesc(this.igstAcTypeDesc);
+		entity.setUgstAcType(this.ugstAcType);
+		entity.setUgstAcTypeDesc(this.ugstAcTypeDesc);
+		entity.setCessAcType(this.cessAcType);
+		entity.setCessAcTypeDesc(this.cessAcTypeDesc);
+		entity.setTdsAcType(this.tdsAcType);
+		entity.setTdsAcTypeDesc(this.tdsAcTypeDesc);
+
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -141,6 +171,20 @@ public class FeeType extends AbstractWorkflowEntity {
 		excludeFields.add("recvFeeTypeCode");
 		excludeFields.add("recvFeeTypeDesc");
 		excludeFields.add("allocationtype");
+		excludeFields.add("incomeOrExpenseAcTypeDesc");
+		excludeFields.add("waiverOrRefundAcTypeDesc");
+		excludeFields.add("cgstAcType");
+		excludeFields.add("cgstAcTypeDesc");
+		excludeFields.add("sgstAcType");
+		excludeFields.add("sgstAcTypeDesc");
+		excludeFields.add("igstAcType");
+		excludeFields.add("igstAcTypeDesc");
+		excludeFields.add("ugstAcType");
+		excludeFields.add("ugstAcTypeDesc");
+		excludeFields.add("cessAcType");
+		excludeFields.add("cessAcTypeDesc");
+		excludeFields.add("tdsAcType");
+		excludeFields.add("tdsAcTypeDesc");
 
 		return excludeFields;
 	}
@@ -357,6 +401,14 @@ public class FeeType extends AbstractWorkflowEntity {
 		this.incomeOrExpenseAcType = incomeOrExpenseAcType;
 	}
 
+	public String getIncomeOrExpenseAcTypeDesc() {
+		return incomeOrExpenseAcTypeDesc;
+	}
+
+	public void setIncomeOrExpenseAcTypeDesc(String incomeOrExpenseAcTypeDesc) {
+		this.incomeOrExpenseAcTypeDesc = incomeOrExpenseAcTypeDesc;
+	}
+
 	public String getPayableLinkTo() {
 		return payableLinkTo;
 	}
@@ -405,12 +457,116 @@ public class FeeType extends AbstractWorkflowEntity {
 		this.waiverOrRefundAcType = waiverOrRefundAcType;
 	}
 
+	public String getWaiverOrRefundAcTypeDesc() {
+		return waiverOrRefundAcTypeDesc;
+	}
+
+	public void setWaiverOrRefundAcTypeDesc(String waiverOrRefundAcTypeDesc) {
+		this.waiverOrRefundAcTypeDesc = waiverOrRefundAcTypeDesc;
+	}
+
 	public boolean isAllowAutoRefund() {
 		return allowAutoRefund;
 	}
 
 	public void setAllowAutoRefund(boolean allowAutoRefund) {
 		this.allowAutoRefund = allowAutoRefund;
+	}
+
+	public String getCgstAcType() {
+		return cgstAcType;
+	}
+
+	public void setCgstAcType(String cgstAcType) {
+		this.cgstAcType = cgstAcType;
+	}
+
+	public String getCgstAcTypeDesc() {
+		return cgstAcTypeDesc;
+	}
+
+	public void setCgstAcTypeDesc(String cgstAcTypeDesc) {
+		this.cgstAcTypeDesc = cgstAcTypeDesc;
+	}
+
+	public String getSgstAcType() {
+		return sgstAcType;
+	}
+
+	public void setSgstAcType(String sgstAcType) {
+		this.sgstAcType = sgstAcType;
+	}
+
+	public String getSgstAcTypeDesc() {
+		return sgstAcTypeDesc;
+	}
+
+	public void setSgstAcTypeDesc(String sgstAcTypeDesc) {
+		this.sgstAcTypeDesc = sgstAcTypeDesc;
+	}
+
+	public String getIgstAcType() {
+		return igstAcType;
+	}
+
+	public void setIgstAcType(String igstAcType) {
+		this.igstAcType = igstAcType;
+	}
+
+	public String getIgstAcTypeDesc() {
+		return igstAcTypeDesc;
+	}
+
+	public void setIgstAcTypeDesc(String igstAcTypeDesc) {
+		this.igstAcTypeDesc = igstAcTypeDesc;
+	}
+
+	public String getUgstAcType() {
+		return ugstAcType;
+	}
+
+	public void setUgstAcType(String ugstAcType) {
+		this.ugstAcType = ugstAcType;
+	}
+
+	public String getUgstAcTypeDesc() {
+		return ugstAcTypeDesc;
+	}
+
+	public void setUgstAcTypeDesc(String ugstAcTypeDesc) {
+		this.ugstAcTypeDesc = ugstAcTypeDesc;
+	}
+
+	public String getCessAcType() {
+		return cessAcType;
+	}
+
+	public void setCessAcType(String cessAcType) {
+		this.cessAcType = cessAcType;
+	}
+
+	public String getCessAcTypeDesc() {
+		return cessAcTypeDesc;
+	}
+
+	public void setCessAcTypeDesc(String cessAcTypeDesc) {
+		this.cessAcTypeDesc = cessAcTypeDesc;
+	}
+
+	public String getTdsAcType() {
+		return tdsAcType;
+	}
+
+	public void setTdsAcType(String tdsAcType) {
+		this.tdsAcType = tdsAcType;
+	}
+
+	public String getTdsAcTypeDesc() {
+		return tdsAcTypeDesc;
+	}
+
+	public void setTdsAcTypeDesc(String tdsAcTypeDesc) {
+		this.tdsAcTypeDesc = tdsAcTypeDesc;
 	}
 
 }

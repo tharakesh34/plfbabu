@@ -90,6 +90,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.ProductUtil;
 
@@ -509,10 +510,13 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 			}
 		}
 
-		getFinanceTypeDAO().delete(financeType, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		// List
-		auditHeader.setAuditDetails(deleteChilds(financeType, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
+
+		if (!RequestSource.UPLOAD.equals(financeType.getRequestSource())) {
+			getFinanceTypeDAO().delete(financeType, "_Temp");
+			auditHeader.setAuditDetails(deleteChilds(financeType, TableType.TEMP_TAB, auditHeader.getAuditTranType()));
+		}
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceType(), financeType.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				financeType.getBefImage(), financeType));

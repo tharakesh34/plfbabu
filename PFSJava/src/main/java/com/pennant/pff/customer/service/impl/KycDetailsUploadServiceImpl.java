@@ -30,6 +30,7 @@ import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennapps.core.util.ObjectUtil;
@@ -240,24 +241,47 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 			return;
 		}
 
-		if (kycDetailsUploadDAO.isInLoanQueue(custId)) {
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_02, reference);
+		List<FinanceMain> fmList = kycDetailsUploadDAO.isInMaintanance(custId);
+
+		if (CollectionUtils.isNotEmpty(fmList)) {
+			StringBuilder message = new StringBuilder();
+
+			for (FinanceMain fm : fmList) {
+				if (message.length() > 0) {
+					message.append(", ");
+				}
+
+				String rcdMaintainSts = fm.getRcdMaintainSts();
+
+				if (StringUtils.isEmpty(rcdMaintainSts)) {
+					rcdMaintainSts = FinServiceEvent.ORG;
+				}
+
+				message.append(fm.getFinReference() + " is in maintainance on  :" + rcdMaintainSts);
+			}
+
+			setFailureStatus(detail, "CUST_MNTS_08", message.toString());
 			return;
 		}
 
 		List<String> references = kycDetailsUploadDAO.getReceiptQueueList(custId);
 
 		if (CollectionUtils.isNotEmpty(references)) {
-			StringBuilder message = new StringBuilder();
-			for (String ref : references) {
-				if (message.length() > 0) {
-					message.append(", ");
-				}
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, references);
+			return;
+		}
 
-				message.append(ref);
-			}
+		references = kycDetailsUploadDAO.isInSettlement(custId);
 
-			setError(detail, CustomerDetailsUploadError.CUST_MNTS_03, message.toString());
+		if (CollectionUtils.isNotEmpty(references)) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_06, references);
+			return;
+		}
+
+		references = kycDetailsUploadDAO.isInlinkingDelinking(custId);
+
+		if (CollectionUtils.isNotEmpty(references)) {
+			setError(detail, CustomerDetailsUploadError.CUST_MNTS_07, references);
 			return;
 		}
 
@@ -335,6 +359,19 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 		}
 
 		setSuccesStatus(detail);
+	}
+
+	private void setError(CustomerKycDetail detail, CustomerDetailsUploadError error, List<String> references) {
+		StringBuilder message = new StringBuilder();
+		for (String ref : references) {
+			if (message.length() > 0) {
+				message.append(", ");
+			}
+
+			message.append(ref);
+		}
+
+		setError(detail, error.name(), message.toString());
 	}
 
 	private void validateMandatory(CustomerKycDetail detail) {

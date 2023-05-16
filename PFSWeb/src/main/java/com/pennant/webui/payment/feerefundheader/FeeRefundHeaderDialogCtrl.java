@@ -1064,15 +1064,13 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		List<FeeRefundDetail> feeRefundDetailsList = this.feeRefundHeader.getFeeRefundDetailList();
 		List<Long> feeTypeCodes = new ArrayList<>();
-		List<FeeType> feeTypesList = new ArrayList<>();
 
 		for (FeeRefundDetail frd : feeRefundDetailsList) {
 			feeTypeCodes.add(frd.getReceivableFeeTypeID());
 		}
 
-		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-			feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeCodes, "");
-			aeEvent.setFeesList(feeTypesList);
+		if (!feeTypeCodes.isEmpty()) {
+			aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingById(feeTypeCodes));
 		}
 
 		logger.debug(Literal.LEAVING);

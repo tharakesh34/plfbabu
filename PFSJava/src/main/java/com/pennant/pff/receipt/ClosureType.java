@@ -54,7 +54,7 @@ public enum ClosureType {
 		List<ClosureType> list = Arrays.asList(ClosureType.values());
 
 		for (ClosureType it : list) {
-			if (it.name().equals(closureType)) {
+			if (it.code().equals(closureType)) {
 				return it;
 			}
 		}

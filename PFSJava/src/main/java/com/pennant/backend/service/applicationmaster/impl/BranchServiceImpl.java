@@ -277,6 +277,8 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 						retDataSet.getFinReference() + DateUtil.format(new Date(), "yyyyMMddHHmmss") + StringUtils
 								.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
 				retDataSet.setShadowPosting(false);
+				retDataSet.setAppDate(dateAppDate);
+				retDataSet.setAppValueDate(dateAppDate);
 				retDataSet.setPostDate(dateAppDate);
 				retDataSet.setValueDate(dateValueDate);
 				retDataSet.setAmountType(AccountConstants.TRANSENTRY_AMOUNTTYPE);

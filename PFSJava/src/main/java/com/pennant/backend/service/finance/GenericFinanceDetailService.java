@@ -1599,7 +1599,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private void setFeesesForAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		List<FeeType> feeTypesList = new ArrayList<>();
 		List<Long> feeTypeIds = new ArrayList<>();
 
 		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
@@ -1608,8 +1607,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				feeTypeIds.add(finFeeDetail.getFeeTypeID());
 			}
 			if (!feeTypeIds.isEmpty()) {
-				feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeIds, "");
-				aeEvent.setFeesList(feeTypesList);
+				aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingById(feeTypeIds));
 			}
 		}
 		logger.debug(Literal.LEAVING);
