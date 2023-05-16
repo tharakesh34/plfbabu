@@ -239,7 +239,7 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 
 	@Override
 	public String save(FinanceWriteoff fwo, String type) {
-		StringBuilder sql = new StringBuilder("Insert Into FinWriteOffDetail_Log");
+		StringBuilder sql = new StringBuilder("Insert Into FIN_WRITE_OFF_DETAIL_LOG");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (FinID, FinReference, WriteoffDate, SeqNo, WrittenoffPri, WrittenoffPft, CurODPri, CurODPft");
 		sql.append(", UnPaidSchdPri, UnPaidSchdPft, PenaltyAmount, ProvisionedAmount, WriteoffPrincipal");
@@ -282,7 +282,14 @@ public class RevWriteOffUploadDAOImpl extends SequenceDao<RevWriteOffUploadDetai
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, finReference, UploadTypes.WRITE_OFF.name());
+			Long receiptID = this.jdbcOperations.queryForObject(sql, Long.class, finReference,
+					UploadTypes.WRITE_OFF.name());
+
+			if (receiptID == null) {
+				return Long.MIN_VALUE;
+			}
+
+			return (long) receiptID;
 		} catch (EmptyResultDataAccessException dae) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return Long.MIN_VALUE;

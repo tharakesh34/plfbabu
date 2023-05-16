@@ -156,7 +156,9 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 
 			try {
 				if (!executeAccountingProcess(detail, finId)) {
-					throw new AppException("Postings Execution failed for Loan Reference : " + detail.getReference());
+					setFailureStatus(detail, "",
+							"Postings Execution failed for Loan Reference : " + detail.getReference());
+					return;
 				}
 
 				updateWriteOffStatus(finId);

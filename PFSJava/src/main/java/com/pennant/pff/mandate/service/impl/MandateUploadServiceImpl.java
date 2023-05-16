@@ -47,13 +47,26 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 		throw new AppException(IN_VALID_OBJECT);
 	}
 
-	private Mandate process(MandateUpload detail, Mandate mandate) {
-		Mandate response = null;
-
+	private void process(MandateUpload detail, Mandate mandate) {
 		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			response = mandateService.createMandates(mandate);
+			Mandate response = mandateService.createMandates(mandate);
+
+			if (response == null) {
+				setFailureStatus(detail, "Mandate is null");
+				return;
+			}
+
+			ErrorDetail error = response.getError();
+			if (error != null) {
+				setFailureStatus(detail, error);
+				return;
+			}
+
+			setSuccesStatus(detail);
+			detail.setReferenceID(response.getMandateID());
+
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
 			if (txStatus != null) {
@@ -61,7 +74,6 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 			}
 			setFailureStatus(detail, e.getMessage());
 		}
-		return response;
 	}
 
 	@Override
@@ -91,22 +103,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 						mandate.setUserDetails(header.getUserDetails());
 						mandate.setSourceId(RequestSource.UPLOAD.name());
 
-						Mandate response = process(detail, mandate);
-
-						if (response == null) {
-							setFailureStatus(detail, "Mandate is null");
-							continue;
-						}
-
-						ErrorDetail error = response.getError();
-						if (error != null) {
-							failRecords++;
-							setFailureStatus(detail, error.getCode(), error.getError());
-						} else {
-							sucessRecords++;
-							setSuccesStatus(detail);
-							detail.setReferenceID(response.getMandateID());
-						}
+						process(detail, mandate);
 
 						header.getUploadDetails().add(detail);
 					}
