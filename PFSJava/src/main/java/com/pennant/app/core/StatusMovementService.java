@@ -51,8 +51,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class StatusMovementService extends ServiceHelper {
-
-	private static final long serialVersionUID = 4165353615228874397L;
 	private static Logger logger = LogManager.getLogger(StatusMovementService.class);
 
 	static final String NORM_PD = "select * from FinPftDetails where CurODDays=1 and PrvODDate = ? and  CustId = ?";
