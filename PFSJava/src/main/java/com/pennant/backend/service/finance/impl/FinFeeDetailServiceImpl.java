@@ -1655,6 +1655,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			ffd.setFeeScheduleMethod(fee.getFeeScheduleMethod());
 			ffd.setCalculationType(fee.getCalculationType());
 			ffd.setRuleCode(fee.getRuleCode());
+			ffd.setAlwPreIncomization(fee.isAlwPreIncomization());
 
 			BigDecimal feeAmount = fee.getAmount();
 			BigDecimal finAmount = CalculationUtil.roundAmount(feeAmount, roundingMode, roundingTarget);
