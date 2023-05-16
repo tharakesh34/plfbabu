@@ -16,23 +16,20 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private long finID;
 	private String finReference;
 	private String letterType;
+	private String requestType;
 	private long feeId;
 	private Date createdDate;
 	private Date createdOn;
+	private long createdBy;
 	private Date generatedDate;
 	private Date generatedOn;
 	private long generatedBy;
-	private String requestType;
-	private GenerateLetter befImage;
-	private LoggedInUser userDetails;
-	private FinanceDetail financeDetail;
+	private long approvedBy;
+	private Timestamp approvedOn;
 	private String custAcctHolderName;
 	private String custCoreBank;
 	private String finBranch;
 	private String product;
-	private long createdBy;
-	private long approvedBy;
-	private Timestamp approvedOn;
 	private String modeofTransfer;
 	private String courierAgencyName;
 	private String status;
@@ -41,6 +38,9 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private long trackingID;
 	private String remarks;
 	private long adviseID;
+	private GenerateLetter befImage;
+	private LoggedInUser userDetails;
+	private FinanceDetail financeDetail;
 
 	public GenerateLetter() {
 		super();
@@ -48,6 +48,15 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("finReference");
+		excludeFields.add("requestType");
+		excludeFields.add("feeId");
+		excludeFields.add("createdDate");
+		excludeFields.add("createdOn");
+		excludeFields.add("createdBy");
+		excludeFields.add("generatedDate");
+		excludeFields.add("generatedOn");
+		excludeFields.add("generatedBy");
 		excludeFields.add("custAcctHolderName");
 		excludeFields.add("custCoreBank");
 		excludeFields.add("finBranch");
@@ -59,6 +68,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("fileName");
 		excludeFields.add("trackingID");
 		excludeFields.add("remarks");
+		excludeFields.add("adviseID");
+		excludeFields.add("befImage");
+		excludeFields.add("userDetails");
+		excludeFields.add("financeDetail");
+
 		return excludeFields;
 	}
 
@@ -94,6 +108,14 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.letterType = letterType;
 	}
 
+	public String getRequestType() {
+		return requestType;
+	}
+
+	public void setRequestType(String requestType) {
+		this.requestType = requestType;
+	}
+
 	public long getFeeId() {
 		return feeId;
 	}
@@ -116,6 +138,14 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setCreatedOn(Date createdOn) {
 		this.createdOn = createdOn;
+	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public Date getGeneratedDate() {
@@ -142,36 +172,20 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.generatedBy = generatedBy;
 	}
 
-	public String getRequestType() {
-		return requestType;
+	public long getApprovedBy() {
+		return approvedBy;
 	}
 
-	public void setRequestType(String requestType) {
-		this.requestType = requestType;
+	public void setApprovedBy(long approvedBy) {
+		this.approvedBy = approvedBy;
 	}
 
-	public GenerateLetter getBefImage() {
-		return befImage;
+	public Timestamp getApprovedOn() {
+		return approvedOn;
 	}
 
-	public void setBefImage(GenerateLetter befImage) {
-		this.befImage = befImage;
-	}
-
-	public LoggedInUser getUserDetails() {
-		return userDetails;
-	}
-
-	public void setUserDetails(LoggedInUser userDetails) {
-		this.userDetails = userDetails;
-	}
-
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
 	}
 
 	public String getCustAcctHolderName() {
@@ -204,30 +218,6 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setProduct(String product) {
 		this.product = product;
-	}
-
-	public long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(long createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public long getApprovedBy() {
-		return approvedBy;
-	}
-
-	public void setApprovedBy(long approvedBy) {
-		this.approvedBy = approvedBy;
-	}
-
-	public Timestamp getApprovedOn() {
-		return approvedOn;
-	}
-
-	public void setApprovedOn(Timestamp approvedOn) {
-		this.approvedOn = approvedOn;
 	}
 
 	public String getModeofTransfer() {
@@ -293,4 +283,29 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	public void setAdviseID(long adviseID) {
 		this.adviseID = adviseID;
 	}
+
+	public GenerateLetter getBefImage() {
+		return befImage;
+	}
+
+	public void setBefImage(GenerateLetter befImage) {
+		this.befImage = befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
 }

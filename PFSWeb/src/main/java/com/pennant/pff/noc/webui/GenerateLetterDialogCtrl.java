@@ -3,6 +3,7 @@ package com.pennant.pff.noc.webui;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Label;
@@ -33,6 +35,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -44,6 +47,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.util.ErrorControl;
@@ -74,7 +78,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	protected Datebox finClosureDate;
 	protected Textbox sourcingOfcr;
 	protected Textbox closureType;
-	protected Textbox letterType;
+	protected Combobox letterType;
 	protected Textbox closureReason;
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
@@ -210,8 +214,13 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	private void doSetValidation() {
 	}
 
-	private void doWriteComponentsToBean(GenerateLetter gl) {
+	private void doWriteComponentsToBean(GenerateLetter geneLtr) {
+		Date appDate = SysParamUtil.getAppDate();
 
+		geneLtr.setRequestType("M");
+		geneLtr.setCreatedOn(appDate);
+		geneLtr.setCreatedDate(appDate);
+		geneLtr.setGeneratedBy(getUserWorkspace().getUserId());
 	}
 
 	protected boolean doProcess(GenerateLetter gl, String tranType) {
@@ -447,6 +456,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.finClosureDate.setValue(fm.getClosedDate());
 		this.sourcingOfcr.setValue(fm.getSourcingBranch());
 		this.letterType.setValue(gl.getLetterType());
+		fillComboBox(this.letterType, gl.getLetterType(), PennantStaticListUtil.getFinTypeLetterType(), "");
 		this.closureType.setValue(fm.getClosingStatus());
 		this.closureReason.setValue(fm.getClosingStatus());
 

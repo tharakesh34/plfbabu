@@ -29,6 +29,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -154,7 +155,16 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		gl.setNewRecord(true);
 		gl.setWorkflowId(getWorkFlowId());
 
-		doShowDialogPage(gl);
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("moduleCode", this.moduleCode);
+		arg.put("generateLetter", gl);
+		arg.put("generateLetterListCtrl", this);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/NOC/SelectGenerateLetter.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -173,6 +183,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		long id = (Long) this.lbGenerateLetter.getSelectedItem().getAttribute("Id");
 
 		GenerateLetter letters = this.generateLetterService.getLetter(id);
+		letters.setFinanceDetail(
+				generateLetterService.getFinanceDetailById(letters.getFinReference(), letters.getLetterType()));
 
 		if (letters == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -194,16 +206,16 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
-	private void doShowDialogPage(GenerateLetter csb) {
+	private void doShowDialogPage(GenerateLetter gl) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("moduleCode", this.moduleCode);
-		arg.put("generateLetter", csb);
+		arg.put("generateLetter", gl);
 		arg.put("generateLetterListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/NOC/SelectGenerateLetter.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/NOC/GenerateLetterDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -265,6 +277,12 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			lc = new Listcell(gl.getFinBranch());
 			lc.setParent(item);
 			lc = new Listcell(gl.getProduct());
+			lc.setParent(item);
+			lc = new Listcell(gl.getLetterType());
+			lc.setParent(item);
+			lc = new Listcell(gl.getRecordStatus());
+			lc.setParent(item);
+			lc = new Listcell(PennantJavaUtil.getLabel(gl.getRecordType()));
 			lc.setParent(item);
 
 			item.setAttribute("Id", gl.getId());

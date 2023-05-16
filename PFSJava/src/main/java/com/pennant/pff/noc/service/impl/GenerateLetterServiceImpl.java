@@ -113,7 +113,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		// TODO Auto-generated method stub
-		return null;
+		return auditDetail;
 	}
 
 	@Override

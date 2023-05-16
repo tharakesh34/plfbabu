@@ -2,7 +2,6 @@ package com.pennant.pff.noc.webui;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -148,20 +146,16 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		Date appDate = SysParamUtil.getAppDate();
-
 		final Map<String, Object> map = new HashMap<String, Object>();
 		GenerateLetter geneLtr = new GenerateLetter();
 
-		geneLtr.setFinanceDetail(
-				generateLetterService.getFinanceDetailById(this.finReference.getValue(), this.letterType.getValue()));
 		geneLtr.setFinReference(this.finReference.getValue());
-		geneLtr.setLetterType(this.letterType.getValue());
-		geneLtr.setCreatedOn(appDate);
-		geneLtr.setCreatedDate(appDate);
-		geneLtr.setGeneratedBy(getUserWorkspace().getUserId());
+		geneLtr.setLetterType(getComboboxValue(letterType));
 		geneLtr.setWorkflowId(this.generateLetter.getWorkflowId());
 		geneLtr.setNewRecord(this.generateLetter.isNewRecord());
+		geneLtr.setFinanceDetail(
+				generateLetterService.getFinanceDetailById(geneLtr.getFinReference(), geneLtr.getLetterType()));
+		geneLtr.setFinID(geneLtr.getFinanceDetail().getFinScheduleData().getFinID());
 
 		map.put("generateLetter", geneLtr);
 		map.put("moduleCode", this.moduleCode);

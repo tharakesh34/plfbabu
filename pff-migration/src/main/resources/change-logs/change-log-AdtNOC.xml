@@ -39,7 +39,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1561.1" author="Mounika.M">
+	<changeSet id="ST#1561.33" author="Mounika.M">
 		<createTable tableName="AdtLetter_Generate_Manual">
 			<column name="AuditID" type="bigint">
 				<constraints nullable="false" primaryKey="true" />
@@ -53,7 +53,7 @@
 			<column name="AuditImage" type="char(2)">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
-			<column name="ID" type="bigint" autoIncrement="true"></column>
+			<column name="Id" type="bigint" />
 			<column name="LetterType" type="varchar(8)">
 				<constraints nullable="false"/>
 			</column>

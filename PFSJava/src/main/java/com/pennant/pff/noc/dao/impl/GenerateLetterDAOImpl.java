@@ -36,10 +36,10 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		List<Object> value = new ArrayList<>();
 
 		StringBuilder sql = new StringBuilder("select");
-		sql.append(" Id, LetterType, Finreference, CustAcctHolderName");
-		sql.append(", CustCoreBank, FinBranch, Product, LetterType");
+		sql.append(" Id, FinID, LetterType, Finreference, CustAcctHolderName");
+		sql.append(", CustCoreBank, FinBranch, Product");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
-		sql.append(", LastMntBy, LastMntOn, Active, RecordStatus, RoleCode");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From (");
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
@@ -117,7 +117,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public List<GenerateLetter> getGenerateLetters(List<String> roleCodes) {
 		StringBuilder sql = new StringBuilder("select");
-		sql.append(" Id, FinID, LetterType, Finreference, CustAcctHolderName");
+		sql.append(" ID, FinID, LetterType, Finreference, CustAcctHolderName");
 		sql.append(", CustCoreBank, FinBranch, Product, LetterType");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
@@ -126,7 +126,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
-		sql.append(" Where not exists (Select 1 From Letter_Generate_Manual_Temp Where Id = gl.Id)) p");
+		sql.append(" Where not exists (Select 1 From Letter_Generate_Manual_Temp Where ID = gl.ID)) p");
 		sql.append(" Where NextRoleCode is null or NextRoleCode = ? or NextRoleCode in (");
 		sql.append(JdbcUtil.getInCondition(roleCodes));
 		sql.append(") order by Id");
@@ -165,7 +165,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		public GenerateLetter mapRow(ResultSet rs, int rowNum) throws SQLException {
 			GenerateLetter sb = new GenerateLetter();
 
-			sb.setId(rs.getLong("Id"));
+			sb.setId(rs.getLong("ID"));
 			sb.setFinID(rs.getLong("FinID"));
 			sb.setLetterType(rs.getString("LetterType"));
 			sb.setFinReference(rs.getString("Finreference"));
@@ -235,7 +235,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			return null;
 		}
 
-		String sql = "Select WaivedAmount,AllocationType From  ReceiptAllocationDetail Where ReceiptId = ? and AllocationType in (?, ?, ?, ?);";
+		String sql = "Select WaivedAmount,AllocationType From  ReceiptAllocationDetail Where ReceiptId = ? and AllocationType in (?, ?, ?, ?)";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -297,11 +297,11 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 		StringBuilder sql = new StringBuilder("Insert Into Letter_Generate_Manual");
 		sql.append(type.getSuffix());
-		sql.append("(Id, LetterType, FinID");
+		sql.append("(LetterType, FinID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -309,7 +309,6 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setLong(++index, gl.getId());
 				ps.setString(++index, gl.getLetterType());
 				ps.setLong(++index, gl.getFinID());
 				ps.setInt(++index, gl.getVersion());
@@ -336,10 +335,10 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	}
 
 	private void saveLetterGenerationDetails(GenerateLetter gl) {
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation");
+		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
 		sql.append("(FinID, RequestType, LetterType");
-		sql.append(", FeeTypeId, CreatedDate, CreatedOn, AdviseID");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", FeeTypeId, CreatedDate, CreatedOn, AdviseID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -351,8 +350,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				ps.setString(++index, gl.getRequestType());
 				ps.setString(++index, gl.getLetterType());
 				ps.setLong(++index, gl.getFeeId());
+				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
-				ps.setLong(++index, gl.getCreatedBy());
 				ps.setLong(++index, gl.getAdviseID());
 			});
 		} catch (DuplicateKeyException e) {

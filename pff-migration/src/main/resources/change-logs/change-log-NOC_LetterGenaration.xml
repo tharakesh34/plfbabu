@@ -287,7 +287,7 @@
 	
 	<changeSet id="ST#15956.23" author="Mounika.M">
 		<createTable tableName="LETTER_GENERATE_MANUAL">
-			<column name="ID" type="bigint" autoIncrement="true"></column>
+			<column name="Id" type="bigint" autoIncrement="true"></column>
 			<column name="LetterType" type="varchar(8)">
 				<constraints nullable="false"/>
 			</column>
@@ -321,7 +321,7 @@
 	
 	<changeSet id="ST#15956.25" author="Mounika.M">
 		<createTable tableName="LETTER_GENERATE_MANUAL_TEMP">
-			<column name="ID" type="bigint" autoIncrement="true"></column>
+			<column name="Id" type="bigint" autoIncrement="true"></column>
 			<column name="LetterType" type="varchar(8)">
 				<constraints nullable="false"/>
 			</column>

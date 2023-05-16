@@ -152,7 +152,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_LetterType')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="letterType" maxlength="50" width="200px" readonly="true" />
+												<combobox id="letterType" width="180px"  />
 											</hbox>
 											<label value="${c:l('label_GenerateLetterDialog_ClosureReason')}" />
 											<hbox>
