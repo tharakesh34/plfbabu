@@ -86,12 +86,10 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 
 	private transient boolean validationOn;
 
-	private boolean isEditable = false;
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
 	private CheckListDialogCtrl checkListDialogCtrl = null;
 	private CheckList checkList;
 	private boolean isNewRecord = false;
-	private boolean newRecord = false;
 	private List<CheckListDetail> chkListDetailList;
 
 	/**
@@ -154,12 +152,6 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 
 			if (isWorkFlowEnabled()) {
 				this.userAction = setListRecordStatus(this.userAction);
-			}
-			if (arguments.containsKey("isEditable")) {
-				isEditable = (boolean) arguments.get("isEditable");
-			}
-			if (arguments.containsKey("isNewRecord")) {
-				newRecord = (boolean) arguments.get("isNewRecord");
 			}
 			// READ OVERHANDED parameters !
 			// we get the checkListDetailListWindow controller. So we have
