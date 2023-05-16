@@ -7391,7 +7391,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 		FinanceMain aFinanceMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		if (FinServiceEvent.ORG.equals(moduleDefiner) && financeType.isFinIsDwPayRequired()) {
+		if (FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner()) && financeType.isFinIsDwPayRequired()) {
 
 			BigDecimal feeResult = financeDetailService.getDownPayRuleAmount(financeType, aFinanceMain);
 
@@ -18153,8 +18153,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				// Commitment Stop draw down when rate Out of rage:
 				BigDecimal effRate = finMain.getEffectiveRateOfReturn() == null ? BigDecimal.ZERO
 						: finMain.getEffectiveRateOfReturn();
-				if (BigDecimal.ZERO.compareTo(new BigDecimal(
-						PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
+				if (BigDecimal.ZERO
+						.compareTo(new BigDecimal(
+								PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
 						&& BigDecimal.ZERO.compareTo(new BigDecimal(PennantApplicationUtil
 								.formatRate(commitment.getCmtPftRateMax().doubleValue(), 9))) != 0) {
 
@@ -20487,8 +20488,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								if (remStps > 0) {
 									spd.setInstallments(remStps);
 									tenorSplitPerc = (new BigDecimal(spd.getInstallments())
-											.multiply(new BigDecimal(100))).divide(new BigDecimal(curGrcTerms), 2,
-													RoundingMode.HALF_DOWN);
+											.multiply(new BigDecimal(100)))
+											.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
 									spd.setTenorSplitPerc(tenorSplitPerc);
 									newSpdList.add(spd);
 									noOfGrcStps = noOfGrcStps + 1;
