@@ -638,7 +638,6 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		if (type.contains("View")) {
 			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
-			sql.append(", IncomeOrExpenseAcTypeDesc, WaiverOrRefundAcTypeDesc");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
@@ -687,8 +686,6 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				ft.setDueAcctSetCodeName(rs.getString("DueAcctSetCodeName"));
 				ft.setAcType(rs.getString("AcType"));
 				ft.setAcTypeDesc(rs.getString("AcTypeDesc"));
-				ft.setIncomeOrExpenseAcTypeDesc(rs.getString("IncomeOrExpenseAcTypeDesc"));
-				ft.setWaiverOrRefundAcTypeDesc(rs.getString("WaiverOrRefundAcTypeDesc"));
 			}
 
 			ft.setVersion(rs.getInt("Version"));
