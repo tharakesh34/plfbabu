@@ -329,7 +329,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	@Override
 	public List<Long> getFeeTypeIDs(List<String> feeTypeCodes) {
 		StringBuilder sql = new StringBuilder("Select FeeTypeID From FeeTypes");
-		sql.append(" Where FeeTypeID IN (");
+		sql.append(" Where FeeTypeCode IN (");
 		sql.append(JdbcUtil.getInCondition(feeTypeCodes));
 		sql.append(") and Active = ?");
 
