@@ -73,7 +73,6 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 	protected FinChangeCustomerService finChangeCustomerService;
 
 	private long coaplicantCustId = 0;
-	private String CustCategory = "";
 	private JointAccountDetail jointAccountDetail;
 
 	public ChangeCustomerDialogCtrl() {
@@ -294,7 +293,7 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 		private static final long serialVersionUID = 1L;
 
 		public ChangeCustomerListModelItemRenderer() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -304,7 +303,6 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 			radio.setValue(changeCustomer.getCustID());
 			if (coaplicantCustId != 0 && changeCustomer.getCustID() == coaplicantCustId) {
 				radio.setChecked(true);
-				CustCategory = changeCustomer.getCustomerDetails().getCustomer().getCustCtgCode();
 				jointAccountDetail = changeCustomer;
 			}
 			radio.addForward("onCheck", self, "onCheck_radioButtonGroupBtn");
@@ -341,27 +339,21 @@ public class ChangeCustomerDialogCtrl extends GFCBaseCtrl<FinChangeCustomer> {
 		logger.debug(Literal.ENTERING);
 
 		Radio checkBox = (Radio) event.getOrigin().getTarget();
-		boolean fraudCustSelected = false;
 
 		for (int i = 1; i < this.listBoxChangeCustomer.getChildren().size(); i++) {
 
 			Listitem item = (Listitem) this.listBoxChangeCustomer.getChildren().get(i);
 			Listcell lc = (Listcell) item.getChildren().get(0);
-			Listcell fraud = (Listcell) item.getChildren().get(item.getChildren().size() - 1);
 
 			if (lc.getChildren().size() == 0) {
 				continue;
 			}
 			Radio radio = (Radio) lc.getChildren().get(0);
-			if (radio.getUuid().trim().equals(checkBox.getUuid().trim()) && fraud.getChildren().size() > 0) {
-				fraudCustSelected = true;
-			}
 			if ((!(radio.getUuid().trim().equals(checkBox.getUuid().trim()))) && radio.isChecked()) {
 				radio.setChecked(false);
 			}
 		}
 		coaplicantCustId = checkBox.getValue();
-		CustCategory = (String) checkBox.getAttribute("CustCategory");
 		jointAccountDetail = (JointAccountDetail) checkBox.getAttribute("JointAcctDetail");
 
 		logger.debug(Literal.LEAVING);

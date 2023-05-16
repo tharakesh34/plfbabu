@@ -67,6 +67,12 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 
 		createReceiptUploadProcessRecord.validate(detail, header);
 		createReceiptUploadProcessRecord.validateAllocations(detail);
+
+		if (detail.getErrorCode() != null) {
+			setFailureStatus(detail);
+		} else {
+			setSuccesStatus(detail);
+		}
 	}
 
 	@Override
@@ -80,6 +86,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<CreateReceiptUpload> details = createReceiptUploadDAO.getDetails(header.getId());
+				header.setTotalRecords(details.size());
 				int sucessRecords = 0;
 				int failRecords = 0;
 

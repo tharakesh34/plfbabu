@@ -8425,8 +8425,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy, String type) {
-		List<ReturnDataSet> postings = postingsDAO.getPostingsByFinRefAndEvent(finReference, finEvent, showZeroBal,
-				postingGroupBy, type);
+		List<ReturnDataSet> postings = postingsDAO.getPostingsByEnquiry(finReference, finEvent, showZeroBal,
+				postingGroupBy);
 		List<VASRecording> vasReferences = vasRecordingDAO.getVASRecordingsByLinkRef(finReference, "");
 		if (CollectionUtils.isNotEmpty(vasReferences)) {
 			for (VASRecording vas : vasReferences) {

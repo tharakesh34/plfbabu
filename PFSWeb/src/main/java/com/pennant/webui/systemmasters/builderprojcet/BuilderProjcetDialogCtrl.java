@@ -1698,8 +1698,6 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = bankBranchID.getObject();
 
-		int accNoLength = 0;
-
 		if (dataObject == null || dataObject instanceof String) {
 			this.bankBranchID.setValue("");
 			this.bankName.setValue("");
