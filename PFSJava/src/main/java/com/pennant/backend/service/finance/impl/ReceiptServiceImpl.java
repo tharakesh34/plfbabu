@@ -4206,7 +4206,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			isAllocationFound = true;
 		}
 
-		if (AllocationType.AUTO.equals(allocationType)) {
+		if (AllocationType.AUTO.equals(allocationType) && !fsi.isClosureReceipt()) {
 			if (isAllocationFound) {
 				setError(schdData, "RU0028");
 				logger.info(Literal.LEAVING);

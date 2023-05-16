@@ -147,7 +147,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 				for (LoanClosureUpload lcu : details) {
 					lcu.setAppDate(appDate);
-					lcu.setAllocations(loanClosureUploadDAO.getAllocations(lcu.getId(), header.getId()));
 					doValidate(header, lcu);
 
 					header.getUploadDetails().add(lcu);
@@ -159,6 +158,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 					}
 
 					if (lcu.getProgress() == EodConstants.PROGRESS_SUCCESS) {
+						lcu.setAllocations(loanClosureUploadDAO.getAllocations(lcu.getId(), header.getId()));
 						createReceipt(lcu, header);
 					}
 					LoggedInUser userDetails = header.getUserDetails();
@@ -199,7 +199,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 		rud.setReference(lcu.getReference());
 		rud.setFinID(lcu.getReferenceID());
-		// rud.setAllocationType(lcu.getAllocationType());
 		rud.setValueDate(appDate);
 		rud.setRealizationDate(appDate);
 		rud.setReceivedDate(appDate);
@@ -217,7 +216,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 			UploadAlloctionDetail uad = new UploadAlloctionDetail();
 			uad.setRootId(String.valueOf(alloc.getFeeId()));
 			uad.setAllocationType(Allocation.getCode(getAllocationCode(alloc)));
-			uad.setReferenceCode(alloc.getCode());
+			uad.setReferenceCode(getAllocationCode(alloc));
 			uad.setWaivedAmount(alloc.getAmount());
 
 			list.add(uad);
@@ -229,6 +228,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
+		fsi.setClosureReceipt(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		LoggedInUser userDetails = lcu.getUserDetails();
 		fsi.setClosureType(lcu.getClosureType());
@@ -244,7 +244,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		fsi.setReceiptDetail(null);
 		fsi.setReceiptDetails(receiptService.prepareRCDForExcess(lcu.getExcessList(), rud));
 		fsi.getReceiptDetails().addAll(receiptService.prepareRCDForMA(lcu.getAdvises(), rud));
-
 		FinanceDetail fd = null;
 
 		TransactionStatus txStatus = getTransactionStatus();
