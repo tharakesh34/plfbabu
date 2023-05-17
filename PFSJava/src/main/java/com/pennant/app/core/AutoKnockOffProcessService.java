@@ -41,6 +41,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
@@ -51,6 +52,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -58,6 +60,7 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.AutoKnockOffData;
 import com.pennant.backend.model.finance.AutoKnockOffFeeMapping;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -70,6 +73,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.knockoff.KnockOffType;
@@ -95,6 +99,8 @@ public class AutoKnockOffProcessService {
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private ReceiptService receiptService;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	public void processAutoKnockOff(AutoKnockOffData knockOffData) {
 		String finreference = knockOffData.getFinReference();
@@ -106,12 +112,21 @@ public class AutoKnockOffProcessService {
 		BigDecimal availableAmount = knockOffData.getBalAmount();
 		BigDecimal emiAmount = BigDecimal.ZERO;
 
+		Date valueDt = knockOffData.getValueDate();
+
+		if ("E".equals(knockOffData.getPayableType())) {
+			FinExcessAmount fea = finExcessAmountDAO.getFinExcessAmountById(knockOffData.getPayableId(), "");
+			Date appDate = knockOffData.getEventProperties().getAppDate();
+			valueDt = receiptService.getExcessBasedValueDate(valueDt, knockOffData.getFinID(), appDate, fea,
+					FinServiceEvent.SCHDRPY);
+		}
+
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
 		rch.setFinID(knockOffData.getFinID());
 		rch.setReference(finreference);
-		rch.setReceiptDate(knockOffData.getValueDate());
-		rch.setValueDate(knockOffData.getValueDate());
+		rch.setReceiptDate(valueDt);
+		rch.setValueDate(valueDt);
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setKnockOffType(KnockOffType.AUTO.code());
@@ -126,7 +141,7 @@ public class AutoKnockOffProcessService {
 		rch.setActFinReceipt(true);
 		rch.setReceiptMode(getPaymentType(knockOffData.getPayableType()));
 		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rch.setRealizationDate(knockOffData.getValueDate());
+		rch.setRealizationDate(valueDt);
 		rch.setLogSchInPresentment(true);
 		rch.setPostBranch("EOD");
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -215,8 +230,8 @@ public class AutoKnockOffProcessService {
 		rcd.setAmount(receiptAmount);
 		rcd.setDueAmount(receiptAmount);
 		rcd.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rcd.setValueDate(knockOffData.getValueDate());
-		rcd.setReceivedDate(knockOffData.getValueDate());
+		rcd.setValueDate(valueDate);
+		rcd.setReceivedDate(valueDate);
 		rcd.setNoReserve(true);
 
 		receiptDetails.add(rcd);
@@ -469,4 +484,15 @@ public class AutoKnockOffProcessService {
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
+	@Autowired
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
 }

@@ -69,7 +69,6 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -311,8 +310,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
 	private BankDetailDAO bankDetailDAO;
 	private FinanceWorkFlowService financeWorkFlowService;
-	private FeeCalculator feeCalculator;
-
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
@@ -8845,6 +8842,43 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 	}
 
+	@Override
+	public Date getExcessBasedValueDate(Date receiptDt, long finID, Date appDate, FinExcessAmount fea, String receiptPurpose) {
+		if (fea != null && fea.getValueDate() != null) {
+			receiptDt = fea.getValueDate();
+
+			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
+
+			if (DateUtil.compare(receiptDt, schDate) < 0) {
+				receiptDt = schDate;
+			}
+		}
+
+		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
+			List<Date> dates = finServiceInstructionDAO.getListDates(finID, receiptDt);
+
+			if (CollectionUtils.isNotEmpty(dates)) {
+				dates.sort((d1, d2) -> d1.compareTo(d2));
+				receiptDt = dates.get(dates.size() - 1);
+			}
+
+			int appmonth = DateUtil.getMonth(appDate);
+			int receiptmonth = DateUtil.getMonth(receiptDt);
+
+			if (appmonth != receiptmonth) {
+				receiptDt = DateUtil.getMonthStart(appDate);
+			}
+		}
+
+		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
+
+		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
+			receiptDt = maxReceiptDt;
+		}
+
+		return receiptDt;
+	}
+
 	@Autowired
 	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
 		this.limitCheckDetails = limitCheckDetails;
@@ -9230,11 +9264,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	@Autowired
 	public void setPartPayAndEarlySettleValidator(PartPayAndEarlySettleValidator partPayAndEarlySettleValidator) {
 		this.partPayAndEarlySettleValidator = partPayAndEarlySettleValidator;
-	}
-
-	@Autowired
-	public void setFeeCalculator(FeeCalculator feeCalculator) {
-		this.feeCalculator = feeCalculator;
 	}
 
 	@Autowired

@@ -37,7 +37,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
-import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -180,7 +179,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private Label label_ReceiptPayment_ValueDate;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
 	/**
 	 * default constructor.<br>
@@ -1573,38 +1571,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		}
 
 		if (fea != null && fea.getValueDate() != null) {
-			receiptDt = fea.getValueDate();
 			isDisabled = true;
-
-			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, appDate);
-
-			if (DateUtil.compare(receiptDt, schDate) < 0) {
-				receiptDt = schDate;
-			}
 		}
 
-		if (getComboboxValue(receiptPurpose).equals(FinServiceEvent.EARLYRPY)) {
-			List<Date> dates = finServiceInstrutionDAO.getListDates(finID, receiptDt);
-
-			if (CollectionUtils.isNotEmpty(dates)) {
-				dates.sort((d1, d2) -> d1.compareTo(d2));
-				receiptDt = dates.get(dates.size() - 1);
-			}
-
-			int appmonth = DateUtil.getMonth(appDate);
-			int receiptmonth = DateUtil.getMonth(receiptDt);
-
-			if (appmonth != receiptmonth) {
-				receiptDt = DateUtil.getMonthStart(appDate);
-			}
-		}
-
-		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
-
-		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
-			receiptDt = maxReceiptDt;
-		}
-
+		receiptDt = receiptService.getExcessBasedValueDate(receiptDt, finID, appDate, fea, getComboboxValue(receiptPurpose));
 		this.receiptDate.setValue(receiptDt);
 		this.receiptDate.setDisabled(isDisabled);
 	}
@@ -1712,11 +1682,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	@Autowired
-	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
-		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }
