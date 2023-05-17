@@ -567,4 +567,8 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#226779.1" author="Gopal.p">
+		<modifyDataType tableName="AdtFinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)"/>
+	</changeSet>
+	
 </databaseChangeLog>

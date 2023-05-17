@@ -18255,7 +18255,7 @@
 	
 	<changeSet id="ST#1526.4" author="Sandeepkumar.M">
 		<addColumn tableName="LIEN_HEADER">
-			<column name="Reject_Reason" type="varchar2(256)" />
+			<column name="Reject_Reason" type="varchar(256)" />
 		</addColumn>
 	</changeSet>
 		<changeSet id="ST#1528.30_2" author="Sravani.S">
@@ -18438,4 +18438,12 @@
 			columnNames="id" />
 	</changeSet>
 	
+	<changeSet id="PSD#226779.1" author="Gopal.p">
+		<modifyDataType tableName="FinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)"/>
+	</changeSet>
+	
+	<changeSet id="PSD#226779.2" author="Gopal.p">
+		<modifyDataType tableName="FinReceiptHeader_Temp" columnName="KnockOffType" newDataType="varchar(2)"/>
+	</changeSet>
+		
 </databaseChangeLog> 

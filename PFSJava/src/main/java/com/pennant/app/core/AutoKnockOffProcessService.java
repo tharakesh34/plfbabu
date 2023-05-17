@@ -116,7 +116,7 @@ public class AutoKnockOffProcessService {
 		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		rch.setKnockOffType(KnockOffType.AUTO.code());
 		if (knockOffData.isCrossLoanAutoKnockOff()) {
-			rch.setKnockOffType(KnockOffType.CROSS_LOAN.code());
+			rch.setKnockOffType(KnockOffType.AUTO_CROSS_LOAN.code());
 		}
 		// header.setPayAgainstId(knockOffData.getPayableId());
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);

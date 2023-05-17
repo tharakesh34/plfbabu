@@ -3551,15 +3551,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.valueDate.setValue(rch.getValueDate());
 
 		if (row_knockOff_Type.isVisible()) {
-			if (KnockOffType.AUTO.code().equals(rch.getKnockOffType())) {
-				this.knockOffType.setValue("Auto");
-			} else if (KnockOffType.MANUAL.code().equals(rch.getKnockOffType())) {
-				this.knockOffType.setValue("Manual");
-			} else if (KnockOffType.CROSS_LOAN.code().equals(rch.getKnockOffType())) {
-				this.knockOffType.setValue("Cross Loan");
-			} else {
-				this.knockOffType.setValue("");
-			}
+			this.knockOffType.setValue(KnockOffType.getDesc(rch.getKnockOffType()));
 		}
 
 		// Separating Receipt Amounts based on user entry, if exists
@@ -5024,15 +5016,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (this.row_knockOff_Type.isVisible()) {
 			if (isKnockOff) {
-				if ("Manual".equals(this.knockOffType.getValue())) {
-					header.setKnockOffType(KnockOffType.MANUAL.code());
-				} else if ("Auto".equals(this.knockOffType.getValue())) {
-					header.setKnockOffType(KnockOffType.AUTO.code());
-				} else if ("Cross Loan".equals(this.knockOffType.getValue())) {
-					header.setKnockOffType(KnockOffType.CROSS_LOAN.code());
-				} else {
-					header.setKnockOffType("");
-				}
+				header.setKnockOffType(KnockOffType.getCode(this.knockOffType.getValue()));
 			}
 		}
 

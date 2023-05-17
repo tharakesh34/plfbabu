@@ -400,20 +400,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc = new Listcell(PennantAppUtil.formateDate(clk.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 
-			String knockoffType = clk.getKnockoffType();
-			if (KnockOffType.MANUAL.code().equals(knockoffType)) {
-				lc = new Listcell(KnockOffType.MANUAL.code());
-				lc.setParent(item);
-			} else if (KnockOffType.AUTO.code().equals(knockoffType)) {
-				lc = new Listcell(KnockOffType.AUTO.code());
-				lc.setParent(item);
-			} else if (KnockOffType.CROSS_LOAN.code().equals(knockoffType)) {
-				lc = new Listcell(KnockOffType.CROSS_LOAN.code());
-				lc.setParent(item);
-			} else {
-				lc = new Listcell("");
-				lc.setParent(item);
-			}
+			lc = new Listcell(KnockOffType.getDesc(clk.getKnockoffType()));
+			lc.setParent(item);
 
 			lc = new Listcell(clk.getReceiptMode());
 			lc.setParent(item);

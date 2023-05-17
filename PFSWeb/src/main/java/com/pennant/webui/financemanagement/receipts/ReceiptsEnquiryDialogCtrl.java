@@ -1210,15 +1210,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finDivision.setValue(rch.getFinDivision(), rch.getFinDivisionDesc());
 		this.valueDate.setValue(rch.getValueDate());
 		this.closureType.setValue(rch.getClosureType());
-		if (KnockOffType.AUTO.code().equals(rch.getKnockOffType())) {
-			this.knockOffType.setValue("Auto");
-		} else if (KnockOffType.MANUAL.code().equals(rch.getKnockOffType())) {
-			this.knockOffType.setValue("Manual");
-		} else if (KnockOffType.CROSS_LOAN.code().equals(rch.getKnockOffType())) {
-			this.knockOffType.setValue("Cross Loan");
-		} else {
-			this.knockOffType.setValue("");
-		}
+		this.knockOffType.setValue(KnockOffType.getDesc(rch.getKnockOffType()));
 
 		if (rch.getReasonCode() != null && rch.getReasonCode() != 0) {
 			setEarlySettlementReasonData(rch.getReasonCode());
