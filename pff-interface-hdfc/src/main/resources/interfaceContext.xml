@@ -39,7 +39,7 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
+	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 

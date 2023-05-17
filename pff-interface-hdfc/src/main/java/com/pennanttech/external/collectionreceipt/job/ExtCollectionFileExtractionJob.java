@@ -201,7 +201,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 
 							String qualifiedChk = collectionData.getRowNum() + "" + totalChk;
 
-							gTotalChk = Integer.parseInt(collectionData.getRowNum() + "" + totalChk);
+							gTotalChk = gTotalChk + Integer.parseInt(collectionData.getRowNum() + "" + totalChk);
 
 							if (!qualifiedChk.equals(collectionData.getChecksum())) {
 								dataValid = false;
@@ -263,8 +263,8 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 			return "";
 		}
 
-		InterfaceErrorCode interfaceErrorCode = getErrorFromList(InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(),
-				errorCode);
+		InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+				InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), errorCode);
 		return interfaceErrorCode.getErrorMessage();
 	}
 

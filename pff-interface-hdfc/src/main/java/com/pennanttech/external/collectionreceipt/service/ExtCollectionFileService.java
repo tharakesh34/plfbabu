@@ -28,7 +28,8 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	private static final String VALID_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
 
 	public void processCollectionResponseFileWriting(String fileName, Date appDate,
-			List<CollReceiptDetail> fileRecordsList, CollReceiptHeader errorReceiptHeader, FileInterfaceConfig respConfig) {
+			List<CollReceiptDetail> fileRecordsList, CollReceiptHeader errorReceiptHeader,
+			FileInterfaceConfig respConfig) {
 		logger.debug(Literal.ENTERING);
 
 		if (fileRecordsList == null || fileRecordsList.isEmpty()) {
@@ -75,10 +76,10 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 			ExtCollectionReceiptData collectionReceiptData = splitAndSetData(rejectDetail.getRecordData());
 
 			int agreementCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int grTotalCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int chqDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int receiptDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int chqTypeCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
+			int grTotalCHK = generateChecksum(String.valueOf(collectionReceiptData.getGrandTotal()));
+			int chqDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getChequeDate()));
+			int receiptDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getReceiptDate()));
+			int chqTypeCHK = generateChecksum(String.valueOf(collectionReceiptData.getReceiptType()));
 
 			int totalChk = agreementCHK + grTotalCHK + chqDateCHK + receiptDateCHK + chqTypeCHK;
 			String qualifiedChk = rejectRowNum + "" + totalChk;
@@ -114,10 +115,10 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 			ExtCollectionReceiptData collectionReceiptData = splitAndSetData(successDetail.getRecordData());
 
 			int agreementCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int grTotalCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int chqDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int receiptDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
-			int chqTypeCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
+			int grTotalCHK = generateChecksum(String.valueOf(collectionReceiptData.getGrandTotal()));
+			int chqDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getChequeDate()));
+			int receiptDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getReceiptDate()));
+			int chqTypeCHK = generateChecksum(String.valueOf(collectionReceiptData.getReceiptType()));
 
 			int totalChk = agreementCHK + grTotalCHK + chqDateCHK + receiptDateCHK + chqTypeCHK;
 			String qualifiedChk = successRowNum + "" + totalChk;
@@ -151,7 +152,8 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void uploadToClientLocation(Date appDate, FileInterfaceConfig respConfig, String fileName, String baseFilePath) {
+	private void uploadToClientLocation(Date appDate, FileInterfaceConfig respConfig, String fileName,
+			String baseFilePath) {
 		FtpClient ftpClient;
 		if (respConfig == null) {
 			logger.debug("EXT_COLLECTION: CONFIG_COLLECTION_RESP Configuration not found, so returning.");
@@ -476,10 +478,10 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 
 		int agreementCHK = generateChecksum(String.valueOf(detail.getAgreementNumber()));
-		int grTotalCHK = generateChecksum(String.valueOf(detail.getAgreementNumber()));
-		int chqDateCHK = generateChecksum(String.valueOf(detail.getAgreementNumber()));
-		int receiptDateCHK = generateChecksum(String.valueOf(detail.getAgreementNumber()));
-		int chqTypeCHK = generateChecksum(String.valueOf(detail.getAgreementNumber()));
+		int grTotalCHK = generateChecksum(String.valueOf(detail.getGrandTotal()));
+		int chqDateCHK = generateChecksum(String.valueOf(detail.getChequeDate()));
+		int receiptDateCHK = generateChecksum(String.valueOf(detail.getReceiptDate()));
+		int chqTypeCHK = generateChecksum(String.valueOf(detail.getReceiptType()));
 
 		int totalChk = agreementCHK + grTotalCHK + chqDateCHK + receiptDateCHK + chqTypeCHK;
 		String qualifiedChk = rejectRowNum + "" + totalChk;

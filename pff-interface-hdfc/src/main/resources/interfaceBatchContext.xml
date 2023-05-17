@@ -13,7 +13,7 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
         
        <import resource="extensionContext.xml" />
-	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
+	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">

@@ -52,6 +52,10 @@ public interface InterfaceConstants {
 	String CONFIG_FINCONGL = "FINCONGL";
 	String CONFIG_COLLECTION_REQ_CONF = "COLLECTION_RECEIPT_REQ";
 	String CONFIG_COLLECTION_RESP_CONF = "COLLECTION_RECEIPT_RESP";
+	String CONFIG_GST_REQ = "GST_REQ";
+	String CONFIG_GST_REQ_DONE = "GST_REQ_DONE";
+	String CONFIG_GST_RESP = "GST_RESP";
+	String CONFIG_GST_RESP_DONE = "GST_RESP_DONE";
 
 	String CONFIG_BASEL_ONE = "BASEL1";
 	String CONFIG_BASEL_TWO = "BASEL2";
@@ -80,6 +84,7 @@ public interface InterfaceConstants {
 	String SEQ_SILIEN = "SEQ_SILIEN";
 	String SEQ_FINCON_GL = "SEQ_FINCON_GL";
 	String SEQ_COLLECTION_RECEIPT = "SEQ_COLLECTION_RECEIPT";
+	String SEQ_GST_INTF = "SEQ_GST_INTF";
 
 	int ccyFromat = 2;
 	String fileSeperator = "~";
