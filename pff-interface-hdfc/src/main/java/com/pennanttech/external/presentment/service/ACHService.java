@@ -11,10 +11,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennanttech.external.config.dao.ExtGenericDao;
 import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.external.util.InterfaceErrorCodeUtil;

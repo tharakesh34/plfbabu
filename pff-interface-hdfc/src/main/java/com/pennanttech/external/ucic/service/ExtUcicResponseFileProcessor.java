@@ -16,13 +16,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennanttech.external.config.ApplicationContextProvider;
+import com.pennanttech.external.config.dao.ExtGenericDao;
 import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicFile;
+import com.pennanttech.external.util.ApplicationContextProvider;
 import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;

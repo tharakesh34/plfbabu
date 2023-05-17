@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.ExternalPresentmentHook;
+import com.pennanttech.external.config.dao.ExtGenericDao;
 import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.external.presentment.service.ACHService;

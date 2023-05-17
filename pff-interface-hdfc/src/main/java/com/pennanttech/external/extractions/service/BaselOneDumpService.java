@@ -6,7 +6,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennanttech.external.dao.ExtStagingDao;
+import com.pennanttech.external.config.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.BaselOne;
 
 public class BaselOneDumpService {

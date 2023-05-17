@@ -1,4 +1,4 @@
-package com.pennanttech.external.dao.impl;
+package com.pennanttech.external.config.dao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.config.model.InterfaceErrorCode;
-import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 

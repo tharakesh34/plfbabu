@@ -1,4 +1,4 @@
-package com.pennanttech.external.config;
+package com.pennanttech.external.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

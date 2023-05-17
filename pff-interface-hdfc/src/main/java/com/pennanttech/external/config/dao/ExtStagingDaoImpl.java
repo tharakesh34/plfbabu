@@ -1,4 +1,4 @@
-package com.pennanttech.external.dao.impl;
+package com.pennanttech.external.config.dao;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennanttech.external.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.AlmExtract;
 import com.pennanttech.external.extractions.model.BaselOne;
 import com.pennanttech.external.extractions.model.BaselTwoExtract;

@@ -1,4 +1,4 @@
-package com.pennanttech.external.dao;
+package com.pennanttech.external.config.dao;
 
 import java.util.List;
 
