@@ -1563,8 +1563,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
-				if (!finFeeDetail.isRcdVisible() || (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
-						&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
+				if (!finFeeDetail.isRcdVisible()
+						|| (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
+								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))
+						|| finFeeDetail.isAlwPreIncomization()) {
 					continue;
 				}
 
@@ -2687,6 +2689,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				finFeeDetail.setValueDate(fm.getFinStartDate());
 			} else {
 				finFeeDetail.setValueDate(appDate);
+			}
+
+			for (FinTypeFees fee : financeDetail.getFinTypeFeesList()) {
+				if (fee.getFeeTypeCode().equals(finFeeDetail.getFeeTypeCode())) {
+					finFeeDetail.setAlwPreIncomization(fee.isAlwPreIncomization());
+				}
 			}
 		}
 
