@@ -145,6 +145,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 
 		if (valueDate.compareTo(appdate) > 0) {
 			setError(detail, MiscellaneousPostingUploadError.ML07);
+			return;
 		}
 
 	}
@@ -445,10 +446,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 		if (fm == null) {
 			setError(detail, MiscellaneousPostingUploadError.MP02);
 			return;
-		}
-
-		if (!fm.isFinIsActive()) {
-			setError(detail, MiscellaneousPostingUploadError.MP03);
 		}
 	}
 
