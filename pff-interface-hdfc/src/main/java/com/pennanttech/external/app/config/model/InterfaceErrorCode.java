@@ -1,4 +1,4 @@
-package com.pennanttech.external.config.model;
+package com.pennanttech.external.app.config.model;
 
 public class InterfaceErrorCode {
 

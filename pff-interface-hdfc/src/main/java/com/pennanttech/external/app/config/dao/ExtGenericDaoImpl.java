@@ -1,4 +1,4 @@
-package com.pennanttech.external.config.dao;
+package com.pennanttech.external.app.config.dao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennanttech.external.config.model.FileInterfaceConfig;
-import com.pennanttech.external.config.model.InterfaceErrorCode;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 

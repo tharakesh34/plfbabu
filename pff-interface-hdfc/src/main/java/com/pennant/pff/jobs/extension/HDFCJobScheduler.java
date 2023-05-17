@@ -1,4 +1,4 @@
-package com.pennanttech.pff.scheduler.jobs;
+package com.pennant.pff.jobs.extension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import com.pennanttech.external.silien.job.LienFileWritingJob;
 import com.pennanttech.external.ucic.service.ExtUcicResponseJob;
 import com.pennanttech.external.ucic.service.ExtUcicWeekFileJob;
 import com.pennanttech.pennapps.core.job.scheduler.JobData;
+import com.pennanttech.pff.scheduler.jobs.JobSchedulerExtension;
 
 public class HDFCJobScheduler implements JobSchedulerExtension {
 

@@ -1,9 +1,9 @@
-package com.pennanttech.external.config.dao;
+package com.pennanttech.external.app.config.dao;
 
 import java.util.List;
 
-import com.pennanttech.external.config.model.FileInterfaceConfig;
-import com.pennanttech.external.config.model.InterfaceErrorCode;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 
 public interface ExtGenericDao {
 

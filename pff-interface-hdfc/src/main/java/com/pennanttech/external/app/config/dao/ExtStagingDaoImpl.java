@@ -1,4 +1,4 @@
-package com.pennanttech.external.config.dao;
+package com.pennanttech.external.app.config.dao;
 
 import java.sql.Date;
 import java.sql.Timestamp;

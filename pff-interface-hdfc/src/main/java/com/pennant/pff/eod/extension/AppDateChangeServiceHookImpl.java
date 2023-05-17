@@ -2,7 +2,7 @@ package com.pennant.pff.eod.extension;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennanttech.external.config.dao.ExtGenericDao;
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
 
 public class AppDateChangeServiceHookImpl implements AppDateChangeServiceHook {
 

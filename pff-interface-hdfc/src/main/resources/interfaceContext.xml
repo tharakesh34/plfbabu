@@ -115,9 +115,9 @@
 
 	<!-- <bean id="siHoldFileService" class="com.pennanttech.external.sihold.service.SIHoldFileService"> <property name="externalHoldMarkingDAO" 
 		ref="externalHoldMarkingDAO" /> <property name="externalPresentmentDAO" ref="externalPresentmentDAO" /> </bean> -->
-	<bean id="applicationContextProvider" class="com.pennanttech.external.config.ApplicationContextProvider" />
+	<bean id="applicationContextProvider" class="com.pennanttech.external.app.config.ApplicationContextProvider" />
 
-	<bean id="jobSchedulerExtension" class="com.pennanttech.pff.scheduler.jobs.HDFCJobScheduler" />
+	<bean id="jobSchedulerExtension" class="com.pennant.pff.jobs.extension.HDFCJobScheduler" />
 	<bean id="extMandateExtension" class="com.pennanttech.external.mandate.ExtMandateHandler" />
 
 	<bean id="ucicWeeklyWritingService" class="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">

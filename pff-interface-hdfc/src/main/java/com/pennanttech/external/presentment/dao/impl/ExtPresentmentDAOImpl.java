@@ -23,7 +23,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.util.RepayConstants;
-import com.pennanttech.external.constants.InterfaceConstants;
+import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtBounceReason;
 import com.pennanttech.external.presentment.model.ExtPresentment;

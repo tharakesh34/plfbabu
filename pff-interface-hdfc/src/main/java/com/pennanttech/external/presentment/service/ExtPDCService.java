@@ -12,11 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.config.model.FileInterfaceConfig;
-import com.pennanttech.external.constants.InterfaceConstants;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
-import com.pennanttech.external.util.TextFileUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 

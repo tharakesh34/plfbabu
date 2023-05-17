@@ -1,9 +1,9 @@
-package com.pennanttech.external.util;
+package com.pennanttech.external.app.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pennanttech.external.config.model.InterfaceErrorCode;
+import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 
 public class InterfaceErrorCodeUtil {
 

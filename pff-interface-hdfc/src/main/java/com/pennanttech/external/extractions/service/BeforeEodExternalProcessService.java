@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.BeforeEodExternalProcessHook;
-import com.pennanttech.external.config.dao.ExtStagingDao;
+import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class BeforeEodExternalProcessService implements BeforeEodExternalProcessHook {

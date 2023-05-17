@@ -6,7 +6,7 @@ import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennanttech.external.config.dao.ExtStagingDao;
+import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.BaselTwoExtract;
 
 public class BaselTwoDumpService {
