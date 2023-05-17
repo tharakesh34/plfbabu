@@ -239,7 +239,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 */
 	public void deleteByCustomer(long custID, String type) {
 		logger.debug("Entering");
-		int recordCount = 0;
+
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
 		customerBankInfo.setCustID(custID);
 		StringBuilder deleteSql = new StringBuilder();
@@ -251,7 +251,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

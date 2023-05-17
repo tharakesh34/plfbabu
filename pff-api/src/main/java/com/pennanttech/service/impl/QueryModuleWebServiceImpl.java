@@ -40,7 +40,6 @@ public class QueryModuleWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.ENTERING);
 
 		QueryDetail qryDetail = null;
-		WSReturnStatus returnStatus = null;
 
 		// bean validations
 		validationUtility.validate(queryDetail, QueryDetailGroup.class);
@@ -49,7 +48,6 @@ public class QueryModuleWebServiceImpl extends ExtendedTestClass
 		APIErrorHandlerService.logReference(queryDetail.getFinReference());
 
 		if (!StringUtils.equals(queryDetail.getStatus(), "Resolve")) {
-			returnStatus = new WSReturnStatus();
 			String[] paramValue = new String[2];
 			paramValue[0] = "Status: " + queryDetail.getStatus();
 			paramValue[1] = "Update";
@@ -58,7 +56,6 @@ public class QueryModuleWebServiceImpl extends ExtendedTestClass
 		qryDetail = queryDetailService.getQueryDetail(queryDetail.getId());
 
 		if (qryDetail == null) {
-			returnStatus = new WSReturnStatus();
 			String[] paramValue = new String[1];
 			paramValue[0] = "Id:" + queryDetail.getId();
 			return APIErrorHandlerService.getFailedStatus("90266", paramValue);
@@ -67,7 +64,6 @@ public class QueryModuleWebServiceImpl extends ExtendedTestClass
 
 		// status of the record validation
 		if (!StringUtils.equals(qryDetail.getStatus(), "Open")) {
-			returnStatus = new WSReturnStatus();
 			String[] paramValue = new String[2];
 			paramValue[0] = "Update";
 			paramValue[1] = qryDetail.getStatus() + " status record";
@@ -80,7 +76,6 @@ public class QueryModuleWebServiceImpl extends ExtendedTestClass
 					.getSecurityUserByLogin(qryDetail.getUsrLogin().toUpperCase());
 
 			if (securityUser == null) {
-				returnStatus = new WSReturnStatus();
 				String[] paramValue = new String[2];
 				paramValue[0] = "usrLogin";
 				paramValue[1] = queryDetail.getUsrLogin();

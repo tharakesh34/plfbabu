@@ -195,7 +195,7 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		paramSource.addValue("usrId", usrID);
 
 		try {
-			int recordcount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (Exception e) {
 			throw new DependencyFoundException(e);
 		}
@@ -217,7 +217,7 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		paramSource.addValue("id", ID);
 
 		try {
-			int recordcount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (Exception e) {
 			throw new DependencyFoundException(e);
 		}
