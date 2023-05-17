@@ -18445,5 +18445,13 @@
 	<changeSet id="PSD#226779.2" author="Gopal.p">
 		<modifyDataType tableName="FinReceiptHeader_Temp" columnName="KnockOffType" newDataType="varchar(2)"/>
 	</changeSet>
-		
+	
+	<changeSet id="PSD#225911" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE RMTFINANCETYPES SET FINRVWFRQ = '#' WHERE FINRVWFRQ IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

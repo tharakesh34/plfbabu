@@ -3250,7 +3250,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					this.finRvwFrq.setValue("M0030");
 				}
 			}
-			aFinanceType.setFinRvwFrq(this.finRvwFrq.getValue() == null ? "" : this.finRvwFrq.getValue());
+			aFinanceType.setFinRvwFrq(this.finRvwFrq.getValue() == null ? PennantConstants.List_Select : this.finRvwFrq.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -3473,7 +3473,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (finIsRvwAlw.isChecked()) {
 				if (this.finRvwFrq.isValidComboValue()) {
-					aFinanceType.setFinRvwFrq(this.finRvwFrq.getValue() == null ? "" : this.finRvwFrq.getValue());
+					aFinanceType.setFinRvwFrq(this.finRvwFrq.getValue() == null ? PennantConstants.List_Select : this.finRvwFrq.getValue());
 				}
 			}
 		} catch (WrongValueException we) {
@@ -5545,7 +5545,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIsRvwAlw.setChecked(false);
 		this.rateChgAnyDay.setChecked(false);
 		this.finRepayPftOnFrq.setChecked(false);
-		this.finRvwFrq.setValue("");
+		this.finRvwFrq.setValue(PennantConstants.List_Select);
 		this.financeGrcBaseRate.getBaseComp().setValue("", "");
 		this.financeGrcBaseRate.getSpecialComp().setValue("", "");
 		this.finGrcIntRate.setValue("");
@@ -7001,7 +7001,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		} else {
 			if (checkAction) {
-				this.finRvwFrq.setValue("");
+				this.finRvwFrq.setValue(PennantConstants.List_Select);
 				this.cbfinRvwRateApplFor.setSelectedIndex(0);
 				this.cbfinSchCalCodeOnRvw.setSelectedIndex(0);
 				this.rateChgAnyDay.setChecked(false);
