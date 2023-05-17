@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -26,6 +28,9 @@ public class ManualKnockOffUpload extends UploadDetails {
 	private Long receiptID;
 	private Date appDate;
 	private List<ManualAdvise> advises = new ArrayList<>();
+	private BigDecimal balanceAmount = BigDecimal.ZERO;
+	private FinanceMain financeMain;
+	private FinanceType finType;
 
 	public ManualKnockOffUpload() {
 		super();
@@ -133,6 +138,30 @@ public class ManualKnockOffUpload extends UploadDetails {
 
 	public void setAdvises(List<ManualAdvise> advises) {
 		this.advises = advises;
+	}
+
+	public BigDecimal getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(BigDecimal balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
+	}
+
+	public FinanceType getFinType() {
+		return finType;
+	}
+
+	public void setFinType(FinanceType finType) {
+		this.finType = finType;
 	}
 
 }

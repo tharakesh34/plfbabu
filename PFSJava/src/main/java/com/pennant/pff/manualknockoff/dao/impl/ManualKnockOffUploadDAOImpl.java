@@ -73,6 +73,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 			fc.setId(rs.getLong("UploadId"));
 			fc.setCode(rs.getString("Code"));
 			fc.setAmount(rs.getBigDecimal("Amount"));
+			fc.setBalanceAmount(rs.getBigDecimal("Amount"));
 
 			return fc;
 		});
@@ -147,7 +148,7 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 	@Override
 	public void update(List<ManualKnockOffUpload> details) {
 		StringBuilder sql = new StringBuilder("Update MANUAL_KNOCKOFF_UPLOAD set");
-		sql.append(" FinID = ?, ReceiptID = ?, Progress = ?");
+		sql.append(" FinID = ?, Progress = ?");
 		sql.append(", Status = ?, ErrorCode = ?, ErrorDesc = ?");
 		sql.append(" Where ID = ?");
 
@@ -161,7 +162,6 @@ public class ManualKnockOffUploadDAOImpl extends SequenceDao<ManualKnockOffUploa
 				ManualKnockOffUpload detail = details.get(i);
 
 				ps.setObject(++index, detail.getReferenceID());
-				ps.setObject(++index, detail.getReceiptID());
 				ps.setInt(++index, detail.getProgress());
 				ps.setString(++index, (detail.getProgress() == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
 				ps.setString(++index, detail.getErrorCode());

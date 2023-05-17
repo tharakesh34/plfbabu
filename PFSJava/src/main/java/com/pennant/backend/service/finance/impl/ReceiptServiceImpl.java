@@ -7472,7 +7472,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		valueParm[4] = String.valueOf(receiptIdList.get(0));
 
 		List<ErrorDetail> errors = new ArrayList<>();
-		errors.add(new ErrorDetail("21005", message.toString(), valueParm));
+		// errors.add(new ErrorDetail("21005", message.toString(), valueParm));
 
 		return errors;
 	}
@@ -8843,7 +8843,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	}
 
 	@Override
-	public Date getExcessBasedValueDate(Date receiptDt, long finID, Date appDate, FinExcessAmount fea, String receiptPurpose) {
+	public Date getExcessBasedValueDate(Date receiptDt, long finID, Date appDate, FinExcessAmount fea,
+			String receiptPurpose) {
 		if (fea != null && fea.getValueDate() != null) {
 			receiptDt = fea.getValueDate();
 

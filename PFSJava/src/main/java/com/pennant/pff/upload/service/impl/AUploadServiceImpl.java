@@ -37,6 +37,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadStatus;
 
@@ -407,6 +408,18 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 		remarks.append(" Total Records : ").append(header.getTotalRecords());
 		remarks.append(" Success Records : ").append(sucessRecords);
 		remarks.append(" Failed Records : ").append(failRecords);
+	}
+
+	protected void prepareUserDetails(FileUploadHeader header, UploadDetails detail) {
+		LoggedInUser userDetails = detail.getUserDetails();
+
+		if (userDetails == null) {
+			userDetails = new LoggedInUser();
+			userDetails.setLoginUsrID(header.getApprovedBy());
+			userDetails.setUserName(header.getApprovedByName());
+		}
+
+		detail.setUserDetails(userDetails);
 	}
 
 	private WorkFlowDetails getWorkflow(String moduleCode) {
