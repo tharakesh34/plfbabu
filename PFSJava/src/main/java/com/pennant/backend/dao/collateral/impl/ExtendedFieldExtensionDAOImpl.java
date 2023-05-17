@@ -82,14 +82,12 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(extendedFieldExtension);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
 	}
 
 	@Override

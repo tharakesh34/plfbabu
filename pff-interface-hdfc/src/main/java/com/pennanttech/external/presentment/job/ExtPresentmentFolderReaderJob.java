@@ -419,7 +419,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			String secretKey) {
 		Session session = null;
 		Channel channel = null;
-		ChannelSftp channelSftp = null;
 		JSch jsch = new JSch();
 		try {
 			session = jsch.getSession(accessKey, hostName, port);
@@ -433,7 +432,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		} catch (JSchException e1) {
 			logger.info(Literal.EXCEPTION, e1);
 		}
-		channelSftp = (ChannelSftp) channel;
+
 		LsEntry entry = null;
 		List<String> fileName = new ArrayList<String>();
 		Vector filelist = null;
