@@ -244,7 +244,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			return fwh;
 		}
 
-		String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(detail.getReferenceID());
+		String rcdMaintainSts = detail.getFinanceMain().getRcdMaintainSts();
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			setFailureStatus(detail, "FWU_999", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return fwh;
