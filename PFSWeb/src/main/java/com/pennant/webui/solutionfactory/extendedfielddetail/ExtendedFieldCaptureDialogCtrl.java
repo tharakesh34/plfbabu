@@ -38,7 +38,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
-import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -73,15 +72,11 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 	private ExtendedFieldsGenerator generator;
 	private List<ExtendedFieldRender> extendedList = null;
 	private int ccyFormat = 0;
-	private long queryId = 0;
-	private String querySubCode = "";
-	private String queryCode = "";
 	private boolean newRecord = false;
 	private boolean isReadOnly = false;
 	private boolean newExtendedField = false;
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
-	private DedupParmService dedupParmService;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private Combobox loanSerEvent;
 
@@ -135,15 +130,6 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 		}
 		if (arguments.containsKey("isReadOnly")) {
 			isReadOnly = (Boolean) arguments.get("isReadOnly");
-		}
-		if (arguments.containsKey("queryId")) {
-			queryId = (long) arguments.get("queryId");
-		}
-		if (arguments.containsKey("querySubCode")) {
-			querySubCode = (String) arguments.get("querySubCode");
-		}
-		if (arguments.containsKey("queryCode")) {
-			queryCode = (String) arguments.get("queryCode");
 		}
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
@@ -771,10 +757,6 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 
 	public void setNewExtendedField(boolean newExtendedField) {
 		this.newExtendedField = newExtendedField;
-	}
-
-	public void setDedupParmService(DedupParmService dedupParmService) {
-		this.dedupParmService = dedupParmService;
 	}
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {

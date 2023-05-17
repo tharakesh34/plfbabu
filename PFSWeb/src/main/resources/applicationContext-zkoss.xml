@@ -3656,7 +3656,6 @@
 	<bean id="extendedFieldCaptureDialogCtrl" scope="prototype"
 		class="com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldCaptureDialogCtrl">
 		<property name="scriptValidationService" ref="scriptValidationService" />
-		<property name="dedupParmService" ref="dedupParmService" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 

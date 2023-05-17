@@ -160,7 +160,6 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private RelationshipOfficerService relationshipOfficerService;
 	private BranchService branchService;
 	private CustomerTypeService customerTypeService;
-	private com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService;
 
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
@@ -1262,11 +1261,6 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
-	}
-
-	public void setCustomerInterfaceService(
-			com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
-		this.customerInterfaceService = customerInterfaceService;
 	}
 
 	public void setBranchService(BranchService branchService) {
