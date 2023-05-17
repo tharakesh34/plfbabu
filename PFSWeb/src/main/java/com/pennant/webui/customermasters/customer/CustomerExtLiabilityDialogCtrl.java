@@ -159,7 +159,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private String userRole = "";
 	private int finFormatter;
 	private boolean isFinanceProcess = false;
-	private boolean workflow = false;
 	Date appDate = SysParamUtil.getAppDate();
 	Date appStartDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 	private String inputSource = "customer";
@@ -269,10 +268,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			}
 			if (arguments.containsKey("financialSummaryDialogCtrl")) {
 				setNewCustomer(true);
-			}
-
-			if (getCustomerDialogCtrl() != null) {
-				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
 
 			if (arguments.containsKey("samplingDialogCtrl")) {
@@ -1726,7 +1721,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	public void onFulfill$bankName(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = bankName.getObject();
-		int accNoLength = 0;
+
 		if (dataObject == null || dataObject instanceof String) {
 			this.bankName.setValue("");
 			this.bankName.setDescription("");

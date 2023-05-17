@@ -111,7 +111,6 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	private List<CovenantDocument> covenantDocuments;
 
 	private String frequncy;
-	private Date loanStartDate;
 	private Date loanMaturityDate;
 	private DMSService dMSService;
 	protected Date receivableDate;
@@ -166,10 +165,6 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 			if (arguments.containsKey("frequency")) {
 				frequncy = arguments.get("frequency").toString();
-			}
-
-			if (arguments.containsKey("loanStartDate")) {
-				loanStartDate = (Date) arguments.get("loanStartDate");
 			}
 
 			if (arguments.containsKey("loanMaturityDate")) {

@@ -148,7 +148,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	protected Radio unConsolidated;
 	public List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>(); // autowired
 	protected Textbox auditedYear; // autowired
-	private String errorMsg = null;
 	private ExcelFileImport fileImport = null;
 	private Media media;
 	protected Textbox txtFileName;
@@ -526,7 +525,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
 		doWriteComponentsToBean(aCreditReviewDetails);
 		this.fileImport = null;
-		this.errorMsg = null;
 		media = event.getMedia();
 
 		if (!MediaUtil.isExcel(media)) {
@@ -544,16 +542,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 			finCreditReviewDetailsList = getCreditApplicationReviewService()
 					.getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_View");
-			/*
-			 * if (finCreditReviewDetailsList.size() >= 3) { String errorMsg =
-			 * "3 Years Credit Review For The Customer with CIF Number: " + customer.getCustCIF() +
-			 * " is already in process please process it"; MessageUtil.showError(errorMsg);
-			 * this.documentName.setValue(""); return; }
-			 */
 
 			setListDetails();
 		} catch (Exception e) {
-			this.errorMsg = e.getMessage();
 			MessageUtil.showError(e);
 		}
 
@@ -951,20 +942,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					}
 
 					for (Object[] object : revData.getValue()) {
-						String dbDesc = null;
 						if (object[2] == null || object[0] == null) {
 							break;
 						}
 
-						if (object[2] != null) {
-							dbDesc = object[2].toString();
-
-						}
-						// validation for description
-						/*
-						 * if (!(desc.containsKey(dbDesc))) { MessageUtil.showMessage(dbDesc + "Invalid Description");
-						 * data.clear(); documentName.setValue(""); return; }
-						 */
 						// validation for ID
 						if (!seqId.containsKey(object[0].toString())) {
 							MessageUtil.showError(object[0].toString() + "Invalid sequence Id");

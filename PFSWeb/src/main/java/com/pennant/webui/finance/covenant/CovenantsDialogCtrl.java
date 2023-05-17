@@ -91,7 +91,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinCovenantMaintanceDialogCtrl;
-import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -156,7 +155,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 	private Covenant covenant;
 	private transient boolean newFinance;
-	private FinanceMainBaseCtrl financeMainDialogCtrl;
 	private boolean newRecord;
 	private boolean newCustomer;
 	private List<Covenant> covenants;
@@ -229,7 +227,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			setCovenantsListCtrl((CovenantsListCtrl) arguments.get("covenantsListCtrl"));
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
 				setNewCustomer(true);
 				setNewFinance(true);
 				this.covenant.setWorkflowId(0);
