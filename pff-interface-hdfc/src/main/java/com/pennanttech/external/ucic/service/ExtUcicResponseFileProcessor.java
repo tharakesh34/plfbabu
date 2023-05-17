@@ -16,12 +16,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
-import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.config.model.InterfaceErrorCode;
+import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicFile;
 import com.pennanttech.pennapps.core.App;
@@ -37,7 +37,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 	private ApplicationContext applicationContext;
 	private ExtUcicDao extUcicDao;
 	private DataSource dataSource;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	public void readFileAndExtracData() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -46,9 +46,9 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 		dataSource = applicationContext.getBean("dataSource", DataSource.class);
 
 		// Get main configuration for External Interfaces
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 		// Get Response file and complete file configuration
-		ExternalConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+		FileInterfaceConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
 		if (ucicDBServerConfig == null) {
 			logger.debug("EXT_UCIC: DB Server CONFIG_PLF_DB_SERVER configuration not found . So returning.");
@@ -123,7 +123,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 
 					// Add Failed file in to table with error code and error message
 					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F500);
+							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F500);
 
 					// mark file extraction and processing status as completed
 					extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), FAILED,
@@ -143,8 +143,8 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

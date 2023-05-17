@@ -75,7 +75,6 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	private transient SecurityGroupRightsService securityGroupRightsService;
 	private List<SecurityRight> assignedRights = new ArrayList<SecurityRight>();
 	private List<SecurityRight> unAssignedRights = new ArrayList<SecurityRight>();
-	private List<SecurityRight> tempUnAssignedRights = new ArrayList<SecurityRight>();
 	private Map<Long, SecurityRight> newAssignedMap = new HashMap<Long, SecurityRight>();
 	private Map<Long, SecurityRight> oldAssignedMap = new HashMap<Long, SecurityRight>();
 	private Map<Long, SecurityGroupRights> selectedMap;
@@ -130,7 +129,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 			assignedRights = getSecurityGroupRightsService().getRightsByGroupId(getSecurityGroup().getGrpID(), true);
 			/* get all unassigned rights */
 			unAssignedRights = getSecurityGroupRightsService().getRightsByGroupId(getSecurityGroup().getGrpID(), false);
-			tempUnAssignedRights = unAssignedRights;
+
 			doShowDialog();
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {

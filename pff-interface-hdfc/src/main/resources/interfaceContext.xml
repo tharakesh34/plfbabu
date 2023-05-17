@@ -28,40 +28,48 @@
 		</constructor-arg>
 	</bean>
 
+
+
 	<bean id="otpService" class="com.pennapps.security.core.otp.impl.OTPServiceImpl">
 		<property name="smsGateway" ref="smsGateway" />
 		<property name="otpEmailEngine" ref="otpEmailEngine" />
 	</bean>
 	<!-- Below code is for HDFC External Presentment SI, SI INternal and ACH -->
 
-	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.impl.ExtPresentmentDAOImpl">
+	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
+	<bean id="extGenericDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
+	
+	<bean id="InterfaceErrorCodeUtil" class="com.pennanttech.external.app.util.InterfaceErrorCodeUtil">
+		<property name="extGenericDao" ref="extGenericDao" />
+	</bean>
+	
+	
 
 	<bean id="extStageDao" class="com.pennanttech.external.dao.impl.ExtStagingDaoImpl">
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
-	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl">
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
+	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.ExtLienMarkingDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalHoldMarkingDAO" class="com.pennanttech.external.sihold.dao.impl.ExternalSIHoldMarkingDAOImpl"
+	<bean id="externalHoldMarkingDAO" class="com.pennanttech.external.sihold.dao.ExternalSIHoldMarkingDAOImpl"
 		parent="sequenceDao" />
 
 	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">
@@ -70,7 +78,7 @@
 
 	<bean id="achService" class="com.pennanttech.external.presentment.service.ACHService">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="siInternalService" class="com.pennanttech.external.presentment.service.SIInternalService">
@@ -83,7 +91,7 @@
 
 	<bean id="lienFileWritingService" class="com.pennanttech.external.silien.service.LienFileWritingService">
 		<property name="externalLienMarkingDAO" ref="externalLienMarkingDAO" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
@@ -94,47 +102,47 @@
 
 	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicResponseFolderReader" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileReader">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicResponseProcessor" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 
 	<!-- <bean id="siHoldFileService" class="com.pennanttech.external.sihold.service.SIHoldFileService"> <property name="externalHoldMarkingDAO" 
 		ref="externalHoldMarkingDAO" /> <property name="externalPresentmentDAO" ref="externalPresentmentDAO" /> </bean> -->
-	<bean id="applicationContextProvider" class="com.pennanttech.external.config.ApplicationContextProvider" />
+	<bean id="applicationContextProvider" class="com.pennanttech.external.app.config.ApplicationContextProvider" />
 
-	<bean id="jobSchedulerExtension" class="com.pennanttech.pff.scheduler.jobs.HDFCJobScheduler" />
+	<bean id="jobSchedulerExtension" class="com.pennant.pff.jobs.extension.HDFCJobScheduler" />
 	<bean id="extMandateExtension" class="com.pennanttech.external.mandate.ExtMandateHandler" />
 
 	<bean id="ucicWeeklyWritingService" class="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
-	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.handler.PresentmentRequestHandler">
+	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.service.PresentmentRequestHandler">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 		<property name="siService" ref="siService" />
 		<property name="achService" ref="achService" />
 		<property name="siInternalService" ref="siInternalService" />
 		<property name="extPdcService" ref="extPdcService" />
 	</bean>
 	<bean id="bankAccountValidationService"
-		class="com.pennanttech.external.api.casavalidation.service.CasaAccountValidationService">
+		class="com.pennanttech.external.casavalidation.service.CasaAccountValidationService">
 		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
 	</bean>
 
@@ -170,7 +178,7 @@
 	
 	<bean id="collectionFileService" class="com.pennanttech.external.collectionreceipt.service.ExtCollectionFileService"/>
 	<bean id="extCollectionReceiptDao"
-		class="com.pennanttech.external.collectionreceipt.dao.impl.ExtCollectionReceiptDaoImpl">
+		class="com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>

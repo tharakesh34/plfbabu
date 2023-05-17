@@ -9,7 +9,7 @@ import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennanttech.external.dao.ExtStagingDao;
+import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.AlmExtract;
 
 public class ALMDumpService {

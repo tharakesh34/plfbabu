@@ -44,6 +44,7 @@ import com.pennant.pff.receipt.ClosureType;
 import com.pennant.pff.receipt.dao.CreateReceiptUploadDAO;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.model.UploadDetails;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.dataengine.CommonHeader;
 import com.pennanttech.dataengine.ProcessRecord;
@@ -234,6 +235,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			}
 
 			long uploadID = createReceiptUploadDAO.save(cru);
+			cru.setId(uploadID);
 
 			List<CreateReceiptUpload> allocations = new ArrayList<>();
 
@@ -288,7 +290,10 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 					throw new AppException("Fee Types are exceeded the limit");
 				}
 			}
+
 			createReceiptUploadDAO.saveAllocations(allocations);
+
+			cru.setAllocations(allocations);
 
 			validate(cru, header);
 
@@ -794,15 +799,11 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		ErrorDetail error = receiptService.getWaiverValidation(rud.getReferenceID(), purpose, rud.getValueDate());
 
 		if (error != null) {
-			rud.setProgress(EodConstants.PROGRESS_FAILED);
-			rud.setErrorCode(error.getCode());
-			rud.setErrorDesc(error.getMessage());
+			setFailureStatus(rud, error);
 			return;
 		}
 
-		rud.setProgress(EodConstants.PROGRESS_SUCCESS);
-		rud.setErrorCode("");
-		rud.setErrorDesc("");
+		setSuccesStatus(rud);
 	}
 
 	private void prepareKeys(CreateReceiptUpload rud) {
@@ -986,6 +987,20 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			setError(uad, "Allocation Sheet: [PAIDAMOUNT] ");
 			return;
 		}
+	}
+
+	private void setFailureStatus(CreateReceiptUpload rud, ErrorDetail error) {
+		rud.setProgress(EodConstants.PROGRESS_FAILED);
+		rud.setStatus("F");
+		rud.setErrorCode(error.getCode());
+		rud.setErrorDesc(error.getMessage());
+	}
+
+	private void setSuccesStatus(UploadDetails rud) {
+		rud.setProgress(EodConstants.PROGRESS_SUCCESS);
+		rud.setStatus("S");
+		rud.setErrorCode(null);
+		rud.setErrorDesc(null);
 	}
 
 	@Autowired

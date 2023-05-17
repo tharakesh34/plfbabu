@@ -138,9 +138,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	public Hbox hbox_Split;
 	private Component parent = null;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private boolean isWIF = false;
 	private String roleCode = "";
-	private String moduleDefiner = "";
 	public Checkbox split;
 	private Button btnAdd_AddPricingTopUp;
 	private Button btnNew_Insurance;
@@ -268,16 +266,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				this.window_PricingDetailList.setTitle("");
 			}
 
-			if (arguments.containsKey("isWIF")) {
-				isWIF = (Boolean) arguments.get("isWIF");
-			}
-
 			if (arguments.containsKey("CreditReviewData")) {
 				setCreditReviewData((CreditReviewData) arguments.get("CreditReviewData"));
-			}
-
-			if (arguments.containsKey("moduleDefiner")) {
-				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			if (arguments.containsKey("Role")) {

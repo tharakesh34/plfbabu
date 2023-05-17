@@ -44,7 +44,7 @@ public class MiscellaneousPostingUploadDAOImpl extends SequenceDao<Miscellaneous
 			mp.setValueDate(rs.getDate("ValueDate"));
 			mp.setNarrLine1(rs.getString("NarrLine1"));
 			mp.setNarrLine2(rs.getString("NarrLine2"));
-			mp.setNarrLine2(rs.getString("NarrLine3"));
+			mp.setNarrLine3(rs.getString("NarrLine3"));
 			mp.setNarrLine4(rs.getString("NarrLine4"));
 			mp.setProgress(rs.getInt("Progress"));
 			mp.setStatus(rs.getString("Status"));

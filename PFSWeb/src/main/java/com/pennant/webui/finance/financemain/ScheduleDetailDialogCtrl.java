@@ -60,7 +60,6 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
-import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Window;
@@ -242,10 +241,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	private FinanceDetailService financeDetailService;
 
 	private String moduleDefiner = "";
-	private String workflowCode = "";
 	private boolean isWIF = false;
 	private String roleCode = "";
-	private String menuItemRightName = null;
 	protected Row row_totalCost;
 	protected Row row_ContractPrice;
 	protected Row row_odTenor;
@@ -328,16 +325,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			printNotRequired = (Boolean) arguments.get("printNotRequired");
 		}
 
-		if (arguments.containsKey("workflowCode")) {
-			workflowCode = (String) arguments.get("workflowCode");
-		}
-
 		if (arguments.containsKey("roleCode")) {
 			roleCode = (String) arguments.get("roleCode");
-		}
-
-		if (arguments.containsKey("menuItemRightName")) {
-			menuItemRightName = (String) arguments.get("menuItemRightName");
 		}
 
 		if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -360,9 +349,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					|| financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
 				//
 			} else {
-				// logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
-				// FIXME MUR>> Replace me as above otherwise you don't know where i
-				// came.
 				this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
 						.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
 			}
@@ -1195,46 +1181,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 
 			iRRListBox.appendChild(listitem);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * Method for Removing previously embedded tabs if any to Re-render them dynamically
-	 */
-	private void removePrevoiusInsTabs() {
-		logger.debug("Entering");
-		List<Tabpanel> tabpanels = tabpanelsBoxIndexCenter.getChildren();
-		String[] tabpanelIds = new String[tabpanels.size()];
-
-		// To remove tab panels rendered prevoiusly if any
-		for (int i = 0; i < tabpanels.size(); i++) {
-			String tabPanelId = tabpanels.get(i).getId();
-			if (tabPanelId.startsWith("TabPanel_Insurance")) {
-				tabpanelIds[i] = tabPanelId;
-			}
-		}
-
-		for (int i = 0; i < tabpanelIds.length; i++) {
-			if (tabpanelsBoxIndexCenter.getFellowIfAny(tabpanelIds[i]) != null) {
-				tabpanelsBoxIndexCenter.removeChild(tabpanelsBoxIndexCenter.getFellowIfAny(tabpanelIds[i]));
-			}
-		}
-
-		List<Tab> tabs = tabsIndexCenter.getChildren();
-		String[] tabNames = new String[tabs.size()];
-		// To remove tabs rendered prevoiusly if any
-		for (int i = 0; i < tabs.size(); i++) {
-			String tabId = tabs.get(i).getId();
-			if (tabId.startsWith("Tab_FinInsuranceSchdDetails")) {
-				tabNames[i] = tabId;
-			}
-		}
-
-		for (int i = 0; i < tabNames.length; i++) {
-			if (tabsIndexCenter.getFellowIfAny(tabNames[i]) != null) {
-				tabsIndexCenter.removeChild(tabsIndexCenter.getFellowIfAny(tabNames[i]));
-			}
 		}
 		logger.debug("Leaving");
 	}

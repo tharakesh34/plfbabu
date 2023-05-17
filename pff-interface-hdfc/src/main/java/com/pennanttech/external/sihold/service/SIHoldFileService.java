@@ -11,8 +11,8 @@
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 //
-//import com.pennanttech.external.config.ExtConfig;
-//import com.pennanttech.external.config.ExternalConfig;
+//import com.pennanttech.external.app.config.ExtConfig;
+//import com.pennanttech.external.app.config.ExternalConfig;
 //import com.pennanttech.external.fileutil.TextFileUtil;
 //import com.pennanttech.external.presentment.constants.InterfaceConstants;
 //import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;

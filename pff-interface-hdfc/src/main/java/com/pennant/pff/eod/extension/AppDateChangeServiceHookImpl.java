@@ -2,24 +2,24 @@ package com.pennant.pff.eod.extension;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
 
 public class AppDateChangeServiceHookImpl implements AppDateChangeServiceHook {
 
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	public AppDateChangeServiceHookImpl() {
 		super();
 	}
-	
+
 	@Override
 	public void postAppDateChange() {
-		extInterfaceDao.resetAllSequences();
+		extGenericDao.resetAllSequences();
 	}
 
 	@Autowired
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

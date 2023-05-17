@@ -60,6 +60,7 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
+import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
@@ -73,6 +74,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -139,6 +141,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinODDetailsDAO finODDetailsDAO;
 	private LienService lienService;
 	private FeeCalculator feeCalculator;
+	private FinExcessAmountDAO finExcessAmountDAO;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -488,6 +491,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
 			for (Long receiptId : receiptIdList) {
 				receiptDetailList.addAll(finReceiptDetailDAO.getReceiptDetailForCancelReversalByID(receiptId, "_view"));
+
+				FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptId);
+
+				if (fea != null) {
+					for (FinReceiptDetail rd : receiptDetailList) {
+						rd.setPayAgainstID(fea.getExcessID());
+					}
+				}
 			}
 			if (receiptIdList != null && receiptIdList.size() > 0) {
 				finReceiptHeaderDAO.cancelReceipts(finReference);
@@ -1071,7 +1082,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fsi.setInstrumentDate(appDate);
 		fsi.setReceivedDate(rd.getReceivedDate());
 		fsi.setRemarks(LoanCancelationUtil.LOAN_CANCEL_REMARKS);
-		fsi.setPaymentMode(rd.getPaymentType());
+		fsi.setPaymentMode(ReceiptMode.EXCESS);
 		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
@@ -1091,6 +1102,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		rcd.setReference(finReference);
 		rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rcd.setPaymentType(ReceiptMode.EXCESS);
+		rcd.setPayAgainstID(rd.getPayAgainstID());
+		rcd.setNoReserve(true);
 
 		fsi.setReceiptDetail(rcd);
 		return fsi;
@@ -1171,4 +1184,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	public void setFeeCalculator(FeeCalculator feeCalculator) {
 		this.feeCalculator = feeCalculator;
 	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
 }

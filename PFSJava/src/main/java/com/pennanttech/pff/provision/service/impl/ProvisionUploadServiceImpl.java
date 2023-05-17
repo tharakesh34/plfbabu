@@ -173,6 +173,7 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 			auditHeader.getAuditDetail().setModelData(p);
 
 			provisionService.doApprove(auditHeader);
+			transactionManager.commit(txStatus);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			if (txStatus != null) {

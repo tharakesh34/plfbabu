@@ -10,9 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.fileutil.TextFileUtil;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentData;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
@@ -27,7 +27,7 @@ public class SIService extends TextFileUtil implements InterfaceConstants {
 	public static final String SI_LINE_CASA = "CASA";
 	public static final String SI_LINE_ACCOUNT = "Account";
 
-	public void processSIRequest(ExternalConfig config, List<ExtPresentmentFile> presentmentList, Date appDate) {
+	public void processSIRequest(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList, Date appDate) {
 		logger.debug(Literal.ENTERING);
 		try {
 			List<StringBuilder> itemList = new ArrayList<StringBuilder>();
@@ -96,7 +96,7 @@ public class SIService extends TextFileUtil implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public ExtPresentmentFile prepareResponseObject(ExternalConfig extConfig, ExtPresentmentData extPresentmentData,
+	public ExtPresentmentFile prepareResponseObject(FileInterfaceConfig extConfig, ExtPresentmentData extPresentmentData,
 			String fileName) {
 		logger.debug(Literal.ENTERING);
 		String filePrepend = extConfig.getFilePrepend();

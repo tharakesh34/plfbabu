@@ -13,15 +13,15 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
         
        <import resource="extensionContext.xml" />
-	<bean id="extInterfaceDao" class="com.pennanttech.external.dao.impl.ExtInterfaceDaoImpl">
+	<bean id="extGenericDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
-	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl">
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
@@ -31,7 +31,7 @@
 
 	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extractDataDAO" class="com.pennanttech.pff.external.piramal.ExtractDataDAOImpl">
@@ -39,13 +39,13 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.impl.ExtPresentmentDAOImpl">
+	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
 	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 		<property name="extExtractionDao" ref="extExtractionDao" />
 		<property name="extUcicExtractData" ref="extUcicExtractData" />
 		<property name="extUcicRequestFile" ref="extUcicRequestFile" />
@@ -73,13 +73,13 @@
 	</bean>
 
 
-	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.handler.PresentmentRequestHandler">
+	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.service.PresentmentRequestHandler">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
 		<property name="siService" ref="siService" />
 		<property name="achService" ref="achService" />
 		<property name="siInternalService" ref="siInternalService" />
 		<property name="extPdcService" ref="extPdcService" />
-		<property name="extInterfaceDao" ref="extInterfaceDao" />
+		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="appDateChangeServiceHook" class="com.pennant.pff.eod.extension.AppDateChangeServiceHookImpl" />

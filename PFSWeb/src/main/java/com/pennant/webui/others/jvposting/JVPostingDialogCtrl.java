@@ -486,7 +486,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				if (jVPostingEntry != null) {
 					aJVPostingEntry.setDebitAccount(jVPostingEntry.getAccount());
 					aJVPostingEntry.setDebitTxnCode(jVPostingEntry.getTxnCode());
-					aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getDebitTxnDesc());
+					if (aJVPostingEntry.getTxnEntry().equals("D")) {
+						aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getDebitTxnDesc());
+					} else {
+						aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getTxnDesc());
+					}
 					showDetailView(aJVPostingEntry, false, false);
 				}
 			}

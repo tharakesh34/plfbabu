@@ -9,11 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
-import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.config.model.InterfaceErrorCode;
+import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
@@ -24,7 +24,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFileReader.class);
 
 	private ExtUcicDao extUcicDao;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	private static final int UCIC_RESP_NEGLECT_LINES = 2;
 	private static final String UCIC_RESPONSE_END = "EOF";
@@ -33,17 +33,11 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		logger.debug(Literal.ENTERING);
 
 		// Get main configuration for External Interfaces
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
-
-		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// Get Response file and complete file configuration
-		ExternalConfig ucicRespConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP);
-		ExternalConfig ucicRespCompleteConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP_COMPLETE);
+		FileInterfaceConfig ucicRespConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP);
+		FileInterfaceConfig ucicRespCompleteConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP_COMPLETE);
 
 		if (ucicRespConfig == null || ucicRespCompleteConfig == null) {
 			logger.debug(
@@ -133,7 +127,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 					} else {
 						// Add Failed file in to table with error code and error message
 						InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-								ExtErrorCodes.getInstance().getInterfaceErrorsList(), F607);
+								InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F607);
 						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED,
 								interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
 					}
@@ -216,7 +210,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 }

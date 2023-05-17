@@ -11,12 +11,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
-import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.external.fileutil.TextFileUtil;
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.config.model.InterfaceErrorCode;
+import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
+import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.App;
@@ -34,9 +34,9 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 	private static final int ach_ccyFromat = 0;
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
-	public void processACHRequest(ExternalConfig config, List<ExtPresentmentFile> presentmentList, Date dueDate,
+	public void processACHRequest(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList, Date dueDate,
 			String batchRef, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -141,14 +141,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public ExtPresentmentFile prepareResponseObject(ExternalConfig config, String eachRecord) {
+	public ExtPresentmentFile prepareResponseObject(FileInterfaceConfig config, String eachRecord) {
 		logger.debug(Literal.ENTERING);
-
-		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		ExtPresentmentFile presentment = new ExtPresentmentFile();
 
@@ -170,7 +164,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 					presentment.setStatus(SUCCESS);
 				} else {
 					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F802);
+							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F802);
 					presentment.setErrorCode(interfaceErrorCode.getErrorCode());
 					presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				}
@@ -180,7 +174,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 					presentment.setStatus(FAIL);
 				} else {
 					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F803);
+							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F803);
 					presentment.setErrorCode(interfaceErrorCode.getErrorCode());
 					presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				}
@@ -199,7 +193,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 
 		} else {
 			InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-					ExtErrorCodes.getInstance().getInterfaceErrorsList(), F804);
+					InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F804);
 			presentment.setErrorCode(interfaceErrorCode.getErrorCode());
 			presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 		}
@@ -234,8 +228,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 		this.externalPresentmentDAO = externalPresentmentDAO;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

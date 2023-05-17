@@ -10,12 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
-import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.external.fileutil.TextFileUtil;
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
+import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienMarkDetail;
 import com.pennanttech.pennapps.core.App;
@@ -26,21 +24,15 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 	private static final Logger logger = LogManager.getLogger(LienFileWritingService.class);
 
 	private ExtLienMarkingDAO externalLienMarkingDAO;
-	private ExtInterfaceDao extInterfaceDao;
-	private ExternalConfig lienConfig;
+	private ExtGenericDao extGenericDao;
+	private FileInterfaceConfig lienConfig;
 
 	public void processSILienMarkingRequest(Date appDate) {
 		logger.debug(Literal.ENTERING);
 		try {
 
-			// get error codes handy
-			if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
-				List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-				ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-			}
-
 			// Get main configuration for External Interfaces
-			List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+			List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 			// Fetch lien config from main configuration
 			lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_REQ);
@@ -124,8 +116,8 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 		this.externalLienMarkingDAO = externalLienMarkingDAO;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

@@ -101,7 +101,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			return;
 		}
 
-		prepare(detail);
+		prepare(detail, header);
 	}
 
 	@Override
@@ -122,11 +122,12 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 				for (BulkFeeWaiverUpload detail : details) {
 					detail.setUserDetails(header.getUserDetails());
 					detail.setAppDate(appDate);
+					detail.setUserDetails(header.getUserDetails());
 
 					doValidate(header, detail);
 
 					if (EodConstants.PROGRESS_SUCCESS == detail.getProgress()) {
-						processWaiver(detail);
+						processWaiver(detail, header);
 					}
 
 					header.getUploadDetails().add(detail);
@@ -157,9 +158,9 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processWaiver(BulkFeeWaiverUpload detail) {
+	private void processWaiver(BulkFeeWaiverUpload detail, FileUploadHeader header) {
 		TransactionStatus txStatus = getTransactionStatus();
-		AuditHeader ah = getAuditHeader(prepare(detail), PennantConstants.TRAN_WF);
+		AuditHeader ah = getAuditHeader(prepare(detail, header), PennantConstants.TRAN_WF);
 
 		try {
 			ah = feeWaiverHeaderService.doApprove(ah);
@@ -217,8 +218,8 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		return bulkFeeWaiverUploadDAO.getSqlQuery();
 	}
 
-	private FeeWaiverHeader prepare(BulkFeeWaiverUpload detail) {
-		FeeWaiverHeader fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(prepareFWH(detail));
+	private FeeWaiverHeader prepare(BulkFeeWaiverUpload detail, FileUploadHeader header) {
+		FeeWaiverHeader fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(prepareFWH(detail, header));
 
 		if (!fwh.isAlwtoProceed()) {
 			setError(detail, BulkFeeWaiverUploadError.FWU_005);
@@ -243,7 +244,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			return fwh;
 		}
 
-		String rcdMaintainSts = detail.getFinanceMain().getRcdMaintainSts();
+		String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(detail.getReferenceID());
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			setFailureStatus(detail, "FWU_999", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return fwh;
@@ -256,11 +257,13 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		return fwh;
 	}
 
-	private FeeWaiverHeader prepareFWH(BulkFeeWaiverUpload detail) {
+	private FeeWaiverHeader prepareFWH(BulkFeeWaiverUpload detail, FileUploadHeader header) {
 		FeeWaiverHeader fwh = new FeeWaiverHeader();
 		LoggedInUser userDetails = detail.getUserDetails();
 		if (userDetails == null) {
 			userDetails = new LoggedInUser();
+			userDetails.setLoginUsrID(header.getApprovedBy());
+			userDetails.setUserName(header.getApprovedByName());
 		}
 
 		fwh.setNewRecord(true);
