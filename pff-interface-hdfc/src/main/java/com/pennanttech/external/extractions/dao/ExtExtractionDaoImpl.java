@@ -1,4 +1,4 @@
-package com.pennanttech.external.extractions.dao.impl;
+package com.pennanttech.external.extractions.dao;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class ExtExtractionDaoImpl extends SequenceDao implements ExtExtractionDao {

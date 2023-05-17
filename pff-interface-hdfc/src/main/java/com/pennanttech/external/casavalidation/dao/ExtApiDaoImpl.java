@@ -1,4 +1,4 @@
-package com.pennanttech.external.casavalidation.dao.impl;
+package com.pennanttech.external.casavalidation.dao;
 
 import java.sql.Blob;
 import java.sql.Connection;
@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.pennanttech.external.casavalidation.dao.ExtApiDao;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 

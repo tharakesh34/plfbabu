@@ -1,4 +1,4 @@
-package com.pennanttech.external.ucic.dao.impl;
+package com.pennanttech.external.ucic.dao;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicCust;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;

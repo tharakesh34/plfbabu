@@ -34,7 +34,7 @@
 	</bean>
 	<!-- Below code is for HDFC External Presentment SI, SI INternal and ACH -->
 
-	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.impl.ExtPresentmentDAOImpl">
+	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
@@ -47,21 +47,21 @@
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
-	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl">
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.impl.ExtLienMarkingDAOImpl">
+	<bean id="externalLienMarkingDAO" class="com.pennanttech.external.silien.dao.ExtLienMarkingDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalHoldMarkingDAO" class="com.pennanttech.external.sihold.dao.impl.ExternalSIHoldMarkingDAOImpl"
+	<bean id="externalHoldMarkingDAO" class="com.pennanttech.external.sihold.dao.ExternalSIHoldMarkingDAOImpl"
 		parent="sequenceDao" />
 
 	<bean id="siService" class="com.pennanttech.external.presentment.service.SIService">
@@ -125,7 +125,7 @@
 		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
-	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.handler.PresentmentRequestHandler">
+	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.service.PresentmentRequestHandler">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
 		<property name="extGenericDao" ref="extGenericDao" />
 		<property name="siService" ref="siService" />
@@ -170,7 +170,7 @@
 	
 	<bean id="collectionFileService" class="com.pennanttech.external.collectionreceipt.service.ExtCollectionFileService"/>
 	<bean id="extCollectionReceiptDao"
-		class="com.pennanttech.external.collectionreceipt.dao.impl.ExtCollectionReceiptDaoImpl">
+		class="com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>

@@ -1,4 +1,4 @@
-package com.pennanttech.external.silien.dao.impl;
+package com.pennanttech.external.silien.dao;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienMarkDetail;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;

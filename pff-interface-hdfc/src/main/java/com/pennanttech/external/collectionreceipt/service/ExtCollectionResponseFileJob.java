@@ -1,4 +1,4 @@
-package com.pennanttech.external.collectionreceipt.job;
+package com.pennanttech.external.collectionreceipt.service;
 
 import java.io.File;
 import java.sql.PreparedStatement;
@@ -33,7 +33,6 @@ import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
-import com.pennanttech.external.collectionreceipt.service.ExtCollectionFileService;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;

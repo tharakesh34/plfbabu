@@ -1,4 +1,4 @@
-package com.pennanttech.external.presentment.job;
+package com.pennanttech.external.presentment.service;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,9 +36,6 @@ import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.external.presentment.model.ExtPresentmentData;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.external.presentment.model.ExtPrmntRespHeader;
-import com.pennanttech.external.presentment.service.ACHService;
-import com.pennanttech.external.presentment.service.SIInternalService;
-import com.pennanttech.external.presentment.service.SIService;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;

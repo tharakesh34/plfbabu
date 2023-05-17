@@ -1,4 +1,4 @@
-package com.pennanttech.external.collectionreceipt.job;
+package com.pennanttech.external.collectionreceipt.service;
 
 import java.io.File;
 import java.sql.PreparedStatement;

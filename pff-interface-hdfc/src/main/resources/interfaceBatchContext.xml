@@ -16,12 +16,12 @@
 	<bean id="extGenericDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
-	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
+	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.ExtExtractionDaoImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.impl.ExtUcicDaoImpl">
+	<bean id="extUcicDao" class="com.pennanttech.external.ucic.dao.ExtUcicDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
@@ -39,7 +39,7 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.impl.ExtPresentmentDAOImpl">
+	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
 		<property name="mainDataSource" ref="dataSource" />
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
@@ -73,7 +73,7 @@
 	</bean>
 
 
-	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.handler.PresentmentRequestHandler">
+	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.service.PresentmentRequestHandler">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
 		<property name="siService" ref="siService" />
 		<property name="achService" ref="achService" />

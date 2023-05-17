@@ -1,4 +1,4 @@
-package com.pennanttech.external.silien.job;
+package com.pennanttech.external.silien.service;
 
 import java.util.Date;
 
@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.silien.service.LienFileWritingService;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 

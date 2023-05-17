@@ -1,4 +1,4 @@
-package com.pennanttech.external.presentment.dao.impl;
+package com.pennanttech.external.presentment.dao;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -24,7 +24,6 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtBounceReason;
 import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.external.presentment.model.ExtPresentmentData;

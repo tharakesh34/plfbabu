@@ -1,4 +1,4 @@
-package com.pennanttech.external.collectionreceipt.dao.impl;
+package com.pennanttech.external.collectionreceipt.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -16,7 +16,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;

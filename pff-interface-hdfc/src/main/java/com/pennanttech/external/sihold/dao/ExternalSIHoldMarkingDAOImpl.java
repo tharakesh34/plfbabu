@@ -1,4 +1,4 @@
-package com.pennanttech.external.sihold.dao.impl;
+package com.pennanttech.external.sihold.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.sihold.dao.ExternalSIHoldMarkingDAO;
 import com.pennanttech.external.sihold.model.SIHoldDetails;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
