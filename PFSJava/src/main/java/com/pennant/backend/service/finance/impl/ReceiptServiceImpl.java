@@ -245,7 +245,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -4516,7 +4515,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			if (DateUtil.compare(valueDate, fm.getFinStartDate()) < 0) {
-				MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RU0010", null)));
+				setError(schdData, "RU0010", fm.getFinStartDate().toString());
 				return;
 			}
 
