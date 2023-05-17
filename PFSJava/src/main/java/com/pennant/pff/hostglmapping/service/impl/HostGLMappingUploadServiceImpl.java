@@ -148,7 +148,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 			return;
 		}
 
-		String descregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM);
+		String descregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_DESCRIPTION);
 		if (StringUtils.isNotBlank(detail.getGLDescription())
 				&& !Pattern.compile(descregex).matcher(detail.getGLDescription()).matches()) {
 			setError(detail, HostGLMappingUploadError.HGL09);
