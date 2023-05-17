@@ -28,7 +28,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.external.presentment.model.ExtPresentmentData;
@@ -43,7 +43,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ? AND STATUS = ?";
 
 	private DataSource dataSource;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ExtPresentmentDAO externalPresentmentDAO;
 	private PlatformTransactionManager transactionManager;
 	private ApplicationContext applicationContext;
@@ -55,7 +55,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 			// Fetch all required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 

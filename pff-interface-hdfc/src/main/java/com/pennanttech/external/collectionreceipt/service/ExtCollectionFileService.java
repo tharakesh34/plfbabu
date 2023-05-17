@@ -12,10 +12,10 @@ import org.apache.logging.log4j.Logger;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
-import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.fileutil.TextFileUtil;
 import com.pennanttech.external.util.ExtSFTPUtil;
+import com.pennanttech.external.util.TextFileUtil;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -28,7 +28,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	private static final String VALID_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
 
 	public void processCollectionResponseFileWriting(String fileName, Date appDate,
-			List<CollReceiptDetail> fileRecordsList, CollReceiptHeader errorReceiptHeader, ExternalConfig respConfig) {
+			List<CollReceiptDetail> fileRecordsList, CollReceiptHeader errorReceiptHeader, FileInterfaceConfig respConfig) {
 		logger.debug(Literal.ENTERING);
 
 		if (fileRecordsList == null || fileRecordsList.isEmpty()) {
@@ -52,7 +52,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	}
 
 	private void writeReponseFile(List<CollReceiptDetail> successList, List<CollReceiptDetail> failedList,
-			String fileName, Date appDate, ExternalConfig respConfig, CollReceiptHeader errorReceiptHeader) {
+			String fileName, Date appDate, FileInterfaceConfig respConfig, CollReceiptHeader errorReceiptHeader) {
 		logger.debug(Literal.ENTERING);
 
 		List<StringBuilder> itemList = new ArrayList<StringBuilder>();
@@ -151,7 +151,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void uploadToClientLocation(Date appDate, ExternalConfig respConfig, String fileName, String baseFilePath) {
+	private void uploadToClientLocation(Date appDate, FileInterfaceConfig respConfig, String fileName, String baseFilePath) {
 		FtpClient ftpClient;
 		if (respConfig == null) {
 			logger.debug("EXT_COLLECTION: CONFIG_COLLECTION_RESP Configuration not found, so returning.");

@@ -12,12 +12,12 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -27,9 +27,9 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 	private static final Logger logger = LogManager.getLogger(LienFileReadingJob.class);
 
 	private ExtLienMarkingDAO externalLienMarkingDAO;
-	private ExternalConfig lienConfig;
-	private ExternalConfig lienReqConfig;
-	private ExtInterfaceDao extInterfaceDao;
+	private FileInterfaceConfig lienConfig;
+	private FileInterfaceConfig lienReqConfig;
+	private ExtGenericDao extInterfaceDao;
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -40,7 +40,7 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 			// Get all the required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalLienMarkingDAO = applicationContext.getBean(ExtLienMarkingDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 
 		}
 
@@ -52,12 +52,12 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 		logger.debug(Literal.ENTERING);
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
 
 		lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_RESP);
 		lienReqConfig = getDataFromList(mainConfig, CONFIG_LIEN_REQ);
@@ -147,7 +147,7 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<String> fetchRequestFiles(ExternalConfig reqConfig) {
+	private List<String> fetchRequestFiles(FileInterfaceConfig reqConfig) {
 		List<String> requestFileNames = new ArrayList<String>();
 		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
 		if (reqFolderPath != null && !"".equals(reqFolderPath)) {

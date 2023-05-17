@@ -14,16 +14,16 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 
 public class ExtSFTPUtil {
 
-	private ExternalConfig externalConfig;
+	private FileInterfaceConfig externalConfig;
 
-	public ExtSFTPUtil(ExternalConfig externalConfig) {
+	public ExtSFTPUtil(FileInterfaceConfig externalConfig) {
 		this.externalConfig = externalConfig;
 	}
 

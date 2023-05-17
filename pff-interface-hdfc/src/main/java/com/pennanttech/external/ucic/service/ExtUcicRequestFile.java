@@ -11,13 +11,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.external.fileutil.TextFileUtil;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
+import com.pennanttech.external.util.TextFileUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -25,20 +25,20 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicRequestFile.class);
 	private ExtUcicDao extUcicDao;
-	private ExtInterfaceDao extInterfaceDao;
-	private ExternalConfig ucicReqConfig;
-	private ExternalConfig ucicReqCompleteConfig;
+	private ExtGenericDao extInterfaceDao;
+	private FileInterfaceConfig ucicReqConfig;
+	private FileInterfaceConfig ucicReqCompleteConfig;
 
 	public void processUcicRequestFile(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Get main configuration for External Interfaces
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
 
 		// Fetch UCIC configs from main configuration
 		ucicReqConfig = getDataFromList(mainConfig, CONFIG_UCIC_REQ);
@@ -69,7 +69,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			String remoteFilePath = null;
 
 			// Fetch request file from DB Server location and store it in client SFTP
-			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			FileInterfaceConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
 			if (serverConfig == null) {
 				logger.debug("EXT_UCIC: CONFIG_PLF_DB_SERVER Configuration not found, so returning.");
@@ -108,10 +108,10 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void uploadToClientLocation(Date appDate, List<ExternalConfig> mainConfig, String fileName,
+	private void uploadToClientLocation(Date appDate, List<FileInterfaceConfig> mainConfig, String fileName,
 			String baseFilePath) {
 		FtpClient ftpClient;
-		ExternalConfig serverConfig;
+		FileInterfaceConfig serverConfig;
 		serverConfig = getDataFromList(mainConfig, CONFIG_UCIC_REQ);
 		if (serverConfig == null) {
 			logger.debug("EXT_UCIC: CONFIG_UCIC_REQ Configuration not found, so returning.");
@@ -138,7 +138,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		}
 	}
 
-	private void fileBackup(ExternalConfig serverConfig, File mainFile, File completeFileToUpload) throws IOException {
+	private void fileBackup(FileInterfaceConfig serverConfig, File mainFile, File completeFileToUpload) throws IOException {
 		logger.debug(Literal.ENTERING);
 
 		String localBkpLocation = serverConfig.getFileLocalBackupLocation();
@@ -159,7 +159,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void fileDeletion(ExternalConfig serverConfig, File mainFile, File completeFileToUpload)
+	protected void fileDeletion(FileInterfaceConfig serverConfig, File mainFile, File completeFileToUpload)
 			throws IOException {
 		logger.debug(Literal.ENTERING);
 		FtpClient ftpClient;
@@ -188,7 +188,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
+	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
 		this.extInterfaceDao = extInterfaceDao;
 	}
 

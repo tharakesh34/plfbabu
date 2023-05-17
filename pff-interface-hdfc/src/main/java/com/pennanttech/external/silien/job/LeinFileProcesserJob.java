@@ -22,14 +22,14 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienFileStatus;
 import com.pennanttech.external.silien.model.LienMarkDetail;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -45,9 +45,9 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 	private static final String RESP_REJECTED = "FAILED";
 
 	private ExtLienMarkingDAO externalLienMarkingDAO;
-	private ExternalConfig lienConfig;
+	private FileInterfaceConfig lienConfig;
 	private DataSource dataSource;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -58,7 +58,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 			// Get all the required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalLienMarkingDAO = applicationContext.getBean(ExtLienMarkingDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 
 		}
@@ -71,12 +71,12 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 
 		logger.debug(Literal.ENTERING);
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
 
 		lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_RESP);
 
@@ -299,7 +299,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 	}
 
 	private String getErrorMessage(String errCode) {
-		InterfaceErrorCode interfaceErrorCode = getErrorFromList(ExtErrorCodes.getInstance().getInterfaceErrorsList(),
+		InterfaceErrorCode interfaceErrorCode = getErrorFromList(InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(),
 				errCode);
 		String errMsg = interfaceErrorCode.getErrorMessage();
 		errMsg = StringUtils.stripToEmpty(errMsg);

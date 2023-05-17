@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.ExternalPresentmentHook;
-import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.external.presentment.service.ACHService;
@@ -24,7 +24,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	private static final Logger logger = LogManager.getLogger(PresentmentRequestHandler.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 
 	private SIService siService;
 	private SIInternalService siInternalService;
@@ -43,7 +43,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 		logger.debug(Literal.ENTERING);
 
 		// Fetch External configuration once for all the interfaces types
-		List<ExternalConfig> list = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> list = extInterfaceDao.getExternalConfig();
 		Date appDate = SysParamUtil.getAppDate();
 
 		String configTYpe = "";
@@ -66,7 +66,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 			configTYpe = CONFIG_PDC_REQ;
 		}
 
-		ExternalConfig externalConfig = getDataFromList(list, configTYpe);
+		FileInterfaceConfig externalConfig = getDataFromList(list, configTYpe);
 
 		if (externalConfig == null) {
 			return;
@@ -95,7 +95,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processExtPDC(ExternalConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
+	private void processExtPDC(FileInterfaceConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
 		logger.debug(Literal.ENTERING);
 		List<ExtPresentmentFile> presentmentList = externalPresentmentDAO
 				.getExternalPDCPresentmentDetails(presentmentHeader);
@@ -110,7 +110,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	 * @param externalConfig
 	 * @param presentmentHeader
 	 */
-	private void processNACH(ExternalConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
+	private void processNACH(FileInterfaceConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		List<ExtPresentmentFile> presentmentList = externalPresentmentDAO.getACHPresentmentDetails(presentmentHeader);
@@ -130,7 +130,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	 * @param externalConfig
 	 * @param presentmentHeader
 	 */
-	private void processSI(ExternalConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
+	private void processSI(FileInterfaceConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		List<ExtPresentmentFile> presentmentList = externalPresentmentDAO.getSIPresentmentDetails(presentmentHeader);
@@ -148,7 +148,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	 * @param externalConfig
 	 * @param presentmentHeader
 	 */
-	private void processSIInternal(ExternalConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
+	private void processSIInternal(FileInterfaceConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		List<ExtPresentmentFile> presentmentList = externalPresentmentDAO
@@ -184,7 +184,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 		this.extPdcService = extPdcService;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
+	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
 		this.extInterfaceDao = extInterfaceDao;
 	}
 

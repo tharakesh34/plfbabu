@@ -33,10 +33,10 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -50,7 +50,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ApplicationContext applicationContext;
 	private PlatformTransactionManager transactionManager;
 	private ExtReceiptServiceHook extReceiptServiceHook;
@@ -60,7 +60,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 		logger.debug(Literal.ENTERING);
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 		extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);
@@ -70,9 +70,9 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 		}
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Fetch 10 files using extraction status = 0

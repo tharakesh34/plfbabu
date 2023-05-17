@@ -28,13 +28,13 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.service.ExtCollectionFileService;
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.util.ExtSFTPUtil;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
@@ -48,7 +48,7 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ExtPresentmentDAO extPresentmentDAO;
 	private ApplicationContext applicationContext;
 
@@ -59,7 +59,7 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 		logger.debug(Literal.ENTERING);
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		collectionFileService = applicationContext.getBean(ExtCollectionFileService.class);
 		extPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
@@ -67,16 +67,16 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 		Date appDate = SysParamUtil.getAppDate();
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Fetch External configuration once for all the interfaces types
-		List<ExternalConfig> configList = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> configList = extInterfaceDao.getExternalConfig();
 
-		ExternalConfig reqConfig = getDataFromList(configList, CONFIG_COLLECTION_REQ_CONF);
-		ExternalConfig respConfig = getDataFromList(configList, CONFIG_COLLECTION_RESP_CONF);
+		FileInterfaceConfig reqConfig = getDataFromList(configList, CONFIG_COLLECTION_REQ_CONF);
+		FileInterfaceConfig respConfig = getDataFromList(configList, CONFIG_COLLECTION_RESP_CONF);
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();

@@ -18,34 +18,37 @@ import org.springframework.context.ApplicationContext;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
-import com.pennanttech.external.constants.ExtLogConstants;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.util.ExtSFTPUtil;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionFolderReaderJob extends AbstractJob implements InterfaceConstants, ExtLogConstants {
+public class ExtCollectionFolderReaderJob extends AbstractJob implements InterfaceConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFolderReaderJob.class);
 
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ApplicationContext applicationContext;
 
-	private ExternalConfig collectionReqConfig;
+	private FileInterfaceConfig collectionReqConfig;
+
+	String COLLECTION_REQ_CONFIG_MISSING = "Ext_Warning: No configuration found for type Collection receipt interface. So returning without generating the request file.";
+	String COLLECTION_REQ_BASE_FILE_PATH_MISSING = "Ext_Warning: No configuration found for type Collection receipt baseFilePath. So returning without generating the request file.";
+	String COLLECTION_REQ_REMOTE_FILE_PATH_MISSING = "Ext_Warning: No configuration found for type Collection receipt remoteFilePath. So returning without generating the request file.";
 
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 		// Get all the required DAO's
 		applicationContext = ApplicationContextProvider.getApplicationContext();
-		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 
 		fetchRemoteFiles();
@@ -57,15 +60,15 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 		logger.debug(Literal.ENTERING);
 
 		// Get main configuration for External Interfaces
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
 
 		// Fetch Collection Receipt Request config from main configuration
 		collectionReqConfig = getDataFromList(mainConfig, CONFIG_COLLECTION_REQ_CONF);
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		if (collectionReqConfig == null) {

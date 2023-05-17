@@ -22,13 +22,13 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
@@ -40,7 +40,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentFolderReaderJob.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 
 	private ApplicationContext applicationContext;
 
@@ -51,7 +51,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 			readAndSaveFiles();
 
 		} catch (Exception e) {
@@ -65,7 +65,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.ENTERING);
 
 		// Fetch Interface configuration
-		List<ExternalConfig> listConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> listConfig = extInterfaceDao.getExternalConfig();
 
 		processSIReposne(listConfig);
 		processIPDCReposne(listConfig);
@@ -74,11 +74,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processSIReposne(List<ExternalConfig> listConfig) {
+	private void processSIReposne(List<FileInterfaceConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
 
-		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
-		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
+		FileInterfaceConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
+		FileInterfaceConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
 
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
@@ -87,11 +87,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		}
 	}
 
-	private void processIPDCReposne(List<ExternalConfig> listConfig) {
+	private void processIPDCReposne(List<FileInterfaceConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
 
-		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_IPDC_RESP);
-		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_IPDC_REQ);
+		FileInterfaceConfig externalRespConfig = getDataFromList(listConfig, CONFIG_IPDC_RESP);
+		FileInterfaceConfig externalReqConfig = getDataFromList(listConfig, CONFIG_IPDC_REQ);
 
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
@@ -100,11 +100,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		}
 	}
 
-	private void processNACHReposne(List<ExternalConfig> listConfig) {
+	private void processNACHReposne(List<FileInterfaceConfig> listConfig) {
 		// For all type of interfaces configured, process the response files from the configured folder
 
-		ExternalConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
-		ExternalConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
+		FileInterfaceConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
+		FileInterfaceConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
 
 		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getIsSftp()))) {
 			fetchResponseFilesFromSFTP(externalRespConfig);
@@ -117,13 +117,13 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		}
 	}
 
-	private void processResponseFiles(ExternalConfig respConfig, ExternalConfig reqConfig) {
+	private void processResponseFiles(FileInterfaceConfig respConfig, FileInterfaceConfig reqConfig) {
 		logger.debug(Literal.ENTERING);
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Get Interface/Module wise folder path
@@ -229,7 +229,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 						if (!isValidRejectFile) {
 							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									ExtErrorCodes.getInstance().getInterfaceErrorsList(), F606);
+									InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F606);
 
 							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
 							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
@@ -281,7 +281,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		return reqFileNameInRespFile;
 	}
 
-	private List<String> fetchRequestFiles(ExternalConfig reqConfig) {
+	private List<String> fetchRequestFiles(FileInterfaceConfig reqConfig) {
 		List<String> requestFileNames = new ArrayList<String>();
 		if (reqConfig != null && (CONFIG_IPDC_REQ.equals(reqConfig.getInterfaceName())
 				|| CONFIG_SI_REQ.equals(reqConfig.getInterfaceName()))) {
@@ -345,7 +345,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void fetchResponseFilesFromSFTP(ExternalConfig externalRespConfig) {
+	private void fetchResponseFilesFromSFTP(FileInterfaceConfig externalRespConfig) {
 		logger.debug(Literal.ENTERING);
 		if (!"".equals(StringUtils.stripToEmpty(externalRespConfig.getFileSftpLocation()))) {
 
@@ -393,7 +393,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void moveToBackup(ExternalConfig externalRespConfig, String localFolderPath, String fileName) {
+	private void moveToBackup(FileInterfaceConfig externalRespConfig, String localFolderPath, String fileName) {
 		logger.debug(Literal.ENTERING);
 		if ("".equals(StringUtils.stripToEmpty(externalRespConfig.getFileBackupLocation()))) {
 			logger.debug("EXT_PRMNT: No configuration found for Backup path, so returning.");

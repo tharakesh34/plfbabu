@@ -27,10 +27,10 @@ import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -46,7 +46,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ApplicationContext applicationContext;
 
 	/**
@@ -59,12 +59,12 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
-		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Fetch 10 files using extraction status = 0
@@ -263,7 +263,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 			return "";
 		}
 
-		InterfaceErrorCode interfaceErrorCode = getErrorFromList(ExtErrorCodes.getInstance().getInterfaceErrorsList(),
+		InterfaceErrorCode interfaceErrorCode = getErrorFromList(InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(),
 				errorCode);
 		return interfaceErrorCode.getErrorMessage();
 	}

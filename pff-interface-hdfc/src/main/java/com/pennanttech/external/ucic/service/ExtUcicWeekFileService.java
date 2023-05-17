@@ -10,13 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.external.fileutil.TextFileUtil;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
+import com.pennanttech.external.util.TextFileUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -24,19 +24,19 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
 	private ExtUcicDao extUcicDao;
-	private ExtInterfaceDao extInterfaceDao;
-	private ExternalConfig ucicWeeklyConfig;
+	private ExtGenericDao extInterfaceDao;
+	private FileInterfaceConfig ucicWeeklyConfig;
 
 	public void processWeeklyFileRequest(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Get main configuration for External Interfaces
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
 
 		// Fetch UCIC weekly config from main configuration
 		ucicWeeklyConfig = getDataFromList(mainConfig, CONFIG_UCIC_WEEKLY_FILE);
@@ -59,7 +59,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		if ("SUCCESS".equals(status)) {
 			FtpClient ftpClient = null;
 			// Fetch request file from DB Server location and store it in client SFTP
-			ExternalConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			FileInterfaceConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
 			// Now get remote file to local base location using SERVER config
 			String remoteFilePath = serverConfig.getFileSftpLocation();
@@ -90,7 +90,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void fileBackup(ExternalConfig ucicWeeklyConfig, File mainFile) throws IOException {
+	private void fileBackup(FileInterfaceConfig ucicWeeklyConfig, File mainFile) throws IOException {
 		logger.debug(Literal.ENTERING);
 
 		String localBkpLocation = ucicWeeklyConfig.getFileLocalBackupLocation();
@@ -109,7 +109,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
+	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
 		this.extInterfaceDao = extInterfaceDao;
 	}
 

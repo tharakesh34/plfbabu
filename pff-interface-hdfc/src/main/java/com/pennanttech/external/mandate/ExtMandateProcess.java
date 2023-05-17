@@ -50,9 +50,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.external.mandate.errors.ExtMandateError;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
@@ -70,7 +68,7 @@ import com.pennanttech.pff.model.mandate.MandateData;
 public class ExtMandateProcess extends AbstractInterface implements MandateProcesses {
 	protected final Logger logger = LogManager.getLogger(getClass());
 
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ApplicationContext applicationContext;
 
 	@Autowired
@@ -478,15 +476,7 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 		}
 		if (extInterfaceDao == null) {
-			extInterfaceDao = applicationContext.getBean("extInterfaceDao", ExtInterfaceDao.class);
-		}
-
-		if (extInterfaceDao != null) {
-			// get ext-mandate errors codes handy
-			if (ExtErrorCodes.getInstance().getExtMandateErrorsList().isEmpty()) {
-				List<ExtMandateError> extMandateErrorsList = extInterfaceDao.getExtMandateErrors();
-				ExtErrorCodes.getInstance().setExtMandateErrorsList(extMandateErrorsList);
-			}
+			extInterfaceDao = applicationContext.getBean("extInterfaceDao", ExtGenericDao.class);
 		}
 
 		long approved = 0;
@@ -560,15 +550,12 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 							if (!StringUtils.equals("N", respMandate.getStatus())
 									&& StringUtils.isNotEmpty(respMandate.getReason())) {
 								// Get reason code and get remark
-								ExtMandateError extError = getMandateErrorFromList(
-										ExtErrorCodes.getInstance().getExtMandateErrorsList(),
-										respMandate.getReason().trim());
-
-								if (extError != null) {
-									String reasonData = extError.getName();
-									reasonData = respMandate.getReason() + " - " + reasonData;
-									respMandate.setReason(reasonData);
-								}
+								// FIXME errors
+								// if (extError != null) {
+								// String reasonData = extError.getName();
+								// reasonData = respMandate.getReason() + " - " + reasonData;
+								// respMandate.setReason(reasonData);
+								// }
 							}
 
 							updateMandates(respMandate);
@@ -1032,16 +1019,6 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 		RowMapper<DataEngineLog> rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
 
 		return jdbcOperations.query(sql, rowMapper, batchId);
-	}
-
-	private ExtMandateError getMandateErrorFromList(List<ExtMandateError> extMandateErrorCodes, String key) {
-
-		for (ExtMandateError extMandateErrorCode : extMandateErrorCodes) {
-			if (extMandateErrorCode.getCode().equals(key)) {
-				return extMandateErrorCode;
-			}
-		}
-		return null;
 	}
 
 	protected void addCustomParameter(Map<String, Object> parameterMap) {

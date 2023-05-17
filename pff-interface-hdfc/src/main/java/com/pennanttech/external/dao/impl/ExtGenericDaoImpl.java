@@ -8,20 +8,17 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
-import com.pennanttech.external.dao.ExtInterfaceDao;
-import com.pennanttech.external.mandate.errors.ExtMandateError;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.resource.Message;
 
-public class ExtInterfaceDaoImpl implements ExtInterfaceDao {
+public class ExtGenericDaoImpl implements ExtGenericDao {
 
-	private static final Logger logger = LogManager.getLogger(ExtInterfaceDaoImpl.class);
+	private static final Logger logger = LogManager.getLogger(ExtGenericDaoImpl.class);
 
 	private NamedParameterJdbcTemplate extNamedJdbcTemplate;
 
@@ -74,50 +71,19 @@ public class ExtInterfaceDaoImpl implements ExtInterfaceDao {
 	}
 
 	@Override
-	public String getRemarkFromCode(String code) {
-		String sql = "SELECT NAME FROM EXT_MANDATE_ERRORS WHERE CODE = ?";
-
-		try {
-			return extNamedJdbcTemplate.getJdbcOperations().queryForObject(sql, String.class, code);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-		}
-		return "";
-	}
-
-	@Override
-	public List<ExtMandateError> getExtMandateErrors() {
-		logger.debug(Literal.ENTERING);
-		String queryStr;
-
-		List<ExtMandateError> list = new ArrayList<ExtMandateError>();
-
-		queryStr = "SELECT CODE,NAME FROM EXT_MANDATE_ERRORS WHERE STATUS = 1";
-
-		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
-			ExtMandateError errorCode = new ExtMandateError();
-			errorCode.setCode(rs.getString("CODE"));
-			errorCode.setName(rs.getString("NAME"));
-			list.add(errorCode);
-		});
-		logger.debug(Literal.LEAVING);
-		return list;
-	}
-
-	@Override
-	public List<ExternalConfig> getExternalConfig() {
+	public List<FileInterfaceConfig> getExternalConfig() {
 		logger.debug(Literal.ENTERING);
 
 		String queryStr;
 
-		List<ExternalConfig> list = new ArrayList<ExternalConfig>();
+		List<FileInterfaceConfig> list = new ArrayList<FileInterfaceConfig>();
 		queryStr = "SELECT INTERFACE_TYPE,NO_OF_RECORDS,FILE_LOCATION,HOLD_TYPE,FILE_PREPEND,FILE_POSTPEND,"
 				+ "FILE_EXTENSION,DATE_FORMAT,SUCCESS_INDICATOR,FAIL_INDICATOR " + ",BACKUP_LOCATION,ACCESS_KEY,"
 				+ "SECRET_KEY,HOST_NAME,PORT,PRIVATE_KEY,SSE_ALGORITHM,PREFIX,"
 				+ "SFTP_LOCATION,IS_SFTP,LOCAL_BACKUP_LOCATION,SFTP_BUCKET" + " FROM FILE_INTERFACE_CONFIG";
 
 		extNamedJdbcTemplate.getJdbcOperations().query(queryStr, rs -> {
-			ExternalConfig extConfig = new ExternalConfig();
+			FileInterfaceConfig extConfig = new FileInterfaceConfig();
 			extConfig.setInterfaceName(rs.getString("INTERFACE_TYPE"));
 			extConfig.setNoOfRecords(rs.getBigDecimal("NO_OF_RECORDS"));
 			extConfig.setFileLocation(rs.getString("FILE_LOCATION"));

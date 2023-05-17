@@ -18,8 +18,8 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
@@ -246,9 +246,9 @@ public interface InterfaceConstants {
 		return rcdCS;
 	}
 
-	default ExternalConfig getDataFromList(List<ExternalConfig> mainConfig, String key) {
+	default FileInterfaceConfig getDataFromList(List<FileInterfaceConfig> mainConfig, String key) {
 
-		for (ExternalConfig externalConfig : mainConfig) {
+		for (FileInterfaceConfig externalConfig : mainConfig) {
 			if (externalConfig.getInterfaceName().equals(key)) {
 				return externalConfig;
 			}
@@ -290,7 +290,7 @@ public interface InterfaceConstants {
 		return null;
 	}
 
-	default FtpClient getftpClientConnection(ExternalConfig serverConfig) {
+	default FtpClient getftpClientConnection(FileInterfaceConfig serverConfig) {
 		FtpClient ftpClient = null;
 		String host = serverConfig.getHostName();
 		int port = serverConfig.getPort();
@@ -304,7 +304,7 @@ public interface InterfaceConstants {
 		return ftpClient;
 	}
 
-	default void uploadToSFTP(String localFileWithPath, ExternalConfig config) {
+	default void uploadToSFTP(String localFileWithPath, FileInterfaceConfig config) {
 		if (config.getFileSftpLocation() == null || "".equals(config.getFileSftpLocation())) {
 			return;
 		}
@@ -359,7 +359,7 @@ public interface InterfaceConstants {
 		return fileNames;
 	}
 
-	default List<String> fetchRespFiles(ExternalConfig reqConfig) {
+	default List<String> fetchRespFiles(FileInterfaceConfig reqConfig) {
 		List<String> respFileNames = new ArrayList<String>();
 		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
 		if (reqFolderPath != null && !"".equals(reqFolderPath)) {

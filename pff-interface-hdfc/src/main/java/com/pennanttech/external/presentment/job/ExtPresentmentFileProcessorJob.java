@@ -24,11 +24,10 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.config.ApplicationContextProvider;
-import com.pennanttech.external.config.ExtErrorCodes;
-import com.pennanttech.external.config.ExternalConfig;
-import com.pennanttech.external.config.InterfaceErrorCode;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
+import com.pennanttech.external.config.model.InterfaceErrorCode;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtBounceReason;
 import com.pennanttech.external.presentment.model.ExtBounceReasons;
@@ -39,6 +38,7 @@ import com.pennanttech.external.presentment.model.ExtPrmntRespHeader;
 import com.pennanttech.external.presentment.service.ACHService;
 import com.pennanttech.external.presentment.service.SIInternalService;
 import com.pennanttech.external.presentment.service.SIService;
+import com.pennanttech.external.util.InterfaceErrorCodeUtil;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -56,7 +56,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	private SIInternalService siInternalService;
 	private ACHService achService;
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private PlatformTransactionManager transactionManager;
 
 	private ApplicationContext applicationContext;
@@ -72,7 +72,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		siService = applicationContext.getBean(SIService.class);
 		siInternalService = applicationContext.getBean(SIInternalService.class);
 		achService = applicationContext.getBean(ACHService.class);
-		extInterfaceDao = applicationContext.getBean(ExtInterfaceDao.class);
+		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
 		// Process starts here
@@ -86,12 +86,12 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		logger.debug(Literal.ENTERING);
 
 		// get error codes handy
-		if (ExtErrorCodes.getInstance().getInterfaceErrorsList().isEmpty()) {
+		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
 			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
-			ExtErrorCodes.getInstance().setInterfaceErrorsList(interfaceErrorsList);
+			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
-		List<ExternalConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
 
 		// Fetch bounce details beforehand..
 		if (ExtBounceReasons.getInstance().getBounceData().isEmpty()) {
@@ -136,7 +136,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		try {
 			while ((extPresentment = cursorItemReader.read()) != null) {
 				try {
-					ExternalConfig config = getDataFromList(mainConfig, extPresentment.getModule());
+					FileInterfaceConfig config = getDataFromList(mainConfig, extPresentment.getModule());
 
 					// update the processing state as processing
 					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), INPROCESS);
@@ -180,7 +180,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processFileRecords(ExtPresentment extPresentment, ExternalConfig extConfig, ExtPrmntRespHeader prh) {
+	private void processFileRecords(ExtPresentment extPresentment, FileInterfaceConfig extConfig, ExtPrmntRespHeader prh) {
 
 		logger.debug(Literal.ENTERING);
 
@@ -255,7 +255,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 				if (data == null) {
 					logger.debug("Ext_PRMNT:F703 No data available for presentment.");
 					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							ExtErrorCodes.getInstance().getInterfaceErrorsList(), F703);
+							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F703);
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED,
 							interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
 					continue;
@@ -314,7 +314,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 	}
 
-	private ExtPresentmentFile prepareAndValidate(ExternalConfig extConfig, ExtPresentment extPresentment,
+	private ExtPresentmentFile prepareAndValidate(FileInterfaceConfig extConfig, ExtPresentment extPresentment,
 			ExtPresentmentData extPresentmentData) {
 		logger.debug(Literal.ENTERING);
 		ExtPresentmentFile extPresentmentFile = null;
@@ -337,7 +337,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			if (extPresentmentFile == null) {
 				extPresentmentFile = new ExtPresentmentFile();
 				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						ExtErrorCodes.getInstance().getInterfaceErrorsList(), F704);
+						InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F704);
 				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 			}
@@ -360,7 +360,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 		if (extPresentmentFile.getTxnReference() == -1) {
 			InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-					ExtErrorCodes.getInstance().getInterfaceErrorsList(), F801);
+					InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F801);
 			extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 			extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 			return;
@@ -372,7 +372,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			if (StringUtils.isBlank(bounceReturnCode)) {
 				// Bounce return code is empty or null, So report error
 				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						ExtErrorCodes.getInstance().getInterfaceErrorsList(), F900);
+						InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F900);
 				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				return;
@@ -382,7 +382,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			if (!extBounceReasonsMap.containsKey(bounceReturnCode)) {
 				// Bounce code not found in PLF, So report error
 				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						ExtErrorCodes.getInstance().getInterfaceErrorsList(), F901);
+						InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F901);
 				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				return;

@@ -12,11 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.fileutil.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
+import com.pennanttech.external.util.TextFileUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -36,7 +36,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 	private static final String NEW_LINE = "\n";
 	private static final int EXT_PDC_CCY = 2;
 
-	public void processExtPDCPresentments(ExternalConfig config, List<ExtPresentmentFile> presentmentList,
+	public void processExtPDCPresentments(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList,
 			Date appDate) {
 		logger.debug(Literal.ENTERING);
 		// Seperate presentment list by clusterId and generate files..
@@ -48,7 +48,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void writeRecordsToFile(ExternalConfig config, List<ExtPresentmentFile> presentmentList, String clusterId,
+	private void writeRecordsToFile(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList, String clusterId,
 			Date appDate) {
 		logger.debug(Literal.ENTERING);
 		try {

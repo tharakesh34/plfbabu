@@ -1,8 +1,8 @@
-package com.pennanttech.external.config;
+package com.pennanttech.external.config.model;
 
 import java.math.BigDecimal;
 
-public class ExternalConfig {
+public class FileInterfaceConfig {
 	private String interfaceName = "";
 	private BigDecimal NoOfRecords;
 	private String fileLocation = "";

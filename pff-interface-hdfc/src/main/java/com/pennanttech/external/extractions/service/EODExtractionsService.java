@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.google.common.io.Files;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.EODExtractionsHook;
-import com.pennanttech.external.config.ExternalConfig;
+import com.pennanttech.external.config.model.FileInterfaceConfig;
 import com.pennanttech.external.constants.InterfaceConstants;
-import com.pennanttech.external.dao.ExtInterfaceDao;
+import com.pennanttech.external.dao.ExtGenericDao;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
 import com.pennanttech.external.ucic.service.ExtUcicRequestFile;
@@ -29,9 +29,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class EODExtractionsService implements EODExtractionsHook, InterfaceConstants {
 
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
-	private ExternalConfig finconGLConfig;
+	private FileInterfaceConfig finconGLConfig;
 	private ExtExtractionDao extExtractionDao;
-	private ExtInterfaceDao extInterfaceDao;
+	private ExtGenericDao extInterfaceDao;
 	private ExtUcicDataExtractor extUcicExtractData;
 	private ExtUcicRequestFile extUcicRequestFile;
 
@@ -59,7 +59,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	private void processFinconFileSP() {
-		List<ExternalConfig> configList = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> configList = extInterfaceDao.getExternalConfig();
 
 		finconGLConfig = getDataFromList(configList, CONFIG_FINCONGL);
 
@@ -86,7 +86,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		}
 
 		// Fetch request file from DB Server location to local and the upload it in client SFTP
-		ExternalConfig dbServerConfig = getDataFromList(configList, "PLF_DB_SERVER");
+		FileInterfaceConfig dbServerConfig = getDataFromList(configList, "PLF_DB_SERVER");
 
 		if (dbServerConfig == null) {
 			logger.debug("Ext_Warning: DB Server config not found. So returning.");
@@ -122,7 +122,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		}
 	}
 
-	private void fileBackup(ExternalConfig finconGLconf, File mainFile) {
+	private void fileBackup(FileInterfaceConfig finconGLconf, File mainFile) {
 		logger.debug(Literal.ENTERING);
 
 		String localBkpLocation = finconGLconf.getFileLocalBackupLocation();
@@ -153,7 +153,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 
 	@Autowired(required = false)
 	@Qualifier(value = "extInterfaceDao")
-	public void setExtInterfaceDao(ExtInterfaceDao extInterfaceDao) {
+	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
 		this.extInterfaceDao = extInterfaceDao;
 	}
 

@@ -1,4 +1,4 @@
-package com.pennanttech.external.fileutil;
+package com.pennanttech.external.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
