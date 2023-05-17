@@ -245,6 +245,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -3731,8 +3732,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean autoReceipt = ReceiptUtil.isAutoReceipt(receiptMode, productCategory);
 
-		if (!isTerminationEvent(fsi)
-				&& (!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt() || autoReceipt)) {
+		if (!isTerminationEvent(fsi) && (!(ReceiptMode.isValidReceiptMode(receiptMode)) && !fsi.isKnockOffReceipt()
+				&& !fsi.isLoanCancellation() || autoReceipt)) {
 			setError(schdData, "90281", "Receipt mode", ReceiptMode.getValidReceiptModes());
 			return;
 		}
@@ -4513,6 +4514,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
 			}
+
+			if (DateUtil.compare(valueDate, fm.getFinStartDate()) < 0) {
+				MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RU0010", null)));
+				return;
+			}
+
 		}
 
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE || receiptPurpose == ReceiptPurpose.EARLYSTLENQ) {
