@@ -69,7 +69,6 @@ import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -311,7 +310,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
 	private BankDetailDAO bankDetailDAO;
 	private FinanceWorkFlowService financeWorkFlowService;
-	private FeeCalculator feeCalculator;
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -9233,11 +9231,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	}
 
 	@Autowired
-	public void setFeeCalculator(FeeCalculator feeCalculator) {
-		this.feeCalculator = feeCalculator;
-	}
-
-	@Autowired
 	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
 		this.finODCAmountDAO = finODCAmountDAO;
 	}
@@ -9246,5 +9239,4 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	public void setLienService(LienService lienService) {
 		this.lienService = lienService;
 	}
-
 }
