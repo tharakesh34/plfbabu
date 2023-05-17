@@ -25,7 +25,6 @@
 package com.pennant.webui.customermasters.customerdocument;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -105,7 +104,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
-import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
@@ -121,7 +119,6 @@ import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
 import com.pennapps.core.util.ObjectUtil;
 
 /**
@@ -224,9 +221,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean isIssuedAuth = false;
 	private boolean isDocuploadMand = false;
 	private boolean workflow = false;
-	private DeviationExecutionCtrl deviationExecutionCtrl;
-	private List<DocumentDetails> verificationDocuments;
-	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	public String dmsApplicationNo;
 	public String leadId;
 
@@ -373,10 +367,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 			}
 
-			if (arguments.containsKey("verificationDocuments")) {
-				this.verificationDocuments = (List<DocumentDetails>) arguments.get("verificationDocuments");
-			}
-
 			if (enqiryModule) {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
@@ -424,12 +414,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.finDocumentPdfView.setHeight(listboxHeight + "px");
 
 			doShowDialog(getCustomerDocument());
-
-			// Calling SelectCtrl For proper selection of Customer
-			if (isNewRecord() && !isNewCustomer() && !isCheckList) {
-				// onload();
-			}
-			// setDeviationExecutionCtrl();
 
 			if (isCheckList) {// TODO Need to add a condition based visibility
 				// for delete button
@@ -856,12 +840,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	private void checkDocumentExpired(CustomerDocument aCustomerDocument) {
 		boolean deviationallowed = false;
-		// Date date = aCustomerDocument.getCustDocExpDate();
-		// if (date != null && date.compareTo(DateUtility.getAppDate()) <= 0) {
-		// if (deviationExecutionCtrl!=null) {
-		// deviationallowed=deviationExecutionCtrl.checkDeviationForDocument(aCustomerDocument);
-		// }
-		// }
+
 		if (!deviationallowed) {
 			if (!this.custDocExpDate.isReadonly() && !this.custDocExpDate.isDisabled()) {
 				this.custDocExpDate.setConstraint(
@@ -870,7 +849,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.custDocExpDate.getValue();// Call the validation
 			}
 		}
-
 	}
 
 	/**
@@ -2690,24 +2668,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	public void setDeviationExecutionCtrl()
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (getFinanceMainDialogCtrl() != null && isFinanceProcess) {
-			deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass()
-					.getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
-		}
-	}
-
 	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
 		return customerViewDialogCtrl;
 	}
 
 	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
-	}
-
-	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
-		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
 
 	public DocumentValidation getDocumentValidation() {

@@ -34,7 +34,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -61,7 +60,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.UploadManualAdvise;
-import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -104,7 +102,6 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	protected Listbox sortOperator_TransactionDate;
 
 	private transient UploadHeaderService uploadHeaderService;
-	private transient ManualAdviseService manualAdviseService;
 
 	private String module = "";
 	protected Button btnReject;
@@ -855,10 +852,4 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {
 		this.uploadHeaderService = uploadHeaderService;
 	}
-
-	@Autowired
-	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
-		this.manualAdviseService = manualAdviseService;
-	}
-
 }
