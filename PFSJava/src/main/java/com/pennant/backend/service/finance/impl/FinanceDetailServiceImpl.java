@@ -575,6 +575,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		/* Finance Fee Details */
 		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
 
+		fd.setFinTypeFeesList(
+				getFinTypeFees(fm.getFinType(), AccountingEvent.ADDDBSP, true, FinanceConstants.MODULEID_FINTYPE));
 		/* Finance Receipt Details */
 		schdData.setImdReceipts(finFeeDetailService.getUpfrontReceipts(finID, String.valueOf(custID)));
 

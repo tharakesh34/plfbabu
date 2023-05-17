@@ -61,7 +61,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.tds.receivables.TdsReceivable;
@@ -111,7 +110,6 @@ public class TdsReceivableDialogCtrl extends GFCBaseCtrl<TdsReceivable> {
 	protected Combobox certificateQuarter;
 	protected Textbox uploadCertificate;
 	private TdsReceivable tdsReceivable; // overhanded per param
-	private List<ValueLabel> financialYear;
 	protected Button btnView;
 
 	private transient TdsReceivableListCtrl tdsReceivableListCtrl; // overhanded

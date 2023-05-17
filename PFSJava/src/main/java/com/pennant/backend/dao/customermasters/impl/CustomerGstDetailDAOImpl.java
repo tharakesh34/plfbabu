@@ -175,7 +175,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 	public void deleteCustomerGSTByCustomer(long custId, String type) {
 		logger.debug("Entering");
-		int recordCount = 0;
+
 		CustomerGST customerGST = new CustomerGST();
 		customerGST.setCustId(custId);
 		StringBuilder deleteSql = new StringBuilder();
@@ -187,7 +187,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

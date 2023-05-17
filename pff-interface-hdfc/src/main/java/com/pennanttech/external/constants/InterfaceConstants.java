@@ -331,7 +331,6 @@ public interface InterfaceConstants {
 			String secretKey) {
 		Session session = null;
 		Channel channel = null;
-		ChannelSftp channelSftp = null;
 		JSch jsch = new JSch();
 		try {
 			session = jsch.getSession(accessKey, hostName, port);
@@ -345,7 +344,7 @@ public interface InterfaceConstants {
 		} catch (JSchException e1) {
 			e1.printStackTrace();
 		}
-		channelSftp = (ChannelSftp) channel;
+
 		LsEntry entry = null;
 		List<String> fileNames = new ArrayList<String>();
 		Vector filelist = null;

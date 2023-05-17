@@ -246,7 +246,6 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	 */
 	@Override
 	public void update(FinCreditReviewSummary creditReviewSummary, String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinCreditReviewSummary");
 		updateSql.append(StringUtils.trimToEmpty(type));
@@ -259,7 +258,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 

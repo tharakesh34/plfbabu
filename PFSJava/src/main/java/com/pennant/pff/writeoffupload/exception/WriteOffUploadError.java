@@ -6,7 +6,7 @@ import java.util.List;
 public enum WriteOffUploadError {
 	WOUP001("Reference should not be empty."),
 
-	WOUP002("Reference is not valid."),
+	WOUP002("Reference is not valid or not matched with Entity code."),
 
 	WOUP003("Reference is not in active."),
 
