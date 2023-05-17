@@ -244,7 +244,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
 		representment.setHeaderId(header.getId());
 		representment.setAppDate(header.getAppDate());

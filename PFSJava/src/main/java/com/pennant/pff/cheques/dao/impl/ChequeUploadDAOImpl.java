@@ -25,7 +25,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq, ChequeDetailsId");
 		sql.append(", ChequeHeaderId, BankBranchId, FinID, FinReference, AccountNo, ChequeSerialNo, ChequeDate");
 		sql.append(", EmiRefNo, Amount, ChequeCcy,Active, DocumentName, DocumentRef, ChequeType, ChequeStatus");
-		sql.append(", AccountType, AccHolderName, Action, IfscCode, Micr, Progress, Status, ErrorCode, ErrorDesc");
+		sql.append(", AccountType, AccHolderName, Action, Ifsc, Micr, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CHEQUES_UPLOAD");
 		sql.append(" Where HeaderId = ? and Status = ?");
 
@@ -58,7 +58,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 			cd.setChequeStatus(rs.getString("ChequeStatus"));
 			cd.setAccountType(rs.getString("AccountType"));
 			cd.setAccHolderName(rs.getString("AccHolderName"));
-			cd.setIfsc(rs.getString("IfscCode"));
+			cd.setIfsc(rs.getString("Ifsc"));
 			cd.setMicr(rs.getString("Micr"));
 
 			pdc.setChequeDetail(cd);
@@ -137,7 +137,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" cu.ACTION, cu.CHEQUETYPE, cu.FINREFERENCE");
 		sql.append(", cu.CHEQUESERIALNO, cu.ACCOUNTTYPE, cu.ACCHOLDERNAME, cu.ACCOUNTNO");
-		sql.append(",cu.IFSCCODE, cu.MICR, cu.AMOUNT,cu.ID, cu.CHEQUEDETAILSID");
+		sql.append(",cu.IFSC, cu.MICR, cu.AMOUNT,cu.ID, cu.CHEQUEDETAILSID");
 		sql.append(", uh.APPROVEDON, uh.CREATEDON, cu.STATUS, cu.ERRORCODE, cu.ERRORDESC");
 		sql.append(" ,uh.CREATEDBY,uh.APPROVEDBY,cu.CHEQUEDATE");
 		sql.append(" From CHEQUES_UPLOAD cu");

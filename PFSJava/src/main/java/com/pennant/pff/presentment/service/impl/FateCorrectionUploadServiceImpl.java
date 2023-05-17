@@ -233,6 +233,12 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
 		logger.debug(Literal.ENTERING);
 
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
 		PresentmentRespUpload presentment = (PresentmentRespUpload) ObjectUtil.valueAsObject(paramSource,
 				PresentmentRespUpload.class);
 
@@ -240,7 +246,7 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
 
 		presentment.setHeaderId(header.getId());
 		presentment.setAppDate(header.getAppDate());
