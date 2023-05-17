@@ -1,4 +1,4 @@
-package com.pennanttech.external.api.casavalidation.dao;
+package com.pennanttech.external.casavalidation.dao;
 
 public interface ExtApiDao {
 

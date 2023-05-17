@@ -134,7 +134,7 @@
 		<property name="extPdcService" ref="extPdcService" />
 	</bean>
 	<bean id="bankAccountValidationService"
-		class="com.pennanttech.external.api.casavalidation.service.CasaAccountValidationService">
+		class="com.pennanttech.external.casavalidation.service.CasaAccountValidationService">
 		<property name="interfaceLoggingDAO" ref="interfaceLoggingDAO" />
 	</bean>
 

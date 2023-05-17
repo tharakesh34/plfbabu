@@ -1,4 +1,4 @@
-package com.pennanttech.external.api.casavalidation.model;
+package com.pennanttech.external.casavalidation.model;
 
 import java.io.Serializable;
 

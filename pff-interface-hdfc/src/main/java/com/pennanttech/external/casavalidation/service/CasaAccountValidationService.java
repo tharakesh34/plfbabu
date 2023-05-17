@@ -1,4 +1,4 @@
-package com.pennanttech.external.api.casavalidation.service;
+package com.pennanttech.external.casavalidation.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +25,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.pennant.backend.model.pennydrop.BankAccountValidation;
-import com.pennanttech.external.api.casavalidation.model.CasaAccountValidationReq;
-import com.pennanttech.external.api.casavalidation.model.CasaAccountValidationResp;
+import com.pennanttech.external.casavalidation.model.CasaAccountValidationReq;
+import com.pennanttech.external.casavalidation.model.CasaAccountValidationResp;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
