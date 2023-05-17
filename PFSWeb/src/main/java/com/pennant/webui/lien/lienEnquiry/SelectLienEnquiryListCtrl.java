@@ -232,7 +232,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		this.accNumber.setDisabled(false);
 		this.finReference.setValue("");
 		this.finReference.setConstraint("");
-		this.finReference.setReadonly(true);
+		this.finReference.setButtonDisabled(true);
 
 		logger.debug(Literal.LEAVING);
 	}

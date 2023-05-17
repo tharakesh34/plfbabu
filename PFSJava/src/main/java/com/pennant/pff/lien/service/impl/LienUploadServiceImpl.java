@@ -87,17 +87,18 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 			return;
 		}
 
-		LienDetails lu = lienDetailsDAO.getLienById(reference);
+		List<LienDetails> lu = lienDetailsDAO.getLienDtlsByRefAndAcc(detail.getReference(), detail.getAccNumber());
 
-		if (lu != null && lu.getMarking() != null) {
-			if (detail.getAction().equals("Y") && lu.isLienStatus()) {
-				setError(detail, LienUploadError.LUOU_110);
-				return;
-			} else if (detail.getAction().equals("N") && !lu.isLienStatus()) {
-				setError(detail, LienUploadError.LUOU_111);
-				return;
+		for (LienDetails lienDetails : lu) {
+			if (lienDetails != null && lienDetails.getMarking() != null) {
+				if (detail.getAction().equals("Y") && lienDetails.isLienStatus()) {
+					setError(detail, LienUploadError.LUOU_110);
+					return;
+				} else if (detail.getAction().equals("N") && !lienDetails.isLienStatus()) {
+					setError(detail, LienUploadError.LUOU_111);
+					return;
+				}
 			}
-
 		}
 
 		setSuccesStatus(detail);

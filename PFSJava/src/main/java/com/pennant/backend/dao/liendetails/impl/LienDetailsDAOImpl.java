@@ -178,19 +178,23 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	public List<LienDetails> getLienDtlsByRefAndAcc(String reference, String AccNumber) {
 		logger.debug(Literal.ENTERING);
 
-		String key = "";
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ld.LienID, ld.HeaderID, ld.Reference, ld.Source, ld.Marking, ld.MarkingDate, ld.MarkingReason,");
 		sql.append(" ld.DeMarking, ld.DemarkingReason, ld.DemarkingDate, ld.LienReference, ld.LienStatus,");
 		sql.append(" lh.AccNumber, lh.InterfaceStatus ");
 		sql.append(" From Lien_Details ld ");
 		sql.append(" Left Join Lien_Header lh on ld.LienReference = lh.LienReference ");
-		if (!StringUtils.isEmpty(reference)) {
-			key = reference;
+		Object[] args = null;
+		if (!StringUtils.isEmpty(reference) && !StringUtils.isEmpty(AccNumber)) {
+			sql.append(" Where ld.Reference =? and lh.AccNumber =? ");
+			args = new Object[] { reference, AccNumber };
+		} else if (!StringUtils.isEmpty(reference)) {
 			sql.append(" Where ld.Reference =?");
+			args = new Object[] { reference };
 		} else {
-			key = AccNumber;
 			sql.append(" Where lh.AccNumber =?");
+			args = new Object[] { AccNumber };
+
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -213,7 +217,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 				lu.setAccountNumber(rs.getString("AccNumber"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
 				return lu;
-			}, key);
+			}, args);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

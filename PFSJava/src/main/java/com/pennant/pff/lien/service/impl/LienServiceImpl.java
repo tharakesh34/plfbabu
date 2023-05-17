@@ -48,8 +48,10 @@ public class LienServiceImpl implements LienService {
 		String accNumber = "";
 		if (fmBef != null && fmBef.getMandateID() != null) {
 			Mandate m = mandateService.getMandate(fmBef.getMandateID());
-			if (m != null) {
+			if (m != null && !InstrumentType.isNACH(fmBef.getFinRepayMethod())) {
 				accNumber = m.getAccNumber();
+			} else {
+				accNumber = fd.getMandate().getAccNumber();
 			}
 		} else {
 			accNumber = fd.getMandate().getAccNumber();
@@ -67,10 +69,8 @@ public class LienServiceImpl implements LienService {
 			lh = getLienHeader(fm, fd);
 			lh.setDemarking("");
 			lh.setDemarkingDate(null);
-			if (!FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
-				Date startDate = fd.getMandate().getStartDate();
-				lh.setMarkingDate(startDate == null ? appDate : startDate);
-			}
+			Date startDate = fd.getMandate().getStartDate();
+			lh.setMarkingDate(startDate == null ? appDate : startDate);
 
 			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
 				lh.setLienID(fd.getLienHeader().getLienID());
@@ -82,10 +82,9 @@ public class LienServiceImpl implements LienService {
 		} else {
 			headerID = lh.getId();
 			if (isMandate) {
-				fmBef = fm.getBefImage() != null ? fm.getBefImage() : fm;
+				fmBef = fm.getBefImage();
 
-				if (fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
-						&& InstrumentType.isSI(fm.getFinRepayMethod())) {
+				if (fmBef != null && InstrumentType.isSI(fmBef.getFinRepayMethod())) {
 					lh.setLienStatus(false);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
@@ -117,16 +116,50 @@ public class LienServiceImpl implements LienService {
 					setLienDeMarkReason(lu, fm.getModuleDefiner());
 
 					lienDetailsDAO.update(lu);
+				} else {
+					lh.setLienStatus(true);
+					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+					lh.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
+					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
+							lh.setMarkingDate(fd.getMandate().getSwapEffectiveDate());
+						} else {
+							lh.setMarkingDate(appDate);
+						}
+					} else {
+						lh.setMarkingDate(fm.getFinStartDate());
+					}
+					lienHeaderDAO.update(lh);
+
+					LienDetails lu = getLienDetails(lh, fm);
+
+					lu.setLienStatus(true);
+					lu.setMarking(Labels.getLabel("label_Lien_Type_Auto"));
+					lu.setDemarking("");
+					if (FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner())) {
+						if (fd.getMandate() != null && fd.getMandate().getSwapEffectiveDate() != null) {
+							lu.setMarkingDate(fd.getMandate().getSwapEffectiveDate());
+						} else {
+							lu.setMarkingDate(appDate);
+						}
+					} else {
+						lu.setMarkingDate(fm.getFinStartDate());
+					}
+					setLienMarkStatus(lu, fm.getModuleDefiner());
+					lienDetailsDAO.update(lu);
 				}
+				return;
 			} else if (RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
 				lienHeaderDAO.update(lh);
+				return;
 			}
+
 		}
-		if ((fmBef != null && fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod())
-				&& InstrumentType.isSI(fm.getFinRepayMethod())
-				&& FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner()))) {
-			return;
-		}
+		/*
+		 * if ((fmBef != null && fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod()) &&
+		 * InstrumentType.isSI(fm.getFinRepayMethod()) &&
+		 * FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner()))) { return; }
+		 */
 
 		LienDetails lu = getLienDetails(lh, fm);
 		lu.setHeaderID(headerID);
