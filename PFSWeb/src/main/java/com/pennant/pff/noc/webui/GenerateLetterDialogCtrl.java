@@ -18,6 +18,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
@@ -83,6 +84,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tab letterLogDetailTab;
+	protected Button btnDownload;
 
 	protected Label totalPriSchd;
 	protected Label priPaid;
@@ -407,6 +409,10 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	private void doShowDialog(GenerateLetter csb) {
 		logger.debug(Literal.LEAVING);
 
+		if (csb.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)) {
+			this.btnDownload.setVisible(true);
+		}
+
 		if (csb.isNewRecord()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
@@ -546,6 +552,12 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		StringBuilder builder = new StringBuilder("/WEB-INF/pages/NOC/LetterLogEnquiryDialog");
 		builder.append(".zul");
 		return builder.toString();
+	}
+
+	public void onClick$btnDownload(Event event) {
+		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
 	private void dofillDetails(FinanceDetail findetail) {

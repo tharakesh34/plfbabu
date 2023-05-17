@@ -27,4 +27,6 @@ public interface GenerateLetterDAO {
 	void update(GenerateLetter pinCode, TableType tableType);
 
 	void delete(GenerateLetter pinCode, TableType mainTab);
+
+	List<GenerateLetter> getLetterInfo(long finID);
 }

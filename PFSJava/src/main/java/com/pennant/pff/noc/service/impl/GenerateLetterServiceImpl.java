@@ -8,12 +8,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.FeeCalculator;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -42,6 +45,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	private GenerateLetterDAO generateLetterDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	protected FinExcessAmountDAO finExcessAmountDAO;
+	private FeeCalculator feeCalculator;
 
 	@Override
 	public List<GenerateLetter> getResult(ISearch searchFilters) {
@@ -169,6 +173,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			if (gl.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				gl.setRecordType("");
+				processfees(gl);
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -187,6 +192,17 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 		logger.info(Literal.LEAVING);
 		return ah;
+	}
+
+	private void processfees(GenerateLetter gl) {
+		FinReceiptData rd = new FinReceiptData();
+		FinReceiptHeader frh = new FinReceiptHeader();
+		frh.setPartPayAmount(BigDecimal.ZERO);
+		rd.setFinanceDetail(gl.getFinanceDetail());
+		rd.setTdPriBal(gl.getFinanceDetail().getFinScheduleData().getFinPftDeatil().getTdSchdPriBal());
+		rd.setReceiptHeader(frh);
+		feeCalculator.calculateFees(rd);
+
 	}
 
 	@Override
@@ -255,6 +271,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Override
 	public List<FinExcessAmount> getExcessAvailable(long finID) {
 		return finExcessAmountDAO.getExcessAmountsByRef(finID);
+	}
+
+	@Override
+	public List<GenerateLetter> getLetterInfo(GenerateLetter gl) {
+		return generateLetterDAO.getLetterInfo(gl.getFinID());
 	}
 
 	private void prepareProfitDetailSummary(FinanceSummary summary, FinScheduleData schdData) {
@@ -346,5 +367,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setFeeCalculator(FeeCalculator feeCalculator) {
+		this.feeCalculator = feeCalculator;
 	}
 }

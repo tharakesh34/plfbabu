@@ -249,24 +249,13 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		}, id, Allocation.PRI, Allocation.PFT, Allocation.FUT_PRI, Allocation.FUT_PFT);
 	}
 
-	private long getEarltSettleReceipt(String reference) {
-		String sql = "Select ReceiptId From  FinReceiptHeader Where Reference = ? and ReceiptPurpose = ? and ReceiptModeStatus = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, reference, "EarlySettlement", "R");
-		} catch (Exception e) {
-			logger.warn(Message.NO_RECORD_FOUND);
-			return 0;
-		}
-	}
-
+	@Override
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
 		sql.append(" From Letter_Generation gl");
 		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -282,7 +271,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			fm.setRemarks(rs.getString("Remarks"));
 
 			return fm;
-		}, finID, 1);
+		}, finID);
 	}
 
 	@Override
@@ -408,6 +397,19 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
+		}
+	}
+
+	private long getEarltSettleReceipt(String reference) {
+		String sql = "Select ReceiptId From  FinReceiptHeader Where Reference = ? and ReceiptPurpose = ? and ReceiptModeStatus = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, reference, "EarlySettlement", "R");
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
 		}
 	}
 }

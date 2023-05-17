@@ -34,6 +34,9 @@
 							<button id="btnPrint" label="${c:l('label_Print')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
 								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+							<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
 
 						<!-- SEARCH AREA -->

@@ -35,4 +35,6 @@ public interface GenerateLetterService {
 	List<ReceiptAllocationDetail> getPrinAndPftWaiver(String finReference);
 
 	List<FinExcessAmount> getExcessAvailable(long finID);
+
+	List<GenerateLetter> getLetterInfo(GenerateLetter gl);
 }
