@@ -466,7 +466,11 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 				fc.setBalanceAmount(fc.getBalanceAmount().subtract(payableAmount));
 			}
 
-			fsiList.add(getFSI(header, fc, payableAmount, ReceiptMode.EXCESS, fillValueDate(fc, fc.getAppDate())));
+			Date valueDate = fillValueDate(fc, fc.getAppDate());
+			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.EXCESS, valueDate);
+
+			fsi.getReceiptDetail().setPayAgainstID(fea.getExcessID());
+			fsiList.add(fsi);
 		}
 
 		return fsiList;
@@ -493,7 +497,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 				fc.setBalanceAmount(fc.getBalanceAmount().subtract(payableAmount));
 			}
 
-			fsiList.add(getFSI(header, fc, payableAmount, ReceiptMode.PAYABLE, ma.getValueDate()));
+			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.PAYABLE, ma.getValueDate());
+
+			fsi.getReceiptDetail().setPayAgainstID(ma.getAdviseID());
+			fsiList.add(fsi);
 		}
 
 		return fsiList;
@@ -511,7 +518,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		rud.setRealizationDate(valueDate);
 		rud.setReceivedDate(valueDate);
 		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode(ReceiptMode.EXCESS);
+		rud.setReceiptMode(receiptMode);
 		rud.setReceiptPurpose("SP");
 		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		rud.setReceiptChannel(PennantConstants.List_Select);
