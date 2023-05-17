@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
-import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennanttech.pennapps.core.model.AbstractEntity;
 
 public class CustEODEvent extends AbstractEntity {

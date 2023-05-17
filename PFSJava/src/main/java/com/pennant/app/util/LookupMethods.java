@@ -45,17 +45,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LookupMethods {
-	private static final Logger logger = LogManager.getLogger(LookupMethods.class);
-
 	// PROCESS METHODS IN SCHEDULE CALCULATOR
 	public static final int LT = -2; // less than
 	public static final int LE = -1; // less than or equal to

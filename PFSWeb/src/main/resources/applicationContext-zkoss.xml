@@ -3829,7 +3829,6 @@
 		<property name="holdDisbursementService" ref="holdDisbursementService"></property>
 		<property name="jointAccountDetailService" ref="jointAccountDetailService"></property>
 		<property name="finChangeCustomerService" ref="finChangeCustomerService"></property>
-		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
@@ -4576,7 +4575,6 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="verificationService" ref="verificationService" />
 		<property name="legalVerificationService" ref="legalVerificationService" />
 	</bean>
 
