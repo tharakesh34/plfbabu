@@ -17,11 +17,9 @@ import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.pennapps.core.App;
@@ -64,12 +62,6 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 
 		// Fetch Collection Receipt Request config from main configuration
 		collectionReqConfig = getDataFromList(mainConfig, CONFIG_COLLECTION_REQ_CONF);
-
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		if (collectionReqConfig == null) {
 			logger.debug(COLLECTION_REQ_CONFIG_MISSING);

@@ -144,12 +144,6 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 	public ExtPresentmentFile prepareResponseObject(FileInterfaceConfig config, String eachRecord) {
 		logger.debug(Literal.ENTERING);
 
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
-
 		ExtPresentmentFile presentment = new ExtPresentmentFile();
 
 		int i = 0;

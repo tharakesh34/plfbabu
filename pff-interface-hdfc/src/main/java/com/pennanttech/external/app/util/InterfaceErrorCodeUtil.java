@@ -3,31 +3,39 @@ package com.pennanttech.external.app.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 
 public class InterfaceErrorCodeUtil {
 
-	private InterfaceErrorCodeUtil() {
-		super();
-	}
-
-	private List<InterfaceErrorCode> interfaceErrorsList = new ArrayList<InterfaceErrorCode>();
-
+	private static ExtGenericDao extGenericDao;
 	public static InterfaceErrorCodeUtil errorCodes;
+	private static List<InterfaceErrorCode> interfaceErrorsList = new ArrayList<InterfaceErrorCode>();
 
-	public static InterfaceErrorCodeUtil getInstance() {
+	public InterfaceErrorCodeUtil() {
+		super();
+
 		if (errorCodes == null) {
 			errorCodes = new InterfaceErrorCodeUtil();
+			interfaceErrorsList = getExtGenericDao().fetchInterfaceErrorCodes();
+
 		}
-		return errorCodes;
 	}
 
 	public List<InterfaceErrorCode> getInterfaceErrorsList() {
 		return interfaceErrorsList;
 	}
 
-	public void setInterfaceErrorsList(List<InterfaceErrorCode> interfaceErrorsList) {
-		this.interfaceErrorsList = interfaceErrorsList;
+	public static ExtGenericDao getExtGenericDao() {
+		return InterfaceErrorCodeUtil.extGenericDao;
+	}
+
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		InterfaceErrorCodeUtil.extGenericDao = extGenericDao;
+	}
+
+	public static InterfaceErrorCodeUtil getInstance() {
+		return errorCodes;
 	}
 
 }

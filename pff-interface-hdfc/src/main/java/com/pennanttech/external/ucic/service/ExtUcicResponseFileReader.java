@@ -35,12 +35,6 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		// Get main configuration for External Interfaces
 		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
-
 		// Get Response file and complete file configuration
 		FileInterfaceConfig ucicRespConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP);
 		FileInterfaceConfig ucicRespCompleteConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP_COMPLETE);

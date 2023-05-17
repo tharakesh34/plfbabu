@@ -28,6 +28,8 @@
 		</constructor-arg>
 	</bean>
 
+
+
 	<bean id="otpService" class="com.pennapps.security.core.otp.impl.OTPServiceImpl">
 		<property name="smsGateway" ref="smsGateway" />
 		<property name="otpEmailEngine" ref="otpEmailEngine" />
@@ -42,6 +44,12 @@
 	<bean id="extGenericDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
+	
+	<bean id="InterfaceErrorCodeUtil" class="com.pennanttech.external.app.util.InterfaceErrorCodeUtil">
+		<property name="extGenericDao" ref="extGenericDao" />
+	</bean>
+	
+	
 
 	<bean id="extStageDao" class="com.pennanttech.external.dao.impl.ExtStagingDaoImpl">
 		<property name="stagingDataSource" ref="stagingDataSource" />

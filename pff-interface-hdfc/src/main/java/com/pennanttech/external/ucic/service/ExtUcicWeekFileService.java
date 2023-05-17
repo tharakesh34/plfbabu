@@ -12,9 +12,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Files;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -29,11 +27,6 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 
 	public void processWeeklyFileRequest(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		// Get main configuration for External Interfaces
 		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();

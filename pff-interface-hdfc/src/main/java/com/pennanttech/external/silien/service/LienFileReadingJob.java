@@ -13,10 +13,8 @@ import org.springframework.context.ApplicationContext;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
@@ -50,12 +48,6 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 
 	public void processSILienMarkingResponse() {
 		logger.debug(Literal.ENTERING);
-
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 

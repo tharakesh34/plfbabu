@@ -70,11 +70,6 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 	private void processSavedFiles() {
 
 		logger.debug(Literal.ENTERING);
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 

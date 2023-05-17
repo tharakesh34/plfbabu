@@ -29,10 +29,8 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.external.ExtReceiptServiceHook;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
@@ -67,12 +65,6 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 
 		if (extReceiptServiceHook != null) {
 			return;
-		}
-
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Fetch 10 files using extraction status = 0

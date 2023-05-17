@@ -25,11 +25,9 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
@@ -64,12 +62,6 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 		extPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
 
 		Date appDate = SysParamUtil.getAppDate();
-
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
 
 		// Fetch External configuration once for all the interfaces types
 		List<FileInterfaceConfig> configList = extGenericDao.getExternalConfig();

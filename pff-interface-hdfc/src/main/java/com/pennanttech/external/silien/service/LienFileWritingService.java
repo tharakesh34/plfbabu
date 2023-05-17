@@ -12,9 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
-import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienMarkDetail;
@@ -32,12 +30,6 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 	public void processSILienMarkingRequest(Date appDate) {
 		logger.debug(Literal.ENTERING);
 		try {
-
-			// get error codes handy
-			if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-				List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-				InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-			}
 
 			// Get main configuration for External Interfaces
 			List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();

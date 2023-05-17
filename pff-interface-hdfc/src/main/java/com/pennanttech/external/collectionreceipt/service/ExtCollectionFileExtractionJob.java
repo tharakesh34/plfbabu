@@ -61,12 +61,6 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
-
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();
 		cursorItemReader.setDataSource(dataSource);

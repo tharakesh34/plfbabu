@@ -82,12 +82,6 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	public void readAndProcessFiles() {
 		logger.debug(Literal.ENTERING);
 
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
-
 		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// Fetch bounce details beforehand..

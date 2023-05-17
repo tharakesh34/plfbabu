@@ -120,12 +120,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 	private void processResponseFiles(FileInterfaceConfig respConfig, FileInterfaceConfig reqConfig) {
 		logger.debug(Literal.ENTERING);
 
-		// get error codes handy
-		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
-			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
-		}
-
 		// Get Interface/Module wise folder path
 		String folderPath = App.getResourcePath(respConfig.getFileLocation());
 
