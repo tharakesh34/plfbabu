@@ -26,13 +26,13 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseAckFileWriter.class);
 
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	public void processUcicResponseAckFile(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		FileInterfaceConfig ucicAckConfig = getDataFromList(mainConfig, CONFIG_UCIC_ACK);
 		FileInterfaceConfig ucicAckConfConfig = getDataFromList(mainConfig, CONFIG_UCIC_ACK_CONF);
@@ -106,7 +106,8 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 		fileBackup(ucicAckConfig, mainFile, completeFileToUpload);
 	}
 
-	private void fileBackup(FileInterfaceConfig ucicAckConfig, File mainFile, File completeFileToUpload) throws IOException {
+	private void fileBackup(FileInterfaceConfig ucicAckConfig, File mainFile, File completeFileToUpload)
+			throws IOException {
 		logger.debug(Literal.ENTERING);
 
 		String localBkpLocation = ucicAckConfig.getFileLocalBackupLocation();
@@ -144,8 +145,8 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

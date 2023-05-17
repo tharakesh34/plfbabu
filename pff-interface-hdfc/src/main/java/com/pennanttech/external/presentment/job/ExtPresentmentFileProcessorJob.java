@@ -56,7 +56,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	private SIInternalService siInternalService;
 	private ACHService achService;
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private PlatformTransactionManager transactionManager;
 
 	private ApplicationContext applicationContext;
@@ -72,7 +72,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		siService = applicationContext.getBean(SIService.class);
 		siInternalService = applicationContext.getBean(SIInternalService.class);
 		achService = applicationContext.getBean(ACHService.class);
-		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
 		// Process starts here
@@ -87,11 +87,11 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// Fetch bounce details beforehand..
 		if (ExtBounceReasons.getInstance().getBounceData().isEmpty()) {
@@ -180,7 +180,8 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processFileRecords(ExtPresentment extPresentment, FileInterfaceConfig extConfig, ExtPrmntRespHeader prh) {
+	private void processFileRecords(ExtPresentment extPresentment, FileInterfaceConfig extConfig,
+			ExtPrmntRespHeader prh) {
 
 		logger.debug(Literal.ENTERING);
 

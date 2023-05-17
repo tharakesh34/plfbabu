@@ -34,7 +34,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 	private static final int ach_ccyFromat = 0;
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	public void processACHRequest(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList, Date dueDate,
 			String batchRef, Date appDate) {
@@ -146,7 +146,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
@@ -234,8 +234,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 		this.externalPresentmentDAO = externalPresentmentDAO;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

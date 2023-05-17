@@ -29,7 +29,7 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 	private ExtLienMarkingDAO externalLienMarkingDAO;
 	private FileInterfaceConfig lienConfig;
 	private FileInterfaceConfig lienReqConfig;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -40,7 +40,7 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 			// Get all the required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalLienMarkingDAO = applicationContext.getBean(ExtLienMarkingDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+			extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 
 		}
 
@@ -53,11 +53,11 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_RESP);
 		lienReqConfig = getDataFromList(mainConfig, CONFIG_LIEN_REQ);

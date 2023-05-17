@@ -24,7 +24,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	private static final Logger logger = LogManager.getLogger(PresentmentRequestHandler.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	private SIService siService;
 	private SIInternalService siInternalService;
@@ -43,7 +43,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 		logger.debug(Literal.ENTERING);
 
 		// Fetch External configuration once for all the interfaces types
-		List<FileInterfaceConfig> list = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> list = extGenericDao.getExternalConfig();
 		Date appDate = SysParamUtil.getAppDate();
 
 		String configTYpe = "";
@@ -148,7 +148,8 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	 * @param externalConfig
 	 * @param presentmentHeader
 	 */
-	private void processSIInternal(FileInterfaceConfig externalConfig, PresentmentHeader presentmentHeader, Date appDate) {
+	private void processSIInternal(FileInterfaceConfig externalConfig, PresentmentHeader presentmentHeader,
+			Date appDate) {
 		logger.debug(Literal.ENTERING);
 
 		List<ExtPresentmentFile> presentmentList = externalPresentmentDAO
@@ -184,8 +185,8 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 		this.extPdcService = extPdcService;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

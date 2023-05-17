@@ -25,7 +25,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicRequestFile.class);
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private FileInterfaceConfig ucicReqConfig;
 	private FileInterfaceConfig ucicReqCompleteConfig;
 
@@ -33,12 +33,12 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		logger.debug(Literal.ENTERING);
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// Fetch UCIC configs from main configuration
 		ucicReqConfig = getDataFromList(mainConfig, CONFIG_UCIC_REQ);
@@ -138,7 +138,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		}
 	}
 
-	private void fileBackup(FileInterfaceConfig serverConfig, File mainFile, File completeFileToUpload) throws IOException {
+	private void fileBackup(FileInterfaceConfig serverConfig, File mainFile, File completeFileToUpload)
+			throws IOException {
 		logger.debug(Literal.ENTERING);
 
 		String localBkpLocation = serverConfig.getFileLocalBackupLocation();
@@ -188,8 +189,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

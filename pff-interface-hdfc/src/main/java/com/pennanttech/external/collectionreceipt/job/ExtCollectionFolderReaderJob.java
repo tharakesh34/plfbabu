@@ -33,7 +33,7 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFolderReaderJob.class);
 
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ApplicationContext applicationContext;
 
@@ -48,7 +48,7 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 		logger.debug(Literal.ENTERING);
 		// Get all the required DAO's
 		applicationContext = ApplicationContextProvider.getApplicationContext();
-		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 
 		fetchRemoteFiles();
@@ -60,14 +60,14 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 		logger.debug(Literal.ENTERING);
 
 		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// Fetch Collection Receipt Request config from main configuration
 		collectionReqConfig = getDataFromList(mainConfig, CONFIG_COLLECTION_REQ_CONF);
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 

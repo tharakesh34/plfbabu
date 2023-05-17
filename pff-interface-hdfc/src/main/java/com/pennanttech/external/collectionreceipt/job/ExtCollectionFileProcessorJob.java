@@ -50,7 +50,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ApplicationContext applicationContext;
 	private PlatformTransactionManager transactionManager;
 	private ExtReceiptServiceHook extReceiptServiceHook;
@@ -60,7 +60,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 		logger.debug(Literal.ENTERING);
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 		extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);
@@ -71,7 +71,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob implements Interf
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 

@@ -47,7 +47,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 	private ExtLienMarkingDAO externalLienMarkingDAO;
 	private FileInterfaceConfig lienConfig;
 	private DataSource dataSource;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -58,7 +58,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 			// Get all the required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalLienMarkingDAO = applicationContext.getBean(ExtLienMarkingDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+			extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 
 		}
@@ -72,11 +72,11 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 		logger.debug(Literal.ENTERING);
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_RESP);
 
@@ -299,8 +299,8 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 	}
 
 	private String getErrorMessage(String errCode) {
-		InterfaceErrorCode interfaceErrorCode = getErrorFromList(InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(),
-				errCode);
+		InterfaceErrorCode interfaceErrorCode = getErrorFromList(
+				InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), errCode);
 		String errMsg = interfaceErrorCode.getErrorMessage();
 		errMsg = StringUtils.stripToEmpty(errMsg);
 		return errMsg;

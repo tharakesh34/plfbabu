@@ -31,7 +31,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 	private FileInterfaceConfig finconGLConfig;
 	private ExtExtractionDao extExtractionDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ExtUcicDataExtractor extUcicExtractData;
 	private ExtUcicRequestFile extUcicRequestFile;
 
@@ -59,7 +59,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	private void processFinconFileSP() {
-		List<FileInterfaceConfig> configList = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> configList = extGenericDao.getExternalConfig();
 
 		finconGLConfig = getDataFromList(configList, CONFIG_FINCONGL);
 
@@ -152,9 +152,9 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	@Autowired(required = false)
-	@Qualifier(value = "extInterfaceDao")
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	@Qualifier(value = "extGenericDao")
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 	@Autowired(required = false)

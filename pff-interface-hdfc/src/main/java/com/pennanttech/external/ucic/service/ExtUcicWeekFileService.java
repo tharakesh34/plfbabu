@@ -24,19 +24,19 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private FileInterfaceConfig ucicWeeklyConfig;
 
 	public void processWeeklyFileRequest(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
 		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// Fetch UCIC weekly config from main configuration
 		ucicWeeklyConfig = getDataFromList(mainConfig, CONFIG_UCIC_WEEKLY_FILE);
@@ -109,8 +109,8 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

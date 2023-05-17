@@ -37,7 +37,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 	private ApplicationContext applicationContext;
 	private ExtUcicDao extUcicDao;
 	private DataSource dataSource;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	public void readFileAndExtracData() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -46,7 +46,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 		dataSource = applicationContext.getBean("dataSource", DataSource.class);
 
 		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 		// Get Response file and complete file configuration
 		FileInterfaceConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
 
@@ -143,8 +143,8 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 
 }

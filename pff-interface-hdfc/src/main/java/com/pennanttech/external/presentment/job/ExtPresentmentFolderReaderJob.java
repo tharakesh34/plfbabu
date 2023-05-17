@@ -40,7 +40,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentFolderReaderJob.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	private ApplicationContext applicationContext;
 
@@ -51,7 +51,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+			extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 			readAndSaveFiles();
 
 		} catch (Exception e) {
@@ -65,7 +65,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		logger.debug(Literal.ENTERING);
 
 		// Fetch Interface configuration
-		List<FileInterfaceConfig> listConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> listConfig = extGenericDao.getExternalConfig();
 
 		processSIReposne(listConfig);
 		processIPDCReposne(listConfig);
@@ -122,7 +122,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 

@@ -68,7 +68,7 @@ import com.pennanttech.pff.model.mandate.MandateData;
 public class ExtMandateProcess extends AbstractInterface implements MandateProcesses {
 	protected final Logger logger = LogManager.getLogger(getClass());
 
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ApplicationContext applicationContext;
 
 	@Autowired
@@ -475,8 +475,8 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 		if (applicationContext == null) {
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 		}
-		if (extInterfaceDao == null) {
-			extInterfaceDao = applicationContext.getBean("extInterfaceDao", ExtGenericDao.class);
+		if (extGenericDao == null) {
+			extGenericDao = applicationContext.getBean("extGenericDao", ExtGenericDao.class);
 		}
 
 		long approved = 0;

@@ -24,7 +24,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFileReader.class);
 
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 
 	private static final int UCIC_RESP_NEGLECT_LINES = 2;
 	private static final String UCIC_RESPONSE_END = "EOF";
@@ -33,11 +33,11 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		logger.debug(Literal.ENTERING);
 
 		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extInterfaceDao.getExternalConfig();
+		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 
@@ -216,7 +216,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 		this.extUcicDao = extUcicDao;
 	}
 
-	public void setExtInterfaceDao(ExtGenericDao extInterfaceDao) {
-		this.extInterfaceDao = extInterfaceDao;
+	public void setExtGenericDao(ExtGenericDao extGenericDao) {
+		this.extGenericDao = extGenericDao;
 	}
 }

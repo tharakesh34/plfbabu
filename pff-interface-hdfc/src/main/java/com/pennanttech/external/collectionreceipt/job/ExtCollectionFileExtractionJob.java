@@ -46,7 +46,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ApplicationContext applicationContext;
 
 	/**
@@ -59,11 +59,11 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
-		extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 
 		// get error codes handy
 		if (InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList().isEmpty()) {
-			List<InterfaceErrorCode> interfaceErrorsList = extInterfaceDao.fetchInterfaceErrorCodes();
+			List<InterfaceErrorCode> interfaceErrorsList = extGenericDao.fetchInterfaceErrorCodes();
 			InterfaceErrorCodeUtil.getInstance().setInterfaceErrorsList(interfaceErrorsList);
 		}
 

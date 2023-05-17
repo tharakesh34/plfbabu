@@ -43,7 +43,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 	private static final String FETCH_QUERY = "Select * from PRMNT_HEADER  Where EXTRACTION = ? AND STATUS = ?";
 
 	private DataSource dataSource;
-	private ExtGenericDao extInterfaceDao;
+	private ExtGenericDao extGenericDao;
 	private ExtPresentmentDAO externalPresentmentDAO;
 	private PlatformTransactionManager transactionManager;
 	private ApplicationContext applicationContext;
@@ -55,7 +55,7 @@ public class ExtPresentmentFileExtractionJob extends AbstractJob implements Inte
 			// Fetch all required DAO's
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			extInterfaceDao = applicationContext.getBean(ExtGenericDao.class);
+			extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 			dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 			transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
