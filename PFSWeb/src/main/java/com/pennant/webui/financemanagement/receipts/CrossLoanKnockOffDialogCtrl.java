@@ -1782,11 +1782,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		rcd.setReceiptSeqID(getReceiptSeqID(rcd));
 		rcd.setReceiptID(rch.getReceiptID());
 
-		boolean partnerBankReq = false;
-		if (!ReceiptMode.CASH.equals(rcd.getPaymentType())) {
-			partnerBankReq = true;
-		}
-
 		// rcd.setReceivedDate(this.receivedDate.getValue());
 		if (rcd.getReceiptSeqID() <= 0) {
 			rcd.setPayOrder(rcdList.size() + 1);
@@ -1971,11 +1966,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 						receiptDetail.setPaymentRef(this.paymentRef.getValue());
 						receiptDetail.setTransactionRef(this.transactionRef.getValue());
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-
-						boolean partnerBankReq = false;
-						if (!StringUtils.equals(ReceiptMode.CASH, receiptDetail.getPaymentType())) {
-							partnerBankReq = true;
-						}
 
 						// Setting data
 						if (StringUtils.equals(ReceiptMode.CHEQUE, receiptDetail.getPaymentType())
@@ -2266,12 +2256,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					this.transactionRef.setValue(rcd.getTransactionRef());
 					this.externalRefrenceNumber.setValue(rch.getExtReference());
 					this.chequeAcNo.setValue(rcd.getChequeAcNo());
-
-					boolean partnerBankReq = false;
-					if (!StringUtils.equals(ReceiptMode.CASH, rcd.getPaymentType())) {
-						partnerBankReq = true;
-					}
-
 				}
 			}
 		}

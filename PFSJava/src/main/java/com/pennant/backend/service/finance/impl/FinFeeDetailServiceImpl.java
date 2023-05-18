@@ -44,15 +44,11 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -96,14 +92,10 @@ import com.pennanttech.pff.core.TableType;
 public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implements FinFeeDetailService {
 	private static final Logger logger = LogManager.getLogger(FinFeeDetailServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinFeeReceiptDAO finFeeReceiptDAO;
 	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	private ManualAdviseDAO manualAdviseDAO;
-	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
-	private RuleDAO ruleDAO;
 	private BranchDAO branchDAO;
 	private ProvinceDAO provinceDAO;
 	private TaxHeaderDetailsService taxHeaderDetailsService;
@@ -1719,10 +1711,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return finFeeDetailDAO.getFinFeeDetailsByTran(reference, isWIF, type);
 	}
 
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
@@ -1735,20 +1723,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
 
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
 	}
 
 	public void setBranchDAO(BranchDAO branchDAO) {
@@ -1771,5 +1747,4 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public List<FinFeeDetail> getFinFeeDetailByFinRef(long finID, boolean isWIF, String type) {
 		return finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type);
 	}
-
 }

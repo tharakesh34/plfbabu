@@ -345,12 +345,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerIncome> incomeList = new ArrayList<CustomerIncome>();
 
 	private CustomerDetails customerDetails;
-	private transient CustomerListCtrl customerListCtrl;
 
 	// Declaration of Service(s) & DAO(s)
 	private transient CustomerDetailsService customerDetailsService;
 	private int ccyFormatter = 0;
-	private int old_ccyFormatter = 0;
 	private String moduleType = "";
 	protected Div divKeyDetails;
 	protected Grid grid_KYCDetails;
@@ -457,7 +455,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			Customer customer = customerDetails.getCustomer();
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
-			old_ccyFormatter = ccyFormatter;
 
 			if (isFinanceProcess || isEnqProcess) {
 				if (arguments.containsKey("roleCode")) {
@@ -471,14 +468,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				} else {
 					doLoadWorkFlow(customer.isWorkflow(), customer.getWorkflowId(), customer.getNextTaskId());
 				}
-			}
-
-			// READ OVERHANDED params !
-			// we get the customerListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit
-			// or delete customer here.
-			if (arguments.containsKey("customerListCtrl")) {
-				customerListCtrl = (CustomerListCtrl) arguments.get("customerListCtrl");
 			}
 
 			if (arguments.containsKey("module")) {
