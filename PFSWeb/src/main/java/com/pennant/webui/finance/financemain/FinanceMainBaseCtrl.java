@@ -3043,21 +3043,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			createTab(AssetConstants.UNIQUE_ID_MANDATE, false);
 		} else {
 			final Map<String, Object> map = getDefaultArguments();
-			String mandate = AssetConstants.UNIQUE_ID_MANDATE;
-
-			Tab tab = getTab(mandate);
-			if (tab != null) {
-				if (InstrumentType.isDAS(this.finRepayMethod.getValue())) {
-					tab.setLabel(Labels.getLabel("label_Mandate_DAS"));
-				} else {
-					tab.setLabel(Labels.getLabel("tab_label_MANDATE"));
-				}
-			}
-			map.put("tab", tab);
+			map.put("tab", getTab(AssetConstants.UNIQUE_ID_MANDATE));
 			map.put("fromLoan", true);
 			map.put("MandateType", this.finRepayMethod.getValue());
 			map.put("securityMandate", false);
-			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul", getTabpanel(mandate), map);
+			Executions.createComponents("/WEB-INF/pages/Mandate/MandateDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_MANDATE), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -18180,15 +18171,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void onChange$finRepayMethod(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
-
-		Tab tab = (Tab) tabsIndexCenter.getFellowIfAny(getTabID(AssetConstants.UNIQUE_ID_MANDATE));
-		if (tab != null) {
-			if (InstrumentType.isDAS(this.finRepayMethod.getValue())) {
-				tab.setLabel(Labels.getLabel("label_Mandate_DAS"));
-			} else {
-				tab.setLabel(Labels.getLabel("tab_label_MANDATE"));
-			}
-		}
 
 		setRepayAccMandatory();
 		String repymethod = "";
