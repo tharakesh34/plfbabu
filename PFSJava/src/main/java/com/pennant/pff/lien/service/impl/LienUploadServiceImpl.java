@@ -267,6 +267,10 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienDetailsDAO.update(lu);
 				}
 
+				Map<String, String> map = new HashMap<>();
+				map.put("Lien ID", String.valueOf(lu.getLienID()));
+				lienup.setFileDetails(map);
+
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);

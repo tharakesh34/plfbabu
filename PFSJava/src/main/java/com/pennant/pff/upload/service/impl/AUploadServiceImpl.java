@@ -149,6 +149,11 @@ public abstract class AUploadServiceImpl<T> implements UploadService, ValidateRe
 	}
 
 	@Override
+	public void uploadProcess(String type) {
+		logger.debug("Respective job is not yet initialized....");
+	}
+
+	@Override
 	public void uploadProcess(String type, ProcessRecord processRecord, UploadService uploadService,
 			String moduleCode) {
 		uploadProcess1(type, processRecord, uploadService, moduleCode);

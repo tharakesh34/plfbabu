@@ -45,7 +45,7 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_020("Its not a payable advise"),
 
-	CLKU_021("AdviseId is mandatory if Excess Type is P(Payable)"),
+	CLKU_021("FeeTypeCode is mandatory if Excess Type is P(Payable)"),
 
 	CLKU_022("Either principal or interest amount should be given or only emi"),
 

@@ -1315,14 +1315,6 @@
 				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationUploadList.zul?stage=A"
 				rightName="menu_Item_LoanCancelUpload_Approver" />
 		</menu>
-		<menu id="menu_Category_BulkOverduePenaltyDetailsUpload">
-			<menuItem id="menu_Item_BulkOverduePenaltyDetailsUpload_Maker"
-				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=M"
-				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Maker" />
-			<menuItem id="menu_Item_BulkOverduePenaltyDetailsUpload_Approver"
-				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=A"
-				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Approver" />
-		</menu>
 		<menu id="menu_Item_Cust_kyc_Dtls_Upload">
 			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Maker"
 				zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=M"
@@ -1411,6 +1403,22 @@
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionUploadList.zul?stage=A"
 				rightName="menu_Item_Provision_Upload_Approver" />
 	  </menu>
+	  <menu id="menu_Category_BulkLoanOverduePenaltyDetailsUpload">
+			<menuItem id="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Maker"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanUploadList.zul?stage=M"
+				rightName="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Maker" />
+			<menuItem id="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Approver"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanUploadList.zul?stage=A"
+				rightName="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_BulkLoanTypeOverduePenaltyDetailsUpload">
+			<menuItem id="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Maker"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanTypeUploadList.zul?stage=M"
+				rightName="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Maker" />
+			<menuItem id="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Approver"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanTypeUploadList.zul?stage=A"
+				rightName="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

@@ -140,10 +140,10 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 	public void save(LPPUpload lpp) {
 		StringBuilder sql = new StringBuilder("Insert into LPP_UPLOAD");
 		sql.append(" (HeaderId, RecordSeq, LoanType, ApplyToExistingLoans");
-		sql.append(", ApplyOverDue, FinID, FinReference, PenaltyType");
-		sql.append(", IncludeGraceDays, GraceDays, CalculatedOn");
-		sql.append(", AmountOrPercent, AllowWaiver, MaxWaiver, ODMinAmount, Progress, Status)");
-		sql.append("  Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ApplyOverDue, PenaltyType, IncludeGraceDays");
+		sql.append(", GraceDays, CalculatedOn, AmountOrPercent");
+		sql.append(", AllowWaiver, MaxWaiver, ODMinAmount, Progress, Status)");
+		sql.append("  Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -157,8 +157,6 @@ public class LPPUploadDAOImpl extends SequenceDao<LPPUpload> implements LPPUploa
 				ps.setString(++index, lpp.getLoanType());
 				ps.setString(++index, lpp.getApplyToExistingLoans());
 				ps.setString(++index, lpp.getApplyOverDue());
-				ps.setObject(++index, lpp.getReferenceID());
-				ps.setString(++index, lpp.getReference());
 				ps.setString(++index, lpp.getPenaltyType());
 				ps.setString(++index, lpp.getIncludeGraceDays());
 				ps.setInt(++index, lpp.getGraceDays());

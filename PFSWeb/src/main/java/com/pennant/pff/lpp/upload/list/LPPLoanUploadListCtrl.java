@@ -8,12 +8,12 @@ import com.pennant.pff.upload.list.AUploadListCtrl;
 import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.pff.file.UploadTypes;
 
-public class LPPUploadListCtrl extends AUploadListCtrl {
+public class LPPLoanUploadListCtrl extends AUploadListCtrl {
 	private static final long serialVersionUID = -256791887358524752L;
 	protected Window window;
 
-	protected LPPUploadListCtrl(@Autowired UploadService lPPUploadService) {
-		super(lPPUploadService, UploadTypes.LPP);
+	protected LPPLoanUploadListCtrl(@Autowired UploadService lPPUploadService) {
+		super(lPPUploadService, UploadTypes.LPP_LOAN);
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class LPPUploadListCtrl extends AUploadListCtrl {
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "LPPUploadHeader";
+		super.moduleCode = "LPPLoanUploadHeader";
 		super.onCreate(getArgument("stage"), this.window);
 	}
 }

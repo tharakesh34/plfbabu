@@ -122,6 +122,8 @@ public class CrossLoanKnockOffUploadProcessRecord implements ProcessRecord {
 
 			long uploadID = crossLoanKnockOffUploadDAO.save(clku);
 
+			clku.setId(uploadID);
+
 			List<CrossLoanKnockoffUpload> allocations = new ArrayList<>();
 
 			int index = 0;

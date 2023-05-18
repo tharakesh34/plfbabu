@@ -79,7 +79,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			for (Cell cell : headerRow) {
 				rowCell = row.getCell(readColumn);
 
-				if (cell.getColumnIndex() > 11) {
+				if (cell.getColumnIndex() > 10) {
 					break;
 				}
 
@@ -90,48 +90,45 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 				switch (cell.getColumnIndex()) {
 				case 0:
-					lpp.setReference(rowCell.toString());
-					break;
-				case 1:
 					lpp.setLoanType(rowCell.toString());
 					break;
-				case 2:
+				case 1:
 					lpp.setApplyToExistingLoans(rowCell.toString());
 					break;
-				case 3:
+				case 2:
 					lpp.setApplyOverDue(rowCell.toString());
 					break;
-				case 4:
+				case 3:
 					lpp.setPenaltyType(rowCell.toString());
 					break;
-				case 5:
+				case 4:
 					lpp.setIncludeGraceDays(rowCell.toString());
 					break;
-				case 6:
+				case 5:
 					String gracedays = rowCell.toString();
 					if (StringUtils.isNotEmpty(gracedays)) {
 						lpp.setGraceDays(Integer.parseInt(gracedays));
 					}
 					break;
-				case 7:
+				case 6:
 					lpp.setCalculatedOn(rowCell.toString());
 					break;
-				case 8:
+				case 7:
 					String amountorpercent = rowCell.toString();
 					if (amountorpercent != null) {
 						lpp.setAmountOrPercent(PennantApplicationUtil.unFormateAmount(amountorpercent, 2));
 					}
 					break;
-				case 9:
+				case 8:
 					lpp.setAllowWaiver(rowCell.toString());
 					break;
-				case 10:
+				case 9:
 					String maxwaiver = rowCell.toString();
 					if (maxwaiver != null) {
 						lpp.setMaxWaiver(PennantApplicationUtil.unFormateAmount(maxwaiver, 0));
 					}
 					break;
-				case 11:
+				case 10:
 					String odminamount = rowCell.toString();
 					if (odminamount != null) {
 						lpp.setODMinAmount(PennantApplicationUtil.unFormateAmount(odminamount, 2));
@@ -141,11 +138,6 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 				default:
 					break;
 				}
-			}
-
-			if (StringUtils.isNotBlank(lpp.getReference()) && StringUtils.isNotBlank(lpp.getLoanType())) {
-				setError(lpp, LPPUploadError.LPP_01);
-				return;
 			}
 
 			validate(header, lpp);
@@ -314,11 +306,10 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 		if (allowWaiver && StringUtils.isBlank(String.valueOf(maxWaiver))) {
 			setError(detail, LPPUploadError.LPP_18);
 			return;
-		} else if (allowWaiver
-				&& (maxWaiver.compareTo(BigDecimal.ZERO) <= 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
-			setError(detail, LPPUploadError.LPP_10);
-			return;
-		}
+		} else /*
+				 * if (allowWaiver && (maxWaiver.compareTo(BigDecimal.ZERO) <= 0 || maxWaiver.compareTo(new
+				 * BigDecimal(100)) > 0)) { setError(detail, LPPUploadError.LPP_10); return; }
+				 */
 
 		if (StringUtils.isNotBlank(String.valueOf(maxWaiver)) && !allowWaiver
 				&& maxWaiver.compareTo(BigDecimal.ZERO) > 0) {

@@ -28,7 +28,8 @@ import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.holdrefund.upload.job.HoldRefundJob;
 import com.pennant.pff.hostglmapping.upload.job.HostGLMappingUploadJob;
 import com.pennant.pff.lien.upload.job.LienUploadJob;
-import com.pennant.pff.lpp.upload.job.LPPUploadJob;
+import com.pennant.pff.lpp.upload.job.LPPLoanTypeUploadJob;
+import com.pennant.pff.lpp.upload.job.LPPLoanUploadJob;
 import com.pennant.pff.mandate.upload.job.MandateUploadJob;
 import com.pennant.pff.manualknockoff.upload.job.ManualKnockOffJob;
 import com.pennant.pff.miscellaneouspostingupload.service.impl.MiscellaneousPostingUploadJob;
@@ -450,11 +451,6 @@ public class PFFJobScheduler extends JobScheduler {
 		jobDataList.add(jobData);
 
 		args = new JobDataMap();
-		args.put("lPPUploadService", lPPUploadService);
-		jobData = new JobData("LPP_JOB", LPPUploadJob.class, args);
-		jobDataList.add(jobData);
-
-		args = new JobDataMap();
 		args.put("crossLoanKnockOffUploadService", crossLoanKnockOffUploadService);
 		jobData = new JobData("CROSSLOAN_KNOCKOFF_JOB", CrossLoanKnockOffJob.class, args);
 		jobDataList.add(jobData);
@@ -547,6 +543,16 @@ public class PFFJobScheduler extends JobScheduler {
 		args = new JobDataMap();
 		args.put("provisionUploadService", provisionUploadService);
 		jobData = new JobData("PROVISION_JOB", ProvisionUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("lPPLoanUploadService", lPPUploadService);
+		jobData = new JobData("LPP_LOAN_JOB", LPPLoanUploadJob.class, args);
+		jobDataList.add(jobData);
+
+		args = new JobDataMap();
+		args.put("lPPLoanTypeUploadService", lPPUploadService);
+		jobData = new JobData("LPP_LOAN_TYPE_JOB", LPPLoanTypeUploadJob.class, args);
 		jobDataList.add(jobData);
 		/**
 		 * For client specific jobs
