@@ -71,6 +71,13 @@
 									<label value="${c:l('label_FeeTypeDialog_HostFeeTypeCode.value')}" />
 									<textbox id="hostFeeTypeCode" width="200px" maxlength="50" />
 								</row>
+								<row id="refundableFeeRow">
+									<label value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
+									<checkbox id="refundableFee" />
+									<label id="label_FeeTypeDialog_AllowAutuRefund"
+										value="${c:l('label_FeeTypeDialog_AllowAutuRefund.value')}" />
+									<checkbox id="allowAutoRefund" />
+								</row>
 								<row id="manualAdviceRow">
 									<label value="${c:l('label_FeeTypeDialog_ManualAdvice.value')}" />
 									<checkbox id="manualAdvice" />
@@ -79,13 +86,6 @@
 										<space spacing="2px" sclass="mandatory" />
 										<combobox id="adviseType" width="120px" />
 									</hbox>
-								</row>
-								<row id="refundableFeeRow">
-									<label value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
-									<checkbox id="refundableFee" />
-									<label id="label_FeeTypeDialog_AllowAutuRefund"
-										value="${c:l('label_FeeTypeDialog_AllowAutuRefund.value')}" />
-									<checkbox id="allowAutoRefund" />
 								</row>
 								<row id="payableLinkToRow" visible="false">
 									<label value="${c:l('label_FeeTypeDialog_PayableLinkTo.value')}" />

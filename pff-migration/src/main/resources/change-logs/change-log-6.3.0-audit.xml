@@ -1299,30 +1299,4 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1529.6" author="Gireesh.G">
-		<addColumn tableName="ADTMANDATES">
-			<column name="ExternalMandate" type="boolean" />
-		</addColumn>
-	</changeSet>
-	
-	<changeSet id="ST#1529.6.1" author="Gireesh.G">
-		<sql>
-			<![CDATA[
-				UPDATE ADTMANDATES SET EXTERNALMANDATE = 0;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#1529.7" author="Gireesh.G" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMAN_EXTERNALMANDATE DEFAULT 0 FOR EXTERNALMANDATE;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1529.8" author="Gireesh.G" dbms="postgresql, oracle">
-		<addDefaultValue columnName="ExternalMandate" tableName="ADTMANDATES" defaultValue="0" />
-	</changeSet>
-	
 </databaseChangeLog>

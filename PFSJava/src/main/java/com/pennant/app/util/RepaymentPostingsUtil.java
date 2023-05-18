@@ -1016,13 +1016,15 @@ public class RepaymentPostingsUtil {
 
 	public FinanceMain updateStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
-			String receiptPurpose) {
+			String receiptPurpose, boolean isPresentProc) {
 
-		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose);
+		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose,
+				isPresentProc);
 	}
 
 	private FinanceMain updateRepayStatus(FinanceMain fm, Date dateValueDate, List<FinanceScheduleDetail> schedules,
-			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, String receiptPurpose) {
+			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, String receiptPurpose,
+			boolean isPresentProc) {
 		logger.debug(Literal.ENTERING);
 
 		// Finance Profit Details Updation
@@ -1064,7 +1066,7 @@ public class RepaymentPostingsUtil {
 			schdFullyPaid = false;
 		}
 
-		if (schdFullyPaid && (!fm.isSanBsdSchdle() || (fm.isSanBsdSchdle()
+		if (!isPresentProc && schdFullyPaid && (!fm.isSanBsdSchdle() || (fm.isSanBsdSchdle()
 				&& ((receiptPurpose != null && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)))))) {
 			boolean fullyPaid = true;
 

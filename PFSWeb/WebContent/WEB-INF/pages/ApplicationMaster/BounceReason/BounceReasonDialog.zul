@@ -98,10 +98,7 @@
 									<intbox id="holdMarkBounceCount" style="text-align:right" maxlength="1" />
 								</hbox>
 								<label value="${c:l('label_BounceReasonDialog_InstrumentType.value')}" />
-								<hbox>
-									<space id="spaceInstrumentType" spacing="2px" />
 									<combobox id="instrumentType" width="200px" />
-								</hbox>
 							</row>
 							<row>
 								<label value="${c:l('label_BounceReasonDialog_Active.value')}" />

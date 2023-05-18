@@ -956,11 +956,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		// Profit Details
 		Date appDate = SysParamUtil.getAppDate();
 		FinanceProfitDetail pftDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
+		boolean isPresentmentInProcess = presentmentDetailDAO.isPresentmentInProcess(finID);
 
 		// Overdue Details
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(finID);
 
-		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null);
+		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null,
+				isPresentmentInProcess);
 
 		if (!fm.isFinIsActive()) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
@@ -1043,7 +1045,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			profitDetailsDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
 
-		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null);
+		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null, false);
 
 		if (!fm.isFinIsActive()) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);

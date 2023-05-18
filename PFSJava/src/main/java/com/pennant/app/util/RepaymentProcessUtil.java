@@ -2056,9 +2056,9 @@ public class RepaymentProcessUtil {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
-			List<FinODDetails> overdueList, String receiptPurpose) {
+			List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc) {
 		return repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
-				receiptPurpose);
+				receiptPurpose, isPresentProc);
 	}
 
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
@@ -2586,7 +2586,7 @@ public class RepaymentProcessUtil {
 			finODDetailsDAO.updateList(overdueList);
 		}
 
-		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose());
+		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose(), false);
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow);

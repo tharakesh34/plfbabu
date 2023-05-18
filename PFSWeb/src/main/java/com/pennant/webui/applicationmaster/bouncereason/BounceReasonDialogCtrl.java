@@ -190,10 +190,6 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 			this.space_holdMarkBounceCount.setSclass("mandatory");
 		}
 
-		if (MandateExtension.BR_INST_TYPE_MAN) {
-			this.spaceInstrumentType.setSclass("mandatory");
-		}
-
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);

@@ -218,8 +218,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			clt.setReserveAmount(BigDecimal.ZERO);
 			AuditHeader auditReceiptHeader = getAuditHeader(clk.getFinReceiptData(), PennantConstants.TRAN_WF);
 
-			executeAccounting(clk.getCrossLoanTransfer());
-
 			if (clk.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				clk.setRecordType("");
@@ -246,6 +244,8 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 				if (auditReceiptHeader.getErrorMessage() != null) {
 					return auditReceiptHeader;
 				}
+
+				executeAccounting(clk.getCrossLoanTransfer());
 
 				clt.setReceiptId(clk.getKnockOffId());
 

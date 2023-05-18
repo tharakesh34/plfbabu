@@ -161,10 +161,10 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", TaskId, NextTaskId,  RecordType, WorkflowId");
 		sql.append(", OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId");
 		sql.append(", DefaultMandate, EMandateSource, EMandateReferenceNo, HoldReason");
-		sql.append(", SwapEffectiveDate, SecurityMandate,  EmployerID, EmployeeNo, ExternalMandate)");
+		sql.append(", SwapEffectiveDate, SecurityMandate,  EmployerID, EmployeeNo)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?");
-		sql.append(",? ,?, ?, ?, ?, ?, ?)");
+		sql.append(",? ,?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -220,8 +220,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setBoolean(index++, mdt.isSecurityMandate());
 			ps.setObject(index++, mdt.getEmployerID());
-			ps.setString(index++, mdt.getEmployeeNo());
-			ps.setBoolean(index, mdt.isExternalMandate());
+			ps.setString(index, mdt.getEmployeeNo());
 		});
 
 		return mdt.getMandateID();
@@ -240,7 +239,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", InputDate = ?, BarCodeNumber = ?, SwapIsActive = ?, PrimaryMandateId = ?, EntityCode = ?");
 		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
-		sql.append(", HoldReason = ?, SwapEffectiveDate = ?, EmployerID = ?, EmployeeNo = ?, ExternalMandate = ?");
+		sql.append(", HoldReason = ?, SwapEffectiveDate = ?, EmployerID = ?, EmployeeNo = ?");
 		sql.append(" Where MandateID = ?");
 
 		if (!type.endsWith("_Temp")) {
@@ -300,7 +299,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setObject(index++, mdt.getEmployerID());
 			ps.setString(index++, mdt.getEmployeeNo());
-			ps.setBoolean(index++, mdt.isExternalMandate());
 
 			ps.setLong(index++, mdt.getMandateID());
 
@@ -327,7 +325,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", BarCodeNumber = ?, SwapIsActive = ?, EntityCode = ?, PartnerBankId = ?, DefaultMandate = ?");
 		sql.append(", EMandateSource = ?, EMandateReferenceNo = ?, HoldReason = ?");
-		sql.append(", SwapEffectivedate = ?, EmployerID = ?, EmployeeNo = ?, ExternalMandate = ?");
+		sql.append(", SwapEffectivedate = ?, EmployerID = ?, EmployeeNo = ?");
 		sql.append("  Where MandateID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -380,7 +378,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getSwapEffectiveDate()));
 			ps.setObject(index++, mdt.getEmployerID());
 			ps.setString(index++, mdt.getEmployeeNo());
-			ps.setBoolean(index++, mdt.isExternalMandate());
 
 			ps.setLong(index++, mdt.getMandateID());
 			ps.setString(index, mdt.getStatus());
@@ -893,7 +890,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId, BarCodeNumber, SwapIsActive, PrimaryMandateId");
 		sql.append(", EntityCode, PartnerBankId, DefaultMandate, EMandateSource, EMandateReferenceNo");
-		sql.append(", HoldReason, SwapEffectiveDate, SecurityMandate, EmployerID, EmployeeNo, ExternalMandate");
+		sql.append(", HoldReason, SwapEffectiveDate, SecurityMandate, EmployerID, EmployeeNo");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", finType, CustCIF, CustShrtName, BankCode, BranchCode");
@@ -1026,7 +1023,6 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setSecurityMandate(rs.getBoolean("SecurityMandate"));
 			mndts.setEmployerID(JdbcUtil.getLong(rs.getObject("EmployerID")));
 			mndts.setEmployeeNo(rs.getString("EmployeeNo"));
-			mndts.setExternalMandate(rs.getBoolean("ExternalMandate"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				mndts.setFinType(rs.getString("finType"));

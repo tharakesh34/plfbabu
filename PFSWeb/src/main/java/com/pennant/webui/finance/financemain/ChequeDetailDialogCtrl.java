@@ -761,7 +761,11 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			fillList(this.chequeType, InstrumentType.PDC.code(), chequeTypeList);
 		} else {
 			String finRepayMethod = schdData.getFinanceMain().getFinRepayMethod();
-			fillList(this.chequeType, finRepayMethod, chequeTypeList);
+			if (InstrumentType.isPDC(finRepayMethod)) {
+				fillList(this.chequeType, InstrumentType.PDC.code(), chequeTypeList);
+			} else {
+				fillList(this.chequeType, InstrumentType.SPDC.code(), chequeTypeList, ",PDC,");
+			}
 		}
 
 		fillComboBox(this.chequeStatus, ChequeSatus.NEW, chequeStatusList);
