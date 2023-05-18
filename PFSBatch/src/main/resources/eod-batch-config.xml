@@ -390,13 +390,6 @@
 	<bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
 
 	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
-
-	<bean id="extExtractionDao" class="com.pennanttech.external.extractions.dao.impl.ExtExtractionDaoImpl">
-		<property name="mainDataSource" ref="dataSource" />
-		<property name="extDataSource" ref="extDataSource" />
-	</bean>
-
-	
 	
 	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
 		<property name="extStageDao" ref="extStageDao" />
