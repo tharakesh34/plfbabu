@@ -246,8 +246,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 				if (data == null) {
 					logger.debug("Ext_PRMNT:F703 No data available for presentment.");
-					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F703);
+					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F703);
 					externalPresentmentDAO.updateExternalPresentmentRecordStatus(id, UNPROCESSED,
 							interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
 					continue;
@@ -328,8 +327,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 			if (extPresentmentFile == null) {
 				extPresentmentFile = new ExtPresentmentFile();
-				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F704);
+				InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F704);
 				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 			}
@@ -351,10 +349,9 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	private void businessValidation(ExtPresentmentFile extPresentmentFile, ExtPresentment extPresentment) {
 
 		if (extPresentmentFile.getTxnReference() == -1) {
-			InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-					InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F801);
-			extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
-			extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
+
+			extPresentmentFile.setErrorCode(F801);
+			extPresentmentFile.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F801));
 			return;
 		}
 
@@ -363,8 +360,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 
 			if (StringUtils.isBlank(bounceReturnCode)) {
 				// Bounce return code is empty or null, So report error
-				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F900);
+				InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F900);
 				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				return;
@@ -373,8 +369,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 			Map<String, ExtBounceReason> extBounceReasonsMap = ExtBounceReasons.getInstance().getBounceData();
 			if (!extBounceReasonsMap.containsKey(bounceReturnCode)) {
 				// Bounce code not found in PLF, So report error
-				InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-						InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F901);
+				InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F901);
 				extPresentmentFile.setErrorCode(interfaceErrorCode.getErrorCode());
 				extPresentmentFile.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				return;

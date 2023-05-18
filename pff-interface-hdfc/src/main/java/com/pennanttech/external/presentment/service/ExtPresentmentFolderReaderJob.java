@@ -222,8 +222,7 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 						boolean isValidRejectFile = validateRejectFile(file);
 
 						if (!isValidRejectFile) {
-							InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-									InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F606);
+							InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F606);
 
 							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
 							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());

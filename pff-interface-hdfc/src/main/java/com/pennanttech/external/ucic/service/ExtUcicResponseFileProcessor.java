@@ -122,8 +122,7 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 				} else {
 
 					// Add Failed file in to table with error code and error message
-					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F500);
+					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F500);
 
 					// mark file extraction and processing status as completed
 					extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), FAILED,

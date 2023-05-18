@@ -176,8 +176,7 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 						extPresentmentFile.getChequeDate());
 
 				if (data == null) {
-					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F703);
+					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F703);
 
 					extStageDao.updateErrorDetails(extPresentmentFile.getAgreementId(),
 							extPresentmentFile.getChequeSerialNo(), "Y", interfaceErrorCode.getErrorMessage());

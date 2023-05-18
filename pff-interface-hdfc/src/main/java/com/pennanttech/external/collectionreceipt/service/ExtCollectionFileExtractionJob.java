@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -22,7 +21,6 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -165,7 +163,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 						} else {
 							// set header status as error
 							extReceiptHeader.setErrorCode(errorCode);
-							extReceiptHeader.setErrorMessage(getErrorMessage(errorCode));
+							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(errorCode));
 						}
 					}
 
@@ -215,7 +213,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 							// set header status as error
 							extReceiptHeader.setErrorCode(F401);
 							extReceiptHeader.setExtraction(COMPLETED);
-							extReceiptHeader.setErrorMessage(getErrorMessage(F401));
+							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F401));
 						}
 
 					}
@@ -247,16 +245,6 @@ public class ExtCollectionFileExtractionJob extends AbstractJob implements Inter
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private String getErrorMessage(String errorCode) {
-		if ("".equals(StringUtils.stripToEmpty(errorCode))) {
-			return "";
-		}
-
-		InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-				InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), errorCode);
-		return interfaceErrorCode.getErrorMessage();
 	}
 
 	private void saveDetails(List<CollReceiptDetail> detailList, long id) {

@@ -126,8 +126,7 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 								"");
 					} else {
 						// Add Failed file in to table with error code and error message
-						InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-								InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F607);
+						InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F607);
 						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED,
 								interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
 					}

@@ -163,8 +163,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 				if ("1".equals(recordFlag)) {
 					presentment.setStatus(SUCCESS);
 				} else {
-					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F802);
+					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F802);
 					presentment.setErrorCode(interfaceErrorCode.getErrorCode());
 					presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				}
@@ -173,8 +172,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 				if ("0".equals(recordFlag)) {
 					presentment.setStatus(FAIL);
 				} else {
-					InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-							InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F803);
+					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F803);
 					presentment.setErrorCode(interfaceErrorCode.getErrorCode());
 					presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 				}
@@ -192,8 +190,7 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 			presentment.setTxnReference(getLongValue(presentmentId));
 
 		} else {
-			InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-					InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), F804);
+			InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F804);
 			presentment.setErrorCode(interfaceErrorCode.getErrorCode());
 			presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
 		}

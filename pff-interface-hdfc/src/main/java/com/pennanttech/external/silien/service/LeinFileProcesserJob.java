@@ -23,7 +23,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -123,7 +122,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 							// Invalid file
 							errCode = F603;
 							externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED,
-									errCode, getErrorMessage(errCode));
+									errCode, InterfaceErrorCodeUtil.getErrorMessage(errCode));
 							continue;
 						}
 
@@ -152,7 +151,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 						// mark file processing status as completed with error
 						errCode = F602;
 						externalLienMarkingDAO.updateLienResponseFileStatus(lienFileStatus.getId(), COMPLETED, errCode,
-								getErrorMessage(errCode));
+								InterfaceErrorCodeUtil.getErrorMessage(errCode));
 						continue;
 					}
 
@@ -291,14 +290,6 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 
 		logger.debug(Literal.LEAVING);
 		return detail;
-	}
-
-	private String getErrorMessage(String errCode) {
-		InterfaceErrorCode interfaceErrorCode = getErrorFromList(
-				InterfaceErrorCodeUtil.getInstance().getInterfaceErrorsList(), errCode);
-		String errMsg = interfaceErrorCode.getErrorMessage();
-		errMsg = StringUtils.stripToEmpty(errMsg);
-		return errMsg;
 	}
 
 }
