@@ -4,7 +4,7 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-migration</artifactId>
-	<version>6.3.0</version>
+	<version>6.3.0-AVANSE_R1.1</version>
 	<packaging>jar</packaging>
 
 	<name>pff-migration</name>
