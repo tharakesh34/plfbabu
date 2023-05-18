@@ -78,7 +78,6 @@
 
 	<bean id="achService" class="com.pennanttech.external.presentment.service.ACHService">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="siInternalService" class="com.pennanttech.external.presentment.service.SIInternalService">

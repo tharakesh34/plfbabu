@@ -26,7 +26,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.external.app.config.dao.ExtStagingDaoImpl;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -176,10 +175,8 @@ public class ExtPresentmentTableReaderJob extends AbstractJob implements Interfa
 						extPresentmentFile.getChequeDate());
 
 				if (data == null) {
-					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F703);
-
 					extStageDao.updateErrorDetails(extPresentmentFile.getAgreementId(),
-							extPresentmentFile.getChequeSerialNo(), "Y", interfaceErrorCode.getErrorMessage());
+							extPresentmentFile.getChequeSerialNo(), "Y", InterfaceErrorCodeUtil.getErrorMessage(F703));
 					// commit the transaction
 					transactionManager.commit(txStatus);
 					continue;

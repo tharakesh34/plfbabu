@@ -23,7 +23,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -222,10 +221,8 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 						boolean isValidRejectFile = validateRejectFile(file);
 
 						if (!isValidRejectFile) {
-							InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F606);
-
-							extPresentment.setErrorCode(interfaceErrorCode.getErrorCode());
-							extPresentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
+							extPresentment.setErrorCode(F606);
+							extPresentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F606));
 						}
 
 					}

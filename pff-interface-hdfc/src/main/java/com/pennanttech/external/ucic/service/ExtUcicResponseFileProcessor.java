@@ -18,7 +18,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -122,11 +121,9 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants {
 				} else {
 
 					// Add Failed file in to table with error code and error message
-					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F500);
-
 					// mark file extraction and processing status as completed
-					extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), FAILED,
-							interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
+					extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), FAILED, F500,
+							InterfaceErrorCodeUtil.getErrorMessage(F500));
 					continue;
 				}
 

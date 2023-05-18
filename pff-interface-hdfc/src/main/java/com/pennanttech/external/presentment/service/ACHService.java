@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
@@ -116,6 +115,11 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 			}
 
 			if (itemList.size() > 0) {
+
+				StringBuilder emptyLine = new StringBuilder();
+				emptyLine.append("\n");
+				itemList.add(emptyLine);
+
 				long fileSeq = externalPresentmentDAO.getSeqNumber(SEQ_PRMNT_ACH);
 				String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 6, "0");
 
@@ -163,18 +167,16 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 				if ("1".equals(recordFlag)) {
 					presentment.setStatus(SUCCESS);
 				} else {
-					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F802);
-					presentment.setErrorCode(interfaceErrorCode.getErrorCode());
-					presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
+					presentment.setErrorCode(F802);
+					presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F802));
 				}
 			}
 			if (config.getFailIndicator().equals(recordStatus)) {
 				if ("0".equals(recordFlag)) {
 					presentment.setStatus(FAIL);
 				} else {
-					InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F803);
-					presentment.setErrorCode(interfaceErrorCode.getErrorCode());
-					presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
+					presentment.setErrorCode(F803);
+					presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F803));
 				}
 
 			}
@@ -190,9 +192,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants {
 			presentment.setTxnReference(getLongValue(presentmentId));
 
 		} else {
-			InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F804);
-			presentment.setErrorCode(interfaceErrorCode.getErrorCode());
-			presentment.setErrorMessage(interfaceErrorCode.getErrorMessage());
+			presentment.setErrorCode(F804);
+			presentment.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F804));
 		}
 		logger.debug(Literal.LEAVING);
 		return presentment;
