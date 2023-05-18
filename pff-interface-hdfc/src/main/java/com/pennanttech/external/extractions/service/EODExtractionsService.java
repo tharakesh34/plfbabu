@@ -33,47 +33,34 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	private ExtUcicDataExtractor extUcicExtractData;
 	private ExtUcicRequestFile extUcicRequestFile;
 
-	private void processUcicRequest() {
-		logger.debug(Literal.ENTERING);
-		String custDataExtrctstatus = null;
-		try {
-			if (extUcicExtractData != null) {
-				custDataExtrctstatus = extUcicExtractData.extractCustomerData();
-			}
-			if (custDataExtrctstatus.equals("SUCCESS")) {
-				Date appDate = SysParamUtil.getAppDate();
-				if (extUcicRequestFile != null) {
-					extUcicRequestFile.processUcicRequestFile(appDate);
-				}
-			} else {
-				logger.debug("Customers data extraction Unsuccessful :" + custDataExtrctstatus);
-			}
-
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
+	@Override
+	public void processFinconGLExtraction() {
+		Date appDate = SysParamUtil.getAppDate();
+		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL, appDate);
+		if (!"SUCCESS".equals(finconSPStatus)) {
+			logger.debug("EXT_FINCONGL: SP extraction failed.");
+			return;
 		}
 
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void processFinconFileSP() {
-
+		// file writing
 		finconGLConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_FINCONGL);
 
 		long fileSeq = extExtractionDao.getSeqNumber(SEQ_FINCON_GL);
 
 		String fileSeqName = StringUtils.leftPad(String.valueOf(fileSeq), 4, "0");
-		Date appDate = SysParamUtil.getAppDate();
 		String fileName = finconGLConfig.getFilePrepend()
 				+ new SimpleDateFormat(finconGLConfig.getDateFormat()).format(appDate) + fileSeqName
 				+ finconGLConfig.getFileExtension();
 
+		// write the file in DB server
 		String status = extExtractionDao.executeSp(SP_FINCON_WRITE_FILE, fileName);
 
 		if (!"SUCCESS".equals(status)) {
 			logger.debug("EXT_FINCONGL: Fincon File writing SP failed.");
 			return;
 		}
+
+		// check the location of the app server
 
 		String baseFilePath = App.getResourcePath(finconGLConfig.getFileLocation());
 
@@ -117,6 +104,30 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 			fileBackup(finconGLConfig, mainFile);
 			mainFile.delete();
 		}
+
+	}
+
+	private void processUcicRequest() {
+		logger.debug(Literal.ENTERING);
+		String custDataExtrctstatus = null;
+		try {
+			if (extUcicExtractData != null) {
+				custDataExtrctstatus = extUcicExtractData.extractCustomerData();
+			}
+			if (custDataExtrctstatus.equals("SUCCESS")) {
+				Date appDate = SysParamUtil.getAppDate();
+				if (extUcicRequestFile != null) {
+					extUcicRequestFile.processUcicRequestFile(appDate);
+				}
+			} else {
+				logger.debug("Customers data extraction Unsuccessful :" + custDataExtrctstatus);
+			}
+
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void fileBackup(FileInterfaceConfig finconGLconf, File mainFile) {
@@ -158,17 +169,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	@Qualifier(value = "extUcicRequestFile")
 	public void setExtUcicRequestFile(ExtUcicRequestFile extUcicRequestFile) {
 		this.extUcicRequestFile = extUcicRequestFile;
-	}
-
-	@Override
-	public void processFinconGLExtraction() {
-		Date appDate = SysParamUtil.getAppDate();
-		String finconSPStatus = extExtractionDao.executeSp(SP_FINCON_GL, appDate);
-		if (!"SUCCESS".equals(finconSPStatus)) {
-			logger.debug("EXT_FINCONGL: SP extraction failed.");
-			return;
-		}
-		processFinconFileSP();
 	}
 
 	@Override
