@@ -15,11 +15,13 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ACHService extends TextFileUtil implements InterfaceConstants, ErrorCodesConstants {
@@ -133,7 +135,9 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 				super.writeDataToFile(fileName, itemList);
 
 				if ("Y".equals(StringUtils.stripToEmpty(config.getIsSftp()))) {
-					uploadToSFTP(fileName, config);
+					ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(config);
+					FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
+					ftpClient.upload(new File(fileName), config.getFileSftpLocation());
 				}
 			} else {
 				logger.debug("No ACH request records found, so returning. ");

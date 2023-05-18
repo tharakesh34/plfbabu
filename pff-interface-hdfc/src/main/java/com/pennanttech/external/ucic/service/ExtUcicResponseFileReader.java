@@ -13,6 +13,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -57,11 +58,11 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 
 			String remoteFilePath = ucicRespConfig.getFileSftpLocation();
 			// Get list of files in SFTP.
-			List<String> fileNames = getFileNameList(remoteFilePath, ucicRespConfig.getHostName(),
-					ucicRespConfig.getPort(), ucicRespConfig.getAccessKey(), ucicRespConfig.getSecretKey());
+			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicRespConfig);
+			List<String> fileNames = extSFTPUtil.getFileListFromSFTP(remoteFilePath);
 
 			for (String fileName : fileNames) {
-				FtpClient ftpClient = getftpClientConnection(ucicRespConfig);
+				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
 				ftpClient.download(remoteFilePath, localFolderPath, fileName);
 			}
 		}
@@ -202,6 +203,24 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 		}
 		logger.debug(Literal.LEAVING);
 		return returnVal1 && returnVal2;
+	}
+
+	private List<String> fetchRespFiles(FileInterfaceConfig reqConfig) {
+		List<String> respFileNames = new ArrayList<String>();
+		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
+		if (reqFolderPath != null && !"".equals(reqFolderPath)) {
+			File reqDirPath = new File(reqFolderPath);
+			if (reqDirPath.isDirectory()) {
+				// Fetch the list of request files from configured folder
+				File filesList[] = reqDirPath.listFiles();
+				if (filesList != null && filesList.length > 0) {
+					for (File file : filesList) {
+						respFileNames.add(file.getName());
+					}
+				}
+			}
+		}
+		return respFileNames;
 	}
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {

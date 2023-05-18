@@ -267,6 +267,16 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 		return false;
 	}
 
+	private int generateChecksum(String data) {
+		int rcdCS = 0;
+		for (int i = 0; i < data.length(); i++) {
+			char digit = data.charAt(i);
+			int asciiCode = (int) digit;
+			rcdCS = rcdCS + asciiCode;
+		}
+		return rcdCS;
+	}
+
 	private boolean validateRow1(String lineData, String fileName) {
 		logger.debug(Literal.ENTERING);
 		String[] row1Str = lineData.split("\\|", -1);

@@ -14,10 +14,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
@@ -48,8 +50,8 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void writeRecordsToFile(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList, String clusterId,
-			Date appDate) {
+	private void writeRecordsToFile(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList,
+			String clusterId, Date appDate) {
 		logger.debug(Literal.ENTERING);
 		try {
 			List<StringBuilder> itemList = new ArrayList<StringBuilder>();
@@ -173,7 +175,9 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 				super.writeDataToFile(fileName, itemList);
 
 				if ("Y".equals(StringUtils.stripToEmpty(config.getIsSftp()))) {
-					uploadToSFTP(fileName, config);
+					ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(config);
+					FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
+					ftpClient.upload(new File(fileName), config.getFileSftpLocation());
 				}
 			}
 

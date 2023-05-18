@@ -489,4 +489,14 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(qualifiedChk);// Checksum
 		return item;
 	}
+
+	private int generateChecksum(String data) {
+		int rcdCS = 0;
+		for (int i = 0; i < data.length(); i++) {
+			char digit = data.charAt(i);
+			int asciiCode = (int) digit;
+			rcdCS = rcdCS + asciiCode;
+		}
+		return rcdCS;
+	}
 }

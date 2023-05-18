@@ -13,6 +13,7 @@ import com.google.common.io.Files;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -61,8 +62,8 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 						"EXT_UCIC: No configuration found for type UCIC Weekly request file. So returning without generating the request file.");
 				return;
 			}
-
-			ftpClient = getftpClientConnection(ucicWeeklyConfig);
+			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicWeeklyConfig);
+			ftpClient = extSFTPUtil.getSFTPConnection();
 			try {
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
@@ -71,7 +72,8 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 			}
 
 			if ("Y".equals(ucicWeeklyConfig.getIsSftp())) {
-				ftpClient = getftpClientConnection(serverConfig);
+				ExtSFTPUtil extSFTPUtil1 = new ExtSFTPUtil(serverConfig);
+				ftpClient = extSFTPUtil1.getSFTPConnection();
 				// Now upload file to SFTP of client location as per configuration
 				File mainFile = new File(baseFilePath + File.separator + fileName);
 				ftpClient.upload(mainFile, ucicWeeklyConfig.getFileSftpLocation());

@@ -14,6 +14,7 @@ import com.google.common.io.Files;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -77,7 +78,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			}
 
 			// Create FTP connection
-			ftpClient = getftpClientConnection(serverConfig);
+			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(serverConfig);
+			ftpClient = extSFTPUtil.getSFTPConnection();
 
 			try {
 				// Download file from DB server to local location
@@ -110,7 +112,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			logger.debug("EXT_UCIC: CONFIG_UCIC_REQ Configuration not found, so returning.");
 			return;
 		}
-		ftpClient = getftpClientConnection(serverConfig);
+		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(serverConfig);
+		ftpClient = extSFTPUtil.getSFTPConnection();
 		try {
 			// Now upload file to SFTP of client location as per configuration
 			File mainFile = new File(baseFilePath + File.separator + fileName);
@@ -118,7 +121,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			logger.debug("EXT_UCIC:ReqFile upload Successful to Destination");
 
 			// Now upload complete file to SFTP of client location as per configuration
-			ftpClient = getftpClientConnection(serverConfig);
+			ftpClient = extSFTPUtil.getSFTPConnection();
 			String completeFilePathWithName = writeCompleteFile(appDate);
 			File completeFileToUpload = new File(completeFilePathWithName);
 			ftpClient.upload(completeFileToUpload, ucicReqConfig.getFileSftpLocation());
@@ -157,7 +160,8 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			throws IOException {
 		logger.debug(Literal.ENTERING);
 		FtpClient ftpClient;
-		ftpClient = getftpClientConnection(serverConfig);
+		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(serverConfig);
+		ftpClient = extSFTPUtil.getSFTPConnection();
 		ftpClient.deleteFile(mainFile.getPath());
 		ftpClient.deleteFile(completeFileToUpload.getPath());
 		logger.debug("MainFile & Completefile deletion Successful");

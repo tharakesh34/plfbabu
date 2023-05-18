@@ -21,6 +21,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicFile;
@@ -106,7 +107,8 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 				extUcicDao.updateResponseFileProcessingFlag(ucicFile.getId(), INPROCESS, "", "");
 
 				// Connect to SFTP..
-				FtpClient ftpClient = getftpClientConnection(ucicDBServerConfig);
+				ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicDBServerConfig);
+				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
 
 				// Upload the response file to DB Server to read by ORACLE Database
 				ftpClient.upload(file, remoteFilePath);

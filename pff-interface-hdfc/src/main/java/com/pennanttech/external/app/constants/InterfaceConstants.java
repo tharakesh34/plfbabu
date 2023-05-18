@@ -1,27 +1,10 @@
 package com.pennanttech.external.app.constants;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
-import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.ftp.FtpClient;
-import com.pennanttech.pennapps.core.ftp.SftpClient;
 
 public interface InterfaceConstants {
 
@@ -131,16 +114,6 @@ public interface InterfaceConstants {
 	String LIEN_AWAITING_CONF = "AC";
 	String LIEN_FAILED = "FAILED";
 
-	default int generateChecksum(String data) {
-		int rcdCS = 0;
-		for (int i = 0; i < data.length(); i++) {
-			char digit = data.charAt(i);
-			int asciiCode = (int) digit;
-			rcdCS = rcdCS + asciiCode;
-		}
-		return rcdCS;
-	}
-
 	default FileInterfaceConfig getDataFromList(List<FileInterfaceConfig> mainConfig, String key) {
 
 		for (FileInterfaceConfig externalConfig : mainConfig) {
@@ -175,99 +148,4 @@ public interface InterfaceConstants {
 		return bigDecimal;
 	}
 
-	default InterfaceErrorCode getErrorFromList(List<InterfaceErrorCode> interfaceErrorCodes, String key) {
-
-		for (InterfaceErrorCode interfaceErrorCode : interfaceErrorCodes) {
-			if (interfaceErrorCode.getErrorCode().equals(key)) {
-				return interfaceErrorCode;
-			}
-		}
-		return null;
-	}
-
-	default FtpClient getftpClientConnection(FileInterfaceConfig serverConfig) {
-		FtpClient ftpClient = null;
-		String host = serverConfig.getHostName();
-		int port = serverConfig.getPort();
-		String accessKey = serverConfig.getAccessKey();
-		String secretKey = serverConfig.getSecretKey();
-		try {
-			ftpClient = new SftpClient(host, port, accessKey, secretKey);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ftpClient;
-	}
-
-	default void uploadToSFTP(String localFileWithPath, FileInterfaceConfig config) {
-		if (config.getFileSftpLocation() == null || "".equals(config.getFileSftpLocation())) {
-			return;
-		}
-
-		FtpClient ftpClient = null;
-		try {
-			ftpClient = getftpClientConnection(config);
-			ftpClient.upload(new File(localFileWithPath), config.getFileSftpLocation());
-		} catch (Exception e) {
-			//
-		} finally {
-			if (ftpClient != null) {
-				ftpClient.disconnect();
-			}
-		}
-	}
-
-	default List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
-			String secretKey) {
-		Session session = null;
-		Channel channel = null;
-		JSch jsch = new JSch();
-		try {
-			session = jsch.getSession(accessKey, hostName, port);
-			session.setPassword(secretKey);
-			java.util.Properties config = new java.util.Properties();
-			config.put("StrictHostKeyChecking", "no");
-			session.setConfig(config);
-			session.connect();
-			channel = session.openChannel("sftp");
-			channel.connect();
-		} catch (JSchException e1) {
-			e1.printStackTrace();
-		}
-
-		LsEntry entry = null;
-		List<String> fileNames = new ArrayList<String>();
-		Vector filelist = null;
-		try {
-			filelist = ((ChannelSftp) channel).ls(pathname);
-		} catch (Exception e) {
-			throw new AppException(e.getMessage());
-		}
-		for (int i = 0; i < filelist.size(); i++) {
-			entry = (LsEntry) filelist.get(i);
-			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
-					&& !entry.getFilename().startsWith(".")) {
-				fileNames.add(entry.getFilename());
-			}
-		}
-		return fileNames;
-	}
-
-	default List<String> fetchRespFiles(FileInterfaceConfig reqConfig) {
-		List<String> respFileNames = new ArrayList<String>();
-		String reqFolderPath = App.getResourcePath(reqConfig.getFileLocation());
-		if (reqFolderPath != null && !"".equals(reqFolderPath)) {
-			File reqDirPath = new File(reqFolderPath);
-			if (reqDirPath.isDirectory()) {
-				// Fetch the list of request files from configured folder
-				File filesList[] = reqDirPath.listFiles();
-				if (filesList != null && filesList.length > 0) {
-					for (File file : filesList) {
-						respFileNames.add(file.getName());
-					}
-				}
-			}
-		}
-		return respFileNames;
-	}
 }

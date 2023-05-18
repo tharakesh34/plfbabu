@@ -15,6 +15,7 @@ import com.google.common.io.Files;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -68,7 +69,8 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 			}
 
 			try {
-				FtpClient ftpClient = getftpClientConnection(dbServerConfig);
+				ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(dbServerConfig);
+				FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
 				ftpClient.download(remoteFilePath, baseFilePath, fileName);
 			} catch (Exception e) {
 				logger.debug("Unable to download file from DB Server to local path.");
@@ -94,13 +96,15 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 		FtpClient ftpClient;
 		// Now upload file to SFTP of client location as per configuration
 		File mainFile = new File(baseFilePath + File.separator + fileName);
-		ftpClient = getftpClientConnection(ucicAckConfig);
+		ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(ucicAckConfig);
+		ftpClient = extSFTPUtil.getSFTPConnection();
 		ftpClient.upload(mainFile, ucicAckConfig.getFileSftpLocation());
 
 		// Now upload complete file to SFTP of client location as per configuration
 		String completeFilePathWithName = writeCompleteFile(appDate, ucicAckConfig, ucicAckConfConfig);
 		File completeFileToUpload = new File(completeFilePathWithName);
-		ftpClient = getftpClientConnection(ucicAckConfig);
+
+		ftpClient = extSFTPUtil.getSFTPConnection();
 		ftpClient.upload(completeFileToUpload, ucicAckConfig.getFileSftpLocation());
 
 		fileBackup(ucicAckConfig, mainFile, completeFileToUpload);

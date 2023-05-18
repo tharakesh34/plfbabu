@@ -26,6 +26,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
@@ -361,10 +362,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 					return;
 				}
 
-				ftpClient = getftpClientConnection(externalRespConfig);
+				ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(externalRespConfig);
+				ftpClient = extSFTPUtil.getSFTPConnection();
 
 				// Get list of files in SFTP.
-				List<String> fileNames = getFileNameList(remoteFilePath, host, port, accessKey, secretKey);
+				List<String> fileNames = extSFTPUtil.getFileListFromSFTP(remoteFilePath);
 
 				for (String fileName : fileNames) {
 					ftpClient.download(remoteFilePath, localFolderPath, fileName);
@@ -393,7 +395,8 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 		FtpClient sftpClient = null;
 		try {
-			sftpClient = getftpClientConnection(externalRespConfig);
+			ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(externalRespConfig);
+			sftpClient = extSFTPUtil.getSFTPConnection();
 			sftpClient.upload(new File(localFolderPath + File.separator + fileName),
 					externalRespConfig.getFileBackupLocation());
 		} catch (Exception e) {
