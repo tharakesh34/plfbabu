@@ -136,7 +136,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 			return;
 		}
 
-		String hostAccountregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM);
+		String hostAccountregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_DESCRIPTION);
 		if (StringUtils.isNotBlank(hostAccount) && !Pattern.compile(hostAccountregex).matcher(hostAccount).matches()) {
 			setError(detail, HostGLMappingUploadError.HGL11);
 			return;
