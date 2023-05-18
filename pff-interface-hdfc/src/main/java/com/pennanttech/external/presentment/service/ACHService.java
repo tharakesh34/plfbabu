@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -37,7 +36,6 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 	private static final int ach_ccyFromat = 0;
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extGenericDao;
 
 	public void processACHRequest(FileInterfaceConfig config, List<ExtPresentmentFile> presentmentList, Date dueDate,
 			String batchRef, Date appDate) {
@@ -231,10 +229,6 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 
 	public void setExternalPresentmentDAO(ExtPresentmentDAO externalPresentmentDAO) {
 		this.externalPresentmentDAO = externalPresentmentDAO;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 }
