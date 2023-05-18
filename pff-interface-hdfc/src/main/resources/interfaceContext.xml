@@ -41,7 +41,7 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="extGenericDao" class="com.pennanttech.external.dao.impl.ExtGenericDaoImpl">
+	<bean id="extGenericDao" class="com.pennanttech.external.app.config.dao.ExtGenericDaoImpl">
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 	
@@ -51,7 +51,7 @@
 	
 	
 
-	<bean id="extStageDao" class="com.pennanttech.external.dao.impl.ExtStagingDaoImpl">
+	<bean id="extStageDao" class="com.pennanttech.external.app.config.dao.ExtStagingDaoImpl">
 		<property name="stagingDataSource" ref="stagingDataSource" />
 	</bean>
 
