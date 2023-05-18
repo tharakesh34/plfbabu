@@ -79,7 +79,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 	}
 
 	@Override
-	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
+	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource paramSource, Table table)
 			throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -98,7 +98,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
-		Long recordSeq = (Long) record.getValue("RecordSeq");
+		Long recordSeq = (Long) paramSource.getValue("RecordSeq");
 
 		cru.setHeaderId(headerID);
 		cru.setRecordSeq(recordSeq);
@@ -298,25 +298,27 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			validate(cru, header);
 
 			if (cru.getProgress() == EodConstants.PROGRESS_FAILED) {
-				record.addValue("ERRORCODE", cru.getErrorCode());
-				record.addValue("ERRORDESC", cru.getErrorDesc());
+				cru.setStatus("F");
+				paramSource.addValue("STATUS", cru.getStatus());
+				paramSource.addValue("ERRORCODE", cru.getErrorCode());
+				paramSource.addValue("ERRORDESC", cru.getErrorDesc());
 			}
 		} catch (AppException e) {
 			cru.setStatus("F");
 			cru.setProgress(EodConstants.PROGRESS_FAILED);
 
-			record.addValue("ERRORCODE", "9999");
-			record.addValue("ERRORDESC", e.getMessage());
+			paramSource.addValue("ERRORCODE", "9999");
+			paramSource.addValue("ERRORDESC", e.getMessage());
 
-			record.addValue("STATUS", cru.getStatus());
-			record.addValue("PROGRESS", cru.getProgress());
+			paramSource.addValue("STATUS", cru.getStatus());
+			paramSource.addValue("PROGRESS", cru.getProgress());
 		}
 
 		List<CreateReceiptUpload> details = new ArrayList<>();
 		details.add(cru);
 
 		createReceiptUploadDAO.update(details);
-		createReceiptUploadService.updateProcess(header, cru, record);
+		createReceiptUploadService.updateProcess(header, cru, paramSource);
 
 		header.getUploadDetails().add(cru);
 
@@ -783,6 +785,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 			for (FinTypePartnerBank ftpb : ftb) {
 				String partnerbankCode = partnerBankDAO.getPartnerBankCodeById(ftpb.getPartnerBankID());
 				rud.setPartnerBankCode(partnerbankCode);
+				return;
 			}
 
 		}

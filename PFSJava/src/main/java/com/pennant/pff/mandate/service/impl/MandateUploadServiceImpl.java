@@ -94,6 +94,7 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 				try {
 					for (MandateUpload detail : details) {
 						doValidate(header, detail);
+						prepareUserDetails(header, detail);
 
 						if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
 							failRecords++;
