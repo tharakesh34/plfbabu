@@ -4261,7 +4261,6 @@
 	<bean name="finCovenantTypeServiceTarget"
 		class="com.pennant.backend.service.finance.impl.FinCovenantTypeServiceImpl">
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -8254,7 +8253,6 @@
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
 	<!-- CHeque Details -->

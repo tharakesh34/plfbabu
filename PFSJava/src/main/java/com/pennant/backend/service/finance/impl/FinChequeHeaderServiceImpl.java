@@ -37,7 +37,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -65,7 +64,6 @@ import com.pennanttech.pff.core.TableType;
 public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> implements FinChequeHeaderService {
 	private static final Logger logger = LogManager.getLogger(FinChequeHeaderServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 
@@ -603,10 +601,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditDetail;
 	}
 
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
 	}
@@ -614,5 +608,4 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
 		this.chequeDetailDAO = chequeDetailDAO;
 	}
-
 }

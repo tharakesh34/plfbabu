@@ -347,7 +347,6 @@
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	<!-- CHeque Details -->
 	<bean name="chequeDetailDAO" class="com.pennant.backend.dao.pdc.impl.ChequeDetailDAOImpl" parent="sequenceDao" />

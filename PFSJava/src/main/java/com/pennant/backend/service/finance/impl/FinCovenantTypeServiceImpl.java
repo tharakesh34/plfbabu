@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
@@ -71,7 +70,6 @@ import com.pennanttech.pff.core.TableType;
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
 	private static final Logger logger = LogManager.getLogger(FinCovenantTypeServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
@@ -637,10 +635,6 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	@Override
 	public List<DocumentType> getPddOtcList() {
 		return finCovenantTypeDAO.getPddOtcList();
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
