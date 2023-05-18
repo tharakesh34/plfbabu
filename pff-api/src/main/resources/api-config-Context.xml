@@ -233,4 +233,8 @@
 	<bean id ="absractController" class="com.pennant.pff.api.controller.AbstractController" abstract="true"/>
 	
 	<bean id ="absractService" class="com.pennant.pff.api.service.AbstractService" abstract="true"/>
+	
+	<bean id="financeEnquiryController" class="com.pennanttech.controller.FinanceEnquiryController" autowire="byName"
+		scope="prototype" parent="absractController">
+	</bean>
 </beans>

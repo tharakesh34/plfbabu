@@ -41,6 +41,7 @@ import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pff.core.TableType;
 
@@ -423,18 +424,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain getBasicDetails(String finReference, TableType tableType);
 
-	List<Long> getByCustShrtName(String custShrtName, TableType tableType);
+	SourcingDetails getSourcingDetails(long finID, TableType tableType);
 
-	List<Long> getByPANNumber(String panNumber, TableType tableType);
-
-	List<Long> getByAccountNumber(String accNumber);
-
-	List<Long> getByPhoneNumber(String phoneNumber, TableType tableType);
-
-	List<Long> getByCustShrtNameAndPhoneNumber(String custShrtName, String phoneNumber, TableType tableType);
-
-	List<Long> getByCustShrtNameAndDateOfBirth(String custShrtName, Date dateOfBirth, TableType tableType);
-
-	List<Long> getByCustShrtNameAndEMIAmount(String custShrtName, BigDecimal repayAmount);
-
+	List<Long> getFinIDsByCustID(Long custID, TableType tableType);
 }

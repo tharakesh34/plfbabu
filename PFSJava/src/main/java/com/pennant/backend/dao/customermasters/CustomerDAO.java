@@ -230,4 +230,15 @@ public interface CustomerDAO {
 	List<Long> getByCustShrtNameAndDOB(String custShrtName, Date custDOB, TableType tableType);
 
 	List<Long> getByCustShrtNameAndEMIAmount(String custShrtName, BigDecimal repayAmount);
+
+	Customer getBasicDetails(long custID, TableType tableType);
+
+	List<Customer> getBasicDetailsForJointCustomers(long finID, TableType tableType);
+
+	List<Long> getByCustShrtNameAndPANNumber(String custShrtName, String custCRCPR, TableType tableType);
+
+	List<Long> getByCustShrtNameDOBAndFinType(String custShrtName, Date custDOB, String finType, TableType tableType);
+
+	List<Long> getByCustName(String custShrtName, TableType tableType);
+
 }

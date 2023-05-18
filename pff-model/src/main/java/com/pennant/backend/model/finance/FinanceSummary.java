@@ -36,14 +36,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(propOrder = { "effectiveRateOfReturn", "totalPriSchd", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft",
+@XmlType(propOrder = { "effectiveRateOfReturn", "totalGracePft", "totalGraceCpz", "totalGrossGrcPft",
 		"totalCpz", "totalProfit", "totalRepayAmt", "feeChargeAmt", "numberOfTerms", "loanTenor", "maturityDate",
 		"firstDisbDate", "lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst",
 		"futureTenor", "firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate",
 		"totalOutStanding", "outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit",
 		"overDueInstlments", "overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus",
-		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt", "finCurODDays", "foreClosureAmount", "installmentNo",
-		"dueDate", "overDueEMI" })
+		"fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -52,7 +51,6 @@ public class FinanceSummary implements Serializable {
 	private long finID;
 	private String finReference;
 	private BigDecimal totalDisbursement = BigDecimal.ZERO;
-	@XmlElement(name = "loanPrincipal")
 	private BigDecimal totalPriSchd = BigDecimal.ZERO;
 	private BigDecimal totalPftSchd = BigDecimal.ZERO;
 	private BigDecimal principalSchd = BigDecimal.ZERO;
@@ -69,7 +67,6 @@ public class FinanceSummary implements Serializable {
 	@XmlElement
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 
-	@XmlElement(name = "DPD")
 	private int finCurODDays = 0;
 	private String assetCode;
 	private BigDecimal finODTotPenaltyAmt = BigDecimal.ZERO;
@@ -187,7 +184,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal nextRepayAmount;
 	@XmlElement
 	private BigDecimal firstEmiAmount;
-	@XmlElement(name = "loanBalanceTenure")
+	@XmlElement
 	private int futureInst;
 	@XmlElement
 	private int futureTenor;
@@ -216,20 +213,16 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal totalOutStandCharges = BigDecimal.ZERO;
 	private BigDecimal OutStandIncludeCharges = BigDecimal.ZERO;
 	private BigDecimal availableAmtExcludeCharges = BigDecimal.ZERO;
-	@XmlElement(name = "loanInstallmentAmt")
 	private BigDecimal loanEMI = BigDecimal.ZERO;
-	@XmlElement(name = "loanForeclosureAmount")
 	private BigDecimal foreClosureAmount = BigDecimal.ZERO;
-	@XmlElement(name = "loanInstallmentNo")
 	private int installmentNo;
-	@XmlElement(name = "loanDueDate")
 	private Date dueDate;
-	@XmlElement
 	private BigDecimal loanTotPrincipal = BigDecimal.ZERO;
-	@XmlElement
 	private BigDecimal loanTotInterest = BigDecimal.ZERO;
-	@XmlElement
 	private BigDecimal overDueEMI;
+	private String vehicleNo;
+	private String migratedNo;
+	private Date lastInstDate;
 
 	public FinanceSummary() {
 		super();
@@ -1234,6 +1227,30 @@ public class FinanceSummary implements Serializable {
 
 	public void setOverDueEMI(BigDecimal overDueEMI) {
 		this.overDueEMI = overDueEMI;
+	}
+
+	public String getVehicleNo() {
+		return vehicleNo;
+	}
+
+	public void setVehicleNo(String vehicleNo) {
+		this.vehicleNo = vehicleNo;
+	}
+
+	public String getMigratedNo() {
+		return migratedNo;
+	}
+
+	public void setMigratedNo(String migratedNo) {
+		this.migratedNo = migratedNo;
+	}
+
+	public Date getLastInstDate() {
+		return lastInstDate;
+	}
+
+	public void setLastInstDate(Date lastInstDate) {
+		this.lastInstDate = lastInstDate;
 	}
 
 }

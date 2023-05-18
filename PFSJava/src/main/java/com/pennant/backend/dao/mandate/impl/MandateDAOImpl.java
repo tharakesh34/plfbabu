@@ -1204,4 +1204,18 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			return null;
 		}
 	}
+
+	@Override
+	public String getAccNumber(Long mandateID) {
+		String sql = "Select AccNumber from Mandates Where MandateID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, mandateID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

@@ -42,7 +42,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlType(propOrder = { "custEmpId", "custEmpName", "custEmpType", "custEmpDesg", "custEmpDept", "custEmpFrom",
-		"custEmpTo", "occupation", "companyName", "industryDesc" })
+		"custEmpTo", "industryDesc" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerEmploymentDetail extends AbstractWorkflowEntity {
 

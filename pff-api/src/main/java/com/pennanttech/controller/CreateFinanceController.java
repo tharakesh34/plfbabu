@@ -54,7 +54,6 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
@@ -112,7 +111,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
@@ -129,10 +127,8 @@ import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
-import com.pennant.backend.model.loanauthentication.LoanAuthentication;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.paymentmode.PaymentMode;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
@@ -176,7 +172,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.pff.core.loan.util.LoanClosureCalculator;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.AgreementEngine;
@@ -194,7 +189,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.overdue.constants.ChargeType;
@@ -206,7 +200,6 @@ import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public class CreateFinanceController extends SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
@@ -261,7 +254,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PromotionDAO promotionDAO;
 	private RuleDAO ruleDAO;
 	private FinFeeDetailService finFeeDetailService;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private CustomerDAO customerDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private BounceReasonDAO bounceReasonDAO;
@@ -2644,15 +2636,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
-			List<FinanceScheduleDetail> fsdl = schdData.getFinanceScheduleDetails();
-
-			FinanceProfitDetail fpd = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
-
-			if (fpd == null) {
-				fpd = new FinanceProfitDetail();
-			}
-
-			schdData.setFinPftDeatil(fpd);
 
 			if (!fm.isFinIsActive()) {
 				fm.setClosedDate(financeMainService.getFinClosedDate(finID));
@@ -2702,20 +2685,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			prepareResponse(fd);
 
-			FinanceSummary financeSummary = schdData.getFinanceSummary();
-			Date businessDate = appDate;
-			if (appDate.compareTo(fm.getMaturityDate()) >= 0) {
-				businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-			}
-
-			financeSummary.setLoanEMI(SchdUtil.getNextEMI(businessDate, fsdl));
-			financeSummary.setForeClosureAmount(getForeClosureAmount(fd));
-			financeSummary.setFutureInst(SchdUtil.getFutureInstalments(appDate, fsdl));
-
-			if (fpd != null) {
-				financeSummary.setFinCurODDays(fpd.getCurODDays());
-			}
-
 			List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 					ExtendedFieldConstants.MODULE_LOAN, finCategory, FinServiceEvent.ORG, finReference);
 			fd.setExtendedDetails(extData);
@@ -2731,12 +2700,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		logger.debug(Literal.LEAVING);
 		return fd;
-	}
-
-	private BigDecimal getForeClosureAmount(FinanceDetail fd) {
-		ReceiptDTO receiptDTO = financeDetailService.prepareReceiptDTO(fd);
-
-		return LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 	}
 
 	private void processPlanEmiDays(long finid, FinanceDetail fd) {
@@ -3206,10 +3169,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		if (fm.isAllowGrcPeriod()) {
-			fm.setGrcStartDate(fm.getFinStartDate());
-		}
-
 		List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
 		fd.setFinFeeDetails(getUpdatedFees(finFeeDetail));
 
@@ -3277,15 +3236,11 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// Fetch summary details
-		Date appDate = SysParamUtil.getAppDate();
-		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 		FinanceSummary summary = getFinanceSummary(fd);
 
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
 		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
 		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
-		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
-		summary.setOverDueEMI(SchdUtil.getOverDueEMI(appDate, schedules));
 
 		schdData.setFinanceSummary(summary);
 
@@ -4565,240 +4520,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		ch.setTotalAmount(totalChequeAmount);
 	}
 
-	public LoanAuthentication getAuthenticationDetails(LoanAuthentication reqLa) {
-		logger.debug(Literal.ENTERING);
-
-		LoanAuthentication response = new LoanAuthentication();
-
-		String finReference = reqLa.getFinReference();
-		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.BOTH_TAB);
-
-		if (fm == null) {
-			response.setReturnStatus(getFailedStatus("90260", "FinReference"));
-			return response;
-		}
-
-		Date custDOb = customerDAO.getCustomerDOBByCustID(fm.getCustID());
-
-		if (DateUtil.compare(DateUtil.getDatePart(custDOb), DateUtil.getDatePart(reqLa.getDateOfBirth())) != 0) {
-			response.setValidFlag(PennantConstants.NO);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		Date businessDate = reqLa.getAppDate();
-		if (businessDate.compareTo(fm.getMaturityDate()) >= 0) {
-			businessDate = DateUtil.addDays(fm.getMaturityDate(), -1);
-		}
-
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinSchedules(fm.getFinID(),
-				TableType.MAIN_TAB);
-
-		BigDecimal loanEMI = SchdUtil.getNextEMI(businessDate, schedules);
-
-		if (loanEMI.compareTo(reqLa.getLoanEMI()) != 0) {
-			response.setValidFlag(PennantConstants.NO);
-			logger.debug(Literal.LEAVING);
-			return response;
-		}
-
-		response.setMobileEmailId("");
-		response.setValidFlag(PennantConstants.YES);
-
-		logger.debug(Literal.LEAVING);
-
-		return response;
-
-	}
-
-	public List<PaymentMode> getPDCEnquiry(FinanceMain fm) {
-		logger.debug(Literal.ENTERING);
-
-		long finID = fm.getFinID();
-		String bounceReason = null;
-		WSReturnStatus returnStatus;
-		Long mandateID = fm.getMandateID();
-		Long secMandateID = fm.getSecurityMandateID();
-		PaymentMode response = new PaymentMode();
-		Date appDate = SysParamUtil.getAppDate();
-		List<PaymentMode> paymentModeList = new ArrayList<>();
-
-		List<FinanceScheduleDetail> fsdList = SchdUtil
-				.sort(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
-		List<ChequeDetail> chequeDetailList = chequeDetailDAO.getChequeDetailsByFinReference(fm.getFinReference(),
-				"_AView");
-		boolean isEmpty = CollectionUtils.isEmpty(chequeDetailList);
-
-		Mandate mandate = null;
-		if (mandateID != null) {
-			mandate = mandateDAO.getMandateById(mandateID, "_AView");
-		}
-
-		for (FinanceScheduleDetail fsd : fsdList) {
-			if (isEmpty && mandate == null) {
-				returnStatus = APIErrorHandlerService.getFailedStatus("MAND100",
-						"Mandate and PDC does not exist for the given LAN");
-				response.setReturnStatus(returnStatus);
-				paymentModeList.add(response);
-				break;
-			}
-
-			if (!fsd.isRepayOnSchDate()) {
-				continue;
-			}
-
-			if (!CollectionUtils.isEmpty(chequeDetailList)) {
-				for (ChequeDetail cd : chequeDetailList) {
-					if (cd.geteMIRefNo() != fsd.getInstNumber()) {
-						continue;
-					}
-
-					cd.setSchdDate(fsd.getSchDate());
-					String chequeSerialNo = Integer.toString(cd.getChequeSerialNo());
-					Long receiptId = finReceiptHeaderDAO.getReceiptIdByChequeSerialNo(chequeSerialNo);
-					if (receiptId != null) {
-						bounceReason = bounceReasonDAO.getReasonByReceiptId(receiptId);
-						cd.setChequeBounceReason(bounceReason);
-					}
-					response = preparePaymentMode(cd);
-					paymentModeList.add(response);
-					continue;
-				}
-			}
-
-			if (mandate == null) {
-				continue;
-			}
-
-			if (mandate.isSwapIsActive() && fsd.getSchDate().compareTo(mandate.getSwapEffectiveDate()) >= 0
-					&& mandate.getMandateID() == mandateID) {
-				List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(fm.getCustID(), appDate);
-				if (!CollectionUtils.isEmpty(mandatesForAutoSwap)) {
-					mandate = mandatesForAutoSwap.get(0);
-				}
-
-			}
-			mandate.setSchdDate(fsd.getSchDate());
-			mandate.setInstalmentNo(fsd.getInstNumber());
-			response = preparePaymentMode(mandate);
-			paymentModeList.add(response);
-		}
-
-		if (secMandateID != null) {
-			Mandate secMandate = mandateDAO.getMandateById(secMandateID, "_AView");
-			response = preparePaymentMode(secMandate);
-			paymentModeList.add(response);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return paymentModeList;
-	}
-
-	public List<PaymentMode> getPDCDetails(FinanceMain fm) {
-		logger.debug(Literal.ENTERING);
-
-		WSReturnStatus returnStatus;
-		long finID = fm.getFinID();
-		Long mandateID = fm.getMandateID();
-		PaymentMode response = new PaymentMode();
-		Date appDate = SysParamUtil.getAppDate();
-		List<PaymentMode> paymentModeList = new ArrayList<>();
-
-		List<FinanceScheduleDetail> fsdList = SchdUtil
-				.sort(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
-		List<ChequeDetail> chequeDetailList = chequeDetailDAO.getChequeDetailsByFinReference(fm.getFinReference(),
-				"_AView");
-		boolean isEmpty = CollectionUtils.isEmpty(chequeDetailList);
-
-		Mandate mandate = null;
-		if (mandateID != null) {
-			mandate = mandateDAO.getMandateById(mandateID, "_AView");
-		}
-
-		for (FinanceScheduleDetail fsd : fsdList) {
-			if (isEmpty && mandate == null) {
-				returnStatus = APIErrorHandlerService.getFailedStatus("MAND100",
-						"Mandate and PDC does not exist for the given LAN");
-				response.setReturnStatus(returnStatus);
-				paymentModeList.add(response);
-				break;
-			}
-			if (appDate.compareTo(fsd.getSchDate()) <= 0 && fsd.isRepayOnSchDate()) {
-				if (isEmpty) {
-					for (ChequeDetail cd : chequeDetailList) {
-						if (cd.geteMIRefNo() != fsd.getInstNumber()) {
-							continue;
-						}
-						cd.setSchdDate(fsd.getSchDate());
-						response = preparePaymentMode(cd);
-						paymentModeList.add(response);
-						continue;
-					}
-				}
-
-				if (mandate == null) {
-					continue;
-				}
-
-				if (mandate.isSwapIsActive() && fsd.getSchDate().compareTo(mandate.getSwapEffectiveDate()) >= 0
-						&& mandate.getMandateID() == mandateID) {
-					List<Mandate> mandatesForAutoSwap = mandateDAO.getMandatesForAutoSwap(fm.getCustID(), appDate);
-					if (!CollectionUtils.isEmpty(mandatesForAutoSwap)) {
-						mandate = mandatesForAutoSwap.get(0);
-					}
-
-				}
-				mandate.setSchdDate(fsd.getSchDate());
-				mandate.setInstalmentNo(fsd.getInstNumber());
-				response = preparePaymentMode(mandate);
-				paymentModeList.add(response);
-			}
-		}
-		logger.debug(Literal.LEAVING);
-		return paymentModeList;
-	}
-
-	private PaymentMode preparePaymentMode(ChequeDetail cd) {
-		PaymentMode response = new PaymentMode();
-
-		response.setLoanInstrumentMode(cd.getChequeType());
-		response.setLoanDueDate(cd.getSchdDate());
-		response.setBankName(cd.getBankName());
-		response.setBankCityName(cd.getCity());
-		response.setMicr(cd.getMicr());
-		response.setBankBranchName(cd.getBankName());
-		response.setAccountNo(cd.getAccountNo());
-		response.setAccountHolderName(cd.getAccHolderName());
-		response.setAccountType(cd.getAccountType());
-		response.setInstallmentNo(cd.geteMIRefNo());
-		response.setPdcType(InstrumentType.isPDC(cd.getChequeType()) ? "Normal" : "Security");
-		response.setChqDate(cd.getChequeDate());
-		response.setChqNo(cd.getChequeSerialNumber());
-		response.setChqStatus(cd.getChequeStatus());
-		response.setBounceReason(cd.getChequeBounceReason());
-
-		return response;
-
-	}
-
-	private PaymentMode preparePaymentMode(Mandate mndt) {
-		PaymentMode response = new PaymentMode();
-
-		response.setLoanInstrumentMode(mndt.getMandateType());
-		response.setLoanDueDate(mndt.getSchdDate());
-		response.setBankName(mndt.getBankName());
-		response.setBankCityName(mndt.getCity());
-		response.setMicr(mndt.getMICR());
-		response.setBankBranchName(mndt.getBankName());
-		response.setAccountNo(mndt.getAccNumber());
-		response.setAccountHolderName(mndt.getAccHolderName());
-		response.setAccountType(mndt.getAccType());
-		response.setInstallmentNo(mndt.getInstalmentNo());
-
-		return response;
-
-	}
-
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -5058,11 +4779,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	@Autowired
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	@Autowired
-	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
-		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
 	@Autowired
