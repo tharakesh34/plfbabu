@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -27,18 +25,15 @@ import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicant.ApplicantDetails;
-import com.pennant.backend.model.chargedetails.ChargeDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.ChequeDetail;
-import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.loanbalance.LoanBalance;
 import com.pennant.backend.model.loandetail.LoanDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -396,65 +391,47 @@ public class FinanceEnquiryController extends AbstractController {
 		return ldList;
 	}
 
-	public List<ChargeDetails> getChargeDetails(long finID) {
-		logger.debug(Literal.ENTERING);
-
-		List<ChargeDetails> response = new ArrayList<>();
-
-		List<ManualAdvise> recAdvises = manualAdviseDAO.getReceivableAdvises(finID, "_AView");
-		List<FinFeeDetail> fees = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_AView");
-		List<FinODDetails> lppDues = finODDetailsDAO.getLPPDueAmount(finID);
-
-		Map<String, ChargeDetails> chargeDetails = new HashMap<>();
-
-		ChargeDetails cd;
-
-		for (ManualAdvise ma : recAdvises) {
-			if (!chargeDetails.containsKey(ma.getFeeTypeCode()) && BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) {
-				cd = new ChargeDetails();
-				cd.setChargeTypeDesc(ma.getFeeTypeDesc());
-				cd.setDueAmount(ma.getBalanceAmt());
-
-				chargeDetails.put(ma.getFeeTypeCode(), cd);
-				continue;
-			}
-			if (BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) {
-				cd = chargeDetails.get(ma.getFeeTypeCode());
-				cd.setDueAmount(cd.getDueAmount().add(ma.getBalanceAmt()));
-			}
-		}
-
-		for (FinFeeDetail fee : fees) {
-			if (!chargeDetails.containsKey(fee.getFeeTypeCode())
-					&& BigDecimal.ZERO.compareTo(fee.getRemainingFee()) < 0) {
-				cd = new ChargeDetails();
-				cd.setChargeTypeDesc(fee.getFeeTypeDesc());
-				cd.setDueAmount(fee.getRemainingFee());
-				cd.setChargeRate(fee.getPercentage());
-
-				chargeDetails.put(fee.getFeeTypeCode(), cd);
-				continue;
-			}
-			if (BigDecimal.ZERO.compareTo(fee.getRemainingFee()) < 0) {
-				cd = chargeDetails.get(fee.getFeeTypeCode());
-				cd.setDueAmount(cd.getDueAmount().add(fee.getRemainingFee()));
-			}
-		}
-
-		cd = new ChargeDetails();
-
-		cd.setChargeTypeDesc("Late Pay Penalty");
-		cd.setDueAmount(SchdUtil.getLPPDueAmount(lppDues));
-
-		if (BigDecimal.ZERO.compareTo(cd.getDueAmount()) < 0) {
-			chargeDetails.put("LPP", cd);
-		}
-
-		chargeDetails.forEach((k, v) -> response.add(v));
-
-		return response;
-
-	}
+	/*
+	 * public List<ChargeDetails> getChargeDetails(long finID) { logger.debug(Literal.ENTERING);
+	 * 
+	 * List<ChargeDetails> response = new ArrayList<>();
+	 * 
+	 * List<ManualAdvise> recAdvises = manualAdviseDAO.getReceivableAdvises(finID, "_AView"); List<FinFeeDetail> fees =
+	 * finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_AView"); List<FinODDetails> lppDues =
+	 * finODDetailsDAO.getLPPDueAmount(finID);
+	 * 
+	 * Map<String, ChargeDetails> chargeDetails = new HashMap<>();
+	 * 
+	 * ChargeDetails cd;
+	 * 
+	 * for (ManualAdvise ma : recAdvises) { if (!chargeDetails.containsKey(ma.getFeeTypeCode()) &&
+	 * BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) { cd = new ChargeDetails();
+	 * cd.setChargeTypeDesc(ma.getFeeTypeDesc()); cd.setDueAmount(ma.getBalanceAmt());
+	 * 
+	 * chargeDetails.put(ma.getFeeTypeCode(), cd); continue; } if (BigDecimal.ZERO.compareTo(ma.getBalanceAmt()) < 0) {
+	 * cd = chargeDetails.get(ma.getFeeTypeCode()); cd.setDueAmount(cd.getDueAmount().add(ma.getBalanceAmt())); } }
+	 * 
+	 * for (FinFeeDetail fee : fees) { if (!chargeDetails.containsKey(fee.getFeeTypeCode()) &&
+	 * BigDecimal.ZERO.compareTo(fee.getRemainingFee()) < 0) { cd = new ChargeDetails();
+	 * cd.setChargeTypeDesc(fee.getFeeTypeDesc()); cd.setDueAmount(fee.getRemainingFee());
+	 * cd.setChargeRate(fee.getPercentage());
+	 * 
+	 * chargeDetails.put(fee.getFeeTypeCode(), cd); continue; } if (BigDecimal.ZERO.compareTo(fee.getRemainingFee()) <
+	 * 0) { cd = chargeDetails.get(fee.getFeeTypeCode()); cd.setDueAmount(cd.getDueAmount().add(fee.getRemainingFee()));
+	 * } }
+	 * 
+	 * cd = new ChargeDetails();
+	 * 
+	 * cd.setChargeTypeDesc("Late Pay Penalty"); cd.setDueAmount(SchdUtil.getLPPDueAmount(lppDues));
+	 * 
+	 * if (BigDecimal.ZERO.compareTo(cd.getDueAmount()) < 0) { chargeDetails.put("LPP", cd); }
+	 * 
+	 * chargeDetails.forEach((k, v) -> response.add(v));
+	 * 
+	 * return response;
+	 * 
+	 * }
+	 */
 
 	private void getRateChange(FinanceMain fm, List<LoanDetail> ldList, LoanDetail ld,
 			List<FinServiceInstruction> fsiList) {
