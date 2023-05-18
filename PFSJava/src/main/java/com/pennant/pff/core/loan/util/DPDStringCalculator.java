@@ -1,5 +1,6 @@
 package com.pennant.pff.core.loan.util;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class DPDStringCalculator {
 		return curDPDStr.concat(dpdString);
 	}
 
-	private static String getDpdString(boolean monthEnd, FinanceMain fm, List<FinanceScheduleDetail> schedules,
+	public static String getDpdString(boolean monthEnd, FinanceMain fm, List<FinanceScheduleDetail> schedules,
 			String curDPDStr) {
 		int dueBucket = fm.getDueBucket();
 
@@ -78,20 +79,66 @@ public class DPDStringCalculator {
 		int frequencyDay = FrequencyUtil.getIntFrequencyDay(fm.getRepayFrq());
 		Date nextBusinessDate = fm.getEventProperties().getBusinessDate();
 		int dueDay = DateUtil.getDay(nextBusinessDate);
+		int weekBusDay = getWeekDay(nextBusinessDate);
+		String frqlable = FrequencyUtil.getRepayFrequencyLabel(fm.getRepayFrq());
 
-		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0) {
+		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0 || considerDPDForMatured(fm, schedules)) {
 			frequencyDay = dueDay;
 		}
 
-		if (frequencyDay == dueDay) {
-			if (dueBucket == 0 && StringUtils.isEmpty(curDPDStr)) {
-				return null;
-			}
+		if (FrequencyUtil.WEEKLY.equals(frqlable)) {
+			dueDay = weekBusDay;
+		}
 
+		if (frequencyDay == dueDay) {
 			return getDueBucket(dueBucket);
 		}
 
 		return null;
+	}
+
+	private static boolean considerDPDForMatured(FinanceMain fm, List<FinanceScheduleDetail> schedules) {
+		Date nextBusinessDate = fm.getEventProperties().getBusinessDate();
+
+		if (fm.getMaturityDate().compareTo(nextBusinessDate) > 0) {
+			return false;
+		}
+
+		int dueDay = FrequencyUtil.getIntFrequencyDay(fm.getRepayFrq());
+		int businessDay = DateUtil.getDay(nextBusinessDate);
+
+		String frqlable = FrequencyUtil.getRepayFrequencyLabel(fm.getRepayFrq());
+
+		boolean isValid = false;
+
+		switch (frqlable) {
+		case FrequencyUtil.DAILY: {
+			isValid = true;
+			break;
+		}
+		case FrequencyUtil.WEEKLY: {
+			if (dueDay == getWeekDay(nextBusinessDate)) {
+				isValid = true;
+			}
+			break;
+		}
+		case FrequencyUtil.MONTHLY, FrequencyUtil.QUARTERLY, FrequencyUtil.HALF_YEARLY, FrequencyUtil.YEARLY: {
+			if (dueDay == businessDay) {
+				isValid = true;
+			}
+			break;
+		}
+		case FrequencyUtil.FORT_NIGHTLY: {
+			if (businessDay == dueDay || businessDay == dueDay + 14) {
+				isValid = true;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+
+		return isValid;
 	}
 
 	/**
@@ -172,5 +219,15 @@ public class DPDStringCalculator {
 			i++;
 		}
 		return String.valueOf((char) i);
+	}
+
+	public static int getWeekDay(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		int day = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		if (day == 0) {
+			return 07;
+		}
+		return day;
 	}
 }

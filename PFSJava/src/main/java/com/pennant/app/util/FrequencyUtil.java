@@ -89,19 +89,19 @@ public class FrequencyUtil implements Serializable {
 
 	public static final String M00 = "00";
 
-	private static final String FREQUENCY = "Frequency";
-	private static final String YEARLY = "Yearly";
-	private static final String YEARLY_2 = "2Yearly";
-	private static final String YEARLY_3 = "3Yearly";
-	private static final String HALF_YEARLY = "HalfYearly";
-	private static final String QUARTERLY = "Quarterly";
-	private static final String BI_MONTHLY = "BiMonthly";
-	private static final String MONTHLY = "Monthly";
-	private static final String FORT_NIGHTLY = "Fortnightly";
-	private static final String DAYS_15 = "15DAYS";
-	private static final String BI_WEEKLY = "BiWeekly";
-	private static final String WEEKLY = "Weekly";
-	private static final String DAILY = "Daily";
+	public static final String FREQUENCY = "Frequency";
+	public static final String YEARLY = "Yearly";
+	public static final String YEARLY_2 = "2Yearly";
+	public static final String YEARLY_3 = "3Yearly";
+	public static final String HALF_YEARLY = "HalfYearly";
+	public static final String QUARTERLY = "Quarterly";
+	public static final String BI_MONTHLY = "BiMonthly";
+	public static final String MONTHLY = "Monthly";
+	public static final String FORT_NIGHTLY = "Fortnightly";
+	public static final String DAYS_15 = "15DAYS";
+	public static final String BI_WEEKLY = "BiWeekly";
+	public static final String WEEKLY = "Weekly";
+	public static final String DAILY = "Daily";
 
 	private static final String ERROR_51001 = "51001";
 
