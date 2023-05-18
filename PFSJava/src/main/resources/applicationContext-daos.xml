@@ -13463,4 +13463,11 @@
 		
 	<bean id="lPPUploadProcessRecord"
 		class="com.pennant.pff.lpp.upload.validate.LPPUploadProcessRecord" />
+		
+	<bean id="financeEnquiryService" class="com.pennant.backend.service.finance.impl.FinanceEnquiryServiceImpl" />
+	
+	<bean id="customerEnquiryService" class="com.pennant.backend.service.customermasters.impl.CustomerEnquiryServiceImpl" />
+	
+	<bean id="summaryDetailService" class="com.pennant.backend.service.finance.impl.SummaryDetailService" />
+		
 </beans>

@@ -40,6 +40,8 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
@@ -74,6 +76,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.impl.SummaryDetailService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.FinanceConstants;
@@ -82,6 +85,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -99,13 +103,14 @@ import com.pennapps.core.util.ObjectUtil;
 
 import net.sf.jasperreports.engine.JasperRunManager;
 
-public class FinStatementController extends SummaryDetailService {
+public class FinStatementController extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(FinStatementController.class);
 
 	private FinanceDetailService financeDetailService;
 	private PostingsDAO postingsDAO;
 	private CollateralSetupService collateralSetupService;
 	private FeeDetailService feeDetailService;
+	private SummaryDetailService summaryDetailService;
 
 	private ReceiptService receiptService;
 	private SOAReportGenerationService soaReportGenerationService;
@@ -114,6 +119,8 @@ public class FinStatementController extends SummaryDetailService {
 	private ReportConfiguration reportConfiguration;
 	private FeeTypeDAO feeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
+	private FinODDetailsDAO finODDetailsDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	public FinStatementResponse getStatement(List<Long> finIDList, String serviceName) {
 		logger.debug(Literal.ENTERING);
@@ -312,7 +319,8 @@ public class FinStatementController extends SummaryDetailService {
 			schdData.setFeeDues(feeDues);
 
 			// process origination fees
-			schdData.getFeeDues().addAll(getUpdatedFees(fd.getFinScheduleData().getFinFeeDetailList()));
+			schdData.getFeeDues()
+					.addAll(summaryDetailService.getUpdatedFees(fd.getFinScheduleData().getFinFeeDetailList()));
 
 			fd.setForeClosureDetails(foreClosureList);
 
@@ -411,12 +419,12 @@ public class FinStatementController extends SummaryDetailService {
 
 			processFeesAndCharges(schdData, finFeeDetail);
 
-			fd.setFinFeeDetails(getUpdatedFees(schdData.getFeeDues()));
+			fd.setFinFeeDetails(summaryDetailService.getUpdatedFees(schdData.getFeeDues()));
 			schdData.setFeeDues(null);
 		}
 
-		FinanceSummary summary = getFinanceSummary(fd);
-		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+		FinanceSummary summary = summaryDetailService.getFinanceSummary(fd);
+		summary.setAdvPaymentAmount(summaryDetailService.getTotalAdvAmount(fm));
 		summary.setOutStandPrincipal(schdData.getOutstandingPri());
 		schdData.setFinanceSummary(summary);
 
@@ -812,7 +820,7 @@ public class FinStatementController extends SummaryDetailService {
 								.getAmountInText(PennantApplicationUtil.formateAmount(fcFee, formatter), finCCy));
 						closureReport.setGstOnForeClosFees((PennantApplicationUtil
 								.formateAmount(fcFeeAmtWithoutGst, formatter).multiply(new BigDecimal(18)))
-								.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
+										.divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_DOWN));
 						closureReport.setForeClosFeesExGST(
 								closureReport.getForeClosFees().subtract(closureReport.getGstOnForeClosFees()));
 
@@ -1923,4 +1931,18 @@ public class FinStatementController extends SummaryDetailService {
 		this.customerDetailsService = customerDetailsService;
 	}
 
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
+		this.summaryDetailService = summaryDetailService;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
 }

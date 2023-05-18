@@ -44,22 +44,22 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
-import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
-import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.masters.LocalityDAO;
-import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -158,6 +158,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceDeviationsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.JointAccountDetailService;
+import com.pennant.backend.service.finance.impl.SummaryDetailService;
 import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.FinMandateService;
@@ -177,6 +178,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
@@ -211,7 +213,7 @@ import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class CreateFinanceController extends SummaryDetailService {
+public class CreateFinanceController extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(CreateFinanceController.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -268,10 +270,12 @@ public class CreateFinanceController extends SummaryDetailService {
 	private CollateralAssignmentDAO collateralAssignmentDAO;
 	private PinCodeDAO pinCodeDAO;
 	private LocalityDAO localityDAO;
-	private ChequeDetailDAO chequeDetailDAO;
-	private BounceReasonDAO bounceReasonDAO;
-	private MandateDAO mandateDAO;
 	private FinanceCancelValidator financeCancelValidator;
+	private SummaryDetailService summaryDetailService;
+	private FinanceDisbursementDAO financeDisbursementDAO;
+	private ReceiptCalculator receiptCalculator;
+	private ManualAdviseDAO manualAdviseDAO;
+	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public FinanceDetail doCreateFinance(FinanceDetail fd, boolean loanWithWIF) {
 		logger.info(Literal.ENTERING);
@@ -462,7 +466,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						schdData = ScheduleCalculator.getCalSchd(schdData, fm.getDesiredProfit());
 						schdData.setSchduleGenerated(true);
 						// process planned EMI details
-						doProcessPlanEMIHDays(schdData);
+						summaryDetailService.doProcessPlanEMIHDays(schdData);
 					}
 				}
 
@@ -2484,9 +2488,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
 			response.setFinScheduleData(finScheduleData);
 			// set fee paid amounts based on schedule method
-			finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
+			finScheduleData
+					.setFinFeeDetailList(summaryDetailService.getUpdatedFees(finScheduleData.getFinFeeDetailList()));
 			// Fetch summary details
-			FinanceSummary summary = getFinanceSummary(financeDetail);
+			FinanceSummary summary = summaryDetailService.getFinanceSummary(financeDetail);
 			response.getFinScheduleData().setFinanceSummary(summary);
 		} else {
 			finScheduleData
@@ -3198,7 +3203,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		List<FinFeeDetail> finFeeDetail = schdData.getFinFeeDetailList();
-		fd.setFinFeeDetails(getUpdatedFees(finFeeDetail));
+		fd.setFinFeeDetails(summaryDetailService.getUpdatedFees(finFeeDetail));
 
 		for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
 			if (fap.getPaymentSeq() == 1) {
@@ -3264,7 +3269,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// Fetch summary details
-		FinanceSummary summary = getFinanceSummary(fd);
+		FinanceSummary summary = summaryDetailService.getFinanceSummary(fd);
 
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
 		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
@@ -5125,23 +5130,28 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	@Autowired
-	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
-		this.chequeDetailDAO = chequeDetailDAO;
-	}
-
-	@Autowired
-	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
-		this.bounceReasonDAO = bounceReasonDAO;
-	}
-
-	@Autowired
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
-	@Autowired
 	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
 		this.financeCancelValidator = financeCancelValidator;
+	}
+
+	@Autowired
+	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
+		this.summaryDetailService = summaryDetailService;
+	}
+
+	@Autowired
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
 }

@@ -25,6 +25,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -47,10 +48,12 @@ import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.impl.SummaryDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -62,7 +65,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.EmiResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FinanceDetailController extends SummaryDetailService {
+public class FinanceDetailController extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(FinanceDetailController.class);
 
 	private FinanceDetailService financeDetailService;
@@ -70,6 +73,8 @@ public class FinanceDetailController extends SummaryDetailService {
 	private StepPolicyHeaderDAO stepPolicyHeaderDAO;
 	private CustomerDetailsService customerDetailsService;
 	private FeeDetailService feeDetailService;
+	private SummaryDetailService summaryDetailService;
+	private FinODDetailsDAO finODDetailsDAO;
 
 	public FinScheduleData doCreateFinanceSchedule(FinScheduleData schdData) throws AppException {
 		logger.debug(Literal.ENTERING);
@@ -148,7 +153,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			schdData.setFinID(fm.getFinID());
 			schdData.setFinReference(fm.getFinReference());
 
-			doProcessPlanEMIHDays(schdData);
+			summaryDetailService.doProcessPlanEMIHDays(schdData);
 
 			if (schdData.getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
@@ -480,7 +485,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			schdData.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
 
 			// set fee paid amounts based on schedule method
-			schdData.setFinFeeDetailList(getUpdatedFees(schdData.getFinFeeDetailList()));
+			schdData.setFinFeeDetailList(summaryDetailService.getUpdatedFees(schdData.getFinFeeDetailList()));
 
 			// summary
 			FinanceDetail response = new FinanceDetail();
@@ -490,7 +495,7 @@ public class FinanceDetailController extends SummaryDetailService {
 			response.getFinScheduleData().setFinanceMain(fm);
 			response.getFinScheduleData()
 					.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
-			schdData.setFinanceSummary(getFinanceSummary(response));
+			schdData.setFinanceSummary(summaryDetailService.getFinanceSummary(response));
 		}
 		// to remove un-necessary objects from response make them as null
 		schdData.setDisbursementDetails(null);
@@ -579,8 +584,8 @@ public class FinanceDetailController extends SummaryDetailService {
 				fm.setGrcMaxRate(null);
 			}
 
-			schdData.setFinFeeDetailList(getUpdatedFees(schdData.getFinFeeDetailList()));
-			schdData.setFinanceSummary(getFinanceSummary(fd));
+			schdData.setFinFeeDetailList(summaryDetailService.getUpdatedFees(schdData.getFinFeeDetailList()));
+			schdData.setFinanceSummary(summaryDetailService.getFinanceSummary(fd));
 			schdData.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			schdData.setFinODDetails(finODDetailsDAO.getFinODDByFinRef(finID, null));
 
@@ -649,6 +654,16 @@ public class FinanceDetailController extends SummaryDetailService {
 	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
+		this.summaryDetailService = summaryDetailService;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 }

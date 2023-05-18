@@ -33,30 +33,22 @@ import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.ReceiptCalculator;
-import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.apicollecetiondetails.CollectionAPIDetailDAO;
-import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
-import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
-import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -135,14 +127,11 @@ import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
-import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.NonLanReceiptService;
-import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
-import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.service.finance.impl.SummaryDetailService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
-import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -150,6 +139,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennanttech.pennapps.core.AppException;
@@ -171,7 +161,7 @@ import com.pennanttech.ws.model.collection.CollectionAccountDetails;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
-public class FinServiceInstController extends SummaryDetailService {
+public class FinServiceInstController extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(FinServiceInstController.class);
 
 	private FinanceDetailService financeDetailService;
@@ -190,12 +180,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinFeeDetailService finFeeDetailService;
 	private BankBranchService bankBranchService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
-	private ReceiptService receiptService;
-	private FinTypePartnerBankService finTypePartnerBankService;
 	private PartnerBankDAO partnerBankDAO;
-	private ManualPaymentService manualPaymentService;
-	private RepayCalculator repayCalculator;
-	private FinanceProfitDetailDAO profitDetailsDAO;
 	private ChangeScheduleMethodService changeScheduleMethodService;
 	private FinanceTypeDAO financeTypeDAO;
 	private FeeReceiptService feeReceiptService;
@@ -204,28 +189,25 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	private ReceiptResponseDetailDAO receiptResponseDetailDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
-	private FinanceWorkFlowService financeWorkFlowService;
 	protected transient WorkflowEngine workFlow = null;
 	private FinanceTaxDetailService financeTaxDetailService;
 	private FinAdvancePaymentsDAO finAdvancePaymensDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private BankDetailDAO bankDetailDAO;
 	private BankDetailService bankDetailService;
 	private CovenantsService covenantsService;
 	private CovenantsDAO covenantsDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private ChequeHeaderService chequeHeaderService;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private PayOrderIssueService payOrderIssueService;
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
 	private NonLanReceiptService nonLanReceiptService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
 	private RestructureService restructureService;
-	private LimitDetailDAO limitDetailDAO;
 	private CollectionAPIDetailDAO collectionAPIDetailDAO;
 	private PostingsDAO postingsDAO;
+	private SummaryDetailService summaryDetailService;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	public FinanceDetail doAddRateChange(FinServiceInstruction fsi, String eventCode) {
 		logger.debug(Literal.ENTERING);
@@ -1699,7 +1681,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// Resetting Maturity Terms & Summary details rendering in case of
 		// Reduce maturity cases
-		resetScheduleDetail(finScheduleData);
+		summaryDetailService.resetScheduleDetail(finScheduleData);
 
 		finScheduleData.setFinanceMain(null);
 		finScheduleData.setDisbursementDetails(null);
@@ -1718,7 +1700,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceSummary getFinanceSummary(FinScheduleData finScheduleData) {
 		FinanceDetail financeDetail = new FinanceDetail();
 		financeDetail.setFinScheduleData(finScheduleData);
-		return getFinanceSummary(financeDetail);
+		return summaryDetailService.getFinanceSummary(financeDetail);
 	}
 
 	/**
@@ -3685,37 +3667,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
-	public void setReceiptService(ReceiptService receiptService) {
-		this.receiptService = receiptService;
-	}
-
-	public void setFinTypePartnerBankService(FinTypePartnerBankService finTypePartnerBankService) {
-		this.finTypePartnerBankService = finTypePartnerBankService;
-	}
-
-	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
-		this.receiptCalculator = receiptCalculator;
-	}
-
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
-	}
-
-	public void setRepayCalculator(RepayCalculator repayCalculator) {
-		this.repayCalculator = repayCalculator;
-	}
-
-	public void setManualPaymentService(ManualPaymentService manualPaymentService) {
-		this.manualPaymentService = manualPaymentService;
-	}
-
-	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
-		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	@Override
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
@@ -3728,10 +3681,6 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	@Autowired
@@ -3750,11 +3699,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	@Autowired
-	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
-		this.financeWorkFlowService = financeWorkFlowService;
-	}
-
-	@Autowired
 	public void setFinAdvancePaymensDAO(FinAdvancePaymentsDAO finAdvancePaymensDAO) {
 		this.finAdvancePaymensDAO = finAdvancePaymensDAO;
 	}
@@ -3766,10 +3710,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	@Autowired
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
 		this.changeScheduleMethodService = changeScheduleMethodService;
-	}
-
-	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
-		this.bankDetailDAO = bankDetailDAO;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
@@ -3821,10 +3761,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		this.chequeDetailDAO = chequeDetailDAO;
 	}
 
-	public void setLimitDetailDAO(LimitDetailDAO limitDetailDAO) {
-		this.limitDetailDAO = limitDetailDAO;
-	}
-
 	public void setCollectionAPIDetailDAO(CollectionAPIDetailDAO collectionAPIDetailDAO) {
 		this.collectionAPIDetailDAO = collectionAPIDetailDAO;
 	}
@@ -3835,5 +3771,15 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	@Autowired
+	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
+		this.summaryDetailService = summaryDetailService;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 }

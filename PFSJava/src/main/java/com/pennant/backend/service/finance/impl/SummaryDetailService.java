@@ -1,4 +1,4 @@
-package com.pennanttech.controller;
+package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
@@ -39,17 +40,16 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.util.SchdUtil;
-import com.pennanttech.util.APIConstants;
 
-public class SummaryDetailService extends AbstractController {
+public class SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(SummaryDetailService.class);
 
 	protected FinanceDisbursementDAO financeDisbursementDAO;
 	protected FinODDetailsDAO finODDetailsDAO;
+
 	protected AccrualService accrualService;
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	protected FinFeeDetailDAO finFeeDetailDAO;
@@ -128,7 +128,7 @@ public class SummaryDetailService extends AbstractController {
 
 		// set Finance closing status
 		if (StringUtils.isBlank(fm.getClosingStatus())) {
-			summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
+			summary.setFinStatus(FinanceConstants.CLOSE_STATUS_ACTIVE);
 		} else {
 			summary.setFinStatus(fm.getClosingStatus());
 		}
@@ -414,31 +414,39 @@ public class SummaryDetailService extends AbstractController {
 		return finScheduleData;
 	}
 
+	@Autowired
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
+	@Autowired
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
 	}
 
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
+	@Autowired
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
+	@Autowired
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
 
+	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
 }
