@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -26,7 +25,6 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFileReader.class);
 
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extGenericDao;
 
 	private static final int UCIC_RESP_NEGLECT_LINES = 2;
 	private static final String UCIC_RESPONSE_END = "EOF";
@@ -223,9 +221,5 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 }

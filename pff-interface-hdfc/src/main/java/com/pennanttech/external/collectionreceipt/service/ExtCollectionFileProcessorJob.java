@@ -28,7 +28,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.external.ExtReceiptServiceHook;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -50,7 +49,6 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtGenericDao extGenericDao;
 	private ApplicationContext applicationContext;
 	private PlatformTransactionManager transactionManager;
 	private ExtReceiptServiceHook extReceiptServiceHook;
@@ -60,7 +58,6 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		logger.debug(Literal.ENTERING);
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 		extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);

@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
@@ -23,7 +22,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicWeekFileService.class);
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extGenericDao;
 	private FileInterfaceConfig ucicWeeklyConfig;
 
 	public void processWeeklyFileRequest(Date appDate) throws Exception {
@@ -99,10 +97,6 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 }

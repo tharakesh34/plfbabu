@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -38,7 +37,6 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 	private ApplicationContext applicationContext;
 	private ExtUcicDao extUcicDao;
 	private DataSource dataSource;
-	private ExtGenericDao extGenericDao;
 
 	public void readFileAndExtracData() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -138,10 +136,6 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 }

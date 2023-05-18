@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -26,7 +25,6 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 	private static final Logger logger = LogManager.getLogger(LienFileWritingService.class);
 
 	private ExtLienMarkingDAO externalLienMarkingDAO;
-	private ExtGenericDao extGenericDao;
 	private FileInterfaceConfig lienConfig;
 
 	public void processSILienMarkingRequest(Date appDate) {
@@ -114,9 +112,4 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 	public void setExternalLienMarkingDAO(ExtLienMarkingDAO externalLienMarkingDAO) {
 		this.externalLienMarkingDAO = externalLienMarkingDAO;
 	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
-	}
-
 }

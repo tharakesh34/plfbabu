@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.google.common.io.Files;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.EODExtractionsHook;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
@@ -31,7 +30,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 	private FileInterfaceConfig finconGLConfig;
 	private ExtExtractionDao extExtractionDao;
-	private ExtGenericDao extGenericDao;
 	private ExtUcicDataExtractor extUcicExtractData;
 	private ExtUcicRequestFile extUcicRequestFile;
 
@@ -148,12 +146,6 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	@Qualifier(value = "extExtractionDao")
 	public void setExtExtractionDao(ExtExtractionDao extExtractionDao) {
 		this.extExtractionDao = extExtractionDao;
-	}
-
-	@Autowired(required = false)
-	@Qualifier(value = "extGenericDao")
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 	@Autowired(required = false)

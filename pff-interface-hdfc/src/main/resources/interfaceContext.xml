@@ -94,7 +94,6 @@
 
 	<bean id="lienFileWritingService" class="com.pennanttech.external.silien.service.LienFileWritingService">
 		<property name="externalLienMarkingDAO" ref="externalLienMarkingDAO" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="mandateProcesses" class="com.pennanttech.external.mandate.ExtMandateProcess" parent="abstractInterface" />
@@ -105,22 +104,18 @@
 
 	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicResponseFolderReader" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileReader">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicResponseProcessor" class="com.pennanttech.external.ucic.service.ExtUcicResponseFileProcessor">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="extUcicResponseAckFileWriter" class="com.pennanttech.external.ucic.service.ExtUcicResponseAckFileWriter">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 
@@ -133,12 +128,10 @@
 
 	<bean id="ucicWeeklyWritingService" class="com.pennanttech.external.ucic.service.ExtUcicWeekFileService">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="externalPresentmentHook" class="com.pennanttech.external.presentment.service.PresentmentRequestHandler">
 		<property name="externalPresentmentDAO" ref="externalPresentmentDAO" />
-		<property name="extGenericDao" ref="extGenericDao" />
 		<property name="siService" ref="siService" />
 		<property name="achService" ref="achService" />
 		<property name="siInternalService" ref="siInternalService" />

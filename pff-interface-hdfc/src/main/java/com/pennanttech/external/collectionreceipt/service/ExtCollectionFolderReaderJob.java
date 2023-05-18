@@ -15,7 +15,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -32,7 +31,6 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFolderReaderJob.class);
 
-	private ExtGenericDao extGenericDao;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
 	private ApplicationContext applicationContext;
 
@@ -47,7 +45,6 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 		logger.debug(Literal.ENTERING);
 		// Get all the required DAO's
 		applicationContext = ApplicationContextProvider.getApplicationContext();
-		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 
 		fetchRemoteFiles();

@@ -31,7 +31,6 @@
 
 	<bean id="extUcicRequestFile" class="com.pennanttech.external.ucic.service.ExtUcicRequestFile">
 		<property name="extUcicDao" ref="extUcicDao" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="externalPresentmentDAO" class="com.pennanttech.external.presentment.dao.ExtPresentmentDAOImpl">
@@ -40,7 +39,6 @@
 	</bean>
 
 	<bean id="extExtractionHook" class="com.pennanttech.external.extractions.service.EODExtractionsService">
-		<property name="extGenericDao" ref="extGenericDao" />
 		<property name="extExtractionDao" ref="extExtractionDao" />
 		<property name="extUcicExtractData" ref="extUcicExtractData" />
 		<property name="extUcicRequestFile" ref="extUcicRequestFile" />
@@ -73,7 +71,6 @@
 		<property name="achService" ref="achService" />
 		<property name="siInternalService" ref="siInternalService" />
 		<property name="extPdcService" ref="extPdcService" />
-		<property name="extGenericDao" ref="extGenericDao" />
 	</bean>
 
 	<bean id="appDateChangeServiceHook" class="com.pennant.pff.eod.extension.AppDateChangeServiceHookImpl" />

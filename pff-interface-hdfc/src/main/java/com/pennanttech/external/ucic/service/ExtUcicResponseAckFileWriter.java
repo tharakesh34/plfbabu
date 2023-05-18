@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
@@ -28,7 +27,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseAckFileWriter.class);
 
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extGenericDao;
 
 	public void processUcicResponseAckFile(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -145,10 +143,6 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 }

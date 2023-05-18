@@ -23,7 +23,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -47,7 +46,6 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 
 	private DataSource dataSource;
 	private ExtCollectionReceiptDao extCollectionReceiptDao;
-	private ExtGenericDao extGenericDao;
 	private ExtPresentmentDAO extPresentmentDAO;
 	private ApplicationContext applicationContext;
 
@@ -58,7 +56,6 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 		logger.debug(Literal.ENTERING);
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
-		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		collectionFileService = applicationContext.getBean(ExtCollectionFileService.class);
 		extPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);

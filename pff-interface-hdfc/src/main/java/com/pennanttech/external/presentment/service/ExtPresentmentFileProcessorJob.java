@@ -23,7 +23,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -54,7 +53,6 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	private SIInternalService siInternalService;
 	private ACHService achService;
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extGenericDao;
 	private PlatformTransactionManager transactionManager;
 
 	private ApplicationContext applicationContext;
@@ -70,7 +68,6 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		siService = applicationContext.getBean(SIService.class);
 		siInternalService = applicationContext.getBean(SIInternalService.class);
 		achService = applicationContext.getBean(ACHService.class);
-		extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 
 		// Process starts here

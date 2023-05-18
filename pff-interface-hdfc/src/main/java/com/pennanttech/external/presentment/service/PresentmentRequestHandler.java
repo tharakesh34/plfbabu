@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.ExternalPresentmentHook;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
@@ -21,7 +20,6 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	private static final Logger logger = LogManager.getLogger(PresentmentRequestHandler.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extGenericDao;
 
 	private SIService siService;
 	private SIInternalService siInternalService;
@@ -178,10 +176,6 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 
 	public void setExtPdcService(ExtPDCService extPdcService) {
 		this.extPdcService = extPdcService;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 }

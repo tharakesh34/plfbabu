@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
@@ -25,7 +24,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstants {
 	private static final Logger logger = LogManager.getLogger(ExtUcicRequestFile.class);
 	private ExtUcicDao extUcicDao;
-	private ExtGenericDao extGenericDao;
 	private FileInterfaceConfig ucicReqConfig;
 	private FileInterfaceConfig ucicReqCompleteConfig;
 
@@ -181,10 +179,6 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 
 	public void setExtUcicDao(ExtUcicDao extUcicDao) {
 		this.extUcicDao = extUcicDao;
-	}
-
-	public void setExtGenericDao(ExtGenericDao extGenericDao) {
-		this.extGenericDao = extGenericDao;
 	}
 
 }

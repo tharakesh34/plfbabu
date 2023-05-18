@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,13 +13,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
@@ -32,7 +23,6 @@ import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.job.AbstractJob;
@@ -42,7 +32,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentFolderReaderJob.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
-	private ExtGenericDao extGenericDao;
 
 	private ApplicationContext applicationContext;
 
@@ -53,7 +42,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 
 			applicationContext = ApplicationContextProvider.getApplicationContext();
 			externalPresentmentDAO = applicationContext.getBean(ExtPresentmentDAO.class);
-			extGenericDao = applicationContext.getBean(ExtGenericDao.class);
 			readAndSaveFiles();
 
 		} catch (Exception e) {
@@ -405,42 +393,6 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 			}
 		}
 		logger.debug(Literal.LEAVING);
-	}
-
-	public List<String> getFileNameList(String pathname, String hostName, int port, String accessKey,
-			String secretKey) {
-		Session session = null;
-		Channel channel = null;
-		JSch jsch = new JSch();
-		try {
-			session = jsch.getSession(accessKey, hostName, port);
-			session.setPassword(secretKey);
-			java.util.Properties config = new java.util.Properties();
-			config.put("StrictHostKeyChecking", "no");
-			session.setConfig(config);
-			session.connect();
-			channel = session.openChannel("sftp");
-			channel.connect();
-		} catch (JSchException e1) {
-			logger.info(Literal.EXCEPTION, e1);
-		}
-
-		LsEntry entry = null;
-		List<String> fileName = new ArrayList<String>();
-		Vector filelist = null;
-		try {
-			filelist = ((ChannelSftp) channel).ls(pathname);
-		} catch (Exception e) {
-			throw new AppException(e.getMessage());
-		}
-		for (int i = 0; i < filelist.size(); i++) {
-			entry = (LsEntry) filelist.get(i);
-			if (StringUtils.isNotEmpty(FilenameUtils.getExtension(entry.getFilename()))
-					&& !entry.getFilename().startsWith(".")) {
-				fileName.add(entry.getFilename());
-			}
-		}
-		return fileName;
 	}
 
 	class RejectFileData {
