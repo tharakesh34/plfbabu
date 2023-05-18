@@ -2073,18 +2073,16 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							BigDecimal debitAmount = BigDecimal.ZERO;
 							if (valueDate.compareTo(schdMonthEnd) == 0) {
 								debitAmount = odc.getAmount();
+								soaTranReport = getlppTrnscEvent(finODCDue, soaTransactionReports, finSchdDetail, odc,
+										valueDate, debitAmount);
 							} else {
-								debitAmount = odc.getPaidAmount().add(odc.getWaivedAmount());
+								if (odc.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
+										|| odc.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+									debitAmount = odc.getPaidAmount().add(odc.getWaivedAmount());
+									soaTranReport = getlppTrnscEvent(finODCDue, soaTransactionReports, finSchdDetail, odc,
+											valueDate, debitAmount);
+								}
 							}
-
-							soaTranReport = new SOATransactionReport();
-							soaTranReport.setEvent(finODCDue.concat(String.valueOf(finSchdDetail.getInstNumber())));
-							soaTranReport.setTransactionDate(odc.getPostDate());
-							soaTranReport.setValueDate(valueDate);
-							soaTranReport.setCreditAmount(BigDecimal.ZERO);
-							soaTranReport.setDebitAmount(debitAmount);
-							soaTranReport.setPriority(19);
-							soaTransactionReports.add(soaTranReport);
 						}
 					}
 				}
@@ -3028,6 +3026,20 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		logger.debug("Leaving");
 		return soaTransactionReports;
+	}
+
+	private SOATransactionReport getlppTrnscEvent(String finODCDue, List<SOATransactionReport> soaTransactionReports,
+			FinanceScheduleDetail finSchdDetail, FinOverDueCharges odc, Date valueDate, BigDecimal debitAmount) {
+		SOATransactionReport soaTranReport;
+		soaTranReport = new SOATransactionReport();
+		soaTranReport.setEvent(finODCDue.concat(String.valueOf(finSchdDetail.getInstNumber())));
+		soaTranReport.setTransactionDate(odc.getPostDate());
+		soaTranReport.setValueDate(valueDate);
+		soaTranReport.setCreditAmount(BigDecimal.ZERO);
+		soaTranReport.setDebitAmount(debitAmount);
+		soaTranReport.setPriority(19);
+		soaTransactionReports.add(soaTranReport);
+		return soaTranReport;
 	}
 
 	// Getting Reversal Transactions for Cancel Loan.
