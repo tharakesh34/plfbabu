@@ -438,6 +438,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 				break;
 			}
 
+			if (payableAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
 			if (payableAmount.compareTo(fc.getBalanceAmount()) >= 0) {
 				payableAmount = fc.getBalanceAmount();
 				fc.setBalanceAmount(BigDecimal.ZERO);
@@ -448,7 +452,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			Date valueDate = receiptService.getExcessBasedValueDate(fc.getAppDate(), fea.getFinID(), fc.getAppDate(),
 					fea, FinServiceEvent.SCHDRPY);
 			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.EXCESS, valueDate);
-
+			fsi.setAdviseId(fea.getExcessID());
 			fsi.getReceiptDetail().setPayAgainstID(fea.getExcessID());
 			fsiList.add(fsi);
 		}
@@ -466,6 +470,10 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		for (ManualAdvise ma : advises) {
 			BigDecimal payableAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
 
+			if (payableAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+			
 			if (fc.getBalanceAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				break;
 			}
@@ -478,7 +486,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			}
 
 			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.PAYABLE, ma.getValueDate());
-
+			fsi.setAdviseId(ma.getAdviseID());
 			fsi.getReceiptDetail().setPayAgainstID(ma.getAdviseID());
 			fsiList.add(fsi);
 		}

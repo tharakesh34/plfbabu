@@ -8,6 +8,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -36,6 +37,9 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 	private Long crossLoanId;
 	private Date appDate;
 	private List<ManualAdvise> advises = new ArrayList<>();
+	private FinanceType finType;
+
+	private BigDecimal balanceAmount = BigDecimal.ZERO;
 
 	public CrossLoanKnockoffUpload() {
 		super();
@@ -207,6 +211,22 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 
 	public void setAdvises(List<ManualAdvise> advises) {
 		this.advises = advises;
+	}
+
+	public BigDecimal getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(BigDecimal balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public FinanceType getFinType() {
+		return finType;
+	}
+
+	public void setFinType(FinanceType finType) {
+		this.finType = finType;
 	}
 
 }

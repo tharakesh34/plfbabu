@@ -2,8 +2,6 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
@@ -22,28 +19,22 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
-import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -52,7 +43,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
@@ -239,7 +229,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 				clk.setRecordType("");
 
 				if (RequestSource.UPLOAD.name().equals(clk.getRequestSource())) {
-					FinanceDetail fd = createReceipt(clk);
+					FinanceDetail fd = receiptService.receiptTransaction(clk.getFinServiceInstruction());
 					FinScheduleData schd = fd.getFinScheduleData();
 
 					if (!schd.getErrorDetails().isEmpty()) {
@@ -488,73 +478,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		crossLoan.setToLinkedTranId(aeEvent1.getLinkedTranId());
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private FinanceDetail createReceipt(CrossLoanKnockOff clko) {
-		CrossLoanKnockoffUpload clku = clko.getCrossLoanKnockoffUpload();
-
-		ReceiptUploadDetail rud = new ReceiptUploadDetail();
-
-		String entityCode = clku.getEntityCode();
-
-		rud.setReference(clku.getToFinReference());
-		rud.setFinID(clku.getToFm().getFinID());
-		rud.setAllocationType(clku.getAllocationType());
-		Date appDate = SysParamUtil.getAppDate();
-		rud.setValueDate(clko.getValueDate());
-		rud.setRealizationDate(appDate);
-		rud.setReceivedDate(appDate);
-		rud.setReceiptAmount(clku.getExcessAmount());
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode((RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clku.getExcessType())) ? ReceiptMode.EXCESS
-				: ReceiptMode.PAYABLE);
-		rud.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rud.setReceiptChannel(PennantConstants.List_Select);
-
-		List<UploadAlloctionDetail> list = new ArrayList<>();
-
-		for (CrossLoanKnockoffUpload alloc : clku.getAllocations()) {
-			UploadAlloctionDetail uad = new UploadAlloctionDetail();
-
-			uad.setRootId(String.valueOf(alloc.getFeeId()));
-			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
-			uad.setReferenceCode(alloc.getCode());
-			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
-
-			receiptDataValidator.validateAllocations(uad);
-
-			if (!uad.getErrorDetails().isEmpty()) {
-				clku.setProgress(EodConstants.PROGRESS_FAILED);
-				clku.setErrorCode(uad.getErrorDetails().get(0).getCode());
-				clku.setErrorDesc(uad.getErrorDetails().get(0).getError());
-			}
-
-			list.add(uad);
-		}
-
-		rud.setListAllocationDetails(list);
-
-		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
-
-		fsi.setReqType("Post");
-		fsi.setReceiptUpload(true);
-		fsi.setRequestSource(RequestSource.UPLOAD);
-		fsi.setLoggedInUser(clku.getUserDetails());
-		fsi.setKnockOffReceipt(true);
-		fsi.setUploadAllocationDetails(list);
-
-		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
-			fsi.setReceiptDetail(null);
-			fsi.setReceiptDetails(receiptService.prepareRCDForExcess(clku.getExcessList(), rud));
-		} else {
-			fsi.setReceiptDetails(receiptService.prepareRCDForMA(clku.getAdvises(), rud));
-		}
-
-		fsi.setKnockOffReceipt(true);
-		fsi.setKnockoffType(KnockOffType.CROSS_LOAN.code());
-
-		return receiptService.receiptTransaction(fsi);
 	}
 
 	@Override

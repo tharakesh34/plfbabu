@@ -35,6 +35,8 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 		return jdbcOperations.query(sql.toString(), (rs, rownum) -> {
 			CrossLoanKnockoffUpload upload = new CrossLoanKnockoffUpload();
 
+			upload.setReference(rs.getString("TOFinReference"));
+			upload.setReferenceID(JdbcUtil.getLong(rs.getObject("ToFinID")));
 			upload.setId(rs.getLong("Id"));
 			upload.setHeaderId(rs.getLong("HeaderID"));
 			upload.setFromFinID(JdbcUtil.getLong(rs.getObject("FromFinID")));
@@ -81,7 +83,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	@Override
 	public void update(List<CrossLoanKnockoffUpload> details) {
 		StringBuilder sql = new StringBuilder("Update CROSS_LOAN_KNOCKOFF_UPLOAD set");
-		sql.append(" CrossLoanId = ?, FromFinID = ?, ToFinID = ?, Progress = ?");
+		sql.append(" FromFinID = ?, ToFinID = ?, Progress = ?");
 		sql.append(", Status = ?, ErrorCode = ?, ErrorDesc = ?");
 		sql.append(" Where ID = ?");
 
@@ -94,7 +96,6 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 				int index = 0;
 				CrossLoanKnockoffUpload detail = details.get(i);
 
-				ps.setObject(++index, detail.getCrossLoanId());
 				ps.setObject(++index, detail.getFromFinID());
 				ps.setObject(++index, detail.getToFinID());
 				ps.setInt(++index, detail.getProgress());
