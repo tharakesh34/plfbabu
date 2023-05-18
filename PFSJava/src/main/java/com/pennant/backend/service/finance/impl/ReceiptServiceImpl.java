@@ -4515,6 +4515,12 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE || receiptPurpose == ReceiptPurpose.EARLYSTLENQ) {
+			if (DateUtil.compare(valueDate, fm.getFinStartDate()) < 0) {
+				setError(schdData, "RU0053", DateUtil.formatToLongDate(valueDate),
+						DateUtil.formatToLongDate(fm.getFinStartDate()));
+				return;
+			}
+
 			Date lastServDate = finLogEntryDetailDAO.getMaxPostDate(finID);
 			if (DateUtil.compare(valueDate, lastServDate) < 0) {
 				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
@@ -4544,6 +4550,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			if (DateUtil.compare(valueDate, lastReceivedDate) < 0) {
 				if (ReceiptExtension.STOP_BACK_DATED_EARLY_SETTLE) {
 					setError(schdData, "RU0011", valueDateFormat, DateUtil.formatToLongDate(lastReceivedDate));
+					return;
 				}
 
 				rd.setExcessType(RepayConstants.EXCESSADJUSTTO_TEXCESS);
