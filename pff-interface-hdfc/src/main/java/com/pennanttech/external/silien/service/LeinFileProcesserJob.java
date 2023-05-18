@@ -26,6 +26,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienFileStatus;
@@ -71,9 +72,7 @@ public class LeinFileProcesserJob extends AbstractJob implements InterfaceConsta
 
 		logger.debug(Literal.ENTERING);
 
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
-		lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_RESP);
+		lienConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_LIEN_RESP);
 
 		JdbcCursorItemReader<LienFileStatus> cursorItemReader = new JdbcCursorItemReader<LienFileStatus>();
 		cursorItemReader.setDataSource(dataSource);

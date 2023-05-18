@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -22,6 +21,7 @@ import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.external.ucic.model.ExtUcicFile;
@@ -46,10 +46,8 @@ public class ExtUcicResponseFileProcessor implements InterfaceConstants, ErrorCo
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("dataSource", DataSource.class);
 
-		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
 		// Get Response file and complete file configuration
-		FileInterfaceConfig ucicDBServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+		FileInterfaceConfig ucicDBServerConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 		if (ucicDBServerConfig == null) {
 			logger.debug("EXT_UCIC: DB Server CONFIG_PLF_DB_SERVER configuration not found . So returning.");

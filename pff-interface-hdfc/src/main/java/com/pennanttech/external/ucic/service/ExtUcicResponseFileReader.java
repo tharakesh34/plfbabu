@@ -14,6 +14,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -33,12 +34,9 @@ public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodes
 	public void readFolderForFiles() {
 		logger.debug(Literal.ENTERING);
 
-		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
 		// Get Response file and complete file configuration
-		FileInterfaceConfig ucicRespConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP);
-		FileInterfaceConfig ucicRespCompleteConfig = getDataFromList(mainConfig, CONFIG_UCIC_RESP_COMPLETE);
+		FileInterfaceConfig ucicRespConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_RESP);
+		FileInterfaceConfig ucicRespCompleteConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_RESP_COMPLETE);
 
 		if (ucicRespConfig == null || ucicRespCompleteConfig == null) {
 			logger.debug(

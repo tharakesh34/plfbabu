@@ -29,6 +29,7 @@ import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptDetail;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
@@ -64,11 +65,8 @@ public class ExtCollectionResponseFileJob extends AbstractJob implements Interfa
 
 		Date appDate = SysParamUtil.getAppDate();
 
-		// Fetch External configuration once for all the interfaces types
-		List<FileInterfaceConfig> configList = extGenericDao.getExternalConfig();
-
-		FileInterfaceConfig reqConfig = getDataFromList(configList, CONFIG_COLLECTION_REQ_CONF);
-		FileInterfaceConfig respConfig = getDataFromList(configList, CONFIG_COLLECTION_RESP_CONF);
+		FileInterfaceConfig reqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_COLLECTION_REQ_CONF);
+		FileInterfaceConfig respConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_COLLECTION_RESP_CONF);
 
 		// Fetch 10 files using extraction status = 0
 		JdbcCursorItemReader<CollReceiptHeader> cursorItemReader = new JdbcCursorItemReader<CollReceiptHeader>();

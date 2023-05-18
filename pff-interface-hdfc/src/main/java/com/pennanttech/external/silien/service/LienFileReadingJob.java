@@ -15,6 +15,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
@@ -49,10 +50,8 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 	public void processSILienMarkingResponse() {
 		logger.debug(Literal.ENTERING);
 
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
-		lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_RESP);
-		lienReqConfig = getDataFromList(mainConfig, CONFIG_LIEN_REQ);
+		lienConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_LIEN_RESP);
+		lienReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_LIEN_REQ);
 
 		// Check if SILIEN config is configured
 		if (lienConfig == null) {

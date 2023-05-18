@@ -45,7 +45,11 @@
 		<property name="extDataSource" ref="extDataSource" />
 	</bean>
 
-	<bean id="InterfaceErrorCodeUtil" class="com.pennanttech.external.app.util.InterfaceErrorCodeUtil">
+	<bean id="interfaceErrorCodeUtil" class="com.pennanttech.external.app.util.InterfaceErrorCodeUtil">
+		<constructor-arg ref="extGenericDao" />
+	</bean>
+	
+	<bean id="fileInterfaceConfigUtil" class="com.pennanttech.external.app.util.FileInterfaceConfigUtil">
 		<constructor-arg ref="extGenericDao" />
 	</bean>
 

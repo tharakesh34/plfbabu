@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +13,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -29,11 +29,8 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 	public void processWeeklyFileRequest(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
 		// Fetch UCIC weekly config from main configuration
-		ucicWeeklyConfig = getDataFromList(mainConfig, CONFIG_UCIC_WEEKLY_FILE);
+		ucicWeeklyConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_WEEKLY_FILE);
 
 		if (ucicWeeklyConfig == null) {
 			logger.debug(
@@ -53,7 +50,7 @@ public class ExtUcicWeekFileService extends TextFileUtil implements InterfaceCon
 		if ("SUCCESS".equals(status)) {
 			FtpClient ftpClient = null;
 			// Fetch request file from DB Server location and store it in client SFTP
-			FileInterfaceConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			FileInterfaceConfig serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 			// Now get remote file to local base location using SERVER config
 			String remoteFilePath = serverConfig.getFileSftpLocation();

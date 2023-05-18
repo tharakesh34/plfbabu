@@ -28,6 +28,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtBounceReason;
@@ -82,8 +83,6 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 	public void readAndProcessFiles() {
 		logger.debug(Literal.ENTERING);
 
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
 		// Fetch bounce details beforehand..
 		if (ExtBounceReasons.getInstance().getBounceData().isEmpty()) {
 			List<ExtBounceReason> bounceReasons = externalPresentmentDAO.fetchBounceReasons();
@@ -127,7 +126,7 @@ public class ExtPresentmentFileProcessorJob extends AbstractJob implements Inter
 		try {
 			while ((extPresentment = cursorItemReader.read()) != null) {
 				try {
-					FileInterfaceConfig config = getDataFromList(mainConfig, extPresentment.getModule());
+					FileInterfaceConfig config = FileInterfaceConfigUtil.getFIConfig(extPresentment.getModule());
 
 					// update the processing state as processing
 					externalPresentmentDAO.updateFileStatus(extPresentment.getId(), INPROCESS);

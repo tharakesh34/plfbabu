@@ -15,6 +15,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -31,12 +32,9 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 	public void processUcicRequestFile(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
 		// Fetch UCIC configs from main configuration
-		ucicReqConfig = getDataFromList(mainConfig, CONFIG_UCIC_REQ);
-		ucicReqCompleteConfig = getDataFromList(mainConfig, CONFIG_UCIC_REQ_COMPLETE);
+		ucicReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_REQ);
+		ucicReqCompleteConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_REQ_COMPLETE);
 
 		if (ucicReqConfig == null || ucicReqCompleteConfig == null) {
 			logger.debug(
@@ -63,7 +61,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 			String remoteFilePath = null;
 
 			// Fetch request file from DB Server location and store it in client SFTP
-			FileInterfaceConfig serverConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			FileInterfaceConfig serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 			if (serverConfig == null) {
 				logger.debug("EXT_UCIC: CONFIG_PLF_DB_SERVER Configuration not found, so returning.");
@@ -92,7 +90,7 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 
 			// Uploading to HDFC SFTP
 			if ("Y".equals(ucicReqConfig.getIsSftp())) {
-				uploadToClientLocation(appDate, mainConfig, fileName, baseFilePath);
+				uploadToClientLocation(appDate, fileName, baseFilePath);
 			} else {
 				// Request file is already downloaded to local location,
 				// so we are generating complete file for the request file
@@ -103,11 +101,10 @@ public class ExtUcicRequestFile extends TextFileUtil implements InterfaceConstan
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void uploadToClientLocation(Date appDate, List<FileInterfaceConfig> mainConfig, String fileName,
-			String baseFilePath) {
+	private void uploadToClientLocation(Date appDate, String fileName, String baseFilePath) {
 		FtpClient ftpClient;
 		FileInterfaceConfig serverConfig;
-		serverConfig = getDataFromList(mainConfig, CONFIG_UCIC_REQ);
+		serverConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_REQ);
 		if (serverConfig == null) {
 			logger.debug("EXT_UCIC: CONFIG_UCIC_REQ Configuration not found, so returning.");
 			return;

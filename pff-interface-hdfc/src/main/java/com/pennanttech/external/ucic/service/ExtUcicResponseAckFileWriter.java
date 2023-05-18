@@ -16,6 +16,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
 import com.pennanttech.pennapps.core.App;
@@ -32,11 +33,8 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 	public void processUcicResponseAckFile(Date appDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
-		FileInterfaceConfig ucicAckConfig = getDataFromList(mainConfig, CONFIG_UCIC_ACK);
-		FileInterfaceConfig ucicAckConfConfig = getDataFromList(mainConfig, CONFIG_UCIC_ACK_CONF);
+		FileInterfaceConfig ucicAckConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_ACK);
+		FileInterfaceConfig ucicAckConfConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_UCIC_ACK_CONF);
 
 		if (ucicAckConfig == null || ucicAckConfConfig == null) {
 			logger.debug(
@@ -54,7 +52,7 @@ public class ExtUcicResponseAckFileWriter extends TextFileUtil implements Interf
 
 		if ("SUCCESS".equals(status)) {
 			// Fetch request file from DB Server location and store it in client SFTP
-			FileInterfaceConfig dbServerConfig = getDataFromList(mainConfig, CONFIG_PLF_DB_SERVER);
+			FileInterfaceConfig dbServerConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_PLF_DB_SERVER);
 
 			if (dbServerConfig == null) {
 				logger.debug("EXT_UCIC: DB Server config not found. So returning.");

@@ -20,6 +20,7 @@ import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
 import com.pennanttech.external.collectionreceipt.model.CollReceiptHeader;
 import com.pennanttech.pennapps.core.App;
@@ -57,11 +58,8 @@ public class ExtCollectionFolderReaderJob extends AbstractJob implements Interfa
 	private void fetchRemoteFiles() {
 		logger.debug(Literal.ENTERING);
 
-		// Get main configuration for External Interfaces
-		List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
 		// Fetch Collection Receipt Request config from main configuration
-		collectionReqConfig = getDataFromList(mainConfig, CONFIG_COLLECTION_REQ_CONF);
+		collectionReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_COLLECTION_REQ_CONF);
 
 		if (collectionReqConfig == null) {
 			logger.debug(COLLECTION_REQ_CONFIG_MISSING);

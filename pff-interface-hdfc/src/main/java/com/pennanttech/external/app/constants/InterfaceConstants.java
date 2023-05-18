@@ -1,9 +1,5 @@
 package com.pennanttech.external.app.constants;
 
-import java.util.List;
-
-import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-
 public interface InterfaceConstants {
 
 	String PLF_SI = "SI";
@@ -111,15 +107,5 @@ public interface InterfaceConstants {
 	String LIEN_SUCCESS = "SUCCESS";
 	String LIEN_AWAITING_CONF = "AC";
 	String LIEN_FAILED = "FAILED";
-
-	default FileInterfaceConfig getDataFromList(List<FileInterfaceConfig> mainConfig, String key) {
-
-		for (FileInterfaceConfig externalConfig : mainConfig) {
-			if (externalConfig.getInterfaceName().equals(key)) {
-				return externalConfig;
-			}
-		}
-		return null;
-	}
 
 }

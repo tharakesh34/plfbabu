@@ -11,6 +11,7 @@ import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -38,8 +39,6 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 	public void processPresentmentRequest(PresentmentHeader presentmentHeader) {
 		logger.debug(Literal.ENTERING);
 
-		// Fetch External configuration once for all the interfaces types
-		List<FileInterfaceConfig> list = extGenericDao.getExternalConfig();
 		Date appDate = SysParamUtil.getAppDate();
 
 		String configTYpe = "";
@@ -62,7 +61,7 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 			configTYpe = CONFIG_PDC_REQ;
 		}
 
-		FileInterfaceConfig externalConfig = getDataFromList(list, configTYpe);
+		FileInterfaceConfig externalConfig = FileInterfaceConfigUtil.getFIConfig(configTYpe);
 
 		if (externalConfig == null) {
 			return;

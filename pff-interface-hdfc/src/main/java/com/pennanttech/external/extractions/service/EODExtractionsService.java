@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +17,7 @@ import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
 import com.pennanttech.external.ucic.service.ExtUcicDataExtractor;
 import com.pennanttech.external.ucic.service.ExtUcicRequestFile;
@@ -59,9 +59,8 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 	}
 
 	private void processFinconFileSP() {
-		List<FileInterfaceConfig> configList = extGenericDao.getExternalConfig();
 
-		finconGLConfig = getDataFromList(configList, CONFIG_FINCONGL);
+		finconGLConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_FINCONGL);
 
 		long fileSeq = extExtractionDao.getSeqNumber(SEQ_FINCON_GL);
 
@@ -86,7 +85,7 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		}
 
 		// Fetch request file from DB Server location to local and the upload it in client SFTP
-		FileInterfaceConfig dbServerConfig = getDataFromList(configList, "PLF_DB_SERVER");
+		FileInterfaceConfig dbServerConfig = FileInterfaceConfigUtil.getFIConfig("PLF_DB_SERVER");
 
 		if (dbServerConfig == null) {
 			logger.debug("Ext_Warning: DB Server config not found. So returning.");

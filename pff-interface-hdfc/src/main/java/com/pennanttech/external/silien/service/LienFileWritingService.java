@@ -14,6 +14,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
 import com.pennanttech.external.silien.model.LienMarkDetail;
@@ -32,11 +33,8 @@ public class LienFileWritingService extends TextFileUtil implements InterfaceCon
 		logger.debug(Literal.ENTERING);
 		try {
 
-			// Get main configuration for External Interfaces
-			List<FileInterfaceConfig> mainConfig = extGenericDao.getExternalConfig();
-
 			// Fetch lien config from main configuration
-			lienConfig = getDataFromList(mainConfig, CONFIG_LIEN_REQ);
+			lienConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_LIEN_REQ);
 
 			if (lienConfig == null) {
 				logger.debug(

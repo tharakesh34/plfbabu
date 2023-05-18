@@ -27,6 +27,7 @@ import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
+import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentment;
@@ -65,21 +66,18 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 	public void readAndSaveFiles() {
 		logger.debug(Literal.ENTERING);
 
-		// Fetch Interface configuration
-		List<FileInterfaceConfig> listConfig = extGenericDao.getExternalConfig();
-
-		processSIReposne(listConfig);
-		processIPDCReposne(listConfig);
-		processNACHReposne(listConfig);
+		processSIReposne();
+		processIPDCReposne();
+		processNACHReposne();
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void processSIReposne(List<FileInterfaceConfig> listConfig) {
+	private void processSIReposne() {
 		// For all type of interfaces configured, process the response files from the configured folder
 
-		FileInterfaceConfig externalRespConfig = getDataFromList(listConfig, CONFIG_SI_RESP);
-		FileInterfaceConfig externalReqConfig = getDataFromList(listConfig, CONFIG_SI_REQ);
+		FileInterfaceConfig externalRespConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_SI_RESP);
+		FileInterfaceConfig externalReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_SI_REQ);
 
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
@@ -88,11 +86,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		}
 	}
 
-	private void processIPDCReposne(List<FileInterfaceConfig> listConfig) {
+	private void processIPDCReposne() {
 		// For all type of interfaces configured, process the response files from the configured folder
 
-		FileInterfaceConfig externalRespConfig = getDataFromList(listConfig, CONFIG_IPDC_RESP);
-		FileInterfaceConfig externalReqConfig = getDataFromList(listConfig, CONFIG_IPDC_REQ);
+		FileInterfaceConfig externalRespConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_IPDC_RESP);
+		FileInterfaceConfig externalReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_IPDC_REQ);
 
 		if (externalRespConfig != null && externalReqConfig != null) {
 			processResponseFiles(externalRespConfig, externalReqConfig);
@@ -101,11 +99,11 @@ public class ExtPresentmentFolderReaderJob extends AbstractJob implements Interf
 		}
 	}
 
-	private void processNACHReposne(List<FileInterfaceConfig> listConfig) {
+	private void processNACHReposne() {
 		// For all type of interfaces configured, process the response files from the configured folder
 
-		FileInterfaceConfig externalRespConfig = getDataFromList(listConfig, CONFIG_NACH_RESP);
-		FileInterfaceConfig externalReqConfig = getDataFromList(listConfig, CONFIG_NACH_REQ);
+		FileInterfaceConfig externalRespConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_NACH_RESP);
+		FileInterfaceConfig externalReqConfig = FileInterfaceConfigUtil.getFIConfig(CONFIG_NACH_REQ);
 
 		if ("Y".equals(StringUtils.stripToEmpty(externalRespConfig.getIsSftp()))) {
 			fetchResponseFilesFromSFTP(externalRespConfig);
