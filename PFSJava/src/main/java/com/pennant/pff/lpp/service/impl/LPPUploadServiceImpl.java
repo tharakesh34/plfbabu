@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +38,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	private static final Logger logger = LogManager.getLogger(LPPUploadServiceImpl.class);
@@ -144,6 +146,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		ft.setODChargeCalOn(detail.getCalculatedOn());
 		ft.setODGraceDays(detail.getGraceDays());
 		ft.setODMaxWaiverPerc(detail.getMaxWaiver());
+		ft.setOdMinAmount(detail.getODMinAmount());
 		ft.setRequestSource(RequestSource.UPLOAD);
 		LoggedInUser userDetails = detail.getUserDetails();
 
@@ -305,6 +308,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		LPPUpload detail = getDetail(object);
 
 		lPPUploadProcessRecord.validate(header, detail);
+		setSuccesStatus(detail);
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {
@@ -319,7 +323,16 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.LPP.name(), lPPUploadProcessRecord, this, "LPPUploadHeader");
+		uploadProcess(UploadTypes.LPP_LOAN.name(), this, "LPPLoanUploadHeader");
+	}
+
+	@Override
+	public void uploadProcess(String type) {
+		if (type.equals(UploadTypes.LPP_LOAN_TYPE.name())) {
+			uploadProcess(UploadTypes.LPP_LOAN_TYPE.name(), lPPUploadProcessRecord, this, "LPPLoanTypeUploadHeader");
+		} else {
+			uploadProcess(UploadTypes.LPP_LOAN.name(), this, "LPPLoanUploadHeader");
+		}
 	}
 
 	@Override
@@ -334,7 +347,26 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 	@Override
 	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
-		// Implemented in process record
+		logger.debug(Literal.ENTERING);
+
+		LPPUpload detail = (LPPUpload) ObjectUtil.valueAsObject(paramSource, LPPUpload.class);
+
+		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		detail.setHeaderId(header.getId());
+		detail.setAppDate(header.getAppDate());
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -363,7 +395,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	}
 
 	@Autowired
-	public void setLPPUploadProcessRecord(LPPUploadProcessRecord lPPUploadProcessRecord) {
+	public void setlPPUploadProcessRecord(LPPUploadProcessRecord lPPUploadProcessRecord) {
 		this.lPPUploadProcessRecord = lPPUploadProcessRecord;
 	}
 

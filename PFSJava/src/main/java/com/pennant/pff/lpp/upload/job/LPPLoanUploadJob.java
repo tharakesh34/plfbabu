@@ -8,7 +8,7 @@ import com.pennant.pff.upload.service.UploadService;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class LPPUploadJob extends AbstractJob {
+public class LPPLoanUploadJob extends AbstractJob {
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		try {
@@ -20,6 +20,6 @@ public class LPPUploadJob extends AbstractJob {
 
 	private UploadService getUploadService(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (UploadService) jobDataMap.get("lPPUploadService");
+		return (UploadService) jobDataMap.get("lPPLoanUploadService");
 	}
 }

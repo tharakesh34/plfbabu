@@ -56,6 +56,8 @@ public interface UploadService {
 
 	void uploadProcess();
 
+	void uploadProcess(String type);
+
 	void uploadProcess(String type, ProcessRecord processRecord, UploadService uploadService, String moduleCode);
 
 	void uploadProcess(String type, UploadService uploadService, String moduleCode);

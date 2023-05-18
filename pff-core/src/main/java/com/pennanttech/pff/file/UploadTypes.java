@@ -13,8 +13,6 @@ public enum UploadTypes {
 
 	CHEQUES("Cheque Upload Details Screen"),
 
-	LPP("Bulk Overdue Penalty Upload Details"),
-
 	EXCESS_TRANSFER("Excess Transfer Screen Details"),
 
 	MANUAL_KNOCKOFF("Manual KnockOff Upload Details Screen"),
@@ -51,7 +49,11 @@ public enum UploadTypes {
 
 	LOAN_CLOSURE("Loan Closure Upload Details Screen"),
 
-	PROVISION("Provision Upload Details Screen");
+	PROVISION("Provision Upload Details Screen"),
+
+	LPP_LOAN("Bulk Loan Overdue Penalty Upload Details"),
+
+	LPP_LOAN_TYPE("Bulk Loan Type Overdue Penalty Upload Details");
 
 	private String description;
 
