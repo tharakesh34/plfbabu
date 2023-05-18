@@ -6199,10 +6199,10 @@
 
 	<bean id="lienUploadListCtrl" class="com.pennant.pff.lien.upload.list.LienUploadListCtrl" parent="uploadList" />
 
-	<bean id="selectLienEnquiryListCtrl" class="com.pennant.webui.lien.lienEnquiry.SelectLienEnquiryListCtrl"
+	<bean id="selectLienEnquiryListCtrl" class="com.pennant.webui.lien.lienenquiry.SelectLienEnquiryListCtrl"
 		parent="basisListCtrl" scope="prototype" />
 
-	<bean id="lienEnquiryDialogCtrl" class="com.pennant.webui.lien.lienEnquiry.LienEnquiryDialogCtrl"
+	<bean id="lienEnquiryDialogCtrl" class="com.pennant.webui.lien.lienenquiry.LienEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
@@ -6212,9 +6212,11 @@
 	<bean id="receiptStatusUploadList" class="com.pennant.pff.receipt.web.ReceiptStatusUploadListCtrl"
 		parent="uploadList" />
 
-	<bean id="writeOffUploadList" class="com.pennant.pff.writeoff.upload.list.WriteOffUploadListCtrl" parent="uploadList" />
-	
-	<bean id="revWriteOffUploadList" class="com.pennant.pff.revwriteoff.upload.list.RevWriteOffUploadListCtrl" parent="uploadList" />
+	<bean id="writeOffUploadList" class="com.pennant.pff.writeoff.upload.list.WriteOffUploadListCtrl"
+		parent="uploadList" />
+
+	<bean id="revWriteOffUploadList" class="com.pennant.pff.revwriteoff.upload.list.RevWriteOffUploadListCtrl"
+		parent="uploadList" />
 
 	<bean id="loanTypeWriteOffListCtrl"
 		class="com.pennant.webui.applicationmaster.loantypewriteoff.LoanTypeWriteOffListCtrl" parent="basisListCtrl"
@@ -6233,52 +6235,53 @@
 		scope="prototype">
 		<property name="loanTypeWriteOffService" ref="loanTypeWriteOffService" />
 	</bean>
-	
+
 	<bean id="branchChangeUploadListCtrl" class="com.pennant.pff.branchchange.upload.list.BranchChangeUploadListCtrl"
 		parent="uploadList" />
-	
-	<bean id="serviceBranchListCtrl"
-		class = "com.pennant.pff.noc.webui.ServiceBranchListCtrl" parent="basisListCtrl" scope="prototype"/>
-		
-	<bean id="serviceBranchDialogCtrl"
-	class="com.pennant.pff.noc.webui.ServiceBranchDialogCtrl" parent="basisCtrl" scope="prototype" />
-	
-	<bean id="blockAutoGenLetterUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.BlockAutoGenLetterUploadListCtrl"
-	parent="uploadList" />
-	
+
+	<bean id="serviceBranchListCtrl" class="com.pennant.pff.noc.webui.ServiceBranchListCtrl" parent="basisListCtrl"
+		scope="prototype" />
+
+	<bean id="serviceBranchDialogCtrl" class="com.pennant.pff.noc.webui.ServiceBranchDialogCtrl" parent="basisCtrl"
+		scope="prototype" />
+
+	<bean id="blockAutoGenLetterUploadListCtrl"
+		class="com.pennant.pff.noc.upload.web.list.BlockAutoGenLetterUploadListCtrl" parent="uploadList" />
+
 	<bean id="loanLetterUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.LoanLetterUploadListCtrl"
-	parent="uploadList" />
-	
-	<bean id="courierDetailUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.CourierDetailUploadListCtrl" 
-	parent="uploadList" />
-	
+		parent="uploadList" />
+
+	<bean id="courierDetailUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.CourierDetailUploadListCtrl"
+		parent="uploadList" />
+
 	<bean id="loanTypeLetterMappingListCtrl" class="com.pennant.pff.noc.webui.LoanTypeLetterMappingListCtrl"
 		parent="basisListCtrl" scope="prototype" />
-		
-	<bean id="selectLoanTypeLetterMappingDialogCtrl" class="com.pennant.pff.noc.webui.SelectLoanTypeLetterMappingDialogCtrl"
-		parent="basisCtrl" scope="prototype">
+
+	<bean id="selectLoanTypeLetterMappingDialogCtrl"
+		class="com.pennant.pff.noc.webui.SelectLoanTypeLetterMappingDialogCtrl" parent="basisCtrl" scope="prototype">
 	</bean>
-	
+
 	<bean id="loanTypeLetterMappingDialogCtrl" class="com.pennant.pff.noc.webui.LoanTypeLetterMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-	
+
 	<bean id="generateLetterDialogCtrl" class="com.pennant.pff.noc.webui.GenerateLetterDialogCtrl" parent="basisCtrl"
-	scope="prototype" />
+		scope="prototype" />
 
 	<bean id="generateLetterListCtrl" class="com.pennant.pff.noc.webui.GenerateLetterListCtrl" parent="basisCtrl"
 		scope="prototype" />
 
 	<bean id="selectGenerateLetterCtrl" class="com.pennant.pff.noc.webui.SelectGenerateLetterCtrl" parent="basisCtrl"
 		scope="prototype" />
-	
+
 	<bean id="loanClosureUploadListCtrl" class="com.pennant.pff.receipt.web.LoanClosureUploadListCtrl"
 		parent="uploadList" />
-		
+
 	<bean id="provisionUploadListCtrl" class="com.pennanttech.pff.provision.upload.list.ProvisionUploadListCtrl"
 		parent="uploadList" />
-		
+
 	<bean id="lppLoanUploadList" class="com.pennant.pff.lpp.upload.list.LPPLoanUploadListCtrl" parent="uploadList" />
-	
-	<bean id="lppLoanTypeUploadList" class="com.pennant.pff.lpp.upload.list.LPPLoanTypeUploadListCtrl" parent="uploadList" />
+
+	<bean id="lppLoanTypeUploadList" class="com.pennant.pff.lpp.upload.list.LPPLoanTypeUploadListCtrl"
+		parent="uploadList" />
 </beans>

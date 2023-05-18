@@ -259,6 +259,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				LienDetails lu = getLienDetails(header, lienup, lienheader.getId());
 
 				lienheader.setId(lienup.getId());
+				lu.setHeaderID(lienup.getId());
 				if (isNew) {
 					lienHeaderDAO.save(lienheader);
 					lienDetailsDAO.save(lu);

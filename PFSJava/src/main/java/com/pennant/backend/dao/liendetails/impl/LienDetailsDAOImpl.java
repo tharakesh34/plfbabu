@@ -166,16 +166,16 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	}
 
 	@Override
-	public int getCountReference(String AccNumber) {
+	public int getCountReference(String accNumber) {
 		String sql = "Select count(ID) From Lien_Details Where AccNumber = ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, AccNumber);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, accNumber);
 	}
 
 	@Override
-	public List<LienDetails> getLienDtlsByRefAndAcc(String reference, String AccNumber) {
+	public List<LienDetails> getLienDtlsByRefAndAcc(String reference, String accNumber) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
@@ -185,15 +185,15 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 		sql.append(" From Lien_Details ld ");
 		sql.append(" Left Join Lien_Header lh on ld.LienReference = lh.LienReference ");
 		Object[] args = null;
-		if (!StringUtils.isEmpty(reference) && !StringUtils.isEmpty(AccNumber)) {
+		if (!StringUtils.isEmpty(reference) && !StringUtils.isEmpty(accNumber)) {
 			sql.append(" Where ld.Reference =? and lh.AccNumber =? ");
-			args = new Object[] { reference, AccNumber };
+			args = new Object[] { reference, accNumber };
 		} else if (!StringUtils.isEmpty(reference)) {
 			sql.append(" Where ld.Reference =?");
 			args = new Object[] { reference };
 		} else {
 			sql.append(" Where lh.AccNumber =?");
-			args = new Object[] { AccNumber };
+			args = new Object[] { accNumber };
 
 		}
 

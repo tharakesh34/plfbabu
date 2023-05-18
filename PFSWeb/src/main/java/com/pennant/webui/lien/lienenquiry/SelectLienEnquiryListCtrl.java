@@ -1,10 +1,11 @@
-package com.pennant.webui.lien.lienEnquiry;
+package com.pennant.webui.lien.lienenquiry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,7 +135,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 
 		List<LienDetails> lien = lienDetailsDAO.getLienDtlsByRefAndAcc(finReference, accountNumber);
 
-		if (lien == null) {
+		if (CollectionUtils.isEmpty(lien)) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}

@@ -1,4 +1,4 @@
-package com.pennant.webui.lien.lienEnquiry;
+package com.pennant.webui.lien.lienenquiry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.model.lien.LienDetails;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -57,7 +58,7 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 			}
 
 			if (lienDetail == null) {
-				throw new Exception(Labels.getLabel("error.unhandled"));
+				throw new AppException(Labels.getLabel("error.unhandled"));
 			}
 
 			if (arguments.containsKey("header")) {

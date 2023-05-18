@@ -165,9 +165,8 @@ public class LienServiceImpl implements LienService {
 		lu.setHeaderID(headerID);
 		lu.setLienID(lh.getLienID());
 		lu.setLienReference(lh.getLienReference());
-		if (!FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
-			lu.setMarkingDate(fd.getMandate().getStartDate());
-		}
+		Date startDate = fd.getMandate().getStartDate();
+		lu.setMarkingDate(startDate == null ? appDate : startDate);
 		lu.setDemarking(lh.getDemarking());
 		lu.setDemarkingDate(lh.getDemarkingDate());
 		lu.setMarking(lh.getMarking());

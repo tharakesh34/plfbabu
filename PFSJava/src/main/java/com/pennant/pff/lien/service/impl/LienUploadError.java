@@ -5,8 +5,6 @@ import java.util.List;
 
 public enum LienUploadError {
 
-	LUOU_100("Schedule has been changed"),
-
 	LUOU_101("Fin Reference should not be empty."),
 
 	LUOU_102("Fin Reference is not valid."),
@@ -50,7 +48,7 @@ public enum LienUploadError {
 	public static boolean isValidation(String errorCode) {
 		LienUploadError error = getError(errorCode);
 
-		if (error == null || error == LUOU_100) {
+		if (error == null) {
 			return false;
 		}
 

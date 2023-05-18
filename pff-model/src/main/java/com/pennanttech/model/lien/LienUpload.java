@@ -18,12 +18,11 @@ public class LienUpload extends UploadDetails {
 	private String lienReference;
 	private Boolean lienstatus;
 	private String source;
-	private String reference;
 	private String accNumber;
 	private String action;
 	private String remarks;
 	private String interfaceStatus;
-	private FinanceMain financeMain;
+	private transient FinanceMain financeMain;
 
 	public LienUpload() {
 		super();
@@ -107,14 +106,6 @@ public class LienUpload extends UploadDetails {
 
 	public void setSource(String source) {
 		this.source = source;
-	}
-
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		this.reference = reference;
 	}
 
 	public String getAccNumber() {

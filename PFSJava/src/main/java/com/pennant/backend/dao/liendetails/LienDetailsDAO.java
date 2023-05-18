@@ -14,9 +14,9 @@ public interface LienDetailsDAO {
 
 	LienDetails getLienById(String finreference);
 
-	int getCountReference(String AccNumber);
+	int getCountReference(String accNumber);
 
-	List<LienDetails> getLienDtlsByRefAndAcc(String finreference, String AccNumber);
+	List<LienDetails> getLienDtlsByRefAndAcc(String finreference, String accNumber);
 
 	List<LienDetails> getLienListByLienId(Long lienId);
 
