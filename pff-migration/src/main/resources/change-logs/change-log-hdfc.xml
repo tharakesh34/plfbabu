@@ -1223,4 +1223,14 @@
  			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#713.008" author="sainaveen.y">
+	  <sql>
+		 <![CDATA[ 
+		 	   UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0/2 * 1/1 * ? *', EXECUTION_RETENTION_DAYS = 1 WHERE JOBKEY = 'LPP_LOAN_JOB';
+		 	   UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0/2 * 1/1 * ? *', EXECUTION_RETENTION_DAYS = 1 WHERE JOBKEY = 'LPP_LOAN_TYPE_JOB';
+		 	 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

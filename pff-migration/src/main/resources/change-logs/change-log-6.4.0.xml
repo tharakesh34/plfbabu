@@ -18438,12 +18438,45 @@
 			columnNames="id" />
 	</changeSet>
 	
+	<changeSet id="PSD#226779.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#226779.1" author="Gopal.p">
 		<modifyDataType tableName="FinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)"/>
 	</changeSet>
 	
+	<changeSet id="PSD#226779.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#226779.2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finreceiptheader_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#226779.2" author="Gopal.p">
 		<modifyDataType tableName="FinReceiptHeader_Temp" columnName="KnockOffType" newDataType="varchar(2)"/>
+	</changeSet>
+	
+	
+		<changeSet id="PSD#226779.2_post" author="sainaveen.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finreceiptheader_temp');
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="PSD#225911" author="Gopal.p">
@@ -18678,15 +18711,6 @@
 		 	     INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'LPP_LOAN_TYPE_JOB', 'LPP Loan Type Job',  'LPP_LOAN_TYPE_JOB_TRIGGER',   '0 0/10 * 1/1 * ? *', 1, 0, 1, 0, NULL, NULL, 0, NULL, NULL, 1, 1, 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
 	           ]]>
 		 </sql>
-	</changeSet>
-
-	<changeSet id="ST#713.008" author="sainaveen.y">
-	  <sql>
-		 <![CDATA[ 
-		 	   UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0/2 * 1/1 * ? *', EXECUTION_RETENTION_DAYS = 1 WHERE JOBKEY = 'LPP_LOAN_JOB';
-		 	   UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0/2 * 1/1 * ? *', EXECUTION_RETENTION_DAYS = 1 WHERE JOBKEY = 'LPP_LOAN_TYPE_JOB';
-		 	 ]]>
-		</sql>
 	</changeSet>
 	
 	<changeSet id="PSD#227143.1" author="Poojitha.M">

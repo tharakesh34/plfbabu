@@ -550,7 +550,7 @@
 	<changeSet id="ST#1561.4_pre" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'adtloantype_letter_mapping');
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtloantype_letter_mapping');
 			]]>
 		</sql>
 	</changeSet>
@@ -562,13 +562,30 @@
 	<changeSet id="ST#1561.4_post" author="saikrihna.b" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				select deps_restore_dependencies ('plf', 'adtloantype_letter_mapping');
+				select deps_restore_dependencies ('plfaudit', 'adtloantype_letter_mapping');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#226779.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plfaudit', 'adtfinreceiptheader');
 			]]>
 		</sql>
 	</changeSet>
 	
 	<changeSet id="PSD#226779.1" author="Gopal.p">
 		<modifyDataType tableName="AdtFinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)"/>
+	</changeSet>
+	
+	
+	<changeSet id="PSD#226779.1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plfaudit', 'adtfinreceiptheader');
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>
