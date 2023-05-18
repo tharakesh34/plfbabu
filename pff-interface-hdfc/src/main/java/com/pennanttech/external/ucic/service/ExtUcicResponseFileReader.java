@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
-import com.pennanttech.external.app.config.model.InterfaceErrorCode;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -126,9 +125,8 @@ public class ExtUcicResponseFileReader implements InterfaceConstants {
 								"");
 					} else {
 						// Add Failed file in to table with error code and error message
-						InterfaceErrorCode interfaceErrorCode = InterfaceErrorCodeUtil.getIFErrorCode(F607);
-						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED,
-								interfaceErrorCode.getErrorCode(), interfaceErrorCode.getErrorMessage());
+						extUcicDao.saveResponseFile(respFileName, ucicRespConfig.getFileLocation(), FAILED, F607,
+								InterfaceErrorCodeUtil.getErrorMessage(F607));
 					}
 				}
 			}
