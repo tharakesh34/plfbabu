@@ -11,7 +11,7 @@
 
 	<bean id="jobDataAccess" class="com.pennanttech.pennapps.core.job.JobDataAccess" parent="basicDao" />
 
-	<bean id="jobScheduler" class="com.pennant.pff.jobs.extension.PFFJobScheduler" init-method="start"
+	<bean id="jobScheduler" class="com.pennanttech.pff.scheduler.jobs.PFFJobScheduler" init-method="start"
 		depends-on="sysParamUtil">
 		<property name="jobDataAccess" ref="jobDataAccess" />
 		<property name="accountUpdater" ref="accountUpdater" />
