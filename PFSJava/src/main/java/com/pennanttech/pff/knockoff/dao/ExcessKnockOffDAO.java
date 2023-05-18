@@ -10,7 +10,7 @@ import com.pennanttech.pff.knockoff.model.ExcessKnockOffDetails;
 
 public interface ExcessKnockOffDAO {
 
-	void logExcessForCrossLoanKnockOff(Date valueDate, String executionDay, String thresholdValue);
+	long logExcessForCrossLoanKnockOff(Date valueDate, String executionDay, String thresholdValue);
 
 	long prepareQueue();
 

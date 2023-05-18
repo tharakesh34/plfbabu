@@ -836,6 +836,10 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		appendRow(Step.processInActiveFinances.name(), StepUtil.PROCESS_INACTIVE_FINANCES.getName());
 
+		if (ImplementationConstants.ALW_AUTO_CROSS_LOAN_KNOCKOFF) {
+			appendRow(Step.crossLoanKnockOff.name(), StepUtil.CROSS_LOAN_KNOCKOFF.getName());
+		}
+
 		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			appendRow(Step.assetClassification.name(), StepUtil.NPA_CLASSIFICATION.getName());
 			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());

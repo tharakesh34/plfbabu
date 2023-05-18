@@ -322,7 +322,8 @@ public class ExtendedFieldDetailsService {
 		if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
 			efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			isRcdType = true;
-		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)
+				|| efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_EDT)) {
 			efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			if (efr.isWorkflow()) {
 				isRcdType = true;

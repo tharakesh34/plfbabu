@@ -19,12 +19,10 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.knockoff.dao.ExcessKnockOffDAO;
-import com.pennanttech.pff.knockoff.service.ExcessKnockOffService;
 
 public class ExcessKnockOffLoading implements Tasklet {
 	private Logger logger = LogManager.getLogger(ExcessKnockOffLoading.class);
 
-	private ExcessKnockOffService excessKnockOffService;
 	private ExcessKnockOffDAO excessKnockOffDAO;
 
 	public ExcessKnockOffLoading() {
@@ -40,7 +38,7 @@ public class ExcessKnockOffLoading implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
-		excessKnockOffService.deleteQueue();
+		excessKnockOffDAO.deleteQueue();
 
 		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
 		Date valueDate = eventProperties.getAppDate();
@@ -48,21 +46,18 @@ public class ExcessKnockOffLoading implements Tasklet {
 		String executionDay = String.valueOf(DateUtil.getDay(valueDate));
 		executionDay = StringUtils.leftPad(executionDay, 2, "0");
 
-		BatchUtil.setExecutionStatus(context, StepUtil.CROSS_LOAN_KNOCKOFF);
-
 		String thresholdValue = eventProperties.getThresholdValue();
 
-		excessKnockOffService.logExcessForCrossLoanKnockOff(valueDate, executionDay, thresholdValue);
+		long totalRecords = excessKnockOffDAO.logExcessForCrossLoanKnockOff(valueDate, executionDay, thresholdValue);
+
+		StepUtil.CROSS_LOAN_KNOCKOFF.setTotalRecords(totalRecords);
 
 		excessKnockOffDAO.logExcessForCrossLoanDetails(valueDate, executionDay);
 
+		BatchUtil.setExecutionStatus(context, StepUtil.CROSS_LOAN_KNOCKOFF);
+
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;
-	}
-
-	@Autowired
-	public void setExcessKnockOffService(ExcessKnockOffService excessKnockOffService) {
-		this.excessKnockOffService = excessKnockOffService;
 	}
 
 	@Autowired

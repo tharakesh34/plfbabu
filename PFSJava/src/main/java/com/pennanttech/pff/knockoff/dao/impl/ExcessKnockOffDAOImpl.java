@@ -16,6 +16,7 @@ import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.extension.CustomerExtension;
+import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -31,7 +32,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 	private static Logger logger = LogManager.getLogger(ExcessKnockOffDAOImpl.class);
 
 	@Override
-	public void logExcessForCrossLoanKnockOff(Date valueDate, String day, String thresholdValue) {
+	public long logExcessForCrossLoanKnockOff(Date valueDate, String day, String thresholdValue) {
 		StringBuilder sql = new StringBuilder("Insert Into");
 		sql.append(" CROSS_LOAN_KNOCKOFF_STAGE");
 		sql.append(" (CustId, CoreBankId, FinId, ReferenceId, AmountType");
@@ -43,8 +44,8 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(" From FinExcessAmount ea");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ea.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  AmountType = ? and BalanceAmt > ? and fm.FinIsActive = ? and");
-		sql.append(" fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
+		sql.append(" Where  AmountType = ? and BalanceAmt > ?");
+		sql.append("  and fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
 		sql.append(" Union All");
 		sql.append(" Select CustId, CustCoreBank, FinId, ReferenceId, AmountType");
 		sql.append(", sum(BalanceAmt) BalanceAmt from ");
@@ -52,14 +53,14 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(", BalanceAmt From ManualAdvise ma");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ma.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ? and fm.FinIsActive = ? and");
-		sql.append(" fm.WriteoffLoan = ?) it ");
-		sql.append("Group by it.CustId, it.CustCoreBank, it.FinID, it.ReferenceId, it.AmountType) T");
+		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ?");
+		sql.append("  and fm.WriteoffLoan = ?) it ");
+		sql.append(" group by it.CustId, it.CustCoreBank, it.FinID, it.ReferenceId, it.AmountType) T");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
+			return this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
 				ps.setDate(++index, JdbcUtil.getDate(valueDate));
@@ -67,12 +68,10 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 				ps.setString(++index, thresholdValue);
 				ps.setString(++index, "E");
 				ps.setInt(++index, 0);
-				ps.setInt(++index, 1);
 				ps.setInt(++index, 0);
 				ps.setString(++index, "P");
 				ps.setInt(++index, 2);
 				ps.setInt(++index, 0);
-				ps.setInt(++index, 1);
 				ps.setInt(++index, 0);
 			});
 		} catch (DuplicateKeyException e) {
@@ -404,6 +403,45 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 			sql.append("Where c.CustId = ?");
 		}
 		sql.append(" and fm.FinID != ? and fm.FinIsActive = ?");
+		sql.append(" Union All");
+		sql.append(" Select fm.FinID, fm.FinReference, fm.GrcPeriodEndDate, fm.AllowGrcPeriod, fm.GraceBaseRate");
+		sql.append(", fm.GraceSpecialRate, fm.GrcPftRate, fm.GrcPftFrq, fm.NextGrcPftDate, fm.AllowGrcPftRvw");
+		sql.append(", fm.GrcPftRvwFrq, fm.NextGrcPftRvwDate, fm.AllowGrcCpz, fm.GrcCpzFrq, fm.NextGrcCpzDate");
+		sql.append(", fm.RepayBaseRate, fm.RepaySpecialRate, fm.RepayProfitRate, fm.RepayFrq, fm.NextRepayDate");
+		sql.append(", fm.RepayPftFrq, fm.NextRepayPftDate, fm.AllowRepayRvw, fm.RepayRvwFrq, fm.RepayRvwFrq");
+		sql.append(", fm.NextRepayRvwDate, fm.AllowRepayCpz, fm.RepayCpzFrq, fm.NextRepayCpzDate, fm.MaturityDate");
+		sql.append(", fm.CpzAtGraceEnd, fm.GrcRateBasis, fm.RepayRateBasis, fm.FinType, fm.FinCcy, fm.ProfitDaysBasis");
+		sql.append(", fm.FirstRepay, fm.LastRepay, fm.ScheduleMethod, fm.FinStartDate, fm.FinAmount, fm.CustID");
+		sql.append(", fm.FinBranch, fm.FinSourceID, fm.RecalType, fm.FinIsActive, fm.LastRepayDate");
+		sql.append(", fm.LastRepayPftDate, fm.LastRepayRvwDate, fm.LastRepayCpzDate, fm.AllowGrcRepay, fm.GrcSchdMthd");
+		sql.append(", fm.GrcMargin, fm.RepayMargin, fm.ClosingStatus, fm.FinRepayPftOnFrq, fm.GrcProfitDaysBasis");
+		sql.append(", fm.GrcMinRate, fm.GrcMaxRate, fm.GrcMaxAmount, fm.RpyMinRate, fm.RpyMaxRate, fm.ManualSchedule");
+		sql.append(", fm.CalRoundingMode, fm.RoundingTarget, fm.RvwRateApplFor, fm.SchCalOnRvw, fm.PastduePftCalMthd");
+		sql.append(", fm.DroppingMethod, fm.RateChgAnyDay, fm.PastduePftMargin, fm.FinRepayMethod, fm.MigratedFinance");
+		sql.append(", fm.ScheduleMaintained, fm.ScheduleRegenerated, fm.MandateID, fm.FinStatus, fm.DueBucket");
+		sql.append(", fm.FinStsReason");
+		sql.append(", fm.PromotionCode, fm.FinCategory, fm.ProductCategory, fm.ReAgeBucket");
+		sql.append(", fm.TDSApplicable, fm.TdsType");
+		sql.append(", fm.BpiTreatment, fm.FinRepaymentAmount, fm.GrcAdvType, fm.AdvType, fm.SanBsdSchdle");
+		sql.append(", fm.AutoIncGrcEndDate, fm.Version, fm.LastMntOn, fm.ReferralId, fm.GraceTerms, fm.AlwMultiDisb");
+		sql.append(", fm.NumberOfTerms, fm.PromotionSeqId, fm.SvAmount, fm.CbAmount, fm.EmployeeName");
+		sql.append(", fm.FinAssetValue, fm.FinCurrAssetValue, fm.AlwGrcAdj, fm.EndGrcPeriodAftrFullDisb");
+		sql.append(", fm.WriteoffLoan, fm.SchdVersion, fm.NumberOfTerms, fm.ManualSchdType");
+		sql.append(", fm.OverdraftTxnChrgReq, fm.OverdraftCalcChrg, fm.OverdraftChrgAmtOrPerc, fm.OverdraftChrCalOn");
+		sql.append(", fm.StepFinance, fm.AlwManualSteps, fm.CalcOfSteps, fm.NoOfGrcSteps, sdd.EntityCode");
+		sql.append(", fm.UnderSettlement, fm.UnderNpa");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join SmtDivisionDetail sdd on sdd.DivisionCode = ft.FinDivision");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank = ?");
+		} else {
+			sql.append("Where c.CustId = ?");
+		}
+		sql.append(" and fm.FinID != ? and fm.FinIsActive = ? and FinID in (Select FinID from ManualAdvise");
+		sql.append(" Where AdviseType = ? and (AdviseAmount-PaidAmount-WaivedAmount) > 0)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -415,6 +453,16 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 			}
 			ps.setLong(2, finId);
 			ps.setBoolean(3, true);
+
+			if (CustomerExtension.CUST_CORE_BANK_ID) {
+				ps.setString(4, coreBankId);
+			} else {
+				ps.setLong(4, custId);
+			}
+			ps.setLong(5, finId);
+			ps.setBoolean(6, false);
+			ps.setLong(7, AdviseType.RECEIVABLE.id());
+
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 

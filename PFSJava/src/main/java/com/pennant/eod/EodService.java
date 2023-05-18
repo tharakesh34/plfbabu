@@ -172,7 +172,7 @@ public class EodService {
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
 		// update customer EOD
 
-		autoRefundService.updateRefunds(custEODEvent);
+		// autoRefundService.updateRefunds(custEODEvent);
 
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD

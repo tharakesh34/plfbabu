@@ -246,7 +246,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 						+ ", against the mandate : " + mandate.getMandateID() + ", is more than the max limit : "
 						+ PennantApplicationUtil.amountFormate(mandate.getMaxLimit(), ccyFormat);
 
-				if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
+				if (repayAmt.compareTo(mandate.getMaxLimit()) > 0 && !InstrumentType.isSI(mandate.getMandateType())) {
 					setErrorDeatils(pmu, remarks, error, "CPU001");
 					continue;
 				}

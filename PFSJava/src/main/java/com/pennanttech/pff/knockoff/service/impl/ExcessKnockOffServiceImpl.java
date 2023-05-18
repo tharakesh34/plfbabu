@@ -1,7 +1,6 @@
 package com.pennanttech.pff.knockoff.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,11 +38,6 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 	@Override
 	public void deleteQueue() {
 		this.excessKnockOffDAO.deleteQueue();
-	}
-
-	@Override
-	public void logExcessForCrossLoanKnockOff(Date valueDate, String executionDay, String thresholdValue) {
-		this.excessKnockOffDAO.logExcessForCrossLoanKnockOff(valueDate, executionDay, thresholdValue);
 	}
 
 	@Override

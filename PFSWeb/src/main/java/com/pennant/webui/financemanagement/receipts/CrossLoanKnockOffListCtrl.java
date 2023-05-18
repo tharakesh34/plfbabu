@@ -241,7 +241,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 
 			whereClause.append(
 					"  RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE like '%MAKER')  and (KnockOffType = '"
-							+ KnockOffType.CROSS_LOAN.code() + "' or KnockOffType  is null)");
+							+ KnockOffType.CROSS_LOAN.code() + "' or KnockOffType  is null" + " or "
+							+ "KnockOffType = '" + KnockOffType.AUTO_CROSS_LOAN.code() + "')");
 		}
 
 		// Filtering added based on user branch and division

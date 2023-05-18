@@ -44,10 +44,8 @@ public class ExcessKnockOffTasklet implements Tasklet {
 	private static final String QUEUE_QUERY = "Select CustID, CoreBankId From Cross_Loan_KnockOff_Queue Where ThreadID = ? and Progress= ?";
 
 	private static final String START_MSG = "Cross Loan KnockOff started at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String FAILED_MSG = "Cross Loan KnockOff failed on {} for the FinReference {}";
 	private static final String SUCCESS_MSG = "Cross Loan KnockOff completed at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String EXCEPTION_MSG = "Cross Loan KnockOff failed on {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
 
 	public static AtomicLong processedCount = new AtomicLong(0);
 	public static AtomicLong failedCount = new AtomicLong(0);
@@ -91,7 +89,6 @@ public class ExcessKnockOffTasklet implements Tasklet {
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
 
 		List<Exception> exceptions = new ArrayList<>(1);
 
@@ -107,7 +104,6 @@ public class ExcessKnockOffTasklet implements Tasklet {
 			}
 
 			try {
-
 				for (ExcessKnockOff ekf : ekflist) {
 					if (ekf.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0) {
 						break;
@@ -119,38 +115,38 @@ public class ExcessKnockOffTasklet implements Tasklet {
 
 					List<FinanceMain> fmList = excessKnockOffService.getLoansbyCustId(custID, coreBankId, finID);
 
-					txStatus = transactionManager.getTransaction(txDef);
-
 					for (FinanceMain fm : fmList) {
 						if (ekf.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0) {
 							break;
 						}
 
-						excessKnockOffService.process(ekf, fm);
-					}
+						TransactionStatus txStatus = null;
 
-					transactionManager.commit(txStatus);
+						try {
+							txStatus = transactionManager.getTransaction(txDef);
+							excessKnockOffService.process(ekf, fm);
+							transactionManager.commit(txStatus);
+						} catch (Exception e) {
+							logger.error(Literal.EXCEPTION, e);
+							if (txStatus != null) {
+								transactionManager.rollback(txStatus);
+							}
+						} finally {
+							txStatus = null;
+						}
+					}
 				}
 
 				excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_SUCCESS);
 
 				StepUtil.CROSS_LOAN_KNOCKOFF.setProcessedRecords(processedCount.incrementAndGet());
-			} catch (Exception e) {
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
-				}
 
+			} catch (Exception e) {
 				StepUtil.CROSS_LOAN_KNOCKOFF.setFailedRecords(failedCount.incrementAndGet());
 
-				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+				logger.error(Literal.EXCEPTION, e);
 				exceptions.add(e);
-
-				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
-				logger.info(FAILED_MSG, strSysDate);
-
 				excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_FAILED);
-			} finally {
-				txStatus = null;
 			}
 		}
 
@@ -169,16 +165,6 @@ public class ExcessKnockOffTasklet implements Tasklet {
 		BatchUtil.setExecutionStatus(context, StepUtil.CROSS_LOAN_KNOCKOFF);
 
 		return RepeatStatus.FINISHED;
-	}
-
-	private void processCrossKnockOff(ExcessKnockOff ekf, List<FinanceMain> fmList) {
-		for (FinanceMain fm : fmList) {
-			if (ekf.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0) {
-				break;
-			}
-
-			excessKnockOffService.process(ekf, fm);
-		}
 	}
 
 	@Autowired

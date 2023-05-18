@@ -1,6 +1,5 @@
 package com.pennanttech.pff.knockoff.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
@@ -11,8 +10,6 @@ import com.pennanttech.pff.knockoff.model.ExcessKnockOffDetails;
 public interface ExcessKnockOffService {
 
 	void deleteQueue();
-
-	void logExcessForCrossLoanKnockOff(Date valueDate, String executionDay, String thresholdValue);
 
 	long prepareQueue();
 
