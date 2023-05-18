@@ -40,7 +40,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
-public class ExtCollectionFileProcessorJob extends AbstractJob implements InterfaceConstants {
+public class ExtCollectionFileProcessorJob extends AbstractJob
+		implements InterfaceConstants, CollectionReceiptDataSplit {
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFileProcessorJob.class);
 

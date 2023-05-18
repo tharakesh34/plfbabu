@@ -19,7 +19,7 @@ import com.pennanttech.external.collectionreceipt.model.ExtCollectionReceiptData
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionFileService extends TextFileUtil implements InterfaceConstants {
+public class ExtCollectionFileService extends TextFileUtil implements InterfaceConstants, CollectionReceiptDataSplit {
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFileService.class);
 
 	private static final String REJECTED_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";

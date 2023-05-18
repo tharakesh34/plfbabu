@@ -32,7 +32,8 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtCollectionFileExtractionJob extends AbstractJob implements InterfaceConstants {
+public class ExtCollectionFileExtractionJob extends AbstractJob
+		implements InterfaceConstants, CollectionReceiptDataSplit {
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFileExtractionJob.class);
 
