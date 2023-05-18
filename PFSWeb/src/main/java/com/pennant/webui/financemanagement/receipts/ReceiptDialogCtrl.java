@@ -7786,8 +7786,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal advisePaidOrg = adv.getTotalPaid().subtract(adv.getTdsPaid());
 		BigDecimal feePaidOrg = fee.getTotalPaid().subtract(fee.getTdsPaid());
 
-		BigDecimal remBalAfterAlloc = receiptData.getTotReceiptAmount().subtract(duePaidOrg).subtract(advisePaidOrg)
-				.subtract(feePaidOrg);
+		BigDecimal remBalAfterAlloc = (receiptData.getTotReceiptAmount().add(xa.getTotalPaid())).subtract(duePaidOrg)
+				.subtract(advisePaidOrg).subtract(feePaidOrg);
 
 		if (!StringUtils.contains(rch.getFinType(), "OD")) {
 			if (remBalAfterAlloc.compareTo(BigDecimal.ZERO) <= 0) {
