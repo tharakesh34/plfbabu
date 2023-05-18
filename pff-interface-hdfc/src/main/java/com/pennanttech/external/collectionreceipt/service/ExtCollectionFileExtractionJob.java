@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -33,7 +34,7 @@ import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ExtCollectionFileExtractionJob extends AbstractJob
-		implements InterfaceConstants, CollectionReceiptDataSplit {
+		implements InterfaceConstants, CollectionReceiptDataSplit, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFileExtractionJob.class);
 

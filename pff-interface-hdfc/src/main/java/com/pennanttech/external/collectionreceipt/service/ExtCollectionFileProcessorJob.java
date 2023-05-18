@@ -29,6 +29,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.receipt.model.CreateReceiptUpload;
 import com.pennanttech.external.ExtReceiptServiceHook;
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.collectionreceipt.dao.ExtCollectionReceiptDao;
@@ -41,7 +42,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class ExtCollectionFileProcessorJob extends AbstractJob
-		implements InterfaceConstants, CollectionReceiptDataSplit {
+		implements InterfaceConstants, CollectionReceiptDataSplit, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtCollectionFileProcessorJob.class);
 

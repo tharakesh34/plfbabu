@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.silien.dao.ExtLienMarkingDAO;
@@ -19,7 +20,7 @@ import com.pennanttech.external.silien.model.LienMarkDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class LienFileWritingService extends TextFileUtil implements InterfaceConstants {
+public class LienFileWritingService extends TextFileUtil implements InterfaceConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(LienFileWritingService.class);
 

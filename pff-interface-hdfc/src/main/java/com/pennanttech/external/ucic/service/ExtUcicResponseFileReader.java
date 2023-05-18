@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.ucic.dao.ExtUcicDao;
@@ -18,7 +19,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtUcicResponseFileReader implements InterfaceConstants {
+public class ExtUcicResponseFileReader implements InterfaceConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtUcicResponseFileReader.class);
 

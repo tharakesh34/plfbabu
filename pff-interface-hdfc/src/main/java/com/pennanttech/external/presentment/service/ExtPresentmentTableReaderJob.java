@@ -26,6 +26,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.external.app.config.dao.ExtStagingDaoImpl;
+import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
@@ -38,7 +39,7 @@ import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtPresentmentTableReaderJob extends AbstractJob implements InterfaceConstants {
+public class ExtPresentmentTableReaderJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentTableReaderJob.class);
 	private static final String FETCH_QUERY = "Select * from PDC_BATCH_D_STG  Where PICK_FINNONE = ?";
