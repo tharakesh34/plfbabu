@@ -15,9 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -39,6 +37,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
@@ -49,6 +48,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.file.UploadTypes;
@@ -67,8 +67,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	private ReceiptService receiptService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	public ManualKnockOffUploadServiceImpl() {
@@ -426,25 +424,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		return true;
 	}
 
-	private Date fillValueDate(ManualKnockOffUpload fc, Date valueDate) {
-		Date receiptDt = fc.getAppDate();
-
-		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
-			receiptDt = valueDate;
-			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(fc.getReferenceID(), receiptDt);
-			if (DateUtil.compare(receiptDt, schDate) < 0) {
-				receiptDt = schDate;
-			}
-		}
-
-		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(fc.getReferenceID());
-		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
-			receiptDt = maxReceiptDt;
-		}
-
-		return receiptDt;
-	}
-
 	private List<FinServiceInstruction> prepareRCDForExcess(FileUploadHeader header, ManualKnockOffUpload fc) {
 		List<FinServiceInstruction> fsiList = new ArrayList<>();
 
@@ -466,7 +445,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 				fc.setBalanceAmount(fc.getBalanceAmount().subtract(payableAmount));
 			}
 
-			Date valueDate = fillValueDate(fc, fc.getAppDate());
+			Date valueDate = receiptService.getExcessBasedValueDate(fc.getAppDate(), fea.getFinID(), fc.getAppDate(),
+					fea, FinServiceEvent.SCHDRPY);
 			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.EXCESS, valueDate);
 
 			fsi.getReceiptDetail().setPayAgainstID(fea.getExcessID());
@@ -546,6 +526,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		fsi.setReceiptUpload(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
 		fsi.setKnockOffReceipt(true);
+		fsi.setUploadAllocationDetails(rud.getListAllocationDetails());
+		fsi.setKnockoffType(KnockOffType.MANUAL.code());
 
 		return fsi;
 	}
@@ -630,16 +612,6 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	@Autowired
-	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
-		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
 	@Autowired
