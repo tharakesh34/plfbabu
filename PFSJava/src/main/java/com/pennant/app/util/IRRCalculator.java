@@ -612,11 +612,17 @@ public class IRRCalculator {
 				df = BigDecimal.valueOf(days).divide(big360, 13, RoundingMode.HALF_DOWN);
 			}
 
-			// FIXME Review Required by PV
 			pv = irr.add(BigDecimal.ONE);
 			double pow = Math.pow(pv.doubleValue(), df.doubleValue());
 
-			if (Double.isNaN(pow)) {
+			/*
+			 * 
+			 * Double.isNaN is changed to Double.isFinite It returns false, if the argument is not a finite
+			 * floating-point value.
+			 * 
+			 * Double.isNaN is not handling for Infinite Values.
+			 */
+			if (!Double.isFinite(pow)) {
 				pow = 0;
 			}
 
