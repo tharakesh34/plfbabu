@@ -552,7 +552,6 @@ public class RepaymentProcessUtil {
 		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes = new AEAmountCodes();
 
 		// Last Receipt record for banking details
 		FinReceiptDetail rcd = rcdList.get(rcdList.size() - 1);
@@ -671,13 +670,10 @@ public class RepaymentProcessUtil {
 
 		movements.addAll(payableAdvMovements);
 
-		// Put Receipt amount from Bank/Cash Map along with GST
-		// receiptFromBank = totXcessAmount.subtract(receiptFromBank);
 		if (receiptFromBank.compareTo(BigDecimal.ZERO) > 0) {
 			extMap.put("PB_ReceiptAmount", receiptFromBank);
 		}
 
-		// FIXME: NO SURE ON GOLD LOAN. SO FOR LOOP KEPT AS IS
 		for (FinReceiptDetail frd : rcdList) {
 			if (ReceiptMode.REPLEDGE.equals(frd.getPaymentType())) {
 				extMap.put("PR_ReceiptAmount", frd.getAmount());
@@ -690,13 +686,6 @@ public class RepaymentProcessUtil {
 		addZeroifNotContains(extMap, "PB_ReceiptAmount");
 		addZeroifNotContains(extMap, "Restruct_Bpi");
 		addZeroifNotContains(extMap, "SETTLE_ReceiptAmount");
-
-		// Branch Cash Update
-		/*
-		 * if (StringUtils.equals(rch.getReceiptMode(), RepayConstants.RECEIPTMODE_CASH)) {
-		 * branchCashDetailDAO.updateBranchCashDetail(rch.getUserDetails().getBranchCode(), receiptFromBank,
-		 * CashManagementConstants.Add_Receipt_Amount); }
-		 */
 
 		String finType = fm.getFinType();
 		String cashierBranch = rch.getCashierBranch();
@@ -1963,7 +1952,7 @@ public class RepaymentProcessUtil {
 			throws AppException {
 		logger.debug(Literal.ENTERING);
 
-		List<Object> returnList = new ArrayList<Object>();
+		List<Object> returnList = new ArrayList<>();
 		List<FinRepayQueue> finRepayQueues = new ArrayList<>();
 		FinRepayQueue finRepayQueue = null;
 		FinRepayQueueHeader rpyQueueHeader = new FinRepayQueueHeader();
@@ -2124,8 +2113,7 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(paidNow));
 					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(waivedNow));
 					break;
-				case Allocation.MANADV:
-				case Allocation.BOUNCE:
+				case Allocation.MANADV, Allocation.BOUNCE:
 					rpyQueueHeader.setAdviseAmount(rpyQueueHeader.getAdviseAmount().add(paidNow).add(waivedNow));
 					break;
 				default:
@@ -2173,11 +2161,8 @@ public class RepaymentProcessUtil {
 			returnList = repaymentPostingsUtil.postingProcess(fm, scheduleDetails, finFeeDetailList, profitDetail,
 					rpyQueueHeader, eventCode, rch.getValueDate(), postDate, rch);
 
-		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 
@@ -2190,7 +2175,7 @@ public class RepaymentProcessUtil {
 			return repayScheduleDetails;
 		}
 
-		Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
+		Collections.sort(repayScheduleDetails, new Comparator<>() {
 			@Override
 			public int compare(RepayScheduleDetail rsd1, RepayScheduleDetail rsd2) {
 				return DateUtil.compare(rsd1.getSchDate(), rsd2.getSchDate());
@@ -2294,7 +2279,7 @@ public class RepaymentProcessUtil {
 
 		if (logKey != 0) {
 			// Finance Disbursement Details
-			mapDateSeq = new HashMap<Date, Integer>();
+			mapDateSeq = new HashMap<>();
 			Date curBDay = SysParamUtil.getAppDate();
 
 			for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
@@ -2592,7 +2577,7 @@ public class RepaymentProcessUtil {
 		}
 
 		dueDataDtls = dueDataDtls.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
-				.collect(Collectors.toList());
+				.toList();
 
 		setFinDueDataByHierarchy(dueDataDtls, repayHierarchy);
 
