@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.AmountUtil;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -122,7 +123,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 				item.append(CAP_SEPARATOR);
 				item.append(new SimpleDateFormat("dd/MM/yyyy").format(data.getSchDate()));
 				item.append(CAP_SEPARATOR);
-				item.append(convertAmount(data.getSchAmtDue(), EXT_PDC_CCY));//
+				item.append(AmountUtil.convertAmount(data.getSchAmtDue(), EXT_PDC_CCY));//
 				item.append(CAP_SEPARATOR);
 				item.append(data.getBankCode());
 				item.append(CAP_SEPARATOR);
@@ -149,7 +150,7 @@ public class ExtPDCService extends TextFileUtil implements InterfaceConstants {
 				footer = new StringBuilder();
 				footer.append(AMOUNT_OF_CHEQUES);
 				footer.append(CAP_SEPARATOR);
-				footer.append(convertAmount(totalAmount, EXT_PDC_CCY));
+				footer.append(AmountUtil.convertAmount(totalAmount, EXT_PDC_CCY));
 				itemList.add(footer);
 
 				footer = new StringBuilder();

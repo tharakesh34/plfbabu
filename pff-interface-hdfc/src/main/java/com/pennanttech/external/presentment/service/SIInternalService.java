@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.AmountUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
 import com.pennanttech.external.presentment.model.ExtPresentmentData;
@@ -36,7 +37,7 @@ public class SIInternalService extends TextFileUtil implements InterfaceConstant
 				item.append(fileSeperator);
 				item.append(StringUtils.leftPad(data.getAccountNo(), 14));
 				item.append(fileSeperator);
-				item.append(StringUtils.leftPad(convertAmount(data.getSchAmtDue(), ccyFromat), 16));
+				item.append(StringUtils.leftPad(AmountUtil.convertAmount(data.getSchAmtDue(), ccyFromat), 16));
 				item.append(fileSeperator);
 				item.append(StringUtils.leftPad(data.getPresentmentRef(), 20));
 				item.append(fileSeperator);
@@ -97,8 +98,8 @@ public class SIInternalService extends TextFileUtil implements InterfaceConstant
 		logger.debug(Literal.LEAVING);
 	}
 
-	public ExtPresentmentFile prepareResponseObject(FileInterfaceConfig extConfig, ExtPresentmentData extPresentmentData,
-			String fileName) {
+	public ExtPresentmentFile prepareResponseObject(FileInterfaceConfig extConfig,
+			ExtPresentmentData extPresentmentData, String fileName) {
 
 		logger.debug(Literal.ENTERING);
 

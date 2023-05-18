@@ -15,6 +15,7 @@ import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
+import com.pennanttech.external.app.util.AmountUtil;
 import com.pennanttech.external.app.util.ExtSFTPUtil;
 import com.pennanttech.external.app.util.InterfaceErrorCodeUtil;
 import com.pennanttech.external.app.util.TextFileUtil;
@@ -65,8 +66,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 				item.append(StringUtils.rightPad(EMPTY, 7));// 7
 				item.append(StringUtils.rightPad("HDFC BANK LIMITED", 20));// 20
 				item.append(StringUtils.rightPad(EMPTY, 13));// 13
-				item.append(
-						StringUtils.rightPad(prependZeros(convertAmount(data.getSchAmtDue(), ach_ccyFromat), 13), 13));// 13
+				item.append(StringUtils
+						.rightPad(prependZeros(AmountUtil.convertAmount(data.getSchAmtDue(), ach_ccyFromat), 13), 13));// 13
 				item.append(StringUtils.rightPad(EMPTY, 10));// 10
 				item.append(StringUtils.rightPad(EMPTY, 10));// 10
 				item.append(StringUtils.rightPad(EMPTY, 1));// 1
@@ -101,7 +102,8 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 				item.append(StringUtils.rightPad(EMPTY, 15));// 15
 				item.append(StringUtils.rightPad(EMPTY, 3));// 3
 				item.append(StringUtils.rightPad("0005000000000", 13));// 13
-				item.append(StringUtils.rightPad(prependZeros(convertAmount(totalAmount, ach_ccyFromat), 13), 13));// 13
+				item.append(StringUtils.rightPad(prependZeros(AmountUtil.convertAmount(totalAmount, ach_ccyFromat), 13),
+						13));// 13
 				item.append(StringUtils.rightPad(ACH_DATEFORMATTER.format(dueDate), 8));// 8
 				item.append(StringUtils.rightPad(EMPTY, 10));// 10
 				item.append(StringUtils.rightPad(EMPTY, 10));// 10
