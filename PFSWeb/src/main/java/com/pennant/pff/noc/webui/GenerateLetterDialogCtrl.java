@@ -409,7 +409,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	private void doShowDialog(GenerateLetter csb) {
 		logger.debug(Literal.LEAVING);
 
-		if (csb.getRecordStatus().equals(PennantConstants.RCD_STATUS_APPROVED)) {
+		if (PennantConstants.RCD_STATUS_APPROVED.equals(csb.getRecordStatus())) {
 			this.btnDownload.setVisible(true);
 		}
 

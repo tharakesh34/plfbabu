@@ -15,4 +15,7 @@ public class NOCConstants {
 
 	public static final String BLOCK = "B";
 	public static final String REMOVE_BLOCK = "R";
+
+	public static final String TYPE_CANCLTR = "Cancellation Letter";
+
 }

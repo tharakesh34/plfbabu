@@ -21,12 +21,16 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.LoanCancelationUtil;
 
 public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
@@ -87,13 +91,42 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	private boolean validateReference() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		boolean isDataExists = generateLetterService.isReferenceExist(this.finReference.getValue());
+		FinanceMain fm = generateLetterService.getFinanceMainByRef(this.finReference.getValue(), "", false);
 
-		if (!isDataExists) {
+		if (fm == null) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_Finreference")
 					+ " :".concat(this.finReference.getValue()));
-			return isDataExists;
+			return false;
 		}
+
+		String ltrType = this.letterType.getValue();
+
+		if (NOCConstants.TYPE_CANCLTR.equals(ltrType)) {
+			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())
+					|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
+					|| FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
+				MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
+						+ " for ".concat(this.finReference.getValue()));
+				return false;
+			}
+		}
+
+		if (fm.isFinIsActive() && fm.getClosingStatus() == null) {
+			MessageUtil.showError("Active Loans are not allowed to Generate Letter");
+			return false;
+		}
+
+		if (LoanCancelationUtil.LOAN_CANCEL_REBOOK
+				.equals(generateLetterService.getCanceltype(this.finReference.getValue()))) {
+			MessageUtil.showError("Cancelled and Rebooked Loan's are not allowed to Generate Letter");
+			return false;
+		}
+
+		if (generateLetterService.getFinTypeMap(fm.getFinType()) == 0) {
+			MessageUtil.showError("Loan Type Letter mapping not available");
+			return false;
+		}
+
 		logger.debug(Literal.LEAVING);
 
 		return true;

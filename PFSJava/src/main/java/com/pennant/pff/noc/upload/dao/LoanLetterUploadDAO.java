@@ -15,7 +15,7 @@ public interface LoanLetterUploadDAO {
 
 	String getSqlQuery();
 
-	int getFinTypeLtrMap(String finReference);
+	int getFinTypeLtrMap(String finType);
 
 	String getCanceltype(String finReference);
 

@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.FeeCalculator;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -35,6 +36,7 @@ import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
+import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
@@ -52,6 +54,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	private FeeCalculator feeCalculator;
 	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
+	private LoanLetterUploadDAO loanLetterUploadDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	@Override
 	public List<GenerateLetter> getResult(ISearch searchFilters) {
@@ -76,6 +80,21 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Override
 	public boolean isReferenceExist(String reference) {
 		return generateLetterDAO.isReferenceExist(reference);
+	}
+
+	@Override
+	public int getFinTypeMap(String finType) {
+		return loanLetterUploadDAO.getFinTypeLtrMap(finType);
+	}
+
+	@Override
+	public FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF) {
+		return financeMainDAO.getFinanceMainByRef(finReferece, "", false);
+	}
+
+	@Override
+	public String getCanceltype(String finReference) {
+		return loanLetterUploadDAO.getCanceltype(finReference);
 	}
 
 	@Override
@@ -180,6 +199,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 				tranType = PennantConstants.TRAN_ADD;
 				gl.setRecordType("");
 				processfees(gl);
+				gl.setAgreementTemplate(0);
+				gl.setModeofTransfer(gl.getRequestType());
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -415,4 +436,13 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
 	}
 
+	@Autowired
+	public void setLoanLetterUploadDAO(LoanLetterUploadDAO loanLetterUploadDAO) {
+		this.loanLetterUploadDAO = loanLetterUploadDAO;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
 }

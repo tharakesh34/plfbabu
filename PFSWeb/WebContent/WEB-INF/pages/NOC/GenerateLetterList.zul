@@ -62,10 +62,11 @@
 									<textbox id="coreBankID" width="80px" maxlength="8" />
 									<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
 									<listbox id="custCifSort" width="43px" mold="select" rows="1" />
-									<textbox id="custCIF" width="150px" />
-										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_SelectFinanceTypeDialog_CustID.tooltiptext')}"
+									<hbox>
+										<textbox id="custCIF" width="160px" />
+										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchCustCIF.tooltiptext')}"
 											image="/images/icons/more.png" autodisable="btnSearchCustCIF" />
-									<space spacing="4px" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>

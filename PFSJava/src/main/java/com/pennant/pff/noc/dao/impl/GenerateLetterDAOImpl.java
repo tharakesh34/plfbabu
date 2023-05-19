@@ -325,9 +325,9 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	private void saveLetterGenerationDetails(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
-		sql.append("(FinID, RequestType, LetterType");
-		sql.append(", FeeTypeId, CreatedDate, CreatedOn, AdviseID)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
+		sql.append("(FinID, RequestType, LetterType, FeeTypeId");
+		sql.append(", CreatedDate, CreatedOn, AdviseID, AgreementTemplate, ModeOfTransfer)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -342,6 +342,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
 				ps.setLong(++index, gl.getAdviseID());
+				ps.setLong(++index, gl.getAgreementTemplate());
+				ps.setString(++index, gl.getModeofTransfer());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);

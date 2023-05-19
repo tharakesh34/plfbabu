@@ -5,43 +5,67 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 		<window id="windowLetterLogEnquiryDialog" border="none" apply="${letterLogEnquiryDialogCtrl}" width="100%" height="100%"
-			style="padding-top:10px" sizable="false">
+			 sizable="false">
 			<borderlayout id="blGenLetterEnquiry">
 				<center border="none" autoscroll="false">
+				<groupbox style="border:none;">
 						<div style="border:none;">
+						<div style="border:none;" height="100%">
+			            	<groupbox style="border:none;">
 									<groupbox id="gb_finBasicDetails">
-										<grid fixedLayout="true">
-											<columns>
-												<column width="150px" />
-												<column width="350px" />
-												<column width="150px" />
-												<column width="250px" />
-												<column width="280px" />
-											</columns>
-											<rows>
-												<row>
-													<label value="${c:l('label_FinanceEnquiryDialog_FinType.value')}" />
-													<label id="finType" />
-													<label value="${c:l('label_FinanceEnquiryDialog_FinCcy.value')}" />
-													<label id="finccy" />
-												</row>
-				
-												<row>
-													<label value="${c:l('label_FinanceEnquiryDialog_ScheduleMethod.value')}" />
-													<label id="schMethod" />
-													<label value="${c:l('label_FinanceEnquiryDialog_ProfitDaysBasis.value')}" />
-													<label id="profitbasis" />
-												</row>
-				
-												<row>
-													<label value="${c:l('label_FinanceEnquiryDialog_FinReference.value')}" />
-													<label id="finReference" />
-													<label value="${c:l('label_FinanceEnquiryDialog_CustName.value')}" />
-													<label id="custName" />
-												</row>
-											</rows>
-										</grid>
+											<grid fixedLayout="true">
+												<columns>
+													<column width="150px" />
+													<column width="350px" />
+													<column width="150px" />
+													<column width="250px" />
+													<column width="280px" />
+												</columns>
+												<rows>
+													<row>
+														<label value="${c:l('label_FinanceEnquiryDialog_FinType.value')}" />
+															<hbox>
+																<space spacing="2px" />
+																<label id="finType" />
+															</hbox>
+														<label value="${c:l('label_FinanceEnquiryDialog_FinCcy.value')}" />
+															<hbox>
+																<space spacing="2px" />
+																<label id="finccy" />
+															</hbox>
+													</row>
+					
+													<row>
+														<label value="${c:l('label_FinanceEnquiryDialog_ScheduleMethod.value')}" />
+															<hbox>
+																<space spacing="2px" />
+																<label id="schMethod" />
+															</hbox>
+														<label value="${c:l('label_FinanceEnquiryDialog_ProfitDaysBasis.value')}" />
+															<hbox>
+																<space spacing="2px" />
+																<label id="profitbasis" />
+															</hbox>
+													</row>
+					
+													<row>
+														<label value="${c:l('label_FinanceEnquiryDialog_FinReference.value')}" />
+															<hbox>
+																<space spacing="2px" />
+																<label id="finReference" />
+															</hbox>
+														<label value="${c:l('label_FinanceEnquiryDialog_CustName.value')}" />
+															<hbox>
+																<space spacing="2px" />
+																<label id="custName" />
+															</hbox>
+													</row>
+												</rows>
+											</grid>
+									 </groupbox>
 								</groupbox>
+								</div>
+								<div style="border:none;" height="100%">
 								<groupbox>
 									<listbox id="listBoxLetterLog" multiple="true" style="border:none,overflow:scroll" width="100%"
 									span="true" emptyMessage="${c:l('listbox.emptyMessage')}" height="150px">
@@ -69,7 +93,9 @@
 										</listhead>
 									</listbox>
 								</groupbox>
-					</div>
+								</div>
+					    </div>
+						</groupbox>
 			</center>
 		</borderlayout>
 	</window>

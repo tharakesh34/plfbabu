@@ -27,7 +27,7 @@
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
 								sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								sclass="z-toolbarbutton" />
