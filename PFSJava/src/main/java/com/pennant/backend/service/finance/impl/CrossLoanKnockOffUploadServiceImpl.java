@@ -266,9 +266,13 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 		clk.setFinType(finType);
 		prepareUserDetails(header, clk);
-
-		ahList.addAll(prepareCLOForExcess(header, clk, fromFm, toFm));
-		ahList.addAll(prepareCLOForAdvises(header, clk, fromFm, toFm));
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
+			ahList.addAll(prepareCLOForExcess(header, clk, fromFm, toFm));
+		} 
+		
+		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())) {
+			ahList.addAll(prepareCLOForAdvises(header, clk, fromFm, toFm));
+		}
 
 		TransactionStatus txStatus = getTransactionStatus();
 

@@ -310,8 +310,13 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		prepareUserDetails(header, fc);
 
 		List<FinServiceInstruction> fsiList = new ArrayList<>();
-		fsiList.addAll(prepareRCDForExcess(header, fc));
-		fsiList.addAll(prepareRCDForPayable(header, fc));
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+			fsiList.addAll(prepareRCDForExcess(header, fc));
+		} 
+		
+		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(fc.getExcessType())) {
+			fsiList.addAll(prepareRCDForPayable(header, fc));
+		}
 
 		TransactionStatus txStatus = getTransactionStatus();
 
@@ -473,7 +478,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			if (payableAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
-			
+
 			if (fc.getBalanceAmount().compareTo(BigDecimal.ZERO) <= 0) {
 				break;
 			}
