@@ -1580,21 +1580,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	public JVPostingEntry doCheckAndPrepareOtherLeg(JVPostingEntry aJVPostingEntry, List<JVPostingEntry> list) {
 		JVPostingEntry otherentry = getEntryList(aJVPostingEntry.getTxnReference(), list);
 		if (otherentry != null) {
-			if (otherentry.getRecordType() != null) {
-				BeanUtils.copyProperties(aJVPostingEntry, otherentry);
-				otherentry.setTxnReference(aJVPostingEntry.getTxnReference() + 1);
-				otherentry.setTxnEntry(AccountConstants.TRANTYPE_DEBIT);
-
-				if (otherentry.getBefImage() != null) {
-					otherentry.setAccount(otherentry.getBefImage().getDebitAccount());
-				} else {
-					otherentry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.debitAccount.getValue()));
-				}
-
-				otherentry.setTxnCode(this.debitTxnCode.getValidatedValue());
-				otherentry.setDerivedTxnRef(aJVPostingEntry.getTxnReference());
-			}
-
+			otherentry.setTxnReference(aJVPostingEntry.getTxnReference() + 1);
+			otherentry.setTxnEntry(AccountConstants.TRANTYPE_DEBIT);
+			otherentry.setTxnCode(this.debitTxnCode.getValidatedValue());
+			otherentry.setDerivedTxnRef(aJVPostingEntry.getTxnReference());
+			otherentry.setDebitAccount(otherentry.getAccount());
 		}
 		return otherentry;
 	}
