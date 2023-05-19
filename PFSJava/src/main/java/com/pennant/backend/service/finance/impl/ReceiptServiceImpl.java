@@ -4514,7 +4514,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE || receiptPurpose == ReceiptPurpose.EARLYSTLENQ) {
+		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE || receiptPurpose == ReceiptPurpose.EARLYRPY) {
 			if (DateUtil.compare(valueDate, fm.getFinStartDate()) < 0) {
 				setError(schdData, "RU0053", DateUtil.formatToLongDate(valueDate),
 						DateUtil.formatToLongDate(fm.getFinStartDate()));
@@ -8179,11 +8179,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		logMsg.append("\n");
 		logMsg.append("=======================================================\n");
 		logMsg.append("Error-Code: ").append(error.getCode()).append("\n");
-		logMsg.append("Error-Message: ").append(error.getMessage()).append("\n");
+		logMsg.append("Error-Message: ").append(error.getError()).append("\n");
 		logMsg.append("=======================================================");
 		logMsg.append("\n");
 
-		logger.error(Literal.EXCEPTION, logMsg.toString());
+		logger.error(Literal.EXCEPTION.concat(logMsg.toString()));
 
 		schdData.setErrorDetail(error);
 	}

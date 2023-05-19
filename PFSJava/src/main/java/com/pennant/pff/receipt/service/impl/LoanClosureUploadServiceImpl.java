@@ -45,6 +45,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennanttech.pff.receipt.constants.AllocationType;
 
 public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosureUpload> {
 	private static final Logger logger = LogManager.getLogger(LoanClosureUploadServiceImpl.class);
@@ -223,6 +224,10 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		}
 
 		rud.setListAllocationDetails(list);
+
+		if (!list.isEmpty()) {
+			rud.setAllocationType(AllocationType.MANUAL);
+		}
 
 		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
 

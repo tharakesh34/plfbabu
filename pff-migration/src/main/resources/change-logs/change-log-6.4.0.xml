@@ -18738,4 +18738,24 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#227176_pre" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'loan_cancel_uploads');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#227176" author="Poojitha.M">
+		<modifyDataType tableName="LOAN_CANCEL_UPLOADS" columnName="CancelType" newDataType="varchar(2)"/>
+	</changeSet>
+	
+	<changeSet id="PSD#227176_post" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'loan_cancel_uploads');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
