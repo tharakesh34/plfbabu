@@ -215,4 +215,38 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 			return null;
 		}
 	}
+
+	@Override
+	public LienHeader getLienByAccAndStatus(String accnumber, Boolean isActive) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate,");
+		sql.append(" DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus");
+		sql.append(" From  Lien_Header");
+		sql.append(" Where AccNumber = ? and LienStatus = ? ");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				LienHeader lu = new LienHeader();
+
+				lu.setId(rs.getLong("ID"));
+				lu.setLienID(rs.getLong("LienID"));
+				lu.setReference(rs.getString("Reference"));
+				lu.setAccountNumber(rs.getString("AccNumber"));
+				lu.setMarking(rs.getString("Marking"));
+				lu.setMarkingDate(rs.getTimestamp("MarkingDate"));
+				lu.setDemarking(rs.getString(("DeMarking")));
+				lu.setDemarkingDate(rs.getDate("DemarkingDate"));
+				lu.setLienReference(rs.getString("LienReference"));
+				lu.setLienStatus(rs.getBoolean("LienStatus"));
+				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				return lu;
+
+			}, accnumber, isActive);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

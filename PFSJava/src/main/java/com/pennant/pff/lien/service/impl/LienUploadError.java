@@ -23,13 +23,13 @@ public enum LienUploadError {
 
 	LUOU_109("Lien should be marked to Demark the Lien"),
 
-	LUOU_110("Lien is marked cannot mark again"),
-
-	LUOU_111("Lien is demarked cannot demark again"),
+	LUOU_110("Lien already Exists with lien id %s against the reference and account"),
 
 	LUOU_112("Account Number cannot be empty"),
 
-	LUOU_113("Source cannot be empty");
+	LUOU_113("Source cannot be empty"),
+
+	LUOU_114("Lien Not Exists against the reference and account");
 
 	private String description;
 

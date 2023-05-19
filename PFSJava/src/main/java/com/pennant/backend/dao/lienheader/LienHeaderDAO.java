@@ -20,4 +20,6 @@ public interface LienHeaderDAO {
 
 	List<LienHeader> getLienHeaderList(String finReference);
 
+	LienHeader getLienByAccAndStatus(String accnumber, Boolean isActive);
+
 }

@@ -88,17 +88,25 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 		}
 
 		List<LienDetails> lu = lienDetailsDAO.getLienDtlsByRefAndAcc(detail.getReference(), detail.getAccNumber());
+		boolean isExists = false;
 
 		for (LienDetails lienDetails : lu) {
 			if (lienDetails != null && lienDetails.getMarking() != null) {
 				if (detail.getAction().equals("Y") && lienDetails.isLienStatus()) {
-					setError(detail, LienUploadError.LUOU_110);
+					setError(detail, LienUploadError.LUOU_110, String.valueOf(lienDetails.getLienID()));
 					return;
 				} else if (detail.getAction().equals("N") && !lienDetails.isLienStatus()) {
-					setError(detail, LienUploadError.LUOU_111);
+					setError(detail, LienUploadError.LUOU_110, String.valueOf(lienDetails.getLienID()));
 					return;
+				} else if (detail.getAction().equals("N") && detail.getReference().equals(lienDetails.getReference())) {
+					isExists = true;
 				}
 			}
+		}
+
+		if (!isExists) {
+			setError(detail, LienUploadError.LUOU_114);
+			return;
 		}
 
 		setSuccesStatus(detail);
@@ -346,6 +354,10 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 	private void setError(LienUpload detail, LienUploadError error) {
 		setFailureStatus(detail, error.name(), error.description());
+	}
+
+	private void setError(LienUpload detail, LienUploadError error, String arg) {
+		setFailureStatus(detail, error.name(), String.format(error.description(), arg));
 	}
 
 	private LienDetails getLienDetails(FileUploadHeader header, LienUpload lienup, Long id) {

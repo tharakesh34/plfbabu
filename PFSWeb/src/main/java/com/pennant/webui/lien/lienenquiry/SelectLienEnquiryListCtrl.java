@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +22,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.ExtendedCombobox;
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -37,7 +35,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 	private static final Logger logger = LogManager.getLogger(SelectLienEnquiryListCtrl.class);
 
 	protected Window windowSelectLienEnquiryList;
-	protected ExtendedCombobox finReference;
+	protected Textbox finReference;
 	protected Button btnProceed;
 	private boolean isModelWindow = false;
 	private String finRefValue;
@@ -93,12 +91,6 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 			this.finReference.setReadonly(true);
 		} else {
 			accNumber.setDisabled(true);
-			this.finReference.setMandatoryStyle(true);
-			this.finReference.setModuleName("FinanceDetail");
-			this.finReference.setValueColumn("FinReference");
-			this.finReference.setDescColumn("FinType");
-			this.finReference.setValidateColumns(new String[] { "FinReference" });
-
 			logger.debug(Literal.LEAVING);
 		}
 	}
@@ -135,7 +127,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 
 		List<LienDetails> lien = lienDetailsDAO.getLienDtlsByRefAndAcc(finReference, accountNumber);
 
-		if (CollectionUtils.isEmpty(lien)) {
+		if (lien == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
@@ -161,7 +153,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		doRemoveValidation();
 
 		this.finReference.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_SelectLienEnquiryList_finReference.value"), null, true, true));
+				Labels.getLabel("label_SelectLienEnquiryList_finReference.value"), null, true, false));
 		this.accNumber.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_SelectLienEnquiryList_accNum.value"), null, true, false));
 
@@ -184,8 +176,8 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 
 		try {
 			this.finRefValue = "";
-			if (!this.finReference.isReadonly())
-				this.finRefValue = this.finReference.getValidatedValue();
+			if (!this.finReference.isDisabled())
+				this.finRefValue = this.finReference.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -215,7 +207,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		this.accNumber.setDisabled(true);
-		this.finReference.setButtonDisabled(false);
+		this.finReference.setDisabled(false);
 		this.accNumber.setValue("");
 		this.accNumber.setConstraint("");
 		this.accNumber.setReadonly(true);
@@ -233,7 +225,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 		this.accNumber.setDisabled(false);
 		this.finReference.setValue("");
 		this.finReference.setConstraint("");
-		this.finReference.setButtonDisabled(true);
+		this.finReference.setDisabled(true);
 
 		logger.debug(Literal.LEAVING);
 	}

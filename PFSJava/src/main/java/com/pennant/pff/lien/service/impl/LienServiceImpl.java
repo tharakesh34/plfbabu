@@ -60,7 +60,7 @@ public class LienServiceImpl implements LienService {
 		LienHeader lh = fd.getLienHeader();
 
 		if (!RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
-			lh = lienHeaderDAO.getLienByAcc(accNumber);
+			lh = lienHeaderDAO.getLienByAccAndStatus(accNumber, true);
 		}
 
 		long headerID = 0;
@@ -71,6 +71,10 @@ public class LienServiceImpl implements LienService {
 			lh.setDemarkingDate(null);
 			Date startDate = fd.getMandate().getStartDate();
 			lh.setMarkingDate(startDate == null ? appDate : startDate);
+
+			if (FinServiceEvent.ORG.equals(fm.getModuleDefiner())) {
+				lh.setMarkingDate(fm.getFinStartDate());
+			}
 
 			if (fm.getFinSourceID().equals(RequestSource.UPLOAD.name())) {
 				lh.setLienID(fd.getLienHeader().getLienID());
@@ -155,11 +159,6 @@ public class LienServiceImpl implements LienService {
 			}
 
 		}
-		/*
-		 * if ((fmBef != null && fm.getFinRepayMethod().equals(fmBef.getFinRepayMethod()) &&
-		 * InstrumentType.isSI(fm.getFinRepayMethod()) &&
-		 * FinServiceEvent.RPYBASICMAINTAIN.equals(fm.getModuleDefiner()))) { return; }
-		 */
 
 		LienDetails lu = getLienDetails(lh, fm);
 		lu.setHeaderID(headerID);
@@ -167,6 +166,9 @@ public class LienServiceImpl implements LienService {
 		lu.setLienReference(lh.getLienReference());
 		Date startDate = fd.getMandate().getStartDate();
 		lu.setMarkingDate(startDate == null ? appDate : startDate);
+		if (FinServiceEvent.ORG.equals(fm.getModuleDefiner())) {
+			lu.setMarkingDate(fm.getFinStartDate());
+		}
 		lu.setDemarking(lh.getDemarking());
 		lu.setDemarkingDate(lh.getDemarkingDate());
 		lu.setMarking(lh.getMarking());
