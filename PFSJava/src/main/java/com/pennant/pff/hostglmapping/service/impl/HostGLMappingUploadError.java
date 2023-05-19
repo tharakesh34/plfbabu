@@ -15,8 +15,6 @@ public enum HostGLMappingUploadError {
 
 	HGL08("[Allow Manual Entries] is not valid, possible value should be either of the following {N/D/C/B}."),
 
-	HGL09("[GL Description] is not valid."),
-
 	HGL10("[Opened Date] is not allowed Future Date."),
 
 	HGL11("[Host GL Code] is not valid. Allowed Characters are {a-z A-Z 0-9}.");

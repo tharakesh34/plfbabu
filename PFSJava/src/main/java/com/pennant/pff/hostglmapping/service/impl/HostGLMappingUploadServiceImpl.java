@@ -136,7 +136,7 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 			return;
 		}
 
-		String hostAccountregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_DESCRIPTION);
+		String hostAccountregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM);
 		if (StringUtils.isNotBlank(hostAccount) && !Pattern.compile(hostAccountregex).matcher(hostAccount).matches()) {
 			setError(detail, HostGLMappingUploadError.HGL11);
 			return;
@@ -145,13 +145,6 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 		String ame = detail.getAllowManualEntries();
 		if (StringUtils.isNotBlank(ame) && TransactionType.object(ame) == null) {
 			setError(detail, HostGLMappingUploadError.HGL08);
-			return;
-		}
-
-		String descregex = PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_DESCRIPTION);
-		if (StringUtils.isNotBlank(detail.getGLDescription())
-				&& !Pattern.compile(descregex).matcher(detail.getGLDescription()).matches()) {
-			setError(detail, HostGLMappingUploadError.HGL09);
 			return;
 		}
 
