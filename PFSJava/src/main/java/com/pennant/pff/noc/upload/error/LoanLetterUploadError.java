@@ -3,19 +3,19 @@ package com.pennant.pff.noc.upload.error;
 public enum LoanLetterUploadError {
 	LOAN_LTR_01("Enter valid loan reference."),
 
-	LOAN_LTR_02("Allowed values For report are NOCLTR/CANCLLTR/CLOSELTR."),
+	LOAN_LTR_02("Allowed values For LETTERTYPE are NOCLTR/CANCLLTR/CLOSELTR."),
 
-	LOAN_LTR_03("Allowed values For mode are EMAIL/COURIER"),
+	LOAN_LTR_03("Allowed values For Mode are EMAIL/COURIER"),
 
-	LOAN_LTR_04("Allowed values for override charges are Y/N"),
+	LOAN_LTR_04("Allowed values for Waiver charges are Y/N"),
 
 	LOAN_LTR_05("Active loans are not eligible for issuance for NOC or Closure Letter or Cancellation Letter."),
 
-	LOAN_LTR_06("letter type {NOC/CLOSURE} are not allowed for 'CANCELLED LOANS'."),
+	LOAN_LTR_06("Letter type {NOC/CLOSURE} are not allowed for 'CANCELLED LOANS'."),
 
 	LOAN_LTR_07("Cancellation letter is not allowed for this LOAN."),
 
-	LOAN_LTR_08("Specified report is not mapped in 'LOAN TYPE LETTER MAPPING' master."),
+	LOAN_LTR_08("Specified LETTERTYPE is not mapped in 'LOAN TYPE LETTER MAPPING' master."),
 
 	LOAN_LTR_09("Waiver charges is not configured for the loan"),
 
