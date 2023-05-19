@@ -35,10 +35,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ProvisionCalculationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
-import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -73,9 +71,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	private static final Logger logger = LogManager.getLogger(ProvisionServiceImpl.class);
 
 	private ProvisionDAO provisionDAO;
-	private ProvisionMovementDAO provisionMovementDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private ProvisionCalculationUtil provisionCalculationUtil;
 
 	public ProvisionServiceImpl() {
 		super();
@@ -470,12 +465,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		return aeEvent.getLinkedTranId();
 	}
 
-	private void saveProvisionMovement(Provision provision) {
-		provision.setProvisionId(provision.getId());
-		provision.setId(Long.MIN_VALUE);
-		provisionDAO.saveMovements(provision, TableType.MAIN_TAB);
-	}
-
 	@Override
 	public List<ProvisionAmount> getProvisionAmounts(long id, TableType type) {
 		return provisionDAO.getProvisionAmounts(id, type);
@@ -485,16 +474,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		this.provisionDAO = provisionDAO;
 	}
 
-	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
-		this.provisionMovementDAO = provisionMovementDAO;
-	}
-
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
-
-	public void setProvisionCalculationUtil(ProvisionCalculationUtil provisionCalculationUtil) {
-		this.provisionCalculationUtil = provisionCalculationUtil;
-	}
-
 }

@@ -5125,7 +5125,6 @@
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>

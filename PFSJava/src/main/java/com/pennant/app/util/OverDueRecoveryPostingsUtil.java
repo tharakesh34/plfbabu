@@ -60,10 +60,8 @@ import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.applicationmaster.Assignment;
@@ -102,7 +100,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(OverDueRecoveryPostingsUtil.class);
 
-	private FinanceMainDAO financeMainDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
@@ -110,7 +107,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private AssignmentDAO assignmentDAO;
 	private AssignmentDealDAO assignmentDealDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
-	private FinanceTypeDAO financeTypeDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
@@ -1008,7 +1004,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		BigDecimal value = ((odCalculatedBalance.multiply(odPercent))
 				.multiply(CalculationUtil.getInterestDays(odEffectiveDate, dateValueDate, profitDayBasis)))
-						.divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
+				.divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
 
 		return value.setScale(0, RoundingMode.HALF_DOWN);
 	}
@@ -1053,9 +1049,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			// ### 06-11-2015 End
 			BigDecimal penaltyPaidNow = BigDecimal.ZERO;
 			boolean isPaidClear = false;
-
-			// Account Type Check
-			String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
 
 			paidAmount = penaltyPaidNow;
 			if (isPayNow) {
@@ -1158,10 +1151,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		return netAmount;
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
@@ -1188,10 +1177,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 	public void setAssignmentDealDAO(AssignmentDealDAO assignmentDealDAO) {
 		this.assignmentDealDAO = assignmentDealDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
 	}
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {

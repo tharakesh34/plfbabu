@@ -218,7 +218,6 @@
 
 	<!-- Overdue Charge Recovery Posting Util -->
 	<bean id="recoveryPostingsUtil" class="com.pennant.app.util.OverDueRecoveryPostingsUtil">
-		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
@@ -227,7 +226,6 @@
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
-		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
