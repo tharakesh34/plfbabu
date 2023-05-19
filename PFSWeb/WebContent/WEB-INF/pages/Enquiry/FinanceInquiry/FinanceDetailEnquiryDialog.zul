@@ -419,6 +419,18 @@
 												</hbox>
 											</row>
 											<row>
+												<label id="label_FinanceMainDialog_BlockAutoGenLtr" value="${c:l('label_FinanceMainDialog_BlockAutoGenLtr.value')}"/>
+												<hbox>
+													<space spacing="2px" />
+													<uppercasebox id="blockAutoGenLtr" width="170px" />
+												</hbox>
+												<label id="label_FinanceMainDialog_RemarksForBlock" value="${c:l('label_FinanceMainDialog_RemarksForBlock.value')}"/>
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="remarksForBlock" width="170px" />
+												</hbox>
+											</row>
+											<row>
 												<label value="${c:l('label_FinanceMainDialog_CreatedOn.value')}" />
 												<hbox>
 													<space spacing="2px" />

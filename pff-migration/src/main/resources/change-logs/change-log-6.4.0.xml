@@ -18721,5 +18721,11 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="ST#1561.64" author="sainaveen.y">
+		<addColumn tableName="Letter_Blocking">
+			<column name="Remarks" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog> 

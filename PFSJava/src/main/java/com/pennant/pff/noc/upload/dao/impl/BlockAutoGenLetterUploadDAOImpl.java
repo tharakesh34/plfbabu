@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.eod.constants.EodConstants;
@@ -15,6 +16,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 
 public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLetterUpload>
 		implements BlockAutoGenLetterUploadDAO {
@@ -147,8 +149,8 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 	@Override
 	public void save(BlockAutoGenLetterUpload bu) {
 		StringBuilder sql = new StringBuilder("Insert into Letter_Blocking");
-		sql.append(" (FinID, CreatedOn)");
-		sql.append(" Values(?, ?)");
+		sql.append(" (FinID, CreatedOn, Remarks)");
+		sql.append(" Values(?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 		try {
@@ -156,6 +158,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 				ps.setObject(1, bu.getReferenceID());
 				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+				ps.setString(3, bu.getRemarks());
 
 			});
 
@@ -183,6 +186,20 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
+		}
+	}
+
+	@Override
+	public String getRemarks(Long finID) {
+		String sql = "Select Remarks From Letter_Blocking Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, String.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
 		}
 	}
 

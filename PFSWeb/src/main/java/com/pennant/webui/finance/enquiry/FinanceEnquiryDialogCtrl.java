@@ -116,6 +116,7 @@ import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -126,6 +127,7 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.noc.upload.dao.BlockAutoGenLetterUploadDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.service.SettlementService;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -578,8 +580,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox odMinAmount;
 	protected Label label_FinanceTypeDialog_ODMinAmount;
 	protected Row row_odMinAmount;
+	protected Uppercasebox blockAutoGenLtr;
+	protected Textbox remarksForBlock;
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private BlockAutoGenLetterUploadDAO blockAutoGenLetterUploadDAO;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -1201,6 +1206,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.getHoldStatus() != null && aFinanceMain.getHoldStatus().equals("H")) {
 				this.blockRefunds.setValue(aFinanceMain.getHoldStatus());
 				this.reasonForBlock.setValue(aFinanceMain.getReason());
+			}
+			String remarks = blockAutoGenLetterUploadDAO.getRemarks(aFinanceMain.getFinID());
+			if (blockAutoGenLetterUploadDAO.isValidateAction(aFinanceMain.getFinID())) {
+				this.blockAutoGenLtr.setValue(NOCConstants.BLOCK);
+			}
+			if (remarks != null) {
+				this.remarksForBlock.setValue(remarks);
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
@@ -2242,6 +2254,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.createdOn.setDisabled(true);
 		this.approvedBy.setReadonly(true);
 		this.approvedOn.setDisabled(true);
+		this.blockAutoGenLtr.setReadonly(true);
+		this.remarksForBlock.setReadonly(true);
 
 	}
 
@@ -2641,5 +2655,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setBlockAutoLetterGenerateUploadDAO(BlockAutoGenLetterUploadDAO blockAutoLetterGenerateUploadDAO) {
+		this.blockAutoGenLetterUploadDAO = blockAutoLetterGenerateUploadDAO;
 	}
 }

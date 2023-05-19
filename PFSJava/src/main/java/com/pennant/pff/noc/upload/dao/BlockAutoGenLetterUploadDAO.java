@@ -22,4 +22,6 @@ public interface BlockAutoGenLetterUploadDAO {
 
 	void savebyLog(BlockAutoGenLetterUpload bu);
 
+	String getRemarks(Long finID);
+
 }
