@@ -18758,4 +18758,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#1468.11" author="saikrishna.b">
+		<sql>
+		 	<![CDATA[
+		 		UPDATE DATA_ENGINE_CONFIG SET MAXRECORDS = 10000 WHERE NAME = 'BRANCH_CHANGE_UPLOAD';
+		 	]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 

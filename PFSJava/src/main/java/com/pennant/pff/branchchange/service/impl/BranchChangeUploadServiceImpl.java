@@ -15,6 +15,7 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.branchchange.upload.BranchChangeUpload;
@@ -42,6 +43,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	private BranchDAO branchDAO;
 	private BranchMigrationDAO branchMigrationDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
+	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
 	@Override
 	protected BranchChangeUpload getDetail(Object object) {
@@ -88,7 +90,9 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		detail.setReferenceID(finID);
 
 		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
-		if (fm.getRcdMaintainSts() != null || fm.isUnderSettlement()) {
+		boolean isundermaintainance = finServiceInstrutionDAO.isFinServiceInstExists(finID, "_temp");
+
+		if (isundermaintainance || fm.isUnderSettlement()) {
 			setError(detail, BranchChangeUploadError.BC_07);
 			return;
 		}
@@ -334,6 +338,11 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	@Autowired
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }
