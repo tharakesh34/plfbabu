@@ -2577,7 +2577,7 @@ public class RepaymentProcessUtil {
 		}
 
 		dueDataDtls = dueDataDtls.stream().sorted((d1, d2) -> DateUtil.compare(d1.getDueDate(), d2.getDueDate()))
-				.toList();
+				.collect(Collectors.toList());
 
 		setFinDueDataByHierarchy(dueDataDtls, repayHierarchy);
 
