@@ -30,9 +30,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadTypes;
-import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.provision.ProvisionUploadError;
-import com.pennanttech.pff.provision.dao.ProvisionDAO;
 import com.pennanttech.pff.provision.dao.ProvisionUploadDAO;
 import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.provision.model.ProvisionUpload;
@@ -45,8 +43,6 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 	private ProvisionService provisionService;
 	private ProvisionUploadDAO provisionUploadDAO;
 	private FinanceMainDAO financeMainDAO;
-	private ProvisionDAO provisionDao;
-	private AssetClassificationDAO assetClassificationDAO;
 
 	@Override
 	protected ProvisionUpload getDetail(Object object) {
@@ -132,17 +128,6 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		TransactionStatus txStatus = getTransactionStatus();
 		AuditHeader auditHeader;
 		try {
-
-			/*
-			 * List<NpaProvisionStage> npaDetails = provisionDao.getNPAProvisionDetails(mp.getFinID());
-			 * 
-			 * 
-			 * for (NpaProvisionStage npa : npaDetails) { npa.setEffFinReference(npa.getFinReference()); }
-			 * 
-			 * assetClassificationDAO.deleteStage(detail.getReferenceID());
-			 * 
-			 * assetClassificationDAO.saveStage(npaDetails);
-			 */
 
 			Provision p = provisionService.getProvision(detail.getReferenceID(), header.getAppDate(), mp);
 
@@ -373,16 +358,6 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 	@Autowired
 	public void setProvisionUploadDAO(ProvisionUploadDAO provisionUploadDAO) {
 		this.provisionUploadDAO = provisionUploadDAO;
-	}
-
-	@Autowired
-	public void setProvisionDao(ProvisionDAO provisionDao) {
-		this.provisionDao = provisionDao;
-	}
-
-	@Autowired
-	public void setAssetClassificationDAO(AssetClassificationDAO assetClassificationDAO) {
-		this.assetClassificationDAO = assetClassificationDAO;
 	}
 
 }
