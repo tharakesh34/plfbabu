@@ -238,7 +238,6 @@
 										<hbox>
 											<currencyBox id="manProvisionAmount" width="100px" visible="true"
 												disabled="true" removeSpace = "true"/>
-											<label id="amanProvisionAmount" width="100px" visible="false" />
 										</hbox>
 									</cell>
 								</row>

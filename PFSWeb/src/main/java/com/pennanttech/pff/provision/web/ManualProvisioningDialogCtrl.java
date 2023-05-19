@@ -25,7 +25,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Intbox;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -81,7 +80,6 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	protected Checkbox manualProvision;
 	protected Decimalbox manProvisionPercentage;
 	protected CurrencyBox manProvisionAmount;
-	protected Label amanProvisionAmount;
 	protected Button btnSearchCustomer;
 
 	private Provision provision;
@@ -336,8 +334,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 			manProvAmt = osPrincipal.multiply(manProvPer.divide(new BigDecimal(100)));
 		}
 
-		this.amanProvisionAmount.setVisible(true);
-		this.amanProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(manProvAmt, 2)));
+		this.manProvisionAmount.setVisible(true);
+		this.manProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(manProvAmt, 2)));
 		this.recordStatus.setValue(p.getRecordStatus());
 
 		Long manualAssetClassID = p.getManualAssetClassID();
@@ -806,7 +804,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	public void onChange$manProvisionPercentage(Event event) throws Exception {
 		BigDecimal manPer = this.manProvisionPercentage.getValue();
 
-		this.amanProvisionAmount.setValue("0");
+		this.manProvisionAmount.setValue("0");
 		this.manProvisionPercentage.setErrorMessage("");
 
 		if (manPer.compareTo(BigDecimal.ZERO) < 0 || manPer.compareTo(new BigDecimal("100")) > 0) {
@@ -820,8 +818,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		BigDecimal amount = osPrincipal.multiply(manPer.divide(new BigDecimal(100)));
 		this.manProvisionAmount.setValue(BigDecimal.ZERO);
-		this.amanProvisionAmount.setVisible(true);
-		this.amanProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(amount, format)));
+		this.manProvisionAmount.setVisible(true);
+		this.manProvisionAmount.setValue(String.valueOf(PennantApplicationUtil.formateAmount(amount, format)));
 	}
 
 	private Long getSelectedValue(Combobox combobox) {
