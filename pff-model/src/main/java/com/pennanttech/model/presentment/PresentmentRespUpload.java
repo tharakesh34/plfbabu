@@ -2,7 +2,6 @@ package com.pennanttech.model.presentment;
 
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.upload.model.UploadDetails;
 
@@ -12,15 +11,10 @@ public class PresentmentRespUpload extends UploadDetails {
 	private String presentmentReference;
 	private String hostReference;
 	private String instalmentNo;
-	@JsonProperty("AMOUNT_CLEARED")
 	private String amountCleared;
-	@JsonProperty("CLEARING_DATE")
 	private Date clearingDate;
-	@JsonProperty("CLEARING_STATUS")
 	private String clearingStatus;
-	@JsonProperty("BOUNCE_CODE")
 	private String bounceCode;
-	@JsonProperty("BOUNCE_REMARKS")
 	private String bounceRemarks;
 	private String reasonCode;
 	private String bankCode;
@@ -32,7 +26,6 @@ public class PresentmentRespUpload extends UploadDetails {
 	private String bankAddress;
 	private String accountNumber;
 	private String ifscCode;
-	@JsonProperty("UMRN_NO")
 	private String umrnNo;
 	private String micrCode;
 	private String chequeSerialNo;

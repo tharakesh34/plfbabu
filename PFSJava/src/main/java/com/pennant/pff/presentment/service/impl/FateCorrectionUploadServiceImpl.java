@@ -243,6 +243,12 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 				PresentmentRespUpload.class);
 
 		presentment.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		presentment.setAmountCleared(ObjectUtil.valueAsString(paramSource.getValue("AMOUNT_CLEARED")));
+		presentment.setClearingDate(ObjectUtil.valueAsDate(paramSource.getValue("CLEARING_DATE")));
+		presentment.setUmrnNo(ObjectUtil.valueAsString(paramSource.getValue("UMRN_NO")));
+		presentment.setClearingStatus(ObjectUtil.valueAsString(paramSource.getValue("CLEARING_STATUS")));
+		presentment.setBounceCode(ObjectUtil.valueAsString(paramSource.getValue("BOUNCE_CODE")));
+		presentment.setBounceRemarks(ObjectUtil.valueAsString(paramSource.getValue("BOUNCE_REMARKS")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
