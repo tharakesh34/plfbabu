@@ -240,7 +240,10 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 		RePresentmentUploadDetail representment = (RePresentmentUploadDetail) ObjectUtil.valueAsObject(paramSource,
 				RePresentmentUploadDetail.class);
 
+		String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
 		representment.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		representment.setDueDate(ObjectUtil.valueAsDate(paramSource.getValue("dueDate")));
+		representment.setAcBounce(acBounce);
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
