@@ -9332,7 +9332,6 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
-		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
 	</bean>

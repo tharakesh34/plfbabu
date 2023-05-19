@@ -65,7 +65,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -239,7 +238,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private TdsReceivablesTxnService tdsReceivablesTxnService;
 	protected boolean customer360;
 	private boolean isModelWindow = false;
-	private VASRecordingDAO vASRecordingDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDao;
@@ -348,10 +346,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for appending Child window on selection of Menu Enquiry
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doFillDialogWindow() throws InterruptedException {
+	public void doFillDialogWindow() {
 		logger.debug("Entering");
 
 		FinanceEnquiry enquiry = getFinanceEnquiry();
@@ -1142,9 +1138,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for OnClick Event on Menu Item Enqiries
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onFilterMenuItem(ForwardEvent event) throws InterruptedException {
+	public void onFilterMenuItem(ForwardEvent event) {
 		if (event.getData() != null) {
 			ValueLabel enquiry = (ValueLabel) event.getData();
 			this.enquiryType = enquiry.getValue();
@@ -1155,9 +1150,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate, int reportType,
-			String userName, Window window) throws InterruptedException {
+	public boolean generateReport(String reportName, Object object, List<Object> listData, boolean isRegenerate,
+			int reportType, String userName, Window window) {
 
 		if (isRegenerate) {
 			try {
@@ -1172,7 +1166,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 
-	private void createReport(String reportName, Object object, List listData, String userName, Window dialogWindow) {
+	private void createReport(String reportName, Object object, List<Object> listData, String userName,
+			Window dialogWindow) {
 		logger.debug("Entering");
 		try {
 			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
@@ -1207,9 +1202,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * When user clicks on button "button_Print" button
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnPrint(Event event) throws InterruptedException {
+	public void onClick$btnPrint(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
@@ -1324,10 +1318,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 						// PSD#183407
 						fee.setFeeTypeDesc(fee.getVasReference());
-						/*
-						 * String productCode = vASRecordingDAO.getProductCodeByReference(fee.getFinReference(),
-						 * fee.getVasReference()); fee.setFeeTypeDesc(productCode);
-						 */
 					}
 				}
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
@@ -1359,9 +1349,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnClose(Event event) throws InterruptedException {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -1539,10 +1528,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
-		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
 	@Autowired

@@ -67,7 +67,6 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
-import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -152,7 +151,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private ReceiptCalculator receiptCalculator;
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private FinanceProfitDetailDAO profitDetailsDAO;
-	private PresentmentDetailDAO presentmentDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private LoanPaymentService loanPaymentService;
@@ -1930,7 +1928,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		detailsMap.put("bounceCharge_UGST_W", bounceUGST);
 		detailsMap.put("bounceCharge_CESS_W", bounceCESS);
 		detailsMap.put("bounceChargeWaived", bounceWithGst);
-		// TODO add Cess
 
 		detailsMap.put("LPP_CGST_W", lppCGST);
 		detailsMap.put("LPP_SGST_W", lppSGST);
@@ -2726,10 +2723,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
-	}
-
-	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {
-		this.presentmentDetailDAO = presentmentDetailDAO;
 	}
 
 	public void setManualAdviseList(List<ManualAdvise> manualAdviseList) {

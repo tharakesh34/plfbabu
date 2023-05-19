@@ -117,7 +117,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	private List<Filter> filterList = new ArrayList<Filter>();
 	private String whereClause = null;
 	protected Button btnClear;
-	private String finDivision = null;
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
 
 	/**
@@ -183,10 +182,6 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 
 		if (arguments.containsKey("DialogCtrl")) {
 			setDialogCtrl(arguments.get("DialogCtrl"));
-		}
-
-		if (arguments.containsKey("finDivision")) {
-			finDivision = (String) arguments.get("finDivision");
 		}
 
 		if (arguments.containsKey("filtersList")) {

@@ -2747,7 +2747,6 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="finOptionService" ref="finOptionService" />
 		<property name="dpdEnquiryService" ref="dpdEnquiryService" />
-		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 		<property name="overdrafLoanService" ref="overdrafLoanService" />
 	</bean>
 

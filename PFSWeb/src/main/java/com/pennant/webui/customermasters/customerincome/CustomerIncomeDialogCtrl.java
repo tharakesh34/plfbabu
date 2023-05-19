@@ -132,9 +132,7 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	private boolean custIsJointCust = false;
 	private String userRole = "";
 	private String inputSource = "customer";
-	private String finReference;
 	private Set<String> coApplicants;
-	private boolean workflow = false;
 	private boolean isFinanceProcess = false;
 
 	/**
@@ -225,10 +223,6 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 			}
 		}
 
-		if (getCustomerDialogCtrl() != null && getCustomerDialogCtrl().getFinancedetail() == null) {
-			workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
-		}
-
 		if (arguments.containsKey("samplingDialogCtrl")) {
 			row_custType.setVisible(true);
 			inputSource = "sampling";
@@ -237,9 +231,6 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 
 			if (arguments.containsKey("ccyFormatter")) {
 				ccyFormatter = (Integer) arguments.get("ccyFormatter");
-			}
-			if (arguments.containsKey("finReference")) {
-				finReference = (String) arguments.get("finReference");
 			}
 			if (arguments.containsKey("coApplicants")) {
 				coApplicants = (Set<String>) arguments.get("coApplicants");
@@ -504,18 +495,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 		}
 
 		aCustomerIncome.setJointCust(this.jointCust.isChecked());
-		// try {
-		// aCustomerIncome.setLovDescCustIncomeCountryName(this.lovDescCustIncomeCountryName.getValue());
-		// aCustomerIncome.setCustIncomeCountry(this.custIncomeCountry.getValue());
-		// } catch (WrongValueException we) {
-		// wve.add(we);
-		// }
 
-		try {
-			aCustomerIncome.setInputSource(inputSource);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		aCustomerIncome.setInputSource(inputSource);
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
