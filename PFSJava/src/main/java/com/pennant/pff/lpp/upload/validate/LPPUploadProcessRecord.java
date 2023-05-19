@@ -142,8 +142,6 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 			validate(header, lpp);
 
-			setSuccesStatus(lpp);
-
 			lppUploadDAO.save(lpp);
 
 			if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
@@ -210,7 +208,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			setError(detail, LPPUploadError.LPP_13);
 			return;
 		}
-
+		setSuccesStatus(detail);
 	}
 
 	@Autowired
@@ -298,7 +296,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (includeGraceDays && (detail.getGraceDays() <= 0 || detail.getGraceDays() > 999)) {
+		if (includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
 			setError(detail, LPPUploadError.LPP_15);
 			return;
 		}
@@ -306,10 +304,11 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 		if (allowWaiver && StringUtils.isBlank(String.valueOf(maxWaiver))) {
 			setError(detail, LPPUploadError.LPP_18);
 			return;
-		} else /*
-				 * if (allowWaiver && (maxWaiver.compareTo(BigDecimal.ZERO) <= 0 || maxWaiver.compareTo(new
-				 * BigDecimal(100)) > 0)) { setError(detail, LPPUploadError.LPP_10); return; }
-				 */
+		} else if (allowWaiver
+				&& (maxWaiver.compareTo(BigDecimal.ZERO) <= 0 || maxWaiver.compareTo(new BigDecimal(100)) > 0)) {
+			setError(detail, LPPUploadError.LPP_10);
+			return;
+		}
 
 		if (StringUtils.isNotBlank(String.valueOf(maxWaiver)) && !allowWaiver
 				&& maxWaiver.compareTo(BigDecimal.ZERO) > 0) {

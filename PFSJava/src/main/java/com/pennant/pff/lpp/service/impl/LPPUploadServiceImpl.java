@@ -306,9 +306,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
 		LPPUpload detail = getDetail(object);
-
 		lPPUploadProcessRecord.validate(header, detail);
-		setSuccesStatus(detail);
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {
