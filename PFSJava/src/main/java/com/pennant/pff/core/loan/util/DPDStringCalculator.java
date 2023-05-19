@@ -82,12 +82,12 @@ public class DPDStringCalculator {
 		int weekBusDay = getWeekDay(nextBusinessDate);
 		String frqlable = FrequencyUtil.getRepayFrequencyLabel(fm.getRepayFrq());
 
-		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0 || considerDPDForMatured(fm, schedules)) {
-			frequencyDay = dueDay;
-		}
-
 		if (FrequencyUtil.WEEKLY.equals(frqlable)) {
 			dueDay = weekBusDay;
+		}
+
+		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0 || considerDPDForMatured(fm, schedules)) {
+			frequencyDay = dueDay;
 		}
 
 		if (frequencyDay == dueDay) {
