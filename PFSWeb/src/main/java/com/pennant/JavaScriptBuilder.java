@@ -138,6 +138,8 @@ public class JavaScriptBuilder extends Groupbox {
 	private List<RBFieldDetail> objectFieldList = null;// retrieve values
 	private List<JSRuleReturnType> jsRuleReturnTypeList = null;
 
+	private List<ValueLabel> closureTypeList = com.pennant.pff.receipt.ClosureType.getTypes();
+
 	protected Groupbox groupbox;
 	protected Toolbar toolbar;
 	protected Button btnValidate = new Button("GENERATE");
@@ -1340,6 +1342,11 @@ public class JavaScriptBuilder extends Groupbox {
 						comboBox = (Combobox) treeCell.getFellowIfAny(uUID + "_rightOperandType");
 						comboBoxValue = comboBox.getSelectedItem().getValue();
 
+						if (StringUtils.equals(((Combobox) operand).getSelectedItem().getValue(), "ClosureType")) {
+							excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , "
+									+ RuleConstants.DBVALUE + " , ";
+						}
+
 						fillComboBox(comboBox, comboBoxValue, operandTypesList, excludeFields);
 					}
 				} else if (StringUtils.equals(operandTypeValue, RuleConstants.GLOBALVAR)
@@ -1875,21 +1882,41 @@ public class JavaScriptBuilder extends Groupbox {
 
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand") instanceof Combobox) {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
-					for (int i = 0; i < this.objectFieldList.size(); i++) {
-						RBFieldDetail fieldDetails = this.objectFieldList.get(i);
+					String closureType = leftOperand.getSelectedItem().getValue();
 
-						comboitem = new Comboitem();
-						if (leftOperand.getSelectedIndex() != 0) {
-							if (leftOperand.getSelectedItem().getTooltiptext()
-									.contains(fieldDetails.getRbFldType().toUpperCase())) {
-								comboitem.setLabel(fieldDetails.getRbFldName() + "  -  " + fieldDetails.getRbFldDesc());
-								comboitem.setValue(fieldDetails.getRbFldName());
-								comboitem.setTooltiptext("Data Type :" + fieldDetails.getRbFldType().toUpperCase());
-								comboitem.setAttribute("FieldDetails", fieldDetails);
+					if (StringUtils.equals(closureType, "ClosureType")) {
+						for (int i = 0; i < this.closureTypeList.size(); i++) {
+							ValueLabel closureDetails = this.closureTypeList.get(i);
+
+							comboitem = new Comboitem();
+
+							if (leftOperand.getSelectedIndex() != 0) {
+
+								comboitem.setLabel(closureDetails.getValue());
+								comboitem.setValue(closureDetails.getValue());
 								operand.appendChild(comboitem);
-								if (StringUtils.trimToEmpty(value)
-										.equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
-									operand.setSelectedItem(comboitem);
+							}
+						}
+					} else {
+						for (int i = 0; i < this.objectFieldList.size(); i++) {
+							RBFieldDetail fieldDetails = this.objectFieldList.get(i);
+
+							comboitem = new Comboitem();
+
+							if (leftOperand.getSelectedIndex() != 0) {
+
+								if (leftOperand.getSelectedItem().getTooltiptext()
+										.contains(fieldDetails.getRbFldType().toUpperCase())) {
+									comboitem.setLabel(
+											fieldDetails.getRbFldName() + "  -  " + fieldDetails.getRbFldDesc());
+									comboitem.setValue(fieldDetails.getRbFldName());
+									comboitem.setTooltiptext("Data Type :" + fieldDetails.getRbFldType().toUpperCase());
+									comboitem.setAttribute("FieldDetails", fieldDetails);
+									operand.appendChild(comboitem);
+									if (StringUtils.trimToEmpty(value)
+											.equals(StringUtils.trimToEmpty(fieldDetails.getRbFldName()))) {
+										operand.setSelectedItem(comboitem);
+									}
 								}
 							}
 						}
