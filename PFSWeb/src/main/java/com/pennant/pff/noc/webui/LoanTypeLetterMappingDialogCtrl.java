@@ -352,12 +352,10 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			Clients.clearWrongValue(autoGeneration);
 			break;
 		case MODE:
-			boolean isAutoGen = ((Checkbox) getComponent(listItem, ListFields.AUTO_GENERATION.index()).getLastChild())
-					.isChecked();
 			Combobox mode = (Combobox) hbox.getLastChild();
 			mode.clearErrorMessage();
 			String modeVal = mode.getValue();
-			if (isAutoGen && PennantConstants.SELECT_LABEL.equals(modeVal)) {
+			if (PennantConstants.SELECT_LABEL.equals(modeVal)) {
 				throw new WrongValueException(mode, Labels.getLabel("FIELD_IS_MAND", new String[] { "Mode " }));
 			}
 			break;
