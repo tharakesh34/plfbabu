@@ -220,7 +220,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		try {
 			fd = receiptService.receiptTransaction(fsi);
 			transactionManager.commit(txStatus);
-		} catch (AppException e) {
+		} catch (Exception e) {
 			setFailureStatus(detail, e.getMessage());
 
 			if (txStatus != null) {
