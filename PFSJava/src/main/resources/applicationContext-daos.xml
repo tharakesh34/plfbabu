@@ -2051,7 +2051,6 @@
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="countryDAO" ref="countryDAO" />
 		<property name="empStsCodeDAO" ref="empStsCodeDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="sectorDAO" ref="sectorDAO" />
 		<property name="subSectorDAO" ref="subSectorDAO" />
 		<property name="customerCategoryDAO" ref="customerCategoryDAO" />
@@ -2083,7 +2082,6 @@
 		<property name="pinCodeDAO" ref="pinCodeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
-		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="customerService" ref="customerService" />
 		<property name="bankDetailDAO" ref="bankDetailDAO" />
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />

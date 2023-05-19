@@ -56,7 +56,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
@@ -64,7 +63,6 @@ import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
-import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
@@ -252,7 +250,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CountryDAO countryDAO;
 	private NationalityCodeDAO nationalityCodeDAO;
 	private EmpStsCodeDAO empStsCodeDAO;
-	private CurrencyDAO currencyDAO;
 	private SectorDAO sectorDAO;
 	private SubSectorDAO subSectorDAO;
 	private CustomerCategoryDAO customerCategoryDAO;
@@ -277,7 +274,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private PinCodeDAO pinCodeDAO;
 	private FinanceMainDAO financeMainDAO;
-	private CollateralSetupDAO collateralSetupDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private GenderDAO genderDAO;
 	private SalutationDAO salutationDAO;
@@ -8826,10 +8822,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.empStsCodeDAO = empStsCodeDAO;
 	}
 
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
-	}
-
 	public void setSectorDAO(SectorDAO sectorDAO) {
 		this.sectorDAO = sectorDAO;
 	}
@@ -8904,10 +8896,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
 	}
 
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {

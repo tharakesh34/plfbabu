@@ -362,7 +362,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		}
 
 		BigDecimal loanAmount = statementOfAccount.getLoanAmount();
-		String currentRateType = "";
+
 		if (financeProfitDetail != null) {
 
 			custId = financeProfitDetail.getCustId();
@@ -430,8 +430,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					if ((DateUtil.compare(finSchdDetail.getSchDate(), endDate) > 0)) {
 						break;
 					}
-
-					currentRateType = StringUtils.trimToEmpty(finSchdDetail.getBaseRate());
 
 					if ("H".equals(finSchdDetail.getBpiOrHoliday())) {
 						emiHoliday = emiHoliday + 1;
@@ -2061,8 +2059,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				if (StringUtils.isBlank(closingStatus)
 						|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
 								&& LPPExtension.LPP_DUE_CREATION_REQ) {
-					String event = "";
-
 					Date schdMonthEnd = DateUtil.getMonthEnd(finSchdDetail.getSchDate());
 
 					for (FinOverDueCharges odc : odcAmounts) {

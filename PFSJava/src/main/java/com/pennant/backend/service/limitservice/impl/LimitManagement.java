@@ -87,7 +87,6 @@ public class LimitManagement {
 
 		BigDecimal tranAmt = BigDecimal.ZERO;
 		BigDecimal reservTranAmt = BigDecimal.ZERO;
-		BigDecimal cmtReserve = null;
 
 		if (LimitConstants.BLOCK.equals(tranType)) {
 			tranAmt = finMain.getFinAssetValue();

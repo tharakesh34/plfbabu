@@ -800,12 +800,6 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			return auditDetails;
 		}
 
-		String usrLanguage = PennantConstants.default_Language;
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (financeMain != null && financeMain.getUserDetails() != null) {
-			usrLanguage = financeMain.getUserDetails().getLanguage();
-		}
-
 		for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
 			boolean isAllowedMethod = false;
 			boolean isDocumentReceived = false;

@@ -2,7 +2,6 @@ package com.pennanttech.ws.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -52,7 +51,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
-import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -78,7 +76,6 @@ public class FinanceValidationService {
 	private BaseRateDAO baseRateDAO;
 	private FlagDAO flagDAO;
 	private RuleDAO ruleDAO;
-	private GeneralDepartmentService generalDepartmentService;
 	private DepartmentService departmentService;
 	private RelationshipOfficerService relationshipOfficerService;
 	private VehicleDealerService vehicleDealerService;
@@ -892,25 +889,12 @@ public class FinanceValidationService {
 				return getErrorDetails("90501", valueParm);
 			}
 
-			List<VehicleDealer> listVehicleDealerDsa = vehicleDealerService.getVehicleDealerList("DSA");
-
 			RelationshipOfficer relationshipOfficer = relationshipOfficerService
 					.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getDsaCode();
 				return getErrorDetails("90501", valueParm);
-			}
-
-			if (vehicleDealer != null) {
-				Iterator<VehicleDealer> itr = listVehicleDealerDsa.iterator();
-				boolean checkExistingDSA = false;
-				while (itr.hasNext()) {
-					VehicleDealer vehicleDealerDsa = itr.next();
-					if (vehicleDealerDsa.getDealerType().equals(financeMain.getDsaCode())) {
-						checkExistingDSA = true;
-					}
-				}
 			}
 
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
@@ -1012,11 +996,6 @@ public class FinanceValidationService {
 	@Autowired
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
-	}
-
-	@Autowired
-	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
-		this.generalDepartmentService = generalDepartmentService;
 	}
 
 	@Autowired

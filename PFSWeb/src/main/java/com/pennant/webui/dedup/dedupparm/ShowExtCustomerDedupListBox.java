@@ -34,7 +34,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Rows;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbar;
@@ -64,7 +63,6 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	private Paging _paging;
 	private int pageSize = 10;
 	private Listbox listbox;
-	private Rows rows;
 	private ListModelList listModelList;
 	private final int _height = 300;
 	private int _width = 800;
@@ -281,7 +279,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class OnCloseListener implements EventListener<Event> {
 
 		public OnCloseListener() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -298,7 +296,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -404,7 +402,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -452,7 +450,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class CustomerDedupBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public CustomerDedupBoxItemRenderer() {
-		    super();
+			super();
 		}
 
 		@Override
@@ -714,7 +712,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-		    super();
+			super();
 		}
 
 		@Override

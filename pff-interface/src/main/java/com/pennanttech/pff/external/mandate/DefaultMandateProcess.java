@@ -457,7 +457,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		status.setFileName(name);
 		status.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
-		Map<String, Object> parameterMap = new HashMap<>();
 		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
 				status);
 		dataEngine.setFile(file);
