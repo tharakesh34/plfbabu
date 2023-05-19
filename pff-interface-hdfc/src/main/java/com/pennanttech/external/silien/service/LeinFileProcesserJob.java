@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.external.app.config.dao.ExtGenericDao;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.EXTIFConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -35,7 +36,8 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class LeinFileProcesserJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
+public class LeinFileProcesserJob extends AbstractJob
+		implements InterfaceConstants, ErrorCodesConstants, EXTIFConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(LienFileReadingJob.class);
 	private static final String FETCH_QUERY = "Select * from SILIEN_FILE_STATUS  Where STATUS = ?";

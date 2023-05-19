@@ -24,6 +24,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.EXTIFConfigConstants;
 import com.pennanttech.external.app.constants.ErrorCodesConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.ApplicationContextProvider;
@@ -40,7 +41,8 @@ import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class ExtPresentmentFileProcessorJob extends AbstractJob implements InterfaceConstants, ErrorCodesConstants {
+public class ExtPresentmentFileProcessorJob extends AbstractJob
+		implements InterfaceConstants, ErrorCodesConstants, EXTIFConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(ExtPresentmentFileProcessorJob.class);
 

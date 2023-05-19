@@ -15,6 +15,7 @@ import com.google.common.io.Files;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.EODExtractionsHook;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.EXTIFConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.extractions.dao.ExtExtractionDao;
@@ -25,7 +26,7 @@ import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class EODExtractionsService implements EODExtractionsHook, InterfaceConstants {
+public class EODExtractionsService implements EODExtractionsHook, InterfaceConstants, EXTIFConfigConstants {
 
 	private static final Logger logger = LogManager.getLogger(EODExtractionsService.class);
 	private FileInterfaceConfig finconGLConfig;

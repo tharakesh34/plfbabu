@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.external.ExternalPresentmentHook;
 import com.pennanttech.external.app.config.model.FileInterfaceConfig;
+import com.pennanttech.external.app.constants.EXTIFConfigConstants;
 import com.pennanttech.external.app.constants.InterfaceConstants;
 import com.pennanttech.external.app.util.FileInterfaceConfigUtil;
 import com.pennanttech.external.presentment.dao.ExtPresentmentDAO;
@@ -16,7 +17,7 @@ import com.pennanttech.external.presentment.model.ExtPresentmentFile;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
-public class PresentmentRequestHandler implements ExternalPresentmentHook, InterfaceConstants {
+public class PresentmentRequestHandler implements ExternalPresentmentHook, InterfaceConstants, EXTIFConfigConstants {
 	private static final Logger logger = LogManager.getLogger(PresentmentRequestHandler.class);
 
 	private ExtPresentmentDAO externalPresentmentDAO;
