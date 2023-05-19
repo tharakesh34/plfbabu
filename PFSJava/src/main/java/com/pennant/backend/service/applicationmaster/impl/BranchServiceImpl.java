@@ -137,11 +137,11 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 		Branch branch = (Branch) auditHeader.getAuditDetail().getModelData();
@@ -158,39 +158,29 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		} else {
 			getBranchDAO().update(branch, tableType);
 		}
+		/*
+		 * if (branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()) {
+		 * getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
+		 * SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
+		 * 
+		 * List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
+		 * 
+		 * if (existingPostings != null && !existingPostings.isEmpty()) { long linkedTranId =
+		 * getPostingsDAO().getLinkedTransId(); List<ReturnDataSet> executePostings = new ArrayList<ReturnDataSet>();
+		 * List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId, 0,
+		 * true); if (revPostings != null) { executePostings.addAll(revPostings); } List<ReturnDataSet> newPostings =
+		 * preparePostingsForBranchChange(existingPostings, branch, linkedTranId, revPostings == null ? 0 :
+		 * revPostings.size(), false); if (newPostings != null) { executePostings.addAll(newPostings); } if
+		 * (!executePostings.isEmpty()) { getPostingsDAO().saveBatch(executePostings); } }
+		 * 
+		 * getBranchDAO().updateFinanceBranch(branch, "_Temp"); getBranchDAO().updateFinanceBranch(branch, "");
+		 * 
+		 * getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
+		 * SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "Y"); }
+		 */
 
-		if (branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()) {
-			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-
-			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
-
-			if (existingPostings != null && !existingPostings.isEmpty()) {
-				long linkedTranId = getPostingsDAO().getLinkedTransId();
-				List<ReturnDataSet> executePostings = new ArrayList<ReturnDataSet>();
-				List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
-						0, true);
-				if (revPostings != null) {
-					executePostings.addAll(revPostings);
-				}
-				List<ReturnDataSet> newPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
-						revPostings == null ? 0 : revPostings.size(), false);
-				if (newPostings != null) {
-					executePostings.addAll(newPostings);
-				}
-				if (!executePostings.isEmpty()) {
-					getPostingsDAO().saveBatch(executePostings);
-				}
-			}
-
-			getBranchDAO().updateFinanceBranch(branch, "_Temp");
-			getBranchDAO().updateFinanceBranch(branch, "");
-
-			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-		}
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
@@ -203,94 +193,96 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 */
 	private List<ReturnDataSet> preparePostingsForBranchChange(List<ReturnDataSet> existingPostings, Branch branch,
 			long linkedTranId, int seqNo, boolean isReversal) {
-		logger.debug("Entering");
-		List<ReturnDataSet> finalPostings = null;
-		if (existingPostings != null && !existingPostings.isEmpty()) {
-			String currAccount = "";
-			String finReference = "";
-			String tranCode = "";
-			ReturnDataSet revDataSet = null;
-			for (int i = 0; i < existingPostings.size(); i++) {
-				ReturnDataSet returnDataSet = existingPostings.get(i);
-				if (StringUtils.equals(currAccount, returnDataSet.getAccount())
-						&& StringUtils.equals(finReference, returnDataSet.getFinReference())
-						&& StringUtils.equals(tranCode, returnDataSet.getTranCode())) {
-					if (revDataSet != null) {
-						revDataSet.setPostAmount(revDataSet.getPostAmount().add(returnDataSet.getPostAmount()));
-					}
-				} else {
-					revDataSet = new ReturnDataSet();
-					revDataSet.setAccount(returnDataSet.getAccount());
-					revDataSet.setFinID(returnDataSet.getFinID());
-					revDataSet.setFinReference(returnDataSet.getFinReference());
-					revDataSet.setFinEvent(AccountingEvent.BRANCH_CLOSE);
-					revDataSet.setPostAmount(returnDataSet.getPostAmount());
-					revDataSet.setAcCcy(returnDataSet.getAcCcy());
-					if (isReversal) {
-						revDataSet.setPostBranch(branch.getBranchCode());
-						if (StringUtils.equals(AccountConstants.TRANCODE_CREDIT, returnDataSet.getTranCode())) {
-							revDataSet.setTranCode(AccountConstants.TRANCODE_DEBIT);
-							revDataSet.setRevTranCode(AccountConstants.TRANCODE_CREDIT);
-							revDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
-						} else {
-							revDataSet.setTranCode(AccountConstants.TRANCODE_CREDIT);
-							revDataSet.setRevTranCode(AccountConstants.TRANCODE_DEBIT);
-							revDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
-						}
-					} else {
-						revDataSet.setPostBranch(branch.getNewBranchCode());
-						revDataSet.setTranCode(returnDataSet.getTranCode());
-						revDataSet.setRevTranCode(returnDataSet.getRevTranCode());
-						revDataSet.setDrOrCr(returnDataSet.getDrOrCr());
-					}
-				}
+		logger.debug(Literal.ENTERING);
 
+		List<ReturnDataSet> finalPostings = new ArrayList<>();
+
+		if (org.apache.commons.collections.CollectionUtils.isEmpty(existingPostings)) {
+			return finalPostings;
+		}
+
+		Date dateAppDate = SysParamUtil.getAppDate();
+		Date dateValueDate = SysParamUtil.getAppValueDate();
+
+		String currAccount = "";
+		String finReference = "";
+		String tranCode = "";
+		ReturnDataSet revDataSet = null;
+		for (int i = 0; i < existingPostings.size(); i++) {
+			ReturnDataSet returnDataSet = existingPostings.get(i);
+			if (StringUtils.equals(currAccount, returnDataSet.getAccount())
+					&& StringUtils.equals(finReference, returnDataSet.getFinReference())
+					&& StringUtils.equals(tranCode, returnDataSet.getTranCode())) {
 				if (revDataSet != null) {
-					returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
-							SysParamUtil.getAppCurrency(), revDataSet.getPostAmount()));
-					currAccount = returnDataSet.getAccount();
-					finReference = returnDataSet.getFinReference();
-					tranCode = returnDataSet.getTranCode();
-					if (revDataSet.getPostAmount().compareTo(BigDecimal.ZERO) != 0 && (i == existingPostings.size() - 1
-							|| !StringUtils.equals(currAccount, existingPostings.get(i + 1).getAccount())
-							|| !StringUtils.equals(finReference, existingPostings.get(i + 1).getFinReference())
-							|| !StringUtils.equals(tranCode, existingPostings.get(i + 1).getTranCode()))) {
-						if (finalPostings == null) {
-							finalPostings = new ArrayList<ReturnDataSet>();
-						}
-						finalPostings.add(revDataSet);
-					}
+					revDataSet.setPostAmount(revDataSet.getPostAmount().add(returnDataSet.getPostAmount()));
 				}
-
-			}
-		}
-		if (finalPostings != null && !finalPostings.isEmpty()) {
-			Date dateAppDate = SysParamUtil.getAppDate();
-			Date dateValueDate = SysParamUtil.getAppValueDate();
-			for (ReturnDataSet retDataSet : finalPostings) {
-				seqNo = seqNo + 1;
-				if (retDataSet.getLinkedTranId() == Long.MIN_VALUE) {
-					retDataSet.setLinkedTranId(linkedTranId);
-				}
-				retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId() + "-" + seqNo));
-				retDataSet.setPostingId(
-						retDataSet.getFinReference() + DateUtil.format(new Date(), "yyyyMMddHHmmss") + StringUtils
-								.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
-				retDataSet.setShadowPosting(false);
-				retDataSet.setAppDate(dateAppDate);
-				retDataSet.setAppValueDate(dateAppDate);
-				retDataSet.setPostDate(dateAppDate);
-				retDataSet.setValueDate(dateValueDate);
-				retDataSet.setAmountType(AccountConstants.TRANSENTRY_AMOUNTTYPE);
-				retDataSet.setTranOrderId("1-1");
+			} else {
+				revDataSet = new ReturnDataSet();
+				revDataSet.setAccount(returnDataSet.getAccount());
+				revDataSet.setFinID(returnDataSet.getFinID());
+				revDataSet.setFinReference(returnDataSet.getFinReference());
+				revDataSet.setFinEvent(AccountingEvent.BRANCH_CLOSE);
+				revDataSet.setPostAmount(returnDataSet.getPostAmount());
+				revDataSet.setAcCcy(returnDataSet.getAcCcy());
+				revDataSet.setEntityCode(branch.getEntity());
 				if (isReversal) {
-					retDataSet.setTranDesc("Finance Branch Change Reversal Transactions");
+					revDataSet.setPostBranch(branch.getBranchCode());
+					if (StringUtils.equals(AccountConstants.TRANCODE_CREDIT, returnDataSet.getTranCode())) {
+						revDataSet.setTranCode(AccountConstants.TRANCODE_DEBIT);
+						revDataSet.setRevTranCode(AccountConstants.TRANCODE_CREDIT);
+						revDataSet.setDrOrCr(AccountConstants.TRANTYPE_CREDIT);
+					} else {
+						revDataSet.setTranCode(AccountConstants.TRANCODE_CREDIT);
+						revDataSet.setRevTranCode(AccountConstants.TRANCODE_DEBIT);
+						revDataSet.setDrOrCr(AccountConstants.TRANTYPE_DEBIT);
+					}
 				} else {
-					retDataSet.setTranDesc("Finance Branch Change New Transactions");
+					revDataSet.setPostBranch(branch.getNewBranchCode());
+					revDataSet.setTranCode(returnDataSet.getTranCode());
+					revDataSet.setRevTranCode(returnDataSet.getRevTranCode());
+					revDataSet.setDrOrCr(returnDataSet.getDrOrCr());
+				}
+			}
+
+			if (revDataSet != null) {
+				returnDataSet.setPostAmountLcCcy(CalculationUtil.getConvertedAmount(returnDataSet.getAcCcy(),
+						SysParamUtil.getAppCurrency(), revDataSet.getPostAmount()));
+				currAccount = returnDataSet.getAccount();
+				finReference = returnDataSet.getFinReference();
+				tranCode = returnDataSet.getTranCode();
+				if (revDataSet.getPostAmount().compareTo(BigDecimal.ZERO) != 0 && (i == existingPostings.size() - 1
+						|| !StringUtils.equals(currAccount, existingPostings.get(i + 1).getAccount())
+						|| !StringUtils.equals(finReference, existingPostings.get(i + 1).getFinReference())
+						|| !StringUtils.equals(tranCode, existingPostings.get(i + 1).getTranCode()))) {
+
+					finalPostings.add(revDataSet);
 				}
 			}
 		}
-		logger.debug("Leaving");
+
+		for (ReturnDataSet retDataSet : finalPostings) {
+			seqNo = seqNo + 1;
+			if (retDataSet.getLinkedTranId() == Long.MIN_VALUE) {
+				retDataSet.setLinkedTranId(linkedTranId);
+			}
+			retDataSet.setPostref(String.valueOf(retDataSet.getLinkedTranId() + "-" + seqNo));
+			retDataSet.setPostingId(
+					retDataSet.getFinReference() + DateUtil.format(new Date(), "yyyyMMddHHmmss") + StringUtils
+							.leftPad(String.valueOf((long) ((new Random()).nextDouble() * 10000L)).trim(), 4, "0"));
+			retDataSet.setShadowPosting(false);
+			retDataSet.setAppDate(dateAppDate);
+			retDataSet.setAppValueDate(dateAppDate);
+			retDataSet.setPostDate(dateAppDate);
+			retDataSet.setValueDate(dateValueDate);
+			retDataSet.setAmountType(AccountConstants.TRANSENTRY_AMOUNTTYPE);
+			retDataSet.setTranOrderId("1-1");
+			if (isReversal) {
+				retDataSet.setTranDesc("Finance Branch Change Reversal Transactions");
+			} else {
+				retDataSet.setTranDesc("Finance Branch Change New Transactions");
+			}
+		}
+		logger.debug(Literal.LEAVING);
 		return finalPostings;
 	}
 
@@ -305,11 +297,11 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -317,7 +309,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		getBranchDAO().delete(branch, TableType.MAIN_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -358,12 +350,12 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -444,39 +436,29 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(branch);
 
-		if (branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()) {
-			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
-
-			List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
-
-			if (existingPostings != null && !existingPostings.isEmpty()) {
-				long linkedTranId = getPostingsDAO().getLinkedTransId();
-				List<ReturnDataSet> executePostings = new ArrayList<ReturnDataSet>();
-				List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
-						0, true);
-				if (revPostings != null) {
-					executePostings.addAll(revPostings);
-				}
-				List<ReturnDataSet> newPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId,
-						revPostings == null ? 0 : revPostings.size(), false);
-				if (newPostings != null) {
-					executePostings.addAll(newPostings);
-				}
-				if (!executePostings.isEmpty()) {
-					getPostingsDAO().saveBatch(executePostings);
-				}
-			}
-
-			getBranchDAO().updateFinanceBranch(branch, "_Temp");
-			getBranchDAO().updateFinanceBranch(branch, "");
-
-			getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-			SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
-		}
+		/*
+		 * if (branch.getBefImage() != null && branch.getBefImage().isBranchIsActive() && !branch.isBranchIsActive()) {
+		 * getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
+		 * SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "N");
+		 * 
+		 * List<ReturnDataSet> existingPostings = getPostingsDAO().getPostingsbyFinanceBranch(branch.getBranchCode());
+		 * 
+		 * if (existingPostings != null && !existingPostings.isEmpty()) { long linkedTranId =
+		 * getPostingsDAO().getLinkedTransId(); List<ReturnDataSet> executePostings = new ArrayList<ReturnDataSet>();
+		 * List<ReturnDataSet> revPostings = preparePostingsForBranchChange(existingPostings, branch, linkedTranId, 0,
+		 * true); if (revPostings != null) { executePostings.addAll(revPostings); } List<ReturnDataSet> newPostings =
+		 * preparePostingsForBranchChange(existingPostings, branch, linkedTranId, revPostings == null ? 0 :
+		 * revPostings.size(), false); if (newPostings != null) { executePostings.addAll(newPostings); } if
+		 * (!executePostings.isEmpty()) { getPostingsDAO().saveBatch(executePostings); } }
+		 * 
+		 * getBranchDAO().updateFinanceBranch(branch, "_Temp"); getBranchDAO().updateFinanceBranch(branch, "");
+		 * 
+		 * getBranchDAO().updateApplicationAccess(PennantConstants.ALLOW_ACCESS_TO_APP, "Y");
+		 * SysParamUtil.updateParamDetails(PennantConstants.ALLOW_ACCESS_TO_APP, "Y"); }
+		 */
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -490,11 +472,11 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader);
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -503,7 +485,7 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 		getBranchDAO().delete(branch, TableType.TEMP_TAB);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -515,12 +497,12 @@ public class BranchServiceImpl extends GenericService<Branch> implements BranchS
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
