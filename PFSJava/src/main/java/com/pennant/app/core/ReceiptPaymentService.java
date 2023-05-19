@@ -34,6 +34,7 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -66,6 +67,7 @@ public class ReceiptPaymentService {
 	private FinanceProfitDetailDAO profitDetailDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
+	private GenerateLetterService generateLetterService;
 
 	public ReceiptPaymentService() {
 		super();
@@ -195,6 +197,8 @@ public class ReceiptPaymentService {
 		if (loanPaymentService.isSchdFullyPaid(new LoanPayment(finID, fm.getFinReference(), schedules, appDate))) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 			profitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
+
+			generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
 		}
 	}
 
@@ -446,4 +450,10 @@ public class ReceiptPaymentService {
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
+	}
+
 }

@@ -111,6 +111,7 @@ public class AssetConstants {
 	public static final String UNIQUE_ID_EXTERNALAGREEMENTS = "EXTERNALAGREEMENTS";
 	public static final String UNIQUE_ID_PMAY = "PMAY";
 	public static final String UNIQUE_ID_BASICDETAILS = "LOANBASICDETAILS";
+	public static final String UNIQUE_ID_LETTERLOG = "LETTERLOGENQ";
 
 	public static final int DEFAULT_ITEMNO = 1;
 }

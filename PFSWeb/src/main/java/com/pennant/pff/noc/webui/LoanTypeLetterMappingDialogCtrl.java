@@ -63,7 +63,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.LoanTypeLetterMappingService;
 import com.pennant.util.ErrorControl;
@@ -93,8 +93,8 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private boolean isLetterMappingNew = true;
 	private String filteremail = "";
 
-	private final List<ValueLabel> letterTypeList = PennantStaticListUtil.getFinTypeLetterType();
-	private final List<ValueLabel> letterModeList = PennantStaticListUtil.getFinTypeLetterMappingMode();
+	private final List<ValueLabel> letterTypeList = LetterUtil.getLetterTypes();
+	private final List<ValueLabel> letterModeList = LetterUtil.getLetterModes();
 	private List<LoanTypeLetterMapping> deleteletterMappingList = new ArrayList<>();
 
 	private enum ListFields {
@@ -923,10 +923,15 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		listItem.setAttribute("data", mapping);
 
 		Combobox letterType = appendLetterType(listItem, mapping, isReadOnly);
+
 		appendAutoGeneration(listItem, mapping, isReadOnly);
+
 		appendMode(listItem, mapping, isReadOnly);
+
 		ExtendedCombobox emailTemplate = appendEmailTemplate(listItem, mapping, isReadOnly);
+
 		ExtendedCombobox agreement = appendAgreement(listItem, mapping, isReadOnly);
+
 		appendDelete(listItem, isReadOnly);
 
 		applyFilters(mapping, letterType, emailTemplate, agreement);
@@ -938,14 +943,13 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 	private Combobox appendLetterType(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Combobox comboBox = new Combobox();
-		fillComboBox(comboBox, String.valueOf(mapping.getLetterType()), letterTypeList, "");
+
+		fillList(comboBox, mapping.getLetterType(), letterTypeList);
+
 		comboBox.addForward(Events.ON_CHANGE, windowLoanTypeLetterMappingDialog, "onChangeLetterType", listItem);
 
-		if (mapping.getLetterType() != null) {
-			comboBox.setValue(mapping.getLetterType());
-		}
-
 		comboBox.setId(ListFields.LETTER_TYPE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+
 		readOnlyComponent(isReadOnly, comboBox);
 
 		Hbox hbox = new Hbox();
@@ -997,24 +1001,27 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	}
 
 	private ExtendedCombobox appendEmailTemplate(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
-		ExtendedCombobox emailTemplate = new ExtendedCombobox();
-		emailTemplate.setModuleName("MailTemplate");
-		emailTemplate.setValueColumn("TemplateCode");
-		emailTemplate.setDescColumn("TemplateDesc");
-		emailTemplate.setValidateColumns(new String[] { "TemplateCode" });
-		emailTemplate.setId(ListFields.EMAIL_TEMPLATE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
-		readOnlyComponent(isReadOnly, emailTemplate);
+		ExtendedCombobox combobox = new ExtendedCombobox();
+
+		combobox.setModuleName("MailTemplate");
+		combobox.setValueColumn("TemplateCode");
+		combobox.setDescColumn("TemplateDesc");
+		combobox.setValidateColumns(new String[] { "TemplateCode" });
+		// combobox.setFilters(new File);
+
+		combobox.setId(ListFields.EMAIL_TEMPLATE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		readOnlyComponent(isReadOnly, combobox);
 
 		Hbox hbox = new Hbox();
 		hbox.appendChild(getSpace(true));
-		hbox.appendChild(emailTemplate);
+		hbox.appendChild(combobox);
 
 		Listcell listCell = new Listcell();
 		listCell.appendChild(hbox);
 
 		listItem.appendChild(listCell);
 
-		return emailTemplate;
+		return combobox;
 	}
 
 	private ExtendedCombobox appendAgreement(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {

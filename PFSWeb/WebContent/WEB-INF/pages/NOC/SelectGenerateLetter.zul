@@ -40,12 +40,18 @@
 								<row>
 									<label value="${c:l('label_GenerateLetterDialog_LetterType')}"
 										style="padding-left:12px;" />
-									<combobox id="letterType" width="180px"  />
+										<hbox>
+										  <space spacing="2px" sclass="mandatory" />
+									      <combobox id="letterType" width="180px"  />
+									   </hbox>
 								</row>
 								<row>
-									<label value="${c:l('label_ExcessTransferMaker_LoanReference')}"
+									<label value="${c:l('label_ExcessTransferMaker_LoanReference.value')}"
 										style="padding-left:12px;" />
-									<textbox id="finReference" width="250px" />
+										<hbox>
+										  <space spacing="2px" sclass="mandatory" />
+									      <textbox id="finReference" width="250px" />
+									   </hbox>
 								</row>
 								<row>
 									<cell />

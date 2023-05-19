@@ -10,4 +10,5 @@
 
 	<bean id="successResponseJob" class="com.pennant.pff.presentment.SuccessResponseJob"/>
 	<bean id="bounceResponseJob" class="com.pennant.pff.presentment.BounceResponseJob"/>
+	<bean id ="autoLetterGenerationJob" class="com.pennant.pff.autolettergeneration.AutoLetterGenerationJob"/>
 </beans>

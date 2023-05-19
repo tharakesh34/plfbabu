@@ -112,6 +112,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.extension.NpaAndProvisionExtension;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -156,6 +157,7 @@ public class RepaymentPostingsUtil {
 	private AssetClassificationService assetClassificationService;
 	private FeeTypeService feeTypeService;
 	private FinODCAmountDAO finODCAmountDAO;
+	private GenerateLetterService generateLetterService;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -1098,6 +1100,9 @@ public class RepaymentPostingsUtil {
 				pftDetail.setPrvMthAmz(pftDetail.getTotalPftSchd());
 				pftDetail.setAmzTillLBD(pftDetail.getTotalPftSchd());
 			}
+
+			generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
+
 		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 			fm.setFinIsActive(false);
 			fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
@@ -2606,6 +2611,11 @@ public class RepaymentPostingsUtil {
 	@Autowired
 	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
 		this.finODCAmountDAO = finODCAmountDAO;
+	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
 	}
 
 }

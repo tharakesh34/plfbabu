@@ -711,6 +711,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.utilisedFrqDef.setMaxlength(3);
 			this.frqDefferments.setMaxlength(3);
 			this.finAssetValue.setMaxlength(18);
+
 			this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.collectionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 

@@ -36,6 +36,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.template.TemplateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -45,7 +46,7 @@ public class NotificationsListModelItemRenderer implements ListitemRenderer<Noti
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public NotificationsListModelItemRenderer() {
-	    super();
+		super();
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class NotificationsListModelItemRenderer implements ListitemRenderer<Noti
 		lc = new Listcell(notifications.getRuleCodeDesc());
 		lc.setParent(item);
 		lc = new Listcell(PennantStaticListUtil.getlabelDesc(StringUtils.trimToEmpty(notifications.getRuleModule()),
-				PennantStaticListUtil.getMailModulesList()));
+				TemplateUtil.getModules()));
 		lc.setParent(item);
 		lc = new Listcell(notifications.getRecordStatus());
 		lc.setParent(item);

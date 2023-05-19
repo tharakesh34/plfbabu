@@ -13470,4 +13470,7 @@
 	
 	<bean id="summaryDetailService" class="com.pennant.backend.service.finance.impl.SummaryDetailService" />
 		
+	<bean name="autoLetterGenerationEngine" class="com.pennant.pff.letter.AutoLetterGenerationEngine" />
+	
+	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl" parent="sequenceDao" />
 </beans>

@@ -1,8 +1,13 @@
 package com.pennant.pff.noc.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
@@ -26,4 +31,20 @@ public interface GenerateLetterService {
 	AuditHeader doApprove(AuditHeader ah);
 
 	AuditHeader doReject(AuditHeader ah);
+
+	FinanceDetail getFinanceDetailById(String finReference, String letterType);
+
+	List<ReceiptAllocationDetail> getPrinAndPftWaiver(String finReference);
+
+	List<FinExcessAmount> getExcessAvailable(long finID);
+
+	List<GenerateLetter> getLetterInfo(GenerateLetter gl);
+
+	void saveClosedLoanLetterGenerator(FinanceMain fm, Date appDate);
+	
+	int getFinTypeMap(String finType);
+
+	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
+
+	String getCanceltype(String finReference);
 }

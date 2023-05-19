@@ -1091,6 +1091,9 @@
 				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT_CANCEL"
 				rightName="menu_Item_SettlementCancellation" />
 		</menu>
+		<menuItem id="menuItem_Generate_Letter"
+				zulNavigation="/WEB-INF/pages/NOC/GenerateLetterList.zul" rightName="menuItem_Generate_Letter" />
+		
 
 	</menu>
 
