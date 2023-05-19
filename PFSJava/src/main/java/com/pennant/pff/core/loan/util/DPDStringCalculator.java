@@ -90,11 +90,29 @@ public class DPDStringCalculator {
 			frequencyDay = dueDay;
 		}
 
-		if (frequencyDay == dueDay) {
+		if (frequencyDay == dueDay && isNotFirstInstallment(schedules, nextBusinessDate)) {
 			return getDueBucket(dueBucket);
 		}
 
 		return null;
+	}
+
+	private static boolean isNotFirstInstallment(List<FinanceScheduleDetail> schedules, Date nextBusinessDate) {
+		int index = 0;
+
+		for (FinanceScheduleDetail schedule : schedules) {
+			if (index > 0) {
+				return true;
+			}
+
+			if (schedule.isRepayOnSchDate()) {
+				index++;
+				if (schedule.getSchDate().compareTo(nextBusinessDate) == 0) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	private static boolean considerDPDForMatured(FinanceMain fm, List<FinanceScheduleDetail> schedules) {
