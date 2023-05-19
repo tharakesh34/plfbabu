@@ -1069,7 +1069,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fsi.setValueDate(rd.getValueDate());
 		fsi.setAmount(rd.getAmount());
 		fsi.setAllocationType(AllocationType.AUTO);
-		fsi.setFundingAc(rd.getFundingAc());
+		Long fundingAc = rd.getFundingAc();
+		if (fundingAc != null) {
+			fsi.setFundingAc(fundingAc);
+		}
 
 		LoggedInUser loggedInUser = new LoggedInUser();
 		loggedInUser.setLoginUsrID(1000);
@@ -1094,7 +1097,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		rcd.setValueDate(rd.getValueDate());
 		rcd.setBankCode(rd.getBankCode());
 		rcd.setDepositDate(rd.getDepositDate());
-		rcd.setFundingAc(rd.getFundingAc());
+		rcd.setFundingAc(fundingAc);
 		rcd.setReceivedDate(rd.getReceivedDate());
 		rcd.setStatus(fsi.getStatus());
 		rcd.setRemarks(LoanCancelationUtil.LOAN_CANCEL_REMARKS);
