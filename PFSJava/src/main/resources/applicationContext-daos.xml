@@ -4547,7 +4547,6 @@
 	<bean name="overdueChargeRecoveryServiceTarget"
 		class="com.pennant.backend.service.financemanagement.impl.OverdueChargeRecoveryServiceImpl">
 		<property name="overdueChargeRecoveryDAO" ref="overdueChargeRecoveryDAO" />
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
