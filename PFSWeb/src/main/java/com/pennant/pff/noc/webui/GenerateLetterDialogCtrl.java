@@ -48,7 +48,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.util.ErrorControl;
@@ -462,7 +462,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.finClosureDate.setValue(fm.getClosedDate());
 		this.sourcingOfcr.setValue(fm.getSourcingBranch());
 		this.letterType.setValue(gl.getLetterType());
-		fillComboBox(this.letterType, gl.getLetterType(), PennantStaticListUtil.getFinTypeLetterType(), "");
+		fillComboBox(this.letterType, gl.getLetterType(), LetterUtil.getLetterTypes(), "");
 		this.closureType.setValue(fm.getClosingStatus());
 		this.closureReason.setValue(fm.getClosingStatus());
 

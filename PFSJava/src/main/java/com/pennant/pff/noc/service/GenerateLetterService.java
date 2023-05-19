@@ -1,10 +1,12 @@
 package com.pennant.pff.noc.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -37,4 +39,6 @@ public interface GenerateLetterService {
 	List<FinExcessAmount> getExcessAvailable(long finID);
 
 	List<GenerateLetter> getLetterInfo(GenerateLetter gl);
+
+	void saveClosedLoanLetterGenerator(FinanceMain fm, Date appDate);
 }

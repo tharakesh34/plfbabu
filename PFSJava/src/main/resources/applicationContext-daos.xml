@@ -13463,4 +13463,8 @@
 		
 	<bean id="provisionUploadService"
 		class="com.pennanttech.pff.provision.service.impl.ProvisionUploadServiceImpl" parent="aUploadService" />
+		
+	<bean name="autoLetterGenerationEngine" class="com.pennant.pff.letter.AutoLetterGenerationEngine" />
+	
+	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl" parent="sequenceDao" />
 </beans>

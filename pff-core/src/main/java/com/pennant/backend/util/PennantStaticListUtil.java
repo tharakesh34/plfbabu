@@ -1342,18 +1342,6 @@ public class PennantStaticListUtil {
 		return enquiryTypes;
 	}
 
-	public static List<ValueLabel> getTemplateFormat() {
-
-		if (templateFormats == null) {
-			templateFormats = new ArrayList<ValueLabel>(2);
-			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_PLAIN,
-					getLabel("common.template.format.plain")));
-			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_HTML,
-					getLabel("common.template.format.html")));
-		}
-		return templateFormats;
-	}
-
 	public static List<ValueLabel> getRuleReturnType() {
 
 		if (ruleReturnTypes == null) {
@@ -1594,7 +1582,7 @@ public class PennantStaticListUtil {
 			subCategory.addAll(getSubCategoryGeneralList());
 			subCategory.addAll(getSubSectorList());
 		}
-		
+
 		return subCategory;
 	}
 
@@ -1728,41 +1716,6 @@ public class PennantStaticListUtil {
 			expenseForList.add(new ValueLabel("A", Labels.getLabel("label_AdvBillingExpense")));
 		}
 		return expenseForList;
-	}
-
-	public static List<ValueLabel> getTemplateForList() {
-
-		if (templateForList == null) {
-			templateForList = new ArrayList<ValueLabel>(9);
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_CN,
-					Labels.getLabel("label_MailTemplateDialog_CustomerNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_AE,
-					Labels.getLabel("label_MailTemplateDialog_AlertNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SP,
-					Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DSAN,
-					Labels.getLabel("label_MailTemplateDialog_DSANotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PVRN,
-					Labels.getLabel("label_MailTemplateDialog_PNNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SU,
-					Labels.getLabel("label_MailTemplateDialog_SecurityUser")));
-		}
-		return templateForList;
-	}
-
-	public static List<ValueLabel> getMailModulesList() {
-
-		if (mailTeplateModulesList == null) {
-			mailTeplateModulesList = new ArrayList<ValueLabel>(7);
-			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_FIN,
-					Labels.getLabel("label_MailTemplateDialog_Finance")));
-			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_PROVIDER,
-					Labels.getLabel("label_MailTemplateDialog_Provider")));
-			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_OTP,
-					Labels.getLabel("label_MailTemplateDialog_OTP")));
-
-		}
-		return mailTeplateModulesList;
 	}
 
 	public static List<ValueLabel> getCustCtgType() {
@@ -2146,17 +2099,6 @@ public class PennantStaticListUtil {
 		return accTypes;
 	}
 
-	public static List<ValueLabel> getAgreementType() {
-		if (agreementType == null) {
-			agreementType = new ArrayList<ValueLabel>(2);
-			agreementType
-					.add(new ValueLabel(PennantConstants.DOC_TYPE_PDF, Labels.getLabel("label_AgreementType_PDF")));
-			agreementType
-					.add(new ValueLabel(PennantConstants.DOC_TYPE_WORD, Labels.getLabel("label_AgreementType_WORD")));
-		}
-		return agreementType;
-	}
-
 	public static List<ValueLabel> getFeeToFinanceTypes() {
 		if (feeToFinanceTypes == null) {
 			feeToFinanceTypes = new ArrayList<ValueLabel>(3);
@@ -2357,30 +2299,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_CrossLoanKnockOff"), "CROSCROSS_LOAN_KNOCKOFFSLOANKNOCKOFF"));
 		}
 		return events;
-	}
-
-	public static List<ValueLabel> getTemplateEvents() {
-
-		if (templateEvents == null) {
-			templateEvents = new ArrayList<>(5);
-			templateEvents.add(new ValueLabel(FinServiceEvent.ORG, Labels.getLabel("label_FinSerEvent_Origination")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.RATECHG, Labels.getLabel("label_FinSerEvent_AddRateChange")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.ADDDISB, Labels.getLabel("label_FinSerEvent_AddDisbursement")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.RECEIPT, Labels.getLabel("label_FinSerEvent_Receipt")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.COVENANT, Labels.getLabel("label_FinSerEvent_Covenants")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.PUTCALL, Labels.getLabel("label_FinSerEvent_PutCall")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.COLLATERAL_LTV_BREACHS,
-					Labels.getLabel("label_FinSerEvent_Collateral_Ltv_Breaches")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.CANCELFIN, Labels.getLabel("label_VasEvent_Cancellation")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS, Labels.getLabel("label_VasEvent_DueAlerts")));
-			templateEvents.add(new ValueLabel("SecurityUser", Labels.getLabel("label_OTP_SecurityUser")));
-			templateEvents.addAll(getFinTypeLetterType());
-		}
-		return templateEvents;
 	}
 
 	public static List<ValueLabel> getPaymentDetails() {
@@ -5657,29 +5575,5 @@ public class PennantStaticListUtil {
 					new ValueLabel(PennantConstants.SANCTION_CLOSED, Labels.getLabel("label_Sanction_Status_Closed")));
 		}
 		return sanctionStatusList;
-	}
-
-	public static List<ValueLabel> getFinTypeLetterType() {
-		if (finTypeLetterType == null) {
-			finTypeLetterType = new ArrayList<>();
-
-			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_NOC_LTR, Labels.getLabel("label_NOC")));
-			finTypeLetterType
-					.add(new ValueLabel(NOCConstants.TYPE_CAN_LTR, Labels.getLabel("label_CancellationLetter")));
-			finTypeLetterType.add(new ValueLabel(NOCConstants.TYPE_CLOSE_LTR, Labels.getLabel("label_ClosureLetter")));
-		}
-
-		return finTypeLetterType;
-	}
-
-	public static List<ValueLabel> getFinTypeLetterMappingMode() {
-		if (finTypeLetterMappingMode == null) {
-			finTypeLetterMappingMode = new ArrayList<>();
-
-			finTypeLetterMappingMode.add(new ValueLabel(NOCConstants.MODE_COURIER, Labels.getLabel("label_Courier")));
-			finTypeLetterMappingMode.add(new ValueLabel(NOCConstants.MODE_EMAIL, Labels.getLabel("label_Email")));
-		}
-
-		return finTypeLetterMappingMode;
 	}
 }

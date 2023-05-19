@@ -37,10 +37,12 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String fileName;
 	private long trackingID;
 	private String remarks;
-	private long adviseID;
+	private Long adviseID;
 	private GenerateLetter befImage;
 	private LoggedInUser userDetails;
 	private FinanceDetail financeDetail;
+	private long agreementTemplate;
+	private Long emailTemplate;
 
 	public GenerateLetter() {
 		super();
@@ -72,6 +74,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("befImage");
 		excludeFields.add("userDetails");
 		excludeFields.add("financeDetail");
+		excludeFields.add("emailTemplate");
 
 		return excludeFields;
 	}
@@ -276,11 +279,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.remarks = remarks;
 	}
 
-	public long getAdviseID() {
+	public Long getAdviseID() {
 		return adviseID;
 	}
 
-	public void setAdviseID(long adviseID) {
+	public void setAdviseID(Long adviseID) {
 		this.adviseID = adviseID;
 	}
 
@@ -306,6 +309,22 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public long getAgreementTemplate() {
+		return agreementTemplate;
+	}
+
+	public void setAgreementTemplate(long agreementTemplate) {
+		this.agreementTemplate = agreementTemplate;
+	}
+
+	public Long getEmailTemplate() {
+		return emailTemplate;
+	}
+
+	public void setEmailTemplate(Long emailTemplate) {
+		this.emailTemplate = emailTemplate;
 	}
 
 }

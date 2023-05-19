@@ -21,7 +21,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -42,7 +42,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	private GenerateLetter generateLetter;
 	private GenerateLetterService generateLetterService;
 
-	private final List<ValueLabel> letterTypeList = PennantStaticListUtil.getFinTypeLetterType();
+	private final List<ValueLabel> letterTypeList = LetterUtil.getLetterTypes();
 
 	public SelectGenerateLetterCtrl() {
 		super();

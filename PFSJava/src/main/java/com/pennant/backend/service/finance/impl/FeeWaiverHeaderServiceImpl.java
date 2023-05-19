@@ -115,6 +115,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -157,8 +158,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private LoanPaymentService loanPaymentService;
 	private FinODCAmountDAO finODCAmountDAO;
-
-	List<ManualAdvise> manualAdviseList; // TODO remove this
+	private GenerateLetterService generateLetterService;
+	List<ManualAdvise> manualAdviseList;
 
 	public FeeWaiverHeaderServiceImpl() {
 		super();
@@ -1042,6 +1043,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (isFinFullyPaid) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, null);
 			profitDetailsDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
+
+			generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
+
 		}
 
 		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null);
@@ -2753,4 +2757,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
 		this.finODCAmountDAO = finODCAmountDAO;
 	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
+	}
+
 }

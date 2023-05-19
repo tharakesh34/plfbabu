@@ -42,7 +42,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.service.notifications.NotificationsService;
-import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.template.TemplateUtil;
 import com.pennant.webui.mail.notifications.model.NotificationsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -113,7 +113,7 @@ public class NotificationsListCtrl extends GFCBaseListCtrl<Notifications> {
 		registerButton(button_NotificationsList_NewNotifications, "button_NotificationsList_NewNotifications", true);
 		registerButton(button_NotificationsList_NotificationsSearchDialog);
 
-		fillComboBox(this.ruleModule, "", PennantStaticListUtil.getMailModulesList(), "");
+		fillComboBox(this.ruleModule, "", TemplateUtil.getModules(), "");
 
 		registerField("ruleCode", listheader_NotificationsRuleCode, SortOrder.ASC, ruleCode, sortOperator_ruleCode,
 				Operators.STRING);
