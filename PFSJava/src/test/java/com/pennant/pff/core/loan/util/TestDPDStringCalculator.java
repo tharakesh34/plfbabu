@@ -52,17 +52,17 @@ public class TestDPDStringCalculator {
 
 	@Test
 	public void dueDateMonthly() {
-		String curDPDStr = "111";
+		String curDPDStr = null;
 		FinanceMain fm = new FinanceMain();
 		fm.setDueBucket(2);
 		fm.setRepayFrq("M0005");
 		fm.setMaturityDate(DateUtil.getDate(2021, 06, 05));
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 02, 05));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 04, 05));
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2021, 02, 05)));
-		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2021, 02, 05)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2021, 04, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 05, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 06, 05)));
@@ -77,12 +77,12 @@ public class TestDPDStringCalculator {
 		fm.setDueBucket(0);
 		fm.setRepayFrq("M0005");
 		fm.setMaturityDate(DateUtil.getDate(2021, 06, 05));
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 02, 05));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 04, 05));
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2021, 02, 05)));
-		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2021, 02, 05)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2021, 04, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 05, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 06, 05)));
@@ -91,18 +91,18 @@ public class TestDPDStringCalculator {
 	}
 
 	@Test
-	public void dueDateMonthlyBeforeClearingDueOnFirstInst() {
+	public void dueDateMonthlyAfter1stInstDueCleared() {
 		String curDPDStr = null;
 		FinanceMain fm = new FinanceMain();
 		fm.setDueBucket(0);
 		fm.setRepayFrq("M0005");
 		fm.setMaturityDate(DateUtil.getDate(2021, 06, 05));
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 02, 01));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 03, 05));
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2021, 02, 05)));
-		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2021, 02, 05)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2021, 04, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 05, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 06, 05)));
@@ -120,8 +120,8 @@ public class TestDPDStringCalculator {
 		fm.setMaturityDate(DateUtil.getDate(2021, 05, 05));
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2021, 02, 05)));
-		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2021, 02, 05)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2021, 04, 05)));
 		schedules.add(getSchedule(DateUtil.getDate(2021, 05, 05)));
 
@@ -129,18 +129,36 @@ public class TestDPDStringCalculator {
 	}
 
 	@Test
-	public void dueDateDaily() {
+	public void dueDateMonthlyNotDueDate() {
 		String curDPDStr = "11111";
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(2);
+		fm.setRepayFrq("M0005");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2021, 04, 07));
+		fm.setMaturityDate(DateUtil.getDate(2021, 05, 05));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2021, 02, 05)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2021, 03, 05)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2021, 04, 05)));
+		schedules.add(getSchedule(DateUtil.getDate(2021, 05, 05)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateDaily() {
+		String curDPDStr = null;
 		FinanceMain fm = new FinanceMain();
 		fm.setDueBucket(0);
 		fm.setRepayFrq("D0000");
 		fm.setMaturityDate(DateUtil.getDate(2018, 05, 19));
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 05, 18));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 05, 17));
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 15)));
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 05, 15)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 17)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 18)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 19)));
@@ -159,13 +177,33 @@ public class TestDPDStringCalculator {
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 15)));
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 05, 15)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 17)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 18)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 19)));
 
-		Assert.assertEquals("1", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateDailyAfter1stInstDueCleared() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(0);
+		fm.setRepayFrq("D0000");
+		fm.setMaturityDate(DateUtil.getDate(2018, 05, 19));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 05, 17));
+
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 05, 15)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 17)));
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 18)));
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 19)));
+
+		Assert.assertEquals("0", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
 	}
 
 	@Test
@@ -179,8 +217,8 @@ public class TestDPDStringCalculator {
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 15)));
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 05, 15)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 17)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 18)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 19)));
@@ -195,12 +233,12 @@ public class TestDPDStringCalculator {
 		fm.setDueBucket(0);
 		fm.setRepayFrq("D0000");
 		fm.setMaturityDate(DateUtil.getDate(2018, 05, 19));
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 05, 18));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 05, 17));
 
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 15)));
-		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 05, 15)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 16)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 17)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 18)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 05, 19)));
@@ -214,12 +252,12 @@ public class TestDPDStringCalculator {
 		FinanceMain fm = new FinanceMain();
 		fm.setDueBucket(2);
 		fm.setRepayFrq("W0001");
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 06, 20));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 06, 27));
 		fm.setMaturityDate(DateUtil.getDate(2020, 07, 10));
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 13)));
-		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 20)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 06, 13)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 20)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 27)));
 		schedules.add(getSchedule(DateUtil.getDate(2020, 07, 03)));
 		schedules.add(getSchedule(DateUtil.getDate(2020, 07, 10)));
@@ -228,23 +266,138 @@ public class TestDPDStringCalculator {
 	}
 
 	@Test
+	public void dueDateWeeklyForFirstInst() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(2);
+		fm.setRepayFrq("W0001");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 06, 20));
+		fm.setMaturityDate(DateUtil.getDate(2020, 07, 10));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 06, 13)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 20)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 27)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 07, 03)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 07, 10)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateWeeklyAfter1stInstDueCleared() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(0);
+		fm.setRepayFrq("W0001");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 06, 27));
+		fm.setMaturityDate(DateUtil.getDate(2020, 07, 10));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 06, 13)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 20)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 06, 27)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 07, 03)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 07, 10)));
+
+		Assert.assertEquals("0", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
 	public void dueDateWeeklyAftrMaturity() {
 		String curDPDStr = "1234";
 		FinanceMain fm = new FinanceMain();
 		fm.setDueBucket(2);
 		fm.setRepayFrq("W0005");
-		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 05, 01));
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 04, 25));
 		fm.setMaturityDate(DateUtil.getDate(2018, 04, 18));
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2018, 03, 06)));
-		schedules.add(getSchedule(DateUtil.getDate(2018, 03, 13)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 03, 06)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 03, 13)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2018, 03, 20)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 04, 04)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 04, 11)));
 		schedules.add(getSchedule(DateUtil.getDate(2018, 04, 18)));
 
 		Assert.assertEquals("2", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateWeeklyNonDueDay() {
+		String curDPDStr = "1234";
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(2);
+		fm.setRepayFrq("W0005");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2018, 04, 13));
+		fm.setMaturityDate(DateUtil.getDate(2018, 04, 18));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2018, 03, 06)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2018, 03, 13)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2018, 03, 20)));
+		schedules.add(getSchedule(DateUtil.getDate(2018, 04, 04)));
+		schedules.add(getSchedule(DateUtil.getDate(2018, 04, 11)));
+		schedules.add(getSchedule(DateUtil.getDate(2018, 04, 18)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateForeNightly() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(1);
+		fm.setRepayFrq("F0001");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 02, 01));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 01)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 15)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 01)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 15)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 03, 01)));
+
+		Assert.assertEquals("1", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateForeNightlyForFirstInst() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(1);
+		fm.setRepayFrq("F0001");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 01, 15));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 01)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 15)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 01)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 15)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 03, 01)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateForeNightlyAfter1stInstDueCleared() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(0);
+		fm.setRepayFrq("F0001");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 02, 01));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 01)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 15)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 01)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 15)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 03, 01)));
+
+		Assert.assertEquals("0", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
 	}
 
 	@Test
@@ -257,18 +410,45 @@ public class TestDPDStringCalculator {
 		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
 		List<FinanceScheduleDetail> schedules = new ArrayList<>();
 
-		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 01)));
-		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 15)));
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 01)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 15)));// 1st Inst
 		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 01)));
 		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 15)));
 		schedules.add(getSchedule(DateUtil.getDate(2020, 03, 01)));
 
-		Assert.assertEquals("2", DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
+	@Test
+	public void dueDateForeNightlyNonDueDate() {
+		String curDPDStr = "11111";
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(2);
+		fm.setRepayFrq("F0001");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 02, 17));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 01)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 15)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 01)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 02, 15)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 03, 01)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
 	}
 
 	private FinanceScheduleDetail getSchedule(Date schdDate) {
 		FinanceScheduleDetail fsd = new FinanceScheduleDetail();
 		fsd.setSchDate(schdDate);
+		fsd.setRepayOnSchDate(true);
+		return fsd;
+	}
+
+	private FinanceScheduleDetail getScheduleWithRepayFalse(Date schdDate) {
+		FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+		fsd.setSchDate(schdDate);
+		fsd.setRepayOnSchDate(false);
 		return fsd;
 	}
 
