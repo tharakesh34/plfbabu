@@ -1740,13 +1740,15 @@ public class PresentmentEngine {
 
 		long finID = pd.getFinID();
 
+		boolean oldFinIsActive = fm.isFinIsActive();
+
 		try {
 			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		if (!fm.isFinIsActive()) {
+		if (oldFinIsActive && !fm.isFinIsActive()) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, pd.getSchDate());
 			financeProfitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
