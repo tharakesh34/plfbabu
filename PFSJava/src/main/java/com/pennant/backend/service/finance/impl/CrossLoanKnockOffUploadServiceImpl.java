@@ -268,8 +268,8 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 		prepareUserDetails(header, clk);
 		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clk.getExcessType())) {
 			ahList.addAll(prepareCLOForExcess(header, clk, fromFm, toFm));
-		} 
-		
+		}
+
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(clk.getExcessType())) {
 			ahList.addAll(prepareCLOForAdvises(header, clk, fromFm, toFm));
 		}
@@ -281,17 +281,18 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 				ah = crossLoanKnockOffService.doApprove(ah);
 
 				if (ah.getErrorMessage() != null) {
-					setFailureStatus(clk, ah.getErrorMessage().get(0));
-
 					if (txStatus != null) {
 						transactionManager.rollback(txStatus);
 					}
+
+					setFailureStatus(clk, ah.getErrorMessage().get(0));
+					return;
 				}
 			}
 
 			setSuccesStatus(clk);
 			transactionManager.commit(txStatus);
-		} catch (AppException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {

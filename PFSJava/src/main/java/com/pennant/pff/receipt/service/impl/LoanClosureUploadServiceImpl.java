@@ -256,7 +256,7 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		try {
 			fd = receiptService.receiptTransaction(fsi);
 			transactionManager.commit(txStatus);
-		} catch (AppException e) {
+		} catch (Exception e) {
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}

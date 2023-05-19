@@ -422,8 +422,6 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 		ReceiptStatusUpload detail = (ReceiptStatusUpload) ObjectUtil.valueAsObject(paramSource,
 				ReceiptStatusUpload.class);
 
-		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
-
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
 		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");

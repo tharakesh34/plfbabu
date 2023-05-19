@@ -312,8 +312,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 		List<FinServiceInstruction> fsiList = new ArrayList<>();
 		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForExcess(header, fc));
-		} 
-		
+		}
+
 		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(fc.getExcessType())) {
 			fsiList.addAll(prepareRCDForPayable(header, fc));
 		}
@@ -326,18 +326,18 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 
 				FinScheduleData schd = fd.getFinScheduleData();
 				if (!schd.getErrorDetails().isEmpty()) {
-					setFailureStatus(fc, schd.getErrorDetails().get(0));
-
 					if (txStatus != null) {
 						transactionManager.rollback(txStatus);
 					}
+
+					setFailureStatus(fc, schd.getErrorDetails().get(0));
 					return;
 				}
 			}
 
 			setSuccesStatus(fc);
 			transactionManager.commit(txStatus);
-		} catch (AppException e) {
+		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {

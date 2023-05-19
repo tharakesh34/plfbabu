@@ -221,12 +221,11 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 			fd = receiptService.receiptTransaction(fsi);
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			setFailureStatus(detail, e.getMessage());
-
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
 
+			setFailureStatus(detail, e.getMessage());
 			return;
 		}
 

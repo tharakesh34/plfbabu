@@ -18766,4 +18766,24 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#227404_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rev_write_off_upload');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#227404" author="Gopal.p">
+		<modifyDataType tableName="REV_WRITE_OFF_UPLOAD" columnName="Remarks" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="PSD#227404_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rev_write_off_upload');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
