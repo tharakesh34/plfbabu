@@ -524,6 +524,11 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			return;
 		}
 
+		if (clk.getExcessAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			setError(clk, CrossLoanKnockOffUploadError.CLKU_028);
+			return;
+		}
+
 		if (StringUtils.isBlank(clk.getAllocationType())) {
 			setError(clk, CrossLoanKnockOffUploadError.CLKU_005);
 			return;

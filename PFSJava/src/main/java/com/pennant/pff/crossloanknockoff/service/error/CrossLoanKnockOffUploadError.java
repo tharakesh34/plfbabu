@@ -57,7 +57,9 @@ public enum CrossLoanKnockOffUploadError {
 
 	CLKU_026("To Fin Reference is not in active."),
 
-	CLKU_027("From Fin Reference is already cancelled, cross loan knockoff is not allowed.");
+	CLKU_027("From Fin Reference is already cancelled, cross loan knockoff is not allowed."),
+
+	CLKU_028("Excess Amount should be greater than ZERO");
 
 	private String description;
 
