@@ -2057,7 +2057,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 
 				if (StringUtils.isBlank(closingStatus)
-						|| FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
+						|| !FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
 								&& LPPExtension.LPP_DUE_CREATION_REQ) {
 					Date schdMonthEnd = DateUtil.getMonthEnd(finSchdDetail.getSchDate());
 

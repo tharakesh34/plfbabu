@@ -1068,7 +1068,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fsi.setFinID(finId);
 		fsi.setValueDate(rd.getValueDate());
 		fsi.setAmount(rd.getAmount());
-		fsi.setAllocationType(AllocationType.AUTO);
+		fsi.setAllocationType(AllocationType.MANUAL);
 		Long fundingAc = rd.getFundingAc();
 		if (fundingAc != null) {
 			fsi.setFundingAc(fundingAc);
@@ -1088,7 +1088,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
-		fsi.setUploadAllocationDetails(null);
+		fsi.setUploadAllocationDetails(new ArrayList<>());
 		fsi.setReqType(RepayConstants.REQTYPE_POST);
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
