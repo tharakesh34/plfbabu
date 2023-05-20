@@ -953,4 +953,8 @@ public class PennantConstants {
 	public static final String SANCTION_PENDING = "Pending";
 	public static final String SANCTION_RECEIVED = "Received";
 	public static final String SANCTION_CLOSED = "Closed";
+
+	// Hold Marking
+	public static final String HOLD_MARKING = "H";
+	public static final String REMOVE_HOLD_MARKING = "R";
 }

@@ -120,4 +120,8 @@ public class FinanceUtil {
 
 		return rpyHierarchy;
 	}
+
+	public static boolean isClosedNow(FinanceMain fm) {
+		return fm.isOldActiveState() && !fm.isFinIsActive();
+	}
 }

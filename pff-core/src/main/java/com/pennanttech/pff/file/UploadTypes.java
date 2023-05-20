@@ -51,7 +51,9 @@ public enum UploadTypes {
 
 	LOAN_CLOSURE("Loan Closure Upload Details Screen"),
 
-	PROVISION("Provision Upload Details Screen");
+	PROVISION("Provision Upload Details Screen"),
+
+	HOLD_MARKING("Hold Marking Upload Details Screen");
 
 	private String description;
 

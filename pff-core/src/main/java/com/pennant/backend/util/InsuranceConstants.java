@@ -38,5 +38,6 @@ public class InsuranceConstants {
 	public static final String SURRENDER = "SURRENDER";
 	public static final String CLAIM = "CLAIM";
 	public static final String MATURED = "MATURED";
+	public static final String SUCCESS = "SUCCESS";
 
 }

@@ -1410,7 +1410,15 @@
 			<menuItem id="menu_Item_Provision_Upload_Approver"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionUploadList.zul?stage=A"
 				rightName="menu_Item_Provision_Upload_Approver" />
-	  </menu>
+	   </menu>
+	   <menu id="menu_Category_HoldMarkingUpload">
+			<menuItem id="menu_Item_HoldMarkingUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HoldMarking/Upload/HoldMarkingUploadList.zul?stage=M"
+				rightName="menu_Item_HoldMarkingUpload_Maker" />
+			<menuItem id="menu_Item_HoldMarkingUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HoldMarking/Upload/HoldMarkingUploadList.zul?stage=A"
+				rightName="menu_Item_HoldMarkingUpload_Approver" />
+		</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

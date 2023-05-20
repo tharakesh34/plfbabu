@@ -6246,16 +6246,16 @@
 		class = "com.pennant.pff.noc.webui.ServiceBranchListCtrl" parent="basisListCtrl" scope="prototype"/>
 		
 	<bean id="serviceBranchDialogCtrl"
-	class="com.pennant.pff.noc.webui.ServiceBranchDialogCtrl" parent="basisCtrl" scope="prototype" />
+		class="com.pennant.pff.noc.webui.ServiceBranchDialogCtrl" parent="basisCtrl" scope="prototype" />
 	
 	<bean id="blockAutoGenLetterUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.BlockAutoGenLetterUploadListCtrl"
-	parent="uploadList" />
+		parent="uploadList" />
 	
 	<bean id="loanLetterUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.LoanLetterUploadListCtrl"
-	parent="uploadList" />
+		parent="uploadList" />
 	
 	<bean id="courierDetailUploadListCtrl" class="com.pennant.pff.noc.upload.web.list.CourierDetailUploadListCtrl" 
-	parent="uploadList" />
+		parent="uploadList" />
 	
 	<bean id="loanTypeLetterMappingListCtrl" class="com.pennant.pff.noc.webui.LoanTypeLetterMappingListCtrl"
 		parent="basisListCtrl" scope="prototype" />
@@ -6269,7 +6269,7 @@
 	</bean>
 	
 	<bean id="generateLetterDialogCtrl" class="com.pennant.pff.noc.webui.GenerateLetterDialogCtrl" parent="basisCtrl"
-	scope="prototype" />
+		scope="prototype" />
 
 	<bean id="generateLetterListCtrl" class="com.pennant.pff.noc.webui.GenerateLetterListCtrl" parent="basisCtrl"
 		scope="prototype" />
@@ -6281,5 +6281,8 @@
 		parent="uploadList" />
 		
 	<bean id="provisionUploadListCtrl" class="com.pennanttech.pff.provision.upload.list.ProvisionUploadListCtrl"
+		parent="uploadList" />
+		
+	<bean id="holdMarkingUploadListCtrl" class="com.pennant.pff.holdmarking.upload.web.list.HoldMarkingUploadListCtrl"
 		parent="uploadList" />
 </beans>

@@ -96,7 +96,9 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -149,6 +151,7 @@ public class RepaymentProcessUtil {
 	private AccrualService accrualService;
 	private LoanPaymentService loanPaymentService;
 	private AdvancePaymentService advancePaymentService;
+	private HoldMarkingService holdMarkingService;
 
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
@@ -332,11 +335,12 @@ public class RepaymentProcessUtil {
 			repaymentPostingsUtil.recalOldestDueKnockOff(fm, profitDetail, valuedate, scheduleDetails);
 		}
 
-		// If all presentment also Approved and upload status is succeed then only need to check the case
+		fm.setOldActiveState(fm.isFinIsActive());
+
+		boolean isFinFullyPaid = false;
 		if (presentmentDetailDAO.getApprovedPresentmentCount(fm.getFinReference()) == 0) {
-			boolean oldFinActive = fm.isFinIsActive();
 			LoanPayment lp = new LoanPayment(fm.getFinID(), fm.getFinReference(), scheduleDetails, rch.getValueDate());
-			boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
+			isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
 			Date appDate = SysParamUtil.getAppDate();
 
@@ -346,7 +350,7 @@ public class RepaymentProcessUtil {
 
 			if (isFinFullyPaid) {
 				fm.setFinIsActive(false);
-				if (oldFinActive) {
+				if (fm.isOldActiveState()) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
 				}
 				profitDetail.setFinIsActive(false);
@@ -365,6 +369,11 @@ public class RepaymentProcessUtil {
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customer, priPaynow);
+
+		if (MandateExtension.ALLOW_HOLD_MARKING && isFinFullyPaid) {
+			holdMarkingService.removeHold(fm);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -2875,6 +2884,11 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setLoanPaymentService(LoanPaymentService loanPaymentService) {
 		this.loanPaymentService = loanPaymentService;
+	}
+
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
 	}
 
 	@Autowired

@@ -34,6 +34,8 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -61,6 +63,7 @@ public class ReceiptPaymentService {
 	private LoanPaymentService loanPaymentService;
 	private OverdrafLoanService overdrafLoanService;
 	private ReceiptCancellationService receiptCancellationService;
+	private HoldMarkingService holdMarkingService;
 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailDAO;
@@ -192,9 +195,16 @@ public class ReceiptPaymentService {
 		long finID = pd.getFinID();
 		List<FinanceScheduleDetail> schedules = receiptDTO.getSchedules();
 
+		fm.setOldActiveState(fm.isFinIsActive());
+
 		if (loanPaymentService.isSchdFullyPaid(new LoanPayment(finID, fm.getFinReference(), schedules, appDate))) {
+			fm.setFinIsActive(false);
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 			profitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
+
+			if (MandateExtension.ALLOW_HOLD_MARKING) {
+				holdMarkingService.removeHold(fm);
+			}
 		}
 	}
 
@@ -445,5 +455,10 @@ public class ReceiptPaymentService {
 	@Autowired
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
 	}
 }

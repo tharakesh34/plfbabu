@@ -66,6 +66,7 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.FinanceConfigCache;
@@ -74,6 +75,10 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
+import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
+import com.pennant.pff.holdmarking.upload.dao.HoldMarkingDetailDAO;
+import com.pennant.pff.holdmarking.upload.dao.HoldMarkingHeaderDAO;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
@@ -130,6 +135,8 @@ public class PresentmentEngine {
 	private MandateDAO mandateDAO;
 	private MandateStatusDAO mandateStatusDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private HoldMarkingDetailDAO holdMarkingDetailDAO;
+	private HoldMarkingHeaderDAO holdMarkingHeaderDAO;
 
 	/* Service's */
 	private OverdrafLoanService overdrafLoanService;
@@ -1485,6 +1492,47 @@ public class PresentmentEngine {
 			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 998) : errorDesc;
 		}
 		presentmentDetailDAO.updatePresentmentDetail(pd);
+
+		if (InstrumentType.SI.code().equals(pd.getMandateType()) && RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
+
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
+				return;
+			}
+
+			int count = 0;
+			Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+			long userId = 1000;
+
+			HoldMarkingHeader hmh = new HoldMarkingHeader();
+			hmh.setFinReference(pd.getFinReference());
+			hmh.setFinID(pd.getFinID());
+			hmh.setAccountNumber(pd.getAccountNo());
+			hmh.setHoldAmount(pd.getPresentmentAmt());
+			hmh.setBalance(pd.getPresentmentAmt());
+
+			long headerId = holdMarkingHeaderDAO.saveHeader(hmh);
+
+			HoldMarkingDetail hmd = new HoldMarkingDetail();
+			hmd.setHoldID(hmh.getHoldID());
+			hmd.setHeaderID(headerId);
+			hmd.setFinReference(pd.getFinReference());
+			hmd.setFinID(pd.getFinID());
+			hmd.setHoldType(PennantConstants.HOLD_MARKING);
+			hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
+			hmd.setMovementDate(pd.getAppDate());
+			hmd.setStatus(InsuranceConstants.SUCCESS);
+			hmd.setAmount(pd.getPresentmentAmt());
+			hmd.setLogID(++count);
+			hmd.setHoldReleaseReason("Presentment Bounce");
+			hmd.setCreatedBy(userId);
+			hmd.setCreatedOn(currentTime);
+			hmd.setLastMntBy(userId);
+			hmd.setLastMntOn(currentTime);
+			hmd.setApprovedOn(currentTime);
+			hmd.setApprovedBy(userId);
+
+			holdMarkingDetailDAO.saveDetail(hmd);
+		}
 	}
 
 	private void holdMandate(PresentmentDetail pd) {
@@ -2002,6 +2050,16 @@ public class PresentmentEngine {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setHoldMarkingDetailDAO(HoldMarkingDetailDAO holdMarkingDetailDAO) {
+		this.holdMarkingDetailDAO = holdMarkingDetailDAO;
+	}
+
+	@Autowired
+	public void setHoldMarkingHeaderDAO(HoldMarkingHeaderDAO holdMarkingHeaderDAO) {
+		this.holdMarkingHeaderDAO = holdMarkingHeaderDAO;
 	}
 
 }

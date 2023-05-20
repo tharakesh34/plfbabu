@@ -62,6 +62,7 @@ import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.extension.Services;
@@ -288,6 +289,9 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return this.glemsCollateralProcess != null;
 		case "menu_Item_FinTypePartnerbankMapping":
 			return PartnerBankExtension.BRANCH_WISE_MAPPING;
+		case "menu_Item_HoldMarkingUpload_Maker":
+		case "menu_Item_HoldMarkingUpload_Approver":
+			return MandateExtension.ALLOW_HOLD_MARKING;
 		default:
 			break;
 		}
