@@ -846,7 +846,9 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 	private void onSelectManualAssetSubClassCode() {
 		ProvisionRuleData prd = provisionDao.getProvisionData(provision.getFinID());
-
+		if (prd == null) {
+			prd = provisionDao.getProvisionDataForUpload(provision.getFinID());
+		}
 		prd.setEffNpaClassCode(getSelectedLabel(effManualAssetClassification));
 		prd.setEffNpaSubClassCode(getSelectedLabel(effManualAssetSubClassification));
 		provisionService.executeProvisionRule(prd, provision);

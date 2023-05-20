@@ -100,7 +100,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		ProvisionRuleData prd = provisionDao.getProvisionData(finID);
 
 		if (prd == null) {
-			return null;
+			prd = provisionDao.getProvisionDataForUpload(finID);
 		}
 
 		Provision p = provisionDao.getProvision(finID);
@@ -140,7 +140,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 				p.setManualAssetSubClassCode(mp.getManualAssetSubClassCode());
 			}
 
-			p.setOverrideProvision(PennantConstants.YES.equals(mp.isOverrideProvision()));
+			p.setOverrideProvision(mp.isOverrideProvision());
 
 			manProvsnPer = mp.getManProvsnPer();
 			p.setManProvsnPer(manProvsnPer);
@@ -148,12 +148,12 @@ public class ProvisionServiceImpl implements ProvisionService {
 
 		p.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-		if (p.isManualProvision()) {
+		if (p.isManualProvision() || mp.isOverrideProvision()) {
 			prd.setEffNpaClassCode(mp.getManualAssetClassCode());
 			prd.setEffNpaSubClassCode(mp.getManualAssetSubClassCode());
 
 			executeProvisionRule(prd, p);
-			BigDecimal osPrincipal = prd.getOdPrincipal();
+			BigDecimal osPrincipal = prd.getOutstandingprincipal();
 			p.setManProvsnAmt(osPrincipal.multiply(manProvsnPer.divide(new BigDecimal(100))));
 
 		} else {
@@ -170,8 +170,8 @@ public class ProvisionServiceImpl implements ProvisionService {
 		p.setEffNpaClassCode(prd.getEffNpaClassCode());
 		p.setEffNpaSubClassCode(prd.getEffNpaSubClassCode());
 
-		p.setManualAssetClassID(prd.getEffAssetClassID());
-		p.setManualAssetSubClassID(prd.getEffAssetSubClassID());
+		p.setManualAssetClassID(mp.getManualAssetClassID());
+		p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
 
 		if (newRecord || p.getNpaClassID() != prd.getNpaClassID()) {
 			p.setNpaClassChng(true);

@@ -549,10 +549,10 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = lp.FinID");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.ID = lp.NpaClassId");
-		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.Classid");
+		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassId");
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = lp.EffNpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassId");
-		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacc.Id");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacsd.SubClassId");
 		sql.append(" Where lp.FinID = ?");
 		sql.append(" Union All");
 		sql.append("  Select lp.Id,c.CustID, c.CustCIF, c.CustShrtName");
@@ -580,10 +580,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.ID = lp.NpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.Classid");
-		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.AssetClassId = acc.Id");
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = lp.EffNpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassId");
-		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacc.Id");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacsd.SubClassId");
 		sql.append(" Where lp.FinID = ? and Not Exists (Select 1 From Loan_Provisions_Temp Where ID = lp.ID)");
 		sql.append(") T ");
 
@@ -871,6 +870,92 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 			return pu;
 		}, finID);
+	}
+
+	@Override
+	public ProvisionRuleData getProvisionDataForUpload(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" npa.FinID, npa.FinReference, fm.FinType, fpt.FinCategory, cst.CustCtgCode");
+		sql.append(", fm.FinAssetValue, fm.FinCurrAssetValue, fpt.TotalPriBal, fpt.TotalPftBal");
+		sql.append(", fpt.ODPrincipal, fpt.ODProfit, fpt.TotalPriBal, fpt.TotalPriPaid");
+		sql.append(", fpt.TotalPftPaid, fpt.PftAccrued, fpt.AmzTillLBD, fpt.TdSchdPriBal");
+		sql.append(", npa.PastDueDays, npa.NpaPastDueDays");
+		sql.append(", npa.EffNpaPastDueDays, npa.NpaStage, npa.EffNpaStage");
+		sql.append(", npa.NpaClassID, acc.Code NpaClassCode, ascc.Code NpaSubClassCode");
+		sql.append(", npa.EffNpaClassID, eacc.Code EffNpaClassCode, eascc.Code EffNpaSubClassCode");
+		sql.append(", fm.Restructure RestrutureLoan, 0 repossessedLoan");
+		sql.append(", regProvnR.SqlRule RegProvsnRule, intProvnR.SqlRule IntProvsnRule");
+		sql.append(", fm.CustID, e.EntityCode, fm.FinCCY, fm.FinBranch");
+		sql.append(", acsd.NpaAge NpaAge, eacsd.NpaAge EffNpaAge");
+		sql.append(", eacc.ID EffAssetClassID, eascc.ID EffAssetSubClassID");
+		sql.append(" From Npa_Loan_Info npa");
+		sql.append(" Left Join Npa_Provision_Stage nps on nps.FinID = npa.FinID");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = npa.FinID");
+		sql.append(" Inner Join FinPftDetails fpt on fpt.FinID = fm.FinID");
+		sql.append(" Inner Join customers cst on cst.CustID = fm.CustID");
+		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Left Join Rules regProvnR on regProvnR.RuleID = ft.RegProvRule");
+		sql.append(" Left Join Rules intProvnR on intProvnR.RuleID = ft.IntProvRule");
+		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.id = npa.NpaClassId");
+		sql.append(" Inner Join Asset_Class_Codes acc on acc.id = acsd.classId");
+		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.id = acsd.subClassId");
+		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.id = npa.EffNpaClassId");
+		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.id = eacsd.classId");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.id = eacsd.subClassId");
+		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
+		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ProvisionRuleData data = new ProvisionRuleData();
+
+				data.setFinID(rs.getLong("FinID"));
+				data.setFinReference(rs.getString("FinReference"));
+				data.setFinType(rs.getString("FinType"));
+				data.setProductCategory(rs.getString("FinCategory"));
+				data.setCustCategory(rs.getString("CustCtgCode"));
+				data.setPastDueDays(rs.getInt("PastDueDays"));
+				data.setNpaPastDueDays(rs.getInt("NpaPastDueDays"));
+				data.setEffNpaPastDueDays(rs.getInt("EffNpaPastDueDays"));
+				data.setNpaStage(rs.getBoolean("NpaStage"));
+				data.setEffNpaStage(rs.getBoolean("EffNpaStage"));
+				data.setNpaClassID(JdbcUtil.getLong(rs.getObject("NpaClassID")));
+				data.setNpaClassCode(rs.getString("NpaClassCode"));
+				data.setNpaSubClassCode(rs.getString("NpaSubClassCode"));
+				data.setEffNpaClassID(JdbcUtil.getLong(rs.getObject("EffNpaClassID")));
+				data.setEffNpaClassCode(rs.getString("EffNpaClassCode"));
+				data.setEffNpaSubClassCode(rs.getString("EffNpaSubClassCode"));
+				data.setRestrutureLoan(rs.getBoolean("RestrutureLoan"));
+				data.setOutstandingprincipal(rs.getBigDecimal("TotalPriBal"));
+				data.setOsProfit(rs.getBigDecimal("TotalPftBal"));
+				data.setOdPrincipal(rs.getBigDecimal("ODPrincipal"));
+				data.setOdProfit(rs.getBigDecimal("ODProfit"));
+				data.setLoanAmount(rs.getBigDecimal("FinAssetValue"));
+				data.setDisbursedAmount(rs.getBigDecimal("FinCurrAssetValue"));
+				data.setOverdueEMI(rs.getBigDecimal("ODPrincipal").add(rs.getBigDecimal("ODProfit")));
+				data.setRegProvsnRule(rs.getString("RegProvsnRule"));
+				data.setIntProvsnRule(rs.getString("IntProvsnRule"));
+				data.setTotPftAccrued(rs.getBigDecimal("PftAccrued"));
+				data.setTillDateSchdPri(rs.getBigDecimal("TdSchdPriBal"));
+				data.setCustID(rs.getLong("CustID"));
+				data.setEntityCode(rs.getString("EntityCode"));
+				data.setFinCCY(rs.getString("FinCCY"));
+				data.setFinBranch(rs.getString("FinBranch"));
+				data.setNpaAge(rs.getInt("NpaAge"));
+				data.setEffNpaAge(rs.getInt("EffNpaAge"));
+				data.setEffAssetClassID(rs.getLong("EffAssetClassID"));
+				data.setEffAssetSubClassID(rs.getLong("EffAssetSubClassID"));
+
+				return data;
+
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 }

@@ -54,4 +54,6 @@ public interface ProvisionDAO {
 	boolean isRecordExists(long finID);
 
 	List<NpaProvisionStage> getNPAProvisionDetails(long finID);
+
+	ProvisionRuleData getProvisionDataForUpload(long finID);
 }
