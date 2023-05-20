@@ -53,6 +53,10 @@ public class SchdUtil {
 
 	}
 
+	public static FinanceScheduleDetail getFirstInstalment(List<FinanceScheduleDetail> schedules) {
+		return sort(schedules).stream().filter(FinanceScheduleDetail::isRepayOnSchDate).findAny().orElse(null);
+	}
+
 	public static BigDecimal getTotalPrincipalSchd(List<FinanceScheduleDetail> schedules) {
 		return schedules.stream().filter(schd -> schd.isRepayOnSchDate()).toList().stream()
 				.map(FinanceScheduleDetail::getPrincipalSchd).reduce(BigDecimal.ZERO, BigDecimal::add);
