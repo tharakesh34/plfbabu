@@ -191,7 +191,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.HOLD_MARKING.name(), this, "HoldMarkingUploadHeader");
+		uploadProcess(UploadTypes.HOLD_MARKING.name(), this, "HoldMarkingUpload");
 	}
 
 	@Override

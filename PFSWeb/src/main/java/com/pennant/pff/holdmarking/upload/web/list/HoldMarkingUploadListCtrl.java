@@ -24,7 +24,7 @@ public class HoldMarkingUploadListCtrl extends AUploadListCtrl {
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "HoldMarkingUploadHeader";
+		super.moduleCode = "HoldMarkingUpload";
 		super.onCreate(getArgument("stage"), this.window);
 	}
 }
