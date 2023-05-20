@@ -175,7 +175,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	}
 
 	@Override
-	public List<LienDetails> getLienDtlsByRefAndAcc(String reference, String accNumber) {
+	public List<LienDetails> getLienDtlsByRefAndAcc(String reference, String accNumber, Boolean isActive) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder("Select");
@@ -185,9 +185,9 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 		sql.append(" From Lien_Details ld ");
 		sql.append(" Left Join Lien_Header lh on ld.LienReference = lh.LienReference ");
 		Object[] args = null;
-		if (!StringUtils.isEmpty(reference) && !StringUtils.isEmpty(accNumber)) {
-			sql.append(" Where ld.Reference =? and lh.AccNumber =? ");
-			args = new Object[] { reference, accNumber };
+		if (!StringUtils.isEmpty(reference) && !StringUtils.isEmpty(accNumber) && isActive == true) {
+			sql.append(" Where ld.Reference =? and lh.AccNumber =? and ld.LienStatus= ? ");
+			args = new Object[] { reference, accNumber, isActive };
 		} else if (!StringUtils.isEmpty(reference)) {
 			sql.append(" Where ld.Reference =?");
 			args = new Object[] { reference };

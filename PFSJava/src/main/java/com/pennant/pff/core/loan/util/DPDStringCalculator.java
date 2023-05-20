@@ -15,6 +15,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.pff.extension.DPDExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.util.SchdUtil;
 
 public class DPDStringCalculator {
 	private DPDStringCalculator() {
@@ -86,7 +87,7 @@ public class DPDStringCalculator {
 			dueDay = weekBusDay;
 		}
 
-		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0 || considerDPDForMatured(fm, schedules)) {
+		if (LookupMethods.lookupFSD(schedules, nextBusinessDate, 0) > 0 || considerDPDForMatured(fm)) {
 			frequencyDay = dueDay;
 		}
 
@@ -98,24 +99,10 @@ public class DPDStringCalculator {
 	}
 
 	private static boolean isNotFirstInstallment(List<FinanceScheduleDetail> schedules, Date nextBusinessDate) {
-		int index = 0;
-
-		for (FinanceScheduleDetail schedule : schedules) {
-			if (index > 0) {
-				return true;
-			}
-
-			if (schedule.isRepayOnSchDate()) {
-				index++;
-				if (schedule.getSchDate().compareTo(nextBusinessDate) == 0) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return SchdUtil.getFirstInstalment(schedules).getSchDate().compareTo(nextBusinessDate) != 0;
 	}
 
-	private static boolean considerDPDForMatured(FinanceMain fm, List<FinanceScheduleDetail> schedules) {
+	private static boolean considerDPDForMatured(FinanceMain fm) {
 		Date nextBusinessDate = fm.getEventProperties().getBusinessDate();
 
 		if (fm.getMaturityDate().compareTo(nextBusinessDate) > 0) {

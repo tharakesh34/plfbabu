@@ -87,18 +87,27 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 			return;
 		}
 
-		List<LienDetails> lu = lienDetailsDAO.getLienDtlsByRefAndAcc(detail.getReference(), detail.getAccNumber());
+		List<LienDetails> lu = lienDetailsDAO.getLienDtlsByRefAndAcc(detail.getReference(), detail.getAccNumber(),
+				true);
 		boolean isExists = false;
+
+		if (detail.getAction().equals("Y")) {
+			isExists = true;
+		}
 
 		for (LienDetails lienDetails : lu) {
 			if (lienDetails != null && lienDetails.getMarking() != null) {
 				if (detail.getAction().equals("Y") && lienDetails.isLienStatus()) {
 					setError(detail, LienUploadError.LUOU_110, String.valueOf(lienDetails.getLienID()));
 					return;
-				} else if (detail.getAction().equals("N") && !lienDetails.isLienStatus()) {
+				}
+
+				if (detail.getAction().equals("N") && !lienDetails.isLienStatus()) {
 					setError(detail, LienUploadError.LUOU_110, String.valueOf(lienDetails.getLienID()));
 					return;
-				} else if (detail.getAction().equals("N") && detail.getReference().equals(lienDetails.getReference())) {
+				}
+
+				if (detail.getAction().equals("N") && detail.getReference().equals(lienDetails.getReference())) {
 					isExists = true;
 				}
 			}
@@ -206,7 +215,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 			lienup.setUserDetails(header.getUserDetails());
 
 			String accNumber = lienup.getAccNumber();
-			LienHeader lienheader = lienHeaderDAO.getLienByAcc(accNumber);
+			LienHeader lienheader = lienHeaderDAO.getLienByAccAndStatus(accNumber, true);
 			boolean isNew = false;
 
 			TransactionStatus txStatus = getTransactionStatus();
@@ -278,7 +287,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 				Map<String, String> map = new HashMap<>();
 				map.put("Lien ID", String.valueOf(lu.getLienID()));
-				lienup.setFileDetails(map);
+				lienup.setExtendedFields(map);
 
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
