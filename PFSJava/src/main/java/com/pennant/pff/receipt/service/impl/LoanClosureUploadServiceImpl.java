@@ -40,7 +40,6 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
@@ -162,13 +161,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 						lcu.setAllocations(loanClosureUploadDAO.getAllocations(lcu.getId(), header.getId()));
 						createReceipt(lcu, header);
 					}
-					LoggedInUser userDetails = header.getUserDetails();
-
-					if (userDetails == null) {
-						userDetails = new LoggedInUser();
-						userDetails.setLoginUsrID(header.getApprovedBy());
-						userDetails.setUserName(header.getApprovedByName());
-					}
 				}
 
 				try {
@@ -235,16 +227,11 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 		fsi.setReceiptUpload(true);
 		fsi.setClosureReceipt(true);
 		fsi.setRequestSource(RequestSource.UPLOAD);
-		LoggedInUser userDetails = lcu.getUserDetails();
 		fsi.setClosureType(lcu.getClosureType());
+		fsi.setClosureWithFullWaiver(!list.isEmpty() && rud.getReceiptAmount().compareTo(BigDecimal.ZERO) == 0);
 
-		if (userDetails == null) {
-			userDetails = new LoggedInUser();
-			userDetails.setLoginUsrID(header.getApprovedBy());
-			userDetails.setUserName(header.getApprovedByName());
-		}
-
-		fsi.setLoggedInUser(userDetails);
+		prepareUserDetails(header, lcu);
+		fsi.setLoggedInUser(lcu.getUserDetails());
 		fsi.setKnockOffReceipt(true);
 		fsi.setReceiptDetail(null);
 		fsi.setReceiptDetails(receiptService.prepareRCDForExcess(lcu.getExcessList(), rud));

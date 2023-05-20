@@ -3588,7 +3588,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(fm.getFinCcy()));
 		String excessAdjustTo = rh.getExcessAdjustTo();
 
-		if (RequestSource.UPLOAD == requestSource
+		if (!fsi.isClosureReceipt() && RequestSource.UPLOAD == requestSource
 				&& totalDues.compareTo(rh.getReceiptAmount().add(rh.getClosureThresholdLimit())) > 0
 				&& !RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)) {
 			setError(schdData, "RU0051");
@@ -4007,6 +4007,10 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			return;
 		}
 
+		if (StringUtils.isNotBlank(fsi.getClosureType())) {
+			rd.setForeClosure(true);
+		}
+
 		// closure with full waiver
 		if (fsi != null && ("Post".equals(fsi.getReqType()) || "Inquiry".equals(fsi.getReqType()))
 				&& FinServiceEvent.EARLYSETTLE.equals(fsi.getReceiptPurpose()) && !fsi.isReceiptUpload()) {
@@ -4203,7 +4207,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			isAllocationFound = true;
 		}
 
-		if (AllocationType.AUTO.equals(allocationType) && !fsi.isClosureReceipt()) {
+		if (AllocationType.AUTO.equals(allocationType)) {
 			if (isAllocationFound) {
 				setError(schdData, "RU0028");
 				logger.info(Literal.LEAVING);
@@ -5908,6 +5912,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setSource(fsi.getRequestSource().name());
 		rch.setFinType(fm.getFinType());
 		rch.setClosureType(fsi.getClosureType());
+		rch.setClosureWithFullWaiver(fsi.isClosureWithFullWaiver());
 
 		if (fsi.isKnockOffReceipt()) {
 			rch.setKnockOffType(fsi.getKnockoffType());
@@ -6480,6 +6485,19 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		String allocateMthd = rd.getReceiptHeader().getAllocationType();
 		if (AllocationType.AUTO.equals(allocateMthd)) {
 			rd = receiptCalculator.recalAutoAllocation(rd, false);
+		} else {
+			if (fsi.isClosureReceipt()) {
+				for (UploadAlloctionDetail alloc : fsi.getUploadAllocationDetails()) {
+					for (ReceiptAllocationDetail allc : rd.getReceiptHeader().getAllocations()) {
+						if (allc.getAllocationType().equals(alloc.getReferenceCode())) {
+							BigDecimal waivedAmount = alloc.getWaivedAmount();
+							allc.setWaivedAmount(waivedAmount);
+							allc.setWaivedAvailable(waivedAmount);
+							allc.setBalance(allc.getBalance().subtract(waivedAmount));
+						}
+					}
+				}
+			}
 		}
 
 		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
@@ -6810,18 +6828,14 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			createXcessRCD(rd);
 			rcd.setPayOrder(rch.getReceiptDetails().size() + 1);
 			rch.getReceiptDetails().add(rcd);
-		}
-
-		if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
-			rcd.setDueAmount(rch.getReceiptAmount());
-			rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
 		} else {
-			rcd.setDueAmount(rd.getTotalPastDues());
-			rd.setTotalPastDues(BigDecimal.ZERO);
-		}
-
-		for (FinReceiptDetail detail : rch.getReceiptDetails()) {
-			detail.setDueAmount(rcd.getDueAmount());
+			if (rd.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
+				rcd.setDueAmount(rch.getReceiptAmount());
+				rd.setTotalPastDues(rd.getTotalPastDues().subtract(rch.getReceiptAmount()));
+			} else {
+				rcd.setDueAmount(rd.getTotalPastDues());
+				rd.setTotalPastDues(BigDecimal.ZERO);
+			}
 		}
 
 		fm.setReceiptPurpose(receiptPurpose.code());
@@ -7067,7 +7081,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		rd.setDueAdjusted(true);
 		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
-		RequestSource requestSource = schdData.getFinServiceInstruction().getRequestSource();
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
+		RequestSource requestSource = fsi.getRequestSource();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
 			if (!RequestSource.EOD.equals(requestSource)) {
@@ -7079,7 +7094,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			BigDecimal totalClosureAmt = rch.getClosureThresholdLimit().add(rd.getTotReceiptAmount());
 			BigDecimal calcClosureAmt = LoanClosureCalculator.computeClosureAmount(prepareReceiptDTO(rd), true);
 
-			String excessAdjustTo = schdData.getFinServiceInstruction().getExcessAdjustTo();
+			String excessAdjustTo = fsi.getExcessAdjustTo();
 
 			if (RepayConstants.EXCESSADJUSTTO_TEXCESS.equals(excessAdjustTo)
 					&& (RequestSource.API.equals(requestSource) && !rd.isDueAdjusted())) {
@@ -7096,6 +7111,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 						}
 					}
 				}
+				rd.setDueAdjusted(true);
+			} else if (fsi.isClosureReceipt() && AllocationType.MANUAL.equals(rch.getAllocationType())) {
 				rd.setDueAdjusted(true);
 			}
 		}

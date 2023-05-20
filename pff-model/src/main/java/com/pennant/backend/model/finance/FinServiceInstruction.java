@@ -368,6 +368,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String knockoffType;
 	private boolean loanCancellation;
 	private boolean closureReceipt;
+	private boolean closureWithFullWaiver;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -559,6 +560,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setKnockOffReceipt(this.knockOffReceipt);
 		fsi.setLoanCancellation(this.loanCancellation);
 		fsi.setClosureReceipt(this.closureReceipt);
+		fsi.setClosureWithFullWaiver(this.closureWithFullWaiver);
 		fsi.setRecordStatus(super.getRecordStatus());
 		fsi.setRoleCode(super.getRoleCode());
 		fsi.setNextRoleCode(super.getNextRoleCode());
@@ -1873,4 +1875,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		this.closureReceipt = closureReceipt;
 	}
 
+	public boolean isClosureWithFullWaiver() {
+		return closureWithFullWaiver;
+	}
+
+	public void setClosureWithFullWaiver(boolean closureWithFullWaiver) {
+		this.closureWithFullWaiver = closureWithFullWaiver;
+	}
 }
