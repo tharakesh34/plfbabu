@@ -744,7 +744,7 @@ public class RepaymentProcessUtil {
 		}
 
 		String bounceComponent = feeTypeDAO.getTaxComponent(Allocation.BOUNCE);
-		extMap.putAll(ManualAdviceUtil.prepareMovementMap(payableAdvMovements, bounceComponent));
+		extMap.putAll(ManualAdviceUtil.prepareMovementMap(movements, bounceComponent));
 
 		BigDecimal adjustedToReceipt = BigDecimal.ZERO;
 		adjustedToReceipt = rch.getTotalPastDues().getPaidAmount();
