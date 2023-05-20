@@ -3018,7 +3018,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public CustomerCoreBank getCoreBankByCustID(long custID) {
-		String sql = "Select c.CustId,c.CustCoreBank From Customers c where CustID = ?";
+		String sql = "Select c.CustId, c.CustCoreBank From Customers c where CustID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 

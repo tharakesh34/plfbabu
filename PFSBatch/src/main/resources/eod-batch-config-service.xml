@@ -855,4 +855,6 @@
 	
 	<bean name="rejectDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.RejectDetailDAOImpl" />
 	
+	<bean id="autoRefundQueueDAO" class="com.pennanttech.refund.dao.impl.AutoRefundQueueDAOImpl" parent="sequenceDao" />
+		
 </beans>

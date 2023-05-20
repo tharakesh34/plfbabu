@@ -31,8 +31,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
-import com.pennant.backend.model.finance.CustEODEvent;
-import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -71,74 +69,67 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	private RefundBeneficiary refundBeneficiary;
 
 	@Override
-	public void loadAutoRefund(CustEODEvent cee) {
+	public AutoRefundLoan getAutoRefundDetails(long finID, EventProperties ep) {
 		logger.debug(Literal.ENTERING);
-		EventProperties ep = cee.getEventProperties();
 
-		Date appDate = cee.getEodDate();
+		Date appDate = ep.getAppDate();
+		Date autoRefundDate = DateUtil.addDays(appDate, -ep.getAutoRefundDaysForClosed());
 
-		cee.getAutoRefundLoans().addAll(autoRefundDAO.getAutoRefunds(cee));
+		AutoRefundLoan arl = autoRefundDAO.getAutoRefund(finID, autoRefundDate);
 
-		for (AutoRefundLoan arl : cee.getAutoRefundLoans()) {
-			long finID = arl.getFinID();
-
-			int autoRefundDaysForActive = ep.getAutoRefundDaysForActive();
-			int autoRefundDaysForClosed = ep.getAutoRefundDaysForClosed();
-
-			arl.setAutoRefCheckDPD(ep.getAutoRefundCheckDPD());
-			arl.setOverDueReq(ep.isAutoRefundOverdueCheck());
-			arl.setActiveNDate(DateUtil.addDays(appDate, -autoRefundDaysForActive));
-			arl.setClosedNDate(DateUtil.addDays(appDate, -autoRefundDaysForClosed));
-			arl.setAlwRefundByCheque(ep.isAutoRefundByCheque());
-			arl.setBusinessDate(ep.getBusinessDate());
-			arl.setAppDate(appDate);
-
-			Date maxValueDate = null;
-			if (arl.isFinIsActive()) {
-				maxValueDate = arl.getActiveNDate();
-			} else {
-				maxValueDate = arl.getClosedNDate();
-			}
-
-			/* Fetch Excess List against Reference and Before Requested Value Date */
-			arl.getExcessList().addAll(finExcessAmountDAO.getExcessRcdList(finID, maxValueDate));
-
-			/* Fetch Payable List against Reference and Before Requested Value Date */
-			arl.getPayableList().addAll(manualAdviseDAO.getPayableAdviseList(finID, maxValueDate));
-
-			arl.getReceivableList().addAll(manualAdviseDAO.getReceivableAdvises(finID));
-
-			if (arl.getExcessList().isEmpty() && arl.getPayableList().isEmpty()) {
-				continue;
-			}
-
-			arl.setPaymentInstruction(refundBeneficiary.getBeneficiary(finID, appDate, arl.isAlwRefundByCheque()));
+		if (arl == null) {
+			return null;
 		}
 
-		logger.debug(Literal.LEAVING);
-	}
+		int autoRefundDaysForActive = ep.getAutoRefundDaysForActive();
+		int autoRefundDaysForClosed = ep.getAutoRefundDaysForClosed();
 
-	@Override
-	public void executeRefund(CustEODEvent cee) {
-		logger.debug(Literal.ENTERING);
-		for (AutoRefundLoan arl : cee.getAutoRefundLoans()) {
+		arl.setAutoRefCheckDPD(ep.getAutoRefundCheckDPD());
+		arl.setOverDueReq(ep.isAutoRefundOverdueCheck());
+		arl.setActiveNDate(DateUtil.addDays(appDate, -autoRefundDaysForActive));
+		arl.setClosedNDate(DateUtil.addDays(appDate, -autoRefundDaysForClosed));
+		arl.setAlwRefundByCheque(ep.isAutoRefundByCheque());
+		arl.setBusinessDate(ep.getBusinessDate());
+		arl.setAppDate(appDate);
+		arl.setClosedLoanHoldRefundDays(autoRefundDaysForClosed);
 
-			/* Overdue Amount calculation */
-			if (arl.isOverDueReq()) {
-				calculateOverDueAmount(arl, cee);
-			}
-
-			executeRefund(arl);
+		Date maxValueDate = null;
+		if (arl.isFinIsActive()) {
+			maxValueDate = arl.getActiveNDate();
+		} else {
+			maxValueDate = arl.getClosedNDate();
 		}
+
+		/* Fetch Excess List against Reference and Before Requested Value Date */
+		arl.getExcessList().addAll(finExcessAmountDAO.getExcessRcdList(finID, maxValueDate));
+
+		/* Fetch Payable List against Reference and Before Requested Value Date */
+		arl.getPayableList().addAll(manualAdviseDAO.getPayableAdviseList(finID, maxValueDate));
+
+		arl.getReceivableList().addAll(manualAdviseDAO.getReceivableAdvises(finID));
+
+		arl.setProfitDetail(profitDetailsDAO.getFinProfitDetailsById(finID));
+
+		arl.getFinODDetails().addAll(finODDetailsDAO.getFinODDByFinRef(finID, null));
+
+		arl.setPaymentInstruction(refundBeneficiary.getBeneficiary(finID, appDate, arl.isAlwRefundByCheque()));
+
 		logger.debug(Literal.LEAVING);
+
+		return arl;
 	}
 
-	private void executeRefund(AutoRefundLoan arl) {
+	public void executeRefund(AutoRefundLoan arl) {
 		logger.debug(Literal.ENTERING);
 
 		long finID = arl.getFinID();
 		String finReference = arl.getFinReference();
 		Date appDate = arl.getAppDate();
+
+		/* Overdue Amount calculation */
+		if (arl.isOverDueReq()) {
+			calculateOverDueAmount(arl);
+		}
 
 		/* Overdue Amount verification Check required or not */
 		BigDecimal overDueAmount = arl.getOverDueAmount();
@@ -229,6 +220,25 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 			return;
 		}
 
+		Date closedDate = arl.getClosedDate();
+
+		if (closedDate != null) {
+			int closedLoanHoldRefundDays = arl.getClosedLoanHoldRefundDays();
+			int closedDays = DateUtil.getDaysBetween(closedDate, arl.getAppDate());
+
+			if (closedDays < closedLoanHoldRefundDays) {
+				setError(arl, "REFUND_012", String.valueOf(closedLoanHoldRefundDays), String.valueOf(closedDays));
+				logger.debug(Literal.LEAVING);
+				return;
+			}
+		}
+
+		if (refundAmt.compareTo(minRefundAmt) < 0) {
+			setError(arl, "REFUND_005", CurrencyUtil.format(refundAmt), CurrencyUtil.format(minRefundAmt));
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
 		PaymentInstruction paymentInstruction = arl.getPaymentInstruction();
 
 		if (paymentInstruction == null) {
@@ -241,20 +251,17 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 	}
 
 	@Override
-	public void updateRefunds(CustEODEvent cee) {
+	public void updateRefunds(AutoRefundLoan arl) {
 		logger.debug(Literal.ENTERING);
 
-		for (AutoRefundLoan arl : cee.getAutoRefundLoans()) {
-			BigDecimal refundAmt = arl.getRefundAmt();
+		BigDecimal refundAmt = arl.getRefundAmt();
 
-			if (arl.getError().getCode() == null && refundAmt.compareTo(BigDecimal.ZERO) > 0) {
-				doProcessPayment(arl);
-			}
+		if (arl.getError().getCode() == null && refundAmt.compareTo(BigDecimal.ZERO) > 0) {
+			doProcessPayment(arl);
+		}
 
-			if (arl.getError().getCode() != null) {
-				logRefund(arl);
-			}
-
+		if (arl.getError().getCode() != null) {
+			logRefund(arl);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -316,22 +323,10 @@ public class AutoRefundServiceImpl implements AutoRefundService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void calculateOverDueAmount(AutoRefundLoan arl, CustEODEvent cee) {
-		FinEODEvent finEodEvent = null;
-		for (FinEODEvent item : cee.getFinEODEvents()) {
-			if (item.getFinanceMain().getFinID() == arl.getFinID()) {
-				finEodEvent = item;
-			}
-		}
-
-		if (finEodEvent == null) {
-			return;
-		}
-
-		BigDecimal overDueAmount = finOverDueService.getOveDueAmount(finEodEvent.getFinProfitDetail(),
-				finEodEvent.getFinODDetails(), arl.getReceivableList());
-
-		arl.setOverDueAmount(overDueAmount);
+	private void calculateOverDueAmount(AutoRefundLoan arl) {
+		FinanceProfitDetail pd = arl.getProfitDetail();
+		List<FinODDetails> finODDetails = arl.getFinODDetails();
+		arl.setOverDueAmount(finOverDueService.getOveDueAmount(pd, finODDetails, arl.getReceivableList()));
 
 	}
 

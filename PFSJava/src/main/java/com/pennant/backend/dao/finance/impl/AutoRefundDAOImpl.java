@@ -6,34 +6,29 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.dao.finance.AutoRefundDAO;
-import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
 import com.pennant.backend.model.finance.CustEODEvent;
-import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.payment.model.PaymentDetail;
-import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.resource.Message;
 
-public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoRefundDAO {
+public class AutoRefundDAOImpl extends SequenceDao<CustEODEvent> implements AutoRefundDAO {
 
 	@Override
-	public List<AutoRefundLoan> getAutoRefunds(CustEODEvent cee) {
-		Date eodDate = cee.getEodDate();
-		EventProperties ep = cee.getEventProperties();
-		Customer customer = cee.getCustomer();
-		StringBuilder sql = new StringBuilder("Select * From (");
+	public AutoRefundLoan getAutoRefund(long finID, Date appDate) {
+		StringBuilder sql = new StringBuilder();
 		sql.append(" Select fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
 		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.WriteOffLoan");
-		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
+		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode, fm.ClosedDate");
 		sql.append(" From Financemain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
@@ -41,78 +36,34 @@ public class AutoRefundDAOImpl extends BasicDao<AutoRefundLoan> implements AutoR
 		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
 		sql.append(" Inner Join FinPftDetails fpd on fpd.FinID = fm.FinID");
 		sql.append(" Left Join Fin_Hold_Details h on fm.FinID = h.FinID");
-		sql.append(" Where fm.FinIsActive = ?");
-
-		if (CustomerExtension.CUST_CORE_BANK_ID) {
-			sql.append(" and c.CustCoreBank = ? ");
-		} else {
-			sql.append(" and c.CustID = ? ");
-		}
-		sql.append(" and ft.AllowAutoRefund = ?");
-
-		sql.append(" Union All");
-
-		sql.append(" Select fm.FinID, fm.FinReference, ft.MaxAutoRefund, ft.MinAutoRefund");
-		sql.append(", fm.FinRepayMethod, fm.FinIsActive, fpd.CurOdDays, fm.FinCcy, fm.WriteOffLoan");
-		sql.append(", h.HoldStatus, fm.FinType, e.EntityCode");
-		sql.append(" From Financemain fm");
-		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
-		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
-		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
-		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
-		sql.append(" Inner Join FinPftDetails fpd on fpd.FinID = fm.FinID");
-		sql.append(" Left Join Fin_Hold_Details h on fm.FinID = h.FinID");
-		sql.append(" Where fm.FinIsActive = ? and fm.ClosedDate <= ?");
-
-		if (CustomerExtension.CUST_CORE_BANK_ID) {
-			sql.append(" and c.CustCoreBank = ? ");
-		} else {
-			sql.append(" and c.CustID = ? ");
-		}
-		sql.append(" and ft.AllowAutoRefund = ?");
-
-		sql.append(" ) T");
+		sql.append(" Where fm.FinID = ? and ft.AllowAutoRefund = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 0;
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				AutoRefundLoan arl = new AutoRefundLoan();
 
-			ps.setBoolean(++index, true);
-			if (CustomerExtension.CUST_CORE_BANK_ID) {
-				ps.setString(++index, customer.getCustCoreBank());
-			} else {
-				ps.setLong(++index, customer.getCustID());
-			}
-			ps.setBoolean(++index, true);
+				arl.setFinID(rs.getLong("FinID"));
+				arl.setFinReference(rs.getString("FinReference"));
+				arl.setMaxRefundAmt(rs.getBigDecimal("MaxAutoRefund"));
+				arl.setMinRefundAmt(rs.getBigDecimal("MinAutoRefund"));
+				arl.setFinRepayMethod(rs.getString("FinRepayMethod"));
+				arl.setFinIsActive(rs.getBoolean("FinIsActive"));
+				arl.setDpdDays(rs.getInt("CurOdDays"));
+				arl.setFinCcy(rs.getString("FinCcy"));
+				arl.setWriteOffLoan(rs.getBoolean("WriteOffLoan"));
+				arl.setHoldStatus(rs.getString("HoldStatus"));
+				arl.setFinType(rs.getString("FinType"));
+				arl.setEntityCode(rs.getString("EntityCode"));
+				arl.setClosedDate(rs.getDate("ClosedDate"));
 
-			ps.setBoolean(++index, false);
-			ps.setDate(++index, JdbcUtil.getDate(DateUtil.addDays(eodDate, -ep.getAutoRefundDaysForClosed())));
-			if (CustomerExtension.CUST_CORE_BANK_ID) {
-				ps.setString(++index, customer.getCustCoreBank());
-			} else {
-				ps.setLong(++index, customer.getCustID());
-			}
-			ps.setBoolean(++index, true);
-
-		}, (rs, rowNum) -> {
-			AutoRefundLoan arl = new AutoRefundLoan();
-
-			arl.setFinID(rs.getLong("FinID"));
-			arl.setFinReference(rs.getString("FinReference"));
-			arl.setMaxRefundAmt(rs.getBigDecimal("MaxAutoRefund"));
-			arl.setMinRefundAmt(rs.getBigDecimal("MinAutoRefund"));
-			arl.setFinRepayMethod(rs.getString("FinRepayMethod"));
-			arl.setFinIsActive(rs.getBoolean("FinIsActive"));
-			arl.setDpdDays(rs.getInt("CurOdDays"));
-			arl.setFinCcy(rs.getString("FinCcy"));
-			arl.setWriteOffLoan(rs.getBoolean("WriteOffLoan"));
-			arl.setHoldStatus(rs.getString("HoldStatus"));
-			arl.setFinType(rs.getString("FinType"));
-			arl.setEntityCode(rs.getString("EntityCode"));
-
-			return arl;
-		});
+				return arl;
+			}, finID, true);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override

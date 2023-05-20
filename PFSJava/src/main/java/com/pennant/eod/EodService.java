@@ -239,8 +239,6 @@ public class EodService {
 		// LatePay Due creation Service
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
-		autoRefundService.executeRefund(custEODEvent);
-
 		// ExtractionDumpHook
 		if (microEodExternalProcessHook != null) {// microEodExtranalProcessHook
 			microEodExternalProcessHook.saveExtractionData(custEODEvent, eventProperties.getBusinessDate());
@@ -356,19 +354,8 @@ public class EodService {
 		}
 	}
 
-	public void processAutoRefund(CustEODEvent custEODEvent) {
-		logger.info("Process the auto Refund for the Customer who is no active loans");
-		autoRefundService.executeRefund(custEODEvent);
-
-		autoRefundService.updateRefunds(custEODEvent);
-	}
-
 	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
 		loadFinanceData.prepareFinEODEvents(custEODEvent);
-	}
-
-	public void loadAutoRefund(CustEODEvent custEODEvent) {
-		autoRefundService.loadAutoRefund(custEODEvent);
 	}
 
 	@Autowired

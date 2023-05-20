@@ -243,4 +243,23 @@
 	<bean id="autoWriteOffCalcQueueTasklet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcQueue" />
 
 	<bean id="autoWriteOffClacTaskLet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffClacTaskLet" />
+	
+	
+	<!-- auto Refund -->
+	<bean id="autoRefundQueuingTaskLet" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundQueueTasklet">
+		<constructor-arg ref="autoRefundQueueDAO"/>
+	</bean>
+
+	<bean id="autoRefundTasklet" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundTasklet">
+		<constructor-arg ref="autoRefundQueueDAO"/>
+	</bean>
+	
+	<bean id="autoRefundPartition" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundPartitioner">
+		<constructor-arg ref="autoRefundQueueDAO"/>
+	</bean>
+	
+	<bean id="autoRefundClearTasklet" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundClearTasklet">
+		<constructor-arg ref="autoRefundQueueDAO"/>
+	</bean>
+	
 </beans>

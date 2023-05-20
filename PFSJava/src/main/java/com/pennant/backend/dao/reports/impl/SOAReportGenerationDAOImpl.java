@@ -51,6 +51,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -1414,5 +1415,58 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<CrossLoanTransfer> getCrossLoanDetail(String finReference, boolean fromRef) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" clt.ID, clt.CustId, clt.ReceiptId, clt.FromFinID, clt.ToFinID, clt.FromFinReference");
+		sql.append(", clt.ToFinReference, clt.TransferAmount, clt.ExcessId, clt.ToLinkedTranId");
+		sql.append(", clt.FromLinkedTranId, clt.ExcessAmount, clt.UtiliseAmount, clt.ReserveAmount");
+		sql.append(", clt.AvailableAmount, clt.ToExcessId, clt.ExcessType, frh.ValueDate");
+		sql.append(" from Cross_Loan_Transfer clt");
+		sql.append(" Inner Join FinReceiptHeader frh on frh.ReceiptID = clt.ReceiptId");
+
+		if (fromRef) {
+			sql.append("  where FromFinReference = ?");
+		} else {
+			sql.append("  where ToFinReference = ?");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+		}, (rs, i) -> {
+			CrossLoanTransfer clt = new CrossLoanTransfer();
+
+			clt.setId(rs.getLong("ID"));
+			clt.setCustId(rs.getLong("CustId"));
+			clt.setReceiptId(rs.getLong("ReceiptId"));
+			clt.setFromFinID(rs.getLong("FromFinID"));
+			clt.setToFinID(rs.getLong("ToFinID"));
+			clt.setFromFinReference(rs.getString("FromFinReference"));
+			clt.setToFinReference(rs.getString("ToFinReference"));
+			clt.setTransferAmount(rs.getBigDecimal("TransferAmount"));
+			clt.setExcessId(rs.getLong("ExcessId"));
+			clt.setToLinkedTranId(rs.getLong("ToLinkedTranId"));
+			clt.setFromLinkedTranId(rs.getLong("FromLinkedTranId"));
+
+			clt.setExcessAmount(rs.getBigDecimal("ExcessAmount"));
+			clt.setUtiliseAmount(rs.getBigDecimal("UtiliseAmount"));
+			clt.setReserveAmount(rs.getBigDecimal("ReserveAmount"));
+			clt.setAvailableAmount(rs.getBigDecimal("AvailableAmount"));
+			clt.setToExcessId(rs.getLong("ToExcessId"));
+			clt.setExcessType(rs.getString("ExcessType"));
+			clt.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+			/*
+			 * clt.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+			 * clt.setTransactionRef(rs.getString("TransactionRef"));
+			 * clt.setToLinkedTranId(rs.getLong("ToLinkedTranId"));
+			 * clt.setFromLinkedTranId(rs.getLong("FromLinkedTranId"));
+			 */
+
+			return clt;
+		});
 	}
 }

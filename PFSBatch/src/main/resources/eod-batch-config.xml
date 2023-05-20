@@ -110,6 +110,26 @@
 			<partition step="excessKnockOff" partitioner="excessKnockOffPartition">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="autoRefundQueuing" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="autoRefundQueuing">
+			<tasklet ref="autoRefundQueuingTaskLet" />
+			<next on="*" to="autoRefundMaster" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="autoRefundMaster">
+			<partition step="autoRefund" partitioner="autoRefundPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="clearAutoRefundQueue" />
+			<fail on="FAILED" />
+		</step>
+		
+		<step id="clearAutoRefundQueue">
+			<tasklet ref="autoRefundClearTasklet" />
 			<next on="*" to="beforeAssetClassification" />
 			<fail on="FAILED" />
 		</step>
@@ -336,6 +356,12 @@
 
 	<step id="excessKnockOff" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="excessKnockOffTasklet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+	
+	<step id="autoRefund" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="autoRefundTasklet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>

@@ -18786,4 +18786,78 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="ST#110.1" author="saikiran.n">
+		<createTable tableName="AUTO_REFUND_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint" />
+			<column name="ThreadId" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PickUpFlag" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#110.2" author="saikiran.n" dbms="oracle">
+		<createSequence sequenceName="SEQ_AUTO_REFUND_QUEUE" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" ordered="true" />
+	</changeSet>
+
+	<changeSet id="ST#110.3" author="saikiran.n">
+		<addPrimaryKey tableName="AUTO_REFUND_QUEUE" columnNames="ID" constraintName="pk_auto_refund_queue" />
+	</changeSet>
+
+	<changeSet id="ST#110.4" author="saikiran.n" dbms="postgresql,mssql">
+		<createSequence sequenceName="SEQ_AUTO_REFUND_QUEUE" minValue="1" maxValue="9223372036854775807"
+			incrementBy="1" startValue="1" />
+	</changeSet>
+
+	<changeSet id="ST#110.5" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadId" tableName="AUTO_REFUND_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="AUTO_REFUND_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="ResetCounterId" tableName="AUTO_REFUND_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="PickUpFlag" tableName="AUTO_REFUND_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#110.5" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_THREADID DEFAULT 0 FOR THREADID;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_PROGRESS DEFAULT 0 FOR PROGRESS;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_RCID DEFAULT 0 FOR RESETCOUNTERID;
+				ALTER TABLE EOD_CUSTOMER_QUEUE ADD CONSTRAINT DF_AUTO_REFUND_QUEUE_PCPF DEFAULT 0 FOR PICKUPFLAG;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#110.6" author="saikiran.n">
+		<sql>
+		    <![CDATA[
+		        DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'AUTO_REFUND_PROCESS_THREAD_COUNT';
+                INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('AUTO_REFUND_PROCESS_THREAD_COUNT', 'AUTO REFUND PROCESS THREAD COUNT', 'string', 0, '10', 3, 0, NULL, NULL, 'Auto Refund Thread Count', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		     ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#110.7" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				DELETE FROM ERRORDETAILS WHERE CODE='REFUND_012';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, RECORDSTATUS, WORKFLOWID, LASTMNTBY, VERSION) VALUES ('REFUND_012', 'EN', 'E', 'Auto refund not allowed, loan closed days {0} less than configred hold refund days {1} for closed loans.', 'Approved', 0, 1000, 1);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
