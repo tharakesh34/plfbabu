@@ -125,7 +125,7 @@ public class SelectLienEnquiryListCtrl extends GFCBaseCtrl<LienDetails> {
 
 		doWriteComponentsToBean(finReference, accountNumber);
 
-		List<LienDetails> lien = lienDetailsDAO.getLienDtlsByRefAndAcc(finReference, accountNumber);
+		List<LienDetails> lien = lienDetailsDAO.getLienDtlsByRefAndAcc(finReference, accountNumber, false);
 
 		if (lien == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
