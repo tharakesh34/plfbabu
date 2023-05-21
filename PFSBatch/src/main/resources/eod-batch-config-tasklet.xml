@@ -243,4 +243,23 @@
 	<bean id="autoWriteOffCalcQueueTasklet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcQueue" />
 
 	<bean id="autoWriteOffClacTaskLet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffClacTaskLet" />
+	
+	<bean id="letterGeneratePartitioner" class="com.pennant.pff.letter.partitioner.LetterGeneratePartitioner">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	<bean id="letterGenerationTasklet" class="com.pennant.pff.letter.LetterGenerationTasklet">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	<bean id="letterGenerationClearTasklet" class="com.pennant.pff.letter.LetterGenerationClearTasklet">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	<bean id="letterGenerationQueueTasklet" class="com.pennant.pff.letter.LetterGenerationQueueTasklet">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	
+	
 </beans>

@@ -25,299 +25,22 @@
 			<listener ref="eodJobListener" />
 		</listeners>
 
-
-		<step id="beforeEOD">
-			<tasklet ref="beforeEODTaskLet" />
-			<next on="*" to="loanCancel" />
+		<step id="letterGenerationQueuing">
+			<tasklet ref="letterGenerationQueueTasklet" />
+			<next on="*" to="letterGenerationMaster" />
 			<fail on="FAILED" />
 		</step>
 
-		<step id="loanCancel">
-			<tasklet ref="loanCancelTaskLet" />
-			<next on="*" to="prepareCustomerQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="prepareCustomerQueue">
-			<tasklet ref="prepareCustomerQueueTaskLet" />
-			<next on="*" to="financeHoldRelease" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="financeHoldRelease">
-			<tasklet ref="financeHoldReleaseTasklet" />
-			<next on="*" to="autoKnockOffProcess" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="autoKnockOffProcess">
-			<tasklet ref="loadAutoKnockOffProcessTasklet" />
-			<next on="*" to="masterStep" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="masterStep">
-			<partition step="microEOD" partitioner="partitioningMaster">
+		<step id="letterGenerationMaster">
+			<partition step="letterGeneration" partitioner="letterGeneratePartitioner">
 				<handler task-executor="taskExecutor" />
 			</partition>
-			<next on="*" to="autoKnockOffDataBackUp" />
+			<next on="*" to="letterGenerationClear" />
 			<fail on="FAILED" />
 		</step>
 
-		<step id="autoKnockOffDataBackUp">
-			<tasklet ref="autoKnockOffDataBackUpTasklet" />
-			<next on="*" to="notifyLoanClosureDetailsToEFS" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="notifyLoanClosureDetailsToEFS">
-			<tasklet ref="notifyLoanClosureDetailsToEFSTaskLet" />
-			<next on="*" to="processInActiveFinances" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="processInActiveFinances">
-			<tasklet ref="processInActiveFinancesTaskLet" />
-			<next on="*" to="oTSQueue" />
-			<fail on="FAILED" />
-		</step>
-		<step id="oTSQueue">
-			<tasklet ref="oTsQueueTasklet" />
-			<next on="*" to="oTSettlement" />
-			<fail on="FAILED" />
-		</step>
-		<step id="oTSettlement">
-			<partition step="oTSMaster" partitioner="otsPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="excessKnockOffLoading" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="excessKnockOffLoading">
-			<tasklet ref="excessKnockOffLoadingTaskLet" />
-			<next on="*" to="excessKnockOffQueuing" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="excessKnockOffQueuing">
-			<tasklet ref="excessKnockOffQueuingTaskLet" />
-			<next on="*" to="excessKnockOffMaster" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="excessKnockOffMaster">
-			<partition step="excessKnockOff" partitioner="excessKnockOffPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="beforeAssetClassification" />
-			<fail on="FAILED" />
-		</step>
-		<step id="beforeAssetClassification">
-			<tasklet ref="beforeAssetClassificationTasklet" />
-			<next on="*" to="assetClassificationQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="assetClassificationQueue">
-			<tasklet ref="assetClassificationQueueTasklet" />
-			<next on="*" to="assetClassificationMaster" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="assetClassificationMaster">
-			<partition step="assetClassification" partitioner="assetClassificationPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="effAssetClassificationQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="effAssetClassificationQueue">
-			<tasklet ref="effAssetClassificationQueueTasklet" />
-			<next on="*" to="effAssetClassificationMaster" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="effAssetClassificationMaster">
-			<partition step="effAssetClassification" partitioner="effAssetClassificationPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="provisionCalcQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="provisionCalcQueue">
-			<tasklet ref="provisionCalcQueueTasklet" />
-			<next on="*" to="provisionCalcMaster" />
-			<fail on="FAILED" />
-		</step>
-		<step id="provisionCalcMaster">
-			<partition step="provisionCalc" partitioner="provisionCalcPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="autoWriteOffCalcQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<!-- Auto Write Off -->
-		<step id="autoWriteOffCalcQueue">
-			<tasklet ref="autoWriteOffCalcQueueTasklet" />
-			<next on="*" to="autoWriteOffCalcMaster" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="autoWriteOffCalcMaster">
-			<partition step="autoWriteOffCalc" partitioner="autoWriteOffCalcPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="processINDASForInActiveFinances" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="processINDASForInActiveFinances">
-			<tasklet ref="processINDASForInActiveFinancesTasklet" />
-			<next on="*" to="prepareCustomerGroupQueue" />
-			<fail on="FAILED" />
-		</step>
-		<step id="prepareCustomerGroupQueue">
-			<tasklet ref="prepareCustomerGroupQueueTaskLet" />
-			<next on="*" to="limitCustomerGroupsUpdate" />
-			<fail on="FAILED" />
-		</step>
-		<step id="limitCustomerGroupsUpdate">
-			<tasklet ref="limitCustomerGroupsUpdateTaskLet">
-				<transaction-attributes propagation="NEVER" />
-			</tasklet>
-			<next on="*" to="institutionLimitUpdate" />
-			<fail on="FAILED" />
-		</step>
-		<step id="institutionLimitUpdate">
-			<tasklet ref="institutionLimitUpdateTaskLet" />
-			<next on="*" to="limitsUpdate" />
-			<fail on="FAILED" />
-		</step>
-		<step id="limitsUpdate">
-			<tasklet ref="limitsUpdateTaskLet" />
-			<next on="*" to="manualAdvisesCancellation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="manualAdvisesCancellation">
-			<tasklet ref="manualAdvisesCancellationTaskLet" />
-			<next on="*" to="datesUpdate" />
-			<fail on="FAILED" />
-		</step>
-		<step id="datesUpdate">
-			<tasklet ref="datesUpdateTaskLet" />
-			<next on="*" to="presentmentExtraction" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="presentmentExtraction">
-			<tasklet ref="presentmentPreparationTasklet" />
-			<next on="*" to="snapShotPreparation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="snapShotPreparation">
-			<tasklet ref="snapShotPreparationTaskLet" />
-			<next on="*" to="dmsRetrieveProcess" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="dmsRetrieveProcess">
-			<tasklet ref="dmsRetrieveProcessTaskLet" />
-			<next on="*" to="gstDownload" />
-			<fail on="FAILED" />
-		</step>
-		<step id="gstDownload">
-			<tasklet ref="gSTDownloadTaskLet" />
-			<next on="*" to="ledgerDownloadQueue" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ledgerDownloadQueue">
-			<tasklet ref="ledgerDownloadQueueTasklet" />
-			<next on="*" to="ledgerDownloadProces" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ledgerDownloadProces">
-			<partition step="ledgerDownloadProcess" partitioner="ledgerDownloadPartition">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="ledgerDownLoad" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ledgerDownLoad">
-			<tasklet ref="ledgerDownloadTaskLet" />
-			<next on="*" to="ledgerNotification" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ledgerNotification">
-			<tasklet ref="ledgerNotificationTaskLet" />
-			<fail on="FAILED" />
-			<next on="*" to="collectionDataDownLoad" />
-		</step>
-
-		<step id="collectionDataDownLoad">
-			<tasklet ref="collectionDataDownLoadTaskLet" />
-			<fail on="FAILED" />
-			<next on="*" to="collectionNotification" />
-		</step>
-		<step id="collectionNotification">
-			<tasklet ref="collectionNotificationTaskLet" />
-			<fail on="FAILED" />
-			<next on="*" to="loadCollateralRevaluationData" />
-		</step>
-		<step id="loadCollateralRevaluationData">
-			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
-			<next on="*" to="collateralRevaluation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="collateralRevaluation">
-			<tasklet>
-				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor"
-					writer="collateralRevaluationItemWriter" commit-interval="10" />
-			</tasklet>
-			<next on="*" to="customerDataPreperation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="customerDataPreperation">
-			<tasklet ref="customerDataPreperationTaskLet" />
-			<next on="*" to="masterDataPreparation" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="masterDataPreparation">
-			<tasklet ref="masterDataPreparationTaskLet" />
-			<next on="*" to="waiverCancellation" />
-			<fail on="FAILED" />
-		</step>
-		<step id="waiverCancellation">
-			<tasklet ref="waiverCancellationTasklet" />
-			<next on="*" to="finconGLExtraction" />
-			<fail on="FAILED" />
-		</step>
-		<step id="finconGLExtraction">
-			<tasklet ref="finconGLExtractionTasklet" />
-			<next on="*" to="ucicExtraction" />
-			<fail on="FAILED" />
-		</step>
-		<step id="ucicExtraction">
-			<tasklet ref="ucicExtractionTasklet" />
-			<next on="*" to="endOfMonthDecider" />
-			<fail on="FAILED" />
-		</step>
-		<decision id="endOfMonthDecider" decider="endOfMonthDecider">
-			<next on="EndOfMonth" to="retailcibil" />
-			<end on="NotEndOfMonth" exit-code="COMPLETED" />
-			<fail on="FAILED" />
-		</decision>
-		<step id="retailcibil">
-			<tasklet ref="retailcibilTaskLet" />
-			<next on="*" to="corporatecibil" />
-			<fail on="FAILED" />
-		</step>
-		<step id="corporatecibil">
-			<tasklet ref="corporatecibilTaskLet" />
+		<step id="letterGenerationClear">
+			<tasklet ref="letterGenerationClearTasklet" />
 			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>
@@ -336,6 +59,12 @@
 
 	<step id="excessKnockOff" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="excessKnockOffTasklet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<step id="letterGeneration" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="letterGenerationTasklet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
@@ -390,7 +119,7 @@
 	<bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
 
 	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
-	
+
 	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
 		<property name="extStageDao" ref="extStageDao" />
 	</bean>
@@ -414,8 +143,9 @@
 		<property name="baselTwoDumpService" ref="baselTwoDumpService" />
 		<property name="rpmsDumpService" ref="rpmsDumpService" />
 	</bean>
-	
-	<bean id="beforeEodExternalProcessHook" class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
+
+	<bean id="beforeEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
 		<property name="extStageDao" ref="extStageDao" />
 	</bean>
 </beans>

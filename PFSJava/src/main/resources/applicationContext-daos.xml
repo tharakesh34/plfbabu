@@ -13470,7 +13470,13 @@
 	
 	<bean id="summaryDetailService" class="com.pennant.backend.service.finance.impl.SummaryDetailService" />
 		
-	<bean name="autoLetterGenerationEngine" class="com.pennant.pff.letter.AutoLetterGenerationEngine" />
-	
 	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl" parent="sequenceDao" />
+	
+	<bean id="batchJobDAO" class="com.pennant.pff.batch.dao.BatchJobDAOImpl" parent="sequenceDao" />
+	
+	<bean id="letterGenerationJOB" class="com.pennant.pff.letter.job.LetterGenerationJob"/>
+	
+	<bean id="letterGenerationJobQueueDAO" class="com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl" parent="sequenceDao" />
+	
+	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService"/>
 </beans>

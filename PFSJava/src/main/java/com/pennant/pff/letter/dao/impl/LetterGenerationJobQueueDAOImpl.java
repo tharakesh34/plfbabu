@@ -1,4 +1,4 @@
-package com.pennant.pff.letter;
+package com.pennant.pff.letter.dao.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -38,37 +38,34 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 	@Override
 	public int prepareQueue(BatchJobQueue jobQueue) {
-		StringBuilder sql = new StringBuilder("Insert into LETTER_GENERATION_QUEUE (Id, ReferenceId, BatchID)");
-		sql.append(" Select row_number() over(order by ID) ID, ID as ReferenceId");
+		StringBuilder sql = new StringBuilder("Insert into LETTER_GENERATION_QUEUE (Id, LetterID)");
+		sql.append(" Select row_number() over(order by ID) ID, ID as LetterID");
 		sql.append(" From Letter_Generation_Stage Where Generated = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, jobQueue.getBatchId());
-			ps.setInt(1, 1);
+			ps.setInt(1, 0);
 		});
 	}
 
 	@Override
 	public void handleFailures(BatchJobQueue jobQueue) {
-		String sql = "Delete From LETTER_GENERATION_QUEUE Where Progress = ? and  BatchID = ?";
+		String sql = "Delete From LETTER_GENERATION_QUEUE Where Progress = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
-			ps.setLong(2, jobQueue.getBatchId());
 		});
 
-		sql = "Update GL_RESP_SUCCESS_QUEUE Set Progress = ? Where Progress = ? and  BatchID = ?";
+		sql = "Update LETTER_GENERATION_QUEUE Set Progress = ? Where Progress = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		int count = this.jdbcOperations.update(sql, ps -> {
 			ps.setInt(1, EodConstants.PROGRESS_WAIT);
 			ps.setInt(2, EodConstants.PROGRESS_FAILED);
-			ps.setLong(3, jobQueue.getBatchId());
 		});
 
 		if (count > 0) {
@@ -78,7 +75,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 	@Override
 	public int getQueueCount() {
-		String sql = "Select Coalesce(count(Id), 0) From GL_RESP_SUCCESS_QUEUE";
+		String sql = "Select Coalesce(count(Id), 0) From LETTER_GENERATION_QUEUE";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -87,12 +84,11 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 	@Override
 	public int getQueueCount(BatchJobQueue jobQueue) {
-		String sql = "Select Coalesce(count(Id), 0) From GL_RESP_SUCCESS_QUEUE where BatchID = ? and Progress = ?";
+		String sql = "Select Coalesce(count(Id), 0) From LETTER_GENERATION_QUEUE Where Progress = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, jobQueue.getBatchId(),
-				EodConstants.PROGRESS_WAIT);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, EodConstants.PROGRESS_WAIT);
 	}
 
 	@Override
@@ -102,7 +98,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 		String sql = null;
 		if (process == EodConstants.PROGRESS_IN_PROCESS) {
-			sql = "Update GL_RESP_SUCCESS_QUEUE Set Progress = ?, StartTime = ?, ThreadId = ? Where Id = ?";
+			sql = "Update LETTER_GENERATION_QUEUE Set Progress = ?, StartTime = ?, ThreadId = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -113,7 +109,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 				ps.setLong(4, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_SUCCESS) {
-			sql = "Update GL_RESP_SUCCESS_QUEUE Set EndTime = ?, Progress = ? Where Id = ?";
+			sql = "Update LETTER_GENERATION_QUEUE Set EndTime = ?, Progress = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -123,7 +119,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 				ps.setLong(3, queueId);
 			});
 		} else if (process == EodConstants.PROGRESS_FAILED) {
-			sql = "Update GL_RESP_SUCCESS_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ?, ErrorLog = ? Where Id = ?";
+			sql = "Update LETTER_GENERATION_QUEUE Set EndTime = ?, ThreadId = ?, Progress = ?, ErrorLog = ? Where Id = ?";
 
 			logger.debug(Literal.SQL.concat(sql));
 
@@ -159,7 +155,7 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 	@Override
 	public Long getIdBySequence(long sequence) {
-		String sql = "Select ReferenceId From GL_RESP_SUCCESS_QUEUE Where Id = ?";
+		String sql = "Select LetterID From LETTER_GENERATION_QUEUE Where Id = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -172,22 +168,20 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 	}
 
 	private List<BatchJobQueue> getQueingRecords(BatchJobQueue bJobQueue) {
-		String sql = "Select row_number() over(order by id) resetCounterId, ID from GL_RESP_SUCCESS_QUEUE Where BatchID = ?";
+		String sql = "Select row_number() over(order by id) ResetCounterId, ID from LETTER_GENERATION_QUEUE";
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, bJobQueue.getBatchId());
-		}, (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, Num) -> {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(rs.getLong("ID"));
-			jobQueue.setResetCounterId(rs.getLong("resetCounterId"));
+			jobQueue.setResetCounterId(rs.getLong("ResetCounterId"));
 			return jobQueue;
 		});
 	}
 
 	private void updateQueingRecords(List<BatchJobQueue> jobQueue) {
-		String sql = "Update GL_RESP_SUCCESS_QUEUE Set Id = ? Where ID = ? and BatchID = ?";
+		String sql = "Update LETTER_GENERATION_QUEUE Set Id = ? Where ID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -201,7 +195,6 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 
 					ps.setLong(index++, jobQueuedetails.getResetCounterId());
 					ps.setLong(index, jobQueuedetails.getId());
-					ps.setLong(index, jobQueuedetails.getBatchId());
 				}
 
 				@Override
@@ -214,33 +207,4 @@ public class LetterGenerationJobQueueDAOImpl extends SequenceDao<BatchJobQueue> 
 		}
 	}
 
-	@Override
-	public void updateQueue(BatchJobQueue jobQueue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public int updateThreadID(long from, long to, int i) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void logQueue() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void logQueue(int progress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }

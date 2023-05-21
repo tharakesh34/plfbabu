@@ -41,10 +41,12 @@ public interface GenerateLetterService {
 	List<GenerateLetter> getLetterInfo(GenerateLetter gl);
 
 	void saveClosedLoanLetterGenerator(FinanceMain fm, Date appDate);
-	
+
 	int getFinTypeMap(String finType);
 
 	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
 
 	String getCanceltype(String finReference);
+
+	void saveCancelledLoanLetterGenerator(FinanceMain fm, Date appDate);
 }

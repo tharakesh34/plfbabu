@@ -5,10 +5,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 
@@ -18,11 +14,10 @@ import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.presentment.partitioner.ResponsePartitioner;
 
-public class LetterGeneratePartitioner implements Partitioner, StepExecutionListener {
+public class LetterGeneratePartitioner implements Partitioner {
 	private Logger logger = LogManager.getLogger(ResponsePartitioner.class);
 
 	private BatchJobQueueDAO bjqDAO;
-	private Long batchId;
 
 	public LetterGeneratePartitioner(BatchJobQueueDAO bjqDAO) {
 		super();
@@ -31,12 +26,11 @@ public class LetterGeneratePartitioner implements Partitioner, StepExecutionList
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.PRESENTMENT_RESPONSE_THREAD_COUNT);
+		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.LETTER_GENERATION_THREAD_COUNT);
 
 		Map<String, ExecutionContext> partitionData = new HashMap<>();
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
-		jobQueue.setBatchId(batchId);
 
 		bjqDAO.resetSequence();
 
@@ -69,17 +63,4 @@ public class LetterGeneratePartitioner implements Partitioner, StepExecutionList
 
 		return execution;
 	}
-
-	@Override
-	public void beforeStep(StepExecution stepExecution) {
-		JobParameters jobParameters = stepExecution.getJobParameters();
-
-		batchId = jobParameters.getLong("BATCH_ID");
-	}
-
-	@Override
-	public ExitStatus afterStep(StepExecution stepExecution) {
-		return stepExecution.getExitStatus();
-	}
-
 }

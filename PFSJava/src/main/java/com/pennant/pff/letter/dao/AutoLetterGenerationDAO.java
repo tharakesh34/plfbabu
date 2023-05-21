@@ -2,18 +2,15 @@ package com.pennant.pff.letter.dao;
 
 import java.util.List;
 
-import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennanttech.dataengine.model.EventProperties;
 
 public interface AutoLetterGenerationDAO {
 
-	void updateEndTimeStatus(BatchJobQueue jobQueue);
-
-	long createBatch(String string, int totalRecords);
+	int getPendingRecords();
 
 	int updateRespProcessFlag(long batchID, int i, String string);
-
-	void updateBatch(long batchID, String errMessage);
 
 	List<Long> getResponseHeadersByBatch(Long batchId, String responseType);
 
@@ -21,6 +18,10 @@ public interface AutoLetterGenerationDAO {
 
 	GenerateLetter getLetter(long id);
 
-	int getLetterGenerationCount();
+	String getCSDCode(String finType, String finBranch);
+
+	int getNextSequence(long finID, LetterType letterType);
+
+	EventProperties getEventProperties(String configName);
 
 }

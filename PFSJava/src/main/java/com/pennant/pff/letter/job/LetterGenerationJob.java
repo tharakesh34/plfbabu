@@ -6,35 +6,28 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import com.pennant.pff.batch.job.BatchConfiguration;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
-import com.pennant.pff.letter.AutoLetterGenerationTasklet;
-import com.pennant.pff.letter.GLResponseClearTasklet;
-import com.pennant.pff.letter.LetterGenerationJobQueueDAOImpl;
-import com.pennant.pff.letter.LetterGenerationtJobListener;
-import com.pennant.pff.letter.UpdateGLResponseTasklet;
-import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
+import com.pennant.pff.letter.LetterGenerationClearTasklet;
+import com.pennant.pff.letter.LetterGenerationTasklet;
+import com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl;
 import com.pennant.pff.letter.partitioner.LetterGeneratePartitioner;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-@Configuration
 public class LetterGenerationJob extends BatchConfiguration {
 
 	public LetterGenerationJob(@Autowired DataSource dataSource) throws Exception {
-		super(dataSource, "BATCH", "LETTER_GENERATION");
+		super(dataSource, "BATCH", "LETTER_GENERATION_JOB");
 
 		initilizeVariables();
 	}
-
-	@Autowired
-	private AutoLetterGenerationDAO letterGenerationDAO;
 
 	private BatchJobQueueDAO bjqDAO;
 
@@ -44,25 +37,23 @@ public class LetterGenerationJob extends BatchConfiguration {
 		builder.addLong("BATCH_ID", batchID);
 		JobParameters jobParameters = builder.toJobParameters();
 
+		bjqDAO.prepareQueue(null);
+
 		try {
 			start(jobParameters);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e.getMessage());
-			throw new AppException("LGEN", e);
+			throw new AppException("LETTER_GENERATION_JOB", e);
 		}
 	}
 
 	@Bean
-	public Job peSuccessJob() throws Exception {
-		super.job = this.jobBuilderFactory.get("peSuccessJob")
-
-				.listener(new LetterGenerationtJobListener(letterGenerationDAO))
+	public Job letterGenerationJob() throws Exception {
+		super.job = this.jobBuilderFactory.get("letterGenerationJob")
 
 				.incrementer(jobParametersIncrementer())
 
 				.start(masterStep()).on("FAILED").fail()
-
-				.next(updateHeaderStep()).on("FAILED").fail()
 
 				.next(clear()).on("*").end("COMPLETED").on("FAILED").fail()
 
@@ -86,12 +77,6 @@ public class LetterGenerationJob extends BatchConfiguration {
 				.build();
 	}
 
-	private Step updateHeaderStep() throws Exception {
-		return this.stepBuilderFactory.get("UPDATE_HEADER").tasklet(new UpdateGLResponseTasklet(letterGenerationDAO))
-				.build();
-
-	}
-
 	private TaskletStep masterTasklet() {
 		DefaultTransactionAttribute attribute = new DefaultTransactionAttribute();
 		attribute.setPropagationBehaviorName("PROPAGATION_NEVER");
@@ -100,11 +85,11 @@ public class LetterGenerationJob extends BatchConfiguration {
 
 				.get("LETTER_GENERATION")
 
-				.tasklet(new AutoLetterGenerationTasklet(bjqDAO, transactionManager))
+				.tasklet(letterGenerationTasklet())
 
 				.transactionAttribute(attribute)
 
-				.taskExecutor(taskExecutor("SUCCESS_RESPONSE_"))
+				.taskExecutor(taskExecutor("LETTER_GENERATION_"))
 
 				.build();
 	}
@@ -113,12 +98,16 @@ public class LetterGenerationJob extends BatchConfiguration {
 		return this.stepBuilderFactory.get("CLEAR").tasklet(clearQueueTasklet()).build();
 	}
 
-	private GLResponseClearTasklet clearQueueTasklet() {
-		return new GLResponseClearTasklet(letterGenerationDAO, bjqDAO);
-	}
-
 	private void initilizeVariables() {
 		this.bjqDAO = new LetterGenerationJobQueueDAOImpl(dataSource);
+	}
+
+	private Tasklet letterGenerationTasklet() {
+		return new LetterGenerationTasklet(this.bjqDAO);
+	}
+
+	private Tasklet clearQueueTasklet() {
+		return new LetterGenerationClearTasklet(this.bjqDAO);
 	}
 
 }

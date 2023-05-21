@@ -26,7 +26,7 @@ public enum LetterMode {
 		List<LetterMode> list = Arrays.asList(LetterMode.values());
 
 		for (LetterMode it : list) {
-			if (it.name().equals(letterMode)) {
+			if (it.getDescription().equals(letterMode)) {
 				return it;
 			}
 		}

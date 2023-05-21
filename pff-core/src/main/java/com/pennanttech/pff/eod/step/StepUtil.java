@@ -12,7 +12,7 @@ public class StepUtil {
 		endOfMonthDecider, retailcibil, corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess,
 		notifyLoanClosureDetailsToEFS, customerDataPreperation, masterDataPreparation, prepareAmortizationQueue,
 		financeHoldRelease, autoRefundExecution, autoWriteOffCalc, excessKnockOff, excessKnockOffLoading,
-		crossLoanKnockOff,
+		crossLoanKnockOff, letterGeneration,
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
@@ -66,6 +66,8 @@ public class StepUtil {
 	public static final DataEngineStatus AUTO_REFUND_PROCESS = new DataEngineStatus("AUTO_REFUND_PROCESS");
 
 	public static final DataEngineStatus CROSS_LOAN_KNOCKOFF = new DataEngineStatus("CROSS_LOAN_KNOCKOFF");
+
+	public static final DataEngineStatus LETTER_GENERATION = new DataEngineStatus("LETTER_GENERATION");
 
 	private StepUtil() {
 		super();

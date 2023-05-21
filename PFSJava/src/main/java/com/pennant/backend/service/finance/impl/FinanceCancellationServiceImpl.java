@@ -105,6 +105,7 @@ import com.pennant.backend.util.VASConsatnts;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.lien.service.LienService;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -142,6 +143,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private LienService lienService;
 	private FeeCalculator feeCalculator;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private GenerateLetterService generateLetterService;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -650,6 +652,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		cancelChildLoan(finReference);
+		generateLetterService.saveCancelledLoanLetterGenerator(fm, appData);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -1187,6 +1190,11 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
 	}
 
 }

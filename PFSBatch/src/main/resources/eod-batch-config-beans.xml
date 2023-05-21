@@ -779,7 +779,6 @@
 	
 	<bean id="assetSubClassCodeDAO" class="com.pennanttech.pff.npa.dao.impl.AssetSubClassCodeDAOImpl"
 		parent="sequenceDao" />
-	<bean name="autoLetterGenerationEngine" class="com.pennant.pff.letter.AutoLetterGenerationEngine" />
 	
 	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl" parent="sequenceDao" />
 	
@@ -789,24 +788,23 @@
 	<bean id="generateLetterDAO" class="com.pennant.pff.noc.dao.impl.GenerateLetterDAOImpl"
 		parent="sequenceDao" />
 	
-	<bean id="generateLetterService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="generateLetterServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
+	<bean name="generateLetterService" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl"/>
 	
-	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl"/>
+	<bean id="loanLetterUploadDAO" class="com.pennant.pff.noc.upload.dao.impl.LoanLetterUploadDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="batchJobDAO" class="com.pennant.pff.batch.dao.BatchJobDAOImpl" parent="sequenceDao" />
+	
+	<bean id="letterGenerationJobQueueDAO" class="com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl" parent="sequenceDao" />
+	
+	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService"/>
+	
+	<bean id="financeEnquiryService" class="com.pennant.backend.service.finance.impl.FinanceEnquiryServiceImpl" />
+	
+	<bean id="agreementDefinitionDAO"
+		class="com.pennant.backend.dao.applicationmaster.impl.AgreementDefinitionDAOImpl" parent="sequenceDao" />
+		
+	<bean id="summaryDetailService" class="com.pennant.backend.service.finance.impl.SummaryDetailService" />
+	<bean id="customerEnquiryService" class="com.pennant.backend.service.customermasters.impl.CustomerEnquiryServiceImpl" />
 	
 </beans>

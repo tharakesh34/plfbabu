@@ -451,4 +451,6 @@ public class SMTParameterConstants {
 	public static final String MAINTAIN_CANFIN_BACK_DATE = "MAINTAIN_CANFIN_BACK_DATE";
 	public static final String PSL_DATA_REQUIRED = "PSL_DATA_REQUIRED";
 
+	public static final String LETTER_GENERATION_THREAD_COUNT = "LETTER_GENERATION_THREAD_COUNT";
+
 }

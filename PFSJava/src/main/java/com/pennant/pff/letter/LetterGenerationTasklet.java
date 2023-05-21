@@ -1,7 +1,10 @@
 package com.pennant.pff.letter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,24 +28,27 @@ import com.pennant.pff.letter.service.LetterService;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pff.eod.step.StepUtil;
 
-public class AutoLetterGenerationTasklet implements Tasklet {
-	private static Logger logger = LogManager.getLogger(AutoLetterGenerationTasklet.class);
+public class LetterGenerationTasklet implements Tasklet {
+	private static Logger logger = LogManager.getLogger(LetterGenerationTasklet.class);
 
-	private static final String START_MSG = "AutoLetterGeneration success response process started at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String FAILED_MSG = "AutoLetterGeneration success response process failed on {} for the Presentment-ID {}";
-	private static final String SUCCESS_MSG = "AutoLetterGeneration success response process completed at {} for the APP_DATE {} with THREAD_ID {}";
-	private static final String ERROR_LOG = "Cause {}\nMessage {}\n LocalizedMessage {}\nStackTrace {}";
+	private static final String START_MSG = "Letter Generation Process started at {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String FAILED_MSG = "Letter Generation Process failed on {} for the Presentment-ID {}";
+	private static final String SUCCESS_MSG = "Letter Generation Process completed at {} for the APP_DATE {} with THREAD_ID {}";
 
 	private BatchJobQueueDAO ebjqDAO;
-	private DataSourceTransactionManager transactionManager;
-	private AutoLetterGenerationEngine autoLetterGenerationEngine;
+
 	private LetterService letterService;
 
-	public AutoLetterGenerationTasklet(BatchJobQueueDAO ebjqDAO, DataSourceTransactionManager transactionManager) {
+	private DataSourceTransactionManager transactionManager;
+
+	protected static AtomicLong processedCount = new AtomicLong(0);
+	protected static AtomicLong failedCount = new AtomicLong(0);
+
+	public LetterGenerationTasklet(BatchJobQueueDAO ebjqDAO) {
 		super();
 		this.ebjqDAO = ebjqDAO;
-		this.transactionManager = transactionManager;
 	}
 
 	@Override
@@ -66,6 +72,8 @@ public class AutoLetterGenerationTasklet implements Tasklet {
 
 		logger.info(START_MSG, strSysDate, strAppDate, threadID);
 
+		List<Exception> exceptions = new ArrayList<>(1);
+
 		while (letterID != null) {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(queueID);
@@ -75,7 +83,7 @@ public class AutoLetterGenerationTasklet implements Tasklet {
 				jobQueue.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 				ebjqDAO.updateProgress(jobQueue);
 
-				boolean status = generateLetter(letterID);
+				boolean status = generateLetter(letterID, appDate);
 
 				if (status) {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
@@ -84,14 +92,20 @@ public class AutoLetterGenerationTasklet implements Tasklet {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					ebjqDAO.updateProgress(jobQueue);
 				}
+
+				StepUtil.LETTER_GENERATION.setProcessedRecords(processedCount.incrementAndGet());
 			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+
+				exceptions.add(e);
+
+				StepUtil.LETTER_GENERATION.setProcessedRecords(failedCount.incrementAndGet());
+
 				String errorMsg = ExceptionUtils.getStackTrace(e);
 
 				if (errorMsg != null && errorMsg.length() > 2000) {
 					errorMsg = errorMsg.substring(0, 1999);
 				}
-
-				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
 
 				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 				logger.info(FAILED_MSG, strSysDate, letterID);
@@ -101,11 +115,14 @@ public class AutoLetterGenerationTasklet implements Tasklet {
 
 				ebjqDAO.updateProgress(jobQueue);
 
-				autoLetterGenerationEngine.updateResponse(letterID, e);
 			}
 
 			queueID = ebjqDAO.getNextValue();
 			letterID = ebjqDAO.getIdBySequence(queueID);
+		}
+
+		if (!exceptions.isEmpty()) {
+			throw exceptions.get(0);
 		}
 
 		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
@@ -116,14 +133,16 @@ public class AutoLetterGenerationTasklet implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	private boolean generateLetter(long letterID) {
-		Letter letter = letterService.generate(letterID);
+	private boolean generateLetter(long letterID, Date appDate) {
+		Letter letter = letterService.generate(letterID, appDate);
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
+
+			letterService.sendEmail(letter);
 
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
@@ -135,8 +154,13 @@ public class AutoLetterGenerationTasklet implements Tasklet {
 	}
 
 	@Autowired
-	public void setEbjqDAO(BatchJobQueueDAO ebjqDAO) {
-		this.ebjqDAO = ebjqDAO;
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
+	}
+
+	@Autowired
+	public void setTransactionManager(DataSourceTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 }

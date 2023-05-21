@@ -1,77 +1,27 @@
 package com.pennant.pff.letter.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pennant.pff.batch.job.model.BatchJobQueue;
+import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
-import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
-public class AutoLetterGenerationDAOImpl extends SequenceDao<Presentment> implements AutoLetterGenerationDAO {
-
-	@Override
-	public void updateEndTimeStatus(BatchJobQueue jobQueue) {
-		String sql = "Update BATCH_JOBS Set End_Time = ?, Status = ? Where ID = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		this.jdbcOperations.update(sql, ps -> {
-			ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-			ps.setString(2, jobQueue.getBatchStatus());
-			ps.setLong(3, jobQueue.getBatchId());
-		});
-	}
-
-	@Override
-	public long createBatch(String batchType, int totalRecords) {
-		String sql = "Insert into BATCH_JOBS (Batch_Type, Start_Time, Total_Records) values (?, ?, ?)";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-
-		jdbcOperations.update(new PreparedStatementCreator() {
-
-			@Override
-			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql, new String[] { "id" });
-
-				ps.setString(1, batchType);
-				ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-				ps.setInt(3, totalRecords);
-
-				return ps;
-			}
-		}, keyHolder);
-
-		Number key = keyHolder.getKey();
-
-		if (key == null) {
-			return 0;
-		}
-
-		return key.longValue();
-	}
+public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> implements AutoLetterGenerationDAO {
 
 	@Override
 	public GenerateLetter getLetter(long id) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, RequestType, LetterType");
 		sql.append(", AgreementTemplate, FeeTypeID");
-		sql.append(", ModeofTransfer, EmailTemplate, Adviseid");
+		sql.append(", ModeofTransfer, EmailTemplate");
+		sql.append(", CreatedDate");
 		sql.append(" From Letter_Generation_Stage");
 		sql.append(" Where Id = ?");
 
@@ -89,7 +39,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<Presentment> implem
 				generateLetter.setFeeId(rs.getLong("FeeTypeID"));
 				generateLetter.setModeofTransfer(rs.getString("ModeofTransfer"));
 				generateLetter.setEmailTemplate(rs.getLong("EmailTemplate"));
-				generateLetter.setAdviseID(rs.getLong("Adviseid"));
+				generateLetter.setCreatedDate(rs.getDate("CreatedDate"));
 
 				return generateLetter;
 			}, id);
@@ -100,14 +50,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<Presentment> implem
 	}
 
 	@Override
-	public void updateBatch(long batchID, String errMessage) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public List<Long> getResponseHeadersByBatch(Long batchId, String responseType) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -128,14 +71,65 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<Presentment> implem
 	}
 
 	@Override
-	public int getLetterGenerationCount() {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Count(*) from Letter_Generation_Stage");
-		sql.append(" Where Generated <> ?");
+	public int getPendingRecords() {
+		String sql = "Select Count(ID) from Letter_Generation_Stage Where Generated = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), 1);
+	}
+
+	@Override
+	public String getCSDCode(String finType, String finBranch) {
+		StringBuilder sql = new StringBuilder("Select sb.Code");
+		sql.append(" From Service_Branches sb");
+		sql.append(" Inner Join Service_Branches_Loantype sbl on sbl.HeaderID = sb.ID");
+		sql.append(" Where sb.FinType = ? and sb.Branch = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), 1);
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getString(1), finType, finBranch);
+
 	}
 
+	@Override
+	public int getNextSequence(long finID, LetterType letterType) {
+		String sql = "Select count(FinID)+1 from Letter_Generation Where FinID = ? and LetterType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), finID, letterType.name());
+	}
+
+	@Override
+	public EventProperties getEventProperties(String configName) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" dep.Storage_Type, dep.Region_Name, dep.Bucket_Name, dep.Access_Key, dep.Secret_Key");
+		sql.append(", dep.Prefix, dep.Sse_Algorithm, dep.Host_Name, dep.Port, dep.Private_Key");
+		sql.append(" From Data_Engine_Event_Properties dep");
+		sql.append(" Inner Join Data_Engine_Config dc on dc.ID = dep.Config_ID");
+		sql.append(" Where dc.Name = ? and dep.Storage_Type = ?");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				EventProperties ep = new EventProperties();
+
+				ep.setStorageType(rs.getString("Storage_Type"));
+				ep.setRegionName(rs.getString("Region_Name"));
+				ep.setBucketName(rs.getString("Bucket_Name"));
+				ep.setAccessKey(rs.getString("Access_Key"));
+				ep.setSecretKey(rs.getString("Secret_Key"));
+				ep.setPrefix(rs.getString("Prefix"));
+				ep.setSseAlgorithm(rs.getString("Sse_Algorithm"));
+				ep.setHostName(rs.getString("Host_Name"));
+				ep.setPort(rs.getString("Port"));
+				ep.setPrivateKey(rs.getString("Private_Key"));
+
+				return ep;
+			}, configName);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Configuration details not available for " + configName);
+			return null;
+		}
+	}
 }

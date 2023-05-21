@@ -5,7 +5,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 
-	<include file="change-logs/change-log-5.3.0.xml" />
+	<!-- <include file="change-logs/change-log-5.3.0.xml" />
 	<include file="change-logs/change-log-5.4.0.xml" />
 	<include file="change-logs/change-log-5.5.0.xml" />
 	<include file="change-logs/change-log-5.6.0.xml" />
@@ -47,5 +47,6 @@
 	<include file="change-logs/change-log-hdfc.xml" />
 	<include file="change-logs/change-log-hdfc_day_0.xml" />
 	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
-	<include file="change-logs/change-log-meta-data.xml" />
+	<include file="change-logs/change-log-meta-data.xml" /> -->
+	<include file="change-logs/change-log-NOC_LetterGenaration.xml" />
 </databaseChangeLog>

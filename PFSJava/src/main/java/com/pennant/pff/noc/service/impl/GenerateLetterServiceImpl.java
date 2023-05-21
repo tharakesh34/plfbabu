@@ -11,6 +11,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.FeeCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
@@ -29,8 +30,8 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
 import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -387,28 +388,46 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 				.getLoanTypeLettterMappingListByLoanType(fm.getFinType());
 
 		for (LoanTypeLetterMapping ltlp : loanTypeLetterMapping) {
-			if (ltlp.getLetterType().equals(NOCConstants.TYPE_CAN_LTR)) {
+			if (ltlp.getLetterType().equals(LetterType.CANCELLATION.name())) {
 				continue;
 			}
 
-			GenerateLetter gl = new GenerateLetter();
-
-			gl.setFinID(fm.getFinID());
-			gl.setFinReference(fm.getFinReference());
-			gl.setCustCoreBank(fm.getCustCoreBank());
-			gl.setFinBranch(fm.getFinBranch());
-			gl.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-			gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-			gl.setRequestType("A");
-			gl.setLetterType(ltlp.getLetterType());
-			gl.setCreatedBy(ltlp.getCreatedBy());
-			gl.setModeofTransfer(ltlp.getLetterMode());
-			gl.setGeneratedBy(ltlp.getApprovedBy());
-			gl.setAdviseID(null);
-			gl.setAgreementTemplate(ltlp.getAgreementCodeId());
-
-			generateLetterDAO.save(gl, TableType.MAIN_TAB);
+			saveLetter(fm, ltlp);
 		}
+	}
+
+	@Override
+	public void saveCancelledLoanLetterGenerator(FinanceMain fm, Date appDate) {
+		List<LoanTypeLetterMapping> loanTypeLetterMapping = loanTypeLetterMappingDAO
+				.getLoanTypeLettterMappingListByLoanType(fm.getFinType());
+
+		for (LoanTypeLetterMapping ltlp : loanTypeLetterMapping) {
+			if (ltlp.getLetterType().equals(LetterType.CLOSURE.name())) {
+				continue;
+			}
+
+			saveLetter(fm, ltlp);
+		}
+	}
+
+	private void saveLetter(FinanceMain fm, LoanTypeLetterMapping ltlp) {
+		GenerateLetter gl = new GenerateLetter();
+
+		gl.setFinID(fm.getFinID());
+		gl.setFinReference(fm.getFinReference());
+		gl.setCustCoreBank(fm.getCustCoreBank());
+		gl.setFinBranch(fm.getFinBranch());
+		gl.setCreatedDate(SysParamUtil.getAppDate());
+		gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+		gl.setRequestType("A");
+		gl.setLetterType(ltlp.getLetterType());
+		gl.setCreatedBy(ltlp.getCreatedBy());
+		gl.setModeofTransfer(ltlp.getLetterMode());
+		gl.setGeneratedBy(ltlp.getApprovedBy());
+		gl.setAdviseID(null);
+		gl.setAgreementTemplate(ltlp.getAgreementCodeId());
+
+		generateLetterDAO.save(gl, TableType.MAIN_TAB);
 	}
 
 	@Autowired
