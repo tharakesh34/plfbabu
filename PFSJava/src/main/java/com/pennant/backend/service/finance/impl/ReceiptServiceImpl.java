@@ -2358,7 +2358,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 
 			BigDecimal receiptAmount = rch.getReceiptAmount().subtract(refund);
-			holdMarkingService.updateFundRecovery(receiptAmount, "87654567656", fm.getFinID(), fm.getFinReference());
+			holdMarkingService.updateHoldRemoval(receiptAmount, fm.getFinID(), fm.getFinReference());
 		}
 
 		logger.debug(Literal.LEAVING);
