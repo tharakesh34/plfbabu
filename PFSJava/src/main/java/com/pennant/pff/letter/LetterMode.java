@@ -18,10 +18,6 @@ public enum LetterMode {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public static LetterMode getMode(String letterMode) {
 		List<LetterMode> list = Arrays.asList(LetterMode.values());
 

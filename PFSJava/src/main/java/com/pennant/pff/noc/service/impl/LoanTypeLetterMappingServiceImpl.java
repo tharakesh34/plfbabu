@@ -190,7 +190,7 @@ public class LoanTypeLetterMappingServiceImpl extends GenericService<LoanTypeLet
 
 	@Override
 	public List<LoanTypeLetterMapping> getLoanTypeLetterMappingById(String finType) {
-		return loanTypeLetterMappingDAO.getLoanTypeLettterMappingListByLoanType(finType);
+		return loanTypeLetterMappingDAO.getLetterMapping(finType);
 	}
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -238,10 +238,10 @@ public class LoanTypeLetterMappingServiceImpl extends GenericService<LoanTypeLet
 		LoanTypeLetterMapping tempMapping = null;
 
 		if (ltlm.isWorkflow()) {
-			tempMapping = loanTypeLetterMappingDAO.getLoanTypeLetterMappingByID(ltlm, TableType.TEMP_TAB.getSuffix());
+			tempMapping = loanTypeLetterMappingDAO.getLetterMapping(ltlm, TableType.TEMP_TAB.getSuffix());
 		}
 
-		LoanTypeLetterMapping befMapping = loanTypeLetterMappingDAO.getLoanTypeLetterMappingByID(ltlm, "");
+		LoanTypeLetterMapping befMapping = loanTypeLetterMappingDAO.getLetterMapping(ltlm, "");
 		LoanTypeLetterMapping oldMapping = ltlm.getBefImage();
 
 		String[] errParm = new String[1];

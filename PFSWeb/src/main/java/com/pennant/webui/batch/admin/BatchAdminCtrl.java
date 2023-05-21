@@ -836,24 +836,24 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		appendRow(Step.processInActiveFinances.name(), StepUtil.PROCESS_INACTIVE_FINANCES.getName());
 
+		appendRow(Step.letterGeneration.name(), StepUtil.LETTER_GENERATION.getName());
+
 		if (ImplementationConstants.ALW_AUTO_CROSS_LOAN_KNOCKOFF) {
-			appendRow(Step.crossLoanKnockOff.name(), StepUtil.CROSS_LOAN_KNOCKOFF.getName());
+			appendRow(Step.excessKnockOff.name(), StepUtil.CROSS_LOAN_KNOCKOFF.getName());
 		}
 
-		appendRow(Step.autoRefund.name(), StepUtil.AUTO_REFUND.getName());
+		appendRow(Step.autoRefund.name(), StepUtil.AUTO_REFUND_PROCESS.getName());
 
 		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			appendRow(Step.assetClassification.name(), StepUtil.NPA_CLASSIFICATION.getName());
 			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());
 		}
 
-		appendRow(Step.letterGeneration.name(), StepUtil.LETTER_GENERATION.getName());
-
 		if (NpaAndProvisionExtension.ALLOW_PROVISION) {
 			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
 		}
 		// Auto Write Off
-		appendRow(Step.autoWriteOffCalc.name(), StepUtil.AUTOWRITEOFF_CALC.getName());
+		appendRow(Step.autoWriteOffCalc.name(), StepUtil.AUTO_WRITE_OFF.getName());
 
 		appendRow(Step.processINDASForInActiveFinances.name(), StepUtil.PROCESS_INDAS_INACTIVE_FINANCES.getName());
 

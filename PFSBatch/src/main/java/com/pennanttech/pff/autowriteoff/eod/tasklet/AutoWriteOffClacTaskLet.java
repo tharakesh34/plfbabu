@@ -78,7 +78,7 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 
 		logger.info(START_MSG, strSysDate, strAppDate, threadId);
 
-		BatchUtil.setExecutionStatus(context, StepUtil.AUTOWRITEOFF_CALC);
+		BatchUtil.setExecutionStatus(context, StepUtil.AUTO_WRITE_OFF);
 
 		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
@@ -133,11 +133,11 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 					transactionManager.commit(txStatus);
 				}
 
-				StepUtil.AUTOWRITEOFF_CALC.setProcessedRecords(processedCount.incrementAndGet());
+				StepUtil.AUTO_WRITE_OFF.setProcessedRecords(processedCount.incrementAndGet());
 
 			} catch (Exception e) {
 
-				StepUtil.AUTOWRITEOFF_CALC.setFailedRecords(failedCount.incrementAndGet());
+				StepUtil.AUTO_WRITE_OFF.setFailedRecords(failedCount.incrementAndGet());
 
 				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
 
@@ -167,7 +167,7 @@ public class AutoWriteOffClacTaskLet implements Tasklet {
 		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 		logger.info(SUCCESS_MSG, sysDate, strAppDate, threadId);
 
-		BatchUtil.setExecutionStatus(context, StepUtil.AUTOWRITEOFF_CALC);
+		BatchUtil.setExecutionStatus(context, StepUtil.AUTO_WRITE_OFF);
 
 		return RepeatStatus.FINISHED;
 	}

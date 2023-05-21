@@ -861,5 +861,4 @@
 	
 	<bean id="autoRefundQueueDAO" class="com.pennanttech.refund.dao.impl.AutoRefundQueueDAOImpl" parent="sequenceDao" />
 		
-	<bean id="letterGenerationJOB" class="com.pennant.pff.letter.job.LetterGenerationJob"/>
 </beans>

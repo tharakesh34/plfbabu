@@ -116,7 +116,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
-import com.pennant.pff.noc.service.GenerateLetterService;
+import com.pennant.pff.letter.service.LetterService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -160,7 +160,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private FinODCAmountDAO finODCAmountDAO;
 	private HoldMarkingService holdMarkingService;
 	List<ManualAdvise> manualAdviseList; // TODO remove this
-	private GenerateLetterService generateLetterService;
+	private LetterService letterService;
 
 	public FeeWaiverHeaderServiceImpl() {
 		super();
@@ -1047,7 +1047,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, null);
 			profitDetailsDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 			fm.setFinIsActive(false);
-			generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
 		}
 
 		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null);
@@ -1059,6 +1058,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (MandateExtension.ALLOW_HOLD_MARKING && isFinFullyPaid) {
 			holdMarkingService.removeHold(fm);
 		}
+
+		letterService.logForAutoLetter(fm, appDate);
 	}
 
 	private void prepareTaxMovement(FinanceMain fm, List<ManualAdviseMovements> lppMovList, long linkedTranID) {
@@ -2765,7 +2766,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	@Autowired
-	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
-		this.generateLetterService = generateLetterService;
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
 	}
 }

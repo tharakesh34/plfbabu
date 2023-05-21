@@ -276,10 +276,6 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
-		if (type == TableType.MAIN_TAB) {
-			saveLetterGenerationDetails(gl);
-		}
-
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
 			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
 		}
@@ -321,32 +317,6 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		}
 
 		return gl.getId();
-	}
-
-	private void saveLetterGenerationDetails(GenerateLetter gl) {
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
-		sql.append("(FinID, RequestType, LetterType, FeeTypeId");
-		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 0;
-
-				ps.setLong(++index, gl.getFinID());
-				ps.setString(++index, gl.getRequestType());
-				ps.setString(++index, gl.getLetterType());
-				ps.setLong(++index, gl.getFeeId());
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
-				ps.setLong(++index, gl.getAgreementTemplate());
-				ps.setString(++index, gl.getModeofTransfer());
-			});
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
 	}
 
 	@Override

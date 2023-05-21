@@ -33,9 +33,9 @@ import com.pennanttech.pff.core.TableType;
 
 public interface LoanTypeLetterMappingDAO {
 
-	LoanTypeLetterMapping getLoanTypeLetterMappingByID(LoanTypeLetterMapping letterMapping, String type);
+	LoanTypeLetterMapping getLetterMapping(LoanTypeLetterMapping letterMapping, String type);
 
-	List<LoanTypeLetterMapping> getLoanTypeLettterMappingListByLoanType(String finType);
+	List<LoanTypeLetterMapping> getLetterMapping(String finType);
 
 	void update(LoanTypeLetterMapping letterMapping, String type);
 

@@ -91,13 +91,12 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 	private LoanTypeLetterMapping loanTypeLetterMapping;
 	private boolean isLetterMappingNew = true;
-	private String filteremail = "";
 
 	private final List<ValueLabel> letterTypeList = LetterUtil.getLetterTypes();
 	private final List<ValueLabel> letterModeList = LetterUtil.getLetterModes();
 	private List<LoanTypeLetterMapping> deleteletterMappingList = new ArrayList<>();
 
-	private enum ListFields {
+	private enum ListField {
 		LETTER_TYPE(1),
 
 		AUTO_GENERATION(2),
@@ -110,7 +109,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 		private int index;
 
-		private ListFields(int index) {
+		private ListField(int index) {
 			this.index = index;
 		}
 
@@ -118,10 +117,10 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			return index;
 		}
 
-		public static ListFields getField(String field) {
-			List<ListFields> list = Arrays.asList(ListFields.values());
+		public static ListField getField(String field) {
+			List<ListField> list = Arrays.asList(ListField.values());
 
-			for (ListFields it : list) {
+			for (ListField it : list) {
 				if (it.name().equals(field)) {
 					return it;
 				}
@@ -274,17 +273,16 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	public void onChangeLetterType(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
-		Combobox letterType = (Combobox) (getComponent(listitem, ListFields.LETTER_TYPE.index())).getLastChild();
-		this.filteremail = letterType.getSelectedItem().getValue();
+		String selectedLetterType = getComboboxValue(listitem, ListField.LETTER_TYPE);
 
-		ExtendedCombobox email = (ExtendedCombobox) (getComponent(listitem, ListFields.EMAIL_TEMPLATE.index()))
+		ExtendedCombobox email = (ExtendedCombobox) (getComponent(listitem, ListField.EMAIL_TEMPLATE.index()))
 				.getLastChild();
 		email.setValue(null);
 		email.setDescription(null);
 
-		if (StringUtils.isNotEmpty(this.filteremail)) {
+		if (StringUtils.isNotEmpty(selectedLetterType)) {
 			Filter[] codeFilter = new Filter[1];
-			codeFilter[0] = Filter.in("Event", filteremail);
+			codeFilter[0] = Filter.in("Event", selectedLetterType);
 			email.setFilters(codeFilter);
 		}
 	}
@@ -307,6 +305,18 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		listBoxLoanTypeLetterMapping.removeChild(item);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String getComboboxValue(Listitem listitem, ListField listField) {
+		Component component = getComponent(listitem, listField.index());
+
+		if (component == null) {
+			return null;
+		}
+
+		Combobox lastChild = (Combobox) component.getLastChild();
+
+		return lastChild.getSelectedItem().getValue();
 	}
 
 	private Component getComponent(Listitem row, int index) {
@@ -334,9 +344,13 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			return;
 		}
 
-		ListFields type = ListFields.getField(id.split("\\-")[0]);
+		ListField listField = ListField.getField(id.split("\\-")[0]);
 
-		switch (type) {
+		if (listField == null) {
+			return;
+		}
+
+		switch (listField) {
 		case LETTER_TYPE:
 			Combobox letterType = (Combobox) hbox.getLastChild();
 			letterType.clearErrorMessage();
@@ -354,7 +368,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		case MODE:
 			Combobox mode = (Combobox) hbox.getLastChild();
 			mode.clearErrorMessage();
-			String modeVal = mode.getValue();
+			String modeVal = mode.getSelectedItem().getValue();
 			if (PennantConstants.SELECT_LABEL.equals(modeVal)) {
 				throw new WrongValueException(mode, Labels.getLabel("FIELD_IS_MAND", new String[] { "Mode " }));
 			}
@@ -385,6 +399,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		}
 	}
 
+	@Override
 	protected void refreshList() {
 		logger.debug(Literal.ENTERING);
 		loanTypeLetterMappingListCtrl.fillListData();
@@ -418,31 +433,30 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		List<String> letterTypes = new ArrayList<>();
 		List<WrongValueException> wve = new ArrayList<>();
 
-		for (Listitem component : listBoxLoanTypeLetterMapping.getItems()) {
-			Listitem listitem = (Listitem) component;
+		for (Listitem listitem : listBoxLoanTypeLetterMapping.getItems()) {
 			LoanTypeLetterMapping letterMapping = (LoanTypeLetterMapping) listitem.getAttribute("data");
 
 			try {
-				doSetValidation(listitem, ListFields.LETTER_TYPE.index());
-				Combobox letterType = (Combobox) (getComponent(listitem, ListFields.LETTER_TYPE.index()))
-						.getLastChild();
+				doSetValidation(listitem, ListField.LETTER_TYPE.index());
+				String selectedLeterType = getComboboxValue(listitem, ListField.LETTER_TYPE);
 
-				if (letterTypes.contains(letterType.getValue())
+				if (letterTypes.contains(selectedLeterType)
 						&& !letterMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 					MessageUtil.showError(
-							"Duplicate letterType: " + letterType.getValue() + " are not allowed for same loan type ");
-					wve.add(new WrongValueException(letterType.getValue()));
+							"Duplicate letterType: " + selectedLeterType + " are not allowed for same loan type ");
+					wve.add(new WrongValueException(selectedLeterType));
 				}
-				letterTypes.add(letterType.getValue());
-				letterMapping.setLetterType(letterType.getValue());
+
+				letterTypes.add(selectedLeterType);
+				letterMapping.setLetterType(selectedLeterType);
 
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				doSetValidation(listitem, ListFields.AUTO_GENERATION.index());
-				Checkbox autoGeneration = (Checkbox) (getComponent(listitem, ListFields.AUTO_GENERATION.index()))
+				doSetValidation(listitem, ListField.AUTO_GENERATION.index());
+				Checkbox autoGeneration = (Checkbox) (getComponent(listitem, ListField.AUTO_GENERATION.index()))
 						.getLastChild();
 
 				letterMapping.setAutoGeneration(autoGeneration.isChecked());
@@ -451,19 +465,20 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			}
 
 			try {
-				doSetValidation(listitem, ListFields.MODE.index());
-				Combobox mode = (Combobox) (getComponent(listitem, ListFields.MODE.index())).getLastChild();
+				doSetValidation(listitem, ListField.MODE.index());
 
-				letterMapping.setLetterMode(mode.getValue());
+				String selectedMode = getComboboxValue(listitem, ListField.MODE);
+
+				letterMapping.setLetterMode(selectedMode);
 
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				doSetValidation(listitem, ListFields.EMAIL_TEMPLATE.index());
+				doSetValidation(listitem, ListField.EMAIL_TEMPLATE.index());
 				ExtendedCombobox emailTemplate = (ExtendedCombobox) (getComponent(listitem,
-						ListFields.EMAIL_TEMPLATE.index())).getLastChild();
+						ListField.EMAIL_TEMPLATE.index())).getLastChild();
 
 				letterMapping.setEmailTemplateId(((MailTemplate) emailTemplate.getObject()).getId());
 			} catch (WrongValueException we) {
@@ -471,9 +486,9 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 			}
 
 			try {
-				doSetValidation(listitem, ListFields.AGREEMENT_CODE.index());
+				doSetValidation(listitem, ListField.AGREEMENT_CODE.index());
 				ExtendedCombobox agreementCode = (ExtendedCombobox) (getComponent(listitem,
-						ListFields.AGREEMENT_CODE.index())).getLastChild();
+						ListField.AGREEMENT_CODE.index())).getLastChild();
 				letterMapping.setAgreementCodeId(((AgreementDefinition) agreementCode.getObject()).getId());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -502,8 +517,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 						letterMapping.setRecordType(PennantConstants.RCD_UPD);
 					}
 
-					if (letterMapping.getRecordType().equals(PennantConstants.RCD_ADD) && letterMapping.isNewRecord()) {
-					} else if (letterMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (letterMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 						letterMapping.setVersion(letterMapping.getVersion() + 1);
 					}
 				} else {
@@ -526,7 +540,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
-				wvea[i] = (WrongValueException) wve.get(i);
+				wvea[i] = wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
@@ -789,12 +803,9 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 					nextTaskId = getNextTaskIds(taskId, mapping);
 				}
 
-				if (isNotesMandatory(taskId, mapping)) {
-					if (!notesEntered) {
-						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-						return false;
-					}
-
+				if (isNotesMandatory(taskId, mapping) && !notesEntered) {
+					MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+					return false;
 				}
 			}
 			if (!StringUtils.isBlank(nextTaskId)) {
@@ -878,7 +889,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 				} else {
 					auditHeader.setErrorDetails(
 							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-					retValue = ErrorControl.showErrorControl(this.windowLoanTypeLetterMappingDialog, auditHeader);
+					ErrorControl.showErrorControl(this.windowLoanTypeLetterMappingDialog, auditHeader);
 					return processCompleted;
 				}
 			}
@@ -946,7 +957,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 		comboBox.addForward(Events.ON_CHANGE, windowLoanTypeLetterMappingDialog, "onChangeLetterType", listItem);
 
-		comboBox.setId(ListFields.LETTER_TYPE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		comboBox.setId(ListField.LETTER_TYPE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
 
 		readOnlyComponent(isReadOnly, comboBox);
 
@@ -964,7 +975,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private void appendAutoGeneration(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Checkbox checkBox = new Checkbox();
 		checkBox.setChecked(mapping.isAutoGeneration());
-		checkBox.setId(ListFields.AUTO_GENERATION.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		checkBox.setId(ListField.AUTO_GENERATION.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, checkBox);
 
 		Hbox hbox = new Hbox();
@@ -979,13 +990,8 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 	private void appendMode(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Combobox comboBox = new Combobox();
-		fillComboBox(comboBox, String.valueOf(mapping.getLetterMode()), letterModeList);
-
-		if (mapping.getLetterMode() != null) {
-			comboBox.setValue(mapping.getLetterMode());
-		}
-
-		comboBox.setId(ListFields.MODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		fillList(comboBox, mapping.getLetterMode(), letterModeList);
+		comboBox.setId(ListField.MODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, comboBox);
 
 		Hbox hbox = new Hbox();
@@ -1005,9 +1011,8 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		combobox.setValueColumn("TemplateCode");
 		combobox.setDescColumn("TemplateDesc");
 		combobox.setValidateColumns(new String[] { "TemplateCode" });
-		// combobox.setFilters(new File);
 
-		combobox.setId(ListFields.EMAIL_TEMPLATE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		combobox.setId(ListField.EMAIL_TEMPLATE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, combobox);
 
 		Hbox hbox = new Hbox();
@@ -1028,7 +1033,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		agreementCode.setValueColumn("AggCode");
 		agreementCode.setDescColumn("AggName");
 		agreementCode.setValidateColumns(new String[] { "AggCode" });
-		agreementCode.setId(ListFields.AGREEMENT_CODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
+		agreementCode.setId(ListField.AGREEMENT_CODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, agreementCode);
 
 		Hbox hbox = new Hbox();

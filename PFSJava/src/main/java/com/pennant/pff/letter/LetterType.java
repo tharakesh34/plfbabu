@@ -20,10 +20,6 @@ public enum LetterType {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public static LetterType getType(String letterType) {
 		List<LetterType> list = Arrays.asList(LetterType.values());
 

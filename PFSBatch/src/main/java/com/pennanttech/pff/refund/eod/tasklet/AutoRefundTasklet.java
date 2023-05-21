@@ -1,6 +1,8 @@
 package com.pennanttech.pff.refund.eod.tasklet;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -40,8 +42,8 @@ public class AutoRefundTasklet implements Tasklet {
 	private static final String START_MSG = "Auto Refund started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String SUCCESS_MSG = "Auto Refund completed at {} for the APP_DATE {} with THREAD_ID {}";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	public static final AtomicLong processedCount = new AtomicLong(0);
+	public static final AtomicLong failedCount = new AtomicLong(0);
 
 	public AutoRefundTasklet(BatchJobQueueDAO ebjqDAO) {
 		super();
@@ -71,6 +73,8 @@ public class AutoRefundTasklet implements Tasklet {
 
 		logger.info(START_MSG, strSysDate, strAppDate, threadID);
 
+		List<Exception> exceptions = new ArrayList<>(1);
+
 		while (finID != null) {
 			BatchJobQueue jobQueue = new BatchJobQueue();
 			jobQueue.setId(queueID);
@@ -85,26 +89,27 @@ public class AutoRefundTasklet implements Tasklet {
 				if (status) {
 					jobQueue.setProgress(EodConstants.PROGRESS_SUCCESS);
 					ebjqDAO.updateProgress(jobQueue);
-					StepUtil.AUTO_REFUND.setProcessedRecords(processedCount.incrementAndGet());
+					StepUtil.AUTO_REFUND_PROCESS.setProcessedRecords(processedCount.incrementAndGet());
 				} else {
 					jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
 					ebjqDAO.updateProgress(jobQueue);
-					StepUtil.AUTO_REFUND.setProcessedRecords(failedCount.incrementAndGet());
+					StepUtil.AUTO_REFUND_PROCESS.setProcessedRecords(failedCount.incrementAndGet());
 				}
 			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+
+				exceptions.add(e);
+
+				StepUtil.AUTO_REFUND_PROCESS.setProcessedRecords(failedCount.incrementAndGet());
+
 				String errorMsg = ExceptionUtils.getStackTrace(e);
 
 				if (errorMsg != null && errorMsg.length() > 2000) {
 					errorMsg = errorMsg.substring(0, 1999);
 				}
 
-				logger.error(Literal.EXCEPTION, e);
-
-				strSysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
-
 				jobQueue.setError(errorMsg);
 				jobQueue.setProgress(EodConstants.PROGRESS_FAILED);
-				StepUtil.AUTO_REFUND.setProcessedRecords(failedCount.incrementAndGet());
 
 				ebjqDAO.updateProgress(jobQueue);
 			}
@@ -112,6 +117,10 @@ public class AutoRefundTasklet implements Tasklet {
 			queueID = ebjqDAO.getNextValue();
 
 			finID = ebjqDAO.getIdBySequence(queueID);
+		}
+
+		if (!exceptions.isEmpty()) {
+			throw exceptions.get(0);
 		}
 
 		String sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
@@ -143,8 +152,8 @@ public class AutoRefundTasklet implements Tasklet {
 
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(transactionStatus);
+			throw e;
 		}
 
 		return true;

@@ -1,8 +1,6 @@
 package com.pennant.pff.noc.service.impl;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.FeeCalculator;
-import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -31,11 +27,8 @@ import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
-import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
-import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -54,9 +47,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	private FinTypeFeesDAO finTypeFeesDAO;
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	private FeeCalculator feeCalculator;
-	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
 	private LoanLetterUploadDAO loanLetterUploadDAO;
-	private FinanceMainDAO financeMainDAO;
 
 	@Override
 	public List<GenerateLetter> getResult(ISearch searchFilters) {
@@ -382,54 +373,6 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		schdData.setFinODDetails(odDetails);
 	}
 
-	@Override
-	public void saveClosedLoanLetterGenerator(FinanceMain fm, Date appDate) {
-		List<LoanTypeLetterMapping> loanTypeLetterMapping = loanTypeLetterMappingDAO
-				.getLoanTypeLettterMappingListByLoanType(fm.getFinType());
-
-		for (LoanTypeLetterMapping ltlp : loanTypeLetterMapping) {
-			if (ltlp.getLetterType().equals(LetterType.CANCELLATION.name())) {
-				continue;
-			}
-
-			saveLetter(fm, ltlp);
-		}
-	}
-
-	@Override
-	public void saveCancelledLoanLetterGenerator(FinanceMain fm, Date appDate) {
-		List<LoanTypeLetterMapping> loanTypeLetterMapping = loanTypeLetterMappingDAO
-				.getLoanTypeLettterMappingListByLoanType(fm.getFinType());
-
-		for (LoanTypeLetterMapping ltlp : loanTypeLetterMapping) {
-			if (ltlp.getLetterType().equals(LetterType.CLOSURE.name())) {
-				continue;
-			}
-
-			saveLetter(fm, ltlp);
-		}
-	}
-
-	private void saveLetter(FinanceMain fm, LoanTypeLetterMapping ltlp) {
-		GenerateLetter gl = new GenerateLetter();
-
-		gl.setFinID(fm.getFinID());
-		gl.setFinReference(fm.getFinReference());
-		gl.setCustCoreBank(fm.getCustCoreBank());
-		gl.setFinBranch(fm.getFinBranch());
-		gl.setCreatedDate(SysParamUtil.getAppDate());
-		gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
-		gl.setRequestType("A");
-		gl.setLetterType(ltlp.getLetterType());
-		gl.setCreatedBy(ltlp.getCreatedBy());
-		gl.setModeofTransfer(ltlp.getLetterMode());
-		gl.setGeneratedBy(ltlp.getApprovedBy());
-		gl.setAdviseID(null);
-		gl.setAgreementTemplate(ltlp.getAgreementCodeId());
-
-		generateLetterDAO.save(gl, TableType.MAIN_TAB);
-	}
-
 	@Autowired
 	public void setGenerateLetterDAO(GenerateLetterDAO generateLetterDAO) {
 		this.generateLetterDAO = generateLetterDAO;
@@ -451,17 +394,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	}
 
 	@Autowired
-	public void setLoanTypeLetterMappingDAO(LoanTypeLetterMappingDAO loanTypeLetterMappingDAO) {
-		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
-	}
-
-	@Autowired
 	public void setLoanLetterUploadDAO(LoanLetterUploadDAO loanLetterUploadDAO) {
 		this.loanLetterUploadDAO = loanLetterUploadDAO;
 	}
 
-	@Autowired
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
 }

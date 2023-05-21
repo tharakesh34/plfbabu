@@ -57,7 +57,7 @@ public class LoanTypeLetterMappingDAOImpl extends SequenceDao<LoanTypeLetterMapp
 	}
 
 	@Override
-	public LoanTypeLetterMapping getLoanTypeLetterMappingByID(LoanTypeLetterMapping letterMapping, String type) {
+	public LoanTypeLetterMapping getLetterMapping(LoanTypeLetterMapping letterMapping, String type) {
 		StringBuilder sql = new StringBuilder("Select Id, FinType, Lettertype");
 		sql.append(", AutoGeneration, LetterMode, EmailTemplateId, AgreementCodeId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -100,7 +100,7 @@ public class LoanTypeLetterMappingDAOImpl extends SequenceDao<LoanTypeLetterMapp
 	}
 
 	@Override
-	public List<LoanTypeLetterMapping> getLoanTypeLettterMappingListByLoanType(String finType) {
+	public List<LoanTypeLetterMapping> getLetterMapping(String finType) {
 		StringBuilder sql = new StringBuilder("Select Id, FinType, LetterType");
 		sql.append(", AutoGeneration, LetterMode, EmailTemplateId, AgreementCodeId");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy, LastMntOn, RecordStatus");

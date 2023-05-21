@@ -1,19 +1,46 @@
 package com.pennant.pff.letter.dao;
 
-import java.util.List;
-
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 
 public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> implements AutoLetterGenerationDAO {
+
+	@Override
+	public void save(GenerateLetter gl) {
+		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
+		sql.append("(FinID, RequestType, LetterType, FeeTypeId");
+		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+
+				ps.setLong(++index, gl.getFinID());
+				ps.setString(++index, gl.getRequestType());
+				ps.setString(++index, gl.getLetterType());
+				ps.setLong(++index, gl.getFeeId());
+				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
+				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
+				ps.setLong(++index, gl.getAgreementTemplate());
+				ps.setString(++index, gl.getModeofTransfer());
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+	}
 
 	@Override
 	public GenerateLetter getLetter(long id) {
@@ -47,36 +74,6 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
 		return null;
-	}
-
-	@Override
-	public List<Long> getResponseHeadersByBatch(Long batchId, String responseType) {
-		return null;
-	}
-
-	@Transactional(isolation = Isolation.READ_COMMITTED)
-	@Override
-	public int getRecordsByWaiting(String clearingStatus) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select count(ID) From Letter_Generation_Stage prh");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, 1, "IMPORT", 0, clearingStatus);
-	}
-
-	@Override
-	public int updateRespProcessFlag(long batchID, int i, String string) {
-		return 0;
-	}
-
-	@Override
-	public int getPendingRecords() {
-		String sql = "Select Count(ID) from Letter_Generation_Stage Where Generated = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), 1);
 	}
 
 	@Override
@@ -128,8 +125,8 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				return ep;
 			}, configName);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Configuration details not available for " + configName);
 			return null;
 		}
 	}
+
 }

@@ -1,6 +1,5 @@
 package com.pennant.pff.noc.service;
 
-import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -40,13 +39,9 @@ public interface GenerateLetterService {
 
 	List<GenerateLetter> getLetterInfo(GenerateLetter gl);
 
-	void saveClosedLoanLetterGenerator(FinanceMain fm, Date appDate);
-
 	int getFinTypeMap(String finType);
 
 	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
 
 	String getCanceltype(String finReference);
-
-	void saveCancelledLoanLetterGenerator(FinanceMain fm, Date appDate);
 }

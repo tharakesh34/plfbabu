@@ -99,7 +99,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
-import com.pennant.pff.noc.service.GenerateLetterService;
+import com.pennant.pff.letter.service.LetterService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -157,7 +157,7 @@ public class RepaymentProcessUtil {
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ReceiptCalculator receiptCalculator;
-	private GenerateLetterService generateLetterService;
+	private LetterService letterService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -340,11 +340,10 @@ public class RepaymentProcessUtil {
 		fm.setOldActiveState(fm.isFinIsActive());
 
 		boolean isFinFullyPaid = false;
+		Date appDate = SysParamUtil.getAppDate();
 		if (presentmentDetailDAO.getApprovedPresentmentCount(fm.getFinReference()) == 0) {
 			LoanPayment lp = new LoanPayment(fm.getFinID(), fm.getFinReference(), scheduleDetails, rch.getValueDate());
 			isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
-
-			Date appDate = SysParamUtil.getAppDate();
 
 			if (ProductUtil.isOverDraft(fm) && DateUtil.compare(appDate, fm.getMaturityDate()) < 0) {
 				isFinFullyPaid = false;
@@ -357,9 +356,6 @@ public class RepaymentProcessUtil {
 				}
 				profitDetail.setFinIsActive(false);
 				profitDetail.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
-
-				generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
-
 			} else {
 				fm.setFinIsActive(true);
 			}
@@ -378,6 +374,8 @@ public class RepaymentProcessUtil {
 		if (MandateExtension.ALLOW_HOLD_MARKING && isFinFullyPaid) {
 			holdMarkingService.removeHold(fm);
 		}
+
+		letterService.logForAutoLetter(fm, appDate);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -2897,7 +2895,7 @@ public class RepaymentProcessUtil {
 	}
 
 	@Autowired
-	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
-		this.generateLetterService = generateLetterService;
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
 	}
 }

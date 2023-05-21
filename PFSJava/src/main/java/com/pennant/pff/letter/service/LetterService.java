@@ -2,7 +2,8 @@ package com.pennant.pff.letter.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -21,14 +22,15 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.letter.Letter;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.finance.FinanceEnquiryService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.document.generator.TemplateEngine;
-import com.pennant.pff.batch.dao.BatchJobDAO;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
-import com.pennant.pff.letter.job.LetterGenerationJob;
+import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.net.FTPUtil;
@@ -40,35 +42,49 @@ import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LetterService {
 	private static final Logger logger = LogManager.getLogger(LetterService.class);
+
+	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
 	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 	private EmailEngine emailEngine;
 	private MailTemplateDAO mailTemplateDAO;
 	private NotificationService notificationService;
 	private FinanceEnquiryService financeEnquiryService;
-	private BatchJobDAO batchJobDAO;
 
-	private LetterGenerationJob letterGenerationJob;
+	public void logForAutoLetter(FinanceMain fm, Date appDate) {
+		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
 
-	public void executeJob() {
-		int count = autoLetterGenerationDAO.getPendingRecords();
+		for (LoanTypeLetterMapping ltlp : letterMapping) {
 
-		if (count == 0) {
-			return;
+			if (!ltlp.isAutoGeneration()) {
+				continue;
+			}
+
+			LetterType letterType = LetterType.getType(ltlp.getLetterType());
+
+			if ((letterType == LetterType.CANCELLATION
+					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus()))
+					|| (letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
+							&& FinanceUtil.isClosedNow(fm)) {
+
+				GenerateLetter gl = new GenerateLetter();
+				gl.setFinID(fm.getFinID());
+				gl.setRequestType("A");
+				gl.setLetterType(ltlp.getLetterType());
+				gl.setCreatedDate(appDate);
+				gl.setCreatedBy(ltlp.getCreatedBy());
+				gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+				gl.setAgreementTemplate(ltlp.getAgreementCodeId());
+				gl.setModeofTransfer(ltlp.getLetterMode());
+
+				autoLetterGenerationDAO.save(gl);
+			}
 		}
-
-		long batchID = batchJobDAO.createBatch("LETTER_GENERATION", count);
-
-		try {
-			letterGenerationJob.start(batchID);
-		} catch (Exception e) {
-			batchJobDAO.deleteBatch(batchID);
-		}
-
 	}
 
 	public Letter generate(long letterID, Date appDate) {
@@ -103,8 +119,6 @@ public class LetterService {
 		}
 
 		setLetterName(letter);
-
-		System.out.println();
 
 		setData(letter);
 
@@ -149,6 +163,7 @@ public class LetterService {
 		try {
 			notificationService.parseMail(mailTemplate, letter);
 		} catch (Exception e) {
+			throw new AppException("LetterService", e);
 		}
 
 		Notification emailMessage = new Notification();
@@ -156,7 +171,7 @@ public class LetterService {
 		emailMessage.setModule(letter.getLetterType());
 		emailMessage.setSubModule(letter.getLetterType());
 		emailMessage.setSubject(mailTemplate.getEmailSubject());
-		emailMessage.setContent(mailTemplate.getEmailMessage().getBytes(Charset.forName("UTF-8")));
+		emailMessage.setContent(mailTemplate.getEmailMessage().getBytes(StandardCharsets.UTF_8));
 
 		if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(mailTemplate.getEmailFormat())) {
 			emailMessage.setContentType(EmailBodyType.HTML.getKey());
@@ -204,13 +219,13 @@ public class LetterService {
 		try {
 			FTPUtil.writeBytesToFTP(host, port, username, password, privateKey, remotePath, fileName, fileContent);
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw new AppException("LetterService", e);
 		}
 	}
 
 	private void setLetterName(Letter letter) {
 		Date appDate = letter.getAppDate();
-		Date createdDate = letter.getCreatedDate();
+		// Date createdDate = letter.getCreatedDate();
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(letter.getFinReference());
@@ -272,6 +287,11 @@ public class LetterService {
 	}
 
 	@Autowired
+	public void setLoanTypeLetterMappingDAO(LoanTypeLetterMappingDAO loanTypeLetterMappingDAO) {
+		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
+	}
+
+	@Autowired
 	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
 		this.autoLetterGenerationDAO = autoLetterGenerationDAO;
 	}
@@ -299,16 +319,6 @@ public class LetterService {
 	@Autowired
 	public void setFinanceEnquiryService(FinanceEnquiryService financeEnquiryService) {
 		this.financeEnquiryService = financeEnquiryService;
-	}
-
-	@Autowired
-	public void setBatchJobDAO(BatchJobDAO batchJobDAO) {
-		this.batchJobDAO = batchJobDAO;
-	}
-
-	@Autowired
-	public void setLetterGenerationJob(LetterGenerationJob letterGenerationJob) {
-		this.letterGenerationJob = letterGenerationJob;
 	}
 
 }

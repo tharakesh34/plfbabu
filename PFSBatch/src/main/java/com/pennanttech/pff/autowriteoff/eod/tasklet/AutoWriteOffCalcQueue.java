@@ -35,7 +35,7 @@ public class AutoWriteOffCalcQueue implements Tasklet {
 			count = autoWriteOffService.prepareQueueForEOM();
 		}
 
-		StepUtil.AUTOWRITEOFF_CALC.setTotalRecords(count);
+		StepUtil.AUTO_WRITE_OFF.setTotalRecords(count);
 
 		AutoWriteOffClacTaskLet.processedCount.set(0);
 		AutoWriteOffClacTaskLet.failedCount.set(0);
