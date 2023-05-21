@@ -306,7 +306,6 @@ import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
@@ -499,6 +498,7 @@ import com.pennanttech.pff.organization.model.Organization;
 import com.pennanttech.pff.overdraft.model.OverdraftLimit;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
+import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class PennantJavaUtil {
