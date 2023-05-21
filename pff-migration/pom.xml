@@ -72,7 +72,7 @@
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLF_HDFC_DEV</pfs.liquibase.username>
+				<pfs.liquibase.username>PLF_HDFC_DEV2</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
@@ -82,7 +82,7 @@
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLFAUDIT_HDFC_DEV</pfs.liquibase.username>
+				<pfs.liquibase.username>PLFAUDIT_HDFC_DEV2</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
