@@ -494,7 +494,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
-		this.bankBranchID.setValueColumn("BranchCode");
+		this.bankBranchID.setValueColumn("BankBranchID");
 		this.bankBranchID.setDescColumn("BranchDesc");
 		this.bankBranchID.setDisplayStyle(2);
 
@@ -504,7 +504,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.bankBranchID.setValueType(DataType.LONG);
 		}
 
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 
 		this.micr.setModuleName("BankBranch");
 		this.micr.setValueColumn("MICR");
@@ -515,7 +515,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.bankBranchID.setValueType(DataType.LONG);
 		}
 
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		// this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
 
 		this.mandateRef.setModuleName("Mandate");
 		this.mandateRef.setMandatoryStyle(true);
@@ -2358,6 +2358,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		BankBranch details = (BankBranch) dataObject;
 
 		this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
+		this.bankBranchID.setValue(details.getBranchCode(), details.getBranchDesc());
 		this.bank.setValue(details.getBankName());
 		this.micr.setValue(details.getMICR());
 		this.ifsc.setValue(details.getIFSC());
