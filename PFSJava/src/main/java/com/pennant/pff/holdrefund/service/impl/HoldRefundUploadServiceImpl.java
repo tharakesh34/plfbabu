@@ -56,30 +56,24 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<HoldRefundUploadDetail> details = holdRefundUploadDAO.getDetails(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (HoldRefundUploadDetail detail : details) {
 					doValidate(header, detail);
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
+						setFailureStatus(detail);
 					} else {
-						sucessRecords++;
 						if (holdRefundUploadDAO.isFinIDExists(detail.getReferenceID())) {
 							holdRefundUploadDAO.updateFinHoldDetail(detail);
 						} else {
-							// insertion into maintable for checking hold flag for a loan
 							holdRefundUploadDAO.save(detail);
 						}
-					}
-					// insertion for logging purpose
-					holdRefundUploadDAO.saveLog(detail, header);
 
-					header.getUploadDetails().add(detail);
+						setSuccesStatus(detail);
+					}
+					holdRefundUploadDAO.saveLog(detail, header);
 				}
 
 				TransactionStatus txStatus = getTransactionStatus();
@@ -97,9 +91,6 @@ public class HoldRefundUploadServiceImpl extends AUploadServiceImpl<HoldRefundUp
 				} finally {
 					txStatus = null;
 				}
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
 			}
 
 			try {

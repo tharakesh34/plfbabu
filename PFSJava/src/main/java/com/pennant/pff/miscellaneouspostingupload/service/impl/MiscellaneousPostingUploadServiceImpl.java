@@ -42,7 +42,6 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
@@ -163,9 +162,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 				List<MiscellaneousPostingUpload> details = miscellaneousPostingUploadDAO.getDetails(header.getId());
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 				List<MiscellaneousPostingUpload> mList = new ArrayList<>();
 
 				for (MiscellaneousPostingUpload detail : details) {
@@ -175,32 +171,19 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 					doValidate(header, detail);
 
 					if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-						failRecords++;
 						continue;
 					}
 
 					setSuccesStatus(detail);
+					prepareUserDetails(header, detail);
 
-					LoggedInUser userDetails = header.getUserDetails();
-
-					if (userDetails == null) {
-						userDetails = new LoggedInUser();
-						userDetails.setLoginUsrID(header.getApprovedBy());
-						userDetails.setUserName(header.getApprovedByName());
-					}
-					detail.setUserDetails(userDetails);
 					mList.add(detail);
-					sucessRecords++;
 				}
 
-				int failureCount = process(mList);
-
-				header.getUploadDetails().addAll(details);
+				header.getUploadDetails().addAll(mList);
+				process(mList);
 
 				try {
-					header.setSuccessRecords(sucessRecords - failureCount);
-					header.setFailureRecords(failRecords + failureCount);
-
 					logger.info("Processed the File {}", header.getFileName());
 
 					miscellaneousPostingUploadDAO.update(details);
@@ -217,7 +200,7 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 
 	}
 
-	private int process(List<MiscellaneousPostingUpload> mList) {
+	private void process(List<MiscellaneousPostingUpload> mList) {
 		Map<String, List<MiscellaneousPostingUpload>> map = new LinkedHashMap<>();
 
 		for (MiscellaneousPostingUpload mpus : mList) {
@@ -297,7 +280,8 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 					jVPosting.setUserDetails(mpus.getUserDetails());
 					jVPosting.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					jVPosting.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					jVPosting.setUploadID(mpus.getId());
+					jVPosting.setUploadHeaderID(mpus.getHeaderId());
+					jVPosting.setUploaddetailID(mpus.getId());
 					jVPosting.setLastMntBy(mpus.getUserDetails().getUserId());
 					jVPosting.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				}
@@ -316,7 +300,6 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 			auditList.add(auditHeader);
 		}
 
-		int failureCount = 0;
 		for (AuditHeader auditHeader : auditList) {
 			TransactionStatus txStatus = getTransactionStatus();
 
@@ -330,7 +313,13 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 					transactionManager.rollback(txStatus);
 				}
 
-				++failureCount;
+				JVPosting upload = (JVPosting) auditHeader.getModelData();
+
+				mList.forEach(dtl -> {
+					if (dtl.getId() == upload.getUploaddetailID()) {
+						setFailureStatus(dtl, e.getMessage());
+					}
+				});
 				continue;
 			}
 
@@ -340,17 +329,26 @@ public class MiscellaneousPostingUploadServiceImpl extends AUploadServiceImpl<Mi
 
 			JVPosting upload = (JVPosting) auditHeader.getModelData();
 
-			List<Long> headerIDs = new ArrayList<>();
-
 			if (auditHeader.getErrorMessage() != null) {
-				headerIDs.add(upload.getUploadID());
 				ErrorDetail ed = auditHeader.getErrorMessage().get(0);
-				miscellaneousPostingUploadDAO.update(headerIDs, ed.getCode(), ed.getMessage());
-				failureCount++;
+				mList.forEach(dtl -> {
+					if (dtl.getId() == upload.getUploaddetailID()) {
+						setFailureStatus(dtl, ed);
+					}
+				});
+			} else {
+				mList.forEach(dtl -> {
+					if (dtl.getId() == upload.getUploaddetailID()) {
+						setSuccesStatus(dtl);
+						dtl.setBatchReference(upload.getBatchReference());
+
+						Map<String, String> extMap = new HashMap<>();
+						extMap.put("Unique Reference", String.valueOf(dtl.getBatchReference()));
+						dtl.setExtendedFields(extMap);
+					}
+				});
 			}
 		}
-
-		return failureCount;
 	}
 
 	private BigDecimal getTxnAmount(List<JVPostingEntry> list, String txnCode) {

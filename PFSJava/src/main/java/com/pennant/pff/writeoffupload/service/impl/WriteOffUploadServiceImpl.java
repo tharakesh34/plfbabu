@@ -12,9 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.SysParamUtil;
@@ -78,45 +76,29 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<WriteOffUploadDetail> details = writeOffUploadDAO.getDetails(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				List<String> key = new ArrayList<>();
 
-				// Validating Writeoff Prepared loan details
 				for (WriteOffUploadDetail detail : details) {
 
 					String reference = detail.getReference();
 
 					if (key.contains(reference)) {
 						setError(detail, WriteOffUploadError.WOUP009);
-						failRecords++;
 						continue;
 					}
 
 					key.add(reference);
 
-					// Validate Details
 					doValidate(header, detail);
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
 
 				logger.info("WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
@@ -125,46 +107,18 @@ public class WriteOffUploadServiceImpl extends AUploadServiceImpl<WriteOffUpload
 
 				logger.info("WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 
-				header.getUploadDetails().addAll(details);
-
 				try {
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
 
-					txStatus = transactionManager.getTransaction(txDef);
-
-					// Success Status Update on Upload Table
 					writeOffUploadDAO.update(details);
 
-					// Update Header Details Count
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headerList, true);
 
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
 				}
-
 			}
 		}).start();
 

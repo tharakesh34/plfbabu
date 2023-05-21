@@ -26,7 +26,6 @@ import com.pennant.backend.model.hostglmapping.upload.HostGLMappingUpload;
 import com.pennant.backend.service.applicationmaster.AccountMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.accounting.HostAccountStatus;
 import com.pennant.pff.accounting.TransactionType;
 import com.pennant.pff.hostglmapping.dao.HostGLMappingUploadDAO;
@@ -34,7 +33,6 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
@@ -167,11 +165,8 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<HostGLMappingUpload> details = hostGLMappingUploadDAO.getDetails(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (HostGLMappingUpload detail : details) {
 					doValidate(header, detail);
@@ -181,33 +176,15 @@ public class HostGLMappingUploadServiceImpl extends AUploadServiceImpl<HostGLMap
 					} else {
 						setSuccesStatus(detail);
 
-						LoggedInUser userDetails = header.getUserDetails();
+						prepareUserDetails(header, detail);
 
-						if (userDetails == null) {
-							userDetails = new LoggedInUser();
-							userDetails.setLoginUsrID(header.getApprovedBy());
-							userDetails.setUserName(header.getApprovedByName());
-						}
-
-						detail.setUserDetails(userDetails);
 						detail.setCreatedOn(header.getCreatedOn());
 						detail.setCreatedBy(header.getCreatedBy());
 						process(detail);
 					}
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					hostGLMappingUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();

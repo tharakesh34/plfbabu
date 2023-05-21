@@ -16,7 +16,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
@@ -64,37 +63,22 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<RePresentmentUploadDetail> details = representmentUploadDAO.getDetails(header.getId());
+				header.getUploadDetails().addAll(details);
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (RePresentmentUploadDetail detail : details) {
 					detail.setAcBounce(acBounce);
 					doValidate(header, detail);
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				representmentUploadDAO.update(details);
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
 
 			TransactionStatus txStatus = getTransactionStatus();
 			try {
-				updateHeader(headers, true);
-
 				logger.info("RePresentment Process is Initiated");
 				extractionService.extractRePresentment(headerIdList);
 
@@ -108,6 +92,8 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresent
 			} finally {
 				txStatus = null;
 			}
+
+			updateHeader(headers, true);
 		}).start();
 	}
 

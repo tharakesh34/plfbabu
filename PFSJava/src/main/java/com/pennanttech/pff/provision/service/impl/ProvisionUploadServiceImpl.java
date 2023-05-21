@@ -64,11 +64,8 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<ProvisionUpload> details = provisionUploadDAO.getDetails(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (ProvisionUpload detail : details) {
 					doValidate(header, detail);
@@ -79,20 +76,9 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 						setSuccesStatus(detail);
 						process(header, detail);
 					}
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					provisionUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();

@@ -106,8 +106,8 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 				List<HoldMarkingUpload> details = holdMarkingUploadDAO.getDetails(header.getId());
 
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
 
 				for (HoldMarkingUpload detail : details) {
 					detail.setCreatedOn(header.getCreatedOn());
@@ -129,8 +129,6 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 							setFailureStatus(detail, e.getMessage());
 						}
 					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {

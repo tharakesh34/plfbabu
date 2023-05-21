@@ -91,7 +91,8 @@ public class JVPosting extends AbstractWorkflowEntity {
 	private String divisionCodeDesc;
 	private String finSourceID;
 	private RequestSource requestSource = RequestSource.UI;
-	private long uploadID;
+	private long uploadHeaderID;
+	private long uploaddetailID;
 
 	public JVPosting() {
 		super();
@@ -112,7 +113,8 @@ public class JVPosting extends AbstractWorkflowEntity {
 		excludeFields.add("divisionCodeDesc");
 		excludeFields.add("finSourceID");
 		excludeFields.add("requestSource");
-		excludeFields.add("uploadID");
+		excludeFields.add("uploadHeaderID");
+		excludeFields.add("uploaddetailID");
 		return excludeFields;
 	}
 
@@ -392,12 +394,20 @@ public class JVPosting extends AbstractWorkflowEntity {
 		this.requestSource = requestSource;
 	}
 
-	public long getUploadID() {
-		return uploadID;
+	public long getUploadHeaderID() {
+		return uploadHeaderID;
 	}
 
-	public void setUploadID(long uploadID) {
-		this.uploadID = uploadID;
+	public void setUploadHeaderID(long uploadHeaderID) {
+		this.uploadHeaderID = uploadHeaderID;
+	}
+
+	public long getUploaddetailID() {
+		return uploaddetailID;
+	}
+
+	public void setUploaddetailID(long uploaddetailID) {
+		this.uploaddetailID = uploaddetailID;
 	}
 
 }

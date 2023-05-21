@@ -134,11 +134,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<ExcessTransferUpload> details = excessTransferUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
-
+				header.getUploadDetails().addAll(details);
 				List<ExcessTransferUpload> process = new ArrayList<>();
 
 				for (ExcessTransferUpload fc : details) {
@@ -146,9 +142,9 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 					doValidate(header, fc);
 
 					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
+						setFailureStatus(fc);
 					} else {
-						sucessRecords++;
+						setSuccesStatus(fc);
 						process.add(fc);
 					}
 				}
@@ -167,20 +163,8 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTr
 					txStatus = null;
 				}
 
-				for (ExcessTransferUpload fc : details) {
-					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-						sucessRecords--;
-					}
-
-					header.getUploadDetails().add(fc);
-				}
-
 				try {
 					excessTransferUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);

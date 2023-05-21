@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
+import com.ibm.icu.math.BigDecimal;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -74,6 +74,13 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
+
+		try {
+			new BigDecimal(detail.getAmountCleared());
+		} catch (NumberFormatException e) {
+			setFailureStatus(detail, PresentmentError.REPRMNT523.name(), "Amount Cleared is invalid format");
+			return;
+		}
 
 		if (presentmentRespUploadDAO.isDuplicateKeyPresent(reference, detail.getClearingStatus(),
 				detail.getClearingDate())) {
@@ -135,32 +142,11 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<PresentmentRespUpload> details = presentmentRespUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
 				header.getUploadDetails().addAll(details);
-
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (PresentmentRespUpload fc : details) {
 					doValidate(header, fc);
-
-					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
-
-				presentmentRespUploadDAO.update(details);
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
-
-				List<FileUploadHeader> headerList = new ArrayList<>();
-				headerList.add(header);
-
-				updateHeader(headerList, true);
 
 				logger.info("Fate Correction Process is Initiated");
 
@@ -176,9 +162,18 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 					if (txStatus != null) {
 						transactionManager.rollback(txStatus);
 					}
+
+					header.getUploadDetails().forEach(detail -> setFailureStatus(detail));
 				} finally {
 					txStatus = null;
 				}
+
+				presentmentRespUploadDAO.update(details);
+
+				List<FileUploadHeader> headerList = new ArrayList<>();
+				headerList.add(header);
+
+				updateHeader(headerList, true);
 
 				logger.info("Processed the File {}", header.getFileName());
 			}

@@ -27,7 +27,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
 import com.pennant.pff.lpp.upload.validate.LPPUploadProcessRecord;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -72,11 +71,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<LPPUpload> details = lppUploadDAO.getDetails(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (LPPUpload detail : details) {
 					doValidate(header, detail);
@@ -88,20 +84,9 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 						detail.setUserDetails(header.getUserDetails());
 						process(detail, header);
 					}
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					lppUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
@@ -111,7 +96,6 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 					logger.error(Literal.EXCEPTION, e);
 				}
 			}
-
 		}).start();
 	}
 

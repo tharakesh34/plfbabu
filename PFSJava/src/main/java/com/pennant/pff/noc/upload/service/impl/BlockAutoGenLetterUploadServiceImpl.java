@@ -95,12 +95,9 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<BlockAutoGenLetterUpload> details = blockAutoGenLetterUploadDAO.getDetails(header.getId());
+				header.getUploadDetails().addAll(details);
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (BlockAutoGenLetterUpload detail : details) {
 					detail.setCreatedOn(header.getCreatedOn());
@@ -116,26 +113,14 @@ public class BlockAutoGenLetterUploadServiceImpl extends AUploadServiceImpl<Bloc
 						setSuccesStatus(detail);
 						process(detail);
 					}
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					blockAutoGenLetterUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 					updateHeader(headers, true);
-
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}

@@ -85,11 +85,8 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 
 			for (FileUploadHeader header : headers) {
 				List<MandateUpload> details = mandateUploadDAO.loadRecordData(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				try {
 					for (MandateUpload detail : details) {
@@ -97,25 +94,20 @@ public class MandateUploadServiceImpl extends AUploadServiceImpl<MandateUpload> 
 						prepareUserDetails(header, detail);
 
 						if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-							failRecords++;
 							continue;
 						}
+
 						Mandate mandate = detail.getMandate();
-						mandate.setUserDetails(header.getUserDetails());
+						mandate.setUserDetails(detail.getUserDetails());
 						mandate.setSourceId(RequestSource.UPLOAD.name());
 
 						process(detail, mandate);
-
-						header.getUploadDetails().add(detail);
 					}
 
 					mandateUploadDAO.update(details);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
 			}
 
 			try {

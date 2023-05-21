@@ -13,7 +13,6 @@ import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.noc.upload.dao.CourierDetailUploadDAO;
 import com.pennant.pff.noc.upload.error.CourierDetailUploadError;
 import com.pennant.pff.noc.upload.model.CourierDetailUpload;
@@ -107,34 +106,19 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 				List<CourierDetailUpload> details = courierDetailUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (CourierDetailUpload detail : details) {
 					doValidate(header, detail);
-
-					if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
-
-				header.getUploadDetails().addAll(details);
 
 				try {
 					courierDetailUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
 
 					logger.info("Processed the File {}", header.getFileName());
 
 					updateHeader(headers, true);
 
-					logger.info("BulkLetterCourierDetails Process is Initiated");
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
 				}

@@ -141,9 +141,6 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 				List<FinCancelUploadDetail> details = financeCancellationUploadDAO.getDetails(header.getId());
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				List<String> key = new ArrayList<>();
 
@@ -152,33 +149,27 @@ public class FinanceCancellationUploadServiceImpl extends AUploadServiceImpl<Fin
 
 					if (key.contains(keyRef)) {
 						setError(detail, FinCancelUploadError.LANCLUP016);
-						failRecords++;
 						continue;
 					}
 
 					key.add(keyRef);
+					header.getUploadDetails().add(detail);
 
 					doValidate(header, detail);
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
+						setFailureStatus(detail);
 					} else {
-						sucessRecords++;
-
 						logger.info("Loan Cancelation Process is Initiated for the Header ID {}", header.getId());
 
 						detail.setAppDate(appDate);
 						processCancelLoan(detail);
-
+						setSuccesStatus(detail);
 						logger.info("Loan Cancelation Process is Completed for the Header ID {}", header.getId());
 					}
 
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
 
 					financeCancellationUploadDAO.update(details);

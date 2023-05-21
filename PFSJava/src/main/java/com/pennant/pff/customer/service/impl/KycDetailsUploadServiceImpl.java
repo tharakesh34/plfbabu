@@ -9,9 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -73,37 +71,29 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 		logger.debug(Literal.ENTERING);
 
 		new Thread(() -> {
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 			TransactionStatus txStatus = null;
 
 			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
 				List<CustomerKycDetail> details = kycDetailsUploadDAO.loadRecordData(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				try {
 					for (CustomerKycDetail detail : details) {
 						doValidate(header, detail);
 
 						if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-							failRecords++;
 							continue;
 						}
 
 						detail.setUserDetails(header.getUserDetails());
 						detail.setSource(RequestSource.UPLOAD.name());
-						header.getUploadDetails().add(detail);
 
 						if (detail.getCustAddrPriority() != 0) {
 							customerAddressUpload.process(detail);
 							if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-								failRecords++;
 								continue;
 							}
 						}
@@ -111,7 +101,6 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 						if (detail.getPhoneTypePriority() != 0) {
 							customerPhoneNumberUpload.process(detail);
 							if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-								failRecords++;
 								continue;
 							}
 						}
@@ -119,16 +108,14 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 						if (detail.getCustEMailPriority() != 0) {
 							customerEmailUpload.process(detail);
 							if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-								failRecords++;
 								continue;
 							}
 						}
 
-						sucessRecords++;
 						setSuccesStatus(detail);
 					}
 
-					txStatus = transactionManager.getTransaction(txDef);
+					txStatus = getTransactionStatus();
 					kycDetailsUploadDAO.update(details);
 					transactionManager.commit(txStatus);
 				} catch (Exception e) {
@@ -140,37 +127,13 @@ public class KycDetailsUploadServiceImpl extends AUploadServiceImpl<CustomerKycD
 				} finally {
 					txStatus = null;
 				}
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
-
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
-				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
 			}
 
 			try {
-				txStatus = transactionManager.getTransaction(txDef);
-
 				updateHeader(headers, true);
-
-				transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
-
-				if (txStatus != null) {
-					transactionManager.rollback(txStatus);
-				}
-			} finally {
-				txStatus = null;
 			}
-
 		}).start();
 
 		logger.debug(Literal.LEAVING);

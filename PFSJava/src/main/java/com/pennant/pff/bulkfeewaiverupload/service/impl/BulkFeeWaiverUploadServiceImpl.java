@@ -115,10 +115,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 				logger.info("Processing the File {}", header.getFileName());
 				List<BulkFeeWaiverUpload> details = bulkFeeWaiverUploadDAO.getDetails(header.getId());
 
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
-
 				for (BulkFeeWaiverUpload detail : details) {
 					detail.setUserDetails(header.getUserDetails());
 					detail.setAppDate(appDate);
@@ -133,18 +129,14 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 					header.getUploadDetails().add(detail);
 
 					if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-						failRecords++;
+						setFailureStatus(detail);
 					} else {
-						sucessRecords++;
 						setSuccesStatus(detail);
 					}
 				}
 
 				try {
 					bulkFeeWaiverUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
 
 					updateHeader(headers, true);
 

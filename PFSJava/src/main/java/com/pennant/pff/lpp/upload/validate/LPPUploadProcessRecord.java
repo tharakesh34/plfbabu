@@ -146,7 +146,6 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 			if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
 				int processrecordcount = lppUploadDAO.saveByFinType(lpp);
-
 				header.setTotalRecords(header.getTotalRecords() + processrecordcount);
 			}
 

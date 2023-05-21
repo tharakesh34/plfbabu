@@ -45,7 +45,6 @@ import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -244,43 +243,21 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<ManualKnockOffUpload> details = manualKnockOffUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (ManualKnockOffUpload fc : details) {
 					fc.setAppDate(appDate);
 					fc.setAllocations(manualKnockOffUploadDAO.getAllocations(fc.getId(), header.getId()));
 					doValidate(header, fc);
+					prepareUserDetails(header, fc);
 
-					LoggedInUser userDetails = fc.getUserDetails();
-
-					if (userDetails == null) {
-						userDetails = new LoggedInUser();
-						userDetails.setLoginUsrID(header.getApprovedBy());
-						userDetails.setUserName(header.getApprovedByName());
-					}
-
-					fc.setUserDetails(userDetails);
 					if (fc.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						createReceipt(fc, header);
-					}
-
-					header.getUploadDetails().add(fc);
-
-					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
 					}
 				}
 
 				try {
 					manualKnockOffUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);

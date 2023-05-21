@@ -54,7 +54,6 @@ import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -136,9 +135,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<CrossLoanKnockoffUpload> details = crossLoanKnockoffUploadDAO.loadRecordData(header.getId());
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (CrossLoanKnockoffUpload clk : details) {
 					clk.setAppDate(appDate);
@@ -182,35 +179,15 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 					}
 
 					doValidate(header, clk);
-
-					LoggedInUser userDetails = header.getUserDetails();
-
-					if (userDetails == null) {
-						userDetails = new LoggedInUser();
-						userDetails.setLoginUsrID(header.getApprovedBy());
-						userDetails.setUserName(header.getApprovedByName());
-					}
-
-					clk.setUserDetails(userDetails);
+					prepareUserDetails(header, clk);
 
 					if (clk.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						createReceipt(header, clk, fromFm, toFm);
-					}
-
-					header.getUploadDetails().add(clk);
-
-					if (clk.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
 					}
 				}
 
 				try {
 					crossLoanKnockoffUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);

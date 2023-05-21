@@ -86,9 +86,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<CreateReceiptUpload> details = createReceiptUploadDAO.getDetails(header.getId());
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (CreateReceiptUpload receipt : details) {
 					receipt.setAppDate(appDate);
@@ -101,19 +99,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 						createReceipt(receipt, header);
 					}
 
-					header.getUploadDetails().add(receipt);
-
-					if (receipt.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
 					try {
 						createReceiptUploadDAO.update(details);
-
-						header.setSuccessRecords(sucessRecords);
-						header.setFailureRecords(failRecords);
 
 						List<FileUploadHeader> headerList = new ArrayList<>();
 						headerList.add(header);

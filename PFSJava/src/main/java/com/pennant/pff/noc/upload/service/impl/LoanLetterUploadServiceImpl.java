@@ -19,7 +19,6 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
 import com.pennant.pff.noc.upload.error.LoanLetterUploadError;
 import com.pennant.pff.noc.upload.model.LoanLetterUpload;
@@ -170,11 +169,9 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<LoanLetterUpload> details = loanLetterUploadDAO.getDetails(header.getId());
+				header.getUploadDetails().addAll(details);
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (LoanLetterUpload detail : details) {
 					doValidate(header, detail);
@@ -186,20 +183,9 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					}
 
 					detail.setUserDetails(header.getUserDetails());
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					loanLetterUploadDAO.update(details);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
@@ -283,7 +269,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		transfer.setHeaderId(header.getId());
 		transfer.setAppDate(header.getAppDate());
 		transfer.setReference(finReference);
-		
+
 		if (isInProgress(headerID, finReference)) {
 			setFailureStatus(transfer, "Record is already initiated, unable to proceed.");
 			updateProcess(header, transfer, paramSource);

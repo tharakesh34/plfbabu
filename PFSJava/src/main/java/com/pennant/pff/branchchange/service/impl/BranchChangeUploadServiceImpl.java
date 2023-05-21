@@ -23,7 +23,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.branchchange.dao.BranchChangeUploadDAO;
 import com.pennant.pff.branchchange.dao.BranchMigrationDAO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
@@ -123,9 +122,6 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 				List<BranchChangeUpload> details = branchChangeUploadDAO.getDetails(header.getId());
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (BranchChangeUpload bcu : details) {
 					doValidate(header, bcu);
@@ -140,16 +136,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 					}
 
 					header.getUploadDetails().add(bcu);
-
-					if (bcu.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
 
 				logger.info("Processed the File {}", header.getFileName());
 

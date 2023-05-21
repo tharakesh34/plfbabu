@@ -84,10 +84,8 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 
 				List<RevWriteOffUploadDetail> details = revWriteOffUploadDAO.getDetails(header.getId());
 
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				List<String> key = new ArrayList<>();
 
@@ -96,19 +94,12 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 					detail.setAppDate(appDate);
 					if (key.contains(reference)) {
 						setError(detail, WriteOffUploadError.WOUP009);
-						failRecords++;
 						continue;
 					}
 
 					key.add(reference);
 
 					doValidate(header, detail);
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
 
 				logger.info("Reverse WriteOff Upload Process is Initiated for the Header ID {}", header.getId());
@@ -117,12 +108,7 @@ public class RevWriteOffUploadServiceImpl extends AUploadServiceImpl<RevWriteOff
 
 				logger.info("Reverse WriteOff Upload Process is Completed for the Header ID {}", header.getId());
 
-				header.getUploadDetails().addAll(details);
-
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
 
 					revWriteOffUploadDAO.update(details);

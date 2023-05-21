@@ -71,7 +71,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 				Map<String, List<ChequeUpload>> map = new HashMap<>();
 				List<ChequeUpload> details = chequeUploadDAO.getDetails(header.getId());
 
-				header.setTotalRecords(details.size());
 				for (ChequeUpload detail : details) {
 					String finReference = detail.getReference();
 					if (map.containsKey(finReference)) {

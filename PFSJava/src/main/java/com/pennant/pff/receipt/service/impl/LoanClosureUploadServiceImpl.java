@@ -141,21 +141,11 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 				List<LoanClosureUpload> details = loanClosureUploadDAO.loadRecordData(header.getId());
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (LoanClosureUpload lcu : details) {
 					lcu.setAppDate(appDate);
 					doValidate(header, lcu);
-
-					header.getUploadDetails().add(lcu);
-
-					if (lcu.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 
 					if (lcu.getProgress() == EodConstants.PROGRESS_SUCCESS) {
 						lcu.setAllocations(loanClosureUploadDAO.getAllocations(lcu.getId(), header.getId()));
@@ -165,9 +155,6 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 
 				try {
 					loanClosureUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);

@@ -41,7 +41,6 @@ import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.receipt.dao.ReceiptStatusUploadDAO;
 import com.pennant.pff.receipt.model.ReceiptStatusUpload;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -240,11 +239,8 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<ReceiptStatusUpload> details = receiptStatusUploadDAO.getDetails(header.getId());
-
+				header.getUploadDetails().addAll(details);
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (ReceiptStatusUpload detail : details) {
 					doValidate(header, detail);
@@ -252,25 +248,13 @@ public class ReceiptStatusUploadServiceImpl extends AUploadServiceImpl<ReceiptSt
 					if (detail.getErrorCode() != null) {
 						setFailureStatus(detail);
 					} else {
-						setSuccesStatus(detail);
-						detail.setUserDetails(header.getUserDetails());
-
+						prepareUserDetails(header, detail);
 						updateReceipt(detail);
+						setSuccesStatus(detail);
 					}
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
-
-					header.getUploadDetails().add(detail);
 				}
 
 				try {
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
 
 					receiptStatusUploadDAO.update(details);

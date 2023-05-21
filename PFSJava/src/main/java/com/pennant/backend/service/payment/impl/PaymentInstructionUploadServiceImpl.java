@@ -90,11 +90,9 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 				List<PaymentInstUploadDetail> details = paymentInstructionUploadDAO.getDetails(header.getId());
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				List<String> key = new ArrayList<>();
+				header.getUploadDetails().addAll(details);
 
 				for (PaymentInstUploadDetail detail : details) {
 
@@ -109,7 +107,6 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 					if (key.contains(keyRef)) {
 						setError(detail, PaymentUploadError.REFUP014);
-						failRecords++;
 						continue;
 					}
 
@@ -118,21 +115,16 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 					doValidate(header, detail);
 
 					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
+						setFailureStatus(detail);
 					} else {
-						sucessRecords++;
 						detail.setAppDate(appDate);
 						processRefunds(detail);
-					}
 
-					header.getUploadDetails().add(detail);
+						setSuccesStatus(detail);
+					}
 				}
 
 				try {
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
 					logger.info("Processed the File {}", header.getFileName());
 
 					paymentInstructionUploadDAO.update(details);
