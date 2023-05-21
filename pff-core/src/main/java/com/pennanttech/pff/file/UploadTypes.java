@@ -53,7 +53,9 @@ public enum UploadTypes {
 
 	LPP_LOAN("Bulk Loan Overdue Penalty Upload Details"),
 
-	LPP_LOAN_TYPE("Bulk Loan Type Overdue Penalty Upload Details");
+	LPP_LOAN_TYPE("Bulk Loan Type Overdue Penalty Upload Details"),
+
+	HOLD_MARKING("Hold Marking Upload Details Screen");
 
 	private String description;
 

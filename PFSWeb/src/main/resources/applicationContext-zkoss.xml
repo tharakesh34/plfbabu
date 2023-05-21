@@ -6281,6 +6281,8 @@
 
 	<bean id="lppLoanUploadList" class="com.pennant.pff.lpp.upload.list.LPPLoanUploadListCtrl" parent="uploadList" />
 
-	<bean id="lppLoanTypeUploadList" class="com.pennant.pff.lpp.upload.list.LPPLoanTypeUploadListCtrl"
+	<bean id="lppLoanTypeUploadList" class="com.pennant.pff.lpp.upload.list.LPPLoanTypeUploadListCtrl" parent="uploadList" />
+		
+	<bean id="holdMarkingUploadListCtrl" class="com.pennant.pff.holdmarking.upload.web.list.HoldMarkingUploadListCtrl"
 		parent="uploadList" />
 </beans>

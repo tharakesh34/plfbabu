@@ -104,6 +104,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.lien.service.LienService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -142,6 +143,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private LienService lienService;
 	private FeeCalculator feeCalculator;
 	private FinExcessAmountDAO finExcessAmountDAO;
+
+	private HoldMarkingService holdMarkingService;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -647,6 +650,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		if (ImplementationConstants.ALLOW_LIEN
 				&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			lienService.update(fd);
+		}
+
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			holdMarkingService.removeHold(fm);
 		}
 
 		cancelChildLoan(finReference);
@@ -1192,4 +1199,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
 }

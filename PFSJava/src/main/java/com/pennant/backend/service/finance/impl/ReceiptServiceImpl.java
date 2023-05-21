@@ -229,9 +229,11 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.ReceiptExtension;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.receipt.ClosureType;
@@ -349,6 +351,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 	private ReceiptAllocationDetailDAO receiptAllocationDetailDAO;
 	private FinODCAmountDAO finODCAmountDAO;
 	private LienService lienService;
+	private HoldMarkingService holdMarkingService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -2343,6 +2346,17 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		if (ImplementationConstants.ALLOW_LIEN && FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
 			fd.setModuleDefiner(FinServiceEvent.RECEIPT);
 			lienService.update(fd);
+		}
+
+		if (MandateExtension.ALLOW_HOLD_MARKING && !FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
+			List<FinExcessAmount> excessList = rch.getExcessAmounts();
+			BigDecimal refund = BigDecimal.ZERO;
+			for (FinExcessAmount finExcessAmount : excessList) {
+				refund = refund.add(finExcessAmount.getBalanceAmt());
+			}
+
+			BigDecimal receiptAmount = rch.getReceiptAmount().subtract(refund);
+			holdMarkingService.updateHoldRemoval(receiptAmount, fm.getFinID(), fm.getFinReference());
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -9301,4 +9315,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		this.lienService = lienService;
 	}
 
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
 }

@@ -114,6 +114,8 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -155,6 +157,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 	private LoanPaymentService loanPaymentService;
 	private FinODCAmountDAO finODCAmountDAO;
+	private HoldMarkingService holdMarkingService;
 
 	List<ManualAdvise> manualAdviseList; // TODO remove this
 
@@ -1035,17 +1038,24 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		List<FinanceScheduleDetail> schdList = this.financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 
 		LoanPayment lp = new LoanPayment(finID, fm.getFinReference(), schdList, appDate);
+
+		fm.setOldActiveState(fm.isFinIsActive());
 		boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
 		if (isFinFullyPaid) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, null);
 			profitDetailsDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			fm.setFinIsActive(false);
 		}
 
 		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null);
 
 		if (!fm.isFinIsActive()) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
+		}
+
+		if (MandateExtension.ALLOW_HOLD_MARKING && isFinFullyPaid) {
+			holdMarkingService.removeHold(fm);
 		}
 	}
 
@@ -2745,5 +2755,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	@Autowired
 	public void setFinODCAmountDAO(FinODCAmountDAO finODCAmountDAO) {
 		this.finODCAmountDAO = finODCAmountDAO;
+	}
+
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
 	}
 }

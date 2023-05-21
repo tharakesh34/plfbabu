@@ -868,6 +868,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Timestamp approvedOn;
 	private String loanName;
 	private Date custDOB;
+	private boolean oldActiveState;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1119,6 +1120,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("closureType");
 		excludeFields.add("loanName");
 		excludeFields.add("custDOB");
+		excludeFields.add("oldActiveState");
 
 		return excludeFields;
 	}
@@ -5706,4 +5708,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setCustDOB(Date custDOB) {
 		this.custDOB = custDOB;
 	}
+
+	public boolean isOldActiveState() {
+		return oldActiveState;
+	}
+
+	public void setOldActiveState(boolean oldActiveState) {
+		this.oldActiveState = oldActiveState;
+	}
+
 }

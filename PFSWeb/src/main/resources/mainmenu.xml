@@ -1418,6 +1418,14 @@
 			<menuItem id="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Approver"
 				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanTypeUploadList.zul?stage=A"
 				rightName="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Approver" />
+	   </menu>
+	   <menu id="menu_Category_HoldMarkingUpload">
+			<menuItem id="menu_Item_HoldMarkingUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HoldMarking/Upload/HoldMarkingUploadList.zul?stage=M"
+				rightName="menu_Item_HoldMarkingUpload_Maker" />
+			<menuItem id="menu_Item_HoldMarkingUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HoldMarking/Upload/HoldMarkingUploadList.zul?stage=A"
+				rightName="menu_Item_HoldMarkingUpload_Approver" />
 		</menu>
 	</menu>
 	<!-- Insurance Module -->

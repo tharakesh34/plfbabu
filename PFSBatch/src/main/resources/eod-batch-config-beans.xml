@@ -777,4 +777,11 @@
 	
 	<bean id="assetSubClassCodeDAO" class="com.pennanttech.pff.npa.dao.impl.AssetSubClassCodeDAOImpl"
 		parent="sequenceDao" />
+		
+		
+	<bean id="holdMarkingHeaderDAO" class="com.pennant.pff.holdmarking.dao.impl.HoldMarkingHeaderDAOImpl" parent="sequenceDao" />
+
+	<bean id="holdMarkingDetailDAO" class="com.pennant.pff.holdmarking.dao.impl.HoldMarkingDetailDAOImpl" parent="sequenceDao" />
+	
+	<bean id = "holdMarkingService" class="com.pennant.pff.holdmarking.service.impl.HoldMarkingServiceImpl"/>
 </beans>
