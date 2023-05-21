@@ -603,7 +603,7 @@
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="Id" type="bigint" />
-			<column name="LetterType" type="varchar(8)">
+			<column name="LetterType" type="varchar(20)">
 				<constraints nullable="false"/>
 			</column>
 			<column name="FinID" type="bigint">

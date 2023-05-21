@@ -31,9 +31,11 @@ import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
+import com.pennant.pff.noc.model.ServiceBranch;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.net.FTPUtil;
+import com.pennanttech.pennapps.core.net.Protocol;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -103,6 +105,7 @@ public class LetterService {
 		AgreementDefinition ad = agreementDefinitionDAO.getTemplate(templateId);
 
 		Letter letter = new Letter();
+		letter.setId(letterID);
 		letter.setFinID(gl.getFinID());
 		letter.setSaveFormat(SaveFormat.PDF);
 		letter.setLetterDesc(ad.getAggDesc());
@@ -118,9 +121,14 @@ public class LetterService {
 			letter.setMailTemplate(mailTemplateDAO.getMailTemplateById(letter.getEmailTemplate(), "_AView"));
 		}
 
-		setLetterName(letter);
-
 		setData(letter);
+
+		String finBranch = letter.getFinBranch();
+		String finType = letter.getFinType();
+		letter.setServiceBranch(autoLetterGenerationDAO.getServiceBranch(finType, finBranch));
+		letter.setEventProperties(autoLetterGenerationDAO.getEventProperties("CSD_STORAGE"));
+
+		setLetterName(letter);
 
 		String templatePath = null;
 		switch (LetterType.valueOf(gl.getLetterType())) {
@@ -186,6 +194,8 @@ public class LetterService {
 
 		try {
 			emailEngine.sendEmail(emailMessage);
+
+			letter.setTrackingID(emailMessage.getId());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException("Unable to save the email notification", e);
@@ -199,33 +209,67 @@ public class LetterService {
 			return;
 		}
 
-		String csdCode = "";
-		csdCode = autoLetterGenerationDAO.getCSDCode(letter.getFinType(), letter.getFinBranch());
-		letter.setCsdCode(csdCode);
-		Date createdDate = letter.getCreatedDate();
+		ServiceBranch serviceBranch = letter.getServiceBranch();
 
-		String fileName = letter.getFileName();
-		String remotePath = csdCode.concat(File.separator).concat(DateUtil.format(createdDate, "ddMMyyyy"));
+		if (serviceBranch == null) {
+			throw new AppException("Customer Service Branch not found found with " + letter.getFinType() + " and "
+					+ letter.getFinBranch());
+		}
+
+		EventProperties ep = letter.getEventProperties();
+
+		if (ep == null) {
+			throw new AppException(
+					"There is no FTP/SFTP/S-3 Storage details not configured with Data-Engine Name CSD_STORAGE");
+		}
+
+		String csdCode = serviceBranch.getCode();
+		String parentFolder = serviceBranch.getFolderPath();
+
+		Date appDate = letter.getAppDate();
+
+		String fileName = letter.getLetterName();
+		String remotePath = parentFolder.concat(File.separator).concat(csdCode).concat(File.separator)
+				.concat(DateUtil.format(appDate, "ddMMyyyy"));
 		byte[] fileContent = letter.getContent();
-
-		EventProperties ep = autoLetterGenerationDAO.getEventProperties("CSD_STORAGE");
 
 		String host = ep.getHostName();
 		String port = ep.getPort();
 		String username = ep.getAccessKey();
 		String password = ep.getSecretKey();
-		String privateKey = ep.getPrivateKey();
+
+		remotePath = ep.getBucketName().concat(File.separator).concat(remotePath);
 
 		try {
-			FTPUtil.writeBytesToFTP(host, port, username, password, privateKey, remotePath, fileName, fileContent);
+			FTPUtil.writeBytesToFTP(Protocol.SFTP, host, port, username, password, remotePath, fileName, fileContent);
 		} catch (Exception e) {
 			throw new AppException("LetterService", e);
 		}
 	}
 
+	public void update(Letter letter) {
+		GenerateLetter gl = new GenerateLetter();
+
+		long letterID = letter.getId();
+		gl.setId(letterID);
+		gl.setFeeTypeID(letter.getFeeTypeID());
+		gl.setGeneratedDate(letter.getAppDate());
+		gl.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
+		gl.setAdviseID(letter.getAdviseID());
+		gl.setTrackingID(letter.getTrackingID());
+		gl.setStatus(letter.getStatus());
+		gl.setRemarks(letter.getRemarks());
+
+		autoLetterGenerationDAO.update(gl);
+
+		autoLetterGenerationDAO.moveFormStage(letterID);
+
+		autoLetterGenerationDAO.deleteFromStage(letterID);
+
+	}
+
 	private void setLetterName(Letter letter) {
 		Date appDate = letter.getAppDate();
-		// Date createdDate = letter.getCreatedDate();
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(letter.getFinReference());
@@ -270,8 +314,10 @@ public class LetterService {
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
+		letter.setFinReference(fm.getFinReference());
 		letter.setCustFullName(fm.getLoanName());
 		letter.setFinStartDate(DateUtil.format(fm.getFinStartDate(), DateFormat.LONG_DATE));
+		letter.setStrAppDate(DateUtil.format(letter.getAppDate(), DateFormat.LONG_DATE));
 
 		letter.setFinBranch(fm.getFinBranch());
 		letter.setFinType(fm.getFinType());

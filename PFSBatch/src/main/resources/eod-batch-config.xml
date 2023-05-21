@@ -25,6 +25,44 @@
 			<listener ref="eodJobListener" />
 		</listeners>
 
+		<step id="beforeEOD">
+			<tasklet ref="beforeEODTaskLet" />
+			<next on="*" to="loanCancel" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="loanCancel">
+			<tasklet ref="loanCancelTaskLet" />
+			<next on="*" to="prepareCustomerQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="prepareCustomerQueue">
+			<tasklet ref="prepareCustomerQueueTaskLet" />
+			<next on="*" to="financeHoldRelease" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="financeHoldRelease">
+			<tasklet ref="financeHoldReleaseTasklet" />
+			<next on="*" to="autoKnockOffProcess" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoKnockOffProcess">
+			<tasklet ref="loadAutoKnockOffProcessTasklet" />
+			<next on="*" to="masterStep" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="masterStep">
+			<partition step="microEOD" partitioner="partitioningMaster">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="autoKnockOffDataBackUp" />
+			<fail on="FAILED" />
+		</step>
+
 		<step id="autoKnockOffDataBackUp">
 			<tasklet ref="autoKnockOffDataBackUpTasklet" />
 			<next on="*" to="notifyLoanClosureDetailsToEFS" />
@@ -85,6 +123,12 @@
 			<partition step="letterGeneration" partitioner="letterGeneratePartitioner">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="letterGenerationClear" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="letterGenerationClear">
+			<tasklet ref="letterGenerationClearTasklet" />
 			<next on="*" to="autoRefundQueuing" />
 			<fail on="FAILED" />
 		</step>

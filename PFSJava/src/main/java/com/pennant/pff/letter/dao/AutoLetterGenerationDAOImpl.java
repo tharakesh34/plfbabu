@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.ServiceBranch;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -17,9 +18,9 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	@Override
 	public void save(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
-		sql.append("(FinID, RequestType, LetterType, FeeTypeId");
+		sql.append("(FinID, RequestType, LetterType");
 		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -30,7 +31,6 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ps.setLong(++index, gl.getFinID());
 				ps.setString(++index, gl.getRequestType());
 				ps.setString(++index, gl.getLetterType());
-				ps.setLong(++index, gl.getFeeId());
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
 				ps.setLong(++index, gl.getAgreementTemplate());
@@ -39,7 +39,6 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-
 	}
 
 	@Override
@@ -63,7 +62,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				generateLetter.setRequestType(rs.getString("RequestType"));
 				generateLetter.setLetterType(rs.getString("LetterType"));
 				generateLetter.setAgreementTemplate(rs.getLong("AgreementTemplate"));
-				generateLetter.setFeeId(rs.getLong("FeeTypeID"));
+				generateLetter.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
 				generateLetter.setModeofTransfer(rs.getString("ModeofTransfer"));
 				generateLetter.setEmailTemplate(rs.getLong("EmailTemplate"));
 				generateLetter.setCreatedDate(rs.getDate("CreatedDate"));
@@ -77,16 +76,76 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public String getCSDCode(String finType, String finBranch) {
-		StringBuilder sql = new StringBuilder("Select sb.Code");
+	public void update(GenerateLetter gl) {
+		StringBuilder sql = new StringBuilder("Update Letter_Generation_Stage");
+		sql.append(" Set FeeTypeId = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
+		sql.append(", TrackingID = ?, Status = ?, Remarks = ?");
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+
+				ps.setObject(++index, JdbcUtil.getLong(gl.getFeeTypeID()));
+				ps.setInt(++index, gl.getGenerated());
+				ps.setDate(++index, JdbcUtil.getDate(gl.getGeneratedDate()));
+				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
+				ps.setObject(++index, JdbcUtil.getLong(gl.getAdviseID()));
+				ps.setObject(++index, JdbcUtil.getLong(gl.getTrackingID()));
+				ps.setString(++index, gl.getStatus());
+				ps.setString(++index, gl.getRemarks());
+
+				ps.setLong(++index, gl.getId());
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+	}
+
+	@Override
+	public void moveFormStage(long letterID) {
+		String sql = "Insert Into Letter_Generation Select * from Letter_Generation_Stage Where Id = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, letterID);
+	}
+
+	@Override
+	public void deleteFromStage(long letterID) {
+		String sql = "Delete From Letter_Generation_Stage Where Id = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, letterID);
+	}
+
+	@Override
+	public ServiceBranch getServiceBranch(String finType, String finBranch) {
+		StringBuilder sql = new StringBuilder("Select sb.Code, sb.FolderPath");
 		sql.append(" From Service_Branches sb");
-		sql.append(" Inner Join Service_Branches_Loantype sbl on sbl.HeaderID = sb.ID");
-		sql.append(" Where sb.FinType = ? and sb.Branch = ?");
+		sql.append(" Inner Join Service_Branches_LoanType sbl on sbl.HeaderID = sb.ID");
+		sql.append(" Where sbl.FinType = ? and sbl.Branch = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getString(1), finType, finBranch);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ServiceBranch sb = new ServiceBranch();
 
+				sb.setCode(rs.getString("Code"));
+				sb.setFolderPath(rs.getString("FolderPath"));
+
+				return sb;
+
+			}, finType, finBranch);
+
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+		return null;
 	}
 
 	@Override
@@ -123,7 +182,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ep.setPrivateKey(rs.getString("Private_Key"));
 
 				return ep;
-			}, configName);
+			}, configName, "SFTP");
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}

@@ -144,6 +144,13 @@ public class LetterGenerationTasklet implements Tasklet {
 
 			letterService.sendEmail(letter);
 
+			letterService.storeLetter(letter);
+
+			letter.setGenerated(1);
+			letter.setStatus("S");
+
+			letterService.update(letter);
+
 			transactionManager.commit(transactionStatus);
 		} catch (Exception e) {
 			transactionManager.rollback(transactionStatus);

@@ -19099,7 +19099,7 @@
 			<column name="RequestType" type="char(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="LetterType" type="varchar(8)">
+			<column name="LetterType" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
 			<column name="AgreementTemplate" type="bigint">
@@ -19183,7 +19183,7 @@
 			<column name="RequestType" type="char(1)">
 				<constraints nullable="false" />
 			</column>
-			<column name="LetterType" type="varchar(8)">
+			<column name="LetterType" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
 			<column name="AgreementTemplate" type="bigint">
@@ -19357,7 +19357,7 @@
 	<changeSet id="ST#15956.90" author="Mounika.M">
 		<createTable tableName="LETTER_GENERATE_MANUAL">
 			<column name="Id" type="bigint" autoIncrement="true"></column>
-			<column name="LetterType" type="varchar(8)">
+			<column name="LetterType" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
 			<column name="FinID" type="bigint">
@@ -19392,7 +19392,7 @@
 	<changeSet id="ST#15956.92" author="Mounika.M">
 		<createTable tableName="LETTER_GENERATE_MANUAL_TEMP">
 			<column name="Id" type="bigint" autoIncrement="true"></column>
-			<column name="LetterType" type="varchar(8)">
+			<column name="LetterType" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
 			<column name="FinID" type="bigint">
@@ -19518,6 +19518,17 @@
 			<![CDATA[	
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'LETTER_GENERATION_THREAD_COUNT';
 				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('LETTER_GENERATION_THREAD_COUNT',          'LETTER GENERATION THREAD COUNT',                       'int',   '1','1', 2, 0, NULL, NULL, '',                                                                    1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#15956.103" author="nagavamsi.p">
+		<sql>
+			<![CDATA[	
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'CSD_STORAGE';
+				INSERT INTO DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'CSD_STORAGE', 'Loan Letters Storage', 5, NULL, NULL, NULL, NULL, 0, 1, NULL, NULL,NULL, 'A', NULL, 'CSD_STORAGE', NULL, 0, current_timestamp, NULL, NULL, '0', NULL, 1, 1, 0);
+				INSERT INTO DATA_ENGINE_EVENT_PROPERTIES (CONFIG_ID, STORAGE_TYPE, BUCKET_NAME, ACCESS_KEY, SECRET_KEY, HOST_NAME,PORT, ID) VALUES ((SELECT ID from DATA_ENGINE_CONFIG WHERE NAME='CSD_STORAGE'), 'SFTP', '/sftpuser/PLF/HDFC/QC', 'sftpuser', 'Zxcvbn$@123','sftpserver','22',(SELECT MAX(ID)+1 FROM DATA_ENGINE_EVENT_PROPERTIES));
+				
 			]]>
 		</sql>
 	</changeSet>

@@ -17,10 +17,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String finReference;
 	private String letterType;
 	private String requestType;
-	private long feeId;
+	private Long feeTypeID;
 	private Date createdDate;
 	private Date createdOn;
 	private long createdBy;
+	private int generated;
 	private Date generatedDate;
 	private Date generatedOn;
 	private long generatedBy;
@@ -35,7 +36,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String status;
 	private String email;
 	private String fileName;
-	private long trackingID;
+	private Long trackingID;
 	private String remarks;
 	private Long adviseID;
 	private GenerateLetter befImage;
@@ -52,10 +53,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finReference");
 		excludeFields.add("requestType");
-		excludeFields.add("feeId");
+		excludeFields.add("feeTypeID");
 		excludeFields.add("createdDate");
 		excludeFields.add("createdOn");
 		excludeFields.add("createdBy");
+		excludeFields.add("generated");
 		excludeFields.add("generatedDate");
 		excludeFields.add("generatedOn");
 		excludeFields.add("generatedBy");
@@ -119,12 +121,12 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.requestType = requestType;
 	}
 
-	public long getFeeId() {
-		return feeId;
+	public Long getFeeTypeID() {
+		return feeTypeID;
 	}
 
-	public void setFeeId(long feeId) {
-		this.feeId = feeId;
+	public void setFeeTypeID(Long feeTypeID) {
+		this.feeTypeID = feeTypeID;
 	}
 
 	public Date getCreatedDate() {
@@ -149,6 +151,14 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setCreatedBy(long createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public int getGenerated() {
+		return generated;
+	}
+
+	public void setGenerated(int generated) {
+		this.generated = generated;
 	}
 
 	public Date getGeneratedDate() {
@@ -263,11 +273,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.fileName = fileName;
 	}
 
-	public long getTrackingID() {
+	public Long getTrackingID() {
 		return trackingID;
 	}
 
-	public void setTrackingID(long trackingID) {
+	public void setTrackingID(Long trackingID) {
 		this.trackingID = trackingID;
 	}
 
