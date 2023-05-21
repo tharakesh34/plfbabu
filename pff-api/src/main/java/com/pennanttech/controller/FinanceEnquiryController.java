@@ -71,18 +71,7 @@ public class FinanceEnquiryController extends AbstractController {
 	private static final String ERROR_92021 = "92021";
 
 	public FinanceDetail getLoanBasicDetails(Long finID) {
-		logger.debug(Literal.ENTERING);
-
-		FinanceDetail fd = getLoanDetails(finID);
-
-		long custID = fd.getFinScheduleData().getFinanceMain().getCustID();
-
-		CustomerDetails cd = getCustomerDetails(custID);
-
-		fd.setCustomerDetails(cd);
-
-		logger.debug(Literal.LEAVING);
-		return fd;
+		return financeEnquiryService.getLoanBasicDetails(finID);
 	}
 
 	public CustomerDetails getCustomerDetails(long custID) {

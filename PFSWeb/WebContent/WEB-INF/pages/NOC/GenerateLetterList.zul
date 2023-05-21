@@ -62,7 +62,11 @@
 									<textbox id="coreBankID" width="80px" maxlength="8" />
 									<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
 									<listbox id="custCifSort" width="43px" mold="select" rows="1" />
-									<textbox id="custCif" width="80px" maxlength="8" />
+									<hbox>
+										<textbox id="custCIF" width="160px" />
+										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_FinanceEnquiryList_btnSearchCustCIF.tooltiptext')}"
+											image="/images/icons/more.png" autodisable="btnSearchCustCIF" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>
@@ -83,12 +87,10 @@
 									hflex="min" />
 								<listheader id="letterTypeHeader" label="${c:l('label_listheader_LetterType')}"
 									sort="auto" hflex="min" />
-								<listheader id="recordStatusHeader" label="${c:l('label.RecordStatus')}" sort="auto"
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto"
 									hflex="min" />
-								<listheader id="recordTypeHeader" label="${c:l('label.RecordType')}" sort="auto"
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
 									hflex="min" />
-								<listheader id="download" label="${c:l('listheaderServiceBranch_CityName.label')}"
-									sort="auto" hflex="min" />
 							</listhead>
 
 						</listbox>

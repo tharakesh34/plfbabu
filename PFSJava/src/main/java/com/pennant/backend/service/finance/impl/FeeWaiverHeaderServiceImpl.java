@@ -116,6 +116,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -158,8 +159,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private LoanPaymentService loanPaymentService;
 	private FinODCAmountDAO finODCAmountDAO;
 	private HoldMarkingService holdMarkingService;
-
 	List<ManualAdvise> manualAdviseList; // TODO remove this
+	private GenerateLetterService generateLetterService;
 
 	public FeeWaiverHeaderServiceImpl() {
 		super();
@@ -1046,6 +1047,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, null);
 			profitDetailsDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 			fm.setFinIsActive(false);
+			generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
 		}
 
 		fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overdueList, null);
@@ -2760,5 +2762,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	@Autowired
 	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
 		this.holdMarkingService = holdMarkingService;
+	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
 	}
 }

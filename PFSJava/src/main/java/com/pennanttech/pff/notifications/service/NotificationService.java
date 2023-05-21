@@ -496,15 +496,7 @@ public class NotificationService extends GenericService<Notification> {
 		return emailMessage;
 	}
 
-	/**
-	 * Method for Parsing Mail Details and Send Notification To Users/Customer
-	 * 
-	 * @param mailTemplate
-	 * @param templateData
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	private void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
+	public void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
 		logger.debug("Entering");
 
 		String subject = "";

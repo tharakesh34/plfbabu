@@ -244,8 +244,6 @@
 
 	<bean id="autoWriteOffClacTaskLet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffClacTaskLet" />
 	
-	
-	<!-- auto Refund -->
 	<bean id="autoRefundQueuingTaskLet" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundQueueTasklet">
 		<constructor-arg ref="autoRefundQueueDAO"/>
 	</bean>
@@ -260,6 +258,22 @@
 	
 	<bean id="autoRefundClearTasklet" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundClearTasklet">
 		<constructor-arg ref="autoRefundQueueDAO"/>
+	</bean>
+
+	<bean id="letterGeneratePartitioner" class="com.pennant.pff.letter.partitioner.LetterGeneratePartitioner">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	<bean id="letterGenerationTasklet" class="com.pennant.pff.letter.LetterGenerationTasklet">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	<bean id="letterGenerationClearTasklet" class="com.pennant.pff.letter.LetterGenerationClearTasklet">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
+	</bean>
+	
+	<bean id="letterGenerationQueueTasklet" class="com.pennant.pff.letter.LetterGenerationQueueTasklet">
+		<constructor-arg ref="letterGenerationJobQueueDAO"/>
 	</bean>
 	
 </beans>

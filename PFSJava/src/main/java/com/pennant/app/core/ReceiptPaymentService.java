@@ -36,6 +36,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -69,6 +70,7 @@ public class ReceiptPaymentService {
 	private FinanceProfitDetailDAO profitDetailDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
+	private GenerateLetterService generateLetterService;
 
 	public ReceiptPaymentService() {
 		super();
@@ -205,6 +207,8 @@ public class ReceiptPaymentService {
 			if (MandateExtension.ALLOW_HOLD_MARKING) {
 				holdMarkingService.removeHold(fm);
 			}
+
+			generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
 		}
 	}
 
@@ -460,5 +464,10 @@ public class ReceiptPaymentService {
 	@Autowired
 	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
 		this.holdMarkingService = holdMarkingService;
+	}
+
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
 	}
 }

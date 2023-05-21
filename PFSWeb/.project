@@ -5,6 +5,7 @@
 	<projects>
 		<project>notification-engine</project>
 		<project>pennapps-schedular</project>
+		<project>pff-interface-hdfc</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

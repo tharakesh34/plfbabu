@@ -25,45 +25,6 @@
 			<listener ref="eodJobListener" />
 		</listeners>
 
-
-		<step id="beforeEOD">
-			<tasklet ref="beforeEODTaskLet" />
-			<next on="*" to="loanCancel" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="loanCancel">
-			<tasklet ref="loanCancelTaskLet" />
-			<next on="*" to="prepareCustomerQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="prepareCustomerQueue">
-			<tasklet ref="prepareCustomerQueueTaskLet" />
-			<next on="*" to="financeHoldRelease" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="financeHoldRelease">
-			<tasklet ref="financeHoldReleaseTasklet" />
-			<next on="*" to="autoKnockOffProcess" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="autoKnockOffProcess">
-			<tasklet ref="loadAutoKnockOffProcessTasklet" />
-			<next on="*" to="masterStep" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="masterStep">
-			<partition step="microEOD" partitioner="partitioningMaster">
-				<handler task-executor="taskExecutor" />
-			</partition>
-			<next on="*" to="autoKnockOffDataBackUp" />
-			<fail on="FAILED" />
-		</step>
-
 		<step id="autoKnockOffDataBackUp">
 			<tasklet ref="autoKnockOffDataBackUpTasklet" />
 			<next on="*" to="notifyLoanClosureDetailsToEFS" />
@@ -366,6 +327,12 @@
 		</tasklet>
 	</step>
 
+	<step id="letterGeneration" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="letterGenerationTasklet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
 	<step id="assetClassification" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="assetClassificationTaskLet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
@@ -416,7 +383,7 @@
 	<bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
 
 	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
-	
+
 	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
 		<property name="extStageDao" ref="extStageDao" />
 	</bean>
@@ -440,8 +407,9 @@
 		<property name="baselTwoDumpService" ref="baselTwoDumpService" />
 		<property name="rpmsDumpService" ref="rpmsDumpService" />
 	</bean>
-	
-	<bean id="beforeEodExternalProcessHook" class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
+
+	<bean id="beforeEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
 		<property name="extStageDao" ref="extStageDao" />
 	</bean>
 </beans>

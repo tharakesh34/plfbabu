@@ -4,31 +4,52 @@ import com.pennant.pff.batch.job.model.BatchJobQueue;
 
 public interface BatchJobQueueDAO {
 
-	int prepareQueue(BatchJobQueue jobQueue);
+	default int prepareQueue(BatchJobQueue jobQueue) {
+		return 0;
+	}
 
-	void updateQueue(BatchJobQueue jobQueue);
+	default void updateQueue(BatchJobQueue jobQueue) {
+	}
 
-	void handleFailures(BatchJobQueue jobQueue);
+	default void handleFailures(BatchJobQueue jobQueue) {
+	}
 
-	int getCount();
+	default int getCount() {
+		return 0;
+	}
 
-	int getQueueCount();
+	default int getQueueCount() {
+		return 0;
+	}
 
-	int getQueueCount(BatchJobQueue jobQueue);
+	default int getQueueCount(BatchJobQueue jobQueue) {
+		return 0;
+	}
 
-	int updateThreadID(long from, long to, int i);
+	default int updateThreadID(long from, long to, int i) {
+		return 0;
+	}
 
-	void updateProgress(BatchJobQueue jobQueue);
+	default void updateProgress(BatchJobQueue jobQueue) {
+	}
 
-	void clearQueue();
+	default void clearQueue() {
+	}
 
-	long getNextValue();
+	default long getNextValue() {
+		return 0;
+	}
 
-	void resetSequence();
+	default void resetSequence() {
+	}
 
-	Long getIdBySequence(long sequence);
+	default Long getIdBySequence(long sequence) {
+		return null;
+	}
 
-	void logQueue();
+	default void logQueue() {
+	}
 
-	void logQueue(int progress);
+	default void logQueue(int progress) {
+	}
 }

@@ -419,6 +419,10 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="linkedFinancesService" ref="linkedFinancesService" />
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="feeCalculator" ref="feeCalculator" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl"
@@ -857,4 +861,5 @@
 	
 	<bean id="autoRefundQueueDAO" class="com.pennanttech.refund.dao.impl.AutoRefundQueueDAOImpl" parent="sequenceDao" />
 		
+	<bean id="letterGenerationJOB" class="com.pennant.pff.letter.job.LetterGenerationJob"/>
 </beans>

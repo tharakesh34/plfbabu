@@ -6267,12 +6267,15 @@
 	<bean id="generateLetterDialogCtrl" class="com.pennant.pff.noc.webui.GenerateLetterDialogCtrl" parent="basisCtrl"
 		scope="prototype" />
 
-	<bean id="generateLetterListCtrl" class="com.pennant.pff.noc.webui.GenerateLetterListCtrl" parent="basisCtrl"
+	<bean id="generateLetterListCtrl" class="com.pennant.pff.noc.webui.GenerateLetterListCtrl" parent="basisListCtrl"
 		scope="prototype" />
 
 	<bean id="selectGenerateLetterCtrl" class="com.pennant.pff.noc.webui.SelectGenerateLetterCtrl" parent="basisCtrl"
 		scope="prototype" />
-
+	
+	<bean id="letterLogEnquiryDialogCtrl" class="com.pennant.pff.noc.webui.LetterLogEnquiryDialogCtrl" parent="basisCtrl"
+		scope="prototype" />
+	
 	<bean id="loanClosureUploadListCtrl" class="com.pennant.pff.receipt.web.LoanClosureUploadListCtrl"
 		parent="uploadList" />
 

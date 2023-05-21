@@ -4782,38 +4782,31 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (!ReceiptMode.EXCESS.equals(recptMode)) {
-			if (FinanceConstants.DEPOSIT_MAKER.equals(module)
-					&& (ReceiptMode.CHEQUE.equals(recptMode) || ReceiptMode.DD.equals(recptMode))) {
-				if (!this.fundingAccount.isReadonly()) {
-					this.fundingAccount.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
-				}
-			} else if (FinanceConstants.RECEIPT_MAKER.equals(module) && (!ReceiptMode.CHEQUE.equals(recptMode)
-					&& !ReceiptMode.DD.equals(recptMode) && !ReceiptMode.CASH.equals(recptMode))) {
-				if (!this.fundingAccount.isReadonly()) {
-					this.fundingAccount.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
-				}
-			} else if (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE
-					&& ReceiptMode.CASH.equals(recptMode)) {
-				if (!this.fundingAccount.isReadonly()) {
-					this.fundingAccount.setConstraint(new PTStringValidator(
-							Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
-				}
-			}
-
-			/*
-			 * if (!this.receivedDate.isDisabled()) { Date prvMaxReceivedDate =
-			 * getReceiptService().getMaxReceiptDate(financeMain.getFinReference ());
-			 * 
-			 * // ### 26-09-2018 Ticket id :124998 if (prvMaxReceivedDate == null || receiptPurposeCtg == 0) {
-			 * prvMaxReceivedDate = financeMain.getFinStartDate(); } Date curBussDate = DateUtility.getAppDate(); if
-			 * (DateUtility.compare(prvMaxReceivedDate, curBussDate) > 0) { curBussDate = prvMaxReceivedDate; }
-			 * this.receivedDate .setConstraint(new PTDateValidator(Labels.getLabel(
-			 * "label_ReceiptDialog_ReceivedDate.value"), true, prvMaxReceivedDate, curBussDate, true)); }
-			 */
-		}
+		/*
+		 * if (!ReceiptMode.EXCESS.equals(recptMode)) { if (FinanceConstants.DEPOSIT_MAKER.equals(module) &&
+		 * (ReceiptMode.CHEQUE.equals(recptMode) || ReceiptMode.DD.equals(recptMode))) { if
+		 * (!this.fundingAccount.isReadonly()) { this.fundingAccount.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true)); } } else if
+		 * (FinanceConstants.RECEIPT_MAKER.equals(module) && (!ReceiptMode.CHEQUE.equals(recptMode) &&
+		 * !ReceiptMode.DD.equals(recptMode) && !ReceiptMode.CASH.equals(recptMode))) { if
+		 * (!this.fundingAccount.isReadonly()) { this.fundingAccount.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true)); } } else if
+		 * (ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE && ReceiptMode.CASH.equals(recptMode)) {
+		 * if (!this.fundingAccount.isReadonly()) { this.fundingAccount.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true)); } }
+		 * 
+		 * 
+		 * if (!this.receivedDate.isDisabled()) { Date prvMaxReceivedDate =
+		 * getReceiptService().getMaxReceiptDate(financeMain.getFinReference ());
+		 * 
+		 * // ### 26-09-2018 Ticket id :124998 if (prvMaxReceivedDate == null || receiptPurposeCtg == 0) {
+		 * prvMaxReceivedDate = financeMain.getFinStartDate(); } Date curBussDate = DateUtility.getAppDate(); if
+		 * (DateUtility.compare(prvMaxReceivedDate, curBussDate) > 0) { curBussDate = prvMaxReceivedDate; }
+		 * this.receivedDate .setConstraint(new PTDateValidator(Labels.getLabel(
+		 * "label_ReceiptDialog_ReceivedDate.value"), true, prvMaxReceivedDate, curBussDate, true)); }
+		 * 
+		 * }
+		 */
 
 		if (!this.collectionAgentId.isReadonly() && this.collectionAgentId.isVisible()) {
 			this.collectionAgentId

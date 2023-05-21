@@ -99,6 +99,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
+import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -156,6 +157,7 @@ public class RepaymentProcessUtil {
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private ReceiptCalculator receiptCalculator;
+	private GenerateLetterService generateLetterService;
 
 	public RepaymentProcessUtil() {
 		super();
@@ -355,6 +357,9 @@ public class RepaymentProcessUtil {
 				}
 				profitDetail.setFinIsActive(false);
 				profitDetail.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+
+				generateLetterService.saveClosedLoanLetterGenerator(fm, appDate);
+
 			} else {
 				fm.setFinIsActive(true);
 			}
@@ -2891,4 +2896,8 @@ public class RepaymentProcessUtil {
 		this.receiptCalculator = receiptCalculator;
 	}
 
+	@Autowired
+	public void setGenerateLetterService(GenerateLetterService generateLetterService) {
+		this.generateLetterService = generateLetterService;
+	}
 }

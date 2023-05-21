@@ -450,7 +450,6 @@ public class SMTParameterConstants {
 	public static final String ALW_CREDIT_EDIT_DATA_STAGES = "ALW_CREDIT_EDIT_DATA_STAGES";
 	public static final String MAINTAIN_CANFIN_BACK_DATE = "MAINTAIN_CANFIN_BACK_DATE";
 	public static final String PSL_DATA_REQUIRED = "PSL_DATA_REQUIRED";
-
 	public static final String AUTO_REFUND_PROCESS_THREAD_COUNT = "AUTO_REFUND_PROCESS_THREAD_COUNT";
-
+	public static final String LETTER_GENERATION_THREAD_COUNT = "LETTER_GENERATION_THREAD_COUNT";
 }

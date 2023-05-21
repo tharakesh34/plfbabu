@@ -16,6 +16,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -23,6 +24,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.customermasters.CustomerEnquiryService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceEnquiryService;
 import com.pennant.pff.core.loan.util.LoanClosureCalculator;
@@ -39,13 +41,14 @@ import com.pennattech.pff.receipt.model.ReceiptDTO;
 public class FinanceEnquiryServiceImpl implements FinanceEnquiryService {
 	private static final Logger logger = LogManager.getLogger(FinanceEnquiryServiceImpl.class);
 
-	private SummaryDetailService summaryDetailService;
-	private FinanceDetailService financeDetailService;
-
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private CustomerDAO customerDAO;
+
+	private SummaryDetailService summaryDetailService;
+	private FinanceDetailService financeDetailService;
+	private CustomerEnquiryService customerEnquiryService;
 
 	@Override
 	public FinanceDetail getLoanDetails(long finID) {
@@ -111,6 +114,25 @@ public class FinanceEnquiryServiceImpl implements FinanceEnquiryService {
 		return fd;
 	}
 
+	@Override
+	public FinanceDetail getLoanBasicDetails(long finID) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail fd = getLoanDetails(finID);
+
+		long custID = fd.getFinScheduleData().getFinanceMain().getCustID();
+
+		fd.setCustomerDetails(getCustomerDetails(custID));
+
+		logger.debug(Literal.LEAVING);
+
+		return fd;
+	}
+
+	public CustomerDetails getCustomerDetails(long custID) {
+		return customerEnquiryService.getCustomerDetails(custID);
+	}
+
 	private FinanceSummary getLoanSummary(FinanceDetail fd) {
 		FinanceSummary summary = summaryDetailService.getFinanceSummary(fd);
 
@@ -152,16 +174,6 @@ public class FinanceEnquiryServiceImpl implements FinanceEnquiryService {
 	}
 
 	@Autowired
-	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
-		this.summaryDetailService = summaryDetailService;
-	}
-
-	@Autowired
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -179,6 +191,21 @@ public class FinanceEnquiryServiceImpl implements FinanceEnquiryService {
 	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
+	}
+
+	@Autowired
+	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
+		this.summaryDetailService = summaryDetailService;
+	}
+
+	@Autowired
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	@Autowired
+	public void setCustomerEnquiryService(CustomerEnquiryService customerEnquiryService) {
+		this.customerEnquiryService = customerEnquiryService;
 	}
 
 }

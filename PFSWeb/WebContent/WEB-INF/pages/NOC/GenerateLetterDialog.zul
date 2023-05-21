@@ -27,11 +27,14 @@
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
 								sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								sclass="z-toolbarbutton" />
 							<button id="btnPrint" label="${c:l('label_Print')}"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
+								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+							<button id="btnDownload" label="${c:l('label_DisbursementList_btndownload.value')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose,btnSearchCustCIF,btnSearchFinreference,btnSearchReceiptInProcess"
 								tooltiptext="${c:l('btnPrint.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
@@ -58,182 +61,201 @@
 			</north>
 
 			<center border="none" autoscroll="false">
-				<vlayout>
-					<groupbox sclass="gb-dialog">
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="15%" />
-								<column width="35%" />
-								<column width="15%" />
-								<column width="35%" />
-							</columns>
-							<rows>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_Finreference')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="finReference" maxlength="8" width="120px" readonly="true" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="custCIF" maxlength="50" width="300px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_CustomerName')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="custName" width="200px" readonly="true" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_LoanType')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="finType" width="200px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_ActiveStatus')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="finStatus" width="170px" visible="true" />
-										<textbox id="finStatusReason" readonly="true" width="170px" visible="true"
-											style="border:none; background-color:white;" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_coreBankId')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="coreBankID" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_LoanStartDate')}" />
-									<hbox>
-										<space spacing="2px" />
-										<datebox id="finStartDate" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_Branch')}" />
-									<hbox>
-										<space spacing="2px" />
-										<extendedcombobox id="branch" maxlength="8" width="200px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_LoanAmount')}" />
-									<hbox>
-										<space spacing="2px" />
-										<currencyBox id="finAmount" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="finClosureDate" maxlength="8" width="200px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_SourcingOfficer')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="sourcingOfcr" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_ClosureType')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="closureType" maxlength="8" width="200px" readonly="true" />
-									</hbox>
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_LetterType')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="letterType" maxlength="50" width="200px" readonly="true" />
-									</hbox>
-									<label value="${c:l('label_GenerateLetterDialog_ClosureReason')}" />
-									<hbox>
-										<space spacing="2px" />
-										<textbox id="closureReason" maxlength="8" width="200px" readonly="true" />
-									</hbox>
-								</row>
-							</rows>
-						</grid>
-					</groupbox>
-					<groupbox id="gb_profitDetails">
-						<caption label="${c:l('finProfitEnqDetails')}" />
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:1px solid;color:#CBCBCB;">
-							<columns>
-								<column width="230px" />
-								<column />
-								<column />
-								<column />
-							</columns>
-							<rows>
-								<row>
-									<label value="${c:l('label_FinProfitEnqDialog_FinAmount_Type.value')}" />
-									<label value="${c:l('label_FinProfitEnqDialog_Total.value')}"
-										style="font-weight:bold;" />
-									<label value="${c:l('label_GenerateLetterDialog_Paid.value')}"
-										style="font-weight:bold;" />
-									<label value="${c:l('label_GenerateLetterDialog_Waived.value')}"
-										style="font-weight:bold;" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_FinProfitEnqDialog_Principal.value')}" />
-									<label id="totalPriSchd" />
-									<label id="priPaid" />
-									<label id="priWaived" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_FinProfitEnqDialog_Profit.value')}" />
-									<label id="totalProfitSchd" />
-									<label id="profitPaid" />
-									<label id="profitWaived" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_LPP.value')}" />
-									<label id="totalLPP" />
-									<label id="lPPPaid" />
-									<label id="lPPWaived" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_LPI.value')}" />
-									<label id="totalLPI" />
-									<label id="lPIPaid" />
-									<label id="lPIWaived" />
-								</row>
-
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_BounceCharges.value')}" />
-									<label id="totalBounces" />
-									<label id="bouncesPaid" />
-									<label id="bouncesWaived" />
-								</row>
-								<row>
-									<label value="${c:l('label_GenerateLetterDialog_OtherFee.value')}" />
-									<label id="totalOtherFee" />
-									<label id="feePaid" />
-									<label id="feeWaived" />
-								</row>
-							</rows>
-						</grid>
-					</groupbox>
-
-					<groupbox>
-						<caption label="${c:l('lable_PaybelDetails')}" />
-
-						<listbox id="listBoxPaybles" multiple="true" style="border:none,overflow:scroll" width="100%"
-							span="true" emptyMessage="${c:l('listbox.emptyMessage')}" height="150px">
-							<listhead sizable="true">
-								<listheader label="${c:l('lable_Paybel')}" width="20%"
-									sort="false" hflex="min" />
-								
-							</listhead>
-						</listbox>
-					</groupbox>
-				</vlayout>
+				<tabbox id="tabBoxIndexCenter" width="99%" height="100%">
+					<tabs id="tabsIndexCenter">
+							<tab id="financeTypeDetailsTab" label="${c:l('tab_CancelFinanceFinanceMain')}" />
+					</tabs>
+					<tabpanels id="tabpanelsBoxIndexCenter">
+						<tabpanel style="overflow:auto" ca:data-scrollable="true">
+							<div id="basicDetailTabDiv">
+								<groupbox sclass="gb-dialog">
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="15%" />
+										<column width="35%" />
+										<column width="15%" />
+										<column width="35%" />
+									</columns>
+									<rows>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_Finreference')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="finReference" maxlength="8" width="120px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custCIF" maxlength="50" width="300px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_CustomerName')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="custName" width="200px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_LoanType')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="finType" width="200px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_ActiveStatus')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="finStatus" width="170px" visible="true" />
+												<textbox id="finStatusReason" readonly="true" width="170px" visible="true"
+													style="border:none; background-color:white;" />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_coreBankId')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="coreBankID" maxlength="50" width="200px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_LoanStartDate')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox id="finStartDate" maxlength="50" width="200px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_Branch')}" />
+											<hbox>
+												<space spacing="2px" />
+												<extendedcombobox id="branch" maxlength="8" width="200px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_LoanAmount')}" />
+											<hbox>
+												<space spacing="2px" />
+												<currencyBox id="finAmount" width="180px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
+											<hbox>
+												<space spacing="2px" />
+												<datebox id="finClosureDate" maxlength="8" width="200px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_SourcingOfficer')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="sourcingOfcr" maxlength="50" width="200px" readonly="true" />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_ClosureType')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="closureType" maxlength="8" width="200px" readonly="true" />
+											</hbox>
+										</row>
+										<row>
+											<label value="${c:l('label_GenerateLetterDialog_LetterType')}" />
+											<hbox>
+												<space spacing="2px" />
+												<combobox id="letterType" width="180px"  />
+											</hbox>
+											<label value="${c:l('label_GenerateLetterDialog_ClosureReason')}" />
+											<hbox>
+												<space spacing="2px" />
+												<textbox id="closureReason" maxlength="8" width="200px" readonly="true" />
+											</hbox>
+										</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox id="gb_profitDetails">
+									<caption label="${c:l('finProfitEnqDetails')}" />
+										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:1px solid;color:#CBCBCB;">
+											<columns>
+												<column width="230px" />
+												<column />
+												<column />
+												<column />
+											</columns>
+											<rows>
+												<row>
+													<label value="${c:l('label_FinProfitEnqDialog_FinAmount_Type.value')}" />
+													<label value="${c:l('label_FinProfitEnqDialog_Total.value')}"
+														style="font-weight:bold;" />
+													<label value="${c:l('label_GenerateLetterDialog_Paid.value')}"
+														style="font-weight:bold;" />
+													<label value="${c:l('label_GenerateLetterDialog_Waived.value')}"
+														style="font-weight:bold;" />
+												</row>
+				
+												<row>
+													<label value="${c:l('label_FinProfitEnqDialog_Principal.value')}" />
+													<label id="totalPriSchd" />
+													<label id="priPaid" />
+													<label id="priWaived" />
+												</row>
+				
+												<row>
+													<label value="${c:l('label_FinProfitEnqDialog_Profit.value')}" />
+													<label id="totalProfitSchd" />
+													<label id="profitPaid" />
+													<label id="profitWaived" />
+												</row>
+				
+												<row>
+													<label value="${c:l('label_GenerateLetterDialog_LPP.value')}" />
+													<label id="totalLPP" />
+													<label id="lPPPaid" />
+													<label id="lPPWaived" />
+												</row>
+				
+												<row>
+													<label value="${c:l('label_GenerateLetterDialog_LPI.value')}" />
+													<label id="totalLPI" />
+													<label id="lPIPaid" />
+													<label id="lPIWaived" />
+												</row>
+				
+												<row>
+													<label value="${c:l('label_GenerateLetterDialog_BounceCharges.value')}" />
+													<label id="totalBounces" />
+													<label id="bouncesPaid" />
+													<label id="bouncesWaived" />
+												</row>
+												<row>
+													<label value="${c:l('label_GenerateLetterDialog_OtherFee.value')}" />
+													<label id="totalOtherFee" />
+													<label id="feePaid" />
+													<label id="feeWaived" />
+												</row>
+											</rows>
+										</grid>
+								</groupbox>
+								<groupbox>
+								<caption label="${c:l('lable_PaybelDetails')}" />
+								<listbox id="listBoxPaybles" multiple="true" style="border:none,overflow:scroll" width="100%"
+									span="true" emptyMessage="${c:l('listbox.emptyMessage')}" height="150px">
+									<listhead sizable="true">
+										<listheader id="listheader_Select" hflex="min" align="center"
+														visible="false">
+										</listheader>
+										<listheader label="${c:l('lable_Paybel')}" width="20%"
+											sort="false" hflex="min" />
+										<listheader id="paybleAmountHeader"
+														label="${c:l('lable_PaybleAmount')}" sort="none" hflex="min" style="text-align:right;" />
+		
+										<listheader id="adjustmentInHeader"
+														label="${c:l('lable_AdjustmentInProc')}" sort="none" hflex="min" style="text-align:right;" />
+										<listheader id="adjustmentAmountHeader"
+														label="${c:l('lable_AdjustmentAmt')}" sort="none" hflex="min" style="text-align:right;" />
+		
+										<listheader id="balanceAmountHeader"
+														label="${c:l('lable_Balns')}" sort="none" hflex="min" style="text-align:right;" />
+									</listhead>
+								</listbox>
+							</groupbox>
+							</div>
+						</tabpanel>
+					</tabpanels>
+				</tabbox>
 			</center>
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">

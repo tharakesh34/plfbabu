@@ -44,4 +44,6 @@ public interface AgreementDefinitionDAO extends BasicCrudDao<AgreementDefinition
 	boolean isDuplicateKey(String aggCode, TableType tableType);
 
 	int getAgreementDefinitionByRuleCode(String ruleCode, String type);
+
+	AgreementDefinition getTemplate(long templateId);
 }
