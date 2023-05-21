@@ -1824,6 +1824,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 		boolean isEnquiryVisible = false;
 		List<ValueLabel> enquiryList = new ArrayList<>();
+		enquiryList.add(new ValueLabel("1", "Verifications"));
 		List<Integer> verificationTypes = verificationService
 				.getVerificationTypes(StringUtils.trimToEmpty((finBasicDetail.get(3).toString())));
 
