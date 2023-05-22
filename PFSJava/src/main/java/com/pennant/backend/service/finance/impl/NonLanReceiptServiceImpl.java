@@ -841,9 +841,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		String finReference = fsi.getExternalReference();
 		String entity = fsi.getEntity();
 		String receiptSource = fsi.getReceiptSource();
-		String parm1 = null;
 		String recaginst = fsi.getRecAgainst();
-		String receivedFrom = fsi.getReceivedFrom();
 		String cif = fsi.getCustCIF();
 
 		RECEIPT_MODES = PennantApplicationUtil.getActiveFieldCodeList(RepayConstants.RECEIPT_MODE);
@@ -890,10 +888,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 					+ "' or '" + RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE + "'");
 			return receiptData;
 		}
-		/*
-		 * if (StringUtils.isBlank(receivedFrom)) { finScheduleData = setErrorToFSD(finScheduleData, "90502",
-		 * "ReceivedFrom"); return receiptData; }
-		 */
+
 		if (StringUtils.isBlank(finReference)) {
 			finScheduleData = setErrorToFSD(finScheduleData, "90502", "Loan Reference");
 			return receiptData;

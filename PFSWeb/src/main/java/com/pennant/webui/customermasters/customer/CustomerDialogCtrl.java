@@ -3440,7 +3440,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Set the components for edit mode. <br>
 	 */
-	@SuppressWarnings("unused")
 	private void doEdit() {
 		logger.debug("Entering");
 

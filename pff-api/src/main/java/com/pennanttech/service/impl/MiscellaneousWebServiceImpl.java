@@ -16,7 +16,6 @@ import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.ext.dms.DMSGetLeadsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -67,7 +66,6 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 	private CheckListDetailDAO checkListDetailDAO;
 	private CovenantsService covenantsService;
 	private FinanceMainDAO financeMainDAO;
-	private CovenantTypeDAO covenantTypeDAO;
 	private ScoringDetailService scoringDetailService;
 	private DMSGetLeadsDAO dmsGetLeadsDAO;
 	private CovenantsDAO covenantsDAO;
@@ -564,11 +562,6 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setCovenantsService(CovenantsService covenantsService) {
 		this.covenantsService = covenantsService;
-	}
-
-	@Autowired
-	public void setCovenantTypeDAO(CovenantTypeDAO covenantTypeDAO) {
-		this.covenantTypeDAO = covenantTypeDAO;
 	}
 
 	@Autowired

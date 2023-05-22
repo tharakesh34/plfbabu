@@ -4863,14 +4863,12 @@
 		class="com.pennant.backend.service.finance.impl.RepaymentCancellationServiceImpl">
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
-		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
 		<property name="commitmentDAO" ref="commitmentDAO" />
@@ -4880,7 +4878,6 @@
 
 		<!-- EOD -->
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-
 	</bean>
 
 	<!--============ JV Posting Details ============== -->

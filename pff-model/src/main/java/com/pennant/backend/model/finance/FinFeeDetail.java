@@ -117,7 +117,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal calculatedOn = BigDecimal.ZERO;
 	private boolean refundable;
 	private boolean alwPreIncomization;
-	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
 	private transient List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<>(1);
 	private boolean taxApplicable;

@@ -467,8 +467,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
-		// Empty sent any required attributes
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		this.finType.setMaxlength(8);
@@ -1465,7 +1464,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	@SuppressWarnings("unused")
 	public void doSave() {
 		logger.debug("Entering");
 
@@ -2536,7 +2534,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 * @throws AccountNotFoundException
 	 */
-	@SuppressWarnings("unused")
 	private boolean isValid(boolean isChgRpy, boolean isSaveProcess) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 

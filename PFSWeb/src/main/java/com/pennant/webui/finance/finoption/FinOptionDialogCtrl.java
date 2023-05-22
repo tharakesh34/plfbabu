@@ -111,7 +111,6 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private boolean newCustomer;
 	private boolean fromLoan;
 	private boolean isFinanceProcess = false;
-	private FinOption finOption;
 	private String moduleDefiner;
 
 	protected Tabs finOptionTabs;
