@@ -242,7 +242,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 						mandateId = obj.toString();
 					}
 
-					logMandateHistory(new Long(mandateId), id);
+					logMandateHistory(Long.parseLong(mandateId), id);
 					return id;
 				}
 			});
