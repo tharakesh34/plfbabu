@@ -352,4 +352,28 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		return jdbcOperations.queryForObject(sql.toString(), Integer.class, hostAccount) > 0;
 
 	}
+
+	@Override
+	public AccountMapping getAccountMappingForAcounting(String account) {
+		String sql = "Select AccountTypeDesc, AccountType From AccountMapping_view Where Account = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				AccountMapping am = new AccountMapping();
+
+				am.setAccountTypeDesc(rs.getString("AccountTypeDesc"));
+				am.setAccountType(rs.getString("AccountType"));
+
+				return am;
+
+			}, account);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

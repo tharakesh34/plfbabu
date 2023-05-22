@@ -71,6 +71,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.applicationmaster.AccountMapping;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1721,13 +1722,18 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		Listcell lc;
 		for (JVPostingEntry accountingEntry : acEntryList) {
 			item = new Listitem();
-			lc = new Listcell(accountingEntry.getGlCode());
+
+			String hostAccount = AccountingConfigCache.getAccountMapping(accountingEntry.getAccount());
+			lc = new Listcell(hostAccount);
 			lc.setParent(item);
+
+			AccountMapping am = AccountingConfigCache.getAccountMappingForAccounting(accountingEntry.getAccount());
+
 			lc = new Listcell(PennantApplicationUtil.formatAccountNumber(accountingEntry.getAccount()));
 			lc.setParent(item);
-			lc = new Listcell(accountingEntry.getAccountName());
+			lc = new Listcell(am.getAccountTypeDesc());
 			lc.setParent(item);
-			lc = new Listcell(accountingEntry.getAcType());
+			lc = new Listcell(am.getAccountType());
 			lc.setParent(item);
 			lc = new Listcell(accountingEntry.getTxnEntry());
 			lc.setParent(item);
