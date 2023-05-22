@@ -152,6 +152,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1820,7 +1821,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
 			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
-			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
+			throw new AppException(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -6538,8 +6539,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				// Commitment Stop draw down when rate Out of rage:
 				BigDecimal effRate = finMain.getEffectiveRateOfReturn() == null ? BigDecimal.ZERO
 						: finMain.getEffectiveRateOfReturn();
-				if (BigDecimal.ZERO.compareTo(new BigDecimal(
-						PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
+				if (BigDecimal.ZERO
+						.compareTo(new BigDecimal(
+								PennantApplicationUtil.formatRate(commitment.getCmtPftRateMin().doubleValue(), 9))) != 0
 						&& BigDecimal.ZERO.compareTo(new BigDecimal(PennantApplicationUtil
 								.formatRate(commitment.getCmtPftRateMax().doubleValue(), 9))) != 0) {
 
