@@ -12,4 +12,8 @@ public interface BranchChangeUploadDAO {
 	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
+
+	boolean isInSettlement(long finID, String type);
+
+	boolean isInlinkingDelinking(long finID, String type);
 }

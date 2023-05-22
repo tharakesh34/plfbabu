@@ -91,8 +91,22 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
 		boolean isundermaintainance = finServiceInstrutionDAO.isFinServiceInstExists(finID, "_temp");
 
-		if (isundermaintainance || fm.isUnderSettlement()) {
+		if (isundermaintainance || fm.getRcdMaintainSts() != null) {
 			setError(detail, BranchChangeUploadError.BC_07);
+			return;
+		}
+
+		boolean isInSettlement = branchChangeUploadDAO.isInSettlement(finID, "_temp");
+
+		if (isInSettlement) {
+			setError(detail, BranchChangeUploadError.BC_08);
+			return;
+		}
+
+		boolean isInlinkingDelinking = branchChangeUploadDAO.isInlinkingDelinking(finID, "_temp");
+
+		if (isInlinkingDelinking) {
+			setError(detail, BranchChangeUploadError.BC_09);
 			return;
 		}
 
