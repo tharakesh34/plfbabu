@@ -83,7 +83,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> overDueCalOnList;
 	private static List<ValueLabel> overDueForList;
 	private static List<ValueLabel> enquiryTypes;
-	private static List<ValueLabel> templateFormats;
 	private static List<ValueLabel> ruleReturnTypes;
 	private static List<ValueLabel> fieldTypes;
 	private static List<ValueLabel> empAlocList;
@@ -103,8 +102,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> facilityApprovalFor;
 	private static List<ValueLabel> periodList;
 	private static List<ValueLabel> expenseForList;
-	private static List<ValueLabel> templateForList;
-	private static List<ValueLabel> mailTeplateModulesList;
 	private static List<ValueLabel> creditReviewAuditTypesList;
 	private static List<ValueLabel> levelOfApprovalList;
 	private static List<ValueLabel> transactionTypesList;
@@ -126,7 +123,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> checkListdeviationTypes;
 	private static List<ValueLabel> collateralTypes;
 	private static List<ValueLabel> holidayTypes;
-	private static List<ValueLabel> agreementType;
 	private static List<ValueLabel> feeToFinanceTypes;
 	private static List<ValueLabel> paymentDetails;
 	private static List<ValueLabel> payOrderStatus;
@@ -265,7 +261,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> vasModeOfPaymentsList;
 	private static List<ValueLabel> vasAllowFeeTypes;
 	private static List<ValueLabel> medicalStatusList;
-	private static List<ValueLabel> templateEvents;
 	private static List<Property> listCategory;
 	private static List<ValueLabel> opexFeeTypeList;
 	private static List<ValueLabel> receiptPaymentModes;
