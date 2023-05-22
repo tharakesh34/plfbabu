@@ -64,7 +64,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		super.pageRightName = "";
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onCreate$windowLetterLogEnquiryDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
