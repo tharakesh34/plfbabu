@@ -3,7 +3,7 @@ package com.pennant.pff.letter;
 import java.util.Arrays;
 import java.util.List;
 
-public enum CourierUploads {
+public enum CourierStatus {
 
 	D("Delivered"),
 
@@ -15,7 +15,7 @@ public enum CourierUploads {
 
 	String code;
 
-	private CourierUploads(String code) {
+	private CourierStatus(String code) {
 		this.code = code;
 
 	}
@@ -24,10 +24,10 @@ public enum CourierUploads {
 		return code;
 	}
 
-	public static CourierUploads getCourier(String courier) {
-		List<CourierUploads> list = Arrays.asList(CourierUploads.values());
+	public static CourierStatus getCourier(String courier) {
+		List<CourierStatus> list = Arrays.asList(CourierStatus.values());
 
-		for (CourierUploads it : list) {
+		for (CourierStatus it : list) {
 			if (it.name().equals(courier)) {
 				return it;
 			}
