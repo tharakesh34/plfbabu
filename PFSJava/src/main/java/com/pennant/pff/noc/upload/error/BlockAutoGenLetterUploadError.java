@@ -8,7 +8,7 @@ public enum BlockAutoGenLetterUploadError {
 
 	BALG_03("Flag already exists against the Loan."),
 
-	BALG_04("Hold Flag already not available against the loan."),
+	BALG_04("Block flag not available against the loan."),
 
 	BALG_05("[Action] is mandatory.");
 
