@@ -77,6 +77,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("userDetails");
 		excludeFields.add("financeDetail");
 		excludeFields.add("emailTemplate");
+		excludeFields.add("agreementTemplate");
 
 		return excludeFields;
 	}
