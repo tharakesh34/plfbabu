@@ -25,12 +25,9 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.Media;
@@ -47,7 +44,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.crm.CrmDetails;
 import com.pennant.backend.model.crm.ResponseData;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -55,7 +51,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.customermasters.CustomerCrmService;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -171,21 +166,13 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 
 	public void onUpload$btnUpload(UploadEvent event) throws IOException {
 		logger.debug(Literal.ENTERING);
-		int row_NumberOfCells = 12;
-		Object valu = SysParamUtil.getValue(SMTParameterConstants.PRESENTMENT_RESPONSE_ROW_LENGTH);
-		if (valu != null) {
-			row_NumberOfCells = Integer.parseInt(valu.toString());
-		}
+
 		txtFileName.setText("");
 		errorMsg = null;
 		Media media = event.getMedia();
 		txtFileName.setText(media.getName());
 		crmDetails.setFileName(media.getName());
 		crmDetails.setContentType(media.getContentType());
-		String name = media.getName();
-
-		InputStream streamData = media.getStreamData();
-		String result = IOUtils.toString(streamData, Charset.forName("UTF-8"));
 
 		String encodedString = Base64.getEncoder().encodeToString(media.getByteData());
 		crmDetails.setFileData("," + encodedString);
@@ -244,28 +231,12 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	/**
-	 * Method for checking /validating fields before proceed.
-	 * 
-	 * @return
-	 */
-	private boolean doFieldValidation() {
-		doClearMessage();
-		doRemoveValidation();
-		return true;
-	}
-
 	public void onClick$btnClose(Event event) {
 		doClose(false);
 	}
 
 	@Override
 	protected void doClearMessage() {
-		logger.debug("Entering");
-		logger.debug("Leaving");
-	}
-
-	private void doRemoveValidation() {
 		logger.debug("Entering");
 		logger.debug("Leaving");
 	}
@@ -277,5 +248,4 @@ public class CrmDialogCtrl extends GFCBaseCtrl<CrmDetails> {
 	public void setPresentmentExtractService(FileExtractService<PresentmentDetailExtract> presentmentExtractService) {
 		this.presentmentExtractService = presentmentExtractService;
 	}
-
 }

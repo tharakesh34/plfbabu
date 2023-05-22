@@ -49,7 +49,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -139,9 +139,9 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		prepareFeeRulesMap(refundHeader, dataMap, userBranch);
 		aeEvent.setDataMap(dataMap);
 		// Fetch Accounting Set ID
-		long accountingSetID = AccountingConfigCache.getAccountSetID(refundHeader.getFinType(),
-				AccountingEvent.FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
-		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
+		Long accountingSetID = AccountingEngine.getAccountSetID(refundHeader.getFinType(), AccountingEvent.FEEREFUND,
+				FinanceConstants.MODULEID_FINTYPE);
+		if (accountingSetID == null || accountingSetID <= 0) {
 			auditHeader.setErrorDetails(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");

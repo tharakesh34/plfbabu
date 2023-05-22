@@ -51,7 +51,6 @@ import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
-import com.pennanttech.util.APILogDetailDAO;
 import com.pennanttech.ws.auth.model.ServerAuthentication;
 import com.pennanttech.ws.auth.model.UserAuthentication;
 import com.pennanttech.ws.auth.service.ServerAuthService;
@@ -82,8 +81,6 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	private UserService userService;
 	@Autowired
 	private PFSParameterService systemParameterService;
-
-	private APILogDetailDAO apiLogDetailDAO;
 
 	/*
 	 * Constructor
@@ -597,10 +594,4 @@ public class RestInHeaderInterceptor extends AbstractPhaseInterceptor<Message> {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-	@Autowired
-	public void setApiLogDetailDAO(APILogDetailDAO apiLogDetailDAO) {
-		this.apiLogDetailDAO = apiLogDetailDAO;
-	}
-
 }

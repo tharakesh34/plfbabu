@@ -366,6 +366,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private String division;
 	private boolean knockOffReceipt;
 	private String knockoffType;
+	private boolean loanCancellation;
+	private boolean closureReceipt;
+	private boolean closureWithFullWaiver;
 
 	public FinServiceInstruction copyEntity() {
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -555,7 +558,9 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		fsi.setFinAssetValue(this.finAssetValue);
 		fsi.setNumberOfTerms(this.numberOfTerms);
 		fsi.setKnockOffReceipt(this.knockOffReceipt);
-
+		fsi.setLoanCancellation(this.loanCancellation);
+		fsi.setClosureReceipt(this.closureReceipt);
+		fsi.setClosureWithFullWaiver(this.closureWithFullWaiver);
 		fsi.setRecordStatus(super.getRecordStatus());
 		fsi.setRoleCode(super.getRoleCode());
 		fsi.setNextRoleCode(super.getNextRoleCode());
@@ -1854,4 +1859,27 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		this.knockoffType = knockoffType;
 	}
 
+	public boolean isLoanCancellation() {
+		return loanCancellation;
+	}
+
+	public void setLoanCancellation(boolean loanCancellation) {
+		this.loanCancellation = loanCancellation;
+	}
+
+	public boolean isClosureReceipt() {
+		return closureReceipt;
+	}
+
+	public void setClosureReceipt(boolean closureReceipt) {
+		this.closureReceipt = closureReceipt;
+	}
+
+	public boolean isClosureWithFullWaiver() {
+		return closureWithFullWaiver;
+	}
+
+	public void setClosureWithFullWaiver(boolean closureWithFullWaiver) {
+		this.closureWithFullWaiver = closureWithFullWaiver;
+	}
 }

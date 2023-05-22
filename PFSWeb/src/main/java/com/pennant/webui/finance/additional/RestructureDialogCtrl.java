@@ -78,7 +78,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -611,7 +610,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					"");
 			this.stepsAppliedFor.setDisabled(true);
 			this.alwManualSteps.setChecked(finType.isAlwManualSteps());
-
+			onCheckAlwManualSteps(finType.isAlwManualSteps());
 			this.stepPolicy.setValue(finType.getDftStepPolicy());
 			this.stepPolicy.setDescription(finType.getLovDescDftStepPolicyName());
 			this.stepType.setValue(finType.getDftStepPolicyType());
@@ -628,7 +627,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					"");
 			this.stepsAppliedFor.setDisabled(true);
 			this.alwManualSteps.setChecked(finType.isAlwManualSteps());
-
+			onCheckAlwManualSteps(finType.isAlwManualSteps());
 			this.stepPolicy.setValue(finType.getDftStepPolicy());
 			this.stepPolicy.setDescription(finType.getLovDescDftStepPolicyName());
 			this.stepType.setValue(finType.getDftStepPolicyType());
@@ -679,7 +678,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.stepType.setDisabled(true);
 			this.btnNew_RestructureStep.setVisible(true);
 		} else if (calcOfSteps.equals(PennantConstants.STEPPING_CALC_PERC)) {
-			this.stepPolicy.setReadonly(false);
+			if (this.alwManualSteps.isChecked()) {
+				this.stepPolicy.setReadonly(true);
+			} else {
+				this.stepPolicy.setReadonly(false);
+			}
 			this.stepType.setDisabled(false);
 			if (StringUtils.isEmpty(this.stepPolicy.getValue())) {
 				this.stepPolicy.setProperties("StepPolicyHeader", "PolicyCode", "PolicyDesc", true, 8);
@@ -687,6 +690,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			this.btnNew_RestructureStep.setVisible(false);
 		}
+		this.finScheduleData.getFinanceMain().setCalcOfSteps(calcOfSteps);
+		this.finScheduleData.getFinanceType().setCalcOfSteps(calcOfSteps);
 	}
 
 	public void onFulfill$stepPolicy(Event event) {
@@ -846,7 +851,12 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.label_RestructureDialog_numberOfSteps.setVisible(false);
 			this.hbox_numberOfSteps.setVisible(false);
 			this.space_noOfSteps.setSclass("");
-			this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
+			if (getComboboxValue(this.calcOfSteps).equals(PennantConstants.STEPPING_CALC_AMT)) {
+				this.stepPolicy.setValue("", "");
+				this.stepPolicy.setReadonly(true);
+			} else {
+				this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
+			}
 			this.stepType.setReadonly(isReadOnly("FinanceMainDialog_stepType"));
 			this.space_stepType.setSclass("");
 			this.stepType.setDisabled(true);
@@ -1241,11 +1251,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				if (fillAfter.compareTo(curSchd.getSchDate()) < 0) {
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+					comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 
-					if (restructureDate != null && DateUtility.compare(restructureDate, curSchd.getSchDate()) == 0) {
+					if (restructureDate != null && DateUtil.compare(restructureDate, curSchd.getSchDate()) == 0) {
 						dateCombobox.setSelectedItem(comboitem);
 					}
 				}
@@ -1293,7 +1303,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Checking Manual Advise Last max Value Date before Application/Restructuring Date
 		FinanceMain fm = aFinSchData.getFinanceMain();
 		Date maxValueDate = restructureService.getMaxValueDateOfRcv(fm.getFinID());
-		if (maxValueDate != null && DateUtility.compare(maxValueDate, fullyPaidDate) > 0) {
+		if (maxValueDate != null && DateUtil.compare(maxValueDate, fullyPaidDate) > 0) {
 			fullyPaidDate = maxValueDate;
 		}
 		logger.debug(Literal.LEAVING);
@@ -1560,8 +1570,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.restructureDateIn,
 							Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
 									new String[] { Labels.getLabel("label_RestructureDialog_RestructureDate.value"),
-											DateUtility.formatToShortDate(fullyPaidDate),
-											DateUtility.formatToShortDate(appDate) }));
+											DateUtil.formatToShortDate(fullyPaidDate),
+											DateUtil.formatToShortDate(appDate) }));
 				}
 
 			} else {

@@ -1,7 +1,6 @@
 package com.pennanttech.pff.provision.service.impl;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,9 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -29,11 +26,11 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.RuleResult;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -78,13 +75,13 @@ public class ProvisionServiceImpl implements ProvisionService {
 	}
 
 	@Override
-	public void updateProgress(String finReference, int progressInProcess) {
-		provisionDao.updateProgress(finReference, progressInProcess);
+	public void updateProgress(long finID, int progressInProcess) {
+		provisionDao.updateProgress(finID, progressInProcess);
 	}
 
 	@Override
-	public Long getLinkedTranId(String finReference) {
-		return provisionDao.getLinkedTranId(finReference);
+	public Long getLinkedTranId(long finID) {
+		return provisionDao.getLinkedTranId(finID);
 	}
 
 	@Override
@@ -99,36 +96,66 @@ public class ProvisionServiceImpl implements ProvisionService {
 	}
 
 	@Override
-	public Provision getProvision(String finReference, Date appDate) {
-		ProvisionRuleData prd = provisionDao.getProvisionData(finReference);
+	public Provision getProvision(long finID, Date appDate, Provision mp) {
+		ProvisionRuleData prd = provisionDao.getProvisionData(finID);
 
 		if (prd == null) {
-			return null;
+			prd = provisionDao.getProvisionDataForUpload(finID);
 		}
 
-		Provision p = provisionDao.getProvision(finReference);
+		Provision p = provisionDao.getProvision(finID);
+
+		Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
 
 		boolean newRecord = false;
+
+		BigDecimal manProvsnPer = BigDecimal.ZERO;
+		boolean manualProvision = false;
 
 		if (p == null) {
 			p = new Provision();
 			p.setFinID(prd.getFinID());
 			p.setFinReference(prd.getFinReference());
-			p.setManualProvision(false);
-			p.setCreatedOn(new Timestamp(System.currentTimeMillis()));
+			p.setManualProvision(mp.isManualProvision());
+
+			p.setCreatedBy(mp.getLastMntBy());
+			p.setCreatedOn(timeStamp);
+
+			manProvsnPer = p.getManProvsnPer();
 
 			newRecord = true;
+		} else {
+			manProvsnPer = mp.getManProvsnPer();
 		}
 
-		if (p.isManualProvision()) {
-			BigDecimal hundred = new BigDecimal(100);
-			BigDecimal percentage = (p.getManProvsnPer().multiply(hundred)).divide(hundred, 0, RoundingMode.HALF_DOWN);
-			BigDecimal amount = PennantApplicationUtil.formateAmount(p.getOsPrincipal().multiply(percentage),
-					CurrencyUtil.getFormat(prd.getFinCCY()));
-			if (!ImplementationConstants.PROVISION_REVERSAL_REQ) {
-				amount = amount.subtract(p.getManProvsnAmt());
+		if (mp != null) {
+			manualProvision = true;
+			if (mp.getManualAssetClassID() != null) {
+				p.setManualAssetClassID(mp.getManualAssetClassID());
+				p.setManualAssetClassCode(mp.getManualAssetClassCode());
 			}
-			p.setManProvsnAmt(amount);
+
+			if (mp.getManualAssetSubClassID() != null) {
+				p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
+				p.setManualAssetSubClassCode(mp.getManualAssetSubClassCode());
+			}
+
+			p.setOverrideProvision(mp.isOverrideProvision());
+
+			manProvsnPer = mp.getManProvsnPer();
+			p.setManProvsnPer(manProvsnPer);
+		}
+
+		p.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		if (p.isManualProvision() || mp.isOverrideProvision()) {
+			prd.setEffNpaClassCode(mp.getManualAssetClassCode());
+			prd.setEffNpaSubClassCode(mp.getManualAssetSubClassCode());
+
+			executeProvisionRule(prd, p);
+			BigDecimal osPrincipal = prd.getOutstandingprincipal();
+			p.setManProvsnAmt(osPrincipal.multiply(manProvsnPer.divide(new BigDecimal(100))));
+
 		} else {
 			executeProvisionRule(prd, p);
 		}
@@ -142,6 +169,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 		p.setNpaClassID(prd.getNpaClassID());
 		p.setEffNpaClassCode(prd.getEffNpaClassCode());
 		p.setEffNpaSubClassCode(prd.getEffNpaSubClassCode());
+
+		p.setManualAssetClassID(mp.getManualAssetClassID());
+		p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
 
 		if (newRecord || p.getNpaClassID() != prd.getNpaClassID()) {
 			p.setNpaClassChng(true);
@@ -162,9 +192,15 @@ public class ProvisionServiceImpl implements ProvisionService {
 		p.setFinCcy(prd.getFinCCY());
 		p.setFinType(prd.getFinType());
 		p.setEntityCode(prd.getEntityCode());
-		p.setApprovedOn(new Timestamp(System.currentTimeMillis()));
-		p.setCreatedOn(p.getCreatedOn());
-		p.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		if (manualProvision && newRecord) {
+			provisionDao.save(p, TableType.MAIN_TAB);
+			Provision p1 = provisionDao.getProvision(finID);
+
+			p.setId(p1.getId());
+
+			provisionDao.save(p, TableType.TEMP_TAB);
+		}
 
 		return p;
 	}
@@ -174,9 +210,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 		String eventCode = AccountingEvent.PROVSN;
 		int moduleID = FinanceConstants.MODULEID_FINTYPE;
 
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(p.getFinType(), eventCode, moduleID);
+		Long accountingID = AccountingEngine.getAccountSetID(p.getFinType(), eventCode, moduleID);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			return;
 		}
 
@@ -187,7 +223,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		BigDecimal provsnAmt = BigDecimal.ZERO;
 		if (p.isManualProvision()) {
 			provsnAmt = p.getManProvsnAmt();
-		} else if (ImplementationConstants.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
+		} else if (NpaAndProvisionExtension.PROVISION_BOOKS == ProvisionBook.REGULATORY) {
 			provsnAmt = p.getRegProvsnAmt();
 		} else {
 			provsnAmt = p.getIntProvsnAmt();
@@ -202,6 +238,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		amountCode.setNpaSubClass(p.getEffNpaSubClassCode());
 
 		AEEvent aeEvent = new AEEvent();
+		aeEvent.setFinID(p.getFinID());
 		aeEvent.setFinReference(p.getFinReference());
 		aeEvent.setAccountingEvent(eventCode);
 		aeEvent.setPostDate(p.getProvisionDate());
@@ -244,8 +281,9 @@ public class ProvisionServiceImpl implements ProvisionService {
 	}
 
 	@Override
-	public Provision getProvisionDetail(String finReference) {
-		return provisionDao.getProvisionDetail(finReference);
+	public Provision getProvisionDetail(long finID) {
+		Provision provision = provisionDao.getProvisionDetail(finID);
+		return provision;
 	}
 
 	@Override
@@ -303,7 +341,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(provision.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
-			provisionDao.delete(provision.getFinReference(), TableType.MAIN_TAB);
+			provisionDao.delete(provision.getFinID(), TableType.MAIN_TAB);
 		} else {
 			provision.setRoleCode("");
 			provision.setNextRoleCode("");
@@ -322,7 +360,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 			}
 		}
 
-		provisionDao.delete(provision.getFinReference(), TableType.TEMP_TAB);
+		provisionDao.delete(provision.getFinID(), TableType.TEMP_TAB);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Provision(), provision.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -353,7 +391,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		}
 
 		Provision provision = (Provision) auditHeader.getAuditDetail().getModelData();
-		provisionDao.delete(provision.getFinReference(), TableType.MAIN_TAB);
+		provisionDao.delete(provision.getFinID(), TableType.MAIN_TAB);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Provision(), provision.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -379,7 +417,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		Provision provision = (Provision) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		provisionDao.delete(provision.getFinReference(), TableType.TEMP_TAB);
+		provisionDao.delete(provision.getFinID(), TableType.TEMP_TAB);
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Provision(), provision.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -391,16 +429,17 @@ public class ProvisionServiceImpl implements ProvisionService {
 		return auditHeader;
 	}
 
-	private void executeProvisionRule(ProvisionRuleData provisionData, Provision p) {
+	@Override
+	public void executeProvisionRule(ProvisionRuleData provisionData, Provision p) {
 		String regProvsnRule = provisionData.getRegProvsnRule();
 		String intProvsnRule = provisionData.getIntProvsnRule();
 
 		String finReference = provisionData.getFinReference();
 		String finType = provisionData.getFinType();
 
-		String provisionBook = ImplementationConstants.PROVISION_BOOKS.description();
+		String provisionBook = NpaAndProvisionExtension.PROVISION_BOOKS.description();
 
-		switch (ImplementationConstants.PROVISION_BOOKS) {
+		switch (NpaAndProvisionExtension.PROVISION_BOOKS) {
 		case REGULATORY:
 			if (regProvsnRule == null) {
 				throw new AppException(String.format(RULE_ERR, provisionBook, finType));
@@ -433,7 +472,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 		BigDecimal intProvsnPer = getResult(intRuleResult.getProvPercentage());
 		BigDecimal intProvsnAmt = getResult(intRuleResult.getProvAmount());
 
-		if (!ImplementationConstants.PROVISION_REVERSAL_REQ) {
+		if (!NpaAndProvisionExtension.PROVISION_REVERSAL_REQ) {
 			regProvsnAmt = regProvsnAmt.subtract(p.getRegProvsnAmt());
 			if (regProvsnAmt.compareTo(BigDecimal.ZERO) < 0) {
 				regProvsnAmt = BigDecimal.ZERO;
@@ -463,6 +502,11 @@ public class ProvisionServiceImpl implements ProvisionService {
 			p.setIntUnSecProvsnPer(intProvsnPer);
 			p.setIntUnSecProvsnAmt(intProvsnAmt);
 		}
+	}
+
+	@Override
+	public boolean isRecordExists(long finID) {
+		return provisionDao.isRecordExists(finID);
 	}
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -648,5 +692,4 @@ public class ProvisionServiceImpl implements ProvisionService {
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
-
 }

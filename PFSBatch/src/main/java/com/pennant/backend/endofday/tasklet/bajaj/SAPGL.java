@@ -58,7 +58,7 @@ public class SAPGL implements Tasklet {
 
 			DataEngineStatus status = SAPGLExtract.SAP_GL_STATUS;
 			status.setStatus("I");
-			new Thread(new SAPGLProcessThread(new Long(1000))).start();
+			new Thread(new SAPGLProcessThread(1000L)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 

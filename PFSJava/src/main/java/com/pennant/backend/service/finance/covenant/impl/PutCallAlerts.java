@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -133,7 +132,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 		Date lastAlertSentOn = finOption.getAlertsentOn();
 
-		if (lastAlertSentOn != null && DateUtility.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
+		if (lastAlertSentOn != null && DateUtil.getDaysBetween(appDate, lastAlertSentOn) <= alertDays) {
 			logger.debug("lastAlertSentOn" + lastAlertSentOn);
 			logger.debug("App Date" + appDate);
 			logger.debug("alertDays" + alertDays);

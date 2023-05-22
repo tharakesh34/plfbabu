@@ -17,7 +17,7 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 	private static final long serialVersionUID = -6954091801433341494L;
 
 	public CustomerAccountListModelItemRender() {
-
+	    super();
 	}
 
 	@Override

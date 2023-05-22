@@ -62,7 +62,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -752,8 +751,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 						|| this.valueDate.getValue().after(SysParamUtil.getAppDate()))
 						&& !this.valueDate.isDisabled()) {
 
-					String minreqPostDate = DateUtility.formatToShortDate(minReqPostingDate);
-					String currentDate = DateUtility.formatToShortDate(SysParamUtil.getAppDate());
+					String minreqPostDate = DateUtil.formatToShortDate(minReqPostingDate);
+					String currentDate = DateUtil.formatToShortDate(SysParamUtil.getAppDate());
 
 					throw new WrongValueException(this.valueDate,
 							Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",

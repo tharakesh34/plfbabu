@@ -17,6 +17,7 @@ public class EligibilityApclOut implements Serializable {
 
 	@JsonCreator
 	public EligibilityApclOut() {
+	    super();
 	}
 
 	public List<EligibilityApclOutElement> getEligApclOutElement() {

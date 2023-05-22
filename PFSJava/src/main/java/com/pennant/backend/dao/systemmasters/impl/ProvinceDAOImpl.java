@@ -76,8 +76,7 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 		ProvinceRowMapper rowMapper = new ProvinceRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPCountry, cPProvince },
-					rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, cPCountry, cPProvince);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -359,7 +358,7 @@ public class ProvinceDAOImpl extends BasicDao<Province> implements ProvinceDAO {
 		ProvinceRowMapper rowMapper = new ProvinceRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cPProvince }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, cPProvince);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

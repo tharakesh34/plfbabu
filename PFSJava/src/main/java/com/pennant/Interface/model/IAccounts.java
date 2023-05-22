@@ -29,7 +29,7 @@ public class IAccounts implements java.io.Serializable {
 	private String tranAc;
 
 	public IAccounts() {
-
+	    super();
 	}
 
 	// ******************************************************//

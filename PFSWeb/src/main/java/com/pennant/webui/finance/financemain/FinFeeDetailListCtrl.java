@@ -72,7 +72,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -80,6 +79,7 @@ import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -113,11 +113,12 @@ import com.pennant.pff.extension.FeeExtension;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul file.
@@ -208,7 +209,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
 
-	private Map<String, BigDecimal> taxPercentages;
 	private FeeDetailService feeDetailService;
 
 	/**
@@ -923,7 +923,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getPaymentAmount(), ccyFormat));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(detail.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(detail.getValueDate()));
 				lc.setParent(item);
 				item.setAttribute("data", detail);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onPaymentDetailDoubleClicked");
@@ -946,6 +946,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		}
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(schdData, true);
+
+		// For New Loan with New Customer
+		CustomerDetails custDetails = financeDetail.getCustomerDetails();
+		if (custDetails != null && custDetails.getCustomer().getCustID() <= 0) {
+			caluclateFeeGST(finFeeDetailList, schdData);
+		}
 
 		FinanceMain fm = schdData.getFinanceMain();
 		if (!fm.isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
@@ -986,8 +992,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
-		Cloner cloner = new Cloner();
-		finFeeDetailList = cloner.deepClone(finFeeDetailList);
+
+		finFeeDetailList = ObjectUtil.clone(finFeeDetailList);
 		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
 			for (FinFeeDetail fee : finFeeDetailList) {
 				fee.setFinReference(fm.getFinReference());
@@ -1557,8 +1563,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
-				if (!finFeeDetail.isRcdVisible() || (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
-						&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))) {
+				if (!finFeeDetail.isRcdVisible()
+						|| (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent())
+								&& PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType()))
+						|| finFeeDetail.isAlwPreIncomization()) {
 					continue;
 				}
 
@@ -2682,6 +2690,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			} else {
 				finFeeDetail.setValueDate(appDate);
 			}
+
+			for (FinTypeFees fee : financeDetail.getFinTypeFeesList()) {
+				if (fee.getFeeTypeCode().equals(finFeeDetail.getFeeTypeCode())) {
+					finFeeDetail.setAlwPreIncomization(fee.isAlwPreIncomization());
+				}
+			}
 		}
 
 		getCalculatedTdsOnFees(getFinFeeDetailList(), financeDetail.getFinScheduleData());
@@ -2765,7 +2779,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			formatter = CurrencyUtil.getFormat(finCcy);
 
 			if (financeMain.getFinStartDate() != null) {
-				int finAge = DateUtility.getMonthsBetween(SysParamUtil.getAppDate(), financeMain.getFinStartDate());
+				int finAge = DateUtil.getMonthsBetween(SysParamUtil.getAppDate(), financeMain.getFinStartDate());
 				executionMap.put("finAgetilldate", finAge);
 			}
 
@@ -2901,16 +2915,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
 
 			for (FinanceScheduleDetail schd : schdList) {
-				if (DateUtility.compare(valueDate, schd.getSchDate()) == 0) {
+				if (DateUtil.compare(valueDate, schd.getSchDate()) == 0) {
 					calculatedAmt = schd.getClosingBalance();
 					if (calculatedAmt.compareTo(BigDecimal.ZERO) == 0) {
 						List<FinanceScheduleDetail> apdSchdList = getFinanceDetailService()
 								.getFinScheduleList(finScheduleData.getFinanceMain().getFinID());
 						for (FinanceScheduleDetail curSchd : apdSchdList) {
-							if (DateUtility.compare(valueDate, curSchd.getSchDate()) == 0) {
+							if (DateUtil.compare(valueDate, curSchd.getSchDate()) == 0) {
 								calculatedAmt = curSchd.getClosingBalance();
 							}
-							if (DateUtility.compare(valueDate, curSchd.getSchDate()) <= 0) {
+							if (DateUtil.compare(valueDate, curSchd.getSchDate()) <= 0) {
 								break;
 							}
 							calculatedAmt = curSchd.getClosingBalance();
@@ -2918,7 +2932,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 						break;
 					}
 				}
-				if (DateUtility.compare(valueDate, schd.getSchDate()) <= 0) {
+				if (DateUtil.compare(valueDate, schd.getSchDate()) <= 0) {
 					break;
 				}
 				calculatedAmt = schd.getClosingBalance();
@@ -3015,6 +3029,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (!fee.isRcdVisible() || (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())
 					&& PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType()))) {
 				continue;
+			}
+
+			Decimalbox calbox = getDecimalbox(FEE_UNIQUEID_CALCULATEDAMOUNT, fee);
+			if (calbox != null) {
+				calbox.setErrorMessage("");
 			}
 
 			Decimalbox waivedbox = getDecimalbox(FEE_UNIQUEID_WAIVEDAMOUNT, fee);
@@ -3158,6 +3177,32 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				financeDetail.getFinanceTaxDetail());
 
 		return taxPercentages;
+	}
+
+	private void caluclateFeeGST(List<FinFeeDetail> fees, FinScheduleData fsd) {
+		FinanceMain finMain = fsd.getFinanceMain();
+		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
+		String finBranch = finMain.getFinBranch();
+		String finCCY = finMain.getFinCcy();
+
+		CustomerDetails custDetails = financeDetail.getCustomerDetails();
+
+		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+
+		for (FinFeeDetail finFeeDetail : fees) {
+
+			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(finFeeDetail, fsd, getDealerTaxPercentages());
+			} else {
+				if (custDetails == null) {
+					continue;
+				}
+				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custDetails, finCCY,
+						userBranch, finBranch, financeDetail.getFinanceTaxDetail());
+				this.finFeeDetailService.calculateFees(finFeeDetail, fsd, taxPercentages);
+			}
+		}
+
 	}
 
 	private Map<String, BigDecimal> getDealerTaxPercentages() {

@@ -45,7 +45,7 @@ public class BlackListReasonCodeListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 3825281702936630616L;
 
 	public BlackListReasonCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

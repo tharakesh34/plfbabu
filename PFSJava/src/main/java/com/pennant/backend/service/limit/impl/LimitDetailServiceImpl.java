@@ -50,7 +50,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -96,6 +95,7 @@ import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -651,12 +651,12 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setThreadId(0);
-		customerQueuing.setEodDate(DateUtility.getAppValueDate());
+		customerQueuing.setEodDate(SysParamUtil.getAppValueDate());
 		customerQueuing.setLoanExist(loanExist);
 		customerQueuing.setLimitRebuild(true);
 		customerQueuing.setEodProcess(false);
 
-		customerQueuing.setStartTime(DateUtility.getSysDate());
+		customerQueuing.setStartTime(DateUtil.getSysDate());
 		customerQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 
 		logger.debug(Literal.LEAVING);
@@ -673,8 +673,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		CustomerGroupQueuing custGrpQueuing = new CustomerGroupQueuing();
 		custGrpQueuing.setGroupId(groupId);
-		custGrpQueuing.setEodDate(DateUtility.getAppValueDate());
-		custGrpQueuing.setStartTime(DateUtility.getSysDate());
+		custGrpQueuing.setEodDate(SysParamUtil.getAppValueDate());
+		custGrpQueuing.setStartTime(DateUtil.getSysDate());
 		custGrpQueuing.setProgress(EodConstants.PROGRESS_IN_PROCESS);
 		custGrpQueuing.setEodProcess(false);
 
@@ -1142,11 +1142,11 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		// Customer Id
 		if (StringUtils.isNotEmpty(getValue(finRow.getCell(3)))) {
-			headerDetails.setLimitRvwDate(DateUtility.getDate(getValue(finRow.getCell(3))));
+			headerDetails.setLimitRvwDate(DateUtil.getDate(getValue(finRow.getCell(3))));
 		}
 		// Customer Id
 		if (StringUtils.isNotEmpty(getValue(finRow.getCell(4)))) {
-			headerDetails.setLimitExpiryDate(DateUtility.getDate(getValue(finRow.getCell(4))));
+			headerDetails.setLimitExpiryDate(DateUtil.getDate(getValue(finRow.getCell(4))));
 		}
 		// Customer Id
 		if (StringUtils.isNotEmpty(getValue(finRow.getCell(5)))) {
@@ -1533,8 +1533,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		if (limitHeader.getLimitRvwDate() != null && limitHeader.getLimitExpiryDate() != null) {
 			if (limitHeader.getLimitRvwDate().compareTo(limitHeader.getLimitExpiryDate()) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "Review date(" + DateUtility.formatToShortDate(limitHeader.getLimitRvwDate()) + ")";
-				valueParm[1] = "Limit expiry date(" + DateUtility.formatToShortDate(limitHeader.getLimitExpiryDate())
+				valueParm[0] = "Review date(" + DateUtil.formatToShortDate(limitHeader.getLimitRvwDate()) + ")";
+				valueParm[1] = "Limit expiry date(" + DateUtil.formatToShortDate(limitHeader.getLimitExpiryDate())
 						+ ")";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm)));
 			}
@@ -1542,14 +1542,14 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		// Validate ReviewDate
 		Date appDate = SysParamUtil.getAppDate();
-		Date nextYear = DateUtility.addYears(appDate, 1);
+		Date nextYear = DateUtil.addYears(appDate, 1);
 		if (limitHeader.getLimitRvwDate() != null) {
 			if (limitHeader.getLimitRvwDate().before(SysParamUtil.getAppDate())
 					|| limitHeader.getLimitRvwDate().after(nextYear)) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Review date";
-				valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
-				valueParm[2] = DateUtility.formatToLongDate(nextYear);
+				valueParm[1] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
+				valueParm[2] = DateUtil.formatToLongDate(nextYear);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}
@@ -1560,8 +1560,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					|| limitHeader.getLimitExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Limit expiry date";
-				valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+				valueParm[1] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
+				valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}
@@ -1681,8 +1681,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 						|| detail.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "Limit expiry date";
-					valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
-					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+					valueParm[1] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
+					valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 					return auditDetail;
 				}
@@ -1711,7 +1711,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			if (limitHeader.getLimitExpiryDate().before(lineMaxExpDate)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Limit expiry date";
-				valueParm[1] = DateUtility.formatToLongDate(lineMaxExpDate);
+				valueParm[1] = DateUtil.formatToLongDate(lineMaxExpDate);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm)));
 			}
 		}

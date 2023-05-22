@@ -10,7 +10,7 @@ public class ReportsMonthEndConfiguration {
 	private boolean active;
 
 	public ReportsMonthEndConfiguration() {
-
+	    super();
 	}
 
 	// ******************************************************//

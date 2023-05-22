@@ -35,7 +35,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -69,7 +68,7 @@ public class FinanceMainSelectItemRenderer implements ListitemRenderer<FinanceMa
 		lc.setParent(item);
 		lc = new Listcell(financeMain.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(financeMain.getNOInst()));
 		lc.setParent(item);

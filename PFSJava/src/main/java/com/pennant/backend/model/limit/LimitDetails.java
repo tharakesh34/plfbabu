@@ -40,9 +40,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Model class for the <b>LimitDetail table</b>.<br>
@@ -152,6 +152,7 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 	private int tenor;
 
 	public LimitDetails() {
+	    super();
 	}
 
 	public LimitDetails(long id) {
@@ -339,13 +340,13 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 	public void setCreatedOn(Timestamp createdOn) throws DatatypeConfigurationException {
 		if (createdOn != null) {
 			this.createdOn = createdOn;
-			this.createdDate = DateUtility.getXMLDate(createdOn);
+			this.createdDate = DateUtil.getXMLDate(createdOn);
 		}
 	}
 
 	public void setCreatedDate(XMLGregorianCalendar xmlCalendar) {
 		if (xmlCalendar != null) {
-			createdOn = DateUtility.ConvertFromXMLTime(xmlCalendar);
+			createdOn = DateUtil.ConvertFromXMLTime(xmlCalendar);
 			createdDate = xmlCalendar;
 		}
 	}
@@ -354,7 +355,7 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 		if (createdOn == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(createdOn);
+		return DateUtil.getXMLDate(createdOn);
 	}
 
 	public String getLastMaintainedUser() {
@@ -367,7 +368,7 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 
 	public void setLastMaintainedOn(XMLGregorianCalendar xmlCalendar) {
 		if (xmlCalendar != null) {
-			setLastMntOn(DateUtility.ConvertFromXMLTime(xmlCalendar));
+			setLastMntOn(DateUtil.ConvertFromXMLTime(xmlCalendar));
 			lastMaintainedOn = xmlCalendar;
 		}
 	}
@@ -377,7 +378,7 @@ public class LimitDetails extends AbstractWorkflowEntity implements Serializable
 		if (getLastMntOn() == null) {
 			return null;
 		}
-		return DateUtility.getXMLDate(getLastMntOn());
+		return DateUtil.getXMLDate(getLastMntOn());
 	}
 
 	@XmlTransient

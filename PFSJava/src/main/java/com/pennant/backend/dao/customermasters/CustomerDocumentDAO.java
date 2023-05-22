@@ -26,6 +26,7 @@ package com.pennant.backend.dao.customermasters;
 
 import java.util.List;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.ExternalDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -75,4 +76,6 @@ public interface CustomerDocumentDAO {
 	List<ExternalDocument> getExternalDocuments(long bankId, String type);
 
 	boolean getCustomerDocExists(long custId, String docType);
+
+	List<Customer> getCustIdByDocTitle(String custDocTitle);
 }

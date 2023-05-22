@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.BusinessCalendar;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
@@ -79,11 +78,11 @@ public class DateService extends SequenceDao<Object> {
 		String localccy = CurrencyUtil.getCcyNumber(PennantConstants.LOCAL_CCY);
 		Date tempnextBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_NEXT, nextBusinessDate).getTime();
-		String nextBussDate = DateUtility.format(tempnextBussDate, PennantConstants.DBDateFormat);
+		String nextBussDate = DateUtil.format(tempnextBussDate, PennantConstants.DBDateFormat);
 
 		Date tempprevBussDate = BusinessCalendar
 				.getWorkingBussinessDate(localccy, HolidayHandlerTypes.MOVE_PREVIOUS, nextBusinessDate).getTime();
-		String prevBussDate = DateUtility.format(tempprevBussDate, PennantConstants.DBDateFormat);
+		String prevBussDate = DateUtil.format(tempprevBussDate, PennantConstants.DBDateFormat);
 
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_NEXT, nextBussDate);
 		SysParamUtil.updateParamDetails(PennantConstants.APP_DATE_LAST, prevBussDate);

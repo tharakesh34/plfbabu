@@ -346,31 +346,30 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custId },
-					new RowMapper<CustomerStaging>() {
-						@Override
-						public CustomerStaging mapRow(ResultSet rs, int rowNum) throws SQLException {
-							CustomerStaging cs = new CustomerStaging();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<CustomerStaging>() {
+				@Override
+				public CustomerStaging mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerStaging cs = new CustomerStaging();
 
-							cs.setCif(rs.getString("CustCIF"));
-							cs.setSalutation(rs.getString("CustSalutationCode"));
-							cs.setSalutationDesc(rs.getString("LovDescCustSalutationCodeName"));
-							cs.setFirstName(rs.getString("CustFName"));
-							cs.setMiddleName(rs.getString("CustMName"));
-							cs.setLastName(rs.getString("CustLName"));
-							cs.setFullName(rs.getString("CustShrtName"));
-							cs.setDob(rs.getTimestamp("CustDOB"));
-							cs.setGender(rs.getString("LovDescCustGenderCodeName"));
-							cs.setCustMaritalSts(rs.getString("CustMaritalSts"));
-							cs.setCustType(rs.getString("CustTypeCode"));
-							cs.setCustDftBranch(rs.getString("CustDftBranch"));
-							cs.setCustDftBranchName(rs.getString("LovDescCustDftBranchName"));
-							cs.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							cs.setCustStaffId(rs.getString("CustStaffID"));
-							cs.setCustDSA(rs.getString("CustDSA"));
-							return cs;
-						}
-					});
+					cs.setCif(rs.getString("CustCIF"));
+					cs.setSalutation(rs.getString("CustSalutationCode"));
+					cs.setSalutationDesc(rs.getString("LovDescCustSalutationCodeName"));
+					cs.setFirstName(rs.getString("CustFName"));
+					cs.setMiddleName(rs.getString("CustMName"));
+					cs.setLastName(rs.getString("CustLName"));
+					cs.setFullName(rs.getString("CustShrtName"));
+					cs.setDob(rs.getTimestamp("CustDOB"));
+					cs.setGender(rs.getString("LovDescCustGenderCodeName"));
+					cs.setCustMaritalSts(rs.getString("CustMaritalSts"));
+					cs.setCustType(rs.getString("CustTypeCode"));
+					cs.setCustDftBranch(rs.getString("CustDftBranch"));
+					cs.setCustDftBranchName(rs.getString("LovDescCustDftBranchName"));
+					cs.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					cs.setCustStaffId(rs.getString("CustStaffID"));
+					cs.setCustDSA(rs.getString("CustDSA"));
+					return cs;
+				}
+			}, custId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

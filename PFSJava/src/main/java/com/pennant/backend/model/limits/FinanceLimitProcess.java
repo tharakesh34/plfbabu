@@ -23,7 +23,7 @@ public class FinanceLimitProcess implements Serializable {
 	private BigDecimal dealAmount = BigDecimal.ZERO;
 
 	public FinanceLimitProcess() {
-
+	    super();
 	}
 
 	// ******************************************************//

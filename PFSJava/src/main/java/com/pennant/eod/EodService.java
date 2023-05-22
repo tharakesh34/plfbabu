@@ -16,9 +16,7 @@ import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.AutoDisbursementService;
 import com.pennant.app.core.AutoKnockOffService;
 import com.pennant.app.core.ChangeGraceEndService;
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayBucketService;
 import com.pennant.app.core.LatePayDueCreationService;
@@ -27,11 +25,12 @@ import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.ProjectedAmortizationService;
 import com.pennant.app.core.RateReviewService;
 import com.pennant.app.core.ReceiptPaymentService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -40,7 +39,12 @@ import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennant.pff.core.loan.util.DPDStringCalculator;
+import com.pennant.pff.extension.DPDExtension;
+import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennanttech.external.MicroEodExternalProcessHook;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.closure.service.impl.ClosureService;
@@ -76,6 +80,7 @@ public class EodService {
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ClosureService closureService;
 	private AutoRefundService autoRefundService;
+	private MicroEodExternalProcessHook microEodExternalProcessHook;
 
 	public EodService() {
 		super();
@@ -167,7 +172,7 @@ public class EodService {
 	public void doUpdate(CustEODEvent custEODEvent, boolean isLimitRebuild) throws Exception {
 		// update customer EOD
 
-		autoRefundService.updateRefunds(custEODEvent);
+		// autoRefundService.updateRefunds(custEODEvent);
 
 		loadFinanceData.updateFinEODEvents(custEODEvent);
 		// receipt postings on SOD
@@ -181,6 +186,21 @@ public class EodService {
 		}
 
 		loadFinanceData.updateCustomerDate(custEODEvent);
+
+		EventProperties eventProperties = custEODEvent.getEventProperties();
+
+		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF && !ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
+			Date appDate = DateUtil.addDays(eventProperties.getAppDate(), 1);
+			processAutoKnockOff(custEODEvent, eventProperties, appDate);
+		}
+	}
+
+	private void processAutoKnockOff(CustEODEvent custEODEvent, EventProperties eventProperties, Date appDate) {
+		long custId = custEODEvent.getCustomer().getCustID();
+
+		logger.info("Auto-Knock-Off process started for the Customer ID >> {} ", custId);
+		eodAutoKnockOffService.processKnockOff(custId, appDate);
+		logger.info("Auto-Knock-Off process completed for the Customer ID >> {} ", custId);
 	}
 
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
@@ -189,17 +209,12 @@ public class EodService {
 	}
 
 	public void doProcess(CustEODEvent custEODEvent) throws Exception {
-		long custId = custEODEvent.getCustomer().getCustID();
-
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
-		Date appDate = eventProperties.getAppDate();
-
-		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF) {
-			logger.info("Auto-Knock-Off process started for the Customer ID >> {} ", custId);
-			eodAutoKnockOffService.processKnockOff(custId, appDate);
-			logger.info("Auto-Knock-Off process completed for the Customer ID >> {} ", custId);
+		if (ImplementationConstants.ALLOW_AUTO_KNOCK_OFF && ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
+			processAutoKnockOff(custEODEvent, eventProperties, eventProperties.getAppDate());
 		}
+
 		if (!eventProperties.isSkipLatePay()) {
 			// late pay marking
 
@@ -224,7 +239,10 @@ public class EodService {
 		// LatePay Due creation Service
 		latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
-		autoRefundService.executeRefund(custEODEvent);
+		// ExtractionDumpHook
+		if (microEodExternalProcessHook != null) {// microEodExtranalProcessHook
+			microEodExternalProcessHook.saveExtractionData(custEODEvent, eventProperties.getBusinessDate());
+		}
 
 		/**************** SOD ***********/
 		// moving customer date to sod
@@ -248,8 +266,8 @@ public class EodService {
 		}
 
 		// if month end then only it should run
-		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
-				|| eventProperties.isEomOnEOD()) {
+		if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD() && LPPExtension.LPP_DUE_CREATION_REQ) {
 			// Calculate MonthEnd LPI
 			logger.info("Processing Late Pay interest started...");
 			custEODEvent = latePayMarkingService.processLPIAccrual(custEODEvent);
@@ -274,8 +292,8 @@ public class EodService {
 			logger.info("Processing MonthEndAccruals completed.");
 		}
 
-		if (custEODEvent.getEodDate().compareTo(DateUtility.getMonthEnd(custEODEvent.getEodDate())) == 0
-				|| eventProperties.isEomOnEOD()) {
+		if (custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD() && LPPExtension.LPP_DUE_CREATION_REQ) {
 			// Calculate MonthEnd Penalty
 			logger.info("Processing Late Pay Accruals started...");
 			latePayMarkingService.processLatePayAccrual(custEODEvent);
@@ -322,24 +340,22 @@ public class EodService {
 		overdrafLoanService.closeByMaturity(custEODEvent);
 		logger.info("Updating the OverDraft loans closing status process completed.");
 
-		if (ImplementationConstants.ALLOW_NPA) {
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			assetClassificationService.process(custEODEvent);
 		}
-	}
 
-	public void processAutoRefund(CustEODEvent custEODEvent) {
-		logger.info("Process the auto Refund for the Customer who is no active loans");
-		autoRefundService.executeRefund(custEODEvent);
+		if ((custEODEvent.getEodDate().compareTo(DateUtil.getMonthEnd(custEODEvent.getEodDate())) == 0
+				|| eventProperties.isEomOnEOD()) && DPDExtension.DPD_STRING_CALCULATION_ON == 0) {
+			DPDStringCalculator.process(custEODEvent, true);
+		}
 
-		autoRefundService.updateRefunds(custEODEvent);
+		if (DPDExtension.DPD_STRING_CALCULATION_ON == 1) {
+			DPDStringCalculator.process(custEODEvent, false);
+		}
 	}
 
 	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
 		loadFinanceData.prepareFinEODEvents(custEODEvent);
-	}
-
-	public void loadAutoRefund(CustEODEvent custEODEvent) {
-		autoRefundService.loadAutoRefund(custEODEvent);
 	}
 
 	@Autowired
@@ -459,6 +475,11 @@ public class EodService {
 	@Autowired
 	public void setAutoRefundService(AutoRefundService autoRefundService) {
 		this.autoRefundService = autoRefundService;
+	}
+
+	@Autowired(required = false)
+	public void setMicroEodExternalProcessHook(MicroEodExternalProcessHook microEodExternalProcessHook) {
+		this.microEodExternalProcessHook = microEodExternalProcessHook;
 	}
 
 }

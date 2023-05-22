@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -70,14 +69,14 @@ public class AverageYieldReportServiceImpl implements AverageYieldReportService 
 
 				FinanceScheduleDetail curSchd = scheduleDetails.get(i);
 				prvSchd = scheduleDetails.get(i - 1);
-				if (DateUtility.compare(curSchd.getSchDate(), startDate) >= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), startDate) >= 0) {
 
-					if ((DateUtility.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
+					if ((DateUtil.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
 						break;
 					}
 
 					boolean startDateisFrqDate = false;
-					if (DateUtility.compare(prvSchd.getSchDate(), startDate) < 0) {
+					if (DateUtil.compare(prvSchd.getSchDate(), startDate) < 0) {
 						fromDate = startDate;
 					} else {
 						fromDate = prvSchd.getSchDate();
@@ -85,18 +84,18 @@ public class AverageYieldReportServiceImpl implements AverageYieldReportService 
 					}
 
 					boolean endDateisFrqDate = false;
-					if (DateUtility.compare(curSchd.getSchDate(), endDate) > 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), endDate) > 0) {
 						toDate = endDate;
 						endDateCompleted = true;
 					} else {
 						toDate = curSchd.getSchDate();
-						toDate = DateUtility.addDays(toDate, -1);
+						toDate = DateUtil.addDays(toDate, -1);
 						endDateisFrqDate = true;
-						if (DateUtility.compare(curSchd.getSchDate(), endDate) == 0) {
+						if (DateUtil.compare(curSchd.getSchDate(), endDate) == 0) {
 							endDateCompleted = true;
 						}
 					}
-					if (DateUtility.compare(toDate, startDate) >= 0) {
+					if (DateUtil.compare(toDate, startDate) >= 0) {
 
 						if (startDateisFrqDate && endDateisFrqDate) {
 							totalInterest = totalInterest.add(PennantApplicationUtil
@@ -179,13 +178,13 @@ public class AverageYieldReportServiceImpl implements AverageYieldReportService 
 
 					FinanceScheduleDetail curSchd = scheduleDetails.get(i);
 					prvSchd = scheduleDetails.get(i - 1);
-					if (DateUtility.compare(curSchd.getSchDate(), startDate) >= 0) {
-						if ((DateUtility.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
+					if (DateUtil.compare(curSchd.getSchDate(), startDate) >= 0) {
+						if ((DateUtil.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
 							break;
 						}
 
 						boolean startDateisFrqDate = false;
-						if (DateUtility.compare(prvSchd.getSchDate(), startDate) < 0) {
+						if (DateUtil.compare(prvSchd.getSchDate(), startDate) < 0) {
 							fromDate = startDate;
 						} else {
 							fromDate = prvSchd.getSchDate();
@@ -193,18 +192,18 @@ public class AverageYieldReportServiceImpl implements AverageYieldReportService 
 						}
 
 						boolean endDateisFrqDate = false;
-						if (DateUtility.compare(curSchd.getSchDate(), endDate) > 0) {
+						if (DateUtil.compare(curSchd.getSchDate(), endDate) > 0) {
 							toDate = endDate;
 							endDateCompleted = true;
 						} else {
 							toDate = curSchd.getSchDate();
-							toDate = DateUtility.addDays(toDate, -1);
+							toDate = DateUtil.addDays(toDate, -1);
 							endDateisFrqDate = true;
-							if (DateUtility.compare(curSchd.getSchDate(), endDate) == 0) {
+							if (DateUtil.compare(curSchd.getSchDate(), endDate) == 0) {
 								endDateCompleted = true;
 							}
 						}
-						if (DateUtility.compare(toDate, startDate) >= 0) {
+						if (DateUtil.compare(toDate, startDate) >= 0) {
 
 							if (startDateisFrqDate && endDateisFrqDate) {
 								totalInterest = totalInterest.add(PennantApplicationUtil
@@ -251,7 +250,7 @@ public class AverageYieldReportServiceImpl implements AverageYieldReportService 
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}

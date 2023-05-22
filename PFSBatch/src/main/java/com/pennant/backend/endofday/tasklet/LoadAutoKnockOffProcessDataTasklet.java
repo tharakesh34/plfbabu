@@ -39,6 +39,10 @@ public class LoadAutoKnockOffProcessDataTasklet extends BasicDao<AutoKnockOff> i
 		EventProperties eventProperties = EODUtil.getEventProperties(EODUtil.EVENT_PROPERTIES, context);
 		Date valueDate = eventProperties.getAppDate();
 
+		if (!ImplementationConstants.AUTO_KNOCK_OFF_ON_DUE_DATE) {
+			valueDate = DateUtil.addDays(valueDate, 1);
+		}
+
 		/**
 		 * Deleting the data in staging tables.
 		 */

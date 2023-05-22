@@ -568,4 +568,8 @@ public class CurrencyBox extends Hbox {
 		return allowNagativeValues;
 	}
 
+	public void setRemoveSpace(boolean removeSpace) {
+		space.setVisible(!removeSpace);
+	}
+
 }

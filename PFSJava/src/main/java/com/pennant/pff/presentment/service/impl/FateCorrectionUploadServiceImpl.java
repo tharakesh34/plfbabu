@@ -2,48 +2,54 @@ package com.pennant.pff.presentment.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionDefinition;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.ibm.icu.math.BigDecimal;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.presentment.PresentmentRespUpload;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
+import com.pennapps.core.util.ObjectUtil;
 
-public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
+public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<PresentmentRespUpload> {
 	private static final Logger logger = LogManager.getLogger(FateCorrectionUploadServiceImpl.class);
 
 	private PresentmentRespUploadDAO presentmentRespUploadDAO;
 	private FinanceMainDAO financeMainDAO;
-	private ValidateRecord fateCorrectionUploadValidateRecord;
+
+	public FateCorrectionUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected PresentmentRespUpload getDetail(Object object) {
+		if (object instanceof PresentmentRespUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		PresentmentRespUpload detail = null;
-
-		if (object instanceof PresentmentRespUpload) {
-			detail = (PresentmentRespUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		PresentmentRespUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 
@@ -68,6 +74,13 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
+
+		try {
+			new BigDecimal(detail.getAmountCleared());
+		} catch (NumberFormatException e) {
+			setFailureStatus(detail, PresentmentError.REPRMNT523.name(), "Amount Cleared is invalid format");
+			return;
+		}
 
 		if (presentmentRespUploadDAO.isDuplicateKeyPresent(reference, detail.getClearingStatus(),
 				detail.getClearingDate())) {
@@ -114,82 +127,53 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setBounceCode(detail.getBounceCode());
 		detail.setBounceRemarks(detail.getBounceRemarks());
 		detail.setAccountNumber(pd.getAccountNo());
-
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 	}
 
 	private void setError(PresentmentRespUpload detail, PresentmentError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<PresentmentRespUpload> details = presentmentRespUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (PresentmentRespUpload fc : details) {
 					doValidate(header, fc);
-
-					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
 
+				logger.info("Fate Correction Process is Initiated");
+
+				TransactionStatus txStatus = getTransactionStatus();
+
 				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
-					presentmentRespUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
-					List<FileUploadHeader> headerList = new ArrayList<>();
-					headerList.add(header);
-
-					updateHeader(headerList, true);
-
-					logger.info("Fate Correction Process is Initiated");
-
 					process(header);
 
 					transactionManager.commit(txStatus);
 				} catch (Exception e) {
-					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+					logger.error(Literal.EXCEPTION, e);
 
 					if (txStatus != null) {
 						transactionManager.rollback(txStatus);
 					}
+
+					header.getUploadDetails().forEach(detail -> setFailureStatus(detail));
 				} finally {
 					txStatus = null;
 				}
+
+				presentmentRespUploadDAO.update(details);
+
+				List<FileUploadHeader> headerList = new ArrayList<>();
+				headerList.add(header);
+
+				updateHeader(headerList, true);
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
@@ -206,23 +190,23 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
+			headers.forEach(h1 -> {
+				h1.setRemarks(REJECT_DESC);
+				h1.getUploadDetails().addAll(presentmentRespUploadDAO.getDetails(h1.getId()));
+			});
 
-			presentmentRespUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+			presentmentRespUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
@@ -231,13 +215,50 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.FATE_CORRECTION.name(), this, "FateCorrection");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return presentmentRespUploadDAO.getSqlQuery();
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return fateCorrectionUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		PresentmentRespUpload presentment = (PresentmentRespUpload) ObjectUtil.valueAsObject(paramSource,
+				PresentmentRespUpload.class);
+
+		presentment.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		presentment.setAmountCleared(ObjectUtil.valueAsString(paramSource.getValue("AMOUNT_CLEARED")));
+		presentment.setClearingDate(ObjectUtil.valueAsDate(paramSource.getValue("CLEARING_DATE")));
+		presentment.setUmrnNo(ObjectUtil.valueAsString(paramSource.getValue("UMRN_NO")));
+		presentment.setClearingStatus(ObjectUtil.valueAsString(paramSource.getValue("CLEARING_STATUS")));
+		presentment.setBounceCode(ObjectUtil.valueAsString(paramSource.getValue("BOUNCE_CODE")));
+		presentment.setBounceRemarks(ObjectUtil.valueAsString(paramSource.getValue("BOUNCE_REMARKS")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		presentment.setHeaderId(header.getId());
+		presentment.setAppDate(header.getAppDate());
+
+		doValidate(header, presentment);
+
+		updateProcess(header, presentment, paramSource);
+
+		header.getUploadDetails().add(presentment);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -248,12 +269,6 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setFateCorrectionUploadValidateRecord(
-			FateCorrectionUploadValidateRecord fateCorrectionUploadValidateRecord) {
-		this.fateCorrectionUploadValidateRecord = fateCorrectionUploadValidateRecord;
 	}
 
 }

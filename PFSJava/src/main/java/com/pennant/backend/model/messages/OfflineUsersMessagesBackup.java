@@ -12,7 +12,7 @@ public class OfflineUsersMessagesBackup implements java.io.Serializable {
 	private String message;
 
 	public OfflineUsersMessagesBackup() {
-
+	    super();
 	}
 
 	public String getFromUsrID() {

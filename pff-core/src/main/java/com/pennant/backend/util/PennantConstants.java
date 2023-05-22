@@ -210,6 +210,7 @@ public class PennantConstants {
 	public static final String METHOD_DOCUMENTVERIFICATION = "doDocumentVerification";
 	public static final String METHOD_LOAN_DATA_SYNC = "executeLoanDataSync";
 	public static final String method_pushToEFS = "pushToEFS";
+	public static final String METHOD_IMDFEECHECK = "doIMDFeeCheck";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
@@ -947,4 +948,13 @@ public class PennantConstants {
 	public static final int FEE_REFUND_APPROVAL_SUCCESS = 1;
 	public static final int FEE_REFUND_APPROVAL_HOLD = 2;
 	public static final int FEE_REFUND_APPROVAL_DOWNLOADED = 3;
+
+	// Sanction Status
+	public static final String SANCTION_PENDING = "Pending";
+	public static final String SANCTION_RECEIVED = "Received";
+	public static final String SANCTION_CLOSED = "Closed";
+
+	// Hold Marking
+	public static final String HOLD_MARKING = "H";
+	public static final String REMOVE_HOLD_MARKING = "R";
 }

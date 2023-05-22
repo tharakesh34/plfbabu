@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennanttech.pff.provision.model.Provision;
+import com.pennanttech.pff.provision.model.ProvisionRuleData;
 
 public interface ProvisionService {
 
@@ -15,13 +16,13 @@ public interface ProvisionService {
 
 	int updateThreadID(long from, long to, int i);
 
-	void updateProgress(String finReference, int progressInProcess);
+	void updateProgress(long finID, int progressInProcess);
 
-	Long getLinkedTranId(String finReference);
+	Long getLinkedTranId(long finID);
 
 	void doReversal(long linkedTranId);
 
-	Provision getProvision(String finReference, Date appDate);
+	Provision getProvision(long finID, Date appDate, Provision mp);
 
 	void doPost(Provision p);
 
@@ -29,7 +30,7 @@ public interface ProvisionService {
 
 	void update(Provision p);
 
-	Provision getProvisionDetail(String finReference);
+	Provision getProvisionDetail(long finID);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
@@ -38,4 +39,8 @@ public interface ProvisionService {
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	void executeProvisionRule(ProvisionRuleData provisionData, Provision p);
+
+	boolean isRecordExists(long finID);
 }

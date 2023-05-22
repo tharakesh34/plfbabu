@@ -41,7 +41,7 @@ import com.pennanttech.pennapps.pff.verification.model.LVDocument;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LegalVerificationServiceImpl extends GenericService<LegalVerification>
 		implements LegalVerificationService {
@@ -188,8 +188,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		LegalVerification legalVerification = (LegalVerification) auditHeader.getAuditDetail().getModelData();
 		auditDetails.addAll(
@@ -219,8 +218,7 @@ public class LegalVerificationServiceImpl extends GenericService<LegalVerificati
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		LegalVerification lv = new LegalVerification();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), lv);

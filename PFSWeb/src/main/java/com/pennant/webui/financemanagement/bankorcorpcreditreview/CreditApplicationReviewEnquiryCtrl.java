@@ -65,7 +65,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
@@ -107,6 +106,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseDetailDAO;
@@ -1804,10 +1804,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				throw new WrongValueException(this.toYear, Labels.getLabel("FIELD_IS_MAND", new String[] {
 						Labels.getLabel("label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value") }));
 			}
-			if (this.toYear.getValue() > DateUtility.getYear(appldate)) {
+			if (this.toYear.getValue() > DateUtil.getYear(appldate)) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("DATE_NO_FUTURE"));
 			}
-			if (this.toYear.getValue() < DateUtility.getYear(DateUtility.addDays(appDftStrtDate, 1))) {
+			if (this.toYear.getValue() < DateUtil.getYear(DateUtil.addDays(appDftStrtDate, 1))) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("label_CreditReviewNotValidYear"));
 			}
 		} catch (WrongValueException we) {
@@ -1884,10 +1884,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				throw new WrongValueException(this.toYear, Labels.getLabel("FIELD_IS_MAND", new String[] {
 						Labels.getLabel("label_CreditApplicationReviewDialog_NoOfYearsToDisplay.value") }));
 			}
-			if (this.toYear.getValue() > DateUtility.getYear(appldate)) {
+			if (this.toYear.getValue() > DateUtil.getYear(appldate)) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("DATE_NO_FUTURE"));
 			}
-			if (this.toYear.getValue() < DateUtility.getYear(DateUtility.addDays(appDftStrtDate, 1))) {
+			if (this.toYear.getValue() < DateUtil.getYear(DateUtil.addDays(appDftStrtDate, 1))) {
 				throw new WrongValueException(this.toYear, Labels.getLabel("label_CreditReviewNotValidYear"));
 			}
 		} catch (WrongValueException we) {

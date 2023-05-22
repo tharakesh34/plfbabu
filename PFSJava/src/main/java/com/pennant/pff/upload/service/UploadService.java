@@ -3,8 +3,11 @@ package com.pennant.pff.upload.service;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -16,6 +19,8 @@ public interface UploadService {
 
 	long saveHeader(FileUploadHeader header, TableType type);
 
+	void update(FileUploadHeader uploadHeader);
+
 	void doValidate(FileUploadHeader header, Object detail);
 
 	List<FileUploadHeader> getUploadHeaderById(List<String> roleCodes, String entityCode, Long id, Date fromDate,
@@ -23,7 +28,7 @@ public interface UploadService {
 
 	List<Entity> getEntities();
 
-	void update(FileUploadHeader uploadHeader);
+	void updateHeader(FileUploadHeader uploadHeader);
 
 	void updateHeader(List<FileUploadHeader> uploadHeaders, boolean isApprove);
 
@@ -48,4 +53,14 @@ public interface UploadService {
 	void updateFailRecords(int sucessRecords, int faildrecords, long headerId);
 
 	boolean isInProgress(Long headerID, Object... args);
+
+	void uploadProcess();
+
+	void uploadProcess(String type);
+
+	void uploadProcess(String type, ProcessRecord processRecord, UploadService uploadService, String moduleCode);
+
+	void uploadProcess(String type, UploadService uploadService, String moduleCode);
+
+	void updateProcess(FileUploadHeader header, UploadDetails detail, MapSqlParameterSource record);
 }

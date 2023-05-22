@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -54,7 +54,7 @@ public class FinTaxUploadDetailItemRenderer implements ListitemRenderer<FinTaxUp
 		lc = new Listcell(finTaxUploadHeader.getFileName());
 		lc.setParent(item);
 		lc = new Listcell(
-				DateUtility.format(finTaxUploadHeader.getBatchCreatedDate(), DateFormat.LONG_DATE.getPattern()));
+				DateUtil.format(finTaxUploadHeader.getBatchCreatedDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(finTaxUploadHeader.getNumberofRecords() + "");
 		lc.setParent(item);

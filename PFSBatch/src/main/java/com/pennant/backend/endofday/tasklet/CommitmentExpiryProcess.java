@@ -15,7 +15,6 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 
@@ -35,7 +34,7 @@ public class CommitmentExpiryProcess implements Tasklet {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		dateValueDate = EODUtil.getDate("APP_VALUEDATE", context);
 
-		logger.debug("START: Commitment Expiry Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("START: Commitment Expiry Details for Value Date: " + DateUtil.addDays(dateValueDate, -1));
 
 		stepExecutionContext = context.getStepContext().getStepExecution().getExecutionContext();
 		stepExecutionContext.put(context.getStepContext().getStepExecution().getId().toString(), dateValueDate);
@@ -74,7 +73,7 @@ public class CommitmentExpiryProcess implements Tasklet {
 			}
 		}
 
-		logger.debug("COMPLETE: Commitment Expiry Details for Value Date: " + DateUtility.addDays(dateValueDate, -1));
+		logger.debug("COMPLETE: Commitment Expiry Details for Value Date: " + DateUtil.addDays(dateValueDate, -1));
 		return RepeatStatus.FINISHED;
 	}
 

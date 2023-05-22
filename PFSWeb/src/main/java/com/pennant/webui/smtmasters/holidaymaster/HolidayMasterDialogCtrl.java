@@ -57,7 +57,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.BusinessCalendar;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.smtmasters.WeekendMasterDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -72,6 +71,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.masters.calendar.model.HolidayCalendarModelRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -324,7 +324,7 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 		aHolidayDetail.setHolidayCode(this.holidayCode.getValue());
 		aHolidayDetail.setHolidayYear(this.holidayYear.getValue());
 		if (this.holidayYear.getValue().intValue() == 0) {
-			aHolidayDetail.setHolidayYear(new BigDecimal(DateUtility.getYear(new Date())));
+			aHolidayDetail.setHolidayYear(new BigDecimal(DateUtil.getYear(new Date())));
 		}
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("holidayDetail", aHolidayDetail);
@@ -352,10 +352,10 @@ public class HolidayMasterDialogCtrl extends GFCBaseCtrl<HolidayMaster> {
 			if (this.holidayYear.getValue() != null
 					&& (this.holidayYear.getValue().compareTo(BigDecimal.valueOf(1950)) < 0)
 					|| this.holidayYear.getValue().compareTo(BigDecimal.valueOf(
-							Long.valueOf(DateUtility.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))))) > 0) {
+							Long.valueOf(DateUtil.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))))) > 0) {
 				throw new WrongValueException(this.holidayYear, Labels.getLabel("DATE_ALLOWED_RANGE", new String[] {
 						Labels.getLabel("label_HolidayMasterDialog_HolidayYear.value"), "1950",
-						String.valueOf(DateUtility.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) }));
+						String.valueOf(DateUtil.getYear(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) }));
 			}
 			holidayDetails = BusinessCalendar.getWeekendList(this.holidayCode.getValue(), this.holidayYear.intValue());
 			showHoliday();

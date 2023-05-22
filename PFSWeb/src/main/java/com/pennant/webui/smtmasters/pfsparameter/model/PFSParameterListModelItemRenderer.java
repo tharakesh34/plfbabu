@@ -44,7 +44,7 @@ public class PFSParameterListModelItemRenderer implements ListitemRenderer<PFSPa
 	private static final long serialVersionUID = -8769182690540455637L;
 
 	public PFSParameterListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

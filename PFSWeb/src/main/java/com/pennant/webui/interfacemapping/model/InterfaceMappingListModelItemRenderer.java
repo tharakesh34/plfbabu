@@ -44,7 +44,7 @@ public class InterfaceMappingListModelItemRenderer implements ListitemRenderer<I
 	private static final long serialVersionUID = -385475759409018331L;
 
 	public InterfaceMappingListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

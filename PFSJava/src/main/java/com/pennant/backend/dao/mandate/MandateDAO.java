@@ -129,5 +129,9 @@ public interface MandateDAO {
 
 	Long getSecurityMandateIdByRef(String finreference);
 
-	String getAccNumber(Long mandateID);
+	String getMandateStatus(long mandateId);
+
+	int getMandateType(long mandateId, String mandatetype, String reference);
+
+	String getMandateNumber(Long mandateId);
 }

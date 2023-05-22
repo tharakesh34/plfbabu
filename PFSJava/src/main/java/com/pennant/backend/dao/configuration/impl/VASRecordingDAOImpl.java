@@ -558,7 +558,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, paymentInsId);
+			return this.jdbcOperations.queryForObject(sql, String.class, paymentInsId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

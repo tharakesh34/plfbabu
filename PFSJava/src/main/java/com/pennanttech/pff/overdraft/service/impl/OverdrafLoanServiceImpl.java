@@ -15,8 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
@@ -32,9 +30,11 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -54,7 +54,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -91,6 +93,7 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 	private OverdraftLimitDAO overdraftLimitDAO;
 	private FeeTypeDAO feeTypeDAO;
 	private LoanPaymentService loanPaymentService;
+	private HoldMarkingService holdMarkingService;
 
 	public OverdrafLoanServiceImpl() {
 		super();
@@ -313,7 +316,7 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 		overDraft.setLastMntBy(fap.getLastMntBy());
 		overDraft.setAppDate(null);
 
-		if (!overDraft.isOverdraftTxnChrgReq()) {
+		if (overDraft.isOverdraftTxnChrgReq()) {
 			createTransactionCharge(overDraft, feeAmount);
 		}
 
@@ -452,7 +455,7 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 		}
 
 		OverdraftLimit limit = overdraftLimitDAO.getLimit(frh.getFinID());
-		limit.setActualLimit(limit.getActualLimitBal().add(principalAmt).add(txnCharges));
+		limit.setActualLimitBal(limit.getActualLimitBal().add(principalAmt).add(txnCharges));
 
 		OverdraftLimitTransation transaction = new OverdraftLimitTransation();
 		transaction.setLimitID(limit.getId());
@@ -778,6 +781,8 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 			List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 			LoanPayment lp = new LoanPayment(finID, finReference, schedules, valueDate);
+
+			fm.setOldActiveState(fm.isFinIsActive());
 			boolean isFinFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
 			if (!(isFinFullyPaid && DateUtil.compare(valueDate, fm.getMaturityDate()) >= 0)) {
@@ -786,6 +791,12 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, valueDate);
 			financeProfitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			fm.setFinIsActive(false);
+
+			if (MandateExtension.ALLOW_HOLD_MARKING && isFinFullyPaid) {
+				holdMarkingService.removeHold(fm);
+			}
+
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1306,6 +1317,11 @@ public class OverdrafLoanServiceImpl extends GenericService<OverdraftLimit> impl
 	@Autowired
 	public void setLoanPaymentService(LoanPaymentService loanPaymentService) {
 		this.loanPaymentService = loanPaymentService;
+	}
+
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
 	}
 
 }

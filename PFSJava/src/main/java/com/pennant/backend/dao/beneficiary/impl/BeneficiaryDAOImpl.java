@@ -41,6 +41,7 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Beneficiary model</b> class.<br>
@@ -320,4 +321,14 @@ public class BeneficiaryDAOImpl extends SequenceDao<Beneficiary> implements Bene
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
+	@Override
+	public boolean checkCustID(long custid) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Count(CustId) From Beneficiary");
+		sql.append(" Where CustId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), custid) > 0;
+	}
 }

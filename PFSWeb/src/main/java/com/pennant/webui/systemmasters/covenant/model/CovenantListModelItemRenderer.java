@@ -16,7 +16,7 @@ public class CovenantListModelItemRenderer implements ListitemRenderer<FinCovena
 	private static final long serialVersionUID = -7313678083684001775L;
 
 	public CovenantListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

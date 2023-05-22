@@ -77,7 +77,7 @@ public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implement
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				AssignmentDeal ad = new AssignmentDeal();
 
 				ad.setId(rs.getLong("Id"));
@@ -99,7 +99,7 @@ public class AssignmentDealDAOImpl extends SequenceDao<AssignmentDeal> implement
 				ad.setWorkflowId(rs.getInt("WorkflowId"));
 
 				return ad;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record not found in AssignmentDeal{} for the specified id {}", type, id);
 		}

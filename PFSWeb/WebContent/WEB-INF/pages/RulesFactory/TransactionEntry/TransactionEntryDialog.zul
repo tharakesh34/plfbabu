@@ -162,7 +162,7 @@
 										<label id="label_AccountingSetDialog_AccountSetCode" value="${c:l('label_AccountingSetDialog_AccountSetCode.value')}" />
 										<hbox>
 											<space spacing="2px" />
-											<textbox id="accountSetCode" maxlength="8" width="150px" readonly="true" />
+											<textbox id="accountSetCode" maxlength="10" width="150px" readonly="true" />
 										</hbox>
 										<label id="label_AccountingSetDialog_AccountSetCodeName" value="${c:l('label_AccountingSetDialog_AccountSetCodeName.value')}" />
 										<hbox>
@@ -320,7 +320,7 @@
 									<row>
 										<tabbox id="tb_Fields">
 											<tabs>
-												<tab label="Amount Codes" />
+												<tab id="tab_amount" label="Amount Codes" />
 												<tab id="tab_Fee" label="Fee Codes" />
 												<tab id="tab_expense" label="Expense Type Codes" visible="false"/>
 												<tab id="tab_Vas" label="Vas Codes" />

@@ -46,6 +46,8 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.IRRScheduleDetailDAO;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -736,6 +738,13 @@ public class AccrualService extends ServiceHelper {
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
 
 		aeAmountCodes.setNpa(finEODEvent.isNpaStage());
+		BigDecimal advInst = finExcessAmountDAO.getBalAdvIntAmt(fm.getFinReference());
+		if (advInst.compareTo(aeAmountCodes.getdAmz()) > 0 && advInst.compareTo(BigDecimal.ZERO) > 0) {
+			aeAmountCodes.setAdvInst(aeAmountCodes.getdAmz());
+			aeAmountCodes.setIntAdv(true);
+		} else {
+			aeAmountCodes.setAdvInst(advInst.compareTo(BigDecimal.ZERO) > 0 ? advInst : BigDecimal.ZERO);
+		}
 
 		aeEvent.setDataMap(aeAmountCodes.getDeclaredFieldValues());
 		aeEvent.getAcSetIDList().add(accountingID);

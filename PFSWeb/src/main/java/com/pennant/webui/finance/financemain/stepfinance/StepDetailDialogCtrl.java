@@ -48,7 +48,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -69,6 +68,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -691,7 +691,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 
 		if (calcOfSteps.equals(PennantConstants.STEPPING_CALC_AMT)) {
 			this.stepsAppliedFor.setDisabled(false);
-			this.stepType.setDisabled(true);
 		}
 		financeMain.setCalcOfSteps(this.calcOfSteps.getSelectedItem().getValue().toString());
 	}
@@ -1604,8 +1603,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 						listItem.setAttribute("isDelete", isDelete);
 						ComponentsCtrl.applyForward(listItem, "onDoubleClick=onFinStepPolicyItemDoubleClicked");
 					} else if (financeStepPolicyDetail.getStepEnd().compareTo(appDate) > 0) {
-						int paidMnths = DateUtility.getMonthsBetween(financeStepPolicyDetail.getStepStart(), appDate,
-								true);
+						int paidMnths = DateUtil.getMonthsBetween(financeStepPolicyDetail.getStepStart(), appDate);
 						if (paidMnths > 0) {
 							minTerms = paidMnths;
 							isEMIChange = false;
@@ -1830,8 +1828,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 						listItem.setAttribute("isDelete", isDelete);
 						ComponentsCtrl.applyForward(listItem, "onDoubleClick=onFinStepPolicyForGraceItemDoubleClicked");
 					} else if (financeStepPolicyDetail.getStepEnd().compareTo(appDate) > 0) {
-						int paidMnths = DateUtility.getMonthsBetween(financeStepPolicyDetail.getStepStart(), appDate,
-								true);
+						int paidMnths = DateUtil.getMonthsBetween(financeStepPolicyDetail.getStepStart(), appDate);
 						if (paidMnths > 0) {
 							minTerms = paidMnths;
 							isEMIChange = false;

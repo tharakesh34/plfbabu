@@ -46,7 +46,7 @@ public class FeeListItemRenderer implements ListitemRenderer<Rule>, Serializable
 	private static final Logger logger = LogManager.getLogger(FeeListItemRenderer.class);
 
 	public FeeListItemRenderer() {
-
+	    super();
 	}
 
 	@Override

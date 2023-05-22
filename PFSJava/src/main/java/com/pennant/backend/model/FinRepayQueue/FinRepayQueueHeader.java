@@ -54,7 +54,7 @@ public class FinRepayQueueHeader {
 	private List<FinODDetails> finOdList = new ArrayList<>();
 
 	public FinRepayQueueHeader() {
-
+	    super();
 	}
 
 	// ******************************************************//

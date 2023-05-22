@@ -37,10 +37,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customermasters.CustLimitCategoryBreakdown;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -192,7 +192,7 @@ public class CustomerLimitCategoryEnquiryCtrl extends GFCBaseCtrl<CustLimitCateg
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 				lc = new Listcell(
-						breakdown.getEndDate() == null ? "" : DateUtility.formatToLongDate(breakdown.getEndDate()));
+						breakdown.getEndDate() == null ? "" : DateUtil.formatToLongDate(breakdown.getEndDate()));
 				lc.setParent(item);
 				lc = new Listcell(breakdown.getType());
 				lc.setParent(item);

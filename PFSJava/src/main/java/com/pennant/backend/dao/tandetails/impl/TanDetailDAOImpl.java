@@ -163,7 +163,7 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), obj, Integer.class) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, obj) > 0;
 
 	}
 
@@ -183,7 +183,7 @@ public class TanDetailDAOImpl extends SequenceDao<TanDetail> implements TanDetai
 			tanID = 0;
 		}
 
-		return tanID + 1;
+		return tanID;
 	}
 
 	@Override

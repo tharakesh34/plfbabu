@@ -165,7 +165,7 @@ public final class QueryUtil {
 		return "";
 	}
 
-	public static void buildQueryByOperator(Filter filter, List<Object> psList, StringBuilder sql) throws Exception {
+	public static void buildQueryByOperator(Filter filter, List<Object> psList, StringBuilder sql) {
 
 		String property = filter.getProperty();
 		sql.append(property);

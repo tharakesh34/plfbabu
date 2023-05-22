@@ -69,7 +69,6 @@ import org.zkoss.zul.Window;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
@@ -111,6 +110,7 @@ import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
@@ -279,8 +279,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.legalDetail.getLegalReference()));
-		return referenceBuffer.toString();
+		return this.legalDetail.getLegalReference();
 	}
 
 	/**
@@ -1598,7 +1597,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		int years = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, dob);
+			int months = DateUtil.getMonthsBetween(appDate, dob);
 			years = months / 12;
 		}
 		return years;
@@ -1904,7 +1903,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc = new Listcell(String.valueOf(++i));
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.format(legalDocument.getDocumentDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(legalDocument.getDocumentDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(legalDocument.getDocumentNo());
@@ -2163,7 +2162,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 			for (LegalECDetail legalECDetail : legalECDetailList) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(DateUtility.format(legalECDetail.getEcDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(legalECDetail.getEcDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 				lc = new Listcell(legalECDetail.getDocument());
 				lc.setParent(item);
@@ -2171,10 +2170,10 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc = new Listcell(legalECDetail.getEcNumber());
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.format(legalECDetail.getEcFrom(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(legalECDetail.getEcFrom(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.format(legalECDetail.getEcTo(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtil.format(legalECDetail.getEcTo(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(PennantStaticListUtil.getlabelDesc(legalECDetail.getEcType(), ecTypesTypesList));
@@ -2355,7 +2354,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 		String legalDate = "";
 		if (getLegalDetail().getLegalDate() != null) {
-			legalDate = DateUtility.format(getLegalDetail().getLegalDate(), DateFormat.LONG_DATE.getPattern());
+			legalDate = DateUtil.format(getLegalDetail().getLegalDate(), DateFormat.LONG_DATE.getPattern());
 		}
 		arrayList.add(0, getLegalDetail().getLoanReference());
 		arrayList.add(1, getLegalDetail().getCollateralReference());
@@ -2488,7 +2487,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		String legalDate = "";
 		if (aLegalDetail.getLegalDate() != null) {
-			legalDate = DateUtility.format(aLegalDetail.getLegalDate(), DateFormat.LONG_DATE.getPattern());
+			legalDate = DateUtil.format(aLegalDetail.getLegalDate(), DateFormat.LONG_DATE.getPattern());
 		}
 		this.label_LoanReference.setValue(aLegalDetail.getLoanReference());
 		this.label_CollateralRef.setValue(aLegalDetail.getCollateralReference());

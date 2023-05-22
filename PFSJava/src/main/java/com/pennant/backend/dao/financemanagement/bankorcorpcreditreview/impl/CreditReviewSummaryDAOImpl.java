@@ -246,7 +246,6 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	 */
 	@Override
 	public void update(FinCreditReviewSummary creditReviewSummary, String type) {
-		int recordCount = 0;
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinCreditReviewSummary");
 		updateSql.append(StringUtils.trimToEmpty(type));
@@ -259,7 +258,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(creditReviewSummary);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
 
@@ -464,7 +463,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 
 		Currency currency = new Currency();
 		currency.setCcyCode(ccyCode);
-		StringBuffer selectSql = new StringBuffer("Select CcySpotRate from RMTCurrencies where CcyCode = :CcyCode");
+		StringBuilder selectSql = new StringBuilder("Select CcySpotRate from RMTCurrencies where CcyCode = :CcyCode");
 		logger.debug("selectSql: " + selectSql.toString());
 		BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		RowMapper<Currency> typeRowMapper = BeanPropertyRowMapper.newInstance(Currency.class);
@@ -479,7 +478,7 @@ public class CreditReviewSummaryDAOImpl extends SequenceDao<FinCreditReviewSumma
 	public List<String> getAuditYearsbyCustdId(long custId) {
 		MapSqlParameterSource parmSrc = new MapSqlParameterSource();
 		parmSrc.addValue("custId", custId);
-		StringBuffer selectSql = new StringBuffer(
+		StringBuilder selectSql = new StringBuilder(
 				"Select audityear from FinCreditReviewDetails_View where customerId =:custId");
 
 		return this.jdbcTemplate.query(selectSql.toString(), parmSrc, new RowMapper<String>() {

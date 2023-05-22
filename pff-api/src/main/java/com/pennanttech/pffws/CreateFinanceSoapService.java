@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinCustomerDetails;
+import com.pennant.backend.model.finance.FinReqParams;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.UserActions;
@@ -85,5 +86,13 @@ public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finance")
 	FinCustomerDetails getDetailsByOfferID(@WebParam(name = "offerID") String offerID) throws ServiceException;
+
+	@WebResult(name = "finance")
+	FinanceInquiry getFinanceDetailsByParams(@WebParam(name = "finance") FinReqParams reqParams)
+			throws ServiceException;
+
+	@WebResult(name = "finance")
+	public FinanceDetail getFinDetailsByFinReference(@WebParam(name = "finReference") String finReference)
+			throws ServiceException;
 
 }

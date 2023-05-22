@@ -15,7 +15,7 @@ public class EligibilityRule implements Serializable {
 	private BigDecimal elgAmount;
 
 	public EligibilityRule() {
-
+	    super();
 	}
 
 	// ******************************************************//

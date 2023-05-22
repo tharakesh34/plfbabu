@@ -92,5 +92,6 @@ public class FinServiceEvent {
 	public static final String PRINH = "PrincipleHoliday";
 	public static final String FEEREFUNDINST = "FeeRefundInst";
 	public static final String CROSS_LOAN_KNOCKOFF = "CROSSLOANKNOCKOFF";
+	public static final String REV_WRITEOFF = "RevWriteOff";
 
 }

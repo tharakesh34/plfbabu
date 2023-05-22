@@ -41,6 +41,8 @@ public class LoanBranch {
 	private String branchAddrHNbr;
 	@XmlElement
 	private String branchAddrStreet;
+	@XmlElement
+	private String branchAddress;
 
 	public LoanBranch() {
 		super();
@@ -172,5 +174,13 @@ public class LoanBranch {
 
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
+	}
+
+	public String getBranchAddress() {
+		return branchAddress;
+	}
+
+	public void setBranchAddress(String branchAddress) {
+		this.branchAddress = branchAddress;
 	}
 }

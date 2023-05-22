@@ -911,7 +911,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	public List<Mandate> getMandatesForAutoSwap(long custID, Date appDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, m.MandateId, m.MandateType");
-		sql.append(", fm.MandateId OldMandateId, fm.SecuritymandateId OldSecMandateId, m.SecurityMandate");
+		sql.append(", fm.MandateId OldMandateId, fm.SecuritymandateId OldSecMandateId, m.SecurityMandate, m.AccNumber");
 		sql.append(" From Mandates m");
 		sql.append(" Inner Join FinanceMain fm on fm.FinReference = m.OrgReference and fm.CustID = ?");
 		sql.append(" Where SwapIsActive = ? and SwapEffectivedate = ?");
@@ -930,6 +930,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			m.setOldMandate(JdbcUtil.getLong(rs.getObject("OldMandateId")));
 			m.setOldSecMandate(JdbcUtil.getLong(rs.getObject("OldSecMandateId")));
 			m.setSecurityMandate(rs.getBoolean("SecurityMandate"));
+			m.setAccNumber(rs.getString("AccNumber"));
 			m.setMandateType(rs.getString("MandateType"));
 
 			return m;
@@ -1206,13 +1207,31 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public String getAccNumber(Long mandateID) {
-		String sql = "Select AccNumber from Mandates Where MandateID = ?";
+	public String getMandateStatus(long mandateId) {
+		String sql = "SELECT STATUS FROM Mandates WHERE MandateId = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, String.class, mandateId);
+	}
+
+	@Override
+	public int getMandateType(long mandateId, String mandatetype, String reference) {
+		String sql = "Select count(MandateId) From Mandates Where MandateId = ? and MandateType = ? and OrgReference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.queryForObject(sql, Integer.class, mandateId, mandatetype, reference);
+	}
+
+	@Override
+	public String getMandateNumber(Long mandateId) {
+		String sql = "Select AccNumber From Mandates Where MandateId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, String.class, mandateID);
+			return jdbcOperations.queryForObject(sql, String.class, mandateId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

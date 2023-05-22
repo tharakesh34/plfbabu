@@ -19,7 +19,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.applicationmaster.AssignmentRate;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -34,6 +33,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -442,7 +442,6 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 	}
 
 	private void doWriteComponentsToBean(AssignmentRate aAssignmentRate) {
-		// TODO Auto-generated method stub
 		logger.debug(Literal.ENTERING);
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -546,7 +545,7 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 		String[] valueParm = new String[3];
 		String[] errParm = new String[3];
 
-		valueParm[0] = DateUtility.formatToLongDate(aAssignmentRate.getEffectiveDate()).toString();
+		valueParm[0] = DateUtil.formatToLongDate(aAssignmentRate.getEffectiveDate()).toString();
 
 		errParm[0] = PennantJavaUtil.getLabel("label_AssignmentRateDialog_EffectiveDate.value") + " : " + valueParm[0];
 		List<AssignmentRate> assignmentRateList = getAssignmentDialogCtrl().getAssignmentRateDetailList();
@@ -557,7 +556,7 @@ public class AssignmentRateDialogCtrl extends GFCBaseCtrl<AssignmentRate> {
 
 					if (isNewRecord()) {
 						errParm[1] = "/equal to "
-								.concat(DateUtility.formatToLongDate(assignmentrate.getEffectiveDate()).toString());
+								.concat(DateUtil.formatToLongDate(assignmentrate.getEffectiveDate()).toString());
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "30507", errParm, valueParm),
 								getUserWorkspace().getUserLanguage()));

@@ -36,7 +36,7 @@ public class AvailCommitment {
 	private String finDivisionDesc = "";
 
 	public AvailCommitment() {
-
+	    super();
 	}
 
 	public String getCmtReference() {

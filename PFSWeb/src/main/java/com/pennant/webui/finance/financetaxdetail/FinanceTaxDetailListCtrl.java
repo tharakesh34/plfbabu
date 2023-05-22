@@ -227,7 +227,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		}
 		// ### 17-07-2018 - End - Ticket ID : 127950
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append(" where  FinReference =?");
 
 		if (doCheckAuthority(financetaxdetail, whereCond.toString(),

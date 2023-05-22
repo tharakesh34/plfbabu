@@ -36,7 +36,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.expenses.UploadHeader;
@@ -47,6 +46,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -563,7 +563,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 		UploadHeader uploadHeader = new UploadHeader();
 		uploadHeader.setFileName(this.txtFileName.getValue());
 		uploadHeader.setModule("FinFeeFactor");
-		uploadHeader.setTransactionDate(DateUtility.getSysDate());
+		uploadHeader.setTransactionDate(DateUtil.getSysDate());
 		uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 

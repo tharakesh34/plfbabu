@@ -14,6 +14,7 @@ public class Item implements Serializable {
 	private String item;
 
 	public Item() {
+	    super();
 	}
 
 	public Item(String stringJSON) {

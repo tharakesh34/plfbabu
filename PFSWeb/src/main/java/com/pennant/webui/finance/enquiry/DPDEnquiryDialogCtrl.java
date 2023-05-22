@@ -35,11 +35,11 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -140,7 +140,7 @@ public class DPDEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 			for (FinStatusDetail detail : finStatusDetails) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(DateUtility.formatToLongDate(detail.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(detail.getValueDate()));
 				lc.setParent(item);
 				lc = new Listcell(String.valueOf(detail.getODDays()));
 				lc.setParent(item);

@@ -32,6 +32,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadStatus;
 
 public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements UploadDAO {
 
@@ -102,12 +103,11 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	}
 
 	@Override
-	public int update(FileUploadHeader header, TableType tableType) {
+	public int update(FileUploadHeader header) {
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" FILE_UPLOAD_HEADER");
-		sql.append(" Set FileName = ?, SuccessRecords = ?, FailureRecords = ?, TotalRecords = ?");
-		sql.append(", EntityCode = ?, Progress = ?, CreatedBy = ?, CreatedOn = ?");
-		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
+		sql.append(" Set SuccessRecords = ?, FailureRecords = ?, TotalRecords = ?");
+		sql.append(", Progress = ?, ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where ID = ?");
@@ -117,14 +117,10 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setString(++index, header.getFileName());
 			ps.setInt(++index, header.getSuccessRecords());
 			ps.setInt(++index, header.getFailureRecords());
 			ps.setInt(++index, header.getTotalRecords());
-			ps.setString(++index, header.getEntityCode());
 			ps.setInt(++index, header.getProgress());
-			ps.setLong(++index, header.getCreatedBy());
-			ps.setTimestamp(++index, header.getCreatedOn());
 			ps.setObject(++index, header.getApprovedBy());
 			ps.setTimestamp(++index, header.getApprovedOn());
 			ps.setInt(++index, header.getVersion());
@@ -199,14 +195,20 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	public List<FileUploadHeader> getHeaderData(List<String> roleCodes, String entityCode, Long id, Date fromDate,
 			Date toDate, String type, String stage, String usrLogin) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.TotalRecords");
-		sql.append(", uh.SuccessRecords, uh.FailureRecords, uh.ExecutionID, uh.Progress");
+		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.UploadPath, uh.FileName, uh.TotalRecords");
+		sql.append(", uh.SuccessRecords, uh.FailureRecords, uh.Progress");
 		sql.append(", uh.CreatedBy, uh.CreatedOn, uh.ApprovedBy, uh.ApprovedOn, uh.LastMntOn, uh.LastMntBy");
 		sql.append(", uh.Version, uh.RecordStatus, uh.RoleCode, uh.NextRoleCode");
 		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId, su.UsrLogin");
 		sql.append(" From FILE_UPLOAD_HEADER uh");
 		sql.append(" Inner Join SecUsers su on su.UsrID = uh.CreatedBy");
-		sql.append(" Where uh.Type = ? and uh.Progress != ?");
+		sql.append(" Where uh.Type = ?");
+
+		if ("M".equals(stage)) {
+			sql.append(" and uh.Progress in (?, ?, ?, ?)");
+		} else {
+			sql.append(" and uh.Progress in (?, ?)");
+		}
 
 		StringBuilder whereClause = prepareWhereClause(roleCodes, entityCode, id, fromDate, toDate, stage, usrLogin);
 
@@ -222,7 +224,16 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			int index = 0;
 
 			ps.setString(++index, type);
-			ps.setInt(++index, Status.IN_PROCESS.getValue());
+
+			if ("M".equals(stage)) {
+				ps.setInt(++index, UploadStatus.APPROVED.status());
+				ps.setInt(++index, UploadStatus.REJECTED.status());
+				ps.setInt(++index, UploadStatus.INITIATED.status());
+				ps.setInt(++index, UploadStatus.FAILED.status());
+			} else {
+				ps.setInt(++index, UploadStatus.IMPORTED.status());
+				ps.setInt(++index, UploadStatus.DOWNLOADED.status());
+			}
 
 			if (CollectionUtils.isNotEmpty(roleCodes)) {
 				for (String roleCode : roleCodes) {
@@ -259,11 +270,11 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			ruh.setId(rs.getLong("Id"));
 			ruh.setEntityCode(rs.getString("EntityCode"));
 			ruh.setType(rs.getString("Type"));
+			ruh.setUploadPath(rs.getString("UploadPath"));
 			ruh.setFileName(rs.getString("FileName"));
 			ruh.setTotalRecords(rs.getInt("TotalRecords"));
 			ruh.setSuccessRecords(rs.getInt("SuccessRecords"));
 			ruh.setFailureRecords(rs.getInt("FailureRecords"));
-			ruh.setExecutionID(rs.getLong("ExecutionID"));
 			ruh.setProgress(rs.getInt("Progress"));
 			ruh.setCreatedBy(rs.getLong("CreatedBy"));
 			ruh.setCreatedOn(rs.getTimestamp("CreatedOn"));
@@ -371,7 +382,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	@Override
 	public void updateHeader(FileUploadHeader header) {
 		StringBuilder sql = new StringBuilder("Update FILE_UPLOAD_HEADER");
-		sql.append(" Set ExecutionID = ?, TotalRecords = ?, SuccessRecords = ?, FailureRecords = ?");
+		sql.append(" Set TotalRecords = ?, SuccessRecords = ?, FailureRecords = ?");
 		sql.append(", Progress = ?, Remarks = Remarks + ?");
 		sql.append(" Where ID = ?");
 
@@ -380,7 +391,6 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 0;
 
-			ps.setLong(++index, header.getExecutionID());
 			ps.setLong(++index, header.getTotalRecords());
 			ps.setLong(++index, header.getSuccessRecords());
 			ps.setLong(++index, header.getFailureRecords());
@@ -394,7 +404,7 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 	@Override
 	public void updateHeader(List<FileUploadHeader> headerList) {
 		StringBuilder sql = new StringBuilder("Update FILE_UPLOAD_HEADER");
-		sql.append(" Set SuccessRecords = ?, FailureRecords = FailureRecords + ?");
+		sql.append(" Set SuccessRecords = ?, FailureRecords = ?");
 		sql.append(", Progress = ?, Remarks = Remarks + ?");
 		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(", Version = Version + ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
@@ -471,6 +481,73 @@ public class UploadDAOImpl extends SequenceDao<FileUploadHeader> implements Uplo
 			st.setInt(++index, sucessRecords);
 			st.setInt(++index, faildrecords);
 			st.setLong(++index, headerId);
+		});
+	}
+
+	@Override
+	public List<FileUploadHeader> loadData(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" uh.Id, uh.EntityCode, uh.Type, uh.FileName, uh.UploadPath, uh.Progress, uh.TotalRecords");
+		sql.append(", uh.CreatedBy, uh.CreatedOn, uh.ApprovedBy, uh.ApprovedOn, uh.LastMntOn, uh.LastMntBy");
+		sql.append(", uh.Version, uh.RecordStatus, uh.RoleCode, uh.NextRoleCode");
+		sql.append(", uh.TaskId, uh.NextTaskId, uh.RecordType, uh.WorkflowId");
+		sql.append(", csu.UsrLogin CreatedByName, asu.UsrLogin ApprovedByName");
+		sql.append(" From FILE_UPLOAD_HEADER uh");
+		sql.append(" Left Join SecUsers csu on csu.UsrID = uh.CreatedBy");
+		sql.append(" Left Join SecUsers asu on asu.UsrID = uh.ApprovedBy");
+		sql.append(" Where uh.Type = ? and uh.Progress in (?, ?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FileUploadHeader ruh = new FileUploadHeader();
+
+			ruh.setId(rs.getLong("Id"));
+			ruh.setEntityCode(rs.getString("EntityCode"));
+			ruh.setType(rs.getString("Type"));
+			ruh.setFileName(rs.getString("FileName"));
+			ruh.setUploadPath(rs.getString("UploadPath"));
+			ruh.setProgress(rs.getInt("Progress"));
+			ruh.setTotalRecords(rs.getInt("TotalRecords"));
+			ruh.setCreatedBy(rs.getLong("CreatedBy"));
+			ruh.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			ruh.setApprovedBy(rs.getLong("ApprovedBy"));
+			ruh.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			ruh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ruh.setLastMntBy(rs.getLong("LastMntBy"));
+			ruh.setVersion(rs.getInt("Version"));
+			ruh.setRecordStatus(rs.getString("RecordStatus"));
+			ruh.setRoleCode(rs.getString("RoleCode"));
+			ruh.setNextRoleCode(rs.getString("NextRoleCode"));
+			ruh.setTaskId(rs.getString("TaskId"));
+			ruh.setNextTaskId(rs.getString("NextTaskId"));
+			ruh.setRecordType(rs.getString("RecordType"));
+			ruh.setWorkflowId(rs.getLong("WorkflowId"));
+			ruh.setCreatedByName(rs.getString("CreatedByName"));
+			ruh.setApprovedByName(rs.getString("ApprovedByName"));
+
+			return ruh;
+		}, type, UploadStatus.INITIATED.status(), UploadStatus.APPROVE.status());
+	}
+
+	@Override
+	public void updateProgress(List<FileUploadHeader> headers, int status) {
+		String sql = "Update FILE_UPLOAD_HEADER Set Progress = ? Where Id = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				FileUploadHeader header = headers.get(i);
+				ps.setInt(1, status);
+				ps.setLong(2, header.getId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return headers.size();
+			}
 		});
 	}
 }

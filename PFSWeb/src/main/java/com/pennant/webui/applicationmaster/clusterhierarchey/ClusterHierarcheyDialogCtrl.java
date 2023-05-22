@@ -102,8 +102,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.clusterHierarchey.getEntity()));
-		return referenceBuffer.toString();
+		return this.clusterHierarchey.getEntity();
 	}
 
 	/**

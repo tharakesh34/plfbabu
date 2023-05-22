@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.DataSource;
@@ -17,10 +18,12 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.AppException;
@@ -37,11 +40,12 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 	private PlatformTransactionManager transactionManager;
 	private DataSource dataSource;
 	private AssetClassificationService assetClassificationService;
+	private FinanceMainDAO financeMainDAO;
 
 	private static final String QUEUE_QUERY = "Select FinID From Asset_Classification_Queue Where ThreadID = ? and Progress = ?";
 
-	public static AtomicLong processedCount = new AtomicLong(0);
-	public static AtomicLong failedCount = new AtomicLong(0);
+	protected static AtomicLong processedCount = new AtomicLong(0);
+	protected static AtomicLong failedCount = new AtomicLong(0);
 
 	private static final String START_MSG = "Effective Asset Classification started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Effective Asset Classification failed on {} for the FinReference {}";
@@ -58,7 +62,6 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
 
 		Date appDate = SysParamUtil.getAppDate();
-		Date monthEnd = DateUtil.getMonthEnd(appDate);
 
 		final int threadId = Integer.parseInt(stepExecutionContext.get(EodConstants.THREAD).toString());
 
@@ -87,7 +90,7 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		itemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus txStatus = null;
 
 		List<Exception> exceptions = new ArrayList<>(1);
@@ -104,26 +107,35 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 				}
 
 				npa.setAssetClassSetup(header);
-
+				assetClassificationService.setLoanInfo(npa);
 				assetClassificationService.setEffClassification(npa);
 
-				boolean npaChange = false;
-				if (monthEnd.compareTo(appDate) == 0) {
-					if (npa.isEffNpaStage() && npa.getLinkedTranID() == null) {
-						npaChange = true;
-						npa.setFinID(finID);
-						npa.setFinReference(npa.getFinReference());
-						assetClassificationService.setLoanInfo(npa);
-					}
-				}
+				AssetClassification napMovement = assetClassificationService.getNpaMovemnt(finID);
+				Long npaMovemntId = assetClassificationService.getNpaMovemntId(finID);
 
 				txStatus = transactionManager.getTransaction(txDef);
 
-				if (npaChange) {
-					assetClassificationService.doPostNpaChange(npa);
+				boolean movedOutFromNpa = assetClassificationService.doPostNpaChange(npa, npaMovemntId);
+
+				if (movedOutFromNpa) {
+					npa.setLinkedTranID(null);
 				}
 
 				assetClassificationService.updateClassification(npa);
+				financeMainDAO.updateNPA(finID, npa.isEffNpaStage());
+
+				if (napMovement == null || isClassficationChange(napMovement, npa)) {
+					npa.setClassDate(appDate);
+					assetClassificationService.saveNpaMovement(npa);
+				}
+
+				if (npaMovemntId == null && npa.isEffNpaStage()) {
+					npa.setNpaTaggedDate(appDate);
+					assetClassificationService.saveNpaTaggingMovement(npa);
+				} else if (npaMovemntId != null && !npa.isEffNpaStage()) {
+					npa.setNpaUnTaggedDate(appDate);
+					assetClassificationService.updateNpaMovement(npaMovemntId, npa);
+				}
 
 				assetClassificationService.updateProgress(finID, EodConstants.PROGRESS_SUCCESS);
 
@@ -165,6 +177,11 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
+	private boolean isClassficationChange(AssetClassification a1, AssetClassification a2) {
+		return !Objects.equals(a1.getNpaClassID(), a2.getNpaClassID())
+				|| !Objects.equals(a1.getEffNpaClassID(), a2.getEffNpaClassID());
+	}
+
 	@Autowired
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
@@ -178,6 +195,11 @@ public class EffAssetClassificationTaskLet implements Tasklet {
 	@Autowired
 	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
 		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

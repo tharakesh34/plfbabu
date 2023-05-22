@@ -56,8 +56,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.OverDueRecoveryPostingsUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -158,7 +158,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	private static List<ValueLabel> finOdForList = PennantStaticListUtil.getODCChargeFor();
 	private static List<ValueLabel> finODCTypeList = PennantStaticListUtil.getODCChargeType();
 	private transient OverDueRecoveryPostingsUtil recoveryPostingsUtil;
-	Date dateValueDate = DateUtility.getAppValueDate();
+	Date dateValueDate = SysParamUtil.getAppValueDate();
 	private boolean isInquiry = false;
 	private transient BigDecimal paidAmount = new BigDecimal(0);
 
@@ -1278,7 +1278,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 			FinanceMain financeMain = financeMainDAO.getFinanceMainById(getOverdueChargeRecovery().getFinID(), "",
 					false);
-			Date dateValueDate = DateUtility.getAppValueDate();
+			Date dateValueDate = SysParamUtil.getAppValueDate();
 			Date SchdDate = getOverdueChargeRecovery().getFinODSchdDate();
 			String finODFor = getOverdueChargeRecovery().getFinODFor();
 			Date movementDate = getOverdueChargeRecovery().getMovementDate();

@@ -45,7 +45,7 @@ public class FlagListModelItemRenderer implements ListitemRenderer<Flag>, Serial
 	private static final long serialVersionUID = 1L;
 
 	public FlagListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

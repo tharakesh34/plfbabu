@@ -455,7 +455,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		private static final long serialVersionUID = 8848425569301884635L;
 
 		public ReceiptListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override

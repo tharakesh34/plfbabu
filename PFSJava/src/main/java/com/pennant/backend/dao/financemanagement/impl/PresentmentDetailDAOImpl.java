@@ -91,7 +91,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", Status, MandateType, LoanType, FinBranch, SchDate, DBStatusId, EntityCode");
 		sql.append(", ImportStatusId, TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, LppReq, BounceReq");
 		if (StringUtils.containsIgnoreCase(type, "View")) {
 			sql.append(", PartnerBankCode, PartnerBankName, PartnerAcctNumber, PartnerAcctType");
 		}
@@ -133,6 +133,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				ph.setNextTaskId(rs.getString("NextTaskId"));
 				ph.setRecordType(rs.getString("RecordType"));
 				ph.setWorkflowId(rs.getLong("WorkflowId"));
+				ph.setLppReq(rs.getBoolean("LppReq"));
+				ph.setBounceReq(rs.getBoolean("BounceReq"));
 
 				if (StringUtils.containsIgnoreCase(type, "View")) {
 					ph.setPartnerBankCode(rs.getString("PartnerBankCode"));
@@ -331,7 +333,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		String sql = extactPresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -466,7 +468,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		String sql = extactRePresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -583,7 +585,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void extactPDCPresentments(PresentmentHeader ph, PresentmentDetailExtractService service) {
 		String sql = extactPDCPresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -709,7 +711,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void extactPDCRePresentments(PresentmentHeader ph, PresentmentDetailExtractService service) {
 		String sql = extactPDCRePresentmentQuery(ph);
 
-		jdbcOperations.query(sql.toString(), ps -> {
+		jdbcOperations.query(sql, ps -> {
 			ps.setInt(1, 1);
 			ps.setBigDecimal(2, BigDecimal.ZERO);
 			ps.setDate(3, DateUtil.getSqlDate(ph.getFromDate()));
@@ -758,10 +760,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append(", Status, MandateType, EmandateSource, FinBranch, Schdate, LoanType, ImportStatusId");
 		sql.append(", TotalRecords, ProcessedRecords, SuccessRecords, FailedRecords, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
-		sql.append(", WorkflowId, dBStatusId, bankCode, EntityCode");
+		sql.append(", WorkflowId, dBStatusId, bankCode, EntityCode, LppReq, BounceReq");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		jdbcOperations.update(sql.toString(), ps -> {
@@ -798,6 +800,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setLong(index++, ph.getdBStatusId());
 			ps.setString(index++, ph.getBankCode());
 			ps.setString(index, ph.getEntityCode());
+			// Fix me
 		});
 
 		return ph.getId();
@@ -968,7 +971,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void deletePresentmentDetails(long presentmentId) {
 		String sql = "Delete from PresentmentDetails where PresentmentId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, presentmentId);
@@ -979,7 +982,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void deletePresentmentHeader(long id) {
 		String sql = "Delete from PresentmentHeader where Id = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			jdbcOperations.update(sql, ps -> {
@@ -1949,7 +1952,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setInt(index++, status);
 			ps.setLong(index, id);

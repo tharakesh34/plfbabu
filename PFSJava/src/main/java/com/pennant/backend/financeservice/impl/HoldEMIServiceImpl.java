@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.HoldEMIService;
@@ -18,6 +17,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> implements HoldEMIService {
 	private static Logger logger = LogManager.getLogger(AddRepaymentServiceImpl.class);
@@ -36,7 +36,7 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 		logger.debug("Entering");
 
 		for (FinanceScheduleDetail finschdDetail : finscheduleData.getFinanceScheduleDetails()) {
-			if (DateUtility.compare(finschdDetail.getSchDate(), finServiceInstruction.getFromDate()) == 0) {
+			if (DateUtil.compare(finschdDetail.getSchDate(), finServiceInstruction.getFromDate()) == 0) {
 				finschdDetail.setDefSchdDate(finServiceInstruction.getToDate());
 				finschdDetail.setBpiOrHoliday(FinanceConstants.FLAG_HOLDEMI);
 				break;
@@ -58,15 +58,15 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 		String lang = "EN";
 		boolean isValidCheck = true;
 		int holdemidays = SysParamUtil.getValueAsInt("HOLDEMI_MAXDAYS");
-		Date datehldEMIAlwd = DateUtility.addDays(finServiceInstruction.getFromDate(), holdemidays);
+		Date datehldEMIAlwd = DateUtil.addDays(finServiceInstruction.getFromDate(), holdemidays);
 		// To Date cannot be greater than the HoldEMi ALwd Days
-		if (DateUtility.compare(finServiceInstruction.getToDate(), datehldEMIAlwd) > 0
-				|| DateUtility.compare(finServiceInstruction.getToDate(), finServiceInstruction.getFromDate()) < 0) {
+		if (DateUtil.compare(finServiceInstruction.getToDate(), datehldEMIAlwd) > 0
+				|| DateUtil.compare(finServiceInstruction.getToDate(), finServiceInstruction.getFromDate()) < 0) {
 			isValidCheck = false;
 			String[] valueParm = new String[3];
 			valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
-			valueParm[1] = DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
-			valueParm[2] = DateUtility.formatToLongDate(datehldEMIAlwd);
+			valueParm[1] = DateUtil.formatToLongDate(finServiceInstruction.getFromDate());
+			valueParm[2] = DateUtil.formatToLongDate(datehldEMIAlwd);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30567", "", valueParm), lang));
 		}
 		// validation for Todate to check whether it is greater than next Schedule if yes then throw the validation
@@ -74,17 +74,17 @@ public class HoldEMIServiceImpl extends GenericService<FinServiceInstruction> im
 			List<FinanceScheduleDetail> schedules = finscheduleData.getFinanceScheduleDetails();
 			Date nextSchdDate = null;
 			for (int i = 0; i < schedules.size(); i++) {
-				if (DateUtility.compare(schedules.get(i).getSchDate(), finServiceInstruction.getFromDate()) == 0) {
+				if (DateUtil.compare(schedules.get(i).getSchDate(), finServiceInstruction.getFromDate()) == 0) {
 					nextSchdDate = schedules.get(i + 1).getSchDate();
 					break;
 				}
 			}
-			if (DateUtility.compare(finServiceInstruction.getToDate(), nextSchdDate) > 0) {
+			if (DateUtil.compare(finServiceInstruction.getToDate(), nextSchdDate) > 0) {
 				isValidCheck = false;
 				// To Date cannot be greater than the HoldEMi ALwd Days
 				String[] valueParm = new String[2];
 				valueParm[0] = Labels.getLabel("label_HoldEMIDialog_ToDate.value");
-				valueParm[1] = DateUtility.formatToShortDate(nextSchdDate);
+				valueParm[1] = DateUtil.formatToShortDate(nextSchdDate);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65028", "", valueParm), lang));
 
 			}

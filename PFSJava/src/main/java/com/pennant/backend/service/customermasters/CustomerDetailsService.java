@@ -130,4 +130,8 @@ public interface CustomerDetailsService {
 	Customer getCustomerCoreBankID(String custCoreBank);
 
 	CustomerDetails prospectAsCIF(String cif);
+
+	String getCustomerPhoneNumberByCustId(long custID);
+
+	List<Customer> getCustomersByPhoneNum(String phoneNum);
 }

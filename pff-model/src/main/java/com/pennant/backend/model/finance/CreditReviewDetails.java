@@ -58,6 +58,7 @@ public class CreditReviewDetails {
 	private BigDecimal dsrcValue = BigDecimal.ZERO;
 	private BigDecimal grossRecipt = BigDecimal.ZERO;
 	private String fieldKeys;
+	private String formulaCells;
 
 	/**
 	 * Total ABB / EMI (of applied loan)
@@ -463,6 +464,14 @@ public class CreditReviewDetails {
 
 	public void setFieldKeys(String fieldKeys) {
 		this.fieldKeys = fieldKeys;
+	}
+
+	public String getFormulaCells() {
+		return formulaCells;
+	}
+
+	public void setFormulaCells(String formulaCells) {
+		this.formulaCells = formulaCells;
 	}
 
 }

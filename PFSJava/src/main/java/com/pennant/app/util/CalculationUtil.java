@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CalculationUtil implements Serializable {
 	private static final long serialVersionUID = -7140560124513312794L;
@@ -181,7 +182,7 @@ public class CalculationUtil implements Serializable {
 
 		boolean isFebSetReq = true;
 		if (yearOfStart == yearOfEnd && (monthOfStart == Calendar.FEBRUARY || monthOfEnd == Calendar.FEBRUARY)) {
-			if (DateUtility.isLeapYear(yearOfStart)) {
+			if (DateUtil.isLeapYear(yearOfStart)) {
 				if (dayOfStart == 29 && dayOfEnd == 29) {
 					isFebSetReq = false;
 				}
@@ -193,7 +194,7 @@ public class CalculationUtil implements Serializable {
 		}
 
 		if (isFebSetReq && monthOfStart == Calendar.FEBRUARY) {
-			if (DateUtility.isLeapYear(yearOfStart)) {
+			if (DateUtil.isLeapYear(yearOfStart)) {
 				if (dayOfStart > 28) {
 					dayOfStart = 30;
 				}
@@ -205,7 +206,7 @@ public class CalculationUtil implements Serializable {
 		}
 
 		if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
-			if (DateUtility.isLeapYear(yearOfEnd)) {
+			if (DateUtil.isLeapYear(yearOfEnd)) {
 				if (dayOfEnd > 28) {
 					dayOfEnd = 30;
 				}
@@ -284,11 +285,11 @@ public class CalculationUtil implements Serializable {
 	}
 
 	private static BigDecimal getIDB_ACT_365FIXED(Calendar startCalendar, Calendar endCalendar) {
-		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / 365d);
+		return BigDecimal.valueOf(getDaysBetween(startCalendar, endCalendar) / 365d);
 	}
 
 	private static BigDecimal getIDB_ACT_360(Calendar startCalendar, Calendar endCalendar) {
-		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / 360d);
+		return BigDecimal.valueOf(getDaysBetween(startCalendar, endCalendar) / 360d);
 	}
 
 	private static BigDecimal getIDB_ACT_365LEAP(Calendar startCalendar, Calendar endCalendar) {
@@ -298,7 +299,7 @@ public class CalculationUtil implements Serializable {
 			daysInYear = 366d;
 		}
 
-		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInYear);
+		return BigDecimal.valueOf(getDaysBetween(startCalendar, endCalendar) / daysInYear);
 	}
 
 	private static BigDecimal getIDB_ACT_365LEAPStart(Calendar startCalendar, Calendar endCalendar) {
@@ -308,7 +309,7 @@ public class CalculationUtil implements Serializable {
 			daysInYear = 366d;
 		}
 
-		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInYear);
+		return BigDecimal.valueOf(getDaysBetween(startCalendar, endCalendar) / daysInYear);
 	}
 
 	private static BigDecimal getIDB_BY_PERIOD(Calendar startCalendar, Calendar endCalendar) {
@@ -477,7 +478,7 @@ public class CalculationUtil implements Serializable {
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_360)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAPS)) {
-			return (int) DateUtility.getDaysBetween(startCalendar, endCalendar);
+			return (int) getDaysBetween(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
 			double daysInMonth = 30d;
 
@@ -504,7 +505,7 @@ public class CalculationUtil implements Serializable {
 			int yearOfStart, int yearOfEnd) {
 		boolean isFebSetReq = true;
 		if (yearOfStart == yearOfEnd && (monthOfStart == Calendar.FEBRUARY || monthOfEnd == Calendar.FEBRUARY)) {
-			if (DateUtility.isLeapYear(yearOfStart)) {
+			if (DateUtil.isLeapYear(yearOfStart)) {
 				if (dayOfStart == 29 && dayOfEnd == 29) {
 					isFebSetReq = false;
 				}
@@ -516,7 +517,7 @@ public class CalculationUtil implements Serializable {
 		}
 
 		if (isFebSetReq && monthOfStart == Calendar.FEBRUARY) {
-			if (DateUtility.isLeapYear(yearOfStart)) {
+			if (DateUtil.isLeapYear(yearOfStart)) {
 				if (dayOfStart > 28) {
 					dayOfStart = 30;
 				}
@@ -529,7 +530,7 @@ public class CalculationUtil implements Serializable {
 
 		if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
 
-			if (DateUtility.isLeapYear(yearOfEnd)) {
+			if (DateUtil.isLeapYear(yearOfEnd)) {
 				if (dayOfEnd > 28) {
 					dayOfEnd = 30;
 				}
@@ -1129,5 +1130,22 @@ public class CalculationUtil implements Serializable {
 
 		return penaltyBalance.add(lpiBalance);
 
+	}
+
+	private static long getDaysBetween(Calendar startCalendar, Calendar endCalendar) {
+		return Math
+				.round((endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (1000d * 60d * 60d * 24d));
+	}
+
+	public static void setODTotals(FinODDetails fod) {
+		BigDecimal totPenaltyBal = fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid())
+				.subtract(fod.getTotWaived());
+		if (totPenaltyBal.compareTo(BigDecimal.ZERO) >= 0) {
+			fod.setTotPenaltyBal(totPenaltyBal);
+			fod.setPayableAmount(BigDecimal.ZERO);
+		} else {
+			fod.setTotPenaltyBal(BigDecimal.ZERO);
+			fod.setPayableAmount(fod.getTotPenaltyPaid().subtract(fod.getTotWaived()).subtract(fod.getTotPenaltyAmt()));
+		}
 	}
 }

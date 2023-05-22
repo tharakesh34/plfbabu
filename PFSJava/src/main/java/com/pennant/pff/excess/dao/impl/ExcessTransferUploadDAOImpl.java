@@ -18,23 +18,30 @@ import com.pennanttech.pennapps.core.resource.Message;
 
 public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUpload> implements ExcessTransferUploadDAO {
 
+	public ExcessTransferUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<ExcessTransferUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select HeaderId, Id, FinID, FinReference");
-		sql.append(", TransferFromType, TransferToType");
-		sql.append(", TransferAmount, Status, Progress, ErrorCode, ErrorDesc");
-		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		StringBuilder sql = new StringBuilder("Select eu.HeaderId, eu.Id, eu.FinID, eu.FinReference, eu.RecordSeq");
+		sql.append(", eu.TransferFromType, eu.TransferToType");
+		sql.append(", eu.TransferAmount, eu.Status, eu.Progress, eu.ErrorCode, eu.ErrorDesc");
+		sql.append(", fh.CreatedOn, fh.CreatedBy, fh.ApprovedOn, fh.ApprovedBy");
+		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD eu");
+		sql.append(" Inner Join File_Upload_Header fh on fh.ID = eu.HeaderID");
+		sql.append(" Where HeaderId = ? and eu.Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ExcessTransferUpload rpud = new ExcessTransferUpload();
 
 			rpud.setHeaderId(rs.getLong("HeaderId"));
 			rpud.setId(rs.getLong("Id"));
 			rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			rpud.setReference(rs.getString("FinReference"));
+			rpud.setRecordSeq(rs.getLong("RecordSeq"));
 			rpud.setTransferFromType(rs.getString("TransferFromType"));
 			rpud.setTransferToType(rs.getString("TransferToType"));
 			rpud.setTransferAmount(rs.getBigDecimal("TransferAmount"));
@@ -42,8 +49,13 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 			rpud.setProgress(rs.getInt("Progress"));
 			rpud.setErrorCode(rs.getString("ErrorCode"));
 			rpud.setErrorDesc(rs.getString("ErrorDesc"));
+			rpud.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			rpud.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedBy")));
+			rpud.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			rpud.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+
 			return rpud;
-		});
+		}, headerID, "C");
 	}
 
 	@Override
@@ -79,7 +91,7 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update EXCESS_TRANSFER_DETAILS_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -92,8 +104,8 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "C" : "R");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

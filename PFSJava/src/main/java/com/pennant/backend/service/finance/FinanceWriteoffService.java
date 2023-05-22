@@ -25,4 +25,6 @@ public interface FinanceWriteoffService {
 
 	int getMaxFinanceWriteoffSeq(long finID, Date writeoffDate, String string);
 
+	boolean isWriteoffLoan(long finID, String string);
+
 }

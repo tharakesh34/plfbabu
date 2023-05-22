@@ -63,4 +63,6 @@ public interface BankBranchService {
 	BankBranch getBankBranch(String iFSC, String micr, String bankCode, String branchCode);
 
 	boolean validateBranchCode(BankBranch bankBranch, String mandateType);
+
+	BankBranch getBankBrachDetails(String ifsc, String bankName);
 }

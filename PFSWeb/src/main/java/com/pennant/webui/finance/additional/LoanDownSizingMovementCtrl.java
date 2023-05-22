@@ -10,11 +10,11 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinAssetAmtMovement;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class LoanDownSizingMovementCtrl extends GFCBaseCtrl<FinAssetAmtMovement> {
@@ -86,7 +86,7 @@ public class LoanDownSizingMovementCtrl extends GFCBaseCtrl<FinAssetAmtMovement>
 			Listitem item = new Listitem();
 			Listcell lc;
 
-			lc = new Listcell(DateUtility.formatToLongDate(movement.getMovementDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(movement.getMovementDate()));
 			lc.setParent(item);
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(movement.getMovementAmount(), formatter));

@@ -47,6 +47,7 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 	private long id = Long.MIN_VALUE;
 	private long seqNo;
 	private String sanctionCondition;
+	private String remarks;
 	private String Status;
 	private SanctionConditions befImage;
 	private LoggedInUser userDetails;
@@ -130,6 +131,14 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		Status = status;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 }

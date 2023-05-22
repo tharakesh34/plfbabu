@@ -8,6 +8,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -21,6 +22,7 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 	private String fromFinReference;
 	private String toFinReference;
 	private String excessType;
+	private String feeTypeCode;
 	private BigDecimal excessAmount;
 	private String allocationType;
 	private Long feeId;
@@ -34,8 +36,10 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 	private LoggedInUser userDetails;
 	private Long crossLoanId;
 	private Date appDate;
-	private ManualAdvise manualAdvise;
-	private Long adviseId;
+	private List<ManualAdvise> advises = new ArrayList<>();
+	private FinanceType finType;
+
+	private BigDecimal balanceAmount = BigDecimal.ZERO;
 
 	public CrossLoanKnockoffUpload() {
 		super();
@@ -87,6 +91,14 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 
 	public void setExcessType(String excessType) {
 		this.excessType = excessType;
+	}
+
+	public String getFeeTypeCode() {
+		return feeTypeCode;
+	}
+
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 	public BigDecimal getExcessAmount() {
@@ -193,20 +205,28 @@ public class CrossLoanKnockoffUpload extends UploadDetails {
 		this.appDate = appDate;
 	}
 
-	public ManualAdvise getManualAdvise() {
-		return manualAdvise;
+	public List<ManualAdvise> getAdvises() {
+		return advises;
 	}
 
-	public void setManualAdvise(ManualAdvise manualAdvise) {
-		this.manualAdvise = manualAdvise;
+	public void setAdvises(List<ManualAdvise> advises) {
+		this.advises = advises;
 	}
 
-	public Long getAdviseId() {
-		return adviseId;
+	public BigDecimal getBalanceAmount() {
+		return balanceAmount;
 	}
 
-	public void setAdviseId(Long adviseId) {
-		this.adviseId = adviseId;
+	public void setBalanceAmount(BigDecimal balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public FinanceType getFinType() {
+		return finType;
+	}
+
+	public void setFinType(FinanceType finType) {
+		this.finType = finType;
 	}
 
 }

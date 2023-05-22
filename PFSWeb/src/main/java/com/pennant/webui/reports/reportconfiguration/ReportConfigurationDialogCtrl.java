@@ -600,7 +600,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 		}
 		if (!this.dataSourceName.isDisabled()) {
 			this.dataSourceName.setConstraint(
-					new PTListValidator(Labels.getLabel("label_ReportConfigurationDialog_DataSourceName.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_ReportConfigurationDialog_DataSourceName.value"),
 							dataSourceNamesList, true));
 		}
 		if (!this.menuItemCode.isReadonly()) {
@@ -1129,7 +1129,7 @@ public class ReportConfigurationDialogCtrl extends GFCBaseCtrl<ReportConfigurati
 	private class ReportFilterFieldsListModelItemRenderer implements ListitemRenderer<ReportFilterFields> {
 
 		public ReportFilterFieldsListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override

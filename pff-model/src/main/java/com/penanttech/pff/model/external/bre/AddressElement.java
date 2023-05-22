@@ -30,7 +30,7 @@ public class AddressElement {
 
 	@JsonCreator
 	public AddressElement() {
-
+	    super();
 	}
 
 	public String getAddressType() {

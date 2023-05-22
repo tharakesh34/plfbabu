@@ -201,7 +201,7 @@ public class BounceReasonListCtrl extends GFCBaseListCtrl<BounceReason> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  BounceID =?");
 
 		if (doCheckAuthority(bouncereason, whereCond.toString(), new Object[] { bouncereason.getBounceID() })) {

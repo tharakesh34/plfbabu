@@ -27,7 +27,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	private Long invoiceID;
 
 	public FinODAmzTaxDetail() {
-
+	    super();
 	}
 
 	public long getTaxSeqId() {

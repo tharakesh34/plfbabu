@@ -28,6 +28,8 @@ public class EffAssetClassificationPartition implements Partitioner {
 
 		Map<String, ExecutionContext> partitionData = new HashMap<>();
 
+		assetClassificationService.handleFailures();
+
 		long queueCount = assetClassificationService.getQueueCount();
 
 		if (queueCount == 0) {
@@ -37,7 +39,7 @@ public class EffAssetClassificationPartition implements Partitioner {
 		boolean recordsLessThanThread = false;
 		long totalLoans = 0;
 
-		long noOfRows = Math.round((new Double(queueCount) / new Double(threadCount)));
+		long noOfRows = Math.round(Double.valueOf(queueCount) / Double.valueOf(threadCount));
 
 		if (queueCount < threadCount) {
 			recordsLessThanThread = true;

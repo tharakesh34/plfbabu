@@ -80,7 +80,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/CollateralHeaderDialog.zul file.
@@ -98,11 +98,9 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	protected Borderlayout borderlayoutCollateralAssignment;
 
 	private ArrayList<Object> headerList;
-	private String module;
 	private FinanceDetail financedetail;
 	private FinMaintainInstruction finMaintainInstruction;
 	private FinanceSelectCtrl financeSelectCtrl = null;
-	private transient boolean newFinance;
 
 	// Collateral Total Count Details
 	protected Label collateralCount;
@@ -170,7 +168,6 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			if (arguments.containsKey("financeMainDialogCtrl")) {
 				if (arguments.get("financeMainDialogCtrl") instanceof FinanceMainBaseCtrl) {
 					financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
-					setNewFinance(true);
 				}
 			}
 
@@ -218,9 +215,6 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				headerList = (ArrayList<Object>) arguments.get("finHeaderList");
 			}
 
-			if (arguments.containsKey("module")) {
-				module = (String) arguments.get("module");
-			}
 			doEdit();
 
 			doCheckRights();
@@ -337,8 +331,8 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
-		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
+
+		aFinMaintainInstruction = ObjectUtil.clone(finMaintainInstruction);
 
 		doWriteComponentsToBean(aFinMaintainInstruction);
 
@@ -811,10 +805,6 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 
 	public void setFinancedetail(FinanceDetail financedetail) {
 		this.financedetail = financedetail;
-	}
-
-	public void setNewFinance(boolean newFinance) {
-		this.newFinance = newFinance;
 	}
 
 	public FinCollateralDelinkService getFinCollateralDelinkService() {

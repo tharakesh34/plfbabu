@@ -41,7 +41,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -51,6 +50,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -352,16 +352,13 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					this.emailId.setValue(filter.getValue().toString());
 				} else if ("bussCommenceDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_bussCommenceDate, filter);
-					this.bussCommenceDate
-							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.bussCommenceDate.setValue(DateUtil.parseFullDate(filter.getValue().toString()));
 				} else if ("servCommenceDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_servCommenceDate, filter);
-					this.servCommenceDate
-							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.servCommenceDate.setValue(DateUtil.parseFullDate(filter.getValue().toString()));
 				} else if ("bankRelationshipDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_bankRelationshipDate, filter);
-					this.bankRelationshipDate
-							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.bankRelationshipDate.setValue(DateUtil.parseFullDate(filter.getValue().toString()));
 				} else if ("paidUpCapital".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_paidUpCapital, filter);
 					this.paidUpCapital.setValue(filter.getValue().toString());
@@ -572,7 +569,7 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					// do nothing
 				} else {
 					so.addFilter(new Filter("bussCommenceDate",
-							DateUtility.format(this.bussCommenceDate.getValue(), PennantConstants.DBDateFormat),
+							DateUtil.format(this.bussCommenceDate.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}
@@ -587,7 +584,7 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					// do nothing
 				} else {
 					so.addFilter(new Filter("servCommenceDate",
-							DateUtility.format(this.servCommenceDate.getValue(), PennantConstants.DBDateFormat),
+							DateUtil.format(this.servCommenceDate.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}
@@ -602,7 +599,7 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					// do nothing
 				} else {
 					so.addFilter(new Filter("bankRelationshipDate",
-							DateUtility.format(this.bankRelationshipDate.getValue(), PennantConstants.DBDateFormat),
+							DateUtil.format(this.bankRelationshipDate.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}

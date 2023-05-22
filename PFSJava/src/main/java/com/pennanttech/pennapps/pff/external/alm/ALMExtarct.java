@@ -46,7 +46,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -57,6 +56,7 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.ALMProcess;
 import com.pennanttech.pff.model.external.alm.ALM;
 
@@ -97,7 +97,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 		paramMap.addValue("FINISACTIVE", 1);
 		paramMap.addValue("PAYMENTTYPE", "EMIINADV");
 		paramMap.addValue("ACCRUEDON", appDate);
-		paramMap.addValue("MATURITYDATE", DateUtility.getMonthStart(appDate));
+		paramMap.addValue("MATURITYDATE", DateUtil.getMonthStart(appDate));
 		paramMap.addValue("ROWNUM", batchSize);
 
 		try {

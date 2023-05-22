@@ -1,8 +1,10 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class XcessPayables {
+public class XcessPayables implements Serializable {
+	private static final long serialVersionUID = 966281186831332116L;
 
 	private long idx = 0;
 	private long payableID = 0;

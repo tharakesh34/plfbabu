@@ -38,7 +38,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -226,7 +228,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where PhoneCustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -368,9 +370,8 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		source.addValue("PhoneCustId", id);
 		source.addValue("PhoneTypeCode", phoneTypeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerPhoneNumbers");
-
 		selectSql.append(" WHERE PhoneCustId = :PhoneCustId AND PhoneTypeCode = :PhoneTypeCode");
 
 		logger.debug("insertSql: " + selectSql.toString());
@@ -394,7 +395,7 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PhoneTypeCode", phoneTypeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM BMTPhoneTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("PhoneTypeCode= :PhoneTypeCode");
@@ -426,6 +427,110 @@ public class CustomerPhoneNumberDAOImpl extends BasicDao<CustomerPhoneNumber> im
 		RowMapper<CustomerPhoneNumber> typeRowMapper = BeanPropertyRowMapper.newInstance(CustomerPhoneNumber.class);
 
 		return this.jdbcTemplate.query(sql.toString(), mapSqlParameterSource, typeRowMapper);
+	}
+
+	@Override
+	public String getCustomerPhoneNumberByCustId(long custID) {
+		String sql = "Select PhoneNumber From CustomerPhoneNumbers Where PhoneCustID = ? and PhoneTypePriority = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, String.class, custID,
+				Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
+	}
+
+	@Override
+	public List<Customer> getCustomersByPhoneNum(String phoneNum) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" C.CustID, C.CustCIF,C.CustShrtName ");
+		sql.append(" From Customers C");
+		sql.append(" Inner Join CustomerPhoneNumbers CP on CP.PhoneCustID = C.CustID");
+		sql.append("  Where CP.PhoneNumber = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			Customer customer = new Customer();
+
+			customer.setCustID(rs.getLong("CustID"));
+			customer.setCustCIF(rs.getString("CustCIF"));
+			customer.setCustShrtName(rs.getString("CustShrtName"));
+
+			return customer;
+		}, phoneNum);
+	}
+
+	@Override
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberByID(final long id, long phoneTypePriority) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PhoneCustID, PhoneTypeCode");
+		sql.append(", PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerPhoneNumbers");
+		sql.append(" Where PhoneCustID = ? and PhoneTypePriority = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerPhoneNumber custphone = new CustomerPhoneNumber();
+
+			custphone.setPhoneCustID(rs.getLong("PhoneCustID"));
+			custphone.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+			custphone.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+			custphone.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+			custphone.setPhoneNumber(rs.getString("PhoneNumber"));
+			custphone.setPhoneTypePriority((int) rs.getLong("PhoneTypePriority"));
+			custphone.setVersion(rs.getInt("Version"));
+			custphone.setLastMntBy(rs.getLong("LastMntBy"));
+			custphone.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			custphone.setRecordStatus(rs.getString("RecordStatus"));
+			custphone.setRoleCode(rs.getString("RoleCode"));
+			custphone.setNextRoleCode(rs.getString("NextRoleCode"));
+			custphone.setTaskId(rs.getString("TaskId"));
+			custphone.setNextTaskId(rs.getString("NextTaskId"));
+			custphone.setRecordType(rs.getString("RecordType"));
+			custphone.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return custphone;
+		}, id, phoneTypePriority);
+	}
+
+	@Override
+	public List<CustomerPhoneNumber> getCustomerPhoneNumberByID(final long id, String typeCode) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PhoneCustID, PhoneTypeCode,");
+		sql.append(" PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority,");
+		sql.append(" lovDescPhoneTypeCodeName, lovDescPhoneCountryName,PhoneRegex,");
+		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
+		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" From CustomerPhoneNumbers");
+		sql.append(" Where PhoneCustID = ? and PhoneTypeCode = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerPhoneNumber custphone = new CustomerPhoneNumber();
+
+			custphone.setPhoneCustID(rs.getLong("PhoneCustID"));
+			custphone.setPhoneTypeCode(rs.getString("PhoneTypeCode"));
+			custphone.setPhoneCountryCode(rs.getString("PhoneCountryCode"));
+			custphone.setPhoneAreaCode(rs.getString("PhoneAreaCode"));
+			custphone.setPhoneNumber(rs.getString("PhoneNumber"));
+			custphone.setPhoneTypePriority((int) rs.getLong("PhoneTypePriority"));
+			custphone.setVersion(rs.getInt("Version"));
+			custphone.setLastMntBy(rs.getLong("LastMntBy"));
+			custphone.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			custphone.setRecordStatus(rs.getString("RecordStatus"));
+			custphone.setRoleCode(rs.getString("RoleCode"));
+			custphone.setNextRoleCode(rs.getString("NextRoleCode"));
+			custphone.setTaskId(rs.getString("TaskId"));
+			custphone.setNextTaskId(rs.getString("NextTaskId"));
+			custphone.setRecordType(rs.getString("RecordType"));
+			custphone.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return custphone;
+		}, id, typeCode);
 	}
 
 	@Override

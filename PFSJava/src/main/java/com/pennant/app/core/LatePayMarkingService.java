@@ -60,7 +60,9 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -690,8 +692,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		finOD.setFinMaxODAmt(finOD.getFinMaxODPft().add(finOD.getFinMaxODPri()).add(finOD.getMaxOverdraftTxnChrg()));
 
 		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
-
-		finOD.setFinCurODDays(DateUtil.getDaysBetween(finOD.getFinODSchdDate(), valueDate));
 		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
 		// worked.
 
@@ -708,6 +708,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		finOD.setLpCpz(false);
 		finOD.setLpCpzAmount(BigDecimal.ZERO);
 		finOD.setLpCurCpzBal(BigDecimal.ZERO);
+		finOD.setOdMinAmount(pr.getOdMinAmount());
 
 		return finOD;
 	}

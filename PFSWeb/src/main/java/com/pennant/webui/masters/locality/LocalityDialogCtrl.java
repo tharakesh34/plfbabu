@@ -86,8 +86,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.locality.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.locality.getId());
 	}
 
 	/**

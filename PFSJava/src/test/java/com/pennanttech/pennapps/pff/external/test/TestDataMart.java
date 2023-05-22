@@ -35,7 +35,7 @@ public class TestDataMart {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			new DataMartExtarct(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process();
+			new DataMartExtarct(dataSource, 1000L, DateUtil.getSysDate(), DateUtil.getSysDate()).process();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 

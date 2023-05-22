@@ -26,6 +26,7 @@ package com.pennant.backend.dao.customermasters;
 
 import java.util.List;
 
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 
 /**
@@ -54,6 +55,14 @@ public interface CustomerPhoneNumberDAO {
 	int getPhoneTypeCodeCount(String phoneTypeCode);
 
 	List<CustomerPhoneNumber> getCustIDByPhoneNumber(String phoneNumber, String type);
+
+	String getCustomerPhoneNumberByCustId(long custID);
+
+	List<Customer> getCustomersByPhoneNum(String phoneNum);
+
+	List<CustomerPhoneNumber> getCustomerPhoneNumberByID(long id, long phoneTypePriority);
+
+	List<CustomerPhoneNumber> getCustomerPhoneNumberByID(long id, String typeCode);
 
 	String getPhoneNumberByCustID(long custID);
 }

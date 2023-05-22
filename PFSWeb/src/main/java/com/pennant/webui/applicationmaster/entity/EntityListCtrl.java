@@ -198,7 +198,7 @@ public class EntityListCtrl extends GFCBaseListCtrl<Entity> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  EntityCode =?");
 
 		if (doCheckAuthority(entity, whereCond.toString(), new Object[] { entity.getEntityCode() })) {

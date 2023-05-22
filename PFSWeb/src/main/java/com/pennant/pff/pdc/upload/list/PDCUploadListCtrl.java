@@ -14,7 +14,7 @@ public class PDCUploadListCtrl extends AUploadListCtrl {
 	protected Window window;
 
 	protected PDCUploadListCtrl(@Autowired UploadService chequeUploadService) {
-		super(chequeUploadService, UploadTypes.CHEQUE);
+		super(chequeUploadService, UploadTypes.CHEQUES);
 	}
 
 	@Override

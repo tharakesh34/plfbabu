@@ -61,7 +61,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -170,7 +169,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> {
 	public void onClick$btndownload(Event event) {
 		logger.debug("Entering" + event.toString());
 		long userId = getUserWorkspace().getLoggedInUser().getUserId();
-		Date transcationDate = DateUtility.getSqlDate(DateUtil.getSysDate());
+		Date transcationDate = DateUtil.getSqlDate(DateUtil.getSysDate());
 		String whereCond = "and FILENAME in (" + "'" + fileName.getValue() + "'" + ")and lastmntby = " + "'" + userId
 				+ "'" + "and transactiondate = '" + transcationDate + "'";
 		StringBuilder searchCriteriaDesc = new StringBuilder(" ");

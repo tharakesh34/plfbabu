@@ -21,7 +21,7 @@ public class PosidexCustomerAddress extends Posidex implements Serializable {
 	private String email;
 
 	public PosidexCustomerAddress() {
-
+	    super();
 	}
 
 	public String getAddresstype() {

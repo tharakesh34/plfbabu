@@ -15,7 +15,7 @@ public class OverdueDetail implements Serializable {
 	private static final long serialVersionUID = 2302891876161608684L;
 
 	public OverdueDetail() {
-
+	    super();
 	}
 
 	private boolean applyODPenalty;

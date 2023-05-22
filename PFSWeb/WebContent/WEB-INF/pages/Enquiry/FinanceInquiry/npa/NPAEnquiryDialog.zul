@@ -85,6 +85,33 @@
 								</rows>
 							</grid>
 						</groupbox>
+						
+						<groupbox id="gb_SecondaryNPAStage" height="auto">
+							<caption label="${c:l('label_DPDEnquiryDialog_SecondaryNPAStage')}" />
+							<grid id="grid_SecondaryBasicDetails" sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="padding-left:20px;">
+								<columns>
+									<column width="200px" />
+									<column />
+									<column width="200px" />
+									<column />
+								</columns>
+								<rows>
+									<row>
+										<label value="${c:l('label_npa_secondary_npa_flag')}" />
+										<textbox id="secondaryNpaFlag" readonly="true" width="250px" />
+										<label value="${c:l('label_secondary_npa_date')}" />
+										<textbox id="secondaryNpaDate" readonly="true" width="250px" />
+									</row>
+									<row>
+										<label value="${c:l('label_secondary_npa_classification')}" />
+										<textbox id="secondaryNpaClass" readonly="true" width="250px" />
+										<label value="${c:l('label_secondary_npa_modified_date')}" />
+										<textbox id="secondaryNpaModifiedDate" readonly="true" width="250px" />
+									</row>
+								</rows>
+							</grid>
+						</groupbox>
 					</div>
 				</center>
 			</borderlayout>

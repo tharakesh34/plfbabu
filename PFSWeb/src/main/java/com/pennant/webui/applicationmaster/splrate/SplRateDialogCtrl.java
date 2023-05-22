@@ -45,7 +45,6 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -59,6 +58,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -370,17 +370,17 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	public void dateValidation() {
 		Date curBussniessDate = SysParamUtil.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
-		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
+		Date dateBackward = DateUtil.addDays(curBussniessDate, daysBackward * -1);
 
 		int daysForward = SysParamUtil.getValueAsInt("FVRC");
-		Date dateForward = DateUtility.addDays(curBussniessDate, daysForward);
+		Date dateForward = DateUtil.addDays(curBussniessDate, daysForward);
 
 		if (this.sREffDate.getValue().before(dateBackward) || this.sREffDate.getValue().after(dateForward)) {
 			throw new WrongValueException(sREffDate,
 					Labels.getLabel("DATE_ALLOWED_RANGE",
 							new String[] { Labels.getLabel("label_SplRateDialog_SREffDate.value"),
-									DateUtility.formatToShortDate(dateBackward),
-									DateUtility.formatToShortDate(dateForward) }));
+									DateUtil.formatToShortDate(dateBackward),
+									DateUtil.formatToShortDate(dateForward) }));
 		}
 	}
 
@@ -813,7 +813,7 @@ public class SplRateDialogCtrl extends GFCBaseCtrl<SplRate> {
 	@Override
 	protected String getReference() {
 		return getSplRate().getSRType() + PennantConstants.KEY_SEPERATOR
-				+ DateUtility.format(getSplRate().getSREffDate(), PennantConstants.DBDateFormat);
+				+ DateUtil.format(getSplRate().getSREffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

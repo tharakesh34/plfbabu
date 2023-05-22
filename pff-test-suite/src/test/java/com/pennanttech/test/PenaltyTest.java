@@ -17,7 +17,6 @@ public class PenaltyTest {
 		List<FinODPenaltyRate> prrates = new ArrayList<>();
 		FinODPenaltyRate pr1 = new FinODPenaltyRate();
 		FinODPenaltyRate pr2 = new FinODPenaltyRate();
-		FinODPenaltyRate pr3 = new FinODPenaltyRate();
 
 		pr1.setFinEffectDate(DateUtil.getDate(2019, 7, 11));
 		pr1.setODChargeType("E");
@@ -28,11 +27,6 @@ public class PenaltyTest {
 		pr2.setODChargeType("E");
 		pr2.setODChargeAmtOrPerc(new BigDecimal("1600"));
 		prrates.add(pr2);
-
-		/*
-		 * pr3.setFinEffectDate(DateUtil.getDate(2019, 10, 19)); pr3.setODChargeType("E"); pr3.setODChargeAmtOrPerc(new
-		 * BigDecimal("1700")); prrates.add(pr3);
-		 */
 
 		Date datePrv = DateUtil.getDate(2019, 7, 15);
 		Date dateCur = DateUtil.getDate(2019, 10, 17);

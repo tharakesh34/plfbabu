@@ -46,7 +46,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddTermsService;
@@ -61,6 +60,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -290,7 +290,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(
-							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+							DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					if (fillBefore != null && curSchd.getSchDate().compareTo(fillBefore) < 0) {
@@ -554,7 +554,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				if (DateUtility.compare(curSchd.getSchDate(), grcEndDate) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), grcEndDate) <= 0) {
 					continue;
 				}
 
@@ -604,7 +604,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (addToCombo) {
 					comboitem = new Comboitem();
 					comboitem.setLabel(
-							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+							DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 					if (getFinanceScheduleDetail() != null

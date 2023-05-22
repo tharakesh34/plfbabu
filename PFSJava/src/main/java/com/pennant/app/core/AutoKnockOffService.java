@@ -52,7 +52,7 @@ public class AutoKnockOffService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void process(AutoKnockOffExcess knockOffData) {
+	public void process(AutoKnockOffExcess knockOffData) {
 		logger.debug(Literal.ENTERING);
 
 		List<AutoKnockOffExcessDetails> list = knockOffData.getExcessDetails();
@@ -104,6 +104,7 @@ public class AutoKnockOffService {
 			ad.setPayableType(knockOffData.getAmountType());
 			ad.setPayableId(knockOffData.getPayableID());
 			ad.setEventProperties(EODUtil.EVENT_PROPS);
+			ad.setCrossLoanAutoKnockOff(knockOffData.isCrossLoanAutoKnockOff());
 
 			for (Entry<Long, List<AutoKnockOffFeeMapping>> entry : knockOffMap.entrySet()) {
 				ad.setBalAmount(ad.getAmount().subtract(ad.getUtilzedAmount()));
@@ -143,8 +144,10 @@ public class AutoKnockOffService {
 			}
 		}
 
-		autoKnockOffDAO.updateExcessData(knockOffData);
-		autoKnockOffDAO.updateExcessDetails(knockOffData.getExcessDetails());
+		if (!knockOffData.isCrossLoanAutoKnockOff()) {
+			autoKnockOffDAO.updateExcessData(knockOffData);
+			autoKnockOffDAO.updateExcessDetails(knockOffData.getExcessDetails());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

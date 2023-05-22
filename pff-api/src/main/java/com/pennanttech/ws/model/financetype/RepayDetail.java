@@ -24,7 +24,7 @@ public class RepayDetail implements Serializable {
 	private static final long serialVersionUID = -9071743448729728471L;
 
 	public RepayDetail() {
-
+	    super();
 	}
 
 	private String finRateType;

@@ -36,7 +36,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -58,8 +57,8 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -69,10 +68,11 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
@@ -360,8 +360,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.currency.setValue(aFinanceMain.getFinCcy());
 		this.finType.setValue(aFinanceMain.getFinType());
 		this.recordStatus.setValue(aFinanceMain.getRecordStatus());
-		this.startDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getFinStartDate()));
-		this.maturityDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getMaturityDate()));
+		this.startDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getFinStartDate()));
+		this.maturityDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getMaturityDate()));
 
 		// DownSizing Details
 		this.totSanctionedAmt.setValue(finAssetValue);
@@ -656,8 +656,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		Cloner cloner = new Cloner();
-		FinanceDetail aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		FinanceDetail aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
 		// Finance Accounting Details Tab
@@ -1052,8 +1051,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				aFinScheduleData.setFinServiceInstructions(finServInstList);
 				setFinScheduleData(aFinScheduleData);
 
-				Cloner cloner = new Cloner();
-				newFinSchdData = cloner.deepClone(getFinScheduleData());
+				newFinSchdData = ObjectUtil.clone(getFinScheduleData());
 
 			} else {
 
@@ -1097,12 +1095,11 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private void getScheduleDetails(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 
-		Cloner cloner = new Cloner();
 		isSchdBuildReq = false;
 		isDownsizeError = false;
 
 		// Actual Schedules
-		FinScheduleData scheduleData = cloner.deepClone(finScheduleData);
+		FinScheduleData scheduleData = ObjectUtil.clone(finScheduleData);
 
 		if (finAvailableAmt.compareTo(this.downSizingAmt.getActualValue()) == 0) {
 
@@ -1110,8 +1107,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (newFinSchdData == null) {
 				doWriteComponentsToBean(scheduleData);
 			} else {
-				cloner = new Cloner();
-				scheduleData = cloner.deepClone(newFinSchdData);
+				scheduleData = ObjectUtil.clone(newFinSchdData);
 			}
 		}
 
@@ -1120,7 +1116,6 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			scheduleDetailDialogCtrl.doFillScheduleList(scheduleData);
 		}
 
-		cloner = null;
 		scheduleData = null;
 
 		logger.debug(Literal.LEAVING);
@@ -1155,8 +1150,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// 2. ---> Schedule Rendering
 		if (!onLoadProcess) {
 
-			Cloner cloner = new Cloner();
-			FinanceDetail aFinanceDetail = cloner.deepClone(getFinanceDetail());
+			FinanceDetail aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 			// TODO : Render the Schedule Details While selecting TAB, NOT ON OPENING THE FINANCE
 			if (isSchdBuildReq) {
@@ -1210,14 +1204,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			eventCode = AccountingEvent.SCDCHG;
 			financeDetail.setAccountingEventCode(eventCode);
 
-			long acSetID = Long.MIN_VALUE;
-			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-				acSetID = AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
-						FinanceConstants.MODULEID_PROMOTION);
-			} else {
-				acSetID = AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE);
-			}
+			Long acSetID = AccountingEngine.getAccountSetID(finMain, eventCode);
 
 			final Map<String, Object> map = getDefaultArguments();
 

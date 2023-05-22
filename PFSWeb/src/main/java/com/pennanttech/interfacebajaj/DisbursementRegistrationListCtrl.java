@@ -26,8 +26,8 @@
 package com.pennanttech.interfacebajaj;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +69,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Cluster;
@@ -646,10 +645,10 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		}
 
 		try {
-			Date date = DateUtility.addDays(SysParamUtil.getAppDate(), futureDays);
-			if (DateUtility.compare(this.toDate.getValue(), date) > 0) {
+			Date date = DateUtil.addDays(SysParamUtil.getAppDate(), futureDays);
+			if (DateUtil.compare(this.toDate.getValue(), date) > 0) {
 				throw new WrongValueException(this.toDate, Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-						new String[] { "To Date", DateUtility.formatToShortDate(date) }));
+						new String[] { "To Date", DateUtil.formatToShortDate(date) }));
 			}
 
 		} catch (WrongValueException we) {

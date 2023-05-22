@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -16,11 +17,13 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.model.Queing;
 import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.npa.model.AssetClassification;
 import com.pennanttech.pff.provision.model.NpaProvisionStage;
@@ -40,13 +43,14 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public void saveStage(List<NpaProvisionStage> list) {
 		StringBuilder sql = new StringBuilder("Insert Into Npa_Provision_Stage (");
-		sql.append("EodDate, EntityCode");
-		sql.append(", CustID, CustCategoryCode, FinType, Product, FinCcy, FinBranch, FinID, FinReference");
+		sql.append("EodDate, EntityCode, CustID, CustCoreBank, CustCategoryCode");
+		sql.append(", FinType, Product, FinCcy, FinBranch, FinID, FinReference, WriteOffLoan, UnderSettlement");
 		sql.append(", FinAssetValue, FinCurrAssetValue, OsPrincipal, OsProfit, FuturePrincipal, OdPrincipal, OdProfit");
 		sql.append(", TotPriBal, TotPriPaid, TotPftPaid, TotPftAccrued, AmzTillLBDate, TillDateSchdPri");
-		sql.append(", PastDueDays, PastDueDate, EffFinID, EffFinReference, LinkedLoan");
+		sql.append(", PastDueDays, PastDueDate, DerivedPastDueDate, EffFinID, EffFinReference, LinkedLoan");
 		sql.append(")");
-		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(
+				" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -61,6 +65,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setDate(index++, JdbcUtil.getDate(item.getEodDate()));
 				ps.setString(index++, item.getEntityCode());
 				ps.setLong(index++, item.getCustID());
+				ps.setString(index++, item.getCustCoreBank());
 				ps.setString(index++, item.getCustCategoryCode());
 				ps.setString(index++, item.getFinType());
 				ps.setString(index++, item.getProduct());
@@ -68,6 +73,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setString(index++, item.getFinBranch());
 				ps.setObject(index++, item.getFinID());
 				ps.setString(index++, item.getFinReference());
+				ps.setBoolean(index++, item.isWriteOffLoan());
+				ps.setBoolean(index++, item.isUnderSettlement());
 				ps.setBigDecimal(index++, item.getFinAssetValue());
 				ps.setBigDecimal(index++, item.getFinCurrAssetValue());
 				ps.setBigDecimal(index++, item.getOsPrincipal());
@@ -83,6 +90,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setBigDecimal(index++, item.getTillDateSchdPri());
 				ps.setInt(index++, item.getPastDueDays());
 				ps.setDate(index++, JdbcUtil.getDate(item.getPastDueDate()));
+				ps.setDate(index++, JdbcUtil.getDate(item.getDerivedPastDueDate()));
 				ps.setObject(index++, item.getEffFinID());
 				ps.setString(index++, item.getEffFinReference());
 				ps.setBoolean(index, item.isLinkedLoan());
@@ -103,7 +111,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public void createSnapShots(Date appDate, Long finID, Long effFinID) {
 		StringBuilder sql = new StringBuilder("Insert Into Npa_Loan_Info_SnapShot(");
-		sql.append("LinkID, AppDate, CustID, FinID, FinReference, BusinessDate");
+		sql.append("LinkID, AppDate, CustID, CustCoreBank, FinType, FinID, FinReference, BusinessDate");
 		sql.append(", PastDueDays, PastDueDate , EffPastDueDays, EffPastDueDate");
 		sql.append(", NpaPastDueDays, NpaPastDueDate, EffNpaPastDueDays, EffNpaPastDueDate");
 		sql.append(", NpaClassID, EffNpaClassID, NpaStage, EffNpaStage");
@@ -111,7 +119,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", CreatedOn, LastMntOn");
 		sql.append(")");
 		sql.append(" Select");
-		sql.append(" ID, ?, CustID, FinID, FinReference, BusinessDate");
+		sql.append(" ID, ?, CustID, CustCoreBank, FinType, FinID, FinReference, BusinessDate");
 		sql.append(", PastDueDays, PastDueDate, EffPastDueDays, EffPastDueDate");
 		sql.append(", NpaPastDueDays, NpaPastDueDate, EffNpaPastDueDays, EffNpaPastDueDate");
 		sql.append(", NpaClassID, EffNpaClassID, NpaStage, EffNpaStage");
@@ -149,7 +157,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 	@Override
 	public long prepareQueue() {
-		String sql = "Insert Into Asset_Classification_Queue(ID, FinID) Select row_number() over(order by FinID) ID, FinID From (Select distinct FinID From Npa_Provision_Stage) T";
+		String sql = "Insert Into Asset_Classification_Queue(ID, FinID) Select row_number() over(order by FinID) ID, FinID From (Select distinct FinID From Npa_Provision_Stage Where LinkedLoan = 0) T";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -177,6 +185,73 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		}
 
 		return 0;
+	}
+
+	private List<Queing> getQueingRecords() {
+		String sql = "Select row_number() over(order by id) resteID, ID from Asset_Classification_Queue";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+
+		}, (rs, Num) -> {
+			Queing queing = new Queing();
+			queing.setId(rs.getLong("ID"));
+			queing.setResetId(rs.getLong("resteID"));
+			return queing;
+		});
+
+	}
+
+	public void updateQueingRecords(List<Queing> queing) {
+		String sql = "Update Asset_Classification_Queue Set Id = ? Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					Queing queingdetails = queing.get(i);
+					int index = 1;
+
+					ps.setLong(index++, queingdetails.getResetId());
+					ps.setLong(index, queingdetails.getId());
+				}
+
+				@Override
+				public int getBatchSize() {
+					return queing.size();
+				}
+			});
+		} catch (DataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+	}
+
+	@Override
+	public void handleFailures() {
+		String sql = "Delete From Asset_Classification_Queue Where Progress = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_SUCCESS);
+		});
+
+		sql = "Update Asset_Classification_Queue Set Progress = ? Where Progress = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		int count = this.jdbcOperations.update(sql, ps -> {
+			ps.setInt(1, EodConstants.PROGRESS_WAIT);
+			ps.setInt(2, EodConstants.PROGRESS_FAILED);
+		});
+
+		if (count > 0) {
+			updateQueingRecords(getQueingRecords());
+		}
 	}
 
 	@Override
@@ -211,7 +286,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			this.jdbcOperations.update(sql, ps -> {
 				ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setInt(2, 0);
-				ps.setInt(3, EodConstants.PROGRESS_WAIT);
+				ps.setInt(3, EodConstants.PROGRESS_FAILED);
 				ps.setLong(4, finID);
 			});
 		}
@@ -220,8 +295,12 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getClassification(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" npa.Id, nps.CustId, nps.FinID, nps.FinReference, nps.EODDate, nps.EntityCode ");
-		sql.append(", nps.PastDueDays, nps.PastDueDate, npa.NpaPastDueDays, npa.NpaPastDueDate, npa.NpaStage");
+		sql.append(" npa.Id, nps.CustId, nps.CustCoreBank, nps.FinID, nps.FinReference");
+		sql.append(", npa.EffFinReference, nps.EODDate, nps.EntityCode");
+		sql.append(", nps.PastDueDays, nps.PastDueDate, nps.DerivedPastDueDate");
+		sql.append(", npa.NpaPastDueDays, npa.NpaPastDueDate, npa.NpaStage");
+		sql.append(", npa.FinisActive, nps.OdPrincipal, nps.OdProfit, nps.TotPftPaid, nps.TotPftAccrued");
+		sql.append(", nps.TotPriBal, TillDateSchdPri, nps.FinType, nps.WriteOffLoan, nps.UnderSettlement");
 		sql.append(" From Npa_Provision_Stage nps");
 		sql.append(" Left Join Npa_Loan_Info npa On npa.FinID = nps.FinID");
 		sql.append(" Where nps.FinID = ? and nps.LinkedLoan = ?");
@@ -234,15 +313,27 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 				item.setId(JdbcUtil.getLong(rs.getObject("Id")));
 				item.setCustID(rs.getLong("CustID"));
+				item.setCustCoreBank(rs.getString("CustCoreBank"));
 				item.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 				item.setFinReference(rs.getString("FinReference"));
+				item.setEffFinReference(rs.getString("EffFinReference"));
 				item.setEodDate(rs.getDate("EODDate"));
 				item.setEntityCode(rs.getString("EntityCode"));
 				item.setPastDueDays(rs.getInt("PastDueDays"));
 				item.setPastDueDate(rs.getDate("PastDueDate"));
+				item.setDerivedPastDueDate(rs.getDate("DerivedPastDueDate"));
 				item.setNpaPastDueDays(rs.getInt("NpaPastDueDays"));
 				item.setNpaPastDueDate(rs.getDate("NpaPastDueDate"));
 				item.setNpaStage(rs.getBoolean("NpaStage"));
+				item.setOdPrincipal(rs.getBigDecimal("OdPrincipal"));
+				item.setOdProfit(rs.getBigDecimal("OdProfit"));
+				item.setTotPftPaid(rs.getBigDecimal("TotPftPaid"));
+				item.setTotPftAccrued(rs.getBigDecimal("TotPftAccrued"));
+				item.setTotPriBal(rs.getBigDecimal("TotPriBal"));
+				item.setTillDateSchdPri(rs.getBigDecimal("TillDateSchdPri"));
+				item.setFinType(rs.getString("FinType"));
+				item.setWriteOffLoan(rs.getBoolean("WriteOffLoan"));
+				item.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 
 				return item;
 			}, finID, 0);
@@ -254,25 +345,25 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	}
 
 	@Override
-	public long getCustId(long finID) {
-		String sql = "Select CustId From Npa_Provision_Stage Where FinID = ? and LinkedLoan = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		return jdbcOperations.queryForObject(sql, Long.class, finID, 0);
-	}
-
-	@Override
-	public List<FinanceMain> getPrimaryLoans(long custID) {
+	public List<FinanceMain> getPrimaryLoans(long custID, String custCoreBank) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustID, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch");
-		sql.append(", fm.FinCcy, fm.WriteoffLoan, c.CustCtgCode, ft.FinCategory, e.EntityCode");
+		sql.append(" fm.CustID, c.CustCoreBank, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch");
+		sql.append(", fm.FinCcy, fm.WriteoffLoan, fm.UnderSettlement, c.CustCtgCode, ft.FinCategory, e.EntityCode");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd ON dd.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e on e.EntityCode = dd.EntityCode");
-		sql.append(" Where fm.CustID = ? and fm.FinIsActive = ?");
+
+		Object[] args = null;
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank = ? and fm.FinIsActive = ?");
+			args = new Object[] { custCoreBank, 1 };
+		} else {
+			sql.append(" Where fm.CustID = ? and fm.FinIsActive = ?");
+			args = new Object[] { custID, 1 };
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -281,36 +372,51 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 			fm.setCustID(rs.getLong("CustID"));
 			fm.setFinID(rs.getLong("FinID"));
+			fm.setCustCoreBank(rs.getString("CustCoreBank"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setFinBranch(rs.getString("FinBranch"));
 			fm.setFinCcy(rs.getString("FinCcy"));
 			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 			fm.setLovDescCustCtgCode(rs.getString("CustCtgCode"));
 			fm.setFinCategory(rs.getString("FinCategory"));
 			fm.setEntityCode(rs.getString("EntityCode"));
 
 			return fm;
-		}, custID, 1);
+		}, args);
 	}
 
 	@Override
 	public List<FinanceMain> getCoApplicantLoans(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustID, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
-		sql.append(", fm.WriteoffLoan, c.CustCtgCode, ft.FinCategory, e.EntityCode");
+		sql.append(" fm.CustID, c.CustCoreBank, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
+		sql.append(", fm.WriteoffLoan, fm.UnderSettlement, c.CustCtgCode, ft.FinCategory, e.EntityCode");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd ON dd.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e on e.EntityCode = dd.EntityCode");
-		sql.append(" Where fm.CustId in (");
-		sql.append(" Select c.CustID");
-		sql.append(" From FinJointAccountDetails ca");
-		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ca.FinReference");
-		sql.append(" Inner Join Customers c on c.CustCIF = ca.CustCIF");
-		sql.append(" Where fm.FinID = ?");
-		sql.append(" ) and fm.FinIsActive = ?");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank in (");
+			sql.append(" Select c.CustCoreBank");
+			sql.append(" From FinJointAccountDetails ca");
+			sql.append(" Inner Join FinanceMain fm on fm.FinReference = ca.FinReference");
+			sql.append(" Inner Join Customers c on c.CustCIF = ca.CustCIF");
+			sql.append(" Where fm.FinID = ?");
+			sql.append(" ) and fm.FinIsActive = ?");
+
+		} else {
+			sql.append(" Where fm.CustId in (");
+			sql.append(" Select c.CustID");
+			sql.append(" From FinJointAccountDetails ca");
+			sql.append(" Inner Join FinanceMain fm on fm.FinReference = ca.FinReference");
+			sql.append(" Inner Join Customers c on c.CustCIF = ca.CustCIF");
+			sql.append(" Where fm.FinID = ?");
+			sql.append(" ) and fm.FinIsActive = ?");
+
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -319,11 +425,13 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 			fm.setCustID(rs.getLong("CustID"));
 			fm.setFinID(rs.getLong("FinID"));
+			fm.setCustCoreBank(rs.getString("CustCoreBank"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setFinBranch(rs.getString("FinBranch"));
 			fm.setFinCcy(rs.getString("FinCcy"));
 			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 			fm.setLovDescCustCtgCode(rs.getString("CustCtgCode"));
 			fm.setFinCategory(rs.getString("FinCategory"));
 			fm.setEntityCode(rs.getString("EntityCode"));
@@ -335,20 +443,31 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public List<FinanceMain> getGuarantorLoans(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.CustID, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
-		sql.append(", fm.WriteoffLoan, c.CustCtgCode, ft.FinCategory, e.EntityCode");
+		sql.append(" fm.CustID, c.CustCoreBank, fm.FinID, fm.FinReference, fm.FinType, fm.FinBranch, fm.FinCcy");
+		sql.append(", fm.WriteoffLoan, fm.UnderSettlement, c.CustCtgCode, ft.FinCategory, e.EntityCode");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
 		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd ON dd.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e on e.EntityCode = dd.EntityCode");
-		sql.append(" Where fm.CustId in (");
-		sql.append(" Select c.CustID");
-		sql.append(" From FinGuarantorsDetails gd");
-		sql.append(" Inner Join FinanceMain fm on fm.FinID = gd.FinID");
-		sql.append(" Inner Join Customers c on c.CustCIF = gd.GuarantorCIF");
-		sql.append(" Where fm.FinID = ?");
-		sql.append(" ) and fm.FinIsActive = ?");
+
+		if (CustomerExtension.CUST_CORE_BANK_ID) {
+			sql.append(" Where c.CustCoreBank in (");
+			sql.append(" Select c.CustCoreBank");
+			sql.append(" From FinGuarantorsDetails gd");
+			sql.append(" Inner Join FinanceMain fm on fm.FinID = gd.FinID");
+			sql.append(" Inner Join Customers c on c.CustCIF = gd.GuarantorCIF");
+			sql.append(" Where fm.FinID = ?");
+			sql.append(" ) and fm.FinIsActive = ?");
+		} else {
+			sql.append(" Where fm.CustId in (");
+			sql.append(" Select c.CustID");
+			sql.append(" From FinGuarantorsDetails gd");
+			sql.append(" Inner Join FinanceMain fm on fm.FinID = gd.FinID");
+			sql.append(" Inner Join Customers c on c.CustCIF = gd.GuarantorCIF");
+			sql.append(" Where fm.FinID = ?");
+			sql.append(" ) and fm.FinIsActive = ?");
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -356,12 +475,14 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			FinanceMain fm = new FinanceMain();
 
 			fm.setCustID(rs.getLong("CustID"));
+			fm.setCustCoreBank(rs.getString("CustCoreBank"));
 			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setFinBranch(rs.getString("FinBranch"));
 			fm.setFinCcy(rs.getString("FinCcy"));
 			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 			fm.setLovDescCustCtgCode(rs.getString("CustCtgCode"));
 			fm.setFinCategory(rs.getString("FinCategory"));
 			fm.setEntityCode(rs.getString("EntityCode"));
@@ -406,13 +527,15 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public void save(AssetClassification ac) {
 		StringBuilder sql = new StringBuilder("Insert Into Npa_Loan_Info(");
-		sql.append("CustID, FinID, FinReference, BusinessDate, PastDueDays, PastDueDate");
+		sql.append("CustID, CustCoreBank, FinType, FinID, FinReference, BusinessDate, PastDueDays, PastDueDate");
 		sql.append(", NpaClassID, NpaPastDueDays, NpaPastDueDate, NpaStage");
 		sql.append(", EffPastDueDays, EffNpaPastDueDays, EffNpaStage, FinIsActive");
+		sql.append(", EMIRe, InstIncome, FuturePri");
+		sql.append(", SecondaryNpaStage, SecondaryNpaDate, SecondaryNpaModifiedDate, SecondaryNpaClassId");
 		sql.append(", CreatedOn, LastMntOn");
 		sql.append(")");
 		sql.append(" Values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -421,6 +544,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				int index = 1;
 
 				ps.setLong(index++, ac.getCustID());
+				ps.setString(index++, ac.getCustCoreBank());
+				ps.setString(index++, ac.getFinType());
 				ps.setObject(index++, ac.getFinID());
 				ps.setString(index++, ac.getFinReference());
 				ps.setDate(index++, JdbcUtil.getDate(ac.getEodDate()));
@@ -434,7 +559,13 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setInt(index++, 0);
 				ps.setBoolean(index++, false);
 				ps.setBoolean(index++, true);
-
+				ps.setBigDecimal(index++, ac.getOdPrincipal().add(ac.getOdProfit()));
+				ps.setBigDecimal(index++, ac.getTotPftPaid().add(ac.getTotPftAccrued()));
+				ps.setBigDecimal(index++, ac.getTotPriBal().subtract(ac.getTillDateSchdPri()));
+				ps.setBoolean(index++, ac.isSecondaryNpaStage());
+				ps.setDate(index++, JdbcUtil.getDate(ac.getSecondaryNpaDate()));
+				ps.setDate(index++, JdbcUtil.getDate(ac.getSecondaryNpaModifiedDate()));
+				ps.setLong(index++, ac.getSecondaryNpaClassId());
 				ps.setTimestamp(index++, ac.getCreatedOn());
 				ps.setTimestamp(index, ac.getLastMntOn());
 			});
@@ -449,6 +580,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		StringBuilder sql = new StringBuilder("Update Npa_Loan_Info");
 		sql.append(" Set BusinessDate = ?, PastDueDays = ?, PastDueDate = ?");
 		sql.append(", NpaPastDueDays = ?, NpaPastDueDate = ?, NpaStage = ?, NpaClassID = ?");
+		sql.append(", EMIRe = ?, InstIncome = ?, FuturePri = ?, SelfEffected = ?");
+		sql.append(", SecondaryNpaStage = ?, SecondaryNpaDate = ?");
+		sql.append(", SecondaryNpaModifiedDate = ?, SecondaryNpaClassId = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -464,6 +598,14 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ps.setDate(index++, JdbcUtil.getDate(ac.getNpaPastDueDate()));
 				ps.setBoolean(index++, ac.isNpaStage());
 				ps.setObject(index++, ac.getNpaClassID());
+				ps.setBigDecimal(index++, ac.getOdPrincipal().add(ac.getOdProfit()));
+				ps.setBigDecimal(index++, ac.getTotPftPaid().add(ac.getTotPftAccrued()));
+				ps.setBigDecimal(index++, ac.getTotPriBal().subtract(ac.getTillDateSchdPri()));
+				ps.setBoolean(index++, ac.isSelfEffected());
+				ps.setBoolean(index++, ac.isSecondaryNpaStage());
+				ps.setDate(index++, JdbcUtil.getDate(ac.getSecondaryNpaDate()));
+				ps.setDate(index++, JdbcUtil.getDate(ac.getSecondaryNpaModifiedDate()));
+				ps.setLong(index++, ac.getSecondaryNpaClassId());
 
 				ps.setLong(index, ac.getId());
 			});
@@ -474,9 +616,33 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	}
 
 	@Override
+	public void updatePrvPastDuedays(AssetClassification ac) {
+		StringBuilder sql = new StringBuilder("Update Npa_Loan_Info");
+		sql.append(" Set PrvEmiRe = ?, PrvInstIncome = ?, PrvFuturePri = ?");
+		sql.append(" Where Id = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setBigDecimal(index++, ac.getEmiRe());
+				ps.setBigDecimal(index++, ac.getInstIncome());
+				ps.setBigDecimal(index++, ac.getFuturePri());
+
+				ps.setLong(index++, ac.getId());
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+	}
+
+	@Override
 	public List<AssetClassification> getClassifications(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" nps.FinID, nps.EffFinID, npa.FinReference, nps.EffFinReference, nps.EntityCode, nps.LinkedLoan");
+		sql.append(" nps.FinID, nps.EffFinID, npa.FinReference, nps.EffFinReference, nps.FinType, nps.LinkedLoan");
 		sql.append(", npa.PastDueDays, npa.NpaPastDueDays");
 		sql.append(" From Npa_Provision_Stage nps");
 		sql.append(" Inner Join Npa_Loan_Info npa on npa.FinID = nps.EffFinID");
@@ -491,7 +657,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			item.setEffFinID(JdbcUtil.getLong(rs.getObject("EffFinID")));
 			item.setFinReference(rs.getString("FinReference"));
 			item.setEffFinReference(rs.getString("EffFinReference"));
-			item.setEntityCode(rs.getString("EntityCode"));
+			item.setFinType(rs.getString("FinType"));
 			item.setLinkedLoan(rs.getBoolean("LinkedLoan"));
 			item.setPastDueDays(rs.getInt("PastDueDays"));
 			item.setNpaPastDueDays(rs.getInt("NpaPastDueDays"));
@@ -504,14 +670,16 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getNpaDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinID, FinReference, EffFinID, EffFinReference, FinIsActive");
-		sql.append(", PastDueDays, PastDueDate, EffPastDueDays, EffPastDueDate");
-		sql.append(", NpaPastDueDays, NpaPastDueDate, EffNpaPastDueDays, EffNpaPastDueDate");
-		sql.append(", NpaClassID, EffNpaClassID");
-		sql.append(", NpaStage, EffNpaStage");
-		sql.append(", BusinessDate, LinkedTranID");
-		sql.append(" From Npa_Loan_Info");
-		sql.append(" Where FinID = ?");
+		sql.append(" npa.Id, npa.CustID, npa.CustCoreBank, npa.FinType, npa.FinID, npa.FinReference, npa.EffFinID");
+		sql.append(", npa.EffFinReference, npa.FinIsActive");
+		sql.append(", npa.PastDueDays, npa.PastDueDate, npa.EffPastDueDays, npa.EffPastDueDate");
+		sql.append(", npa.NpaPastDueDays, npa.NpaPastDueDate, npa.EffNpaPastDueDays, npa.EffNpaPastDueDate");
+		sql.append(", npa.NpaClassID, npa.EffNpaClassID");
+		sql.append(", npa.NpaStage, npa.EffNpaStage");
+		sql.append(", npa.BusinessDate, npa.LinkedTranID, npa.EmiRe, npa.InstIncome");
+		sql.append(", npa.FuturePri, npa.PrvEmiRe, npa.PrvInstIncome, npa.PrvFuturePri, npa.SelfEffected");
+		sql.append(" From Npa_Loan_Info npa");
+		sql.append(" Where npa.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -520,6 +688,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				AssetClassification ac = new AssetClassification();
 
 				ac.setId(rs.getLong("Id"));
+				ac.setCustID(rs.getLong("CustID"));
+				ac.setCustCoreBank(rs.getString("CustCoreBank"));
+				ac.setFinType(rs.getString("FinType"));
 				ac.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 				ac.setFinReference(rs.getString("FinReference"));
 				ac.setEffFinID(JdbcUtil.getLong(rs.getObject("EffFinID")));
@@ -539,6 +710,13 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				ac.setEffNpaStage(rs.getBoolean("EffNpaStage"));
 				ac.setEodDate(rs.getDate("BusinessDate"));
 				ac.setLinkedTranID(JdbcUtil.getLong(rs.getObject("LinkedTranID")));
+				ac.setEmiRe(rs.getBigDecimal("EmiRe"));
+				ac.setInstIncome(rs.getBigDecimal("InstIncome"));
+				ac.setFuturePri(rs.getBigDecimal("FuturePri"));
+				ac.setPrvEmiRe(rs.getBigDecimal("PrvEmiRe"));
+				ac.setPrvInstIncome(rs.getBigDecimal("PrvInstIncome"));
+				ac.setPrvFuturePri(rs.getBigDecimal("PrvFuturePri"));
+				ac.setSelfEffected(rs.getBoolean("SelfEffected"));
 
 				return ac;
 			}, finID);
@@ -551,7 +729,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	@Override
 	public AssetClassification getLoanInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select s.EodDate, s.EntityCode");
-		sql.append(", s.CustID, s.CustCategoryCode, s.FinType, s.FinCCy, s.Product, s.FinBranch");
+		sql.append(", s.CustID, s.CustCoreBank, s.CustCategoryCode, s.FinType, s.FinCCy, s.Product, s.FinBranch");
 		sql.append(", s.FinID, s.FinReference, s.FinAssetValue, s.FinCurrAssetValue");
 		sql.append(", s.OsPrincipal, s.OsProfit, s.FuturePrincipal, OdPrincipal, OdProfit");
 		sql.append(", s.TotPriBal, s.TotPriPaid, s.TotPftPaid, s.TotPftAccrued, s.AmzTillLBDate, s.TillDateSchdPri");
@@ -566,6 +744,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			item.setEodDate(rs.getDate("EodDate"));
 			item.setEntityCode(rs.getString("EntityCode"));
 			item.setCustID(rs.getLong("CustID"));
+			item.setCustCoreBank(rs.getString("CustCoreBank"));
 			item.setCustCategoryCode(rs.getString("CustCategoryCode"));
 			item.setFinType(rs.getString("FinType"));
 			item.setFinCcy(rs.getString("FinCcy"));
@@ -597,6 +776,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", NpaPastDueDays = ?, NpaPastDueDate = ?, EffNpaPastDueDays = ?, EffNpaPastDueDate = ?");
 		sql.append(", NpaClassID = ?, EffNpaClassID = ?, NpaStage = ?, EFfNpaStage = ?");
 		sql.append(", LinkedTranID = ?, LastMntOn = ?");
+		sql.append(", SecondaryNpaStage = ?, SecondaryNpaDate = ?");
+		sql.append(", SecondaryNpaModifiedDate = ?, SecondaryNpaClassId = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -621,6 +802,10 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			ps.setBoolean(index++, ac.isEffNpaStage());
 			ps.setObject(index++, ac.getLinkedTranID());
 			ps.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
+			ps.setBoolean(index++, ac.isSecondaryNpaStage());
+			ps.setDate(index++, JdbcUtil.getDate(ac.getSecondaryNpaDate()));
+			ps.setDate(index++, JdbcUtil.getDate(ac.getSecondaryNpaModifiedDate()));
+			ps.setLong(index++, ac.getSecondaryNpaClassId());
 
 			ps.setLong(index, ac.getId());
 
@@ -639,6 +824,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(", eacc.Code EffNpaClassCode, eacc.Description EffNpaClassDesc");
 		sql.append(", eascc.Code EffNpaSubClassCode, eascc.Description EffNpaSubClassDesc");
 		sql.append(", np.EffNpaStage, enp.FinIsActive");
+		sql.append(", np.SecondaryNpaStage, np.SecondaryNpaDate");
+		sql.append(", sacc.Code SecondaryNpaClassCode, sacc.Description SecondaryNpaClassDesc");
 		sql.append(" From Npa_Loan_Info np");
 		sql.append(" Inner Join Npa_Loan_Info enp on enp.FinID = np.EffFinID");
 		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.ID = np.NpaClassID");
@@ -647,6 +834,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = np.EffNpaClassID");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassID");
 		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassID");
+		sql.append(" Left  Join Asset_Class_Codes sacc on sacc.Id = enp.SecondaryNpaClassId ");
 		sql.append(" Where np.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -677,6 +865,10 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				npa.setEffNpaSubClassDesc(rs.getString("EffNpaSubClassDesc"));
 				npa.setEffNpaStage(rs.getBoolean("EffNpaStage"));
 				npa.setFinIsActive(rs.getBoolean("FinIsActive"));
+				npa.setSecondaryNpaStage(rs.getBoolean("SecondaryNpaStage"));
+				npa.setSecondaryNpaDate(rs.getDate("SecondaryNpaDate"));
+				npa.setSecondaryNpaClassCode(rs.getString("SecondaryNpaClassCode"));
+				npa.setSecondaryNpaClassDesc(rs.getString("SecondaryNpaClassDesc"));
 
 				return npa;
 			}, finID);
@@ -691,6 +883,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 	public AssetClassification getNpaClassification(long finID) {
 		StringBuilder sql = new StringBuilder("Select FinID, FinReference");
 		sql.append(", PastDueDays, PastDueDate, NpaPastDueDays, NpaPastDueDate, NpaClassId, NpaStage, FinIsActive");
+		sql.append(", SecondaryNpaDate, SecondaryNpaStage");
 		sql.append(" From Npa_Loan_Info");
 		sql.append(" Where FinID = ?");
 
@@ -708,6 +901,8 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 				item.setNpaClassID(JdbcUtil.getLong(rs.getObject("NpaClassId")));
 				item.setNpaStage(rs.getBoolean("NpaStage"));
 				item.setFinIsActive(rs.getBoolean("FinIsActive"));
+				item.setSecondaryNpaDate(rs.getDate("SecondaryNpaDate"));
+				item.setSecondaryNpaStage(rs.getBoolean("SecondaryNpaStage"));
 
 				return item;
 			}, finID);
@@ -734,10 +929,10 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 
 	@Override
 	public String getNpaRepayHierarchy(long finID) {
-		StringBuilder sql = new StringBuilder("Select npa.EffNpaStage, h.RepayHierarchy");
+		StringBuilder sql = new StringBuilder("Select npa.EffNpaStage, rm.NpaRpyHierarchy");
 		sql.append(" From Npa_Loan_Info npa");
-		sql.append(" Inner Join Asset_Class_Setup_Details acsd on acsd.id = npa.NpaclassId");
-		sql.append(" Inner Join Asset_Class_Setup_Header h on h.id = acsd.SetupID");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = npa.FinID");
+		sql.append(" Inner Join RmtFinanceTypes rm on rm.FinType = fm.FinType");
 		sql.append(" Where npa.FinID =  ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -746,9 +941,9 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				String repayHierarchy = "";
 				if (rs.getBoolean("EffNpaStage")) {
-					repayHierarchy = rs.getString("RepayHierarchy");
+					repayHierarchy = rs.getString("NpaRpyHierarchy");
 				}
-				return repayHierarchy;
+				return StringUtils.trimToEmpty(repayHierarchy);
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
@@ -784,6 +979,7 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		jdbcOperations.update(sql, 0, finID);
 	}
 
+	@Override
 	public boolean checkDependency(long npaClassID) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Count(NpaClassID) From Npa_Loan_Info");
@@ -792,6 +988,131 @@ public class AssetClassificationDAOImpl extends SequenceDao<AssetClassification>
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getInt(1), npaClassID) > 0;
+	}
+
+	@Override
+	public Long getNpaMovemntId(long finID) {
+		String sql = "Select ID From NPA_Loan_Movement_Tagging Where FinID = ? and NPA = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, 1);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void saveNpaMovement(AssetClassification as) {
+		StringBuilder sql = new StringBuilder("Insert Into NPA_Loan_Movements(");
+		sql.append(" CustID, CustCoreBank, FinID, FinReference, EffFinReference, EffFinID");
+		sql.append(", ClassDate, EffNpaClassID, NpaClassID");
+		sql.append(", NpaClassCode, NpaSubClassCode, EffNpaClassCode, EffNpaSubClassCode)");
+		sql.append(" Select  ?, ?, ?, ?, ?, ?, ?, ?, ?, acc.Code, ascc.Code, eacc.Code, eascc.Code ");
+		sql.append(" From Asset_Class_Setup_Details acsd");
+		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.ID = acsd.SubClassID");
+		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = ?");
+		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassID");
+		sql.append(" Where acsd.ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, as.getCustID());
+			ps.setString(index++, as.getCustCoreBank());
+			ps.setObject(index++, as.getFinID());
+			ps.setString(index++, as.getFinReference());
+			ps.setString(index++, as.getEffFinReference());
+			ps.setObject(index++, as.getEffFinID());
+			ps.setDate(index++, JdbcUtil.getDate(as.getClassDate()));
+			ps.setLong(index++, as.getNpaClassID());
+			ps.setLong(index++, as.getEffNpaClassID());
+
+			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setLong(index, as.getNpaClassID());
+		});
+	}
+
+	@Override
+	public void saveNpaTaggingMovement(AssetClassification as) {
+		StringBuilder sql = new StringBuilder("Insert Into NPA_Loan_Movement_Tagging(");
+		sql.append(" CustID, CustCoreBank, FinID, FinReference, EffFinReference, EffFinID,");
+		sql.append(" NpaClassID, EffNpaClassID, NPA, TaggedDate,");
+		sql.append(" NpaClassCode, NpaSubClassCode, EffNpaClassCode, EffNpaSubClassCode)");
+		sql.append(" Select  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, acc.Code, ascc.Code, eacc.Code, eascc.Code ");
+		sql.append(" From Asset_Class_Setup_Details acsd");
+		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes ascc on ascc.ID = acsd.SubClassID");
+		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = ?");
+		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassID");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassID");
+		sql.append(" Where acsd.ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, as.getCustID());
+			ps.setString(index++, as.getCustCoreBank());
+			ps.setObject(index++, as.getFinID());
+			ps.setString(index++, as.getFinReference());
+			ps.setString(index++, as.getEffFinReference());
+			ps.setObject(index++, as.getEffFinID());
+			ps.setLong(index++, as.getNpaClassID());
+			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setBoolean(index++, true);
+			ps.setDate(index++, JdbcUtil.getDate(as.getNpaTaggedDate()));
+
+			ps.setLong(index++, as.getEffNpaClassID());
+			ps.setLong(index++, as.getNpaClassID());
+		});
+	}
+
+	@Override
+	public void updateNpaMovement(long id, AssetClassification ac) {
+		String sql = "Update NPA_Loan_Movement_Tagging Set NPA = ?, UnTaggedDate = ?, NpaClassID = ?, EffNpaClassID = ? Where Id = ?";
+		jdbcOperations.update(sql, false, ac.getNpaUnTaggedDate(), ac.getNpaClassID(), ac.getEffNpaClassID(), id);
+	}
+
+	@Override
+	public AssetClassification getNpaMovemnt(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" NpaClassID, EffNpaClassID, NpaClassCode, NpaSubClassCode, EffNpaClassCode, EffNpaSubClassCode");
+		sql.append(" From NPA_Loan_Movements npa");
+		sql.append(" Where ClassDate = (Select MAX(ClassDate)");
+		sql.append(" From Npa_Loan_Movements where FinID = npa.FinID)");
+		sql.append(" and FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				AssetClassification item = new AssetClassification();
+
+				item.setNpaClassID(rs.getLong("NpaClassID"));
+				item.setEffNpaClassID(rs.getLong("EffNpaClassID"));
+				item.setNpaClassCode(rs.getString("NpaClassCode"));
+				item.setNpaSubClassCode(rs.getString("NpaSubClassCode"));
+				item.setEffNpaClassCode(rs.getString("EffNpaClassCode"));
+				item.setEffNpaSubClassCode("EffNpaSubClassCode");
+
+				return item;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public void deleteStage(long finID) {
+		String sql = "Delete From NPA_Provision_Stage Where FinID = ?";
+		jdbcOperations.update(sql, finID);
 	}
 
 }

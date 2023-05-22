@@ -13,7 +13,7 @@ public class PosidexCustomerLoan extends Posidex implements Serializable {
 	private long psxID;
 
 	public PosidexCustomerLoan() {
-
+	    super();
 	}
 
 	public String getDealID() {

@@ -26,8 +26,6 @@ package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -51,8 +49,6 @@ import com.pennanttech.pff.core.util.QueryUtil;
  * Data access layer implementation for <code>DPDBucket</code> with set of CRUD operations.
  */
 public class DPDBucketDAOImpl extends SequenceDao<DPDBucket> implements DPDBucketDAO {
-	private static Logger logger = LogManager.getLogger(DPDBucketDAOImpl.class);
-
 	public DPDBucketDAOImpl() {
 		super();
 	}

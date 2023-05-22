@@ -49,7 +49,7 @@ public class FinanceScheduleReportData {
 	private String tdsAmount;
 
 	public FinanceScheduleReportData() {
-
+	    super();
 	}
 
 	public String getLabel() {

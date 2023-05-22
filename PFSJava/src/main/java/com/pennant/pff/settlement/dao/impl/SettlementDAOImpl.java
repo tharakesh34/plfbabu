@@ -472,7 +472,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 		String sql = "Select count(SettlementID) From OTS_QUEUE where Progress = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
-		
+
 		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
 	}
 
@@ -493,7 +493,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 	@Override
 	public void updateProgress(long settlementId, int progress) {
 		String sql = null;
-		
+
 		if (progress == EodConstants.PROGRESS_IN_PROCESS) {
 			sql = "Update OTS_QUEUE Set Progress = ?, StartTime = ? Where SettlementID = ? and Progress = ?";
 
@@ -527,5 +527,14 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 				ps.setLong(4, settlementId);
 			});
 		}
+	}
+
+	@Override
+	public boolean isSettlementInitiated(long finID) {
+		String sql = "Select count(ID) From Fin_Settlement_Header_Temp Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
 	}
 }

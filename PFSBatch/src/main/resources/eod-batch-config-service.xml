@@ -285,9 +285,6 @@
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
@@ -350,7 +347,6 @@
 		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 		<property name="chequeDetailDAO" ref="chequeDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 	<!-- CHeque Details -->
 	<bean name="chequeDetailDAO" class="com.pennant.backend.dao.pdc.impl.ChequeDetailDAOImpl" parent="sequenceDao" />
@@ -423,6 +419,10 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="linkedFinancesService" ref="linkedFinancesService" />
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="feeCalculator" ref="feeCalculator" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl"
@@ -772,14 +772,93 @@
 	</bean>
 
 	<bean id="pinCodeDAO" class="com.pennant.backend.dao.applicationmaster.impl.PinCodeDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="countryDAO" class="com.pennant.backend.dao.systemmasters.impl.CountryDAOImpl" parent="basicDao" />
-	
+
 	<bean id="salutationDAO" class="com.pennant.backend.dao.systemmasters.impl.SalutationDAOImpl" parent="basicDao" />
-	
+
 	<bean id="genderDAO" class="com.pennant.backend.dao.systemmasters.impl.GenderDAOImpl" parent="basicDao" />
-	
+
 	<bean id="beneficiaryDAO" class="com.pennant.backend.dao.beneficiary.impl.BeneficiaryDAOImpl" parent="sequenceDao" />
+
+	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao" />
+
+	<bean id="autoWriteOffService" class="com.pennanttech.pff.autowriteoff.service.impl.AutoWriteOffServiceImpl">
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
+		<property name="financeWriteoffService" ref="financeWriteoffService" />
+		<property name="loanTypeWriteOffDAO" ref="loanTypeWriteOffDAO" />
+		<property name="autoWriteOffDAO" ref="autoWriteOffDAO" />
+	</bean>
+
+	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
+		parent="basicDao" />
+
+	<!-- PSLDetail -->
+	<bean id="pSLDetailDAO" class="com.pennant.backend.dao.psl.impl.PSLDetailDAOImpl" parent="basicDao" />
+
+	<!--============ Finance Write off Details ============== -->
+	<bean name="financeWriteoffService" class="com.pennant.backend.service.finance.impl.FinanceWriteoffServiceImpl">
+		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
+		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="feeDetailService" ref="feeDetailService" />
+	</bean>
+
+	<bean id="excessKnockOffService" class="com.pennanttech.pff.knockoff.service.impl.ExcessKnockOffServiceImpl" />
+
+	<bean id="excessKnockOffDAO" class="com.pennanttech.pff.knockoff.dao.impl.ExcessKnockOffDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="crossLoanTransferDAO" class="com.pennant.backend.dao.receipts.impl.CrossLoanTransferDAOImpl"
+		parent="sequenceDao" />
+
+	<bean name="autoKnockOffService"
+		class="com.pennant.backend.service.applicationmaster.impl.AutoKnockOffServiceImpl" />
+
+	<bean name="feeDetailService" class="com.pennant.backend.service.fees.FeeDetailService">
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+	</bean>
+
+	<bean id="financeWriteoffDAO" class="com.pennant.backend.dao.finance.impl.FinanceWriteoffDAOImpl"
+		parent="basicDao" />
+
+	<bean id="autoWriteOffDAO" class="com.pennanttech.pff.autowriteoff.dao.impl.AutoWriteOffDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="loanTypeWriteOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeWriteOffDAOImpl"
+		parent="basicDao" />
+	<bean name="mandateService" class="com.pennant.backend.service.mandate.impl.MandateServiceImpl" />
+
+	<bean id="mandateStatusUpdateDAO" class="com.pennant.backend.dao.mandate.impl.MandateStatusUpdateDAOImpl"
+		parent="sequenceDao" />
+
+	<bean name="bankDetailService" class="com.pennant.backend.service.applicationmaster.impl.BankDetailServiceImpl" />
+
+	<bean name="bankBranchService" class="com.pennant.backend.service.bmtmasters.impl.BankBranchServiceImpl" />
 	
-	<bean id="finODCAmountDAO" class="com.pennant.backend.dao.finance.impl.FinODCAmountDAOImpl" parent="sequenceDao"/>
+	<bean name="crossLoanKnockOffService"
+		class="com.pennant.backend.service.finance.impl.CrossLoanKnockOffServiceImpl" />
+	
+	<bean name="financeMainService" class="com.pennant.backend.service.finance.impl.FinanceMainServiceImpl" >
+		<property name="financeMainDAO" ref="financeMainDAO" />
+	</bean>
+	
+	<bean name="receiptDataValidator" class="com.pennanttech.pff.receipt.upload.ReceiptDataValidator" />
+	
+	<bean name="rejectDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.RejectDetailDAOImpl" />
+	
+	<bean id="autoRefundQueueDAO" class="com.pennanttech.refund.dao.impl.AutoRefundQueueDAOImpl" parent="sequenceDao" />
+		
 </beans>

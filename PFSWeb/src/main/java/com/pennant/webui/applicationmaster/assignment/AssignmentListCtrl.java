@@ -214,7 +214,7 @@ public class AssignmentListCtrl extends GFCBaseListCtrl<Assignment> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id = ?");
 
 		if (doCheckAuthority(assignment, whereCond.toString(), new Object[] { assignment.getId() })) {

@@ -38,7 +38,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -55,8 +54,9 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> {
 	private static final long serialVersionUID = -7522534300621535097L;
@@ -566,8 +566,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		this.recordStatus.setValue(aCustCardSales.getRecordStatus());
 
 		if (aCustCardSales.getCustCardMonthSales().size() > 0) {
-			Cloner cloner = new Cloner();
-			CustCardSales detail = (CustCardSales) cloner.deepClone(aCustCardSales);
+			CustCardSales detail = (CustCardSales) ObjectUtil.clone(aCustCardSales);
 			List<CustCardSalesDetails> custCardMonthSales = detail.getCustCardMonthSales();
 			for (int i = 0; i < custCardMonthSales.size(); i++) {
 				custCardMonthSales.get(i).setKeyValue(i + 1);
@@ -787,14 +786,14 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		AuditHeader auditHeader = new AuditHeader();
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
-		valueParm[0] = String.valueOf(DateUtility.format(detail.getMonth(), PennantConstants.monthYearFormat));
+		valueParm[0] = String.valueOf(DateUtil.format(detail.getMonth(), PennantConstants.monthYearFormat));
 		errParm[0] = "Monthyear" + ":" + valueParm[0];
 
 		custCardMonthSales = new ArrayList<>();
 
 		if (CollectionUtils.isNotEmpty(infoList)) {
 			for (int i = 0; i < infoList.size(); i++) {
-				if (DateUtility.compare(detail.getMonth(), infoList.get(i).getMonth()) == 0) {
+				if (DateUtil.compare(detail.getMonth(), infoList.get(i).getMonth()) == 0) {
 					if (detail.isNewRecord() && StringUtils.isEmpty(detail.getRecordType())) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
@@ -862,7 +861,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 					 */
 				} else {
 					monthYearValue.setDate(1);
-					if (DateUtility.compare(monthYearValue, SysParamUtil.getAppDate()) == 1) {
+					if (DateUtil.compare(monthYearValue, SysParamUtil.getAppDate()) == 1) {
 						throw new WrongValueException(monthYear,
 								Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month" }));
 					}

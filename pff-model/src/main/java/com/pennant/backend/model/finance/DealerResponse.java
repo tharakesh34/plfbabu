@@ -21,7 +21,7 @@ public class DealerResponse implements Serializable {
 	private boolean processed;
 
 	public DealerResponse() {
-
+	    super();
 	}
 
 	public long getDealerResponseId() {

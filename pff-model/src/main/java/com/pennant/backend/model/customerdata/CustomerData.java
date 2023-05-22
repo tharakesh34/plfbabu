@@ -17,7 +17,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.loandetail.LoanDetail;
 
-@XmlType(propOrder = { "custCIF", "custShrtName", "custDOB", "custCRCPR", "fullName", "custMotherMaiden",
+@XmlType(propOrder = { "custCIF", "custShrtName", "custDOB", "gender", "custCRCPR", "fullName", "custMotherMaiden",
 		"custFNameLclLng", "fullAddress", "custAddresses", "custPhoneNumbers", "custEmails", "custEmployments",
 		"loanDetail", "loanDetails", "returnStatus" })
 
@@ -31,6 +31,8 @@ public class CustomerData {
 	private String custShrtName;
 	@XmlElement
 	private Date custDOB;
+	@XmlElement
+	private String gender;
 	@XmlElement
 	private String custCRCPR;
 	@XmlElement
@@ -179,6 +181,14 @@ public class CustomerData {
 
 	public void setCustFNameLclLng(String custFNameLclLng) {
 		this.custFNameLclLng = custFNameLclLng;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 
 }

@@ -47,7 +47,6 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.ReinstateFinance;
@@ -62,6 +61,7 @@ import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRen
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -253,7 +253,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		events.append(", ISTBILL,  GRACEEND, DISBINS, FEEPAY, VASFEE, MANFEE, INSTDATE, PAYMTINS,  REAGING");
 		events.append(", JVPOST,  D2C,  CHQ2B,  ASSIGN, INSADJ, INSPAY, CANINS, LPPAMZ,  WAIVER,  INSPAY");
 		events.append(", ADVDUE,  WRITEBK,  OEMSBV,  MIGR,  PROVSN,  PROVCHG, PRVSN_MN,  FEREFUND,  PRSNT");
-		events.append(", PRSNTRSP,  PARTCAN,  MANSUB, RESTRUCT, NPACHNG, PROVSN, CRSLANFR, CRSLANTO, EXTRF");
+		events.append(", PRSNTRSP,  PARTCAN,  MANSUB, RESTRUCT, NPACHNG, PROVSN, CRSLANFR, CRSLANTO, EXTRF, REVWRITE");
 		if (this.showAccrual.isChecked()) {
 			events.append(", AMZ, AMZSUSP, AMZ_REV, INDAS, EXPENSE");
 		}
@@ -314,8 +314,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			detail.setPostAmount(
 					CurrencyUtil.format(dataSet.getPostAmount(), CurrencyUtil.getFormat(dataSet.getAcCcy())));
 			detail.setRevTranCode(dataSet.getRevTranCode());
-			detail.setPostDate(DateUtility.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
-			detail.setValueDate(DateUtility.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+			detail.setPostDate(DateUtil.format(dataSet.getPostDate(), DateFormat.LONG_DATE.getPattern()));
+			detail.setValueDate(DateUtil.format(dataSet.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 			accountingDetails.add(detail);
 		}
 

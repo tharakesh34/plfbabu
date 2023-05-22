@@ -57,9 +57,9 @@ import com.pennant.backend.service.notifications.NotificationsService;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.pff.template.TemplateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -446,9 +446,9 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleCodeDesc.setValue(aNotifications.getRuleCodeDesc());
 		this.recordStatus.setValue(aNotifications.getRecordStatus());
 
-		this.listRuleModule = PennantStaticListUtil.getMailModulesList();
-		this.listRuleEvent = PennantStaticListUtil.getTemplateEvents();
-		this.listTemplateTypes = PennantStaticListUtil.getTemplateForList();
+		this.listRuleModule = TemplateUtil.getModules();
+		this.listRuleEvent = TemplateUtil.getEvents();
+		this.listTemplateTypes = TemplateUtil.getTemplatesFor();
 
 		fillComboBox(this.ruleModule, aNotifications.getRuleModule(), listRuleModule, "");
 		fillComboBox(this.ruleEvent, aNotifications.getRuleEvent(), listRuleEvent, "");
@@ -593,7 +593,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 				aNotifications.setRuleAttachmentFields(this.ruleAttachment.getFields());
 			}
 		} catch (WrongValueException we) {
-			wve.add(we);
+			// Making non mandatory for SMS and EMAIL
 		}
 
 		showErrorDetails(wve, tab_ruleAttachment);

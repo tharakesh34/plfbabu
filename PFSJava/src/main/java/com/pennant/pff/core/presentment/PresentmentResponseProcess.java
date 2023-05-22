@@ -18,8 +18,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -40,6 +38,8 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -57,8 +57,8 @@ import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
@@ -532,8 +532,9 @@ public class PresentmentResponseProcess implements Runnable {
 		aeEvent.setDataMap(dataMap);
 
 		try {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finType, AccountingEvent.PRSNTRSP,
-					FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(
+					AccountingEngine.getAccountSetID(fm, AccountingEvent.PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
+
 			aeEvent.setDataMap(dataMap);
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		} catch (Exception e) {

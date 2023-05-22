@@ -90,10 +90,11 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		this.valuationAmountAsPerPE.setReadonly(true);
+		this.valuationAmountAsPerPE.setReadonly(false);
 		this.valuationAmountAsPerPE.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.finalValuationAmount.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.valuationAsPerCOP.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.valuationAsPerCOP.setReadonly(false);
 		this.finalValRemarks.setMaxlength(450);
 		for (String collRef : collateralRef) {
 			collateralRefList.add(new ValueLabel(collRef, collRef));
@@ -109,7 +110,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
-		this.finalValuationAmount.setReadonly(true);
+		this.finalValuationAmount.setReadonly(false);
 		if (ImplementationConstants.TV_FINALVAL_AMOUNT_VALD) {
 			this.finalValuationAmount.setReadonly(false);
 		}
@@ -158,6 +159,8 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 					verifi.setFinalValAsPerPE(verification.getFinalValAsPerPE());
 					verifi.setFinalValDecision(verification.getFinalValDecision());
 					verifi.setFinalValRemarks(verification.getFinalValRemarks());
+					verifi.setValueForCOP(verification.getValueForCOP());
+					verifi.setCollTranType(verification.getCollateralType());
 				}
 			}
 		}
@@ -187,7 +190,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.ENTERING);
 		if (!this.finalValuationCollateral.isDisabled()) {
 			this.finalValuationCollateral.setConstraint(
-					new PTListValidator(Labels.getLabel("label_FinalValuationDialog_FinalValuationCollaterals.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_FinalValuationDialog_FinalValuationCollaterals.value"),
 							collateralRefList, true));
 		}
 		if (this.finalValuationAmount.isVisible() && !this.finalValuationAmount.isReadonly()) {
@@ -195,7 +198,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 					Labels.getLabel("label_FinalValuationDialog_FinalValuationAmount.value"), 2, true, false));
 		}
 		if (!this.decisionOnVal.isDisabled()) {
-			this.decisionOnVal.setConstraint(new PTListValidator(
+			this.decisionOnVal.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_FinalValuationDialog_DecisiononValuation.value"), decisionOnValList, true));
 		}
 		logger.debug(Literal.LEAVING);
@@ -325,6 +328,19 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 				}
 			}
+			Verification verification = null;
+			for (Verification verifi : verificationList) {
+				if (verifi.getReferenceFor().equals(getComboboxValue(this.finalValuationCollateral))) {
+					verification = verifi;
+				}
+			}
+
+			if (ImplementationConstants.TV_FINALVAL_COP_AMOUNT_VALD
+					&& "PRIMARY".equals(verification.getCollTranType())) {
+				verificationAmountsList.add(PennantApplicationUtil
+						.unFormateAmount(this.valuationAsPerCOP.getValidateValue(), PennantConstants.defaultCCYDecPos));
+			}
+
 			this.finalValuationAmount.setAttribute("minValue", BigDecimal.ZERO);
 			if (CollectionUtils.isNotEmpty(verificationAmountsList)) {
 				if (StringUtils.isBlank(this.finalValRemarks.getValue())) {

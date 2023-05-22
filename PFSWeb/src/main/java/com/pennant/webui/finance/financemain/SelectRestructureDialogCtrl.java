@@ -271,7 +271,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Getting FinanceDetail Data
-		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finID, eventCode, null, userRole);
+		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finID, eventCode,
+				FinServiceEvent.RESTRUCTURE, userRole);
 		financeDetail.setModuleDefiner(moduleDefiner);
 
 		// TODO:Removing feed in Restructure event

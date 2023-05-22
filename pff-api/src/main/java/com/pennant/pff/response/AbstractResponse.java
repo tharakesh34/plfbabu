@@ -3,7 +3,9 @@ package com.pennant.pff.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
@@ -87,6 +89,7 @@ public class AbstractResponse extends AbstractController {
 		cd.setCustEmployments(details.getEmploymentDetailsList());
 		cd.setCustMotherMaiden(c.getCustMotherMaiden());
 		cd.setCustFNameLclLng(c.getCustFNameLclLng());
+		cd.setGender(c.getCustGenderCode());
 	}
 
 	private void setEMIHolidayDetails(LoanDetail ld, FinanceMain fm) {
@@ -153,7 +156,7 @@ public class AbstractResponse extends AbstractController {
 		ld.setGraceDetails(graceDetails);
 	}
 
-	public void setBranchDetails(LoanDetail ld, Branch branch) {
+	private void setBranchDetails(LoanDetail ld, Branch branch) {
 		if (branch == null) {
 			return;
 		}
@@ -170,18 +173,19 @@ public class AbstractResponse extends AbstractController {
 		loanBranch.setLovDescBranchProvinceName(branch.getLovDescBranchProvinceName());
 		loanBranch.setBranchCountry(branch.getBranchCountry());
 		loanBranch.setLovDescBranchCountryName(branch.getLovDescBranchCountryName());
-		loanBranch.setBranchFax("1");
+		loanBranch.setBranchFax("");
 		loanBranch.setBranchTel(branch.getBranchTel());
-		loanBranch.setBranchMail("loansupport@hdfcbank.com");
+		loanBranch.setBranchMail("");
 		loanBranch.setZipCode(branch.getPinCode());
 		loanBranch.setBranchAddrHNbr(branch.getBranchAddrHNbr());
 		loanBranch.setBranchAddrStreet(branch.getBranchAddrStreet());
+		loanBranch.setBranchAddress(getBranchAddress(branch));
 
 		ld.setLoanBranch(loanBranch);
 
 	}
 
-	public void setSchedules(LoanDetail ld, List<FinanceScheduleDetail> schedules) {
+	private void setSchedules(LoanDetail ld, List<FinanceScheduleDetail> schedules) {
 
 		List<LoanSchedules> ls = new ArrayList<>();
 
@@ -224,7 +228,7 @@ public class AbstractResponse extends AbstractController {
 		ld.setLoanSchedules(ls);
 	}
 
-	public void setSummaryDetails(LoanDetail ld, FinanceSummary fs) {
+	private void setSummaryDetails(LoanDetail ld, FinanceSummary fs) {
 		if (fs == null) {
 			return;
 		}
@@ -288,7 +292,7 @@ public class AbstractResponse extends AbstractController {
 		ld.setLoanSummary(ls);
 	}
 
-	public void setFinanceData(LoanDetail ld, FinanceMain fm) {
+	private void setFinanceData(LoanDetail ld, FinanceMain fm) {
 		if (fm == null) {
 			return;
 		}
@@ -309,7 +313,7 @@ public class AbstractResponse extends AbstractController {
 		ld.setFinIsActive(fm.isFinIsActive());
 		ld.setAccountsOfficerReference(fm.getAccountsOfficerReference());
 		ld.setDsaCode(fm.getDsaCode());
-		ld.setTdsApplicable(fm.istDSApplicable());
+		ld.setTdsApplicable(fm.isTDSApplicable());
 		ld.setBaseProduct(fm.getBaseProduct());
 		ld.setCustSegmentation(fm.getCustSegmentation());
 		ld.setExistingLanRefNo(fm.getExistingLanRefNo());
@@ -376,13 +380,84 @@ public class AbstractResponse extends AbstractController {
 		ld.setOverdraftChrgAmtOrPerc(fm.getOverdraftChrgAmtOrPerc());
 		ld.setOverdraftTxnChrgFeeType(fm.getOverdraftTxnChrgFeeType());
 		if (fm.getMandateID() != null) {
-			String accNumber = mandateDAO.getAccNumber(fm.getMandateID());
+			String accNumber = mandateDAO.getMandateNumber(fm.getMandateID());
 			ld.setAccNumber(accNumber != null ? accNumber : "");
 		}
 		ld.setNoOfMonths(DateUtil.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
 		ld.setNetDisbursementAmount(fm.getFinAmount().subtract(fm.getDeductFeeDisb().add(fm.getBpiAmount())));
 		ld.setLoanName(fm.getLoanName());
 		ld.setCustDOB(fm.getCustDOB());
+	}
+
+	private String getBranchAddress(Branch branch) {
+
+		StringBuilder address = new StringBuilder();
+
+		String houseNumber = StringUtils.trimToEmpty(branch.getBranchAddrHNbr());
+		String street = StringUtils.trimToEmpty(branch.getBranchAddrStreet());
+		String addrLine1 = StringUtils.trimToEmpty(branch.getBranchAddrLine1());
+		String addrLine2 = StringUtils.trimToEmpty(branch.getBranchAddrLine2());
+		String city = StringUtils.trimToEmpty(branch.getLovDescBranchCityName());
+		String state = StringUtils.trimToEmpty(branch.getLovDescBranchProvinceName());
+		String country = StringUtils.trimToEmpty(branch.getLovDescBranchCountryName());
+		String zipCode = StringUtils.trimToEmpty(branch.getPinCode());
+
+		if (StringUtils.isNotBlank(houseNumber)) {
+			address.append(Labels.getLabel("label_CustomerAddresDialog_CustAddrHNbr.value") + ":");
+			address.append(houseNumber);
+		}
+
+		if (StringUtils.isNotBlank(street)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(Labels.getLabel("label_CustomerAddresDialog_CustAddrStreet.value") + ":");
+			address.append(street);
+		}
+
+		if (StringUtils.isNotBlank(addrLine1)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(addrLine1);
+		}
+
+		if (StringUtils.isNotBlank(addrLine2)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(addrLine2);
+		}
+
+		if (StringUtils.isNotBlank(city)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(city);
+		}
+
+		if (StringUtils.isNotBlank(state)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(state);
+		}
+
+		if (StringUtils.isNotBlank(country)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(country);
+		}
+
+		if (StringUtils.isNotBlank(zipCode)) {
+			if (address.length() > 0) {
+				address.append(", ");
+			}
+			address.append(zipCode);
+		}
+
+		return address.toString();
 	}
 
 	@Autowired

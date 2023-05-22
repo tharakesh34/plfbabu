@@ -33,6 +33,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
@@ -47,6 +48,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -82,7 +84,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -93,7 +95,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> implements FeeReceiptService {
 	private static final Logger logger = LogManager.getLogger(FeeReceiptServiceImpl.class);
@@ -117,6 +119,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private FinanceTypeDAO financeTypeDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldExtensionService extendedFieldExtensionService;
+	private VASConfigurationDAO vASConfigurationDAO;
 
 	public FeeReceiptServiceImpl() {
 		super();
@@ -250,8 +253,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (rch.isWorkflow()) {
@@ -439,8 +441,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Accounting Process Execution
@@ -475,18 +476,19 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 
 		// Fetch Accounting Set ID
-		long accountingSetID = 0;
+		Long accountingSetID = 0L;
 		Map<String, Object> map = null;
 
 		String recAgainst = rch.getRecAgainst();
 		if (RepayConstants.RECEIPTTO_FINANCE.equals(recAgainst) || (RepayConstants.RECEIPTTO_CUSTOMER.equals(recAgainst)
 				&& StringUtils.isNotBlank(rch.getExtReference()))) {
-			accountingSetID = AccountingConfigCache.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
+			accountingSetID = AccountingEngine.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
 					FinanceConstants.MODULEID_FINTYPE);
+
 			map = financeMainDAO.getGLSubHeadCodes(rch.getFinID());
 		}
 
-		if (accountingSetID == 0 || accountingSetID == Long.MIN_VALUE) {
+		if (accountingSetID == null || accountingSetID <= 0) {
 			auditHeader.setErrorDetails(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65015", null, null)));
 			logger.debug("Leaving");
@@ -942,6 +944,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		dataMap.put("ae_paidVasFee", BigDecimal.ZERO);
 		BigDecimal totPaidAmt = BigDecimal.ZERO;
 
+		List<VASConfiguration> vasProdutsList = this.vASConfigurationDAO.getVASConfigurations("_AView");
+		dataMap.put("VAS_P", BigDecimal.ZERO);
+		for (VASConfiguration vap : vasProdutsList) {
+			String vasProductCode = vap.getProductCode();
+			dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+			dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+			dataMap.put("VAS_" + vasProductCode + "_W", BigDecimal.ZERO);
+			dataMap.put("VAS_" + vasProductCode + "_P", BigDecimal.ZERO);
+		}
+
 		for (FinFeeDetail fd : tempFinFeeDetails) {
 			if (!fd.isRcdVisible()) {
 				continue;
@@ -952,7 +964,22 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				BigDecimal vasPaidFee = (BigDecimal) dataMap.get("ae_paidVasFee");
 				vasPaidFee = vasPaidFee.add(fd.getPaidAmountOriginal());
 				dataMap.put("ae_paidVasFee", vasPaidFee);
+				dataMap.put("VAS_P", vasPaidFee);
 				totPaidAmt = totPaidAmt.add(fd.getPaidAmount());
+
+				String vasProductCode = fd.getVasProductCode();
+				if (fd.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+					dataMap.put("VAS_" + vasProductCode + "_DD", fd.getRemainingFee());
+					dataMap.put("VAS_" + vasProductCode + "_AF", BigDecimal.ZERO);
+
+				} else {
+					dataMap.put("VAS_" + vasProductCode + "_DD", BigDecimal.ZERO);
+					dataMap.put("VAS_" + vasProductCode + "_AF", fd.getRemainingFee());
+				}
+
+				dataMap.put("VAS_" + vasProductCode + "_W", fd.getWaivedAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fd.getPaidAmountOriginal());
+
 				continue;
 			}
 
@@ -1764,6 +1791,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public VASConfigurationDAO getvASConfigurationDAO() {
+		return vASConfigurationDAO;
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
 
 }

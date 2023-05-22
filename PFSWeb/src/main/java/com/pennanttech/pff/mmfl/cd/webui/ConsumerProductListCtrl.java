@@ -142,7 +142,7 @@ public class ConsumerProductListCtrl extends GFCBaseListCtrl<ConsumerProduct> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =? ");
 
 		if (doCheckAuthority(consumerProduct, whereCond.toString(), new Object[] { consumerProduct.getProductId() })) {

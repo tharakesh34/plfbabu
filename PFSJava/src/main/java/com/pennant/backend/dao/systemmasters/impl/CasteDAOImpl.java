@@ -230,7 +230,7 @@ public class CasteDAOImpl extends SequenceDao<Caste> implements CasteDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("casteCode", casteCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(casteCode) FROM Caste");
 		selectSql.append(" WHERE ");
 		selectSql.append("casteCode = :casteCode");

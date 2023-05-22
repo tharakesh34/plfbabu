@@ -62,6 +62,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff> {
@@ -185,9 +186,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			registerField("paymentType", lhExcessType);
 		}
 
-		if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(this.module)
-				|| FinanceConstants.KNOCKOFFCAN_APPROVER.equals(this.module) || StringUtils.equals(this.module, null)) {
-			registerField("knockOffType", lhKnockOffType);
+		if (isKnockOffypeRequired()) {
+			registerField("knockoffType", lhKnockOffType, SortOrder.NONE);
 			this.lhKnockOffType.setVisible(true);
 		}
 
@@ -200,8 +200,18 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		doRenderPage();
 
 		search();
-		
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	private boolean isKnockOffypeRequired() {
+		return FinanceConstants.KNOCKOFFCAN_MAKER.equals(this.module)
+				|| FinanceConstants.KNOCKOFFCAN_APPROVER.equals(this.module) || StringUtils.equals(this.module, null)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_MAKER.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_ENQUIRY.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_MAKER.equals(this.module)
+				|| FinanceConstants.CROSS_LOAN_KNOCKOFF_APPROVER.equals(this.module);
 	}
 
 	@Override
@@ -223,7 +233,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		} else if (FinanceConstants.CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER.equals(this.module)) {
 
 			Filter[] filters = new Filter[3];
-			filters[0] = new Filter("RECEIPTPURPOSE", "SchdlRepayment", Filter.OP_EQUAL);
+			filters[0] = new Filter("RECEIPTPURPOSE", ReceiptPurpose.SCHDRPY.code(), Filter.OP_EQUAL);
 			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
 			filters[2] = new Filter("ReceiptModeStatus", "C");
 			this.searchObject.addFilters(filters);
@@ -231,8 +241,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 
 			whereClause.append(
 					"  RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE like '%MAKER')  and (KnockOffType = '"
-							+ KnockOffType.CROSS_LOAN.code()
-							+ "' or KnockOffType  is null) and (RecordStatus = 'Approved' or RecordStatus = 'Resubmitted')");
+							+ KnockOffType.CROSS_LOAN.code() + "' or KnockOffType  is null" + " or "
+							+ "KnockOffType = '" + KnockOffType.AUTO_CROSS_LOAN.code() + "')");
 		}
 
 		// Filtering added based on user branch and division
@@ -391,20 +401,8 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 			lc = new Listcell(PennantAppUtil.formateDate(clk.getReceiptDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 
-			String knockoffType = clk.getKnockoffType();
-			if (KnockOffType.MANUAL.code().equals(knockoffType)) {
-				lc = new Listcell(KnockOffType.MANUAL.code());
-				lc.setParent(item);
-			} else if (KnockOffType.AUTO.code().equals(knockoffType)) {
-				lc = new Listcell(KnockOffType.AUTO.code());
-				lc.setParent(item);
-			} else if (KnockOffType.CROSS_LOAN.code().equals(knockoffType)) {
-				lc = new Listcell(KnockOffType.CROSS_LOAN.code());
-				lc.setParent(item);
-			} else {
-				lc = new Listcell("");
-				lc.setParent(item);
-			}
+			lc = new Listcell(KnockOffType.getDesc(clk.getKnockoffType()));
+			lc.setParent(item);
 
 			lc = new Listcell(clk.getReceiptMode());
 			lc.setParent(item);
@@ -536,7 +534,7 @@ public class CrossLoanKnockOffListCtrl extends GFCBaseListCtrl<CrossLoanKnockOff
 		CrossLoanTransfer clt = crossLoanKnockOffService.getCrossLoanTransferById(clk.getTransferID(), "_View");
 		clk.setCrossLoanTransfer(clt);
 
-		long id = clk.getKnockOffId();
+		long id = clt.getReceiptId();
 		FinReceiptHeader frh = receiptService.getFinReceiptHeaderById(id, false, "_View");
 
 		frh.setValueDate(frh.getValueDate());

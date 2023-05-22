@@ -181,7 +181,7 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =?");
 
 		if (doCheckAuthority(businessvertical, whereCond.toString(), new Object[] { businessvertical.getId() })) {

@@ -2,7 +2,6 @@ package com.pennanttech.ws.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -53,7 +51,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
-import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -62,6 +59,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.util.APIConstants;
 
@@ -78,7 +76,6 @@ public class FinanceValidationService {
 	private BaseRateDAO baseRateDAO;
 	private FlagDAO flagDAO;
 	private RuleDAO ruleDAO;
-	private GeneralDepartmentService generalDepartmentService;
 	private DepartmentService departmentService;
 	private RelationshipOfficerService relationshipOfficerService;
 	private VehicleDealerService vehicleDealerService;
@@ -112,12 +109,12 @@ public class FinanceValidationService {
 
 			// Finance start date
 			Date appDate = SysParamUtil.getAppDate();
-			Date minReqFinStartDate = DateUtility.addDays(appDate,
+			Date minReqFinStartDate = DateUtil.addDays(appDate,
 					-SysParamUtil.getValueAsInt(SMTParameterConstants.LOAN_START_DATE_BACK_DAYS));
 			if (financeMain.getFinStartDate().compareTo(minReqFinStartDate) < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Loan Start Date";
-				valueParm[1] = DateUtility.format(minReqFinStartDate, PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtil.format(minReqFinStartDate, PennantConstants.XMLDateFormat);
 				return getErrorDetails("65030", valueParm);
 			}
 
@@ -892,25 +889,12 @@ public class FinanceValidationService {
 				return getErrorDetails("90501", valueParm);
 			}
 
-			List<VehicleDealer> listVehicleDealerDsa = vehicleDealerService.getVehicleDealerList("DSA");
-
 			RelationshipOfficer relationshipOfficer = relationshipOfficerService
 					.getApprovedRelationshipOfficerById(financeMain.getDsaCode());
 			if (relationshipOfficer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = financeMain.getDsaCode();
 				return getErrorDetails("90501", valueParm);
-			}
-
-			if (vehicleDealer != null) {
-				Iterator<VehicleDealer> itr = listVehicleDealerDsa.iterator();
-				boolean checkExistingDSA = false;
-				while (itr.hasNext()) {
-					VehicleDealer vehicleDealerDsa = itr.next();
-					if (vehicleDealerDsa.getDealerType().equals(financeMain.getDsaCode())) {
-						checkExistingDSA = true;
-					}
-				}
 			}
 
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
@@ -1012,11 +996,6 @@ public class FinanceValidationService {
 	@Autowired
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
-	}
-
-	@Autowired
-	public void setGeneralDepartmentService(GeneralDepartmentService generalDepartmentService) {
-		this.generalDepartmentService = generalDepartmentService;
 	}
 
 	@Autowired

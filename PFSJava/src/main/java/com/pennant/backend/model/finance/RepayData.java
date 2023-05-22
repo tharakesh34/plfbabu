@@ -25,12 +25,14 @@
 
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepayData {
+public class RepayData implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private String finReference = null;
 	private String buildProcess = "";
 	private BigDecimal accruedTillLBD = BigDecimal.ZERO;
@@ -47,7 +49,7 @@ public class RepayData {
 	private FinanceDetail financeDetail;
 
 	public RepayData() {
-
+	    super();
 	}
 
 	// ******************************************************//

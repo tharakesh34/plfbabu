@@ -30,7 +30,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -44,11 +43,11 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.customexception.ValidationException;
 import com.pennant.batchupload.model.FaultDetails;
 import com.pennanttech.batchupload.util.BatchProcessorUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class BatchUploadProcessor {
 	private static final Logger logger = LogManager.getLogger(BatchUploadProcessor.class);
@@ -370,7 +369,7 @@ public class BatchUploadProcessor {
 							Map<String, Object> rowMap = new HashMap<>();
 
 							for (int j = 0; j < keyList.size(); j++) {
-								if (!keyList.get(j).toString().contains("_")) {
+								if (!keyList.get(j).contains("_")) {
 									objFormulaEvaluator.evaluate(row.getCell(j));
 									String cellValueStr = objDefaultFormat.formatCellValue(row.getCell(j),
 											objFormulaEvaluator);
@@ -472,7 +471,8 @@ public class BatchUploadProcessor {
 		if (value.equalsIgnoreCase(BatchUploadProcessorConstatnt.TRUE)
 				|| value.equalsIgnoreCase(BatchUploadProcessorConstatnt.FALSE)) {
 			result = BatchProcessorUtil.boolFormater(value);
-		} else if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+		} else if (cell.getCellType() == CellType.NUMERIC
+				&& org.apache.poi.ss.usermodel.DateUtil.isCellDateFormatted(cell)) {
 			result = BatchProcessorUtil.dateFormater(cell.toString());
 		} else {
 			result = value;
@@ -623,7 +623,7 @@ public class BatchUploadProcessor {
 					BatchUploadProcessorConstatnt.SERVICEVERSIONVALUE);
 			client.header(BatchUploadProcessorConstatnt.LANGUAGE, BatchUploadProcessorConstatnt.LANGUAGEVALUE);
 			client.header(BatchUploadProcessorConstatnt.REQUESTTIME,
-					DateUtility.getSysDate(PennantConstants.APIDateFormatter));
+					DateUtil.getSysDate(PennantConstants.APIDateFormatter));
 			client.header(BatchUploadProcessorConstatnt.ENTITYID, entityId.concat("BU"));
 		} catch (Exception e) {
 			logger.error(BatchUploadProcessorConstatnt.EXCEPTION, e);

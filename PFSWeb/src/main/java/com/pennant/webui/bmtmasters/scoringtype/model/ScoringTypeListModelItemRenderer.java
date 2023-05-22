@@ -44,7 +44,7 @@ public class ScoringTypeListModelItemRenderer implements ListitemRenderer<Scorin
 	private static final long serialVersionUID = 7903665974929957450L;
 
 	public ScoringTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -83,6 +83,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
+import com.pennanttech.model.lien.LienHeader;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
@@ -169,7 +170,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<FinCovenantType> covenantTypeList = new ArrayList<>(1);
 	private Covenant covenant;
 	@XmlElement(name = "covenantDetails")
-	private List<Covenant> covenants;
+	private List<Covenant> covenants = new ArrayList<>();
 	@XmlElement(name = "customer")
 	private CustomerDetails customerDetails;
 	private StorageDetail storageDetail;
@@ -315,6 +316,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private ExtendedFieldExtension extendedFieldExtension = null;
 	private List<TanAssignment> tanAssignments = new ArrayList<>();
 	private ISRADetail israDetail = null;
+	private LienHeader lienHeader;
 
 	public FinanceDetail() {
 		super();
@@ -327,6 +329,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		excludeFields.add("isOrigination");
 		excludeFields.add("gstPercentages");
 		excludeFields.add("israDetail");
+		excludeFields.add("lienHeader");
 
 		return excludeFields;
 	}
@@ -1667,4 +1670,13 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	public void setSecurityMandate(Mandate securityMandate) {
 		this.securityMandate = securityMandate;
 	}
+
+	public LienHeader getLienHeader() {
+		return lienHeader;
+	}
+
+	public void setLienHeader(LienHeader lienHeader) {
+		this.lienHeader = lienHeader;
+	}
+
 }

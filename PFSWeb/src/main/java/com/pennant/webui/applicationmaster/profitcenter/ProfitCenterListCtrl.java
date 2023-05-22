@@ -183,7 +183,7 @@ public class ProfitCenterListCtrl extends GFCBaseListCtrl<ProfitCenter> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  ProfitCenterID =?");
 
 		if (doCheckAuthority(profitcenter, whereCond.toString(), new Object[] { profitcenter.getProfitCenterID() })) {

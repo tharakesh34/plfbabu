@@ -33,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.authorization.AuthorizationLimitDAO;
@@ -50,6 +49,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -524,7 +524,7 @@ public class AuthorizationLimitServiceImpl extends GenericService<AuthorizationL
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Date currDate = DateUtility.getSysDate();
+		Date currDate = DateUtil.getSysDate();
 
 		AuthorizationLimit authorizationLimit = getAuthorizationLimitDAO()
 				.getLimitForFinanceAuth(financeDetail.getUserDetails().getUserId(), "_AView", true);

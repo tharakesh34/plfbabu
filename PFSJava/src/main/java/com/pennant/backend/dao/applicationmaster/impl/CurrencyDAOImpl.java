@@ -91,7 +91,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Currency>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<Currency>() {
 				@Override
 				public Currency mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Currency c = new Currency();
@@ -136,7 +136,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 
 					return c;
 				}
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in RMTCurrencies{} for the CcyCode >> {}", type, id);
 		}

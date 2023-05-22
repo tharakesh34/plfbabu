@@ -45,7 +45,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -65,6 +64,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -164,17 +164,17 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.cmtExpDate_one.getValue() != null) {
 						this.searchObject.addFilter(new Filter("CmtExpDate",
-								DateUtility.format(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
+								DateUtil.format(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
 								Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.cmtExpDate_two.getValue() != null) {
 						this.searchObject.addFilter(new Filter("CmtExpDate",
-								DateUtility.format(this.cmtExpDate_two.getValue(), PennantConstants.DBDateFormat),
+								DateUtil.format(this.cmtExpDate_two.getValue(), PennantConstants.DBDateFormat),
 								Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
 					this.searchObject.addFilter(new Filter("CmtExpDate",
-							DateUtility.format(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
+							DateUtil.format(this.cmtExpDate_one.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}
@@ -193,17 +193,17 @@ public class CommitmentListCtrl extends GFCBaseListCtrl<Commitment> {
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.cmtRvwDate_one.getValue() != null) {
 						this.searchObject.addFilter(new Filter("CmtRvwDate",
-								DateUtility.format(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
+								DateUtil.format(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
 								Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.cmtRvwDate_two.getValue() != null) {
 						this.searchObject.addFilter(new Filter("CmtRvwDate",
-								DateUtility.format(this.cmtRvwDate_two.getValue(), PennantConstants.DBDateFormat),
+								DateUtil.format(this.cmtRvwDate_two.getValue(), PennantConstants.DBDateFormat),
 								Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
 					this.searchObject.addFilter(new Filter("CmtRvwDate",
-							DateUtility.format(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
+							DateUtil.format(this.cmtRvwDate_one.getValue(), PennantConstants.DBDateFormat),
 							searchOpId));
 				}
 			}

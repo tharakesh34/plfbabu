@@ -28,7 +28,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
@@ -38,6 +37,7 @@ import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.NESLPrepareLoansExcelReportService;
@@ -252,7 +252,7 @@ public class NESLFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> {
 			lc = new Listcell(fileDownlaod.getCustomerCategory());
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatToLongDate(fileDownlaod.getEndTime()));
+			lc = new Listcell(DateUtil.formatToLongDate(fileDownlaod.getEndTime()));
 			lc.setParent(item);
 
 			lc = new Listcell(fileDownlaod.getStatus());

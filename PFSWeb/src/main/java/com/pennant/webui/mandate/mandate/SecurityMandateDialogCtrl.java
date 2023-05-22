@@ -80,7 +80,6 @@ import com.pennant.FrequencyBox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -1819,7 +1818,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			aMandate.setInputDate(
-					DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+					DateUtil.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1871,7 +1870,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		try {
 			if (aMandate.isSwapIsActive()) {
 				aMandate.setSwapEffectiveDate(
-						DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+						DateUtil.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2968,7 +2967,7 @@ public class SecurityMandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (manFinanceExposureDetails != null) {
 			for (FinanceEnquiry finEnquiry : manFinanceExposureDetails) {
 				Listitem item = new Listitem();
-				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				Listcell lc = new Listcell(DateUtil.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getLovDescFinTypeName());
 				lc.setParent(item);

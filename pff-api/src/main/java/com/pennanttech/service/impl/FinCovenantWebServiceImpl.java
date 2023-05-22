@@ -18,7 +18,6 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.FinCovenantController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -35,7 +34,6 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 	private Logger logger = LogManager.getLogger(FinCovenantWebServiceImpl.class);
 
 	private FinCovenantTypeService finCovenantTypeService;
-	private FinanceDetailService financeDetailService;
 	private FinCovenantController finCovenantController;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinanceMainDAO financeMainDAO;
@@ -265,11 +263,6 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 	@Autowired
 	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
 		this.finCovenantTypeService = finCovenantTypeService;
-	}
-
-	@Autowired
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
 	}
 
 	@Autowired

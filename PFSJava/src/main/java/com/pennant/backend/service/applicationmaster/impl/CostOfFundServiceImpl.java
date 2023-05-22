@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CostOfFundDAO;
 import com.pennant.backend.dao.applicationmaster.impl.CostOfFundDAOImpl;
@@ -46,6 +45,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -115,7 +115,7 @@ public class CostOfFundServiceImpl extends GenericService<CostOfFund> implements
 			getCostOfFundDAO().save(costOfFund, tableType);
 			auditHeader.getAuditDetail().setModelData(costOfFund);
 			auditHeader.setAuditReference(costOfFund.getCofCode() + PennantConstants.KEY_SEPERATOR
-					+ DateUtility.format(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat));
+					+ DateUtil.format(costOfFund.getCofEffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getCostOfFundDAO().update(costOfFund, tableType);
 		}

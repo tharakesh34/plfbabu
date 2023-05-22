@@ -12,7 +12,7 @@ public class Abuser implements Serializable {
 	private Date abuserExpDate;
 
 	public Abuser() {
-
+	    super();
 	}
 
 	// ******************************************************//

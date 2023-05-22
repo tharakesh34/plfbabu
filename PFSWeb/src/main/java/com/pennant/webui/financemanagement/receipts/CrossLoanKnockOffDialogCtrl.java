@@ -92,7 +92,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReceiptCalculator;
@@ -171,7 +170,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/CrossLoanKnockOffDialog.zul
@@ -300,9 +299,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	private boolean isForeClosure = false;
 	private boolean isEarlySettle = false;
 	private boolean isCancel = false;
-	private Date maturityDate;
-
-	private CustomerDetails customerDetails = null;
 	private transient CrossLoanKnockOffService crossLoanKnockOffService;
 	protected CrossLoanKnockOff crossLoanHeader;
 	protected CrossLoanKnockOffListCtrl crossLoanKnockOffListCtrl = null;
@@ -376,9 +372,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					recordType = finReceiptHeader.getRecordType();
 					isCancel = crossLoanHeader.isCancelProcess();
 
-					Cloner cloner = new Cloner();
-					befImage = cloner.deepClone(crossLoanHeader);
-					orgFinanceDetail = cloner.deepClone(financeDetail);
+					befImage = ObjectUtil.clone(crossLoanHeader);
+					orgFinanceDetail = ObjectUtil.clone(financeDetail);
 					crossLoanHeader.setBefImage(befImage);
 				}
 			}
@@ -957,9 +952,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		if (!isValidateData(true)) {
 			return;
 		}
-		Cloner cloner = new Cloner();
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 		setOrgReceiptData(tempReceiptData);
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
@@ -1400,7 +1394,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			this.finSchProfitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(),
 					PennantStaticListUtil.getProfitDaysBasis()));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
-			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
+			this.finSchGracePeriodEndDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 
 			// Fill Effective Schedule Details
@@ -1788,11 +1782,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		rcd.setReceiptSeqID(getReceiptSeqID(rcd));
 		rcd.setReceiptID(rch.getReceiptID());
 
-		boolean partnerBankReq = false;
-		if (!ReceiptMode.CASH.equals(rcd.getPaymentType())) {
-			partnerBankReq = true;
-		}
-
 		// rcd.setReceivedDate(this.receivedDate.getValue());
 		if (rcd.getReceiptSeqID() <= 0) {
 			rcd.setPayOrder(rcdList.size() + 1);
@@ -1845,8 +1834,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		}
 
 		// Making Single Set of Repay Schedule Details and sent to Rendering
-		Cloner cloner = new Cloner();
-		List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+		List<RepayScheduleDetail> tempRpySchdList = ObjectUtil.clone(rpySchdList);
 		Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 		for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 
@@ -1919,10 +1907,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * @throws Exception
 	 */
 	public void onClick$btnReceipt(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
 		doSave();
-		crossLoanKnockOffListCtrl.doRefresh();
-		logger.debug("Leaving" + event.toString());
+		crossLoanKnockOffListCtrl.search();
 	}
 
 	public void doSave() throws WrongValueException, InterruptedException {
@@ -1980,13 +1966,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 						receiptDetail.setPaymentRef(this.paymentRef.getValue());
 						receiptDetail.setTransactionRef(this.transactionRef.getValue());
 						receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
-						// receiptDetail.setReceivedDate(this.receivedDate.getValue());
-						// receiptDetail.setDrawerName(this.drawerName.getValue());
-
-						boolean partnerBankReq = false;
-						if (!StringUtils.equals(ReceiptMode.CASH, receiptDetail.getPaymentType())) {
-							partnerBankReq = true;
-						}
 
 						// Setting data
 						if (StringUtils.equals(ReceiptMode.CHEQUE, receiptDetail.getPaymentType())
@@ -2112,8 +2091,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		}
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		CrossLoanKnockOff crossLoanHKnockOff = cloner.deepClone(crossLoanHeader);
+		CrossLoanKnockOff crossLoanHKnockOff = ObjectUtil.clone(crossLoanHeader);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -2278,12 +2256,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 					this.transactionRef.setValue(rcd.getTransactionRef());
 					this.externalRefrenceNumber.setValue(rch.getExtReference());
 					this.chequeAcNo.setValue(rcd.getChequeAcNo());
-
-					boolean partnerBankReq = false;
-					if (!StringUtils.equals(ReceiptMode.CASH, rcd.getPaymentType())) {
-						partnerBankReq = true;
-					}
-
 				}
 			}
 		}
@@ -2454,7 +2426,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		} else {
 			if (finMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())
 					&& finMain.isAllowGrcPeriod() && FinanceConstants.STEPTYPE_PRIBAL.equals(finMain.getStepType())
-					&& DateUtility.compare(receiptData.getValueDate(), finMain.getGrcPeriodEndDate()) <= 0
+					&& DateUtil.compare(receiptData.getValueDate(), finMain.getGrcPeriodEndDate()) <= 0
 					&& (CalculationConstants.SCHMTHD_PRI.equals(finMain.getScheduleMethod())
 							|| CalculationConstants.SCHMTHD_PRI_PFT.equals(finMain.getScheduleMethod()))) {
 				repyMethodList
@@ -3215,8 +3187,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		Date fromDate = rch.getValueDate();
 
 		Date toDate = SysParamUtil.getAppDate(); // DateUtility.getAppDate()
-		if (DateUtility.compare(fromDate, toDate) > 0) {
-			toDate = DateUtility.getDerivedAppDate();
+		if (DateUtil.compare(fromDate, toDate) > 0) {
+			toDate = SysParamUtil.getDerivedAppDate();
 		}
 
 		if (FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose())) {
@@ -3496,7 +3468,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		try {
 			Date curBusDate = SysParamUtil.getAppDate();
 			if (curBusDate.compareTo(header.getValueDate()) < 0) {
-				curBusDate = DateUtility.getDerivedAppDate();
+				curBusDate = SysParamUtil.getDerivedAppDate();
 			}
 
 		} catch (WrongValueException we) {
@@ -3911,7 +3883,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), formatter));
@@ -4021,76 +3993,26 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	 * @param totalPri
 	 */
 	private void doFillSummaryDetails(Map<String, BigDecimal> paymentMap) {
-		Listcell lc;
-		Listitem item;
-		// Summary Details
-		item = new Listitem();
-		lc = new Listcell(Labels.getLabel("listcell_summary.label"));
+		Listitem item = new Listitem();
+		Listcell lc = new Listcell(Labels.getLabel("listcell_summary.label"));
+
 		lc.setStyle("font-weight:bold;background-color: #C0EBDF;");
 		lc.setSpan(15);
 		lc.setParent(item);
-		// this.listBoxPayment.appendChild(item);
 
 		BigDecimal totalSchAmount = BigDecimal.ZERO;
 
-		/*
-		 * if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) { this.listheader_Refund.setVisible(true);
-		 * totalSchAmount = totalSchAmount.subtract(paymentMap.get("totalRefund"));
-		 * fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund")); } else {
-		 * this.listheader_Refund.setVisible(false); } if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0)
-		 * { this.listheader_Penalty.setVisible(true); totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("totalCharge"));
-		 * fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge")); } else {
-		 * this.listheader_Penalty.setVisible(false); } if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
-		 * totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
-		 * fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft")); } if
-		 * (paymentMap.get("totalTds").compareTo(BigDecimal.ZERO) > 0) {
-		 * fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"), paymentMap.get("totalTds"));
-		 * this.listheader_Tds.setVisible(true); } else { this.listheader_Tds.setVisible(false); } if
-		 * (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("totalLatePft")); this.listheader_LatePft.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft")); } else {
-		 * this.listheader_LatePft.setVisible(false); }
-		 */
 		if (paymentMap.get("totalPri").compareTo(BigDecimal.ZERO) > 0) {
 			totalSchAmount = totalSchAmount.add(paymentMap.get("totalPri"));
 			fillListItem(Labels.getLabel("listcell_totalPriPayNow.label"), paymentMap.get("totalPri"));
 		}
 
-		/*
-		 * if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("insPaid")); this.listheader_InsPayment.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid")); } else {
-		 * this.listheader_InsPayment.setVisible(false); } if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO)
-		 * > 0) { totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
-		 * this.listheader_SchdFee.setVisible(true); fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"),
-		 * paymentMap.get("schdFeePaid")); } else { this.listheader_SchdFee.setVisible(false); } if
-		 * (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("schdSuplRentPaid")); this.listheader_SuplRent.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid")); }
-		 * else { this.listheader_SuplRent.setVisible(false); } if
-		 * (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("schdIncrCostPaid")); this.listheader_IncrCost.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid")); }
-		 * else { this.listheader_IncrCost.setVisible(false); }
-		 */
-
 		fillListItem(Labels.getLabel("listcell_totalSchAmount.label"), totalSchAmount);
-
 	}
 
-	/**
-	 * Method for Showing List Item
-	 * 
-	 * @param label
-	 * @param fieldValue
-	 */
 	private void fillListItem(String label, BigDecimal fieldValue) {
-
-		Listcell lc;
-		Listitem item;
-		item = new Listitem();
-		lc = new Listcell();
+		Listitem item = new Listitem();
+		Listcell lc = new Listcell();
 		lc.setParent(item);
 		lc = new Listcell(label);
 		lc.setStyle("font-weight:bold;");
@@ -4103,23 +4025,14 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		lc = new Listcell();
 		lc.setSpan(12);
 		lc.setParent(item);
-		// this.listBoxPayment.appendChild(item);
-
 	}
 
-	/**
-	 * Sorting Repay Schedule Details
-	 * 
-	 * @param repayScheduleDetails
-	 * @return
-	 */
 	public List<RepayScheduleDetail> sortRpySchdDetails(List<RepayScheduleDetail> repayScheduleDetails) {
-
 		if (repayScheduleDetails != null && repayScheduleDetails.size() > 0) {
-			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
+			Collections.sort(repayScheduleDetails, new Comparator<>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -4127,17 +4040,8 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		return repayScheduleDetails;
 	}
 
-	/**
-	 * Method to validate data
-	 * 
-	 * @return
-	 * @throws InterruptedException
-	 * @throws AccountNotFoundException
-	 */
 	private boolean isValidateData(boolean isCalProcess) throws InterruptedException, InterfaceException {
 		logger.debug(Literal.ENTERING);
-		// FIXME: PV: CODE REVIEW PENDING
-		// Validate Field Details
 		if (isCalProcess) {
 			doClearMessage();
 			doSetValidation();
@@ -4149,10 +4053,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				.equals(getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
 			isOverDraft = true;
 		}
-
-		/*
-		 * if (this.receivedDate.getValue() != null) { receiptValueDate = this.receivedDate.getValue(); }
-		 */
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		Date receiptValueDate = rch.getValueDate();
@@ -4186,8 +4086,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			return false;
 		}
 
-		// in case of early settlement,do not allow before first installment
-		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe() && !isOverDraft) {
 			if (financeMain.getFinApprovedDate() != null
 					&& rch.getValueDate().compareTo(financeMain.getFinApprovedDate()) < 0) {
@@ -4287,32 +4185,20 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				return false;
 			}
 		}
-		// validation throw in manuval advice payable in receipts
-		// Commented because of when we are trying to move this receipt amount to 'EMI in Advance' from 'Excess amount',
-		// application is showing the " No dues to knock off.(Below message)"
-		// As per the discussion with team this valid scenario, commented the below error.
-		/*
-		 * if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0) {
-		 * MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff")); return false; }
-		 */
 
 		// No excess amount validation on partial Settlement
 		if (receiptPurposeCtg == 1 && !isOverDraft) {
 			if (receiptData.getRemBal().compareTo(BigDecimal.ZERO) <= 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
 				return false;
-			} /*
-				 * else if (rch.getTotalPastDues().getBalance().compareTo(BigDecimal. ZERO) > 0) {
-				 * MessageUtil.showError(Labels.getLabel( "label_ReceiptDialog_Valid_PastAmount_PartialSettlement"));
-				 * return false; }
-				 */ else {
+			} else {
 
 				// Check the max Schedule payment amount
 				BigDecimal closingBal = BigDecimal.ZERO;
 				boolean isValidPPDate = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0
 							&& StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())
 							&& !FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())
 							&& !FinanceConstants.FLAG_UNPLANNED.equals(curSchd.getBpiOrHoliday())
@@ -4323,11 +4209,11 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 							&& !FinanceConstants.FLAG_RESTRUCTURE_PRIH.equals(curSchd.getBpiOrHoliday())) {
 						isValidPPDate = false;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
@@ -4377,17 +4263,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Paids_EarlySettlement"));
 				return false;
 			}
-
-			// PAN Number checking
-			/*
-			 * if (isPanMandatory) { long finID = financeMainService.getFinID(this.finReference.getValue()); List<Long>
-			 * coAppCustIds = this.jointAccountDetailService.getCustIdsByFinID(finID);
-			 * coAppCustIds.add(financeMain.getCustID());
-			 * 
-			 * if (!customerDetailsService.isPanFoundByCustIds(coAppCustIds, this.panNumber.getValue())) {
-			 * MessageUtil.showError("PAN Details are not matching with Applicant / Co applicant of the loan"); return
-			 * false; } }
-			 */
 
 			if (!ImplementationConstants.RECEIPT_ALLOW_FULL_WAIVER) {
 				if (isForeClosure && receiptData.getPaidNow().compareTo(BigDecimal.ZERO) == 0) {
@@ -4464,53 +4339,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 		logger.debug("Leaving");
 	}
 
-	/** new code to display chart by skipping jsps code end */
-
-	// Printer integration starts
-
 	public void onClick$btnPrint(Event event) throws Exception {
-		/*
-		 * logger.debug(Literal.ENTERING); try {
-		 * 
-		 * String reportName = "Receipt"; String templatePath = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/"; String
-		 * templateName = reportName + PennantConstants.DOC_TYPE_WORD_EXT; AgreementEngine engine = new
-		 * AgreementEngine(templatePath, templatePath); engine.setTemplate(templateName); engine.loadTemplate();
-		 * reportName = "Receipt_" + this.finReference.getValue() + "_" + receiptData.getReceiptHeader().getReceiptID();
-		 * 
-		 * ReceiptReport receipt = new ReceiptReport();
-		 * receipt.setUserName(getUserWorkspace().getLoggedInUser().getUserName( ) + " - " +
-		 * getUserWorkspace().getLoggedInUser().getFullName()); receipt.setFinReference(this.finReference.getValue());
-		 * receipt.setCustName(receiptData.getReceiptHeader().getCustShrtName()) ;
-		 * 
-		 * BigDecimal totalReceiptAmt = receiptData.getTotReceiptAmount(); int finFormatter = CurrencyUtil
-		 * .getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain(). getFinCcy());
-		 * receipt.setReceiptAmount(PennantApplicationUtil.amountFormate( totalReceiptAmt, finFormatter));
-		 * receipt.setReceiptAmountInWords(NumberToEnglishWords .getAmountInText(PennantApplicationUtil.formateAmount(
-		 * totalReceiptAmt, finFormatter), "")); receipt.setAppDate(DateUtility.formatToLongDate(DateUtility.
-		 * getAppDate()));
-		 * 
-		 * 
-		 * Date eventFromDate = this.receivedDate.getValue(); if (eventFromDate == null) { eventFromDate =
-		 * DateUtility.getAppDate(); }
-		 * 
-		 * // receipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
-		 * receipt.setReceiptNo(this.paymentRef.getValue());
-		 * receipt.setPaymentMode(this.receiptMode.getSelectedItem().getLabel(). toString());
-		 * engine.mergeFields(receipt);
-		 * 
-		 * boolean isDirectPrint = false; try { if (isDirectPrint) { try { byte[] documentByteArray =
-		 * engine.getDocumentInByteArray(reportName, SaveFormat.PDF); String encodedString =
-		 * Base64.encodeBase64String(documentByteArray); Clients.evalJavaScript(
-		 * "PrinterUtil.print('window_ReceiptDialog','onPrintSuccess','" + encodedString + "')");
-		 * 
-		 * } catch (Exception e) { logger.error(Labels.getLabel("message.error.printerNotImpl"));
-		 * engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF); } } else {
-		 * engine.showDocument(this.window_ReceiptDialog, reportName, SaveFormat.PDF); } } catch (Exception e) {
-		 * logger.error(Labels.getLabel("message.error.agreementNotFound")); }
-		 * 
-		 * } catch (Exception e) { logger.error(Labels.getLabel("message.error.agreementNotFound")); }
-		 * logger.debug(Literal.LEAVING);
-		 */}
+		//
+	}
 
 	public void addAmountCell(Listitem item, BigDecimal value, String cellID, boolean isBold) {
 		Listcell lc = new Listcell(PennantApplicationUtil.amountFormate(value, formatter));
@@ -4547,22 +4378,9 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 	}
 
 	private void setBalances() {
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		ReceiptAllocationDetail xa = rch.getTotalXcess();
-		ReceiptAllocationDetail pd = rch.getTotalPastDues();
-		ReceiptAllocationDetail adv = rch.getTotalRcvAdvises();
-		ReceiptAllocationDetail fee = rch.getTotalFees();
-
-		// Total Net Receivable
-		BigDecimal paidByCustomer = pd.getTotalDue().add(adv.getTotalDue()).add(fee.getTotalDue());
-		paidByCustomer = paidByCustomer.subtract(pd.getWaivedAmount()).subtract(adv.getWaivedAmount())
-				.subtract(fee.getWaivedAmount());
-
-		// Remaining Balance = Receipt Amount + To be Paid by Customer - Paid by
-		// Customer (Allocated)
-		BigDecimal remBalAfterAllocation = receiptData.getRemBal();
-		if (remBalAfterAllocation.compareTo(BigDecimal.ZERO) <= 0) {
-			remBalAfterAllocation = BigDecimal.ZERO;
+		BigDecimal remBal = receiptData.getRemBal();
+		if (remBal.compareTo(BigDecimal.ZERO) <= 0) {
+			remBal = BigDecimal.ZERO;
 			this.excessAdjustTo.setDisabled(true);
 		} else {
 			this.excessAdjustTo.setDisabled(false);
@@ -4571,7 +4389,7 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 			}
 		}
 
-		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBalAfterAllocation, formatter));
+		this.remBalAfterAllocation.setValue(PennantApplicationUtil.formateAmount(remBal, formatter));
 	}
 
 	/**
@@ -5006,14 +4824,6 @@ public class CrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<CrossLoanKnockOff> 
 
 	private String getTabID(String id) {
 		return "TAB" + StringUtils.trimToEmpty(id);
-	}
-
-	private Tabpanel getTabpanel(String id) {
-		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
-	}
-
-	private String getTabpanelID(String id) {
-		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
 	public FinanceMain getFinanceMain() {

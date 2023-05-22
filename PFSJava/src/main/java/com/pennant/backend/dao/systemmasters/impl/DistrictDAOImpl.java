@@ -52,9 +52,9 @@ public class DistrictDAOImpl extends SequenceDao<District> implements DistrictDA
 		if (dis.getId() == Long.MIN_VALUE) {
 			dis.setId(getNextValue("SeqRmtDistricts"));
 		}
-		
+
 		logger.debug(Literal.SQL.concat(sql.toString()));
-		
+
 		try {
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
@@ -79,7 +79,7 @@ public class DistrictDAOImpl extends SequenceDao<District> implements DistrictDA
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		
+
 		return String.valueOf(dis.getId());
 	}
 

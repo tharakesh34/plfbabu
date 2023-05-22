@@ -183,7 +183,7 @@ public class AssetClassificationHeaderListCtrl extends GFCBaseListCtrl<AssetClas
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  AND  Id = ");
 		whereCond.append(assetclassificationheader.getId());
 		whereCond.append(" AND  version=");

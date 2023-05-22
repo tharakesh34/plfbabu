@@ -56,7 +56,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.finance.AuditTransaction;
@@ -68,6 +67,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -206,7 +206,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.mobileNo.setValue(PennantApplicationUtil.amountFormate(
 				customerFinanceDetail.getFinAmount().add(customerFinanceDetail.getFeeChargeAmt()),
 				CurrencyUtil.getFormat(customerFinanceDetail.getFinCcy())));
-		this.emailID.setValue(DateUtility.formatToLongDate(customerFinanceDetail.getFinStartDate()));
+		this.emailID.setValue(DateUtil.formatToLongDate(customerFinanceDetail.getFinStartDate()));
 		fillAuditTransactions(customerFinanceDetail.getAuditTransactionsList(), customerFinanceDetail.getNotesList());
 		logger.debug("Leaving");
 	}
@@ -286,7 +286,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ note.getRemarks() + " </font> <br>  ";
-				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
+				String date = DateUtil.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + alignSide + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
@@ -325,17 +325,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		long diffInMilliseconds = 0;
 		Listitem item;
 		AuditTransaction auditTransaction = null;
-		String prvUsrName = null;
-		String prvRoleCode = null;
+
 		for (int i = 0; i < auditTransactionsList.size(); i++) {
 			auditTransaction = auditTransactionsList.get(i);
-
-			/*
-			 * if(auditTransaction.getUsrName().equals(prvUsrName) &&
-			 * auditTransaction.getRoleCode().equals(prvRoleCode)) { continue; }
-			 */
-			prvUsrName = auditTransaction.getUsrName();
-			prvRoleCode = auditTransaction.getRoleCode();
 
 			item = new Listitem();
 			Listcell lc;
@@ -345,9 +337,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (ParseException e1) {
 				logger.error(Literal.EXCEPTION, e1);
 			}
-			lc = new Listcell(DateUtility.formatToLongDate(d1));
+			lc = new Listcell(DateUtil.formatToLongDate(d1));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.format(d1, DateUtility.DateFormat.LONG_TIME.getPattern()));
+			lc = new Listcell(DateUtil.format(d1, DateUtil.DateFormat.LONG_TIME.getPattern()));
 			lc.setParent(item);
 			lc = new Listcell(auditTransaction.getRoleDesc());
 			lc.setParent(item);
@@ -398,9 +390,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (ParseException e1) {
 				logger.error(Literal.EXCEPTION, e1);
 			}
-			lc = new Listcell(DateUtility.formatToLongDate(d1));
+			lc = new Listcell(DateUtil.formatToLongDate(d1));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.format(d1, DateUtility.DateFormat.LONG_TIME.getPattern()));
+			lc = new Listcell(DateUtil.format(d1, DateUtil.DateFormat.LONG_TIME.getPattern()));
 			lc.setParent(item);
 			lc = new Listcell(customerFinanceDetail.getNextRoleDesc());
 			lc.setParent(item);

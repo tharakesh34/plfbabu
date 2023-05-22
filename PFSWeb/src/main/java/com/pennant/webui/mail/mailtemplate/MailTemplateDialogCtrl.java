@@ -59,7 +59,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -74,8 +73,8 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.PTCKeditor;
+import com.pennant.pff.template.TemplateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -154,10 +153,10 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private transient MailTemplateService mailTemplateService;
 	private transient PagedListService pagedListService;
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
-	private List<ValueLabel> listEmailFormat = PennantStaticListUtil.getTemplateFormat(); // autowired
-	private List<ValueLabel> listTemplateFor = PennantStaticListUtil.getTemplateForList();
-	private List<ValueLabel> mailTeplateModulesList = PennantStaticListUtil.getMailModulesList();
-	private List<ValueLabel> templateEvents = PennantStaticListUtil.getTemplateEvents();
+	private List<ValueLabel> listEmailFormat = TemplateUtil.getFormats(); // autowired
+	private List<ValueLabel> listTemplateFor = TemplateUtil.getTemplatesFor();
+	private List<ValueLabel> mailTeplateModulesList = TemplateUtil.getModules();
+	private List<ValueLabel> templateEvents = TemplateUtil.getEvents();
 	private Map<String, String> filedValues = new HashMap<String, String>();
 	private Map<String, String> filedDesc = new HashMap<String, String>();
 
@@ -1457,8 +1456,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 
 			Map<String, Object> model = new HashMap<String, Object>();
 			FinanceMain fm = new FinanceMain();
-			fm.setMaturityDate(DateUtility.getAppValueDate());
-			fm.setFinStartDate(DateUtility.getAppValueDate());
+			fm.setMaturityDate(SysParamUtil.getAppValueDate());
+			fm.setFinStartDate(SysParamUtil.getAppValueDate());
 			model.put("vo", fm);
 
 			FreeMarkerTemplateUtils.processTemplateIntoString(template, model);

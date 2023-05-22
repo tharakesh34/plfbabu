@@ -60,7 +60,6 @@ import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.mandate.MandateStatusDAO;
 import com.pennant.backend.dao.mandate.MandateStatusUpdateDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
-import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypePartnerBankDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -97,6 +96,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.mandate.MandateUtil;
@@ -131,7 +131,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	private BankBranchService bankBranchService;
 	private BankDetailService bankDetailService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private ChequeDetailDAO chequeDetailDAO;
+	private LienService lienService;
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -314,6 +314,15 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			Long securityMandate = mandateDAO.getSecurityMandateIdByRef(mandate.getOrgReference());
 			if (securityMandate == null) {
 				mandateDAO.updateFinMandateId(mandate.getMandateID(), mandate.getOrgReference());
+			}
+
+			if (ImplementationConstants.ALLOW_LIEN && InstrumentType.isSI(mandateType)) {
+				FinanceMain fm = financeMainDAO.getFinanceMainByRef(mandate.getOrgReference(), "", false);
+				FinanceDetail fd = new FinanceDetail();
+				fd.setMandate(mandate);
+				fd.getFinScheduleData().setFinanceMain(fm);
+				fd.setModuleDefiner("Mandate Creation");
+				lienService.save(fd, true);
 			}
 
 			try {
@@ -1427,8 +1436,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		if (UploadConstants.FINSOURCE_ID_API.equals(mandate.getSourceId())) {
-			if (StringUtils.isNotBlank(mandate.getMandateRef())
-					&& !InstrumentType.isEMandate(mandate.getMandateType())) {
+			if (StringUtils.isNotBlank(mandate.getMandateRef()) && !InstrumentType.isEMandate(mandate.getMandateType())
+					&& !mandate.isExternalMandate()) {
 				response.setError(getError("90329", "mandateRef", "createMandate"));
 				return response;
 			}
@@ -1485,6 +1494,13 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 				return getError("90224", pbLabel, mandate.getPartnerBankCode());
 			} else {
 				mandate.setPartnerBankId(partnerBankID);
+			}
+		}
+
+		if (InstrumentType.isECS(mandate.getMandateType()) || InstrumentType.isNACH(mandate.getMandateType())
+				|| InstrumentType.isEMandate(mandate.getMandateType())) {
+			if (StringUtils.isNotEmpty(mandate.getMandateRef())) {
+				mandate.setExternalMandate(true);
 			}
 		}
 
@@ -2386,6 +2402,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		mndt.setCustCIF(mandate.getCustCIF());
 		mndt.setUserDetails(mandate.getUserDetails());
 		mndt.setSourceId(mandate.getSourceId());
+		mndt.setExternalMandate(mandate.isExternalMandate());
 	}
 
 	private void setMandateDetails(Mandate mandate, Mandate mndt) {
@@ -2520,8 +2537,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Autowired
-	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
-		this.chequeDetailDAO = chequeDetailDAO;
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
 	}
 
 }

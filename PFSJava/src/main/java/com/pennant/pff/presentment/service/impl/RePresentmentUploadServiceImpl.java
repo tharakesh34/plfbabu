@@ -2,52 +2,59 @@ package com.pennant.pff.presentment.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionDefinition;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.RePresentmentUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.model.RePresentmentUploadDetail;
 import com.pennant.pff.presentment.service.ExtractionService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
-public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
+public class RePresentmentUploadServiceImpl extends AUploadServiceImpl<RePresentmentUploadDetail> {
 	private static final Logger logger = LogManager.getLogger(RePresentmentUploadServiceImpl.class);
 
 	private ExtractionService extractionService;
 	private RePresentmentUploadDAO representmentUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private ValidateRecord representmentUploadValidateRecord;
+
+	public RePresentmentUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected RePresentmentUploadDetail getDetail(Object object) {
+		if (object instanceof RePresentmentUploadDetail detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-					TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
-			List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+			List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
 			Date appDate = SysParamUtil.getAppDate();
 			String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
@@ -56,65 +63,28 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<RePresentmentUploadDetail> details = representmentUploadDAO.getDetails(header.getId());
+				header.getUploadDetails().addAll(details);
 
 				header.setAppDate(appDate);
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
 
 				for (RePresentmentUploadDetail detail : details) {
 					detail.setAcBounce(acBounce);
 					doValidate(header, detail);
-
-					if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
-					}
 				}
 
-				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
-					representmentUploadDAO.update(details);
-					transactionManager.commit(txStatus);
-				} catch (Exception e) {
-					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
-				}
-
-				header.setSuccessRecords(sucessRecords);
-				header.setFailureRecords(failRecords);
-
-				StringBuilder remarks = new StringBuilder("Process Completed");
-
-				if (failRecords > 0) {
-					remarks.append(" with exceptions, ");
-				}
-
-				remarks.append(" Total Records : ").append(header.getTotalRecords());
-				remarks.append(" Success Records : ").append(sucessRecords);
-				remarks.append(" Failed Records : ").append(failRecords);
+				representmentUploadDAO.update(details);
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
 
+			TransactionStatus txStatus = getTransactionStatus();
 			try {
-				txStatus = transactionManager.getTransaction(txDef);
-
-				updateHeader(headers, true);
-
 				logger.info("RePresentment Process is Initiated");
 				extractionService.extractRePresentment(headerIdList);
 
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
-				logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+				logger.error(Literal.EXCEPTION, e);
 
 				if (txStatus != null) {
 					transactionManager.rollback(txStatus);
@@ -123,27 +93,29 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 				txStatus = null;
 			}
 
+			updateHeader(headers, true);
 		}).start();
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
+
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
+			headers.forEach(h1 -> {
+				h1.setRemarks(REJECT_DESC);
+				h1.getUploadDetails().addAll(representmentUploadDAO.getDetails(h1.getId()));
+			});
 
-			representmentUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+			representmentUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
@@ -153,15 +125,7 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		RePresentmentUploadDetail detail = null;
-
-		if (object instanceof RePresentmentUploadDetail) {
-			detail = (RePresentmentUploadDetail) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		RePresentmentUploadDetail detail = getDetail(object);
 
 		logger.info("Validating the Data for the reference {}", detail.getReference());
 
@@ -234,26 +198,20 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 			message.append(", Due Date -").append(dueDate);
 			message.append("with filename").append(fileNames.get(0)).append("already exists");
 
-			detail.setProgress(EodConstants.PROGRESS_FAILED);
-			detail.setErrorCode(PresentmentError.REPRMNT523.name());
-			detail.setErrorDesc(message.toString());
+			setFailureStatus(detail, PresentmentError.REPRMNT523.name(), message.toString());
 
 			logger.info("Duplicate RePresentment found in RePresentUpload table..");
 			return;
 		}
 
-		Date nextSchdDate = financeScheduleDetailDAO.getNextSchdDate(fm.getFinID(), dueDate);
-
-		if (nextSchdDate != null && nextSchdDate.compareTo(appDate) <= 0) {
-			setError(detail, PresentmentError.REPRMNT522);
-			return;
-		}
-
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		setSuccesStatus(detail);
 
 		logger.info("Validated the Data for the reference {}", detail.getReference());
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.RE_PRESENTMENT.name(), this, "RepresentUploadHeader");
 	}
 
 	@Override
@@ -262,14 +220,35 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return representmentUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		RePresentmentUploadDetail representment = (RePresentmentUploadDetail) ObjectUtil.valueAsObject(paramSource,
+				RePresentmentUploadDetail.class);
+
+		String acBounce = SysParamUtil.getValueAsString(SMTParameterConstants.BOUNCE_CODES_FOR_ACCOUNT_CLOSED);
+		representment.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		representment.setDueDate(ObjectUtil.valueAsDate(paramSource.getValue("dueDate")));
+		representment.setAcBounce(acBounce);
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		representment.setHeaderId(header.getId());
+		representment.setAppDate(header.getAppDate());
+
+		doValidate(header, representment);
+
+		updateProcess(header, representment, paramSource);
+
+		header.getUploadDetails().add(representment);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setError(RePresentmentUploadDetail detail, PresentmentError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Autowired
@@ -291,16 +270,4 @@ public class RePresentmentUploadServiceImpl extends AUploadServiceImpl {
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
-
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	@Autowired
-	public void setRepresentmentUploadValidateRecord(
-			RepresentmentUploadValidateRecord representmentUploadValidateRecord) {
-		this.representmentUploadValidateRecord = representmentUploadValidateRecord;
-	}
-
 }

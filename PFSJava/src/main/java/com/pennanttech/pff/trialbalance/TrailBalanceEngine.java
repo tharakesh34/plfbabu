@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -702,10 +701,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private Date getFinanceEndDate() {
 
 		int year = 0;
-		if (DateUtility.getMonth(fromDate) < 4) {
-			year = DateUtility.getYear(DateUtility.getPreviousYearDate(fromDate));
+		if (DateUtil.getMonth(fromDate) < 4) {
+			year = DateUtil.getYear(DateUtil.addYears(fromDate, -1));
 		} else {
-			year = DateUtility.getYear(fromDate);
+			year = DateUtil.getYear(fromDate);
 		}
 
 		String month = SysParamUtil.getValueAsString("FINANCIAL_YEAR_END_MONTH");

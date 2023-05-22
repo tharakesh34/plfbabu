@@ -265,7 +265,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		if (aDealerGroup.getDealerCategoryId() != null) {
+		if (aDealerGroup.getDealerCategoryId() != 0) {
 			LovFieldDetail lovFieldDetail = new LovFieldDetail();
 			lovFieldDetail.setFieldCodeId(Long.valueOf(aDealerGroup.getDealerCategoryId()));
 			this.dealerCategory.setObject(lovFieldDetail);
@@ -306,7 +306,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		// dealer category
 		try {
 			this.dealerCategory.getValidatedValue();
-			aDealerGroup.setDealerCategoryId(this.dealerCategory.getValue());
+			aDealerGroup.setDealerCategoryId(Integer.parseInt(this.dealerCategory.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

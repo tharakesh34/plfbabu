@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -22,6 +21,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> implements AddTermsService {
 	private static Logger logger = LogManager.getLogger(AddTermsServiceImpl.class);
@@ -46,7 +46,7 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = schdData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);
@@ -82,10 +82,10 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		long finID = fsi.getFinID();
 
 		Date appDate = SysParamUtil.getAppDate();
-		if (DateUtility.compare(fsi.getRecalFromDate(), appDate) <= 0) {
+		if (DateUtil.compare(fsi.getRecalFromDate(), appDate) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Recal From Date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
+			valueParm[1] = "application date:" + DateUtil.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30512", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -109,11 +109,11 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		if (schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
 				// FromDate
-				if (DateUtility.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtil.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 				}
 				// RecalFromDate
-				if (DateUtility.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtil.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 					if (checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
 						return auditDetail;
@@ -123,7 +123,7 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 
 			if (!isValidRecalFromDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "RecalFromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
+				valueParm[0] = "RecalFromDate:" + DateUtil.formatToShortDate(fsi.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 		}

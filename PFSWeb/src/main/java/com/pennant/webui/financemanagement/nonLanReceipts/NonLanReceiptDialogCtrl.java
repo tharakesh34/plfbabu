@@ -126,7 +126,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul
@@ -245,7 +245,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected String eventCode = "";
 	protected String menuItemRightName = null;
 	private int formatter = 0;
-	private String amountFormat = null;
 	private int receiptPurposeCtg = -1;
 
 	protected boolean recSave = false;
@@ -302,12 +301,10 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				finReceiptHeader = receiptData.getReceiptHeader();
 
 				formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				amountFormat = PennantApplicationUtil.getAmountFormate(formatter);
 
 				recordType = finReceiptHeader.getRecordType();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(finReceiptHeader);
+				befImage = ObjectUtil.clone(finReceiptHeader);
 				receiptData.getReceiptHeader().setBefImage(befImage);
 			}
 
@@ -893,8 +890,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.fundingAccount.setReadonly(false);
 
 		} else if (StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER)
-				&& (!StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(recMode, ReceiptMode.DD)
-						&& !StringUtils.equals(recMode, ReceiptMode.CASH))) {
+				&& !StringUtils.equals(recMode, ReceiptMode.CHEQUE) && !StringUtils.equals(recMode, ReceiptMode.DD)
+				&& !StringUtils.equals(recMode, ReceiptMode.CASH)) {
 			this.fundingAccount.setMandatoryStyle(true);
 		}
 
@@ -1191,8 +1188,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptData aReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData aReceiptData = ObjectUtil.clone(receiptData);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -1996,7 +1992,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				}
 
 				finishedTasks += (method + ";");
-				FinReceiptData tRepayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 				serviceTasks = getServiceTasks(taskId, rch, finishedTasks);
 
 			}

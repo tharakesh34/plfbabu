@@ -52,7 +52,7 @@ public class WorkFlowListModelItemRenderer implements ListitemRenderer<WorkFlowD
 	private static final long serialVersionUID = 2925499383404057064L;
 
 	public WorkFlowListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

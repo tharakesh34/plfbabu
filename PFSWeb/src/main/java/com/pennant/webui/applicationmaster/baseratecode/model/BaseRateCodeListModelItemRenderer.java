@@ -44,7 +44,7 @@ public class BaseRateCodeListModelItemRenderer implements ListitemRenderer<BaseR
 	private static final long serialVersionUID = -8176701674841176336L;
 
 	public BaseRateCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -32,10 +32,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
 
 /**
@@ -64,7 +64,7 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 		lc = new Listcell(ph.getEntityCode());
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(ph.getSchdate()));
+		lc = new Listcell(DateUtil.formatToLongDate(ph.getSchdate()));
 		lc.setParent(item);
 
 		if (StringUtils.trimToNull(ph.getBankCode()) == null) {
@@ -86,7 +86,7 @@ public class PresentmentHeaderListModelItemRenderer implements ListitemRenderer<
 				PennantStaticListUtil.getlabelDesc(ph.getMandateType(), MandateUtil.getInstrumentTypesForBE()));
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(ph.getPresentmentDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(ph.getPresentmentDate()));
 		lc.setParent(item);
 
 		lc = new Listcell(ph.getRecordStatus());

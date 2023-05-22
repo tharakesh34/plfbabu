@@ -47,7 +47,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.CostOfFund;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -61,6 +60,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -518,17 +518,17 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	public void dateValidation() {
 		Date curBussniessDate = SysParamUtil.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
-		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
+		Date dateBackward = DateUtil.addDays(curBussniessDate, daysBackward * -1);
 
 		int daysForward = SysParamUtil.getValueAsInt("FVRC");
-		Date dateForward = DateUtility.addDays(curBussniessDate, daysForward);
+		Date dateForward = DateUtil.addDays(curBussniessDate, daysForward);
 
 		if (this.cofEffDate.getValue().before(dateBackward) || this.cofEffDate.getValue().after(dateForward)) {
 			throw new WrongValueException(cofEffDate,
 					Labels.getLabel("DATE_ALLOWED_RANGE",
 							new String[] { Labels.getLabel("label_CostOfFundDialog_CofEffDate.value"),
-									DateUtility.formatToShortDate(dateBackward),
-									DateUtility.formatToShortDate(dateForward) }));
+									DateUtil.formatToShortDate(dateBackward),
+									DateUtil.formatToShortDate(dateForward) }));
 		}
 	}
 
@@ -870,7 +870,7 @@ public class CostOfFundDialogCtrl extends GFCBaseCtrl<CostOfFund> {
 	@Override
 	protected String getReference() {
 		return getCostOfFund().getCofCode() + PennantConstants.KEY_SEPERATOR
-				+ DateUtility.format(getCostOfFund().getCofEffDate(), PennantConstants.DBDateFormat);
+				+ DateUtil.format(getCostOfFund().getCofEffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

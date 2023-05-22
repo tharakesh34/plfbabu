@@ -107,7 +107,7 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 0;
-			
+
 			ps.setLong(++index, right.getUsrID());
 			ps.setLong(++index, right.getLoginAppId());
 			ps.setInt(++index, 0);

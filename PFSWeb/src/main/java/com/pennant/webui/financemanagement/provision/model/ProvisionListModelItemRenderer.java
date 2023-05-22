@@ -48,7 +48,7 @@ public class ProvisionListModelItemRenderer implements ListitemRenderer<Provisio
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public ProvisionListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

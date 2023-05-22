@@ -52,7 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.LatePayBucketService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -76,6 +75,7 @@ import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -109,7 +109,13 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.extension.LPPExtension;
+import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
+import com.pennant.pff.letter.service.LetterService;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -153,6 +159,8 @@ public class RepaymentPostingsUtil {
 	private AssetClassificationService assetClassificationService;
 	private FeeTypeService feeTypeService;
 	private FinODCAmountDAO finODCAmountDAO;
+	private HoldMarkingService holdMarkingService;
+	private LetterService letterService;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -595,7 +603,7 @@ public class RepaymentPostingsUtil {
 				FinODDetails latePftODTotal = getLatePftODTotal(repayQueue);
 
 				if (latePftODTotal != null) {
-					if (!financeMain.isSimulateAccounting()
+					if (LPPExtension.LPP_DUE_CREATION_REQ && !financeMain.isSimulateAccounting()
 							&& (repayQueue.getLatePayPftPayNow().compareTo(BigDecimal.ZERO) > 0
 									|| repayQueue.getLatePayPftWaivedNow().compareTo(BigDecimal.ZERO) > 0)) {
 						saveFinLPPAmount(repayQueue, valueDate, rpyQueueHeader, latePftODTotal);
@@ -606,7 +614,7 @@ public class RepaymentPostingsUtil {
 
 				FinODDetails odDetail = getODDetail(repayQueue);
 				if (odDetail != null) {
-					if (!financeMain.isSimulateAccounting()
+					if (LPPExtension.LPP_DUE_CREATION_REQ && !financeMain.isSimulateAccounting()
 							&& (repayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
 									|| repayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
 						saveFinODCAmount(repayQueue, valueDate, rpyQueueHeader, odDetail);
@@ -1058,6 +1066,8 @@ public class RepaymentPostingsUtil {
 		}
 
 		LoanPayment lp = new LoanPayment(finID, finReference, schedules, dateValueDate);
+
+		fm.setOldActiveState(fm.isFinIsActive());
 		boolean schdFullyPaid = loanPaymentService.isSchdFullyPaid(lp);
 
 		if (overDraft && DateUtil.compare(appDate, fm.getMaturityDate()) < 0) {
@@ -1071,22 +1081,30 @@ public class RepaymentPostingsUtil {
 			if (overDraft && DateUtil.compare(appDate, fm.getMaturityDate()) < 0) {
 				fullyPaid = false;
 			}
-
 			if (fullyPaid) {
 				pftDetail.setSvnAcrCalReq(false);
 				fm.setFinIsActive(false);
 				fm.setClosedDate(FinanceUtil.deriveClosedDate(fm));
-				fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+
+				if (fm.isOldActiveState()) {
+					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_MATURED);
+				}
 
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 					pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
 				}
 
+				if (fm.getClosureType() != null && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)
+						&& ClosureType.isCancel(fm.getClosureType())) {
+					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_CANCELLED);
+				}
+
 				// Previous Month Amortization reset to Total Profit to avoid posting on closing Month End
 				pftDetail.setPrvMthAmz(pftDetail.getTotalPftSchd());
 				pftDetail.setAmzTillLBD(pftDetail.getTotalPftSchd());
 			}
+
 		} else if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 			fm.setFinIsActive(false);
 			fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_WRITEOFF);
@@ -1100,6 +1118,12 @@ public class RepaymentPostingsUtil {
 				fm.setClosingStatus(null);
 			}
 		}
+
+		if (schdFullyPaid && MandateExtension.ALLOW_HOLD_MARKING) {
+			holdMarkingService.removeHold(fm);
+		}
+
+		letterService.logForAutoLetter(fm, appDate);
 
 		pftDetail.setFinStatus(fm.getFinStatus());
 		pftDetail.setFinStsReason(fm.getFinStsReason());
@@ -1426,35 +1450,27 @@ public class RepaymentPostingsUtil {
 				amountCodes
 						.setUnAccruedPaid((fpd.getTotalPftSchd().add(fpd.getTdPftCpz())).subtract(fpd.getPrvMthAmz()));
 			}
+		}
 
-			if (ImplementationConstants.ALLOW_NPA) {
-				long finID = fm.getFinID();
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
+			long finID = fm.getFinID();
 
-				amountCodes.setNpa(assetClassificationService.isEffNpaStage(finID));
+			amountCodes.setNpa(assetClassificationService.isEffNpaStage(finID));
 
-				if (amountCodes.isNpa()) {
-					amountCodes.setRpPftPr(amountCodes.getRpPft());
-					amountCodes.setRpTotPr(amountCodes.getRpTot());
-					amountCodes.setPriPr(amountCodes.getPri());
-					amountCodes.setPriSPr(amountCodes.getPriS());
-					// amountCodes.setRpPft(BigDecimal.ZERO);
-					// amountCodes.setRpTot(BigDecimal.ZERO);
-				} else {
-					amountCodes.setPriPr(BigDecimal.ZERO);
-					amountCodes.setPriSPr(BigDecimal.ZERO);
-				}
+			if (amountCodes.isNpa()) {
+				amountCodes.setRpPftPr(amountCodes.getRpPft());
+				amountCodes.setRpTotPr(amountCodes.getRpTot());
+				amountCodes.setPriPr(amountCodes.getPri());
+				amountCodes.setPriSPr(amountCodes.getPriS());
+			} else {
+				amountCodes.setPriPr(BigDecimal.ZERO);
+				amountCodes.setPriSPr(BigDecimal.ZERO);
 			}
 		}
 
 		aeEvent.getAcSetIDList().clear();
-		if (StringUtils.isNotBlank(fm.getPromotionCode())
-				&& (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getCacheAccountSetID(fm.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, eventCode));
 
 		// Assignment Percentage
 		Set<String> excludeFees = null;
@@ -1503,7 +1519,6 @@ public class RepaymentPostingsUtil {
 
 		if (rch != null) {
 			List<ReceiptAllocationDetail> radList = rch.getAllocations();
-			List<FeeType> feeTypesList = new ArrayList<>();
 			List<String> feeTypeCodes = new ArrayList<>();
 			for (ReceiptAllocationDetail rad : radList) {
 				if (rad.getAllocationType().equals(Allocation.MANADV)) {
@@ -1532,8 +1547,7 @@ public class RepaymentPostingsUtil {
 
 			}
 			if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-				feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
-				aeEvent.setFeesList(feeTypesList);
+				aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingByCode(feeTypeCodes));
 			}
 		}
 
@@ -1667,7 +1681,22 @@ public class RepaymentPostingsUtil {
 		String finReference = fm.getFinReference();
 
 		RestructureDetail rd = financeScheduleDetailDAO.getRestructureDetail(finReference);
-		Date resStartDate = fm.getRestructureDate();
+		Date resStartDate = rd.getRestructureDate();
+
+		Date resEndDate = null;
+		if (rd.getPriHldEndDate() != null) {
+			resEndDate = rd.getPriHldEndDate();
+		} else {
+			resEndDate = rd.getEmiHldEndDate();
+		}
+
+		if (resEndDate == null) {
+			resEndDate = fm.getAppDate();
+		}
+
+		if (DateUtil.compare(resEndDate, fm.getAppDate()) > 0) {
+			resEndDate = fm.getAppDate();
+		}
 
 		if (rd != null) {
 			resStartDate = rd.getRestructureDate();
@@ -1677,11 +1706,11 @@ public class RepaymentPostingsUtil {
 		Map<Date, FinanceScheduleDetail> scheduleMap = new HashMap<>();
 
 		for (FinanceScheduleDetail curSchd : oldSchedules) {
-			if (curSchd.getSchDate().compareTo(fm.getAppDate()) > 0) {
+			if (curSchd.getSchDate().compareTo(resEndDate) > 0) {
 				break;
 			}
 
-			if (DateUtil.compare(curSchd.getSchDate(), resStartDate) > 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), resStartDate) >= 0) {
 				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 					instDueDates.add(curSchd.getSchDate());
 					scheduleMap.put(curSchd.getSchDate(), curSchd);
@@ -1712,9 +1741,11 @@ public class RepaymentPostingsUtil {
 
 		monthStartDate = DateUtil.getMonthStart(fm.getAppDate());
 
-		if (!amzReversalDates.contains(monthStartDate)) {
-			processAmzReversal(fm, monthStartDate);
-			amzReversalDates.add(monthStartDate);
+		if (amzReversalDates.size() > 0) {
+			if (!amzReversalDates.contains(monthStartDate)) {
+				processAmzReversal(fm, monthStartDate);
+				amzReversalDates.add(monthStartDate);
+			}
 		}
 
 		List<Date> repostDatelist = new ArrayList<>();
@@ -1820,10 +1851,9 @@ public class RepaymentPostingsUtil {
 			Date monthStartDate) {
 
 		String acceventAmz = AccountingEvent.AMZ;
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), acceventAmz,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountingID = AccountingEngine.getAccountSetID(fm, acceventAmz, FinanceConstants.MODULEID_FINTYPE);
 
-		if (accountingID == null || accountingID == Long.MIN_VALUE) {
+		if (accountingID == null || accountingID <= 0) {
 			return;
 		}
 
@@ -1862,14 +1892,16 @@ public class RepaymentPostingsUtil {
 
 	private void postAMZPostings(FinanceMain fm, List<FinanceScheduleDetail> schedules, FinanceProfitDetail fpd,
 			Date amzDate) {
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.AMZ,
+		Long accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.AMZ,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent acrEvt = AEAmounts.procCalAEAmounts(fm, fpd, schedules, AccountingEvent.AMZ, amzDate, fm.getAppDate());
 
 		acrEvt.setDataMap(acrEvt.getAeAmountCodes().getDeclaredFieldValues());
 
-		acrEvt.getAcSetIDList().add(accountingID);
+		if (accountingID != null && accountingID > 0) {
+			acrEvt.getAcSetIDList().add(accountingID);
+		}
 
 		postingsPreparationUtil.postAccounting(acrEvt);
 
@@ -1890,11 +1922,13 @@ public class RepaymentPostingsUtil {
 
 		String instEvent = AccountingEvent.INSTDATE;
 
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), instEvent,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountingID = AccountingEngine.getAccountSetID(fm, instEvent, FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, fpd, schedules, instEvent, schDate, schDate);
-		aeEvent.getAcSetIDList().add(accountingID);
+
+		if (accountingID != null && accountingID > 0) {
+			aeEvent.getAcSetIDList().add(accountingID);
+		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -2299,7 +2333,7 @@ public class RepaymentPostingsUtil {
 		logger.debug("Entering");
 
 		List<Object> actReturnList = new ArrayList<Object>();
-		Date dateValueDate = DateUtility.getAppValueDate();
+		Date dateValueDate = SysParamUtil.getAppValueDate();
 
 		Map<String, FinanceScheduleDetail> scheduleMap = new HashMap<String, FinanceScheduleDetail>();
 		for (FinanceScheduleDetail detail : scheduleDetails) {
@@ -2587,4 +2621,13 @@ public class RepaymentPostingsUtil {
 		this.finODCAmountDAO = finODCAmountDAO;
 	}
 
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
+
+	@Autowired
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
+	}
 }

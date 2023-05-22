@@ -10,7 +10,7 @@ public class FinanceTypeComparator implements Comparator<Object>, Serializable {
 	private static final long serialVersionUID = -8606975433219761922L;
 
 	public FinanceTypeComparator() {
-
+	    super();
 	}
 
 	@Override

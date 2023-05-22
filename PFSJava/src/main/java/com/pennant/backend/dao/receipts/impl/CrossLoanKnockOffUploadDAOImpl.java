@@ -25,35 +25,36 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	@Override
 	public List<CrossLoanKnockoffUpload> loadRecordData(long id) {
 		StringBuilder sql = new StringBuilder("");
-		sql.append("Select Id, HeaderID, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
-		sql.append(", ExcessAmount, AllocationType, AdviseID, Progress, Status, ErrorCode, ErrorDesc");
+		sql.append("Select Id, HeaderID, FromFinID, ToFinID, FromFinReference, TOFinReference, RecordSeq, ExcessType");
+		sql.append(", ExcessAmount, AllocationType, FeeTypeCode, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CROSS_LOAN_KNOCKOFF_UPLOAD");
-		sql.append(" Where HeaderID = ?");
+		sql.append(" Where HeaderID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rownum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rownum) -> {
 			CrossLoanKnockoffUpload upload = new CrossLoanKnockoffUpload();
 
+			upload.setReference(rs.getString("TOFinReference"));
+			upload.setReferenceID(JdbcUtil.getLong(rs.getObject("ToFinID")));
 			upload.setId(rs.getLong("Id"));
 			upload.setHeaderId(rs.getLong("HeaderID"));
 			upload.setFromFinID(JdbcUtil.getLong(rs.getObject("FromFinID")));
 			upload.setToFinID(JdbcUtil.getLong(rs.getObject("ToFinID")));
 			upload.setFromFinReference(rs.getString("FromFinReference"));
 			upload.setToFinReference(rs.getString("TOFinReference"));
+			upload.setRecordSeq(rs.getLong("RecordSeq"));
 			upload.setExcessType(rs.getString("ExcessType"));
 			upload.setExcessAmount(rs.getBigDecimal("ExcessAmount"));
 			upload.setAllocationType(rs.getString("AllocationType"));
-			upload.setAdviseId(rs.getLong("AdviseID"));
+			upload.setFeeTypeCode(rs.getString("FeeTypeCode"));
 			upload.setProgress(rs.getInt("Progress"));
 			upload.setStatus(rs.getString("Status"));
 			upload.setErrorCode(rs.getString("ErrorCode"));
 			upload.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return upload;
-		});
+		}, id, "S");
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	@Override
 	public void update(List<CrossLoanKnockoffUpload> details) {
 		StringBuilder sql = new StringBuilder("Update CROSS_LOAN_KNOCKOFF_UPLOAD set");
-		sql.append(" CrossLoanId = ?, FromFinID = ?, ToFinID = ?, Progress = ?");
+		sql.append(" FromFinID = ?, ToFinID = ?, Progress = ?");
 		sql.append(", Status = ?, ErrorCode = ?, ErrorDesc = ?");
 		sql.append(" Where ID = ?");
 
@@ -95,7 +96,6 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 				int index = 0;
 				CrossLoanKnockoffUpload detail = details.get(i);
 
-				ps.setObject(++index, detail.getCrossLoanId());
 				ps.setObject(++index, detail.getFromFinID());
 				ps.setObject(++index, detail.getToFinID());
 				ps.setInt(++index, detail.getProgress());
@@ -114,7 +114,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	}
 
 	@Override
-	public void update(List<Long> headerIdList, String errorCode, String errorDesc, int progressFailed) {
+	public void update(List<Long> headerIdList, String errorCode, String errorDesc) {
 		String sql = "Update CROSS_LOAN_KNOCKOFF_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -127,8 +127,8 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 
 				long headerID = headerIdList.get(i);
 
-				ps.setInt(++index, progressFailed);
-				ps.setString(++index, (progressFailed == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 
@@ -148,7 +148,7 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" cu.Id, cu.HeaderID, cu.FromFinReference, cu.TOFinReference, cu.ExcessType");
-		sql.append(", cu.ExcessAmount, cu.AllocationType, cu.AdviseID, cu.Progress, cu.Status");
+		sql.append(", cu.ExcessAmount, cu.AllocationType, cu.FeeTypeCode, cu.Progress, cu.Status");
 		sql.append(", cu.ErrorCode, cu.ErrorDesc, uh.CreatedOn, uh.ApprovedOn");
 		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApproverName");
 		sql.append(" From CROSS_LOAN_KNOCKOFF_UPLOAD cu");
@@ -191,9 +191,9 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 	@Override
 	public long save(CrossLoanKnockoffUpload ck) {
 		StringBuilder sql = new StringBuilder("Insert into CROSS_LOAN_KNOCKOFF_UPLOAD");
-		sql.append(" (HeaderId, FromFinID, ToFinID, FromFinReference, TOFinReference, ExcessType");
-		sql.append(", ExcessAmount, AllocationType, AdviseID)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" (HeaderId, FromFinID, ToFinID, FromFinReference, TOFinReference, RecordSeq, ExcessType");
+		sql.append(", ExcessAmount, AllocationType, FeeTypeCode)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -212,10 +212,11 @@ public class CrossLoanKnockOffUploadDAOImpl extends SequenceDao<CrossLoanKnockof
 					ps.setObject(++index, ck.getToFinID());
 					ps.setString(++index, ck.getFromFinReference());
 					ps.setString(++index, ck.getToFinReference());
+					ps.setLong(++index, ck.getRecordSeq());
 					ps.setString(++index, ck.getExcessType());
 					ps.setBigDecimal(++index, ck.getExcessAmount());
 					ps.setString(++index, ck.getAllocationType());
-					ps.setObject(++index, ck.getAdviseId());
+					ps.setString(++index, ck.getFeeTypeCode());
 
 					return ps;
 				}

@@ -122,8 +122,8 @@ public class FeeRefundHeaderDAOImpl extends SequenceDao<FeeRefundHeader> impleme
 	private StringBuilder getSqlQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AdviseID, FinID, FinReference, BalanceAmt, ma.AdviseType, AdviseAmount, ReservedAmt, ValueDate");
-		sql.append(
-				", PaidAmount, WaivedAmount, ma.FeeTypeId, FeeTypeCode, FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent, ma.BounceID ");
+		sql.append(", PaidAmount, WaivedAmount, ma.FeeTypeId, FeeTypeCode, FeeTypeDesc ");
+		sql.append(", ft.TaxApplicable, ft.TaxComponent, ma.BounceID");
 		sql.append(", PaidCGST, PaidIGST, PaidSGST, PaidUGST, PaidCESS");
 		sql.append(", WaivedCGST, WaivedIGST, WaivedSGST, WaivedUGST, WaivedCESS");
 		sql.append(" From ManualAdvise ma");

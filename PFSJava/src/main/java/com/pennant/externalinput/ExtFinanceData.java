@@ -109,7 +109,7 @@ public class ExtFinanceData implements java.io.Serializable {
 	private BigDecimal expRateAtGrcEnd = BigDecimal.ZERO;
 
 	public ExtFinanceData() {
-
+	    super();
 	}
 
 	public String getFinReference() {

@@ -29,7 +29,6 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.util.PennantConstants;
@@ -40,6 +39,7 @@ import com.pennanttech.activity.log.Activity;
 import com.pennanttech.activity.log.ActivityLogService;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtendedFieldActivityLog extends GFCBaseCtrl<Object> implements Comparator<Notes> {
@@ -233,7 +233,7 @@ public class ExtendedFieldActivityLog extends GFCBaseCtrl<Object> implements Com
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ note.getRemarks() + " </font> <br>  ";
-				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
+				String date = DateUtil.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + alignSide + ";'>"
 							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
@@ -332,7 +332,7 @@ public class ExtendedFieldActivityLog extends GFCBaseCtrl<Object> implements Com
 			cell = new Listcell(activity.getUserLogin());
 			cell.setParent(item);
 
-			cell = new Listcell(DateUtility.format(activity.getAuditDate(), "dd-MMM-yyyy HH:mm"));
+			cell = new Listcell(DateUtil.format(activity.getAuditDate(), "dd-MMM-yyyy HH:mm"));
 			cell.setParent(item);
 
 			if (prvAuditDate == null) {

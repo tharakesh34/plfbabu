@@ -67,8 +67,7 @@ public class InterfaceServiceDialogCtrl extends GFCBaseCtrl<InterfaceConfigurati
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(interfaceServiceLog.getReference());
-		return referenceBuffer.toString();
+		return interfaceServiceLog.getReference();
 	}
 
 	/**

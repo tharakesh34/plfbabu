@@ -32,7 +32,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -48,6 +47,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -434,7 +434,7 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 			}
 
 			comboitem = new Comboitem();
-			String label = DateUtility.formatToLongDate(disbursement.getDisbDate());
+			String label = DateUtil.formatToLongDate(disbursement.getDisbDate());
 			label = label.concat(" , ") + disbursement.getDisbSeq();
 			comboitem.setLabel(label);
 			comboitem.setValue(disbursement.getDisbDate());
@@ -534,11 +534,11 @@ public class FinOCRCaptureDialogCtrl extends GFCBaseCtrl<FinOCRCapture> {
 		}
 		// Receipt Date
 		try {
-			if (DateUtility.compare(this.ocrReceiptDate.getValue(), appDate) > 0) {
+			if (DateUtil.compare(this.ocrReceiptDate.getValue(), appDate) > 0) {
 				throw new WrongValueException(this.ocrReceiptDate,
 						Labels.getLabel("DATE_NOT_AFTER",
 								new String[] { Labels.getLabel("label_FinOCRCaptureDialog_OCRdate.value"),
-										DateUtility.format(appDate, "dd/MM/yyyy") }));
+										DateUtil.format(appDate, "dd/MM/yyyy") }));
 			}
 			afinOCRCapture.setReceiptDate(this.ocrReceiptDate.getValue());
 

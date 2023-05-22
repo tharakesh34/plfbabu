@@ -289,9 +289,9 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 	public List<Long> getHeaderStatusCnt(long uploadHeaderId) {
 		String sql = "Select ReceiptId From  ReceiptUploadDetails Where UploadHeaderId = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, uploadHeaderId), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadHeaderId), (rs, rowNum) -> {
 			if (rs.getLong("ReceiptId") == 0)
 				return null;
 

@@ -16,12 +16,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ResponseClearTasklet implements Tasklet {
 	private final Logger logger = LogManager.getLogger(ResponseClearTasklet.class);
 
-	private PresentmentDAO presentmentDAO;
 	private BatchJobQueueDAO ebjqDAO;
 
 	public ResponseClearTasklet(PresentmentDAO presentmentDAO, BatchJobQueueDAO ebjqDAO) {
 		super();
-		this.presentmentDAO = presentmentDAO;
+
 		this.ebjqDAO = ebjqDAO;
 	}
 
@@ -42,5 +41,4 @@ public class ResponseClearTasklet implements Tasklet {
 
 		return RepeatStatus.FINISHED;
 	}
-
 }

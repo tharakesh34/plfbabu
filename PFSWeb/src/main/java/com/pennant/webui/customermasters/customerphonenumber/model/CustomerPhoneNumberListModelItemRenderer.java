@@ -46,7 +46,7 @@ public class CustomerPhoneNumberListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 2940801004411140146L;
 
 	public CustomerPhoneNumberListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

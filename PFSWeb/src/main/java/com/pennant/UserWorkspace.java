@@ -81,7 +81,7 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	private Map<String, String> hasMenuRights;
 	private Set<String> grantedAuthoritySet = null;
 	private LoggedInUser loggedInUser;
-	private Set<String> userRoleSet = new HashSet<String>();
+	private Set<String> userRoleSet = new HashSet<>();
 	private Map<String, Integer> accessType = null;
 	private Collection<GrantedAuthority> grantedAuthorities;
 	private List<SecurityUserDivBranch> divisionBranches;
@@ -99,9 +99,9 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 		super(AuthenticationManager.getLoggedInUser().getUserId(),
 				AuthenticationManager.getLoggedInUser().getLanguage());
 
-		loggedInUser = AuthenticationManager.getLoggedInUser();
-		grantedAuthorities = AuthenticationManager.getGrantedAuthorities();
-		securityRoles = AuthenticationManager.getSecurityRoles();
+		this.loggedInUser = AuthenticationManager.getLoggedInUser();
+		this.grantedAuthorities = AuthenticationManager.getGrantedAuthorities();
+		this. securityRoles = AuthenticationManager.getSecurityRoles();
 
 		Sessions.getCurrent().setAttribute(org.zkoss.web.Attributes.PREFERRED_LOCALE,
 				org.zkoss.util.Locales.getLocale(loggedInUser.getLanguage()));
@@ -115,12 +115,24 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	 * Logout with the spring-security logout action-URL.<br>
 	 * Therefore we make a sendRedirect() to the logout uri we have configured in the spring-config.
 	 */
+	@Override
 	public void doLogout() {
 		try {
 			License.userLogout();
 		} catch (LicenseException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+	}
+
+	@Override
+	public void destroy() {
+		userService.logLogOut(loggedInUser.getLoginLogId());
+		logger.info("{} logged out at {}.", loggedInUser.getUserName(), DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
+	}
+
+	@Override
+	public String getUserLanguage() {
+		return getLoggedInUser().getLanguage();
 	}
 
 	/**
@@ -134,7 +146,7 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 			Authentication currentUser = AuthenticationManager.getAuthentication();
 
 			userDetails = (User) currentUser.getPrincipal();
-			grantedAuthoritySet = new HashSet<String>(grantedAuthorities.size());
+			grantedAuthoritySet = new HashSet<>(grantedAuthorities.size());
 
 			for (final GrantedAuthority grantedAuthority : grantedAuthorities) {
 				grantedAuthoritySet.add(grantedAuthority.getAuthority());
@@ -199,12 +211,6 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 		return getUserRoleSet().contains(roleName);
 	}
 
-	@Override
-	public void destroy() {
-		userService.logLogOut(loggedInUser.getLoginLogId());
-		logger.info("{} logged out at {}.", loggedInUser.getUserName(), DateUtil.getSysDate(DateFormat.LONG_DATE_TIME));
-	}
-
 	public void allocateAuthorities(String page) {
 		allocateAuthorities(page, null, null);
 	}
@@ -257,7 +263,7 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 	}
 
 	public void deAllocateAuthorities(String page) {
-		Set<String> tempAuthoritySet = new HashSet<String>();
+		Set<String> tempAuthoritySet = new HashSet<>();
 		Object[] object = grantedAuthoritySet.toArray();
 		for (int i = 0; i < object.length; i++) {
 			if (!object[i].toString().contains(page) || object[i].toString().contains("menu")) {
@@ -289,7 +295,7 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 
 	public void setHasMenuRights(String menuId, String menuRight) {
 		if (this.hasMenuRights == null) {
-			this.hasMenuRights = new HashMap<String, String>();
+			this.hasMenuRights = new HashMap<>();
 		}
 		this.hasMenuRights.put(menuId, menuRight);
 	}
@@ -298,9 +304,9 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 		return loggedInUser;
 	}
 
-	public ArrayList<String> getUserRoles() {
-		ArrayList<String> arrayRoleCode = null;
-		arrayRoleCode = new ArrayList<String>();
+	public List<String> getUserRoles() {
+		List<String> arrayRoleCode = new ArrayList<>();
+
 		Object[] object = this.userRoleSet.toArray();
 
 		for (int i = 0; i < object.length; i++) {
@@ -323,10 +329,6 @@ public class UserWorkspace extends com.pennanttech.pennapps.web.session.UserWork
 
 	public void setUserDetails(User userDetails) {
 		this.userDetails = userDetails;
-	}
-
-	public String getUserLanguage() {
-		return getLoggedInUser().getLanguage();
 	}
 
 	public List<SecurityUserDivBranch> getDivisionBranches() {

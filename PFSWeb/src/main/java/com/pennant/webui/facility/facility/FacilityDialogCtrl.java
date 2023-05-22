@@ -74,7 +74,6 @@ import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -108,11 +107,12 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Facility/Facility/facilityDialog.zul file.
@@ -1376,8 +1376,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Entering");
 
 		Facility aFacility = new Facility();
-		Cloner cloner = new Cloner();
-		aFacility = cloner.deepClone(getFacility());
+		aFacility = ObjectUtil.clone(getFacility());
 
 		boolean isNew = false;
 		if (isWorkFlowEnabled()) {
@@ -1937,9 +1936,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollReference());
 				cell.setParent(item);
-				Date date1 = DateUtility
-						.convertDateFromAS400(new BigDecimal(customerCollateral.getColllastRvwDate().toString()));
-				cell = new Listcell(DateUtility.formatToLongDate(date1));
+				cell = new Listcell(DateUtil.formatToLongDate((Date) customerCollateral.getColllastRvwDate()));
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollCcy());
 				cell.setParent(item);
@@ -1960,9 +1957,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 				cell.setParent(item);
 				cell = new Listcell(customerCollateral.getCollComplete());
 				cell.setParent(item);
-				Date date = DateUtility
-						.convertDateFromAS400(new BigDecimal(customerCollateral.getCollExpDate().toString()));
-				cell = new Listcell(DateUtility.formatToLongDate(date));
+				cell = new Listcell(DateUtil.formatToLongDate((Date) customerCollateral.getCollExpDate()));
 				cell.setParent(item);
 				item.setAttribute("data", customerCollateral);
 				if (!enqModule) {
@@ -2142,8 +2137,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Entering");
 		doWriteComponentsToBean(getFacility());
 		Facility aFacility = new Facility();
-		Cloner cloner = new Cloner();
-		aFacility = cloner.deepClone(getFacility());
+		aFacility = ObjectUtil.clone(getFacility());
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			map.put("control", this);

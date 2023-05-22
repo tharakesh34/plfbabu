@@ -42,7 +42,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -943,7 +942,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			UploadHeader auploadHeader = new UploadHeader();
 			auploadHeader.setFileName(this.txtFileName.getValue());
-			auploadHeader.setTransactionDate(DateUtility.getSysDate());
+			auploadHeader.setTransactionDate(DateUtil.getSysDate());
 			auploadHeader.setModule(selectedModuleType);
 			auploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			auploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));

@@ -35,10 +35,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ProvisionCalculationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
-import com.pennant.backend.dao.financemanagement.ProvisionMovementDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -58,7 +56,6 @@ import com.pennant.backend.service.financemanagement.ProvisionService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -74,9 +71,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	private static final Logger logger = LogManager.getLogger(ProvisionServiceImpl.class);
 
 	private ProvisionDAO provisionDAO;
-	private ProvisionMovementDAO provisionMovementDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private ProvisionCalculationUtil provisionCalculationUtil;
 
 	public ProvisionServiceImpl() {
 		super();
@@ -439,7 +433,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(), AccountingEvent.PROVSN,
+		Long accountingID = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.PROVSN,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
@@ -462,17 +456,13 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
-		aeEvent.getAcSetIDList().add(accountingID);
+		if (accountingID != null && accountingID > 0) {
+			aeEvent.getAcSetIDList().add(accountingID);
+		}
 		postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug("Leaving");
 
 		return aeEvent.getLinkedTranId();
-	}
-
-	private void saveProvisionMovement(Provision provision) {
-		provision.setProvisionId(provision.getId());
-		provision.setId(Long.MIN_VALUE);
-		provisionDAO.saveMovements(provision, TableType.MAIN_TAB);
 	}
 
 	@Override
@@ -484,16 +474,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		this.provisionDAO = provisionDAO;
 	}
 
-	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
-		this.provisionMovementDAO = provisionMovementDAO;
-	}
-
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
-
-	public void setProvisionCalculationUtil(ProvisionCalculationUtil provisionCalculationUtil) {
-		this.provisionCalculationUtil = provisionCalculationUtil;
-	}
-
 }

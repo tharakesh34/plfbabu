@@ -55,7 +55,7 @@
 							<row>
 								<label id="label_AccountingSetSearch_EventCode" value="${c:l('label_AccountingSetSearch_EventCode.value')}" />
 								<listbox id="sortOperator_eventCode" width="43px" mold="select" rows="1" />
-								<uppercasebox id="eventCode" width="100px" maxlength="8" />
+								<uppercasebox id="eventCode" width="100px" maxlength="10" />
 								<label id="label_AccountingSetSearch_AccountEventDesc" value="${c:l('label_AccountingSetSearch_AccountEventDesc.value')}" />
 								<listbox id="sortOperator_accountEventDesc" width="43px" mold="select" rows="1" />
 								<textbox id="accountEventDesc" width="200px" maxlength="50" />
@@ -63,7 +63,7 @@
 							<row>
 								<label id="label_AccountingSetSearch_AccountSetCode" value="${c:l('label_AccountingSetSearch_AccountSetCode.value')}" />
 								<listbox id="sortOperator_accountSetCode" width="43px" mold="select" rows="1" />
-								<uppercasebox id="accountSetCode" width="100px" maxlength="8" />
+								<uppercasebox id="accountSetCode" width="100px" maxlength="10" />
 
 								<label id="label_AccountingSetSearch_AccountSetCodeName" value="${c:l('label_AccountingSetSearch_AccountSetCodeName.value')}" />
 								<listbox id="sortOperator_accountSetCodeName" width="43px" mold="select" rows="1" />

@@ -44,7 +44,7 @@ public class ReportListListModelItemRenderer implements ListitemRenderer<ReportL
 	private static final long serialVersionUID = 1L;
 
 	public ReportListListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

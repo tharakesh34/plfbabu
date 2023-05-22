@@ -13,7 +13,7 @@ public class ChartDetail implements java.io.Serializable {
 	private String iFrameHeight;
 
 	public ChartDetail() {
-
+	    super();
 	}
 
 	public String getiFrameWidth() {

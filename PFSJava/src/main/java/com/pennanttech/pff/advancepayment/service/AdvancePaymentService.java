@@ -16,11 +16,8 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
@@ -32,6 +29,8 @@ import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AdvancePaymentDetail;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -57,6 +56,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -544,7 +544,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		rsd.setProfitSchdPayNow(curSchd.getSchdPftPaid());
 		rsd.setPrincipalSchdPayNow(curSchd.getSchdPriPaid());
 
-		int daysLate = DateUtility.getDaysBetween(curSchd.getSchDate(), valueDate);
+		int daysLate = DateUtil.getDaysBetween(curSchd.getSchDate(), valueDate);
 		rsd.setDaysLate(daysLate);
 
 		rsd.setRepayBalance(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -798,16 +798,16 @@ public class AdvancePaymentService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void setAdvancePaymentDetails(FinanceMain fm, FinScheduleData finScheduleData) {
+	public AdvancePaymentDetail getAdvIntPayable(FinanceMain fm, FinScheduleData schdData) {
 		if (!AdvanceType.hasAdvInterest(fm)) {
-			return;
+			return null;
 		}
 
 		AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO.getAdvancePaymentDetailBalByRef(fm.getFinID());
-		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(finScheduleData, oldAdvPay, "");
+		AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(schdData, oldAdvPay, "");
 
 		if (curAdvpay == null) {
-			return;
+			return null;
 		}
 
 		BigDecimal amount = BigDecimal.ZERO;
@@ -817,9 +817,19 @@ public class AdvancePaymentService extends ServiceHelper {
 			amount = amount.add(curAdvpay.getAdvIntTds());
 		}
 
-		createAdvise(fm.getFinReference(), RepayConstants.EXAMOUNTTYPE_ADVINT, SysParamUtil.getAppDate(), amount,
-				fm.getLastMntBy());
+		curAdvpay.setAdvInt(amount);
 
+		return curAdvpay;
+	}
+
+	public void setAdvancePaymentDetails(FinanceMain fm, FinScheduleData finScheduleData) {
+		AdvancePaymentDetail curAdvpay = getAdvIntPayable(fm, finScheduleData);
+
+		if (curAdvpay == null) {
+			return;
+		}
+
+		updateExcess(curAdvpay, RepayConstants.EXAMOUNTTYPE_ADVINT, fm.getModuleDefiner(), fm.getLastMntBy());
 	}
 
 	public void setAdvancePaymentDetails(FinanceDetail fd, AEAmountCodes amountCodes) {
@@ -851,7 +861,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		}
 	}
 
-	private BigDecimal getAdvIntBalance(FinanceMain fm, boolean bpi) {
+	public BigDecimal getAdvIntBalance(FinanceMain fm, boolean bpi) {
 		BigDecimal advIntBalance = BigDecimal.ZERO;
 		if (AdvanceType.hasAdvInterest(fm) || bpi) {
 			FinExcessAmount excessAmount = finExcessAmountDAO.getFinExcessAmount(fm.getFinID(),
@@ -1080,6 +1090,13 @@ public class AdvancePaymentService extends ServiceHelper {
 		}
 
 		return excessID;
+	}
+
+	public BigDecimal getBalAdvIntAmt(FinanceMain fm, Date schDate) {
+		if (DateUtil.compare(schDate, fm.getMaturityDate()) <= 0) {
+			return finExcessAmountDAO.getBalAdvIntAmt(fm.getFinReference());
+		}
+		return BigDecimal.ZERO;
 	}
 
 	@Autowired

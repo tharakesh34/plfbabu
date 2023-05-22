@@ -48,7 +48,6 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerInterfaceService;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
@@ -57,7 +56,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
@@ -65,7 +63,6 @@ import com.pennant.backend.dao.applicationmaster.RelationshipOfficerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.RatingCodeDAO;
-import com.pennant.backend.dao.collateral.CollateralSetupDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
@@ -228,7 +225,7 @@ import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.PerfiousService;
 import com.pennanttech.pff.external.pan.dao.PrimaryAccountDAO;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class CustomerDetailsServiceImpl extends GenericService<Customer> implements CustomerDetailsService {
 	private static final Logger logger = LogManager.getLogger(CustomerDetailsServiceImpl.class);
@@ -253,7 +250,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CountryDAO countryDAO;
 	private NationalityCodeDAO nationalityCodeDAO;
 	private EmpStsCodeDAO empStsCodeDAO;
-	private CurrencyDAO currencyDAO;
 	private SectorDAO sectorDAO;
 	private SubSectorDAO subSectorDAO;
 	private CustomerCategoryDAO customerCategoryDAO;
@@ -278,7 +274,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private PinCodeDAO pinCodeDAO;
 	private FinanceMainDAO financeMainDAO;
-	private CollateralSetupDAO collateralSetupDAO;
 	private VASRecordingDAO vASRecordingDAO;
 	private GenderDAO genderDAO;
 	private SalutationDAO salutationDAO;
@@ -784,8 +779,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		String tableType = "";
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
@@ -2208,9 +2202,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[2];
 							valueParm[0] = "employment startDate:"
-									+ DateUtility.format(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+									+ DateUtil.format(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 							valueParm[1] = "employment endDate:"
-									+ DateUtility.format(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
+									+ DateUtil.format(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
 						}
@@ -2727,7 +2721,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
 						&& PennantConstants.FORM60.equals(custDocument.getCustDocCategory())) {
-					Date addMonths = DateUtility.addMonths(custDocument.getCustDocIssuedOn(), 72);
+					Date addMonths = DateUtil.addMonths(custDocument.getCustDocIssuedOn(), 72);
 					if (!ImplementationConstants.RETAIL_CUST_PAN_MANDATORY
 							&& (DateUtil.compare(addMonths, custDocument.getCustDocExpDate()) < 0)) {
 						String[] valueParm = new String[1];
@@ -2745,11 +2739,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					return auditDetail1;
 				}
 			}
-		} else if ((!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) && !panMandatory) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "panDocument";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-			return auditDetail;
 		}
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(customerDetails.getCustomer().getCustCtgCode())
@@ -2894,9 +2883,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					ErrorDetail errorDetail = new ErrorDetail();
 					String[] valueParm = new String[3];
 					valueParm[0] = "FinDate";
-					valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+					valueParm[1] = DateUtil.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 							PennantConstants.XMLDateFormat);
-					valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+					valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -3298,9 +3287,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return errorDetail;
 		}
 		// EMIType invalidate validation
-		String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
-		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-				liability.getTenure());
+		Date date = DateUtil.getDatePart(liability.getFinDate());
+		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(date, liability.getTenure());
 		if (CollectionUtils.isNotEmpty(paymentDetails)) {
 			for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
 				int emiCount = 0;
@@ -3323,8 +3311,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
-		Date dtStartDate = DateUtility.addMonths(startDate, 1);
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		Date dtStartDate = DateUtil.addMonths(startDate, 1);
+		Date dtEndDate = DateUtil.addMonths(dtStartDate, noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -3338,7 +3326,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) < 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);
@@ -3444,7 +3432,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					} else {
-						if (DateUtility.compare(subDetail.getMonthYear(), detail.getMonthYear()) != 0) {
+						if (DateUtil.compare(subDetail.getMonthYear(), detail.getMonthYear()) != 0) {
 							String[] valueParm = new String[2];
 							valueParm[0] = "bankInfoDetails:MonthYear";
 							valueParm[1] = "bankInfoSubDetails:MonthYear";
@@ -3602,8 +3590,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (date.compareTo(SysParamUtil.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = label;
-				valueParm[1] = DateUtility.format(defaultAppDate, PennantConstants.XMLDateFormat);
-				valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+				valueParm[1] = DateUtil.format(defaultAppDate, PennantConstants.XMLDateFormat);
+				valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			}
 		}
@@ -3935,9 +3923,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			ErrorDetail errorDetail = new ErrorDetail();
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
-			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+			valueParm[1] = DateUtil.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			auditDetail.setErrorDetail(errorDetail);
 		}
@@ -4008,8 +3996,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		Customer customer = customerDetails.getCustomer();
@@ -4062,8 +4049,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		Customer customer = customerDetails.getCustomer();
@@ -4714,13 +4700,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			String[] errorParameters = new String[2];
 
 			String panFourthLetter = StringUtils.substring(customer.getCustCRCPR(), 3, 4);
-			if (!custTypePANMappingService.isValidPANLetter(customer.getCustTypeCode(), customer.getCustCtgCode(),
-					panFourthLetter)) {
-
-				errorParameters[0] = Labels.getLabel("label_PAN_FourthLetter.label");
-				errorParameters[1] = panFourthLetter;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41000", errorParameters)));
-			}
+			/*
+			 * if (!custTypePANMappingService.isValidPANLetter(customer.getCustTypeCode(), customer.getCustCtgCode(),
+			 * panFourthLetter)) {
+			 * 
+			 * errorParameters[0] = Labels.getLabel("label_PAN_FourthLetter.label"); errorParameters[1] =
+			 * panFourthLetter; auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41000",
+			 * errorParameters))); }
+			 */
 		}
 		// Employment type other than NON-WORKING setting below fields as Mandatory
 		if (StringUtils.isNotBlank(customer.getSubCategory()) && !"#".equals(customer.getSubCategory())) {
@@ -5416,7 +5403,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(customerBankInfo.getAccountNumber(), bankBranchID,
 				"_View");
-		if (count == 0) {
+		if (count == 0 || !beneficiaryDAO.checkCustID(cusID)) {
 			Beneficiary beneficiary = new Beneficiary();
 			beneficiary.setCustID(cusID);
 			beneficiary.setBankBranchID(bankBranchID);
@@ -6518,6 +6505,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			if (PennantConstants.RCD_ADD.equalsIgnoreCase(recordType)) {
 				gst.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				recordType = PennantConstants.RECORD_TYPE_NEW;
 				isRcdType = true;
 			} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(recordType)) {
 				gst.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -8217,7 +8205,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						dmsQueue.setReference(perfiosHeader.getTransactionId());
 						dmsQueue.setDocName(perfiosHeader.getDocName());
 						dmsQueue.setCustCif(perfiosHeader.getCustomerCIF());
-						dmsQueue.setCreatedOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
+						dmsQueue.setCreatedOn(DateUtil.getTimestamp(SysParamUtil.getAppDate()));
 						dmsQueue.setOfferId(perfiosHeader.getOfferId());
 						dmsQueue.setApplicationNo(perfiosHeader.getApplicationNo());
 						if (SessionUserDetails.getLogiedInUser() != null) {
@@ -8627,6 +8615,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	}
 
 	@Override
+	public String getCustomerPhoneNumberByCustId(long custID) {
+		return customerPhoneNumberDAO.getCustomerPhoneNumberByCustId(custID);
+	}
+
+	@Override
+	public List<Customer> getCustomersByPhoneNum(String phoneNum) {
+		return customerPhoneNumberDAO.getCustomersByPhoneNum(phoneNum);
+	}
+
+	@Override
 	public int getCustomerCountByCIF(String custCIF, String type) {
 		return customerDAO.getCustomerCountByCIF(custCIF, type);
 	}
@@ -8824,10 +8822,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.empStsCodeDAO = empStsCodeDAO;
 	}
 
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
-	}
-
 	public void setSectorDAO(SectorDAO sectorDAO) {
 		this.sectorDAO = sectorDAO;
 	}
@@ -8902,10 +8896,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
 	}
 
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {

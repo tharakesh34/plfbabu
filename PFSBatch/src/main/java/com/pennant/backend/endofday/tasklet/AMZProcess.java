@@ -59,14 +59,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ProjectedAmortizationService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.amortization.AmortizationQueuing;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
@@ -206,7 +205,7 @@ public class AMZProcess implements Tasklet {
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 
 		amortizationQueuing.setFinID(finID);
-		amortizationQueuing.setEndTime(DateUtility.getSysDate());
+		amortizationQueuing.setEndTime(DateUtil.getSysDate());
 
 		// reset thread for reallocation and reset to "wait", to re run only failed cases.
 		amortizationQueuing.setThreadId(0);

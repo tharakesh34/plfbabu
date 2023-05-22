@@ -195,7 +195,7 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(Extinterfaceconfiguration, whereCond.toString(),

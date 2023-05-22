@@ -34,7 +34,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Paging;
-import org.zkoss.zul.Rows;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbar;
@@ -42,7 +41,6 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.service.PagedListService;
@@ -53,6 +51,7 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.InterfaceConstants;
 
@@ -64,7 +63,6 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	private Paging _paging;
 	private int pageSize = 10;
 	private Listbox listbox;
-	private Rows rows;
 	private ListModelList listModelList;
 	private final int _height = 300;
 	private int _width = 800;
@@ -281,7 +279,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class OnCloseListener implements EventListener<Event> {
 
 		public OnCloseListener() {
-
+			super();
 		}
 
 		@Override
@@ -298,7 +296,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-
+			super();
 		}
 
 		@Override
@@ -404,7 +402,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-
+			super();
 		}
 
 		@Override
@@ -452,7 +450,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	final class CustomerDedupBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public CustomerDedupBoxItemRenderer() {
-
+			super();
 		}
 
 		@Override
@@ -605,7 +603,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 				dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
 				Date curdateFieldValue = (Date) getCustomerDedup().getClass().getMethod(fieldMethod)
 						.invoke(getCustomerDedup());
-				lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+				lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 
 				if (dateFieldValue != null && curdateFieldValue != null) {
 					for (int k = 0; k < ruleFields.length; k++) {
@@ -714,7 +712,7 @@ public class ShowExtCustomerDedupListBox extends Window implements Serializable 
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+			super();
 		}
 
 		@Override

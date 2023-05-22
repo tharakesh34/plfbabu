@@ -10,7 +10,7 @@ public interface CrossLoanKnockOffUploadDAO {
 
 	void update(List<CrossLoanKnockoffUpload> details);
 
-	void update(List<Long> headerIdList, String errorCode, String errorDesc, int progressFailed);
+	void update(List<Long> headerIdList, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

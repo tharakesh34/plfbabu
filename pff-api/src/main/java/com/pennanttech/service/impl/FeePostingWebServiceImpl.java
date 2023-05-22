@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -20,6 +21,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FeePostingController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -50,6 +52,7 @@ public class FeePostingWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.ENTERING);
 		// bean validations
 		validationUtility.validate(feePostings, SaveValidationGroup.class);
+		doBasicMandatoryValidations(feePostings);
 		AuditHeader auditHeader = getAuditHeader(feePostings, PennantConstants.TRAN_WF);
 		// validate Fee Posting details as per the API specification
 		AuditDetail auditDetail = feePostingService.doValidations(feePostings);
@@ -128,6 +131,26 @@ public class FeePostingWebServiceImpl extends ExtendedTestClass
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aFeePostings.getBefImage(), aFeePostings);
 		return new AuditHeader(String.valueOf(aFeePostings.getId()), String.valueOf(aFeePostings.getId()), null, null,
 				auditDetail, aFeePostings.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+	}
+
+	private void doBasicMandatoryValidations(FeePostings feePosting) {
+		if (feePosting.getPostingAmount() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "amount";
+
+			ErrorDetail error = ErrorUtil.getErrorDetail(new ErrorDetail("90242", valueParm));
+
+			ServiceExceptionDetails exceptions[] = new ServiceExceptionDetails[1];
+
+			ServiceExceptionDetails exception = new ServiceExceptionDetails();
+
+			exception.setFaultCode(error.getCode());
+			exception.setFaultMessage(error.getError());
+
+			exceptions[0] = exception;
+
+			throw new ServiceException(exceptions);
+		}
 	}
 
 	@Autowired

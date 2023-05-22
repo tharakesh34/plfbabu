@@ -22,7 +22,7 @@ public class FinanceSuspDetails implements Serializable {
 	private long linkedTranId = Long.MIN_VALUE;
 
 	public FinanceSuspDetails() {
-
+	    super();
 	}
 
 	public long getFinID() {

@@ -25,8 +25,8 @@
 
 package com.pennant.backend.service.finance.impl;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,10 +36,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
@@ -64,6 +62,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -71,7 +70,6 @@ import com.pennanttech.pff.core.TableType;
 public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> implements FinCovenantTypeService {
 	private static final Logger logger = LogManager.getLogger(FinCovenantTypeServiceImpl.class);
 
-	private AuditHeaderDAO auditHeaderDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
@@ -609,14 +607,14 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 				if (finCovenantType.getReceivableDate() != null) {
 					java.util.Date appDate = SysParamUtil.getAppDate();
-					Date allowedDate = DateUtility.addDays(appDate,
+					Date allowedDate = DateUtil.addDays(appDate,
 							+SysParamUtil.getValueAsInt("FUTUREDAYS_COV_RECEIVED_DATE"));
-					if (DateUtility.compare(finCovenantType.getReceivableDate(), appDate) == -1) {
+					if (DateUtil.compare(finCovenantType.getReceivableDate(), appDate) == -1) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "receivableDate";
 						valueParm[1] = String.valueOf(appDate);
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm)));
-					} else if (DateUtility.compare(finCovenantType.getReceivableDate(), allowedDate) == 1) {
+					} else if (DateUtil.compare(finCovenantType.getReceivableDate(), allowedDate) == 1) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "receivableDate";
 						valueParm[1] = String.valueOf(allowedDate);
@@ -637,10 +635,6 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	@Override
 	public List<DocumentType> getPddOtcList() {
 		return finCovenantTypeDAO.getPddOtcList();
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {

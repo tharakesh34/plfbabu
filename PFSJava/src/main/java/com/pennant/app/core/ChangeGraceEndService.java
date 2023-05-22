@@ -47,6 +47,8 @@ import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -76,19 +78,10 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
-			/*
-			 * if (!(financeMain.isAllowGrcPeriod() && financeMain.getGrcPeriodEndDate().compareTo(eodValueDate) == 0 &&
-			 * financeMain.getFinAssetValue().compareTo(financeMain.getFinCurrAssetValue()) != 0)) {
-			 * 
-			 * continue; }
-			 */
-			// Above condition was splitted as separate conditions for better understanding
-			// If Grace is not allowed
 			if (!fm.isAllowGrcPeriod()) {
 				continue;
 			}
 
-			// If it is Fully Disbursed
 			if (!(fm.getFinAssetValue().compareTo(fm.getFinCurrAssetValue()) != 0)) {
 				continue;
 			}
@@ -189,7 +182,6 @@ public class ChangeGraceEndService extends ServiceHelper {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	public void changeGraceEnd(FinScheduleData finScheduleData, boolean isFullDisb) {
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -457,8 +449,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 			}
 
 			fm.setGrcStps(true);
-			BigDecimal tenorSplitPerc = BigDecimal.ZERO;
-			tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+			BigDecimal tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
 					.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
 			spd.setTenorSplitPerc(tenorSplitPerc);
 			stpGrcTerms = stpGrcTerms + spd.getInstallments();
@@ -500,8 +491,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		BigDecimal totalPftSchdOld = pd.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = pd.getTotalPftCpz();
 
-		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = accrualService.calProfitDetails(fm, schedules, pd, valueDate);
+		FinanceProfitDetail newProfitDetail = accrualService.calProfitDetails(fm, schedules, pd, valueDate);
 
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzNew = newProfitDetail.getTotalPftCpz();
@@ -533,7 +523,6 @@ public class ChangeGraceEndService extends ServiceHelper {
 		aeEvent.setCustAppDate(valueDate);
 		aeEvent.setFinType(fm.getFinType());
 
-		// TODO : Need to validate
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 		aeEvent.setDataMap(dataMap);
 
@@ -595,7 +584,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		Date sysDate = DateUtil.getSysDate();
 
 		FinServiceInstruction fsi = new FinServiceInstruction();
-		List<FinServiceInstruction> fsiList = new ArrayList<FinServiceInstruction>();
+		List<FinServiceInstruction> fsiList = new ArrayList<>();
 
 		FinanceMain fm = schdData.getFinanceMain();
 		EventProperties eventProperties = fm.getEventProperties();

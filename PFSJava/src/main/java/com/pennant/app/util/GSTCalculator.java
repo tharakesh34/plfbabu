@@ -23,6 +23,9 @@ import com.pennant.backend.dao.rmtmasters.GSTRateDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.GSTDetail;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
@@ -232,6 +235,113 @@ public class GSTCalculator {
 		}
 
 		List<GSTDetail> gstDetails = gstDetailDAO.getGSTDetailById(custId, "_View");
+
+		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail,
+				gstDetails);
+
+		// setting the customer residential status
+		dataMap.put("custResidentialSts", custResdSts);
+		String ruleCode;
+		BigDecimal totalGST = BigDecimal.ZERO;
+		if (isGSTCalculationOnMaster()) {
+			totalGST = BigDecimal.ZERO;
+			if (dataMap.containsKey("fromState") && dataMap.containsKey("toState")) {
+				String fromState = (String) dataMap.get("fromState");
+				String toState = (String) dataMap.get("toState");
+				if (StringUtils.isNotBlank(fromState) && StringUtils.isNotBlank(toState)) {
+					List<GSTRate> gstRateDetailList = gstRateDAO.getGSTRateByStates(fromState, toState, "_AView");
+					if (CollectionUtils.isNotEmpty(gstRateDetailList)) {
+						for (GSTRate gstRate : gstRateDetailList) {
+							BigDecimal taxPerc = gstRate.getPercentage();
+							totalGST = totalGST.add(taxPerc);
+							taxPercentages.put(gstRate.getTaxType(), gstRate.getPercentage());
+						}
+					}
+				}
+
+			}
+		} else {
+			List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+
+			for (Rule rule : rules) {
+				BigDecimal taxPerc = BigDecimal.ZERO;
+				ruleCode = rule.getRuleCode();
+
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCCY);
+				totalGST = totalGST.add(taxPerc);
+				taxPercentages.put(ruleCode, taxPerc);
+			}
+
+		}
+
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
+
+		return taxPercentages;
+	}
+
+	public static Map<String, BigDecimal> getTaxPercentages(CustomerDetails cd, String finCCY, String userBranch,
+			String finBranch, FinanceTaxDetail financeTaxDetail) {
+		Map<String, BigDecimal> taxPercentages = new HashMap<>();
+
+		taxPercentages.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
+		taxPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
+
+		Map<String, Object> dataMap = null;
+		String custBranch = null;
+		String custProvince = null;
+		String custCountry = null;
+		String custResdSts = null;
+
+		Customer customer = cd.getCustomer();
+
+		if (cd.getCustID() > 0) {
+			dataMap = financeMainDAO.getCustGSTDataMap(cd.getCustID(), TableType.MAIN_TAB);
+
+			if (MapUtils.isEmpty(dataMap)) {
+				dataMap = financeMainDAO.getCustGSTDataMap(cd.getCustID(), TableType.TEMP_TAB);
+			}
+
+			if (MapUtils.isEmpty(dataMap)) {
+				dataMap = financeMainDAO.getCustGSTDataMap(cd.getCustID(), TableType.VIEW);
+			}
+
+			if (dataMap.get("CustBranch") != null) {
+				custBranch = dataMap.get("CustBranch").toString();
+			}
+
+			if (dataMap.get("CustProvince") != null) {
+				custProvince = dataMap.get("CustProvince").toString();
+			}
+
+			if (dataMap.get("CustCountry") != null) {
+				custCountry = dataMap.get("CustCountry").toString();
+			}
+
+			if (dataMap.get("ResidentialStatus") != null) {
+				custResdSts = dataMap.get("ResidentialStatus").toString();
+			}
+		} else {
+			dataMap = new HashMap<String, Object>();
+			dataMap.put("CustBranch", customer.getCustDftBranch());
+			dataMap.put("ResidentialStatus", customer.getResidentialStatus());
+			dataMap.put("CustResidentialSts", customer.getCustResidentialSts());
+			for (CustomerAddres ca : cd.getAddressList()) {
+				if (PennantConstants.KYC_PRIORITY_VERY_HIGH.equals(String.valueOf(ca.getCustAddrPriority()))) {
+					dataMap.put("CustProvince", ca.getCustAddrProvince());
+					dataMap.put("CustCountry", ca.getCustAddrCountry());
+					custProvince = dataMap.get("CustProvince").toString();
+					custCountry = dataMap.get("CustCountry").toString();
+				}
+			}
+			custBranch = dataMap.get("CustBranch").toString();
+			custResdSts = dataMap.get("ResidentialStatus").toString();
+		}
+
+		List<GSTDetail> gstDetails = gstDetailDAO.getGSTDetailById(customer.getCustID(), "_View");
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail,
 				gstDetails);
@@ -712,10 +822,10 @@ public class GSTCalculator {
 
 		Map<String, Object> dataMap = null;
 		if (type.equals("DBD")) {
-			String mId = aExtendedFieldRender.getMapValues().get("MID").toString();
+			long mId = Long.valueOf(aExtendedFieldRender.getMapValues().get("MID").toString());
 			dataMap = merchantDetailsDAO.getGSTDataMapForMerch(mId);
 		} else if (type.equals("MBD")) {
-			String oEMID = aExtendedFieldRender.getMapValues().get("OEMID").toString();
+			long oEMID = Long.valueOf(aExtendedFieldRender.getMapValues().get("OEMID").toString());
 			dataMap = manufacturerDAO.getGSTDataMapForManufac(oEMID);
 		}
 
@@ -960,8 +1070,10 @@ public class GSTCalculator {
 	public static TaxAmountSplit calculateGST(FinanceDetail fd, String taxType, BigDecimal paidAmount,
 			BigDecimal waivedAmount) {
 
+		TaxAmountSplit taxSplit = new TaxAmountSplit();
+		taxSplit.setNetAmount(paidAmount);
 		if (StringUtils.isBlank(taxType)) {
-			return new TaxAmountSplit();
+			return taxSplit;
 		}
 
 		Map<String, BigDecimal> gstPercentages = fd.getGstPercentages();

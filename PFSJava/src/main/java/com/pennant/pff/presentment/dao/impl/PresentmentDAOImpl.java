@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -30,6 +29,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.dao.PresentmentDAO;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
@@ -1678,7 +1678,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 		sql.append(" PRD.HEADER_ID, PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE, PRD.INSTALMENT_NO");
 		sql.append(", PRD.AMOUNT_CLEARED, PRD.CLEARING_DATE, PRD.CLEARING_STATUS, PRD.BOUNCE_CODE, BOUNCE_REMARKS");
 		sql.append(", PRD.ID RESPONSEID, PD.ID, PD.PRESENTMENTID, PD.MANDATEID, PH.MANDATETYPE");
-		sql.append(", PD.SCHDATE, PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE");
+		sql.append(", PH.PRESENTMENTTYPE, PD.SCHDATE, PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE");
 		sql.append(", PD.SCHFEEDUE, PD.SCHINSDUE, PD.SCHPENALTYDUE");
 		sql.append(", PD.ADVANCEAMT, PD.EXCESSID, PD.ADVISEAMT, PD.PRESENTMENTAMT");
 		sql.append(", PD.TDSAMOUNT, PD.EXCLUDEREASON, PD.EMINO, PD.STATUS, PD.PRESENTMENTREF");
@@ -1708,6 +1708,7 @@ public class PresentmentDAOImpl extends SequenceDao<PaymentHeader> implements Pr
 			pd.setSchDate(rs.getDate("SCHDATE"));
 			pd.setMandateId(rs.getLong("MANDATEID"));
 			pd.setMandateType(rs.getString("MANDATETYPE"));
+			pd.setPresentmentType(rs.getString("PRESENTMENTTYPE"));
 			pd.setSchAmtDue(rs.getBigDecimal("SCHAMTDUE"));
 			pd.setSchPriDue(rs.getBigDecimal("SCHPRIDUE"));
 			pd.setSchPftDue(rs.getBigDecimal("SCHPFTDUE"));

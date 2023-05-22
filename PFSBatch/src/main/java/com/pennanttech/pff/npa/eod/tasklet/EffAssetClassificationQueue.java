@@ -8,7 +8,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 
@@ -23,7 +23,7 @@ public class EffAssetClassificationQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		if (!ImplementationConstants.ALLOW_NPA) {
+		if (!NpaAndProvisionExtension.ALLOW_NPA) {
 			return RepeatStatus.FINISHED;
 		}
 

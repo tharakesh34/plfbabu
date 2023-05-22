@@ -49,7 +49,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
@@ -88,8 +87,9 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.dao.OverdraftLoanDAO;
 import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
@@ -148,8 +148,8 @@ public abstract class ServiceHelper {
 		 * }
 		 */
 
-		return AccountingConfigCache.getCacheAccountSetID(main.getFinType(), eventCode,
-				FinanceConstants.MODULEID_FINTYPE);
+		return AccountingEngine.getAccountSetID(main, eventCode, FinanceConstants.MODULEID_FINTYPE);
+
 	}
 
 	public final void postAccountingEOD(AEEvent aeEvent) {
@@ -229,7 +229,7 @@ public abstract class ServiceHelper {
 
 	public Date formatDate(Date date) {
 		if (date != null) {
-			return DateUtility.getDate(DateUtility.format(date, PennantConstants.DBDateFormat),
+			return DateUtil.getDate(DateUtil.format(date, PennantConstants.DBDateFormat),
 					PennantConstants.DBDateFormat);
 		}
 		return null;

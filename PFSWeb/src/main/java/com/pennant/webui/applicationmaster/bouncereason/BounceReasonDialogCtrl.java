@@ -115,8 +115,7 @@ public class BounceReasonDialogCtrl extends GFCBaseCtrl<BounceReason> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.bounceReason.getBounceID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.bounceReason.getBounceID());
 	}
 
 	/**

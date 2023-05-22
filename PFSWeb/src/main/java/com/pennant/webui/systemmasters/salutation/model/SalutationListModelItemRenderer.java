@@ -45,7 +45,7 @@ public class SalutationListModelItemRenderer implements ListitemRenderer<Salutat
 	private static final long serialVersionUID = -8249375246622770860L;
 
 	public SalutationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

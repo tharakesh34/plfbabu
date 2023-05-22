@@ -46,6 +46,7 @@ import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
 import com.pennant.backend.model.partnerbank.PartnerBranchModes;
+import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -467,7 +468,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Entity", entityCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM PartnerBanks");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE Entity= :Entity");
@@ -483,7 +484,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", partnerBankId);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT BankCode FROM PartnerBanks");
 		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
 		logger.debug(Literal.SQL + selectSql.toString());
@@ -540,7 +541,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("PartnerBankId", partnerBankId);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT PartnerBankCode FROM PartnerBanks");
 		selectSql.append(" WHERE PartnerBankId= :PartnerBankId");
 		logger.debug(Literal.SQL + selectSql.toString());
@@ -559,8 +560,8 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		sql.append(type);
 		sql.append(" WHERE ENTITY = ? AND PARTNERBANKCODE = ?");
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { entity, partnerbankCode },
-				Integer.class) > 0 ? true : false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, entity, partnerbankCode) > 0 ? true
+				: false;
 	}
 
 	@Override
@@ -588,7 +589,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 	public PartnerBank getPartnerBankById(long partnerBankId) {
 		String sql = "Select AccountNo, AcType From PartnerBanks Where PartnerBankId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
@@ -628,4 +629,46 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, bankCode) > 0;
 	}
+
+	@Override
+	public long getpartnerbankid(String partnerbankCode, String entity) {
+		String sql = "Select PartnerBankId From PartnerBanks Where PartnerbankCode = ? and Entity = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, partnerbankCode, entity);
+		} catch (EmptyResultDataAccessException dae) {
+			//
+		}
+		return 0;
+	}
+
+	@Override
+	public List<FinTypePartnerBank> getpartnerbankCode(String loanType, String receiptmode) {
+		String sql = "Select PartnerBankID From FINTYPEPARTNERBANKS Where FinType = ? and PaymentMode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, loanType);
+			ps.setString(2, receiptmode);
+		}, (rs, rownum) -> {
+			FinTypePartnerBank ftpb = new FinTypePartnerBank();
+
+			ftpb.setPartnerBankID(rs.getLong("PartnerBankID"));
+
+			return ftpb;
+		});
+	}
+
+	@Override
+	public int getValidPartnerBank(String loanType, String receiptmode, long partnerBankId) {
+		String sql = "SELECT COUNT(PartnerBankID) From FINTYPEPARTNERBANKS Where FinType = ? and PaymentMode = ? and PartnerbankId = ? ";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, loanType, receiptmode, partnerBankId);
+	}
+
 }

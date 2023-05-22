@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -541,29 +541,30 @@
 	
 	<changeSet id="ST#4003.1" author="gopal.p">
 		<createTable tableName="OGL_TRANSACTIONS_QUEUE">
-		    <column name="Id" type="bigint" >
-			 	<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
-			<column name="PostingId" type="bigint"/>
-        	<column name="LinkedTranID" type="bigint">
-        		<constraints nullable="false"/>
-        	</column>
-        	<column name="Reference" type="varchar(20)"/>
-        	<column name="Account" type="varchar(50)"/>
-        	<column name="AccountType" type="varchar(15)"/>
-			<column name="ThreadId" type="int"/> 
-			<column name="StartTime" type="datetime"/>
-			<column name="EndTime" type="datetime"/>
-			<column name="Progress" type="int" >
-				<constraints nullable="false"/> 
+			<column name="PostingId" type="bigint" />
+			<column name="LinkedTranID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reference" type="varchar(20)" />
+			<column name="Account" type="varchar(50)" />
+			<column name="AccountType" type="varchar(15)" />
+			<column name="ThreadId" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
 			</column>
 		</createTable>
- 	</changeSet>  
-  	
- 	<changeSet id="ST#4003.2" author="gopal.p">
- 		<addPrimaryKey tableName="OGL_TRANSACTIONS_QUEUE" columnNames="Id" constraintName="PK_OGL_TRANSACTIONS_QUEUE"/>
- 	</changeSet>
-	
+	</changeSet>
+
+	<changeSet id="ST#4003.2" author="gopal.p">
+		<addPrimaryKey tableName="OGL_TRANSACTIONS_QUEUE" columnNames="Id"
+			constraintName="PK_OGL_TRANSACTIONS_QUEUE" />
+	</changeSet>
+
 	<changeSet id="ST#4003.3" author="gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -577,29 +578,29 @@
 		<addDefaultValue columnName="ThreadID" tableName="OGL_TRANSACTIONS_QUEUE" defaultValue="0" />
 		<addDefaultValue columnName="Progress" tableName="OGL_TRANSACTIONS_QUEUE" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.4.0" author="gopal.p">
 		<createTable tableName="OGL_TRANSACTIONS">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="AppDate" type="datetime"/>
+			<column name="AppDate" type="datetime" />
 			<column name="CustID" type="bigint" />
-            <column name="CustCif" type="varchar(20)" />
-            <column name="CustShrtName" type="varchar(200)" />
-            <column name="FinID" type="bigint"/>
-			<column name="FinReference" type="varchar(20)"/>
+			<column name="CustCif" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(200)" />
+			<column name="FinID" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
 			<column name="LinkedTranID" type="bigint" />
-            <column name="ReceiptId" type="bigint" />
-            <column name="ReceiptMode" type="varchar(10)" />
-			<column name="StatusCode" type="varchar(20)"/>
-			<column name="LedgerID" type="varchar(20)"/>
-			<column name="TranDate" type="datetime"/>
-			<column name="JournalSource" type="varchar(20)"/>
-			<column name="JournalCategory" type="varchar(20)"/>
-			<column name="CurrencyCode" type="varchar(20)"/>
-			<column name="JeCreateDate" type="datetime"/>
-			<column name="ActualFlag" type="varchar(20)"/>
+			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="StatusCode" type="varchar(20)" />
+			<column name="LedgerID" type="varchar(20)" />
+			<column name="TranDate" type="datetime" />
+			<column name="JournalSource" type="varchar(20)" />
+			<column name="JournalCategory" type="varchar(20)" />
+			<column name="CurrencyCode" type="varchar(20)" />
+			<column name="JeCreateDate" type="datetime" />
+			<column name="ActualFlag" type="varchar(20)" />
 			<column name="Entity" type="varchar(100)" />
 			<column name="BranchCode" type="varchar(12)" />
 			<column name="GlAccount" type="varchar(50)" />
@@ -687,11 +688,11 @@
 			<column name="PeriodName" type="varchar(100)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.5" author="gopal.p">
 		<addPrimaryKey tableName="OGL_TRANSACTIONS" columnNames="Id" constraintName="PK_OGL_TRANSACTIONS" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.6" author="gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -705,29 +706,29 @@
 		<addDefaultValue columnName="CreditAmount" tableName="OGL_TRANSACTIONS" defaultValue="0" />
 		<addDefaultValue columnName="DebitAmount" tableName="OGL_TRANSACTIONS" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.7.0" author="gopal.p">
 		<createTable tableName="OGL_TRANSACTIONS_FILE">
 			<column name="Id" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="AppDate" type="datetime"/>
+			<column name="AppDate" type="datetime" />
 			<column name="CustId" type="bigint" />
-            <column name="CustCif" type="varchar(20)" />
-            <column name="CustShrtName" type="varchar(200)" />
-            <column name="FinId" type="bigint"/>
-			<column name="FinReference" type="varchar(20)"/>
+			<column name="CustCif" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(200)" />
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
 			<column name="LinkedTranID" type="bigint" />
-            <column name="ReceiptId" type="bigint" />
-            <column name="ReceiptMode" type="varchar(10)" />
-			<column name="StatusCode" type="varchar(20)"/>
-			<column name="LedgerID" type="varchar(20)"/>
-			<column name="TranDate" type="datetime"/>
-			<column name="JournalSource" type="varchar(20)"/>
-			<column name="JournalCategory" type="varchar(20)"/>
-			<column name="CurrencyCode" type="varchar(20)"/>
-			<column name="JeCreateDate" type="datetime"/>
-			<column name="ActualFlag" type="varchar(20)"/>
+			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="StatusCode" type="varchar(20)" />
+			<column name="LedgerID" type="varchar(20)" />
+			<column name="TranDate" type="datetime" />
+			<column name="JournalSource" type="varchar(20)" />
+			<column name="JournalCategory" type="varchar(20)" />
+			<column name="CurrencyCode" type="varchar(20)" />
+			<column name="JeCreateDate" type="datetime" />
+			<column name="ActualFlag" type="varchar(20)" />
 			<column name="Entity" type="varchar(100)" />
 			<column name="BranchCode" type="varchar(12)" />
 			<column name="GlAccount" type="varchar(50)" />
@@ -815,11 +816,12 @@
 			<column name="PeriodName" type="varchar(100)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.8" author="gopal.p">
-		<addPrimaryKey tableName="OGL_TRANSACTIONS_FILE" columnNames="Id" constraintName="PK_OGL_TRANSACTIONS_FILE" />
+		<addPrimaryKey tableName="OGL_TRANSACTIONS_FILE" columnNames="Id"
+			constraintName="PK_OGL_TRANSACTIONS_FILE" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.9" author="gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -833,29 +835,29 @@
 		<addDefaultValue columnName="CreditAmount" tableName="OGL_TRANSACTIONS_FILE" defaultValue="0" />
 		<addDefaultValue columnName="DebitAmount" tableName="OGL_TRANSACTIONS_FILE" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.10.0" author="gopal.p">
 		<createTable tableName="OGL_TRANSACTIONS_LOG">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="AppDate" type="datetime"/>
+			<column name="AppDate" type="datetime" />
 			<column name="CustId" type="bigint" />
-            <column name="CustCif" type="varchar(20)" />
-            <column name="CustShrtName" type="varchar(200)" />
-            <column name="FinId" type="bigint"/>
-			<column name="FinReference" type="varchar(20)"/>
+			<column name="CustCif" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(200)" />
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)" />
 			<column name="LinkedTranID" type="bigint" />
-            <column name="ReceiptId" type="bigint" />
-            <column name="ReceiptMode" type="varchar(10)" />
-			<column name="StatusCode" type="varchar(20)"/>
-			<column name="LedgerID" type="varchar(20)"/>
-			<column name="TranDate" type="datetime"/>
-			<column name="JournalSource" type="varchar(20)"/>
-			<column name="JournalCategory" type="varchar(20)"/>
-			<column name="CurrencyCode" type="varchar(20)"/>
-			<column name="JeCreateDate" type="datetime"/>
-			<column name="ActualFlag" type="varchar(20)"/>
+			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="StatusCode" type="varchar(20)" />
+			<column name="LedgerID" type="varchar(20)" />
+			<column name="TranDate" type="datetime" />
+			<column name="JournalSource" type="varchar(20)" />
+			<column name="JournalCategory" type="varchar(20)" />
+			<column name="CurrencyCode" type="varchar(20)" />
+			<column name="JeCreateDate" type="datetime" />
+			<column name="ActualFlag" type="varchar(20)" />
 			<column name="Entity" type="varchar(100)" />
 			<column name="BranchCode" type="varchar(12)" />
 			<column name="GlAccount" type="varchar(50)" />
@@ -943,11 +945,12 @@
 			<column name="PeriodName" type="varchar(100)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.11" author="gopal.p">
-		<addPrimaryKey tableName="OGL_TRANSACTIONS_LOG" columnNames="Id" constraintName="PK_OGL_TRANSACTIONS_LOG" />
+		<addPrimaryKey tableName="OGL_TRANSACTIONS_LOG" columnNames="Id"
+			constraintName="PK_OGL_TRANSACTIONS_LOG" />
 	</changeSet>
-	
+
 	<changeSet id="ST#4003.12" author="gopal.p" dbms="mssql">
 		<sql>
 			<![CDATA[	
@@ -961,25 +964,25 @@
 		<addDefaultValue columnName="CreditAmount" tableName="OGL_TRANSACTIONS_LOG" defaultValue="0" />
 		<addDefaultValue columnName="DebitAmount" tableName="OGL_TRANSACTIONS_LOG" defaultValue="0" />
 	</changeSet>
-	
-  <changeSet id="PSD#200634.1" author="Saikiran.n">
+
+	<changeSet id="PSD#200634.1" author="Saikiran.n">
 		<addColumn tableName="Secusers_temp">
 			<column name="Deleted" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.2" author="Saikiran.n">
 		<addColumn tableName="Secusers">
 			<column name="Deleted" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.3" author="Saikiran.n">
 		<addColumn tableName="Secusers_rtemp">
 			<column name="Deleted" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.4" author="Saikiran.n">
 		<sql>
 			<![CDATA[
@@ -989,12 +992,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.5" author="Saikiran.n" dbms="postgresql, oracle">
 		<addDefaultValue columnName="Deleted" tableName="Secusers" defaultValue="0" />
 		<addDefaultValue columnName="Deleted" tableName="Secusers_Temp" defaultValue="0" />
 		<addDefaultValue columnName="Deleted" tableName="Secusers_rtemp" defaultValue="0" />
-		
+
 	</changeSet>
 
 	<changeSet id="PSD#200634.5" author="Saikiran.n" dbms="mssql">
@@ -1007,7 +1010,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.6_pre" author="saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1146,7 +1149,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.7_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1283,7 +1286,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#200634.8_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1363,16 +1366,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD# 201018.1" author="rahul.r">
 		<dropTable tableName="SeqNotes" />
 	</changeSet>
 
 	<changeSet id="PSD# 201018.2" author="rahul.r" dbms="oracle,postgresql">
-		<createSequence sequenceName="SEQNotes" startValue="1" maxValue="9223372036854775807"
-			incrementBy="1" />
+		<createSequence sequenceName="SEQNotes" startValue="1" maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="PSD# 201018.3" author="rahul.r" dbms="oracle">
 		<sql splitStatements="false">
 		<![CDATA[
@@ -1387,7 +1389,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD# 201018.4" author="rahul.r" dbms="postgresql">
 		<sql splitStatements="false">
 		<![CDATA[
@@ -1404,7 +1406,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD# 201018.5" author="rahul.r" dbms="mssql">
 		<sql splitStatements="false">
 			<![CDATA[
@@ -1434,7 +1436,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#203654.1" author="Gopal" dbms="postgresql">
 		<sql splitStatements="false">
 		<![CDATA[
@@ -1451,15 +1453,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#203653.1" author="Alekhya.t">
 		<sql>
 		<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'INSTRUMENT_TYPE_PARTNER_BANK' WHERE SYSPARMCODE ='PRESENTMENT_EXTRACTION_TYPE';
 			]]>
-			</sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#203653.2" author="Alekhya.t">
 		<sql>
 			<![CDATA[
@@ -1467,7 +1469,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="ramya.v" id="ST#92.1T">
 		<sql>
 			<![CDATA[
@@ -1478,7 +1480,7 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="ramya.v" id="ST#92.1">
 		<renameColumn newColumnName="Segment1" oldColumnName="entity" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Segment2" oldColumnName="branchcode" tableName="ogl_transactions" />
@@ -1490,14 +1492,15 @@
 		<renameColumn newColumnName="Segment8" oldColumnName="future1" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Segment9" oldColumnName="future2" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Segment10" oldColumnName="future3" tableName="ogl_transactions" />
-		<renameColumn newColumnName="InterfaceGroupIdentifier" oldColumnName="ExtractionDate" tableName="ogl_transactions" />
+		<renameColumn newColumnName="InterfaceGroupIdentifier" oldColumnName="ExtractionDate"
+			tableName="ogl_transactions" />
 		<renameColumn newColumnName="Reference1" oldColumnName="LoadID" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Reference2" oldColumnName="SystemName" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Reference10" oldColumnName="LineDescription" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Attribute2" oldColumnName="FinReference" tableName="ogl_transactions" />
 		<renameColumn newColumnName="Attribute3" oldColumnName="LinkedTranID" tableName="ogl_transactions" />
 	</changeSet>
-	
+
 	<changeSet author="ramya.v" id="ST#92.2">
 		<renameColumn newColumnName="Segment1" oldColumnName="entity" tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Segment2" oldColumnName="branchcode" tableName="ogl_transactions_file" />
@@ -1509,14 +1512,16 @@
 		<renameColumn newColumnName="Segment8" oldColumnName="future1" tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Segment9" oldColumnName="future2" tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Segment10" oldColumnName="future3" tableName="ogl_transactions_file" />
-		<renameColumn newColumnName="InterfaceGroupIdentifier" oldColumnName="ExtractionDate" tableName="ogl_transactions_file" />
+		<renameColumn newColumnName="InterfaceGroupIdentifier" oldColumnName="ExtractionDate"
+			tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Reference1" oldColumnName="LoadID" tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Reference2" oldColumnName="SystemName" tableName="ogl_transactions_file" />
-		<renameColumn newColumnName="Reference10" oldColumnName="LineDescription" tableName="ogl_transactions_file" />
+		<renameColumn newColumnName="Reference10" oldColumnName="LineDescription"
+			tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Attribute2" oldColumnName="FinReference" tableName="ogl_transactions_file" />
 		<renameColumn newColumnName="Attribute3" oldColumnName="LinkedTranID" tableName="ogl_transactions_file" />
 	</changeSet>
-	
+
 	<changeSet author="ramya.v" id="ST#92.3">
 		<renameColumn newColumnName="Segment1" oldColumnName="entity" tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Segment2" oldColumnName="branchcode" tableName="ogl_transactions_log" />
@@ -1528,14 +1533,16 @@
 		<renameColumn newColumnName="Segment8" oldColumnName="future1" tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Segment9" oldColumnName="future2" tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Segment10" oldColumnName="future3" tableName="ogl_transactions_log" />
-		<renameColumn newColumnName="InterfaceGroupIdentifier" oldColumnName="ExtractionDate" tableName="ogl_transactions_log" />
+		<renameColumn newColumnName="InterfaceGroupIdentifier" oldColumnName="ExtractionDate"
+			tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Reference1" oldColumnName="LoadID" tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Reference2" oldColumnName="SystemName" tableName="ogl_transactions_log" />
-		<renameColumn newColumnName="Reference10" oldColumnName="LineDescription" tableName="ogl_transactions_log" />
+		<renameColumn newColumnName="Reference10" oldColumnName="LineDescription"
+			tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Attribute2" oldColumnName="FinReference" tableName="ogl_transactions_log" />
 		<renameColumn newColumnName="Attribute3" oldColumnName="LinkedTranID" tableName="ogl_transactions_log" />
 	</changeSet>
-	
+
 	<changeSet id="ST#92.4" author="ramya.v">
 		<addColumn tableName="ogl_transactions">
 			<column name="Reference18" type="varchar(50)" />
@@ -1591,12 +1598,12 @@
 			<column name="GlobalAttributeNumber2" type="varchar(50)" />
 			<column name="GlobalAttributeNumber3" type="varchar(50)" />
 			<column name="GlobalAttributeNumber4" type="varchar(50)" />
-			<column name="GlobalAttributeNumber5" type="varchar(50)" /> 
-			<column name="DrOrCr" type="varchar(150)" /> 
-			<column name="Segment11" type="varchar(50)" /> 
+			<column name="GlobalAttributeNumber5" type="varchar(50)" />
+			<column name="DrOrCr" type="varchar(150)" />
+			<column name="Segment11" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.5" author="ramya.v">
 		<addColumn tableName="ogl_transactions_file">
 			<column name="Reference18" type="varchar(50)" />
@@ -1652,15 +1659,15 @@
 			<column name="GlobalAttributeNumber2" type="varchar(50)" />
 			<column name="GlobalAttributeNumber3" type="varchar(50)" />
 			<column name="GlobalAttributeNumber4" type="varchar(50)" />
-			<column name="GlobalAttributeNumber5" type="varchar(50)" /> 
+			<column name="GlobalAttributeNumber5" type="varchar(50)" />
 			<column name="DrOrCr" type="varchar(150)" />
-			<column name="Segment11" type="varchar(50)" /> 
+			<column name="Segment11" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
-	 <changeSet id="ST#92.6" author="ramya.v">
+
+	<changeSet id="ST#92.6" author="ramya.v">
 		<addColumn tableName="OGL_TRANSACTIONS_LOG">
-	 		<column name="Reference18" type="varchar(50)" />
+			<column name="Reference18" type="varchar(50)" />
 			<column name="Reference19" type="varchar(50)" />
 			<column name="Reference20" type="varchar(50)" />
 			<column name="AttributeDate1" type="varchar(50)" />
@@ -1714,39 +1721,38 @@
 			<column name="GlobalAttributeNumber3" type="varchar(50)" />
 			<column name="GlobalAttributeNumber4" type="varchar(50)" />
 			<column name="GlobalAttributeNumber5" type="varchar(50)" />
-			<column name="DrOrCr" type="varchar(150)" /> 
-			<column name="Segment11" type="varchar(50)" /> 
+			<column name="DrOrCr" type="varchar(150)" />
+			<column name="Segment11" type="varchar(50)" />
 		</addColumn>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="ST#92.7" author="ramya.v">
 		<addNotNullConstraint tableName="ogl_transactions" columnName="DrOrCr"
-				columnDataType="varchar(150)" />
+			columnDataType="varchar(150)" />
 		<addNotNullConstraint tableName="ogl_transactions_file" columnName="DrOrCr"
-				columnDataType="varchar(150)" />
+			columnDataType="varchar(150)" />
 		<addNotNullConstraint tableName="OGL_TRANSACTIONS_LOG" columnName="DrOrCr"
-				columnDataType="varchar(150)" />
-	</changeSet> 
-	
+			columnDataType="varchar(150)" />
+	</changeSet>
+
 	<changeSet id="ST#92.8" author="Alekhya.T">
 		<createTable tableName="Loantype_Mapping">
 			<column name="ID" type="bigint" />
-			<column name="LoanTypeDescription" type="varchar(50)" />	
+			<column name="LoanTypeDescription" type="varchar(50)" />
 			<column name="LoanType" type="varchar(30)" />
 			<column name="LOBSeg" type="bigint" />
 			<column name="PartnerSeg" type="bigint" />
 			<column name="Remarks" type="varchar(100)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.9" author="Alekhya.T">
-		<addPrimaryKey tableName="Loantype_Mapping" columnNames="ID"
-			constraintName="PK_OGL_ID" />
+		<addPrimaryKey tableName="Loantype_Mapping" columnNames="ID" constraintName="PK_OGL_ID" />
 	</changeSet>
 
 	<changeSet id="ST#92.10" author="Alekhya.T">
-		<addUniqueConstraint tableName="Loantype_Mapping"
-			columnNames="LoanType" constraintName="UK_OGL_Type" />
+		<addUniqueConstraint tableName="Loantype_Mapping" columnNames="LoanType"
+			constraintName="UK_OGL_Type" />
 	</changeSet>
 
 	<changeSet id="ST#92.11" author="ramya.v">
@@ -1760,34 +1766,34 @@
 				INSERT INTO Loantype_Mapping (ID, LoanTypeDescription, LoanType, LOBSeg, PartnerSeg, Remarks) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 from Loantype_Mapping),'Whole Sale loan','WHOLESALE-CONSUMER','111','9999','');
 			]]>
 		</sql>
-	</changeSet>   
-	    
-	<changeSet id="ST#92.13.1" author="ramya.v">
-			<dropTable tableName="OGL_TRANSACTIONS" />
-			<dropTable tableName="OGL_TRANSACTIONS_FILE" />
-			<dropTable tableName="OGL_TRANSACTIONS_LOG" />
 	</changeSet>
-	    
+
+	<changeSet id="ST#92.13.1" author="ramya.v">
+		<dropTable tableName="OGL_TRANSACTIONS" />
+		<dropTable tableName="OGL_TRANSACTIONS_FILE" />
+		<dropTable tableName="OGL_TRANSACTIONS_LOG" />
+	</changeSet>
+
 	<changeSet id="ST#92.14" author="ramya.v">
 		<createTable tableName="OGL_TRANSACTIONS">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="AppDate" type="datetime"/>
+			<column name="AppDate" type="datetime" />
 			<column name="CustId" type="bigint" />
-            <column name="CustCif" type="varchar(20)" />
-            <column name="CustShrtName" type="varchar(200)" />
-            <column name="FinId" type="bigint"/>
-            <column name="ReceiptId" type="bigint" /> 
-            <column name="ReceiptMode" type="varchar(10)" />
-			<column name="StatusCode" type="varchar(20)"/>
-			<column name="LedgerID" type="varchar(20)"/>
-			<column name="TranDate" type="datetime"/>
-			<column name="JournalSource" type="varchar(20)"/>
-			<column name="JournalCategory" type="varchar(20)"/>
-			<column name="CurrencyCode" type="varchar(20)"/>
-			<column name="JeCreateDate" type="datetime"/>
-			<column name="ActualFlag" type="varchar(20)"/>
+			<column name="CustCif" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(200)" />
+			<column name="FinId" type="bigint" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="StatusCode" type="varchar(20)" />
+			<column name="LedgerID" type="varchar(20)" />
+			<column name="TranDate" type="datetime" />
+			<column name="JournalSource" type="varchar(20)" />
+			<column name="JournalCategory" type="varchar(20)" />
+			<column name="CurrencyCode" type="varchar(20)" />
+			<column name="JeCreateDate" type="datetime" />
+			<column name="ActualFlag" type="varchar(20)" />
 			<column name="Segment1" type="varchar(100)" />
 			<column name="Segment2" type="varchar(12)" />
 			<column name="Segment3" type="varchar(50)" />
@@ -1849,7 +1855,7 @@
 			<column name="InterfaceGroupIdentifier	" type="datetime" />
 			<column name="ContextField" type="varchar(100)" />
 			<column name="Attribute1" type="varchar(100)" />
-			<column name="Attribute2" type="varchar(20)"/>
+			<column name="Attribute2" type="varchar(20)" />
 			<column name="Attribute3" type="bigint" />
 			<column name="Attribute4" type="varchar(100)" />
 			<column name="Attribute5" type="varchar(100)" />
@@ -1875,7 +1881,7 @@
 			<column name="EncumbranceTypeID" type="varchar(100)" />
 			<column name="ReconciliationReference" type="varchar(50)" />
 			<column name="PeriodName" type="varchar(100)" />
-			 <column name="Reference18" type="varchar(50)" />
+			<column name="Reference18" type="varchar(50)" />
 			<column name="Reference19" type="varchar(50)" />
 			<column name="Reference20" type="varchar(50)" />
 			<column name="AttributeDate1" type="varchar(50)" />
@@ -1928,31 +1934,31 @@
 			<column name="GlobalAttributeNumber2" type="varchar(50)" />
 			<column name="GlobalAttributeNumber3" type="varchar(50)" />
 			<column name="GlobalAttributeNumber4" type="varchar(50)" />
-			<column name="GlobalAttributeNumber5" type="varchar(50)" /> 
-			<column name="DrOrCr" type="varchar(150)" /> 
+			<column name="GlobalAttributeNumber5" type="varchar(50)" />
+			<column name="DrOrCr" type="varchar(150)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.15" author="ramya.v">
 		<createTable tableName="OGL_TRANSACTIONS_FILE">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="AppDate" type="datetime"/>
+			<column name="AppDate" type="datetime" />
 			<column name="CustId" type="bigint" />
-            <column name="CustCif" type="varchar(20)" />
-            <column name="CustShrtName" type="varchar(200)" />
-            <column name="FinId" type="bigint"/>
-            <column name="ReceiptId" type="bigint" />
-            <column name="ReceiptMode" type="varchar(10)" />
-			<column name="StatusCode" type="varchar(20)"/>
-			<column name="LedgerID" type="varchar(20)"/>
-			<column name="TranDate" type="datetime"/>
-			<column name="JournalSource" type="varchar(20)"/>
-			<column name="JournalCategory" type="varchar(20)"/>
-			<column name="CurrencyCode" type="varchar(20)"/>
-			<column name="JeCreateDate" type="datetime"/>
-			<column name="ActualFlag" type="varchar(20)"/>
+			<column name="CustCif" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(200)" />
+			<column name="FinId" type="bigint" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="StatusCode" type="varchar(20)" />
+			<column name="LedgerID" type="varchar(20)" />
+			<column name="TranDate" type="datetime" />
+			<column name="JournalSource" type="varchar(20)" />
+			<column name="JournalCategory" type="varchar(20)" />
+			<column name="CurrencyCode" type="varchar(20)" />
+			<column name="JeCreateDate" type="datetime" />
+			<column name="ActualFlag" type="varchar(20)" />
 			<column name="Segment1" type="varchar(100)" />
 			<column name="Segment2" type="varchar(12)" />
 			<column name="Segment3" type="varchar(50)" />
@@ -2014,7 +2020,7 @@
 			<column name="InterfaceGroupIdentifier" type="datetime" />
 			<column name="ContextField" type="varchar(100)" />
 			<column name="Attribute1" type="varchar(100)" />
-			<column name="Attribute2" type="varchar(20)"/>
+			<column name="Attribute2" type="varchar(20)" />
 			<column name="Attribute3" type="bigint" />
 			<column name="Attribute4" type="varchar(100)" />
 			<column name="Attribute5" type="varchar(100)" />
@@ -2040,7 +2046,7 @@
 			<column name="EncumbranceTypeID" type="varchar(100)" />
 			<column name="ReconciliationReference" type="varchar(50)" />
 			<column name="PeriodName" type="varchar(100)" />
-			 <column name="Reference18" type="varchar(50)" />
+			<column name="Reference18" type="varchar(50)" />
 			<column name="Reference19" type="varchar(50)" />
 			<column name="Reference20" type="varchar(50)" />
 			<column name="AttributeDate1" type="varchar(50)" />
@@ -2093,31 +2099,31 @@
 			<column name="GlobalAttributeNumber2" type="varchar(50)" />
 			<column name="GlobalAttributeNumber3" type="varchar(50)" />
 			<column name="GlobalAttributeNumber4" type="varchar(50)" />
-			<column name="GlobalAttributeNumber5" type="varchar(50)" /> 
-			<column name="DrOrCr" type="varchar(150)" /> 
+			<column name="GlobalAttributeNumber5" type="varchar(50)" />
+			<column name="DrOrCr" type="varchar(150)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="ST#92.16" author="ramya.v">
 		<createTable tableName="OGL_TRANSACTIONS_LOG">
 			<column name="ID" type="bigint" autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
-			<column name="AppDate" type="datetime"/>
+			<column name="AppDate" type="datetime" />
 			<column name="CustId" type="bigint" />
-            <column name="CustCif" type="varchar(20)" />
-            <column name="CustShrtName" type="varchar(200)" />
-            <column name="FinId" type="bigint"/>
-            <column name="ReceiptId" type="bigint" />
-            <column name="ReceiptMode" type="varchar(10)" />
-			<column name="StatusCode" type="varchar(20)"/>
-			<column name="LedgerID" type="varchar(20)"/>
-			<column name="TranDate" type="datetime"/>
-			<column name="JournalSource" type="varchar(20)"/>
-			<column name="JournalCategory" type="varchar(20)"/>
-			<column name="CurrencyCode" type="varchar(20)"/>
-			<column name="JeCreateDate" type="datetime"/>
-			<column name="ActualFlag" type="varchar(20)"/>
+			<column name="CustCif" type="varchar(20)" />
+			<column name="CustShrtName" type="varchar(200)" />
+			<column name="FinId" type="bigint" />
+			<column name="ReceiptId" type="bigint" />
+			<column name="ReceiptMode" type="varchar(10)" />
+			<column name="StatusCode" type="varchar(20)" />
+			<column name="LedgerID" type="varchar(20)" />
+			<column name="TranDate" type="datetime" />
+			<column name="JournalSource" type="varchar(20)" />
+			<column name="JournalCategory" type="varchar(20)" />
+			<column name="CurrencyCode" type="varchar(20)" />
+			<column name="JeCreateDate" type="datetime" />
+			<column name="ActualFlag" type="varchar(20)" />
 			<column name="Segment1" type="varchar(100)" />
 			<column name="Segment2" type="varchar(12)" />
 			<column name="Segment3" type="varchar(50)" />
@@ -2176,10 +2182,10 @@
 			<column name="CurrencyConversionType" type="varchar(20)" />
 			<column name="CurrencyConversionDate" type="varchar(20)" />
 			<column name="CurrencyConversionRate" type="varchar(20)" />
-			<column name="InterfaceGroupIdentifier" type="datetime" /> 
+			<column name="InterfaceGroupIdentifier" type="datetime" />
 			<column name="ContextField" type="varchar(100)" />
 			<column name="Attribute1" type="varchar(100)" />
-			<column name="Attribute2" type="varchar(20)"/>
+			<column name="Attribute2" type="varchar(20)" />
 			<column name="Attribute3" type="bigint" />
 			<column name="Attribute4" type="varchar(100)" />
 			<column name="Attribute5" type="varchar(100)" />
@@ -2205,7 +2211,7 @@
 			<column name="EncumbranceTypeID" type="varchar(100)" />
 			<column name="ReconciliationReference" type="varchar(50)" />
 			<column name="PeriodName" type="varchar(100)" />
-			 <column name="Reference18" type="varchar(50)" />
+			<column name="Reference18" type="varchar(50)" />
 			<column name="Reference19" type="varchar(50)" />
 			<column name="Reference20" type="varchar(50)" />
 			<column name="AttributeDate1" type="varchar(50)" />
@@ -2259,11 +2265,252 @@
 			<column name="GlobalAttributeNumber3" type="varchar(50)" />
 			<column name="GlobalAttributeNumber4" type="varchar(50)" />
 			<column name="GlobalAttributeNumber5" type="varchar(50)" />
-			<column name="DrOrCr" type="varchar(150)" />  
+			<column name="DrOrCr" type="varchar(150)" />
 		</createTable>
-	</changeSet>  
+	</changeSet>
+
+	<changeSet id="ST#92.12.10" author="Mounika.M">
+		<modifyDataType tableName="OGL_TRANSACTIONS" columnName="Attribute3" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="ST#92.12.11" author="Mounika.M">
+		<modifyDataType tableName="OGL_TRANSACTIONS_FILE" columnName="Attribute3" newDataType="varchar(20)" />
+	</changeSet>
+
+	<changeSet id="ST#92.12.12" author="Mounika.M">
+		<modifyDataType tableName="OGL_TRANSACTIONS_LOG" columnName="Attribute3" newDataType="varchar(20)" />
+	</changeSet>
+
+
+	<changeSet id="PSD#207094" author="Alekhya.T">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'Y' WHERE SYSPARMCODE = 'MANDATE_ALW_PARTNER_BANK' 			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#210122" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'WL';
+				INSERT INTO LOANTYPE_MAPPING (ID, LOANTYPEDESCRIPTION, LOANTYPE, LOBSEG, PARTNERSEG, REMARKS) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM LOANTYPE_MAPPING), 'Whole Sale loan', 'WL', '113', '9999', '');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#210122.1" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'WHOLESALE-CONSUMER';
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'WHOLESALE-SME';
+				
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'WLS';
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'WLC';
+				
+				INSERT INTO LOANTYPE_MAPPING (ID, LOANTYPEDESCRIPTION, LOANTYPE, LOBSEG, PARTNERSEG, REMARKS) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 FROM LOANTYPE_MAPPING),'Wholesale SME','WLS','112','9999','');
+				INSERT INTO LOANTYPE_MAPPING (ID, LOANTYPEDESCRIPTION, LOANTYPE, LOBSEG, PARTNERSEG, REMARKS) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 FROM LOANTYPE_MAPPING),'Wholesale Consumer','WLC','111','9999','');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#210122.2" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'INC';
+				INSERT INTO LOANTYPE_MAPPING (ID, LOANTYPEDESCRIPTION, LOANTYPE, LOBSEG, PARTNERSEG, REMARKS) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM LOANTYPE_MAPPING), 'IndMoney Non-FLDG Loan', 'INC', '164', '5001', '');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="DE#174" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from STAGETABDETAIL;
+
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (1, 'ADVPAY', 'Advace Paymet', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (2, 'COAPP', 'Co Applicats ', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (3, 'TAXDET', 'Tax Detail', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (4, 'DOCUMET', 'Documets Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (5, 'COVEAT', 'Coveat Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (6, 'MADATE', 'Madate Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (7, 'CHEQUE', 'Cheque Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (8, 'COLLATER', 'Collateral Setup', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (9, 'VAS', 'VAS Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (10, 'EXTFLDS', 'Exteded Field Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (11, 'QRYMGMT', 'Query Magemet Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (12, 'PSLDTLS', 'Other Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (13, 'CRTAB', 'Credit Review Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (14, 'LegalDet', 'Legal Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (15, 'FINSUM', 'Financial Summary', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (24, 'TANDET', 'TAN Detail', 1);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#201.1" author="hariteja. b">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'Y' WHERE SYSPARMCODE = 'MONTHENDACC_CALREQ';
+			]]>
+		</sql>
+	</changeSet> 
 	
-	<changeSet id="ST#92.12.3" author="gopal.p">
+	<changeSet id="PSD#210369" author="ramya.v">
+		<sql>
+			<![CDATA[
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'HCN';
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'MCN';
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'MBS';
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'UPL';
+				DELETE FROM LOANTYPE_MAPPING WHERE LOANTYPE = 'BYJ';
+			
+				INSERT INTO Loantype_Mapping (ID, LoanTypeDescription, LoanType, LOBSeg, PartnerSeg, Remarks) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 from Loantype_Mapping),'Aggregator- Capital Now','HCN','161','4004','');
+				INSERT INTO Loantype_Mapping (ID, LoanTypeDescription, LoanType, LOBSeg, PartnerSeg, Remarks) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 from Loantype_Mapping),'E-agg Capital Now Marketplace','MCN','162','4004','');
+				INSERT INTO Loantype_Mapping (ID, LoanTypeDescription, LoanType, LOBSeg, PartnerSeg, Remarks) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 from Loantype_Mapping),'E-agg Bankse Marketplace','MBS','161','4003','');
+				INSERT INTO Loantype_Mapping (ID, LoanTypeDescription, LoanType, LOBSeg, PartnerSeg, Remarks) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 from Loantype_Mapping),'Unsecured Personal Loan','UPL','151','9999','');
+				INSERT INTO Loantype_Mapping (ID, LoanTypeDescription, LoanType, LOBSeg, PartnerSeg, Remarks) VALUES ((SELECT COALESCE(MAX(ID), 0)+1 from Loantype_Mapping),'Byju’s_Personal Loan_Strategic P-Ship','BYJ','164','5002','');
+			]]>
+		</sql>
+	</changeSet>   
+	
+	<changeSet id="1.1" author="gopal.p">
+		<sql>
+			<![CDATA[
+			    DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='DISB_EXPORT_HDFC');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='DISB_EXPORT_HDFC');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='DISB_EXPORT_HDFC';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC';
+				
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'DISB_EXPORT_HDFC', 'HDFC Bank Disbursements[NEFT/RTGS/CHEQUE/DD] Download.', 3, 'Disbursement', null, null, ',', 0, 0, null, null, null,'A', '/opt/pff/creditsaison/disbursements/request', 'Disbursement_', '.xlsx', 1, current_timestamp, '${ddmm},.${SEQ_DATE_FILE}', null, '0', null, 1, 1);
+				
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC'), 'DISBURSEMENT_REQUESTS', 0, 'ID', 'HEADER_ID IN (:HEADER_ID), DISBURSEMENT_TYPE = :DISBURSEMENT_TYPE', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'DISBURSEMENT_TYPE',       0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'CUSTCIF',                 0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_ACCOUNT',      0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'DISBURSEMENT_AMOUNT',     0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_NAME',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'DRAWEE_LOCATION',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PRINT_LOCATION',          0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_ADDRESS1',	  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_ADDRESS2',	  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_ADDRESS3',	  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_ADDRESS4',	  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_ADDRESS5',	  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'FinReference',			  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'ID',					  0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL1',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL2',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL3',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL4',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL5',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL6',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'PAYMENT_DETAIL7',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'CHEQUE_NUMBER',           0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'DISBURSEMENT_DATE',       0,'N', NULL, NULL, '${SYS_DATE}', NULL, '0', NULL, NULL, NULL, 'DATE:dd/MM/yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'MICR_CODE',               0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'IFSC_CODE',               0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_BANK',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIARY_BRANCH',       0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_EXPORT_HDFC')), 'BENFICIRY_EMAIL',         0,'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+			 ]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="2.1" author="gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='DISB_HDFC_IMPORT');
+ 				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='DISB_HDFC_IMPORT');
+ 				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='DISB_HDFC_IMPORT';
+ 				
+				DELETE FROM DATA_ENGINE_COLUMN WHERE TABLEID IN (SELECT ID FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT'));
+				DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT');
+				DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT';
+
+				INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'DISB_HDFC_IMPORT', 'HDFC Disbursement Response File.', 12, 'Disbursement', null, null, ',', 1, 1, null, 'ROW:{BATCH ID,DISBURSEMENT TYPE,CUSTCIF,BENFICIARY NAME,AMOUNT,CHEQUE NUMBER,DISBURSEMENT DATE,ID,PAYMENT DETAIL1,PAYMENT DETAIL2,BENFICIARY ACCOUNT,TRANSACTIONREF,STATUS,REJECT REASON,IFSC CODE}', null, 'C', '/opt/pff/creditsaison/disbursements/reponse', 'Disbursement_', '.xlsx', 0, current_timestamp, '${ddmm},.${SEQ_DATE_FILE}', null, '0', '', 1, 1);
+
+				INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT'), 'DISBURSEMENT_REQUESTS', 2, 'ID', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 14, 0, 0);
+								
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')), 'RESP_BATCH_ID',       0, 'N', NULL, NULL,'${FILE_ID}',NULL,'0',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'DISBURSEMENT_TYPE',  0, 'N', NULL, NULL,   NULL,     NULL,'0',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'CUSTCIF',            0, 'N', NULL, NULL,   NULL,     NULL,'1',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'BENFICIARY_NAME',    0, 'N', NULL, NULL,   NULL,     NULL,'2',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'DISBURSEMENT_AMOUNT',0, 'N', NULL, NULL,   NULL,     NULL,'3',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'CHEQUE_NUMBER',      0, 'N', NULL, NULL,   NULL,     NULL,'4',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'DISBURSEMENT_DATE',  0, 'N', NULL, NULL,   NULL,     NULL,'5',  NULL, NULL, NULL, 'dd-MMM-yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'ID',                 0, 'N', NULL, NULL,   NULL,     NULL,'6',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'PAYMENT_DETAIL1',    0, 'N', NULL, NULL,   NULL,     NULL,'7',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'PAYMENT_DETAIL2',    0, 'N', NULL, NULL,   NULL,     NULL,'8',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'BENFICIARY_ACCOUNT', 0, 'N', NULL, NULL,   NULL,     NULL,'9',  NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'TRANSACTIONREF',     0, 'N', NULL, NULL,   NULL,     NULL,'10', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'STATUS',             0, 'N', NULL, NULL,   NULL,     NULL,'11', NULL, NULL, NULL, NULL, 'CHECK:E,R,P');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'REJECT_REASON',      0, 'N', NULL, NULL,   NULL,     NULL,'12', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'DISBURSEMENT_REQUESTS' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'DISB_HDFC_IMPORT')),  'IFSC_CODE',          0, 'N', NULL, NULL,   NULL,     NULL,'13', NULL, NULL, NULL, NULL, 'O');		
+ 			]]>
+		</sql>
+	</changeSet> 
+
+	<changeSet id="ST#92_106" author="gopal.p">
+		<sql>
+			<![CDATA[
+				alter table ogl_transactions_file add column ConvertedCreditamountT numeric(18,0);
+				alter table ogl_transactions_file add column ConvertedDebitamountT numeric(18,0);
+				update ogl_transactions_file set ConvertedDebitamount = 0 where converteddebitamount='';
+                update ogl_transactions_file set ConvertedCreditAmount = 0 where ConvertedCreditAmount='';
+				update ogl_transactions_file set ConvertedDebitamountT = cast(ConvertedDebitamount as numeric(18,0)), ConvertedCreditamountT = cast(ConvertedCreditamount as numeric(18,0));
+				update ogl_transactions_file set ConvertedDebitamount = 0, ConvertedCreditamount = 0;
+				alter table ogl_transactions_file alter column ConvertedCreditamount type numeric(18,0) using ConvertedCreditamount::numeric(18,0); 
+				alter table ogl_transactions_file alter column ConvertedDebitamount type numeric(18,0) using ConvertedDebitamount::numeric(18,0);
+				update ogl_transactions_file set ConvertedDebitamount = ConvertedDebitamountT, ConvertedCreditamount = ConvertedCreditamountT;
+				alter table ogl_transactions_file drop column ConvertedCreditamountT;
+				alter table ogl_transactions_file drop column ConvertedDebitamountT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#92_107" author="gopal.p">
+		<sql>
+			<![CDATA[
+				alter table ogl_transactions_log add column ConvertedCreditAmountT numeric(18,0);
+				alter table ogl_transactions_log add column ConvertedDebitAmountT numeric(18,0);
+				update ogl_transactions_log set ConvertedDebitamount = 0 where converteddebitamount='';
+                update ogl_transactions_log set ConvertedCreditAmount = 0 where ConvertedCreditAmount='';
+				update ogl_transactions_log set ConvertedDebitamountT = Cast(ConvertedDebitamount as numeric(18,0)), ConvertedCreditamountT = Cast(ConvertedCreditamount as numeric(18,0));
+				update ogl_transactions_log set ConvertedDebitamount = 0, ConvertedCreditAmount = 0;
+				alter table ogl_transactions_log alter column ConvertedCreditAmount type numeric(18,0) USING ConvertedCreditAmount::numeric(18,0); 
+				alter table ogl_transactions_log alter column ConvertedDebitAmount type numeric(18,0) USING ConvertedDebitAmount::numeric(18,0);
+				update ogl_transactions_log set ConvertedDebitamount = ConvertedDebitamountT, ConvertedCreditamount = ConvertedCreditamountT;
+				alter table ogl_transactions_log drop column ConvertedCreditAmountT;
+				alter table ogl_transactions_log drop column ConvertedDebitAmountT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#92_108" author="gopal.p">
+		<sql>
+			<![CDATA[
+				alter table ogl_transactions add column ConvertedCreditAmountT numeric(18,0);
+				alter table ogl_transactions add column ConvertedDebitAmountT numeric(18,0);
+				update ogl_transactions set ConvertedDebitamount = 0 where converteddebitamount='';
+                update ogl_transactions set ConvertedCreditAmount = 0 where ConvertedCreditAmount='';
+				update ogl_transactions set ConvertedDebitamountT = Cast(ConvertedDebitamount as numeric(18,0)), ConvertedCreditamountT = Cast(ConvertedCreditamount as numeric(18,0));
+				update ogl_transactions set ConvertedDebitamount = 0, ConvertedCreditamount = 0;
+				alter table ogl_transactions alter column ConvertedCreditAmount type numeric(18,0) USING ConvertedCreditamount::numeric(18,0); 
+				alter table ogl_transactions alter column ConvertedDebitAmount type numeric(18,0) USING ConvertedDebitAmount::numeric(18,0);
+				update ogl_transactions set ConvertedDebitamount = ConvertedDebitamountt, ConvertedCreditamount = ConvertedCreditamountT;
+				alter table ogl_transactions drop column ConvertedCreditAmountT;
+				alter table ogl_transactions drop column ConvertedDebitAmountT;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#92_115.1.1" author="gopal.p">
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='OGL_TRANSACTIONS');
@@ -2274,16 +2521,16 @@
                 DELETE FROM DATA_ENGINE_TABLE WHERE CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS');
                 DELETE FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS';
 
-                INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'OGL_TRANSACTIONS', 'OGL Transactions on post Date', 3, NULL, NULL, NULL, ',', 0, 0, NULL, 'ROW:{Status Code,Ledger ID,Effective Date of Transaction,Journal Source,Journal Category,Currency Code,Journal Entry Creation Date,Actual Flag,Segment1,Segment2,Segment3,Segment4,Segment5,Segment6,Segment7,Segment8,Segment9,Segment10,Segment11,Segment12,Segment13,Segment14,Segment15,Segment16,Segment17,Segment18,Segment19,Segment20,Segment21,Segment22,Segment23,Segment24,Segment25,Segment26,Segment27,Segment28,Segment29,Segment30,Debit Amount,Entered Credit Amount,Converted Debit Amount,Converted Credit Amount,REFERENCE1 (Batch Name),REFERENCE2 (Batch Description),REFERENCE3,REFERENCE4(Journal Entry Name),REFERENCE5 (Journal Entry Description),REFERENCE6 (Journal Entry Reference),REFERENCE7 (Journal Entry Reversal flag),REFERENCE8 (Journal Entry Reversal Period),REFERENCE9 (Journal Reversal Method),REFERENCE10 (Journal Entry Line Description),Reference column 1,Reference column 2,Reference column 3,Reference column 4,Reference column 5,Reference column 6,Reference column 7,Reference column 8,Reference column 9,Reference column 10,Statistical Amount,Currency Conversion Type,Currency Conversion Date,Currency Conversion Rate,Interface Group Identifier,Context field,ATTRIBUTE1 Value for Journal Entry Line DFF,ATTRIBUTE2 Value for Journal Entry Line DFF,Attribute3 Value for Journal Entry Line DFF,Attribute4 Value for Journal Entry Line DFF,Attribute5 Value for Journal Entry Line DFF,Attribute6 Value for Journal Entry Line DFF,Attribute7 Value for Journal Entry Line DFF,Attribute8 Value for Journal Entry Line DFF,Attribute9 Value for Journal Entry Line DFF,Attribute10 Value for Journal Entry Line DFF,Attribute11 Value for Captured Information DFF,Attribute12 Value for Captured Information DFF,Attribute13 Value for Captured Information DFF,Attribute14 Value for Captured Information DFF,Attribute15 Value for Captured Information DFF,Attribute16 Value for Captured Information DFF,Attribute17 Value for Captured Information DFF,Attribute18 Value for Captured Information DFF,Attribute19 Value for Captured Information DFF,Attribute20 Value for Captured Information DFF,Context field for Captured Information DFF,Average Journal Flag,Clearing Company,Ledger Name,Encumbrance Type ID,Reconciliation Reference,Period Name,REFERENCE18,REFERENCE19,REFERENCE20,Attribute Date 1,Attribute Date 2,Attribute Date 3,Attribute Date 4,Attribute Date 5,Attribute Date 6,Attribute Date 7,Attribute Date 8,Attribute Date 9,Attribute Date 10,Attribute Number 1,Attribute Number 2,Attribute Number 3,Attribute Number 4,Attribute Number 5,Attribute Number 6,Attribute Number 7,Attribute Number 8,Attribute Number 9,Attribute Number 10,Global Attribute Category,Global Attribute 1,Global Attribute 2,Global Attribute 3,Global Attribute 4,Global Attribute 5,Global Attribute 6,Global Attribute 7,Global Attribute 8,Global Attribute 9,Global Attribute 10,Global Attribute 11,Global Attribute 12,Global Attribute 13,Global Attribute 14,Global Attribute 15,Global Attribute 16,Global Attribute 17,Global Attribute 18,Global Attribute 19,Global Attribute 20,Global Attribute Date 1,Global Attribute Date 2,Global Attribute Date 3,Global Attribute Date 4,Global Attribute Date 5,Global Attribute Number 1,Global Attribute Number 2,Global Attribute Number 3,Global Attribute Number 4,Global Attribute Number 5}', NULL, 'A', '/opt/PFF/OGL', 'OGL_PENNANT_', '.csv', 0, CURRENT_TIMESTAMP, '${ddMMYYYY},_${SEQ_DATE_FILE}', null, '0', 'COPY_TO_SFTP', 1, 1);
+                INSERT INTO DATA_ENGINE_CONFIG (ID, NAME, DESCRIPTION, PARSER, WORKSHEET, TEXTQUALIFIER, ROWDELIMITER, COLUMNDELIMITER, STARTINGROW, SKIPHEADERROW, FIELDNAMES, HEADER, TRAILER, UPLOADLOCATION, UPLOADPATH, FILEPREFIXNAME, FILEEXTENSION, FILESEQUENCENO, LASTPROCESSEDON, FILENAMEFORMAT, CRONEXPRESSION, NOTIFICATIONSTATUSEMAIL, POSTEVENT, BACKUPFILE, ACTIVE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'OGL_TRANSACTIONS', 'OGL Transactions on post Date', 3, NULL, NULL, NULL, ',', 0, 0, NULL, 'ROW:{Status Code,Ledger ID,Effective Date of Transaction,Journal Source,Journal Category,Currency Code,Journal Entry Creation Date,Actual Flag,Segment1,Segment2,Segment3,Segment4,Segment5,Segment6,Segment7,Segment8,Segment9,Segment10,Segment11,Segment12,Segment13,Segment14,Segment15,Segment16,Segment17,Segment18,Segment19,Segment20,Segment21,Segment22,Segment23,Segment24,Segment25,Segment26,Segment27,Segment28,Segment29,Segment30,Entered Debit Amount,Entered Credit Amount,Converted Debit Amount,Converted Credit Amount,REFERENCE1 (Batch Name),REFERENCE2 (Batch Description),REFERENCE3,REFERENCE4(Journal Entry Name),REFERENCE5 (Journal Entry Description),REFERENCE6 (Journal Entry Reference),REFERENCE7 (Journal Entry Reversal flag),REFERENCE8 (Journal Entry Reversal Period),REFERENCE9 (Journal Reversal Method),REFERENCE10 (Journal Entry Line Description),Reference column 1,Reference column 2,Reference column 3,Reference column 4,Reference column 5,Reference column 6,Reference column 7,Reference column 8,Reference column 9,Reference column 10,Statistical Amount,Currency Conversion Type,Currency Conversion Date,Currency Conversion Rate,Interface Group Identifier,Context field for Journal Entry Line DFF,ATTRIBUTE1 Value for Journal Entry Line DFF,ATTRIBUTE2 Value for Journal Entry Line DFF,Attribute3 Value for Journal Entry Line DFF,Attribute4 Value for Journal Entry Line DFF,Attribute5 Value for Journal Entry Line DFF,Attribute6 Value for Journal Entry Line DFF,Attribute7 Value for Journal Entry Line DFF,Attribute8 Value for Journal Entry Line DFF,Attribute9 Value for Journal Entry Line DFF,Attribute10 Value for Journal Entry Line DFF,Attribute11 Value for Captured Information DFF,Attribute12 Value for Captured Information DFF,Attribute13 Value for Captured Information DFF,Attribute14 Value for Captured Information DFF,Attribute15 Value for Captured Information DFF,Attribute16 Value for Captured Information DFF,Attribute17 Value for Captured Information DFF,Attribute18 Value for Captured Information DFF,Attribute19 Value for Captured Information DFF,Attribute20 Value for Captured Information DFF,Context field for Captured Information DFF,Average Journal Flag,Clearing Company,Ledger Name,Encumbrance Type ID,Reconciliation Reference,Period Name,REFERENCE18,REFERENCE19,REFERENCE20,Attribute Date 1,Attribute Date 2,Attribute Date 3,Attribute Date 4,Attribute Date 5,Attribute Date 6,Attribute Date 7,Attribute Date 8,Attribute Date 9,Attribute Date 10,Attribute Number 1,Attribute Number 2,Attribute Number 3,Attribute Number 4,Attribute Number 5,Attribute Number 6,Attribute Number 7,Attribute Number 8,Attribute Number 9,Attribute Number 10,Global Attribute Category,Global Attribute 1,Global Attribute 2,Global Attribute 3,Global Attribute 4,Global Attribute 5,Global Attribute 6,Global Attribute 7,Global Attribute 8,Global Attribute 9,Global Attribute 10,Global Attribute 11,Global Attribute 12,Global Attribute 13,Global Attribute 14,Global Attribute 15,Global Attribute 16,Global Attribute 17,Global Attribute 18,Global Attribute 19,Global Attribute 20,Global Attribute Date 1,Global Attribute Date 2,Global Attribute Date 3,Global Attribute Date 4,Global Attribute Date 5,Global Attribute Number 1,Global Attribute Number 2,Global Attribute Number 3,Global Attribute Number 4,Global Attribute Number 5}', NULL, 'A', '/opt/PFF/OGL', 'OGL_UPLOAD_', '.csv', 0, CURRENT_TIMESTAMP, '${ddMMYYYYHms}', null, '0', 'COPY_TO_SFTP', 1, 1);
 
                 INSERT INTO DATA_ENGINE_TABLE (ID, CONFIGID, NAME, OPERATION, KEYFIELDS, FILTER, STATUSUPDATE, SKIPROWS, IDENTIFIER, DESCRIPTION, STARTINDEX, ENDINDEX, RECORDLENGTH, MULTIROW, HEADERTABLE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS'), 'OGL_TRANSACTIONS_FILE', 0, 'ID', 'ID IN (:ID)', NULL, NULL, NULL, 'OGL Transactions on post Date', NULL, NULL, 0, 0, 0);
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'StatusCode',            0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'LedgerID',              0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'TranDate',              0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL,'DATE:dd/MM/yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'TranDate',              0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL,'DATE:yyyy/MM/dd', 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'JournalSource',         0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'JournalCategory',       0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'CurrencyCode',	        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'JeCreateDate',	        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL,'DATE:dd/MM/yyyy', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'JeCreateDate',	        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL,'DATE:yyyy/MM/dd', 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ActualFlag',	        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment1',	  		    0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment2',  	        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
@@ -2295,7 +2542,7 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment8',              0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment9',              0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment10',             0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment11',            				0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment11',            	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment12',             0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment13',             0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
@@ -2316,11 +2563,11 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment28',             0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment29',             0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Segment30',             0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'DebitAmount',           0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'CreditAmount',          0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ConvertedDebitAmount',  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ConvertedCreditAmount', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference1',     			0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'DebitAmount',           0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'AMOUNT:.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'CreditAmount',          0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'AMOUNT:.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ConvertedDebitAmount',  0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'AMOUNT:.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ConvertedCreditAmount', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'AMOUNT:.00', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference1',     		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference2',    		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference3',         	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference4',	  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
@@ -2329,7 +2576,7 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference7',	  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference8',	  		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference9',  			0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference10',   	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Reference10',   		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ReferenceColumn1',  	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ReferenceColumn2',  	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ReferenceColumn3',      0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
@@ -2344,7 +2591,7 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'CurrencyConversionType',0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'CurrencyConversionDate',0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'CurrencyConversionRate',0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
-				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'InterfaceGroupIdentifier',        0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:ddMMyyyyhhmmss', 'O');
+				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'InterfaceGroupIdentifier', 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:ddMMyyyyhhmmss', 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'ContextField',       	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Attribute1',       		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'Attribute2',       	0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');
@@ -2430,5 +2677,31 @@
 				INSERT INTO DATA_ENGINE_COLUMN (ID, TABLEID, NAME, SKIP, SEQTYPE, SEQOBJECT, DEFAULTVALUE, DERIVEDFROM, REFERENCECOLUMN, STARTINDEX, ENDINDEX, RULEFORVALUE, QUERYFORVALUE, FORMAT, CONSTRAINTTYPE) VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (SELECT ID FROM DATA_ENGINE_TABLE WHERE NAME = 'OGL_TRANSACTIONS_FILE' AND CONFIGID = (SELECT ID FROM DATA_ENGINE_CONFIG WHERE NAME = 'OGL_TRANSACTIONS')), 'GlobalAttributeNumber5',      		0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 'O');					
 			]]>
 		</sql>
+	</changeSet> 
+	
+	<changeSet id="DE#174" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from STAGETABDETAIL;
+
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (1, 'ADVPAY', 'Advace Paymet', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (2, 'COAPP', 'Co Applicats ', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (3, 'TAXDET', 'Tax Detail', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (4, 'DOCUMET', 'Documets Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (5, 'COVEAT', 'Coveat Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (6, 'MADATE', 'Madate Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (7, 'CHEQUE', 'Cheque Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (8, 'COLLATER', 'Collateral Setup', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (9, 'VAS', 'VAS Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (10, 'EXTFLDS', 'Exteded Field Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (11, 'QRYMGMT', 'Query Magemet Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (12, 'PSLDTLS', 'Other Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (13, 'CRTAB', 'Credit Review Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (14, 'LegalDet', 'Legal Details', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (15, 'FINSUM', 'Financial Summary', 1);
+				INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (24, 'TANDET', 'TAN Detail', 1);
+			]]>
+		</sql>
 	</changeSet>
+	
 </databaseChangeLog>

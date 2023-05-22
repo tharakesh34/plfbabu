@@ -38,9 +38,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.util.CalculationUtil;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -54,7 +53,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -78,6 +79,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -291,7 +293,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -313,7 +315,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
-		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -556,13 +558,38 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return tax;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+	private AuditDetail validation(AuditDetail ad, String ulan, String method) {
 		logger.debug(Literal.ENTERING);
 
-		// Write the required validation over hear.
+		ad.setErrorDetails(new ArrayList<ErrorDetail>());
+		ManualAdvise ma = (ManualAdvise) ad.getModelData();
+
+		String[] valueParm = new String[2];
+		String[] errParm = new String[2];
+
+		valueParm[0] = String.valueOf(ma.getAdviseID());
+		valueParm[1] = ma.getAdviseTypeName();
+
+		errParm[0] = PennantJavaUtil.getLabel("label_AdviseID") + ":" + valueParm[0];
+		errParm[1] = PennantJavaUtil.getLabel("label_AdviseType") + ":" + valueParm[1];
+
+		if (PennantConstants.MANUALADVISE_CANCEL.equals(ma.getStatus())) {
+			if (PennantConstants.method_doReject.equals(method)) {
+				return ad;
+			}
+
+			ManualAdvise befImg = manualAdviseDAO.getManualAdviseById(ma.getAdviseID(), "");
+
+			if (befImg.getReservedAmt().compareTo(BigDecimal.ZERO) > 0
+					|| befImg.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0
+					|| befImg.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
+				ad.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "CANMA10", errParm, valueParm), ulan));
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
-		return auditDetail;
+		return ad;
 	}
 
 	@Override
@@ -1073,6 +1100,16 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	@Override
 	public boolean isunAdjustablePayables(long finID) {
 		return manualAdviseDAO.isunAdjustablePayables(finID);
+	}
+
+	@Override
+	public List<ManualAdvise> getCancelledManualAdvise(long finID) {
+		return manualAdviseDAO.getAdvises(finID, "_Temp");
+	}
+
+	@Override
+	public void cancelAdvises(long finID) {
+		manualAdviseDAO.cancelAdvises(finID);
 	}
 
 	@Autowired

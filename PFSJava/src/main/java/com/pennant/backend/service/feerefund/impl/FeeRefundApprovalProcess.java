@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.feerefundqueue.FeeRefundProcessQueuing;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feerefund.FeeRefundDetailDAO;
 import com.pennant.backend.dao.feerefund.FeeRefundHeaderDAO;
@@ -24,6 +23,7 @@ import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FeeRefundApprovalProcess {
 	private static final Logger logger = LogManager.getLogger(FeeRefundApprovalProcess.class);
@@ -53,7 +53,7 @@ public class FeeRefundApprovalProcess {
 			frQueuing.setEodProcess(false);
 			frQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 			frQueuing.setFeeRefundHeaderId(headerId);
-			frQueuing.setStartTime(DateUtility.getSysDate());
+			frQueuing.setStartTime(DateUtil.getSysDate());
 
 			refundQueuings.add(frQueuing);
 		}

@@ -46,7 +46,7 @@ public class CountryListModelItemRenderer implements ListitemRenderer<Country>, 
 	private static final long serialVersionUID = 4901084385021031196L;
 
 	public CountryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

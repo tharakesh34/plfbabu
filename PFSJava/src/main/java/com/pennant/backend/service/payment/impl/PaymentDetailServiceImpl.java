@@ -62,7 +62,6 @@ import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
-import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.payment.PaymentDetailService;
@@ -73,6 +72,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -723,15 +723,19 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 		String finSource = pd.getFinSource();
 		if (!UploadConstants.FINSOURCE_ID_AUTOPROCESS.equals(finSource)
-				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)) {
+				&& !UploadConstants.FINSOURCE_ID_UPLOAD.equals(finSource)
+				|| PennantConstants.FINSOURCE_ID_API.equals(finSource)) {
 			finExcessAmountDAO.updateUtilise(pd.getReferenceId(), pd.getAmount());
 		} else {
 			finExcessAmountDAO.updateUtiliseOnly(pd.getReferenceId(), pd.getAmount());
 		}
 
 		// Delete Reserved Log against Excess and Receipt ID
-		finExcessAmountDAO.deleteExcessReserve(pd.getPaymentDetailId(), pd.getReferenceId(),
-				RepayConstants.RECEIPTTYPE_PAYABLE);
+		if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, finSource)
+				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API, finSource)) {
+			finExcessAmountDAO.deleteExcessReserve(pd.getPaymentDetailId(), pd.getReferenceId(),
+					RepayConstants.RECEIPTTYPE_PAYABLE);
+		}
 
 		// Excess Movement Creation
 		FinExcessMovement movement = new FinExcessMovement();

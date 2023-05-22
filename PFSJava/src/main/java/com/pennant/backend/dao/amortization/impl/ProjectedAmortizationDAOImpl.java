@@ -39,11 +39,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.model.amortization.AmortizationQueuing;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
@@ -535,7 +534,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 	public boolean isAmortizationLogExist() {
 		String sql = "Select count(Id) from AmortizationLog where Status in (?, ?)";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, 0, 1) > 0;
 	}
@@ -747,7 +746,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			int index = 1;
 
 			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_FEE);
-			ps.setDate(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setDate(index++, JdbcUtil.getDate(appDate));
 			ps.setInt(index++, 0);
 			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
@@ -1046,7 +1045,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			int index = 1;
 
 			ps.setString(index++, AmortizationConstants.AMZ_INCOMETYPE_SUBVENTIONAMOUNT);
-			ps.setDate(index++, JdbcUtil.getDate(DateUtility.getSysDate()));
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setDate(index++, JdbcUtil.getDate(appDate));
 			ps.setDate(index++, JdbcUtil.getDate(monthEndDate));
 			ps.setBoolean(index++, true);

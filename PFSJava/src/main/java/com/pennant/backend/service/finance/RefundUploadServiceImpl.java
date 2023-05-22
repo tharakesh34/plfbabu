@@ -25,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -44,8 +43,6 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.refundupload.RefundUpload;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.GenericService;
@@ -56,8 +53,11 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -990,7 +990,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		}
 		// Payable Date
 		if (errorCount == 0 && (refundUpload.getPaymentDate() == null
-				|| (DateUtility.compare(refundUpload.getPaymentDate(), SysParamUtil.getAppDate())) < 0)) {
+				|| (DateUtil.compare(refundUpload.getPaymentDate(), SysParamUtil.getAppDate())) < 0)) {
 			errorCount++;
 			reason = "Payable Date is always current date or future date";
 		}

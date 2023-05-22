@@ -58,7 +58,7 @@ public class SubventionProcessUploadDialogCtrl extends GFCBaseCtrl<Configuration
 		super();
 	}
 
-	public void onCreate$window_SubventionProcessUploadDialogueCtrl(Event event) throws Exception {
+	public void onCreate$window_subventionProcessUploadDialogCtrl(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_subventionProcessUploadDialogCtrl);

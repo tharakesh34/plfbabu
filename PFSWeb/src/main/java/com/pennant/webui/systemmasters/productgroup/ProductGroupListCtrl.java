@@ -139,7 +139,7 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  productGroupId =? ");
 
 		if (doCheckAuthority(productGroup, whereCond.toString(), new Object[] { productGroup.getProductGroupId() })) {
@@ -196,7 +196,7 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =? ");
 
 		if (doCheckAuthority(productGroup, whereCond.toString(), new Object[] { productGroup.getId() })) {

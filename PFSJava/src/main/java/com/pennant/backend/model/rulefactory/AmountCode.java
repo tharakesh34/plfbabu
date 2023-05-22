@@ -37,7 +37,7 @@ public class AmountCode implements java.io.Serializable {
 	private String amountCodeDesc;
 
 	public AmountCode() {
-
+	    super();
 	}
 
 	// Getter and Setter methods

@@ -21,7 +21,7 @@ public class DealerGroup extends AbstractWorkflowEntity {
 
 	private long dealerGroupId;
 	private String dealerCode;
-	private String dealerCategoryId;
+	private int dealerCategoryId;
 	private boolean active;
 	private String channel;
 	@XmlTransient
@@ -47,11 +47,11 @@ public class DealerGroup extends AbstractWorkflowEntity {
 		this.dealerCode = dealerCode;
 	}
 
-	public String getDealerCategoryId() {
+	public int getDealerCategoryId() {
 		return dealerCategoryId;
 	}
 
-	public void setDealerCategoryId(String dealerCategoryId) {
+	public void setDealerCategoryId(int dealerCategoryId) {
 		this.dealerCategoryId = dealerCategoryId;
 	}
 

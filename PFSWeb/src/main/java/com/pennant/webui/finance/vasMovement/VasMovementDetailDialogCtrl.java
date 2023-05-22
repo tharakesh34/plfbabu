@@ -92,13 +92,11 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 
 	private transient boolean validationOn;
 
-	private boolean isEditable = false;
 	private boolean isAccessRights = true;
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<>();
 	private VasMovementDialogCtrl vasMovementDialogCtrl = null;
 	private VasMovement vasMovement;
 	private boolean isNewRecord = false;
-	private boolean newRecord = false;
 	private List<VasMovementDetail> vasMovementDetailList;
 	private VASRecordingService vASRecordingService;
 
@@ -163,12 +161,6 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 			/*
 			 * if (isWorkFlowEnabled()) { this.userAction = setListRecordStatus(this.userAction); }
 			 */
-			if (arguments.containsKey("isEditable")) {
-				isEditable = (boolean) arguments.get("isEditable");
-			}
-			if (arguments.containsKey("isNewRecord")) {
-				newRecord = (boolean) arguments.get("isNewRecord");
-			}
 			if (arguments.containsKey("isAccessRights")) {
 				isAccessRights = (boolean) arguments.get("isAccessRights");
 			}

@@ -88,9 +88,9 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		sql.append(" (Account, HostAccount, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, FinType, CostCenterID, ProfitCenterID, AccountType");
-		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry");
+		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription, AccountTypeGroup");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		log(sql.toString());
 
@@ -118,6 +118,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 				ps.setDate(index++, JdbcUtil.getDate(ac.getClosedDate()));
 				ps.setString(index++, ac.getStatus());
 				ps.setString(index++, ac.getAllowedManualEntry());
+				ps.setString(index++, ac.getGLDescription());
+				ps.setString(index++, ac.getAccountTypeGroup());
 				ps.setLong(index++, ac.getCreatedBy());
 				ps.setTimestamp(index++, ac.getCreatedOn());
 				ps.setObject(index++, ac.getApprovedBy());
@@ -139,8 +141,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		sql.append(" Set HostAccount = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(", FinType = ?, CostCenterID = ?, ProfitCenterID = ?, AccountType = ?");
-		sql.append(", OpenedDate = ?, ClosedDate = ?, Status = ?, AllowedManualEntry = ?");
-		sql.append(", CreatedBy = ?, CreatedOn = ?, ApprovedBy = ?, ApprovedOn = ?");
+		sql.append(", OpenedDate = ?, ClosedDate = ?, Status = ?, AllowedManualEntry = ?, GLDescription = ?");
+		sql.append(", AccountTypeGroup = ?, CreatedBy = ?, CreatedOn = ?, ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(" Where Account = ?");
 
 		if (tableType == TableType.MAIN_TAB) {
@@ -169,6 +171,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			ps.setDate(index++, JdbcUtil.getDate(ac.getClosedDate()));
 			ps.setString(index++, ac.getStatus());
 			ps.setString(index++, ac.getAllowedManualEntry());
+			ps.setString(index++, ac.getGLDescription());
+			ps.setString(index++, ac.getAccountTypeGroup());
 			ps.setLong(index++, ac.getCreatedBy());
 			ps.setTimestamp(index++, ac.getCreatedOn());
 			ps.setObject(index++, ac.getApprovedBy());
@@ -236,7 +240,7 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Account, HostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
-		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry");
+		sql.append(", OpenedDate, ClosedDate, Status, AllowedManualEntry, GLDescription, AccountTypeGroup");
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
@@ -274,6 +278,8 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			ac.setClosedDate(rs.getDate("ClosedDate"));
 			ac.setStatus(rs.getString("Status"));
 			ac.setAllowedManualEntry(rs.getString("AllowedManualEntry"));
+			ac.setGLDescription(rs.getString("GLDescription"));
+			ac.setAccountTypeGroup(rs.getString("AccountTypeGroup"));
 			ac.setVersion(rs.getInt("Version"));
 			ac.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			ac.setLastMntBy(rs.getLong("LastMntBy"));
@@ -318,5 +324,32 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isValidAccount(String account, String trantypeBoth, String trantypeDebit, String status) {
+		String sql = "Select count(Account) From AccountMapping Where Account = ? and AllowedManualEntry in(?,?) and status = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return jdbcOperations.queryForObject(sql, Integer.class, account, trantypeBoth, trantypeDebit, status) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+
+	}
+
+	@Override
+	public boolean isExistingHostAccount(String hostAccount, String type) {
+		StringBuilder sql = new StringBuilder("Select count(HostAccount) From AccountMapping");
+		sql.append(type);
+		sql.append(" Where HostAccount = ?");
+
+		logger.debug(sql.toString());
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, hostAccount) > 0;
+
 	}
 }

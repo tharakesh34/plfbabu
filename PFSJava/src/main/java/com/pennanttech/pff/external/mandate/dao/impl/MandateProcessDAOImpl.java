@@ -333,7 +333,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 	@Override
 	public List<String> getEntityCodes() {
 		String sql = "Select EntityCode from Entity";
-		return jdbcOperations.queryForList(sql, new Object[] {}, String.class);
+		return jdbcOperations.queryForList(sql, String.class);
 	}
 
 	@Override
@@ -417,7 +417,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode }, Long.class);
+		return jdbcOperations.queryForList(sql.toString(), Long.class, entityCode);
 	}
 
 	@Override
@@ -430,7 +430,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForList(sql.toString(), new Object[] { entityCode, partnerBankCode }, Long.class);
+		return jdbcOperations.queryForList(sql.toString(), Long.class, entityCode, partnerBankCode);
 	}
 
 	@Override
@@ -439,7 +439,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 
 		logger.trace(Literal.SQL + sql);
 
-		return jdbcOperations.queryForList(sql, new Object[] { entityCode }, String.class);
+		return jdbcOperations.queryForList(sql, String.class, entityCode);
 	}
 
 }

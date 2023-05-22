@@ -204,7 +204,7 @@ public class DocumentStatusListCtrl extends GFCBaseListCtrl<DocumentStatus> {
 		private static final long serialVersionUID = 5003155481625938369L;
 
 		public DocumentStatusListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override

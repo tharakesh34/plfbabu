@@ -22,9 +22,8 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -119,13 +118,8 @@ public class DisbursementPostings {
 
 				dataMap.putAll(amountCodes.getDeclaredFieldValues());
 				aeEvent.setDataMap(dataMap);
-				if (StringUtils.isNotBlank(fm.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
-							aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
-							aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
-				}
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, aeEvent.getAccountingEvent()));
+
 				aeEvent.setLinkedTranId(0);
 				aeEvent.setEntityCode(fm.getLovDescEntityCode());
 				engineExecution.getAccEngineExecResults(aeEvent);
@@ -227,13 +221,7 @@ public class DisbursementPostings {
 					boolean posted = true;
 					dataMap.putAll(amountCodes.getDeclaredFieldValues());
 					aeEvent.setDataMap(dataMap);
-					if (StringUtils.isNotBlank(fm.getPromotionCode()) && fm.getPromotionSeqId() == 0) {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
-								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
-					} else {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
-								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
-					}
+					aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, aeEvent.getAccountingEvent()));
 					aeEvent.setLinkedTranId(0);
 					try {
 						aeEvent = postingsPreparationUtil.postAccounting(aeEvent);

@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
@@ -52,6 +51,7 @@ public class ReceiptDataValidator {
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 
 	public void validate(ReceiptUploadDetail rud) {
+
 		String reference = rud.getReference();
 
 		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
@@ -195,7 +195,7 @@ public class ReceiptDataValidator {
 		String strReceivedDate = rud.getStrReceivedDate();
 		try {
 			if (StringUtils.isNotBlank(strReceivedDate)) {
-				rud.setReceivedDate(DateUtility.parse(strReceivedDate, DateFormat.LONG_DATE.getPattern()));
+				rud.setReceivedDate(DateUtil.parse(strReceivedDate, DateFormat.LONG_DATE.getPattern()));
 			} else if (rud.isNewReceipt()) {
 				setError(rud, "Blanks in [RECEIVEDDATE] ");
 				return;
@@ -840,4 +840,5 @@ public class ReceiptDataValidator {
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
+
 }

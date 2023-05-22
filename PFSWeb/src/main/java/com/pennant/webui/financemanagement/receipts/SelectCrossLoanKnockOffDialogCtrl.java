@@ -27,11 +27,11 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
@@ -175,13 +175,20 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		this.rowValueDate.setVisible(false);
 		this.valueDate.setValue(this.receiptDate.getValue());
 
+		long finID = ComponentUtil.getFinID(this.toFinReference);
+
+		Date receiptDt = this.receiptDate.getValue();
+		Date appDate = SysParamUtil.getAppDate();
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
+
+		fillValueDate(receiptDt, finID, appDate);
+
 		if (!FinServiceEvent.EARLYSETTLE.equals(recPurpose)) {
 			return;
 		}
 
 		int defaultClearingDays = SysParamUtil.getValueAsInt(SMTParameterConstants.EARLYSETTLE_CHQ_DFT_DAYS);
-		this.valueDate.setValue(DateUtility.addDays(this.receiptDate.getValue(), defaultClearingDays));
+		this.valueDate.setValue(DateUtil.addDays(this.receiptDate.getValue(), defaultClearingDays));
 		this.valueDate.setVisible(true);
 		this.rowValueDate.setVisible(true);
 	}
@@ -190,6 +197,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		loadValueDate();
+
 		this.btnValidate.setDisabled(false);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
@@ -244,29 +252,11 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 	public void onFulfill$referenceId(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		boolean isDisabled = false;
 		Date receiptDt = receiptDate.getValue();
+		Date appDate = SysParamUtil.getAppDate();
+		long finID = ComponentUtil.getFinID(this.toFinReference);
 
-		String knockOff = getComboboxValue(knockOffFrom);
-		FinExcessAmount fea = null;
-		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
-			fea = (FinExcessAmount) this.referenceId.getObject();
-		}
-
-		if (fea != null && fea.getValueDate() != null) {
-			receiptDt = fea.getValueDate();
-			isDisabled = true;
-
-			long finID = ComponentUtil.getFinID(this.toFinReference);
-			Date schDate = financeScheduleDetailDAO.getSchdDateForKnockOff(finID, receiptDate.getValue());
-
-			if (DateUtil.compare(receiptDt, schDate) < 0) {
-				receiptDt = schDate;
-			}
-		}
-
-		this.receiptDate.setValue(receiptDt);
-		this.receiptDate.setDisabled(isDisabled);
+		fillValueDate(receiptDt, finID, appDate);
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
@@ -638,6 +628,8 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			this.receiptDate.setValue(appDate);
 			this.receiptDate.setDisabled(true);
 		}
+
+		fillValueDate(receiptDt, finID, appDate);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1050,12 +1042,12 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			}
 
 			int daysBackValueAllowed = SysParamUtil.getValueAsInt("ALW_SP_BACK_DAYS");
-			int daysBackValue = DateUtility.getDaysBetween(this.receiptDate.getValue(), appDate);
+			int daysBackValue = DateUtil.getDaysBetween(this.receiptDate.getValue(), appDate);
 			if (daysBackValue >= daysBackValueAllowed) {
 				throw new WrongValueException(this.receiptDate,
 						Labels.getLabel("DATE_ALLOWED_ON_AFTER",
 								new String[] { Labels.getLabel("label_SchedulePayment_ReceiptDate.value"),
-										DateUtility.addDays(appDate, -daysBackValueAllowed).toString() }));
+										DateUtil.addDays(appDate, -daysBackValueAllowed).toString() }));
 			}
 
 		} catch (WrongValueException we) {
@@ -1098,8 +1090,8 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		this.referenceId.setConstraint(new PTStringValidator(Labels.getLabel("label_LoanClosurePayment_RefId.value"),
 				PennantRegularExpressions.REGEX_NUMERIC, true));
 
-		this.knockOffFrom
-				.setConstraint(new PTListValidator(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
+		this.knockOffFrom.setConstraint(
+				new PTListValidator<ValueLabel>(Labels.getLabel("label_LoanClosurePayment_kncockoffFrom.value"),
 						PennantStaticListUtil.getKnockOffFromVlaues(), true));
 
 	}
@@ -1154,6 +1146,23 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 			receiptPurpose.setDisabled(true);
 		}
 
+	}
+
+	private void fillValueDate(Date receiptDt, long finID, Date appDate) {
+		boolean isDisabled = false;
+		String knockOff = getComboboxValue(knockOffFrom);
+		FinExcessAmount fea = null;
+
+		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
+			fea = (FinExcessAmount) this.referenceId.getObject();
+		}
+
+		if (fea != null && fea.getValueDate() != null) {
+			isDisabled = true;
+		}
+		receiptDt = receiptService.getExcessBasedValueDate(receiptDt, finID, appDate, fea, getComboboxValue(receiptPurpose));
+		this.receiptDate.setValue(receiptDt);
+		this.receiptDate.setDisabled(isDisabled);
 	}
 
 	@Autowired

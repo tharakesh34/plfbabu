@@ -427,7 +427,7 @@
 												<row id="row_closuretype" visible="false">
 													<label id="label_ClosureTypes"
 														value="${c:l('label_ClosureTypes.value')}" />
-													<extendedcombobox id="closureType" width="180px"/>
+													<combobox id="closureType" width="180px"/>
 												</row>
 											</rows>
 										</grid>

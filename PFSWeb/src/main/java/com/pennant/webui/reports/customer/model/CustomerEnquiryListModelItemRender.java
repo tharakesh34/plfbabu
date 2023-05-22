@@ -10,8 +10,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class CustomerEnquiryListModelItemRender implements ListitemRenderer<FinanceEnquiry>, Serializable {
 
@@ -46,13 +46,13 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 			lc.setParent(item);
 			lc = new Listcell(aFinanceEnq.getFinBranch());
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getFinStartDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getFinStartDate()));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getGrcPeriodEndDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getGrcPeriodEndDate()));
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(aFinanceEnq.getNumberOfTerms()));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getMaturityDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getMaturityDate()));
 			lc.setParent(item);
 			lc = new Listcell(
 					CurrencyUtil.format(aFinanceEnq.getFinAmount(), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
@@ -62,7 +62,7 @@ public class CustomerEnquiryListModelItemRender implements ListitemRenderer<Fina
 					.subtract(aFinanceEnq.getFinRepaymentAmount()), CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));
 			lc.setStyle("text-align:right");
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(aFinanceEnq.getNextDueDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(aFinanceEnq.getNextDueDate()));
 			lc.setParent(item);
 			lc = new Listcell(CurrencyUtil.format(aFinanceEnq.getNextDueAmount(),
 					CurrencyUtil.getFormat(aFinanceEnq.getFinCcy())));

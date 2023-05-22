@@ -39,7 +39,7 @@ public class CustomerIncomeListItemRenderer implements ListitemRenderer<Customer
 	private static final long serialVersionUID = 6321996138703133595L;
 
 	public CustomerIncomeListItemRenderer() {
-
+	    super();
 	}
 
 	@Override

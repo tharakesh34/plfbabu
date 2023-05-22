@@ -69,7 +69,7 @@ import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
@@ -522,6 +522,29 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		BigDecimal downpaySupl = customerEligibilityCheck.getDownpaySupl();
 		customerEligibilityCheck.setDownpaySupl(CalculationUtil.getConvertedAmount(finCcy, null, downpaySupl));
 
+		BigDecimal zero = BigDecimal.ZERO;
+		BigDecimal finAssetValue = zero;
+		BigDecimal totalAssgnedCollAmount = zero;
+
+		if (customerEligibilityCheck.getCurrentAssetValue() != null) {
+			finAssetValue = customerEligibilityCheck.getCurrentAssetValue();
+			finAssetValue = PennantApplicationUtil.formateAmount(finAssetValue, PennantConstants.defaultCCYDecPos);
+		}
+
+		if (customerEligibilityCheck.getExtendedValue("Collaterals_Total_Assigned") != null) {
+			totalAssgnedCollAmount = (BigDecimal) customerEligibilityCheck
+					.getExtendedValue("Collaterals_Total_Assigned");
+		}
+
+		try {
+			BigDecimal collPrec = finAssetValue.divide(totalAssgnedCollAmount, PennantConstants.defaultCCYDecPos,
+					RoundingMode.HALF_UP);
+			collPrec = collPrec.multiply(new BigDecimal(100));
+			customerEligibilityCheck.addExtendedField("Coll_Assign_Percentage", collPrec);
+		} catch (Exception e) {
+			customerEligibilityCheck.addExtendedField("Coll_Assign_Percentage", 0);
+		}
+
 		FinanceDeviations deviation = deviationExecutionCtrl.checkEligibilityDeviations(finElgDet, aFinanceDetail);
 		customerEligibilityCheck.setReqFinAmount(finAmount);
 
@@ -624,8 +647,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		this.label_ElgRuleSummaryVal.setValue("");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		aFinanceDetail = (FinanceDetail) getFinanceMainDialogCtrl().getClass()
 				.getMethod("dofillEligibilityData", Boolean.class).invoke(getFinanceMainDialogCtrl(), isUserAction);

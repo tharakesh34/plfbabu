@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
@@ -56,4 +57,6 @@ public interface AccountingSetService {
 	Map<String, List<FinTypeFees>> fetchFinTypeFees(AccountingSet aAccountingSet);
 
 	long getAccountingSetId(String event, String setCode);
+
+	List<AccountType> getAccountTypes();
 }

@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.util.CollectionUtils;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -28,6 +27,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CancelDisbursementServiceImpl extends GenericService<FinServiceInstruction>
@@ -55,7 +55,7 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = schdData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);
@@ -97,7 +97,7 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			for (FinAdvancePayments finAdvancePayment : fd.getAdvancePaymentsList()) {
 
 				// Validate from date
-				if (DateUtility.compare(fromDate, finAdvancePayment.getLlDate()) == 0
+				if (DateUtil.compare(fromDate, finAdvancePayment.getLlDate()) == 0
 						&& !(StringUtils.equals(finAdvancePayment.getStatus(), "CANCELED"))) {
 					isValidDate = true;
 				}
@@ -105,7 +105,7 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 
 			if (!isValidDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "From date:" + DateUtility.formatToLongDate(fromDate);
+				valueParm[0] = "From date:" + DateUtil.formatToLongDate(fromDate);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30101", "", valueParm)));
 				return auditDetail;
 			}
@@ -118,14 +118,14 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 
 		// validate fromDate and DisbDate
 		isValidDate = false;
-		if (DateUtility.compare(fromDate, fsi.getDisbursementDetails().get(0).getLlDate()) == 0) {
+		if (DateUtil.compare(fromDate, fsi.getDisbursementDetails().get(0).getLlDate()) == 0) {
 			isValidDate = true;
 		}
 
 		if (!isValidDate) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "fromDate:" + DateUtility.formatToLongDate(fromDate);
-			valueParm[1] = "disbDate:" + DateUtility.formatToLongDate(fsi.getDisbursementDetails().get(0).getLlDate());
+			valueParm[0] = "fromDate:" + DateUtil.formatToLongDate(fromDate);
+			valueParm[1] = "disbDate:" + DateUtil.formatToLongDate(fsi.getDisbursementDetails().get(0).getLlDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm)));
 			return auditDetail;
 		}

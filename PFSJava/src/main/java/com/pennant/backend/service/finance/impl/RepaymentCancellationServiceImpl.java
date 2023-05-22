@@ -22,7 +22,6 @@ import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -30,7 +29,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -58,7 +56,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain>
 		implements RepaymentCancellationService {
@@ -68,14 +66,12 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinLogEntryDetailDAO finLogEntryDetailDAO;
-	private PostingsDAO postingsDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private RepayInstructionDAO repayInstructionDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private CustomerDAO customerDAO;
 	private CustomerStatusCodeDAO customerStatusCodeDAO;
 	private FinStatusDetailDAO finStatusDetailDAO;
 	private CommitmentDAO commitmentDAO;
@@ -122,8 +118,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -206,8 +201,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -741,10 +735,6 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
 	}
 
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
@@ -767,10 +757,6 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
 	}
 
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {

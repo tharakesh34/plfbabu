@@ -66,7 +66,7 @@ public class FinRepayQueue {
 	private TaxHeader taxHeader;
 
 	public FinRepayQueue() {
-
+	    super();
 	}
 
 	public long getFinID() {

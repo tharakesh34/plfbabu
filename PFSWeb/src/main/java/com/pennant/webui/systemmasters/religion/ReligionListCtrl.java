@@ -181,7 +181,7 @@ public class ReligionListCtrl extends GFCBaseListCtrl<Religion> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  ReligionId =?");
 
 		if (doCheckAuthority(religion, whereCond.toString(), new Object[] { religion.getReligionId() })) {

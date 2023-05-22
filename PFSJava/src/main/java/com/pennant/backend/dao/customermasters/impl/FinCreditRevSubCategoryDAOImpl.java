@@ -229,7 +229,7 @@ public class FinCreditRevSubCategoryDAOImpl extends BasicDao<FinCreditRevSubCate
 	public class compareCalSeq implements Comparator<FinCreditRevSubCategory> {
 
 		public compareCalSeq() {
-
+		    super();
 		}
 
 		@Override

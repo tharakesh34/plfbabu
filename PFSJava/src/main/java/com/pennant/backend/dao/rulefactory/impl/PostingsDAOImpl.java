@@ -56,7 +56,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
@@ -67,6 +66,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -314,22 +314,26 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sql.append("Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
 		sql.append(", p.PostDate, p.ValueDate, p.TranCode, p.TranDesc, p.RevTranCode, p.DrOrCr, p.Account");
 		sql.append(", p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId, p.ErrorMsg, p.AcCcy");
-		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch");
+		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch, p.PostBranch");
 		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
+		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount GlCode");
 		sql.append(" From Postings p");
 		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinID = p.FinID");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		sql.append(" Where fm.FinBranch = ?");
 		sql.append(" Union All ");
-		sql.append("Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
+		sql.append(" Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
 		sql.append(", p.PostDate, p.ValueDate, p.TranCode, p.TranDesc, p.RevTranCode, p.DrOrCr, p.Account");
 		sql.append(", p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId, p.ErrorMsg, p.AcCcy");
-		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch");
+		sql.append(", p.TransOrder, p.TranOrderId, p.PostToSys, p.ExchangeRate, UserBranch, p.PostBranch");
 		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
+		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount GlCode");
 		sql.append(" From Postings p");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = p.FinID");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		sql.append(" Where not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		sql.append(" and fm.FinBranch = ?");
-		sql.append(") temp order by p.Account, p.FinReference, p.TranCode");
+		sql.append(") temp order by temp.Account, temp.FinReference, temp.TranCode");
 
 		logger.debug(Literal.SQL + sql);
 
@@ -478,7 +482,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	@Override
 	public List<ReturnDataSet> getDisbursementPostings(long finID) {
 		StringBuilder sql = getSelectQuery();
-		sql.append(" Where FinReference = ? AND FinEvent in (?, ?)");
+		sql.append(" Where FinID = ? AND FinEvent in (?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 		List<ReturnDataSet> list = null;
@@ -543,7 +547,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sql.append(", p.Account, p.ShadowPosting, p.PostAmount, p.AmountType, p.PostStatus, p.ErrorId");
 		sql.append(", p.ErrorMsg, p.AcCcy, p.TranOrderId, p.TransOrder, p.PostToSys, p.ExchangeRate");
 		sql.append(", p.PostBranch, p.AppDate, p.AppValueDate, p.UserBranch, p.AccountType");
-		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount glCode");
+		sql.append(", p.PostAmountLcCcy, p.CustAppDate, am.HostAccount GlCode");
 		sql.append(" From Postings p");
 		sql.append(" Left join AccountMapping am on am.Account = p.Account");
 		return sql;
@@ -582,10 +586,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			rd.setTransOrder(rs.getInt("TransOrder"));
 			rd.setPostToSys(rs.getString("PostToSys"));
 			rd.setExchangeRate(rs.getBigDecimal("ExchangeRate"));
+			rd.setUserBranch(rs.getString("UserBranch"));
 			rd.setPostBranch(rs.getString("PostBranch"));
 			rd.setAppDate(JdbcUtil.getDate(rs.getDate("AppDate")));
 			rd.setAppValueDate(JdbcUtil.getDate(rs.getDate("AppValueDate")));
-			rd.setUserBranch(rs.getString("UserBranch"));
 			rd.setAccountType(rs.getString("AccountType"));
 			rd.setPostAmountLcCcy(rs.getBigDecimal("PostAmountLcCcy"));
 			rd.setCustAppDate(rs.getDate("CustAppDate"));
@@ -601,7 +605,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			Collections.sort(postings, new Comparator<ReturnDataSet>() {
 				@Override
 				public int compare(ReturnDataSet detail1, ReturnDataSet detail2) {
-					return DateUtility.compare(detail1.getValueDate(), detail2.getValueDate());
+					return DateUtil.compare(detail1.getValueDate(), detail2.getValueDate());
 				}
 			});
 		}
@@ -675,4 +679,137 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		});
 	}
 
+	@Override
+	public List<ReturnDataSet> getPostingsByEnquiry(String reference, String finEvent, boolean showZeroBal,
+			String postingGroupBy) {
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append(" Select");
+		sql.append(" T1.LinkedTranID, T1.PostRef, T1.PostingID, T1.FinReference, T1.FinId, T1.FinEvent, T1.PostDate");
+		sql.append(", T1.ValueDate, T1.AppValueDate, T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DRORCR");
+		sql.append(", T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg");
+		sql.append(", T2.AeEventCodeDesc LovDescEventCodeName, T1.ShadowPosting, T1.TranDesc, T1.AmountType");
+		sql.append(", T1.ACCCY, T1.PostBranch, T1.UserBranch, T1.TranOrderID, T1.TransOrder, AM.HostAccount GLCode");
+		sql.append(" From Postings T1");
+		sql.append(" Inner Join BMTAeEvents T2 ON T1.FinEvent = T2.AeEventCode");
+		sql.append(" Inner Join (Select FinReference From FinanceMain_Temp");
+		sql.append(" Union All");
+		sql.append(" Select FinReference From FinanceMain fm Where Not Exists");
+		sql.append(" (Select 1 From FinanceMain_Temp Where FinReference = fm.FinReference)) T3");
+		sql.append(" on T3.FinReference = T1.FinReference");
+		sql.append(" Left Join AccountMapping AM ON AM.Account = T1.Account");
+		sql.append(" Where T1.FinEvent  Not IN (?,?)");
+		sql.append(" Union All");
+		sql.append(" Select");
+		sql.append(" T1.LinkedTranID, T1.PostRef, T1.PostingID, T3.PrimaryLinkRef FinReference, T1.FinId, T1.FinEvent");
+		sql.append(", T1.PostDate, T1.ValueDate, T1.AppValueDate, T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DRORCR");
+		sql.append(", T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg");
+		sql.append(", T2.AeEventCodeDesc LovDescEventCodeName, T1.ShadowPosting, T1.TranDesc, T1.AmountType");
+		sql.append(", T1.ACCCY, T1.PostBranch, T1.UserBranch, T1.TranOrderID, T1.TransOrder, AM.HostAccount GLCode");
+		sql.append(" From Postings T1");
+		sql.append(" Inner Join BMTAeEvents T2 ON T1.FinEvent = T2.AeEventCode");
+		sql.append(" Inner Join VasRecording T3 ON T3.VasReference = T1.FinReference");
+		sql.append(" Left Join AccountMapping AM ON AM.Account = T1.Account");
+		sql.append(" Where T1.FinEvent = ?");
+		sql.append(" Union All");
+		sql.append(" Select");
+		sql.append(" T1.LinkedTranID, T1.PostRef, T1.PostingID, CAST(T3.Reference as VARCHAR(20)) FinReference");
+		sql.append(", T1.FinId, T1.FinEvent, T1.PostDate, T1.ValueDate, T1.AppValueDate, T1.AppDate, T1.TranCode");
+		sql.append(", T1.RevTranCode, T1.DRORCR, T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg");
+		sql.append(", T2.AeEventCodeDesc LovDescEventCodeName, T1.ShadowPosting, T1.TranDesc, T1.AmountType");
+		sql.append(", T1.ACCCY, T1.PostBranch, T1.UserBranch, T1.TranOrderID, T1.TransOrder, AM.HostAccount GLCode");
+		sql.append(" From Postings T1");
+		sql.append(" Inner Join BMTAeEvents T2 ON T1.FinEvent = T2.AeEventCode");
+		sql.append(" Inner Join JVPostings T3 ON CAST(T3.BatchReference AS VARCHAR(20))= T1.FinReference");
+		sql.append(" Inner Join FinanceMain T4 ON T3.Reference = T4.FinReference");
+		sql.append(" Left Join AccountMapping AM ON AM.Account = T1.Account");
+		sql.append(" Where T1.FinEvent = ?");
+		sql.append(" Union All");
+		sql.append(" Select");
+		sql.append(" T1.LinkedTranID, T1.PostRef, T1.PostingID, T4.FinReference, T1.FinId, T1.FinEvent, T1.PostDate");
+		sql.append(", T1.ValueDate, T1.AppValueDate, T1.AppDate, T1.TranCode, T1.RevTranCode, T1.DRORCR");
+		sql.append(", T1.Account, T1.PostAmount, T1.PostStatus, T1.ErrorId, T1.ErrorMsg");
+		sql.append(", T2.AeEventCodeDesc LovDescEventCodeName, T1.ShadowPosting, T1.TranDesc, T1.AmountType");
+		sql.append(", T1.ACCCY, T1.PostBranch, T1.UserBranch, T1.TranOrderID, T1.TransOrder, AM.HostAccount GLCode");
+		sql.append(" From Postings T1");
+		sql.append(" Inner Join BMTAeEvents T2 ON T1.FinEvent = T2.AeEventCode");
+		sql.append(" Inner Join FeePostings T3 ON CAST(T3.PostID as VARCHAR(20)) = T1.FinReference");
+		sql.append(" Inner Join FinanceMain T4 ON T3.Reference = T4.FinReference");
+		sql.append(" Left Join AccountMapping AM ON AM.Account = T1.Account");
+		sql.append(" Where T1.FinEvent = ?) p");
+		sql.append(" Left join AccountMapping am on am.Account = p.Account");
+		sql.append(" Where FinReference = ? and FinEvent in (");
+		sql.append(JdbcUtil.getInCondition(Arrays.asList(finEvent.split(","))));
+		sql.append(")");
+
+		if (!showZeroBal) {
+			sql.append(" and PostAmount != ?");
+		}
+
+		if (PennantConstants.EVENTBASE.equals(postingGroupBy)) {
+			sql.append(" order by FinEvent");
+		} else if (PennantConstants.POSTDATE.equals(postingGroupBy)) {
+			sql.append(" order by PostDate");
+		} else if (PennantConstants.ACCNO.equals(postingGroupBy)) {
+			sql.append(" order by Account");
+		} else {
+			sql.append(" order by ValueDate");
+		}
+
+		sql.append(", LinkedTranID, TransOrder");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 0;
+
+			ps.setString(++index, "VASFEE");
+			ps.setString(++index, "JVPOST");
+			ps.setString(++index, "VASFEE");
+			ps.setString(++index, "JVPOST");
+			ps.setString(++index, "MANFEE");
+			ps.setString(++index, reference);
+
+			for (String event : finEvent.split(",")) {
+				ps.setString(++index, StringUtils.trimToEmpty(event));
+			}
+
+			if (!showZeroBal) {
+				ps.setBigDecimal(++index, BigDecimal.ZERO);
+			}
+
+		}, (rs, rowNum) -> {
+			ReturnDataSet rd = new ReturnDataSet();
+
+			rd.setLinkedTranId(rs.getLong("LinkedTranId"));
+			rd.setPostref(rs.getString("Postref"));
+			rd.setPostingId(rs.getString("PostingId"));
+			rd.setFinReference(rs.getString("FinReference"));
+			rd.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
+			rd.setFinEvent(rs.getString("FinEvent"));
+			rd.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));
+			rd.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+			rd.setAppValueDate(JdbcUtil.getDate(rs.getDate("AppValueDate")));
+			rd.setAppDate(JdbcUtil.getDate(rs.getDate("AppDate")));
+			rd.setTranCode(rs.getString("TranCode"));
+			rd.setRevTranCode(rs.getString("RevTranCode"));
+			rd.setDrOrCr(rs.getString("DrOrCr"));
+			rd.setAccount(rs.getString("Account"));
+			rd.setPostAmount(rs.getBigDecimal("PostAmount"));
+			rd.setPostStatus(rs.getString("PostStatus"));
+			rd.setErrorId(rs.getString("ErrorId"));
+			rd.setErrorMsg(rs.getString("ErrorMsg"));
+			rd.setLovDescEventCodeName(rs.getString("LovDescEventCodeName"));
+			rd.setShadowPosting(rs.getBoolean("ShadowPosting"));
+			rd.setTranDesc(rs.getString("TranDesc"));
+			rd.setAmountType(rs.getString("AmountType"));
+			rd.setAcCcy(rs.getString("AcCcy"));
+			rd.setPostBranch(rs.getString("PostBranch"));
+			rd.setUserBranch(rs.getString("UserBranch"));
+			rd.setTranOrderId(rs.getString("TranOrderId"));
+			rd.setTransOrder(rs.getInt("TransOrder"));
+			rd.setGlCode(rs.getString("GlCode"));
+
+			return rd;
+		});
+	}
 }

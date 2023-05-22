@@ -71,7 +71,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				TdsReceivable tdsReceivable = new TdsReceivable();
 
 				tdsReceivable.setId(rs.getLong("Id"));
@@ -103,7 +103,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 				tdsReceivable.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return tdsReceivable;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -274,7 +274,7 @@ public class TdsReceivableDAOImpl extends SequenceDao<TdsReceivable> implements 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, certificatenumber);
+			return this.jdbcOperations.queryForObject(sql, String.class, certificatenumber);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}

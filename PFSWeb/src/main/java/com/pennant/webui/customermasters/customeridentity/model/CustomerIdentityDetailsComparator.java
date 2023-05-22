@@ -10,7 +10,7 @@ public class CustomerIdentityDetailsComparator implements Comparator<Object>, Se
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public CustomerIdentityDetailsComparator() {
-
+	    super();
 	}
 
 	@Override

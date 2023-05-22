@@ -20,7 +20,7 @@ public class CreditReviewMainCtgDetails {
 	private String allowBankName = "False";
 
 	public CreditReviewMainCtgDetails() {
-
+	    super();
 	}
 
 	public String getCustomerId() {

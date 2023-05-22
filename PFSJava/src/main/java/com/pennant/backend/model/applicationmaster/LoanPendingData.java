@@ -25,6 +25,8 @@ public class LoanPendingData extends AbstractWorkflowEntity implements java.io.S
 	private String phoneNumber;
 	@XmlElement
 	private long custID;
+	@XmlElement
+	private String currentRole;
 
 	public long getCustID() {
 		return custID;
@@ -80,6 +82,14 @@ public class LoanPendingData extends AbstractWorkflowEntity implements java.io.S
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public String getCurrentRole() {
+		return currentRole;
+	}
+
+	public void setCurrentRole(String currentRole) {
+		this.currentRole = currentRole;
 	}
 
 }

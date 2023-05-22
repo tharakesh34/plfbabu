@@ -12,6 +12,7 @@ public class ApplicantIn {
 
 	@JsonCreator
 	public ApplicantIn() {
+	    super();
 	}
 
 	@XmlElement(name = "element")

@@ -830,7 +830,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 							PennantRegularExpressions.REGEX_CUST_NAME, ImplementationConstants.VER_INIT_FROM_OUTSIDE));
 		}
 		if (!this.recommendations.isDisabled()) {
-			this.recommendations.setConstraint(new PTListValidator(
+			this.recommendations.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_FieldInvestigationDialog_Status.value"), FIStatus.getList(), true));
 		}
 		if (!this.reason.isReadonly()) {

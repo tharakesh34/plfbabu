@@ -14,7 +14,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
@@ -60,7 +59,7 @@ public class GstTaxDownload implements Tasklet {
 
 			DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new GSTTaxProcessThread(new Long(1000))).start();
+			new Thread(new GSTTaxProcessThread(1000L)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 
@@ -101,7 +100,7 @@ public class GstTaxDownload implements Tasklet {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate, appDate, appDate);
 				} else {
 					process = new TaxDownlaodExtract(dataSource, userId, valueDate, appDate,
-							DateUtility.getMonthStart(appDate), DateUtility.getMonthEnd(appDate));
+							DateUtil.getMonthStart(appDate), DateUtil.getMonthEnd(appDate));
 				}
 				process.process();
 			} catch (Exception e) {

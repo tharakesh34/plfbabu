@@ -20,6 +20,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
+import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SessionUserDetails;
@@ -36,6 +37,7 @@ import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
@@ -51,6 +53,7 @@ import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.financeservice.RestructureService;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.agreement.CovenantAggrement;
@@ -85,6 +88,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -103,6 +107,8 @@ import com.pennant.pff.core.schd.service.PartCancellationService;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
 import com.pennant.pff.document.DocVerificationUtil;
 import com.pennant.pff.document.model.DocVerificationHeader;
+import com.pennant.pff.mandate.InstrumentType;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.model.subvention.Subvention;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.pff.service.subvention.SubventionKnockOffService;
@@ -129,6 +135,7 @@ import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
 import com.pennant.validation.UpfrontFeesGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
@@ -214,6 +221,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private CollectionAPIDetailDAO collectionAPIDetailDAO;
 	private FinTypePartnerBankService finTypePartnerBankService;
+	private FinanceMainService financeMainService;
+	private MandateDAO mandateDAO;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -229,6 +238,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String eventCode = AccountingEvent.RATCHG;
 
 		validationUtility.validate(fsi, AddRateChangeGroup.class);
+		doBasicMandatoryValidations(fsi);
 
 		fd = validateInstruction(fsi, eventCode);
 
@@ -990,14 +1000,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String eventCode = AccountingEvent.SCDCHG;
 
 		validationUtility.validate(fsi, ReSchedulingGroup.class);
+		doBasicMandatoryValidations(fsi);
 
 		fd = validateInstruction(fsi, eventCode);
 
 		if (fd != null) {
 			return fd;
 		}
-
-		validationUtility.validate(fsi, ReSchedulingGroup.class);
 
 		AuditDetail auditDetail = reScheduleService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -1385,7 +1394,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
-		if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN)) {
+		MasterDef md = MasterDefUtil.getMasterDefByType(DocType.PAN);
+		if (md != null && md.isValidationReq() && StringUtils.isNotEmpty(fsi.getPanNumber())) {
 			DocVerificationHeader header = new DocVerificationHeader();
 			header.setDocNumber(fsi.getPanNumber());
 			header.setCustCif(fsi.getCustCIF());
@@ -1395,6 +1405,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			if (error != null) {
 				logger.error(error.getMessage());
+				if (md.isProceedException()) {
+					String[] param = new String[2];
+					param[0] = "PAN Number : ";
+					param[1] = fsi.getPanNumber();
+					ErrorDetail er = ErrorUtil.getError("STP0012", param);
+					schdData.setErrorDetail(er);
+					setReturnStatus(fd);
+					return fd;
+				}
 			}
 		}
 
@@ -2986,7 +3005,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 		}
 
-		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
+		List<FeeWaiverDetail> feeWaiverDetails = feeWaiver.getFeeWaiverDetails();
 		for (FeeWaiverDetail fwd : feeWaiverDetails) {
 			if (fwd.getBalanceAmount() != null && fwd.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
 				actaulfeeWaiverDetails.add(fwd);
@@ -2995,7 +3014,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		feeWaiver.setFeeWaiverDetails(actaulfeeWaiverDetails);
 
-		if (feeWaiver.getFeeWaiverDetails().size() != feeWaiverDetails.size()) {
+		if (feeWaiver.getFeeWaiverDetails().size() != feeWaiverHeader.getFeeWaiverDetails().size()) {
 			String valueParm[] = new String[4];
 			valueParm[0] = "FeeType Codes";
 			valueParm[1] = "Should";
@@ -3003,6 +3022,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParm[3] = finReference;
 			returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			return returnStatus;
+		}
+
+		for (FeeWaiverDetail fwd : feeWaiverHeader.getFeeWaiverDetails()) {
+			if (fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) < 0) {
+				String valueParm[] = new String[1];
+				valueParm[0] = "WaiverAmount";
+				return APIErrorHandlerService.getFailedStatus("STP008", valueParm);
+			}
 		}
 
 		for (FeeWaiverDetail fwd : feeWaiverDetails) {
@@ -3319,6 +3346,159 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
+	@Override
+	public WSReturnStatus changeRepaymentMethod(FinanceMain fm) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus response = doRepaymentMethodValidation(fm);
+
+		if (response != null) {
+			return response;
+		}
+
+		try {
+			int count;
+			String repaymethod = fm.getFinRepayMethod().toUpperCase();
+
+			if (InstrumentType.isManual(repaymethod) || InstrumentType.isPDC(repaymethod)) {
+				count = financeMainDAO.updateFinRepayMethod(fm.getFinID(), repaymethod);
+			} else {
+				count = financeMainService.loanMandateSwapping(fm.getFinID(), fm.getMandateID(), repaymethod, "",
+						false);
+			}
+
+			if (count > 0) {
+				return APIErrorHandlerService.getSuccessStatus();
+			}
+
+			return APIErrorHandlerService.getFailedStatus();
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+	}
+
+	private WSReturnStatus doRepaymentMethodValidation(FinanceMain fm) {
+		logger.debug(Literal.ENTERING);
+
+		String repayMthd = fm.getFinRepayMethod().toUpperCase();
+
+		if (InstrumentType.isManual(repayMthd) || InstrumentType.isPDC(repayMthd)) {
+			if (StringUtils.isBlank(fm.getFinReference())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			}
+			if (fm.getMandateID() > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "MandateId should be specified in case of NACH/ECS/DD";
+				return APIErrorHandlerService.getFailedStatus("90505", valueParm);
+			}
+
+			logger.debug(Literal.LEAVING);
+			return null;
+		}
+
+		if (StringUtils.isBlank(fm.getFinReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (!InstrumentType.isECS(repayMthd) && !InstrumentType.isNACH(repayMthd)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "RepaymentMethod should be ECS/NACH/PDC/DD/MANUAL";
+			return APIErrorHandlerService.getFailedStatus("90505", valueParm);
+		}
+
+		if (StringUtils.isBlank(repayMthd)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "RepaymentMethod";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (fm.getMandateID() == 0 || String.valueOf(fm.getMandateID()) == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "MandateID";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		if (!financeMainDAO.isFinReferenceExists(fm.getFinReference(), "", false)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = fm.getFinReference();
+			return getErrorDetails("90201", valueParm);
+		}
+
+		int count = mandateDAO.getMandateType(fm.getMandateID(), repayMthd, fm.getFinReference());
+		if (count <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "MandateId with specified FinRepaymentMethod not Found";
+			return APIErrorHandlerService.getFailedStatus("90505", valueParm);
+		}
+
+		String status = mandateDAO.getMandateStatus(fm.getMandateID());
+		if (!MandateStatus._APPROVED.name().equals(status.toUpperCase())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Mandate with Status APPROVED is allowed for Change Payment Method";
+			return APIErrorHandlerService.getFailedStatus("90505", valueParm);
+		}
+
+		if (fm.getMandateID() == financeMainDAO.getMandateIdByRef(fm.getFinID(), "")) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Change Payment Method is already done with specified MandateID";
+			return APIErrorHandlerService.getFailedStatus("90505", valueParm);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	private void doBasicMandatoryValidations(FinServiceInstruction fsi) {
+		List<ServiceExceptionDetails> exceptions = new ArrayList<>();
+
+		BigDecimal actualRate = fsi.getActualRate();
+
+		ServiceExceptionDetails error = new ServiceExceptionDetails();
+		boolean negActualRate = actualRate == null || actualRate.compareTo(BigDecimal.ZERO) < 0;
+
+		if ((!negActualRate && StringUtils.isNotEmpty(fsi.getBaseRate()))
+				|| (negActualRate && StringUtils.isEmpty(fsi.getBaseRate()))) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("Either actualRate / baseRate are mandatory");
+
+			exceptions.add(error);
+		}
+
+		if (negActualRate) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("actualRate should be Positive");
+
+			exceptions.add(error);
+		}
+
+		if (StringUtils.isNotEmpty(fsi.getSplRate()) && StringUtils.isEmpty(fsi.getBaseRate())) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("baseRate is mandatory for splRate"); // Error message is changed.
+
+			exceptions.add(error);
+		}
+
+		BigDecimal margin = fsi.getMargin();
+
+		if (margin != null && margin.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isEmpty(fsi.getBaseRate())) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("margin is mandatory for baseRate");
+
+			exceptions.add(error);
+
+		}
+
+		if (CollectionUtils.isNotEmpty(exceptions)) {
+			throw new ServiceException((ServiceExceptionDetails[]) exceptions.toArray());
+		}
+	}
+
 	private WSReturnStatus getError(String code, String... parm) {
 		return APIErrorHandlerService.getFailedStatus(code, parm);
 	}
@@ -3553,4 +3733,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		this.finTypePartnerBankService = finTypePartnerBankService;
 	}
 
+	@Autowired
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
+	}
+
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
 }

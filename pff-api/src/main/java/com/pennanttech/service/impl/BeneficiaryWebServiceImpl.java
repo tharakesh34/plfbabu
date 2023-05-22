@@ -22,6 +22,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.BeneficiaryController;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -54,6 +55,8 @@ public class BeneficiaryWebServiceImpl extends ExtendedTestClass
 
 		// bean validations
 		validationUtility.validate(beneficiary, SaveValidationGroup.class);
+		doBasicMandatoryValidations(beneficiary);
+
 		WSReturnStatus returnStatus = doBeneficiaryValidation(beneficiary);
 
 		Beneficiary response = null;
@@ -70,6 +73,24 @@ public class BeneficiaryWebServiceImpl extends ExtendedTestClass
 		APIErrorHandlerService.logReference(beneficiary.getCustCIF());
 		logger.debug("Leaving");
 		return response;
+	}
+
+	private void doBasicMandatoryValidations(Beneficiary beneficiary) {
+		if (StringUtils.isNotEmpty(beneficiary.getiFSC())) {
+			//
+		} else if (StringUtils.isNotEmpty(beneficiary.getBankCode())
+				&& StringUtils.isNotEmpty(beneficiary.getBranchCode())) {
+			//
+		} else {
+			ServiceExceptionDetails exception = new ServiceExceptionDetails();
+
+			exception.setFaultCode("9009");
+			exception.setFaultMessage("specify any one of BankCode and BranchName Or ifsc code");
+
+			ServiceExceptionDetails exceptions[] = new ServiceExceptionDetails[1];
+			exceptions[0] = exception;
+			throw new ServiceException(exceptions);
+		}
 	}
 
 	/**
@@ -109,6 +130,8 @@ public class BeneficiaryWebServiceImpl extends ExtendedTestClass
 		APIErrorHandlerService.logReference(String.valueOf(beneficiary.getBeneficiaryId()));
 		// beanValidation
 		validationUtility.validate(beneficiary, UpdateValidationGroup.class);
+		doBasicMandatoryValidations(beneficiary);
+
 		Beneficiary beneficiaryDetails = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
 
 		WSReturnStatus returnStatus = null;

@@ -45,7 +45,7 @@ public class NationalityCodeListModelItemRenderer implements ListitemRenderer<Na
 	private static final long serialVersionUID = -2115424367644659335L;
 
 	public NationalityCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

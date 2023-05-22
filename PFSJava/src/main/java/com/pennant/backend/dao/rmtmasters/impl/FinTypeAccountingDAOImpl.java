@@ -39,6 +39,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
@@ -316,8 +317,7 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 		Long accSetID = null;
 
 		try {
-			accSetID = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType, event, moduleId },
-					Long.class);
+			accSetID = this.jdbcOperations.queryForObject(sql.toString(), Long.class, finType, event, moduleId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -408,5 +408,25 @@ public class FinTypeAccountingDAOImpl extends SequenceDao<FinTypeAccounting> imp
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<AccountEngineEvent> getAccountEngineEvents(String categoryCode) {
+		StringBuilder sql = new StringBuilder("Select cwe.AEEventCode, bae.AEEventCodeDesc");
+		sql.append(" From CategoryWiseEvents cwe");
+		sql.append(" Left Join BmtAeEvents bae on bae.AEEventCode = cwe.AEEventCode");
+		sql.append(" Where cwe.CategoryCode = ?");
+		sql.append(" order by SeqOrder, cwe.AEEventCode");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			AccountEngineEvent aee = new AccountEngineEvent();
+
+			aee.setAEEventCode(rs.getString("AEEventCode"));
+			aee.setAEEventCodeDesc(rs.getString("AEEventCodeDesc"));
+
+			return aee;
+		}, categoryCode);
 	}
 }

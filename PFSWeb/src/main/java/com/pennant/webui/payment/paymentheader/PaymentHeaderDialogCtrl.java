@@ -70,7 +70,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -78,7 +77,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -88,8 +86,6 @@ import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
@@ -103,10 +99,12 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.feerefund.FeeRefundUtil;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
@@ -182,7 +180,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected String selectMethodName = "onSelectTab";
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl;
 	private boolean isAccountingExecuted = false;
-	private long accountsetId;
+	private Long accountsetId;
 	// Add list Manualadvise
 	private Listheader listheader_PaymentHeaderDialog_button;
 	private Grid grid_basicDetails;
@@ -194,6 +192,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private FeeTypeService feeTypeService;
 	private RefundBeneficiary refundBeneficiary;
 	private CrossLoanKnockOffDAO crossLoanKnockOffDAO;
+	protected boolean leiMandatory = false;
 
 	private List<String> allowedExcesTypes = PennantStaticListUtil.getAllowedExcessTypeList();
 
@@ -211,8 +210,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.paymentHeader.getPaymentId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.paymentHeader.getPaymentId());
 	}
 
 	/**
@@ -503,9 +501,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		this.lbl_Currency
 				.setValue(this.financeMain.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
 		this.lbl_startDate
-				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate
-				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+				.setValue(DateUtil.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_ODAgainstLoan
 				.setValue(PennantApplicationUtil.amountFormate(aPaymentHeader.getOdAgainstLoan(), ccyFormatter));
 		this.lbl_ODAgainstCustomer
@@ -607,8 +605,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		}
 		if (!onLoadProcess) {
-			accountsetId = AccountingConfigCache.getAccountSetID(this.financeMain.getFinType(),
-					AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+			accountsetId = AccountingEngine.getAccountSetID(this.financeMain, AccountingEvent.PAYMTINS,
+					FinanceConstants.MODULEID_FINTYPE);
+
 			final Map<String, Object> map = new HashMap<>();
 			map.put("paymentInstruction", paymentInstruction);
 			map.put("acSetID", accountsetId);
@@ -720,6 +719,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (this.totAmount != null) {
 			this.totAmount.setConstraint("");
 		}
+		this.disbursementInstructionsDialogCtrl.leiNumber.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -1180,15 +1180,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		List<PaymentDetail> paymentDetailsList = this.paymentHeader.getPaymentDetailList();
 		List<String> feeTypeCodes = new ArrayList<>();
-		List<FeeType> feeTypesList = new ArrayList<>();
 
 		for (PaymentDetail paymentDetail : paymentDetailsList) {
 			feeTypeCodes.add(paymentDetail.getFeeTypeCode());
 		}
 
 		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-			feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
-			aeEvent.setFeesList(feeTypesList);
+			aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingByCode(feeTypeCodes));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1827,6 +1825,17 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		totAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		totAmount.setStyle("text-align:right;");
 		totAmount.setReadonly(true);
+
+		if (disbursementInstructionsDialogCtrl != null) {
+			if (totalPayAmt.compareTo(FinanceConstants.LEI_NUM_LIMIT) > 0) {
+				disbursementInstructionsDialogCtrl.leiNum.setSclass("mandatory");
+			} else {
+				disbursementInstructionsDialogCtrl.leiNum.setSclass("");
+				disbursementInstructionsDialogCtrl.leiNumber.setErrorMessage("");
+				Clients.clearWrongValue(disbursementInstructionsDialogCtrl.leiNumber);
+			}
+		}
+
 		totAmount.setValue(PennantApplicationUtil.formateAmount(totalPayAmt, ccyFormatter));
 
 		lc.appendChild(totAmount);
@@ -1986,22 +1995,25 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			BigDecimal calGST = BigDecimal.ZERO;
 			BigDecimal availAmount = pd.getAvailableAmount();
 			BigDecimal paidAmount = pd.getAmount();
-			String desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
+			String desc = "";
 
-			// GST Calculations
-			TaxHeader taxHeader = pd.getTaxHeader();
-			if (taxHeader != null) {
-				List<Taxes> taxDetails = taxHeader.getTaxDetails();
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						calGST = calGST.add(taxes.getActualTax());
-					}
+			if (!RepayConstants.EXAMOUNTTYPE_EXCESS.equals(pd.getAmountType())) {
+				desc = pd.getFeeTypeCode().concat(("-")).concat(pd.getFeeTypeDesc());
+				TaxHeader taxHeader = pd.getTaxHeader();
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							calGST = calGST.add(taxes.getActualTax());
+						}
 
-					if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-						availAmount = availAmount.subtract(calGST);
-						desc = desc.concat(" (Inclusive)");
-					} else if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-						desc = desc.concat(" (Exclusive)");
+						if (StringUtils.equals(pd.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+							availAmount = availAmount.subtract(calGST);
+							desc = desc.concat(" (Inclusive)");
+						} else if (StringUtils.equals(pd.getTaxComponent(),
+								FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+							desc = desc.concat(" (Exclusive)");
+						}
 					}
 				}
 			}

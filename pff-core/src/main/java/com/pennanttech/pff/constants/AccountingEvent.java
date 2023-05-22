@@ -33,15 +33,26 @@
  */
 package com.pennanttech.pff.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 
 public class AccountingEvent {
 
-	public AccountingEvent() {
-		super();
+	/**
+	 * Private constructor to hide the implicit public one.
+	 * 
+	 * @throws IllegalAccessException If the constructor is used to create and initialize a new instance of the
+	 *                                declaring class by suppressing Java language access checking.
+	 */
+	private AccountingEvent() throws IllegalAccessException {
+		throw new IllegalAccessException();
 	}
 
-	public static final String ADDDBS = "ADDDBS";
 	public static final String ADDDBSF = "ADDDBSF";
 	public static final String ADDDBSN = "ADDDBSN";
 	public static final String ADDDBSP = "ADDDBSP";
@@ -85,36 +96,27 @@ public class AccountingEvent {
 	public static final String CANCELFIN = "CANFIN";
 	public static final String AMENDMENT = "AMENDMNT";
 	public static final String SEGMENT = "SEGCHG";
-	public static final String LIABILITY = "LIBILITY";
-	public static final String NOCISSUANCE = "NOCISU";
-	public static final String TIMELYCLOSURE = "TIMECLS";
-	public static final String BRANCH_CLOSE = "BRNCLOSE";
 	public static final String EMIHOLIDAY = "EMIDAY";
 	public static final String REAGING = "REAGING";
 	public static final String VAS_ACCRUAL = "VASACRUL";
 	public static final String VAS_FEE = "VASFEE";
-	public static final String DEFAULT = "DEFAULT";
 	public static final String DISBINS = "DISBINS";
 	public static final String HOLDEMI = "HLDEMI";
 	public static final String FEEPAY = "FEEPAY";
 	public static final String FEEREFUND = "FEREFUND";
 	public static final String MANFEE = "MANFEE";
 	public static final String PAYMTINS = "PAYMTINS";
-	public static final String CASHTOPENNANT = "C2P";
 	public static final String LPPAMZ = "LPPAMZ";
 	public static final String LPIAMZ = "LPIAMZ";
 	public static final String CASHTOBANK = "C2B";
 	public static final String CASHINTRANSIT = "CIT";
 	public static final String BANKTOCASH = "B2C";
-	public static final String CHANGETDSAPPICABLE = "CHANGETDS";
-	public static final String CASHDISBTOCUST = "D2C";
 	public static final String CHEQUETOBANK = "CHQ2B";
-	public static final String ASSIGNMENT = "ASSIGN";
 	public static final String INSADJ = "INSADJ";
 	public static final String INSPAY = "INSPAY";
 	public static final String CANINS = "CANINS";
 	public static final String RECIP = "RECIP";
-	public static final String WAIVER = "WAIVER"; // For Waivers
+	public static final String WAIVER = "WAIVER";
 	public static final String ADVDUE = "ADVDUE";
 	public static final String OEMSBV = "OEMSBV";
 	public static final String EXPENSE = "EXPENSE";
@@ -130,12 +132,27 @@ public class AccountingEvent {
 	public static final String NPACHNG = "NPACHNG";
 	public static final String CROSS_LOAN_FROM = "CRSLANFR";
 	public static final String CROSS_LOAN_TO = "CRSLANTO";
+
 	// Category Code Constants
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";
 	public static final String EVENTCTG_GOLD = "G";
 	public static final String EVENTCTG_CD = "C";
 	public static final String EXTRF = "EXTRF";
+	public static final String REV_WRITEOFF = "REVWRITE";
+
+	public static final String ADDDBS = "ADDDBS";
+	public static final String DEFAULT = "DEFAULT";
+	public static final String LIABILITY = "LIABILITY";
+	public static final String NOCISSUANCE = "NOCISU";
+	public static final String TIMELYCLOSURE = "TIMECLS";
+	public static final String BRANCH_CLOSE = "BRNCLOSE";
+	public static final String CASHTOPENNANT = "C2P";
+	public static final String ASSIGNMENT = "ASSIGN";
+	public static final String CHANGETDSAPPICABLE = "CHANGETDS";
+	public static final String CASHDISBTOCUST = "D2C";
+
+	public static final String BRNCHG = "BRNCHG";
 
 	public static boolean isDisbursementEvent(String eventCode) {
 		if (StringUtils.isEmpty(eventCode)) {
@@ -145,4 +162,28 @@ public class AccountingEvent {
 				|| eventCode.equals(AccountingEvent.ADDDBSN) || eventCode.equals(AccountingEvent.ADDDBSP);
 	}
 
+	public static List<String> getExcludedAccEvents() {
+		List<String> excludeEvents = new ArrayList<>();
+
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			excludeEvents.add(AccountingEvent.ADDDBSF);
+		}
+
+		if (!ImplementationConstants.ALLOW_IND_AS) {
+			excludeEvents.add(AccountingEvent.EXPENSE);
+			excludeEvents.add(AccountingEvent.INDAS);
+		}
+
+		if (!NpaAndProvisionExtension.ALLOW_NPA) {
+			excludeEvents.add(AccountingEvent.NPACHNG);
+		}
+
+		if (!NpaAndProvisionExtension.ALLOW_PROVISION) {
+			excludeEvents.add(AccountingEvent.PROVSN);
+			excludeEvents.add(AccountingEvent.PRVSN_MN);
+			excludeEvents.add(AccountingEvent.PROVCHG);
+		}
+
+		return excludeEvents;
+	}
 }

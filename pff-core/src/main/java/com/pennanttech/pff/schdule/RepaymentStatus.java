@@ -1,6 +1,9 @@
 package com.pennanttech.pff.schdule;
 
 public enum RepaymentStatus {
+
+	NA("NA"),
+
 	PAID("Paid"),
 
 	PARTIALLY_PAID("Partially Paid"),

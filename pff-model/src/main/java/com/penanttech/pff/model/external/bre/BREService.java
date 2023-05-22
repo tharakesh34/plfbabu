@@ -18,6 +18,7 @@ public class BREService implements Serializable {
 
 	@JsonCreator
 	public BREService() {
+	    super();
 	}
 
 	@XmlElement(name = "DAXMLDocument")
@@ -43,6 +44,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public DAXMLDocument() {
+		    super();
 		}
 
 		public Pchflout getPchflOut() {
@@ -100,6 +102,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public OControl() {
+		    super();
 		}
 
 		// Getter Methods
@@ -192,7 +195,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public PchflIn() {
-
+		    super();
 		}
 
 		public ApplicantIn getApplicantIn() {
@@ -225,6 +228,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Pchflout() {
+		    super();
 		}
 
 		public ApplicantOut getApplicantOut() {
@@ -266,6 +270,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public ApplicationOut() {
+		    super();
 		}
 
 		public CalculationsLtv getCalculationsLtv() {
@@ -329,6 +334,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Advantage() {
+		    super();
 		}
 
 		public String getCombinedLoanSanctioned() {
@@ -397,6 +403,7 @@ public class BREService implements Serializable {
 		private String totalLoanAmount;
 
 		public SuperHigherLoan() {
+		    super();
 		}
 
 		public String getPercChangeEmiBalance() {
@@ -488,6 +495,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public SuperLowEmi() {
+		    super();
 		}
 
 		// Getter Methods
@@ -605,7 +613,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public FinalEligibility() {
-
+		    super();
 		}
 
 		public String getConsideredMonthlyIncome() {
@@ -798,6 +806,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public CalculationsLtv() {
+		    super();
 		}
 
 		// Getter Methods
@@ -1008,6 +1017,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public ApplicationIn() {
+		    super();
 		}
 
 		// Getter Methods
@@ -1443,7 +1453,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public ApplicantDetails() {
-
+		    super();
 		}
 
 		public DecisionReasonCode getDecisionReasonCode() {
@@ -1739,7 +1749,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public EmploymentDetails() {
-
+		    super();
 		}
 
 		public String getEmploymentType() {
@@ -1933,6 +1943,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public ConsolidatedBanking() {
+		    super();
 		}
 
 		public String getTotalNoOfCreditTransactions() {
@@ -2930,6 +2941,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Business() {
+		    super();
 		}
 
 		public String getEmployerType() {
@@ -3048,6 +3060,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Eligibility() {
+		    super();
 		}
 
 		public String getAppliedTenorAdvantageLoan() {
@@ -3110,6 +3123,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public EducationDetail() {
+		    super();
 		}
 
 		public String getQualification() {
@@ -3173,6 +3187,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Poa() {
+		    super();
 		}
 
 		public String getPoaHolder() {
@@ -3241,6 +3256,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Bureau() {
+		    super();
 		}
 
 		public ScoreDetail getScoreDetail() {
@@ -3283,6 +3299,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public ScoreDetail() {
+		    super();
 		}
 
 		public String getScore() {
@@ -3319,7 +3336,7 @@ public class BREService implements Serializable {
 		List<Element> element;
 
 		public PropertyMaster() {
-
+		    super();
 		}
 
 		public List<Element> getElement() {
@@ -3343,6 +3360,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public Supercalc() {
+		    super();
 		}
 
 		// Getter Methods
@@ -3370,6 +3388,7 @@ public class BREService implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		public DV() {
+		    super();
 		}
 
 		@XmlElement(name = "element")
@@ -3391,6 +3410,7 @@ public class BREService implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		public FCU() {
+		    super();
 		}
 
 		@XmlElement(name = "element")
@@ -3415,6 +3435,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public PD() {
+		    super();
 		}
 
 		@XmlElement(name = "element")
@@ -3466,6 +3487,7 @@ public class BREService implements Serializable {
 
 		@JsonCreator
 		public LRD() {
+		    super();
 		}
 
 		// Getter Methods

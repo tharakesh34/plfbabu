@@ -420,36 +420,6 @@
 				<element name="max">8</element>
 			</constraint>
 		</field>
-		<field name="customer">
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>staffID Applicable if the customer is staff.</message>
-				<groups>
-					<value>com.pennant.validation.SaveValidationGroup</value>
-					<value>com.pennant.validation.UpdateValidationGroup</value>
-					<value>com.pennant.validation.PersionalInfoGroup</value>
-				</groups>
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.custIsStaff) {
-					if (_this.custStaffID
-					!= null &amp;&amp; _this.custStaffID != "") {
-					true;
-					} else{
-					false;
-					}
-					}else {
-					if (_this.custStaffID != null &amp;&amp; _this.custStaffID
-					!= "") {
-					false;
-					} else{
-					true;
-					}
-					}
-
-				</element>
-			</constraint>
-		</field>
-
 	</bean>
 </constraint-mappings>
 		

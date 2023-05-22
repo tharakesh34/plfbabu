@@ -52,7 +52,6 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralStructureDAO;
 import com.pennant.backend.endofday.main.BatchMonitor;
@@ -65,6 +64,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
@@ -243,6 +243,9 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			bps = new BatchProcessStatus();
 			bps.setName("PLF_EOD");
 			bps = bpsService.getBatchStatus(bps);
+			if (bps == null) {
+				bps = new BatchProcessStatus();
+			}
 		}
 
 		if (eodConfig != null && eodConfig.isEnableAutoEod()) {
@@ -266,7 +269,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (bps != null && bps.getEndTime() != null && "S".equals(bps.getStatus())) {
 				int days = DateUtil.getDaysBetween(sysDate, bps.getEndTime());
 				if (days == 0) {
-					int timeBetween = Integer.valueOf(DateUtility.timeBetween(sysDate, bps.getEndTime(), "HH"));
+					int timeBetween = Integer.valueOf(DateUtil.timeBetween(sysDate, bps.getEndTime(), "HH"));
 
 					if (timeBetween > 20) {
 						this.btnStartJob.setDisabled(false);
@@ -455,12 +458,12 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 					if (days == 0) {
 						hours = hours + Integer
-								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+								.valueOf(DateUtil.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
 					} else {
 						hours = days * 24;
-						lastJobExecutionTime = DateUtility.addDays(lastJobExecutionTime, days);
+						lastJobExecutionTime = DateUtil.addDays(lastJobExecutionTime, days);
 						hours = hours + Integer
-								.valueOf(DateUtility.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
+								.valueOf(DateUtil.timeBetween(DateUtil.getSysDate(), lastJobExecutionTime, "HH"));
 					}
 
 					if (hours < eODTimeInterval) {
@@ -818,7 +821,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			if (!listitem.hasFellow(threadId + EodConstants.STATUS))
 				listcell.setParent(listitem);
 
-			listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(), status.getStartTime()));
+			listcell = new Listcell(DateUtil.timeBetween(status.getEndTime(), status.getStartTime()));
 			listcell.setParent(listitem);
 			listBoxThread.appendChild(listitem);
 
@@ -833,14 +836,24 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 		appendRow(Step.processInActiveFinances.name(), StepUtil.PROCESS_INACTIVE_FINANCES.getName());
 
-		if (ImplementationConstants.ALLOW_NPA) {
+		appendRow(Step.letterGeneration.name(), StepUtil.LETTER_GENERATION.getName());
+
+		if (ImplementationConstants.ALW_AUTO_CROSS_LOAN_KNOCKOFF) {
+			appendRow(Step.excessKnockOff.name(), StepUtil.CROSS_LOAN_KNOCKOFF.getName());
+		}
+
+		appendRow(Step.autoRefund.name(), StepUtil.AUTO_REFUND_PROCESS.getName());
+
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			appendRow(Step.assetClassification.name(), StepUtil.NPA_CLASSIFICATION.getName());
 			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());
 		}
 
-		if (ImplementationConstants.ALLOW_PROVISION) {
+		if (NpaAndProvisionExtension.ALLOW_PROVISION) {
 			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
 		}
+		// Auto Write Off
+		appendRow(Step.autoWriteOffCalc.name(), StepUtil.AUTO_WRITE_OFF.getName());
 
 		appendRow(Step.processINDASForInActiveFinances.name(), StepUtil.PROCESS_INDAS_INACTIVE_FINANCES.getName());
 

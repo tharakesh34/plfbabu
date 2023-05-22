@@ -16,7 +16,7 @@ public class ReturnedChequeListModelItemRender implements ListitemRenderer<Retur
 	private static final long serialVersionUID = -5018118741984246012L;
 
 	public ReturnedChequeListModelItemRender() {
-
+	    super();
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class SubSectorListModelItemRenderer implements ListitemRenderer<SubSecto
 	private static final long serialVersionUID = -7933062641604193890L;
 
 	public SubSectorListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

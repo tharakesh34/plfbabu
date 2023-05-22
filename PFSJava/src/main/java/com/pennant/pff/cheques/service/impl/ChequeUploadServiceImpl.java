@@ -5,14 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionDefinition;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -35,14 +33,18 @@ import com.pennant.pff.cheques.dao.ChequeUploadDAO;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
+import com.pennapps.core.util.ObjectUtil;
 
-public class ChequeUploadServiceImpl extends AUploadServiceImpl {
+public class ChequeUploadServiceImpl extends AUploadServiceImpl<ChequeUpload> {
 	private static final Logger logger = LogManager.getLogger(ChequeUploadServiceImpl.class);
 
 	private ChequeUploadDAO chequeUploadDAO;
@@ -51,21 +53,24 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	private FinanceMainDAO financeMainDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
-	private ValidateRecord chequeUploadValidateRecord;
+
+	@Override
+	protected ChequeUpload getDetail(Object object) {
+		if (object instanceof ChequeUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
 
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
-
 			for (FileUploadHeader header : headers) {
 				Map<String, List<ChequeUpload>> map = new HashMap<>();
 				List<ChequeUpload> details = chequeUploadDAO.getDetails(header.getId());
 
-				header.setTotalRecords(details.size());
 				for (ChequeUpload detail : details) {
 					String finReference = detail.getReference();
 					if (map.containsKey(finReference)) {
@@ -91,9 +96,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 					if (finID == null) {
 						for (ChequeUpload detail : chequeUploads) {
-							detail.setProgress(EodConstants.PROGRESS_FAILED);
-							detail.setErrorCode("9999");
-							detail.setErrorDesc("Fin Reference is not valid.");
+							setFailureStatus(detail, "Fin Reference is not valid.");
 						}
 						continue;
 					}
@@ -106,7 +109,14 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						continue;
 					}
 
-					chequeHeader.setUserDetails(header.getUserDetails());
+					LoggedInUser userDetails = header.getUserDetails();
+					if (userDetails == null) {
+						userDetails = new LoggedInUser();
+						userDetails.setLoginUsrID(header.getApprovedBy());
+						userDetails.setUserName(header.getApprovedByName());
+					}
+
+					chequeHeader.setUserDetails(userDetails);
 
 					List<ChequeDetail> cheques = new ArrayList<>();
 
@@ -153,39 +163,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						}
 					}
 
-					try {
-						txStatus = transactionManager.getTransaction(txDef);
-
-						if (!addcheques.isEmpty()) {
-							chequeHeader.setChequeDetailList(addcheques);
-							chequeHeader.setNoOfCheques(fetchChequeSize(addcheques));
-							process(chequeHeader, chequeUploads);
-						}
-
-						int chequeSize = 0;
-						if (!delcheques.isEmpty()) {
-							chequeHeader.setChequeDetailList(delcheques);
-							for (ChequeDetail detail : delcheques) {
-								if (InstrumentType.isPDC(detail.getChequeType())) {
-									chequeSize++;
-								}
-								chequeDetailDAO.deleteCheques(detail);
-							}
-
-						}
-						chequeHeader.setNoOfCheques(chequeSize);
-						chequeHeaderDAO.updatesize(chequeHeader);
-
-						transactionManager.commit(txStatus);
-					} catch (Exception e) {
-						logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-						if (txStatus != null) {
-							transactionManager.rollback(txStatus);
-						}
-					} finally {
-						txStatus = null;
-					}
+					processCheques(chequeUploads, chequeHeader, addcheques, delcheques);
 				}
 
 				for (String finReference : finReferences) {
@@ -196,6 +174,8 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 						} else {
 							sucessRecords++;
 						}
+
+						header.getUploadDetails().add(chequeUpload);
 					}
 
 					chequeUploadDAO.update(chequeUploads);
@@ -206,24 +186,50 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 				logger.info("Processed the File {}", header.getFileName());
 
 				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
 					updateHeader(headers, true);
 
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
-					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 
 		}).start();
 
+	}
+
+	private void processCheques(List<ChequeUpload> chequeUploads, ChequeHeader chequeHeader,
+			List<ChequeDetail> addcheques, List<ChequeDetail> delcheques) {
+		TransactionStatus txStatus = getTransactionStatus();
+
+		try {
+			if (!addcheques.isEmpty()) {
+				chequeHeader.setChequeDetailList(addcheques);
+				chequeHeader.setNoOfCheques(fetchChequeSize(addcheques));
+				process(chequeHeader, chequeUploads);
+			}
+
+			int chequeSize = 0;
+			if (!delcheques.isEmpty()) {
+				chequeHeader.setChequeDetailList(delcheques);
+				for (ChequeDetail detail : delcheques) {
+					if (InstrumentType.isPDC(detail.getChequeType())) {
+						chequeSize++;
+					}
+					chequeDetailDAO.deleteCheques(detail);
+				}
+
+			}
+			chequeHeader.setNoOfCheques(chequeSize);
+			chequeHeaderDAO.updatesize(chequeHeader);
+
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+		}
 	}
 
 	private boolean isNotRelizedOrPresent(ChequeUpload upload) {
@@ -243,22 +249,24 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
-			chequeUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			headers.forEach(h1 -> {
+				h1.setRemarks(REJECT_DESC);
+				h1.getUploadDetails().addAll(chequeUploadDAO.getDetails(h1.getId()));
+			});
+
+			chequeUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
@@ -268,24 +276,14 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		ChequeUpload upload = null;
-
-		if (object instanceof ChequeUpload) {
-			upload = (ChequeUpload) object;
-		}
-
-		if (upload == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		ChequeUpload upload = getDetail(object);
 
 		ChequeDetail cd = upload.getChequeDetail();
 
 		String action = upload.getAction();
 
 		if (!("A".equals(action) || "D".equals(action))) {
-			upload.setProgress(EodConstants.PROGRESS_FAILED);
-			upload.setErrorCode("999");
-			upload.setErrorDesc("Action is invalid.");
+			setFailureStatus(upload, "Action is invalid.");
 		}
 
 		String ifsc = cd.getIfsc();
@@ -312,16 +310,13 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		cd.setBankBranchID(bankBranch.getBankBranchID());
+
+		setSuccesStatus(upload);
 	}
 
 	@Override
 	public String getSqlQuery() {
 		return chequeUploadDAO.getSqlQuery();
-	}
-
-	@Override
-	public ValidateRecord getValidateRecord() {
-		return chequeUploadValidateRecord;
 	}
 
 	private void process(ChequeHeader header, List<ChequeUpload> uploads) {
@@ -367,11 +362,52 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		for (ChequeUpload detail : uploads) {
-			detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-			detail.setErrorCode("");
-			detail.setErrorDesc("");
+			setSuccesStatus(detail);
 		}
 
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.CHEQUES.name(), this, "ChequeUpload");
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		Long headerID = ObjectUtil.valueAsLong(attributes.getParameterMap().get("HEADER_ID"));
+
+		if (headerID == null) {
+			return;
+		}
+
+		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
+
+		ChequeUpload detail = new ChequeUpload();
+
+		detail.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+		detail.setAction(ObjectUtil.valueAsString(paramSource.getValue("action")));
+
+		ChequeDetail cd = new ChequeDetail();
+
+		cd.setChequeType(ObjectUtil.valueAsString(paramSource.getValue("chequeType")));
+		cd.setChequeSerialNumber(ObjectUtil.valueAsString(paramSource.getValue("chequeSerialNo")));
+		cd.setAccountType(ObjectUtil.valueAsString(paramSource.getValue("accountType")));
+		cd.setAccHolderName(ObjectUtil.valueAsString(paramSource.getValue("accHolderName")));
+		cd.setAccountNo(ObjectUtil.valueAsString(paramSource.getValue("accountNo")));
+		cd.setIfsc(ObjectUtil.valueAsString(paramSource.getValue("ifsc")));
+		cd.setMicr(ObjectUtil.valueAsString(paramSource.getValue("micr")));
+		cd.setAmount(ObjectUtil.valueAsBigDecimal(paramSource.getValue("amount")));
+		cd.setChequeDate(ObjectUtil.valueAsDate(paramSource.getValue("chequeDate")));
+
+		detail.setChequeDetail(cd);
+
+		doValidate(header, detail);
+
+		updateProcess(header, detail, paramSource);
+
+		header.getUploadDetails().add(detail);
 	}
 
 	private int fetchChequeSize(List<ChequeDetail> cheques) {
@@ -386,9 +422,7 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	private void setError(ChequeUpload detail, ErrorDetail error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.getCode());
-		detail.setErrorDesc(error.getError());
+		setFailureStatus(detail, error.getCode(), error.getError());
 	}
 
 	private void setError(List<ChequeUpload> uploads, ErrorDetail error) {
@@ -425,11 +459,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
-	}
-
-	@Autowired
-	public void setChequeUploadValidateRecord(ChequeUploadValidateRecord chequeUploadValidateRecord) {
-		this.chequeUploadValidateRecord = chequeUploadValidateRecord;
 	}
 
 }

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
@@ -20,6 +19,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.extension.CustomerExtension;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class CustomerDocumentValidation {
@@ -216,7 +216,7 @@ public class CustomerDocumentValidation {
 			return new ErrorDetail(PennantConstants.KEY_FIELD, "30536",
 					new String[] { Labels.getLabel("DocumentDetails"),
 							Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
-							DateUtility.formatToShortDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE")) },
+							DateUtil.formatToShortDate(SysParamUtil.getValueAsDate("APP_DFT_START_DATE")) },
 					new String[] {});
 		}
 

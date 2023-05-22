@@ -71,7 +71,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -106,6 +105,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -584,11 +584,11 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
 					CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(mandate.getExpiryDate()));
 			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.getLabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus()));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(mandate.getInputDate()));
 			lc.setParent(item);
 			lc = new Listcell(mandate.getRecordStatus());
 			lc.setParent(item);

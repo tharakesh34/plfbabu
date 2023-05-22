@@ -45,8 +45,9 @@ import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.applicationmaster.DPDBucketConfiguration;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -95,7 +96,6 @@ public class LatePayBucketService extends ServiceHelper {
 		BigDecimal duePercentage = BigDecimal.ZERO;
 		Date firstDuedate = null;
 		int newCurODDays = 0;
-		long bucketID = 0;
 		boolean dpdCalcIncExs = false;
 
 		String finStatus = StringUtils.trimToEmpty(fm.getFinStatus());
@@ -184,6 +184,10 @@ public class LatePayBucketService extends ServiceHelper {
 		// calculate DueBucket
 		int newDueBucket = (new BigDecimal(newCurODDays).divide(new BigDecimal(30), 0, RoundingMode.UP)).intValue();
 
+		if (pfd.getCurODDays() == 0) {
+			newDueBucket = 0;
+		}
+
 		// for due percentage calculation
 		if (netSchdAmount.compareTo(BigDecimal.ZERO) > 0) {
 			duePercentage = (netSchdDue.multiply(new BigDecimal(100))).divide(netSchdAmount, 2, RoundingMode.HALF_DOWN);
@@ -206,19 +210,7 @@ public class LatePayBucketService extends ServiceHelper {
 		}
 
 		// DPD Configuration
-		List<DPDBucketConfiguration> list = getBucketConfigurations(fm.getFinCategory());
-		for (DPDBucketConfiguration dpdBucketConfiguration : list) {
-
-			if (dpdBucketConfiguration.getDueDays() >= newDueBucket) {
-				bucketID = dpdBucketConfiguration.getBucketID();
-				break;
-			}
-		}
-
-		// newFinStatus is BucketCode based on Bucket Configuration
-		if (bucketID != 0) {
-			newFinStatus = getBucket(bucketID);
-		}
+		newFinStatus = String.valueOf(newDueBucket);
 
 		// No change in the Bucket Status and Number of Buckets
 		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket && curODDays == newCurODDays) {
@@ -248,14 +240,8 @@ public class LatePayBucketService extends ServiceHelper {
 	private BigDecimal getDeductedAmt(long finID) {
 		BigDecimal balanceAmt = BigDecimal.ZERO;
 		List<FinExcessAmount> excess = finExcessAmountDAO.getExcessAmountsByRef(finID);
-		if (excess.size() > 0) {
-			for (FinExcessAmount finExcessAmount : excess) {
-				// DPD calculation considering both balance amount and reserved amount
-				// balanceAmt = balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
-				// The above line is commented due to there may be a chances of bug if utilized amount is not updated
-				// properly.
-				balanceAmt = balanceAmt.add(finExcessAmount.getBalanceAmt());
-			}
+		for (FinExcessAmount finExcessAmount : excess) {
+			balanceAmt = balanceAmt.add(finExcessAmount.getBalanceAmt());
 		}
 
 		return balanceAmt;

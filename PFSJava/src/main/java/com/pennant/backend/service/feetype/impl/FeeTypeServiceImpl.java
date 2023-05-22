@@ -25,8 +25,10 @@
 
 package com.pennant.backend.service.feetype.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -221,13 +223,19 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	}
 
 	@Override
-	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
-		return feeTypeDAO.getFeeTypeListByIds(feeTypeIds, type);
+	public List<FeeType> getFeeTypesForAccountingById(List<Long> feeTypeIds) {
+		return feeTypeDAO.getFeeTypeListByIds(feeTypeIds);
 	}
 
 	@Override
-	public List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type) {
-		return feeTypeDAO.getFeeTypeListByCodes(feeTypeCodes, type);
+	public List<FeeType> getFeeTypesForAccountingByCode(List<String> feeTypeCodes) {
+		List<Long> feeTypeIDs = feeTypeDAO.getFeeTypeIDs(feeTypeCodes);
+
+		if (CollectionUtils.isNotEmpty(feeTypeIDs)) {
+			return getFeeTypesForAccountingById(feeTypeIDs);
+		}
+
+		return new ArrayList<>();
 	}
 
 	@Override

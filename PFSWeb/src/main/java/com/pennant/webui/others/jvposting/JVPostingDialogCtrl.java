@@ -69,7 +69,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -86,6 +85,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.AccountingUtil;
 import com.pennant.pff.accounting.PostAgainst;
 import com.pennant.util.ErrorControl;
@@ -96,6 +96,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -485,7 +486,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				if (jVPostingEntry != null) {
 					aJVPostingEntry.setDebitAccount(jVPostingEntry.getAccount());
 					aJVPostingEntry.setDebitTxnCode(jVPostingEntry.getTxnCode());
-					aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getDebitTxnDesc());
+					if (aJVPostingEntry.getTxnEntry().equals("D")) {
+						aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getDebitTxnDesc());
+					} else {
+						aJVPostingEntry.setDebitTxnDesc(jVPostingEntry.getTxnDesc());
+					}
 					showDetailView(aJVPostingEntry, false, false);
 				}
 			}
@@ -1298,7 +1303,7 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (getJVPosting().isNewRecord()
 				&& getJVPostingService().getJVPostingByFileName(this.batch.getValue()) != null) {
 			MessageUtil.showError(Labels.getLabel("BATCH_ALREADY_EXISTS",
-					new String[] { this.batch.getValue(), DateUtility.getSysDate().toString() }));
+					new String[] { this.batch.getValue(), DateUtil.getSysDate().toString() }));
 			return;
 		}
 
@@ -1750,15 +1755,24 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		BigDecimal debitAmount = BigDecimal.ZERO;
 		int creditCount = 0;
 		int debitCount = 0;
+		int count = 0;
 		this.listBoxJVPostingEntry.getItems().clear();
+		JVPostingEntry newJvPostingEntry = new JVPostingEntry();
+		newJvPostingEntry.setDaySeqDate(DateUtil.getDatePart(DateUtil.getSysDate()));
+		count = jVPostingService.getMaxSeqNumForCurrentDay(newJvPostingEntry);
 		Listitem item = null;
 		Listcell lc;
 		for (JVPostingEntry jvPostingEntry : entryList) {
 			if (jvPostingEntry.isExternalAccount()) {
 				item = new Listitem();
-				lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
-				lc.setParent(item);
-				lc = new Listcell(String.valueOf(StringUtils.trimToEmpty(jvPostingEntry.getGlCode())));
+				if (jvPostingEntry.getRecordStatus() != null) {
+					lc = new Listcell(String.valueOf(jvPostingEntry.getTxnReference()));
+					lc.setParent(item);
+				} else {
+					lc = new Listcell(String.valueOf(++count));
+					lc.setParent(item);
+				}
+				lc = new Listcell(String.valueOf(AccountingConfigCache.getAccountMapping(jvPostingEntry.getAccount())));
 				lc.setParent(item);
 
 				if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
@@ -1773,9 +1787,9 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 					}
 				}
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(jvPostingEntry.getPostingDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(jvPostingEntry.getPostingDate()));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(jvPostingEntry.getValueDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(jvPostingEntry.getValueDate()));
 				lc.setParent(item);
 				if (jvPostingEntry.getTxnEntry().equalsIgnoreCase(AccountConstants.TRANTYPE_CREDIT)) {
 					lc = new Listcell(Labels.getLabel("common.Credit"));
@@ -1788,15 +1802,18 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				lc = new Listcell(CurrencyUtil.format(jvPostingEntry.getTxnAmount(),
 						CurrencyUtil.getFormat(jvPostingEntry.getAccCCy())));
 				lc.setParent(item);
+
+				lc = new Listcell(jvPostingEntry.getPostingStatus());
+				lc.setTooltiptext(jvPostingEntry.getPostingStatus());
+				lc.setParent(item);
+
 				lc = new Listcell(jvPostingEntry.getNarrLine1());
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(jvPostingEntry.getRecordType());
 				lc.setParent(item);
-				lc = new Listcell(jvPostingEntry.getPostingStatus());
-				lc.setTooltiptext(jvPostingEntry.getPostingStatus());
-				lc.setParent(item);
+
 				item.setAttribute("data", jvPostingEntry);
 				if (!jvPostingEntry.isDeletedFlag()) {
 					int formatter = CurrencyUtil.getFormat(getJVPosting().getCurrency());

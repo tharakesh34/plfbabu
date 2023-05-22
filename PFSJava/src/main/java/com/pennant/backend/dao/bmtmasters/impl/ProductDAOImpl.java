@@ -109,7 +109,7 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { code }, new RowMapper<Product>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<Product>() {
 				@Override
 				public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Product pc = new Product();
@@ -121,7 +121,7 @@ public class ProductDAOImpl extends BasicDao<Product> implements ProductDAO {
 
 					return pc;
 				}
-			});
+			}, code);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

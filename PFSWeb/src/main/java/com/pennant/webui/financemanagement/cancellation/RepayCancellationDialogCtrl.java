@@ -49,7 +49,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -65,8 +64,9 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/RepayCancellation/RepayCancellationDialog.zul file.
@@ -286,7 +286,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<FinanceRepayments> repayList = financeDetail.getFinScheduleData().getRepayDetails();
 		if (repayList != null && repayList.size() > 0) {
 
-			this.postDate.setValue(DateUtility.formatToLongDate(repayList.get(0).getFinPostDate()));
+			this.postDate.setValue(DateUtil.formatToLongDate(repayList.get(0).getFinPostDate()));
 			this.rpyAmount.setValue(CurrencyUtil.format(repayList.get(0).getFinRpyAmount(), format));
 			doFilllistbox(repayList);
 
@@ -353,7 +353,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				Listcell lc;
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repay.getFinSchdDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repay.getFinSchdDate()));
 				lc.setParent(item);
 
 				lc = new Listcell(CurrencyUtil.format(repay.getFinSchdPriPaid(), formatter));
@@ -394,8 +394,7 @@ public class RepayCancellationDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		boolean isNew = false;
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();

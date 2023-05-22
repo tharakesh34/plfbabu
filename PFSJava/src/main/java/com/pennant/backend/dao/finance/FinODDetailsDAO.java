@@ -101,5 +101,7 @@ public interface FinODDetailsDAO {
 
 	BigDecimal getOverDueAmount(long finID);
 
+	void delete(long finID);
+
 	List<FinODDetails> getLPPDueAmount(long finID);
 }

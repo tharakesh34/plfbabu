@@ -194,7 +194,7 @@ public class DepositMovementsListCtrl extends GFCBaseListCtrl<DepositMovements> 
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  MovementId =? ");
 
 		if (doCheckAuthority(depositMovements, whereCond.toString(),

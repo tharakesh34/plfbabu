@@ -45,7 +45,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.CancelDisbursementService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -59,6 +58,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -254,10 +254,10 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 								continue;
 							}
-							if (DateUtility.compare(curDisb.getDisbDate(), curSchd.getSchDate()) >= 0) {
+							if (DateUtil.compare(curDisb.getDisbDate(), curSchd.getSchDate()) >= 0) {
 								comboitem = new Comboitem();
 								comboitem.setLabel(
-										DateUtility.format(curDisb.getDisbDate(), DateFormat.SHORT_DATE.getPattern())
+										DateUtil.format(curDisb.getDisbDate(), DateFormat.SHORT_DATE.getPattern())
 												+ " , " + curDisb.getDisbSeq());
 								comboitem.setValue(curDisb.getDisbDate());
 								comboitem.setAttribute("Seq", curDisb.getDisbSeq());

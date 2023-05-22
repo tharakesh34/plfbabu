@@ -150,26 +150,25 @@ public class FinFlagDetailsDAOImpl extends BasicDao<FinFlagsDetail> implements F
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finRef, flagCode, moduleName },
-					(rs, i) -> {
-						FinFlagsDetail ffd = new FinFlagsDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinFlagsDetail ffd = new FinFlagsDetail();
 
-						ffd.setReference(rs.getString("Reference"));
-						ffd.setFlagCode(rs.getString("FlagCode"));
-						ffd.setModuleName(rs.getString("ModuleName"));
-						ffd.setVersion(rs.getInt("Version"));
-						ffd.setLastMntBy(rs.getLong("LastMntBy"));
-						ffd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-						ffd.setRecordStatus(rs.getString("RecordStatus"));
-						ffd.setRoleCode(rs.getString("RoleCode"));
-						ffd.setNextRoleCode(rs.getString("NextRoleCode"));
-						ffd.setTaskId(rs.getString("TaskId"));
-						ffd.setNextTaskId(rs.getString("NextTaskId"));
-						ffd.setRecordType(rs.getString("RecordType"));
-						ffd.setWorkflowId(rs.getLong("WorkflowId"));
+				ffd.setReference(rs.getString("Reference"));
+				ffd.setFlagCode(rs.getString("FlagCode"));
+				ffd.setModuleName(rs.getString("ModuleName"));
+				ffd.setVersion(rs.getInt("Version"));
+				ffd.setLastMntBy(rs.getLong("LastMntBy"));
+				ffd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ffd.setRecordStatus(rs.getString("RecordStatus"));
+				ffd.setRoleCode(rs.getString("RoleCode"));
+				ffd.setNextRoleCode(rs.getString("NextRoleCode"));
+				ffd.setTaskId(rs.getString("TaskId"));
+				ffd.setNextTaskId(rs.getString("NextTaskId"));
+				ffd.setRecordType(rs.getString("RecordType"));
+				ffd.setWorkflowId(rs.getLong("WorkflowId"));
 
-						return ffd;
-					});
+				return ffd;
+			}, finRef, flagCode, moduleName);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record not found in FlagDetails{} table for the specified Reference >> {}, FlagCode >> {} and ModuleName >> {}",

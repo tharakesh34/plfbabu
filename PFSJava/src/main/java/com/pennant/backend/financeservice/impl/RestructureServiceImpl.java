@@ -19,7 +19,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -75,7 +74,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.Allocation;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class RestructureServiceImpl extends GenericService<FinServiceInstruction> implements RestructureService {
 	private static final Logger logger = LogManager.getLogger(RestructureServiceImpl.class);
@@ -170,8 +169,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		BigDecimal oldTotalPft = schdData.getFinanceMain().getTotalGrossPft();
 		FinScheduleData scheduleData = null;
-		Cloner cloner = new Cloner();
-		scheduleData = cloner.deepClone(schdData);
+		scheduleData = ObjectUtil.clone(schdData);
 
 		FinanceScheduleDetail curSchd = null;
 		if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
@@ -419,13 +417,13 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			}
 		}
 
-		int chargeSeq = 1;
+		int chargeSeq = 0;
 		if (priDue.compareTo(BigDecimal.ZERO) > 0) {
-			charges.add(getChargeRcd(priDue, BigDecimal.ZERO, null, chargeSeq++, Allocation.PRI,
+			charges.add(getChargeRcd(priDue, BigDecimal.ZERO, null, ++chargeSeq, Allocation.PRI,
 					Labels.getLabel("label_RecceiptDialog_AllocationType_PRI"), null, true));
 		}
 		if (pftDue.compareTo(BigDecimal.ZERO) > 0) {
-			charges.add(getChargeRcd(pftDue, BigDecimal.ZERO, null, chargeSeq++, Allocation.PFT,
+			charges.add(getChargeRcd(pftDue, BigDecimal.ZERO, null, ++chargeSeq, Allocation.PFT,
 					Labels.getLabel("label_RecceiptDialog_AllocationType_PFT"), null, true));
 		}
 
@@ -451,7 +449,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			bpiCalcAmt = calIntRounded;
 
 			if (bpiCalcAmt.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(bpiCalcAmt, BigDecimal.ZERO, null, chargeSeq++, "BPI",
+				charges.add(getChargeRcd(bpiCalcAmt, BigDecimal.ZERO, null, ++chargeSeq, "BPI",
 						Labels.getLabel("label_RecceiptDialog_AllocationType_BPI"), null, true));
 			}
 		}
@@ -469,7 +467,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 				}
 
 				RestructureCharge frc = new RestructureCharge();
-				frc.setChargeSeq(chargeSeq++);
+				frc.setChargeSeq(++chargeSeq);
 				frc.setAlocType(Allocation.FEE);
 				frc.setAlocTypeDesc(ffd.getFeeTypeDesc());
 				frc.setActualAmount(ffd.getRemainingFeeOriginal());
@@ -584,11 +582,11 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 			}
 
 			if (lpiBal.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(lpiBal, BigDecimal.ZERO, null, chargeSeq++, Allocation.LPFT,
+				charges.add(getChargeRcd(lpiBal, BigDecimal.ZERO, null, ++chargeSeq, Allocation.LPFT,
 						Labels.getLabel("label_RecceiptDialog_AllocationType_LPFT"), null, false));
 			}
 			if (lppBal.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(lppBal, tdsAmount, lppTax, chargeSeq++, Allocation.ODC,
+				charges.add(getChargeRcd(lppBal, tdsAmount, lppTax, ++chargeSeq, Allocation.ODC,
 						Labels.getLabel("label_RecceiptDialog_AllocationType_ODC"), null, false));
 			}
 		}
@@ -693,7 +691,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 								advRc.setTotalAmount(advRc.getTotalAmount().add(taxSplit.gettGST()).add(adviseDue));
 							}
 						} else {
-							advRc = getChargeRcd(adviseDue, tdsAmount, taxSplit, chargeSeq++, type, desc,
+							advRc = getChargeRcd(adviseDue, tdsAmount, taxSplit, ++chargeSeq, type, desc,
 									advise.getFeeTypeCode(), false);
 						}
 
@@ -709,7 +707,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 			// Bounce Due Charges
 			if (bounceDue.compareTo(BigDecimal.ZERO) > 0) {
-				charges.add(getChargeRcd(bounceDue, bounceTds, bounceTax, chargeSeq++, Allocation.BOUNCE,
+				charges.add(getChargeRcd(bounceDue, bounceTds, bounceTax, ++chargeSeq, Allocation.BOUNCE,
 						bounceFeeType.getFeeTypeDesc(), bounceFeeType.getFeeTypeCode(), false));
 			}
 		}
@@ -1582,8 +1580,8 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		if (rstDate.compareTo(appDate) > 0 || rstDate.compareTo(fullyPaidDate) < 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Restructure Date";
-			valueParm[1] = DateUtility.formatToShortDate(fullyPaidDate);
-			valueParm[2] = DateUtility.formatToShortDate(appDate);
+			valueParm[1] = DateUtil.formatToShortDate(fullyPaidDate);
+			valueParm[2] = DateUtil.formatToShortDate(appDate);
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("12721", valueParm)));
 		}
 
@@ -1651,36 +1649,6 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		logger.debug(Literal.LEAVING);
 		return isDue;
-	}
-
-	private Date validateRestructureDate(FinScheduleData schdData) {
-		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
-
-		if (schedules == null) {
-			return null;
-		}
-
-		Date appDate = SysParamUtil.getAppDate();
-		Date allowedRestrcutureDate = null;
-
-		for (int i = 0; i < schedules.size(); i++) {
-			FinanceScheduleDetail curSchd = schedules.get(i);
-			FinanceScheduleDetail prvSchd = null;
-			if (i != 0) {
-				prvSchd = schedules.get(i - 1);
-			}
-
-			if (prvSchd == null) {
-				continue;
-			}
-
-			if (prvSchd.getSchDate().compareTo(appDate) < 0 && curSchd.getSchDate().compareTo(appDate) > 0) {
-				allowedRestrcutureDate = prvSchd.getSchDate();
-				continue;
-			}
-		}
-
-		return allowedRestrcutureDate;
 	}
 
 	private void stepLoanValidations(FinanceDetail fd, RestructureDetail rd, List<ErrorDetail> errors) {

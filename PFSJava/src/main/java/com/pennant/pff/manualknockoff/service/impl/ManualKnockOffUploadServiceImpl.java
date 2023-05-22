@@ -11,15 +11,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionDefinition;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinReceiptData;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -27,26 +29,34 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.fee.AdviseType;
+import com.pennant.pff.knockoff.KnockOffType;
 import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ProcessRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.model.knockoff.ManualKnockOffUpload;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.core.util.FinanceUtil;
+import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
-public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
+public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKnockOffUpload> {
 	private static final Logger logger = LogManager.getLogger(ManualKnockOffUploadServiceImpl.class);
 
 	private ManualKnockOffUploadDAO manualKnockOffUploadDAO;
@@ -56,18 +66,24 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	private ReceiptService receiptService;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+
+	public ManualKnockOffUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected ManualKnockOffUpload getDetail(Object object) {
+		if (object instanceof ManualKnockOffUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		ManualKnockOffUpload detail = null;
-
-		if (object instanceof ManualKnockOffUpload) {
-			detail = (ManualKnockOffUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		ManualKnockOffUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
 
@@ -91,8 +107,19 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		detail.setReferenceID(fm.getFinID());
+		detail.setFinanceMain(fm);
 		if (detail.getAllocationType() == null) {
 			setError(detail, ManualKnockOffUploadError.MKOU_104);
+			return;
+		}
+
+		if (finReceiptHeaderDAO.isReceiptExists(reference, "_Temp")) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1015);
+			return;
+		}
+
+		if (manualKnockOffUploadDAO.isInProgress(header.getId(), reference)) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1016);
 			return;
 		}
 
@@ -122,15 +149,19 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
+		if (AllocationType.MANUAL.equals(allocationType) && !isValidAlloc(detail.getAllocations())) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1014);
+			return;
+		}
+
 		String excessType = detail.getExcessType();
 
-		if ("P".equals(excessType) && (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
+		if ("P".equals(excessType) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1013);
 			return;
 		}
 
-		if ((!"E".equals(excessType) && !"A".equals(excessType))
-				&& (detail.getAdviseId() == null || detail.getAdviseId() <= 0)) {
+		if ((!"E".equals(excessType) && !"A".equals(excessType)) && StringUtils.isEmpty(detail.getFeeTypeCode())) {
 			setError(detail, ManualKnockOffUploadError.MKOU_108);
 			return;
 		}
@@ -152,27 +183,25 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				balanceAmount = balanceAmount.add(fea.getBalanceAmt());
 			}
 		} else {
-			ManualAdvise ma = manualAdviseDAO.getManualAdviseById(detail.getAdviseId(), "");
+			List<ManualAdvise> maList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fm.getFinID(),
+					AdviseType.PAYABLE.id(), detail.getFeeTypeCode());
 
-			if (ma == null) {
-				setError(detail, ManualKnockOffUploadError.MKOU_1011);
+			if (CollectionUtils.isEmpty(maList)) {
+				setError(detail, ManualKnockOffUploadError.MKOU_109);
 				return;
 			}
 
-			if (ma.getAdviseType() != AdviseType.PAYABLE.id()) {
-				setError(detail, ManualKnockOffUploadError.MKOU_1012);
-				return;
-			}
+			detail.setAdvises(maList);
 
-			detail.setManualAdvise(ma);
-
-			balanceAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
+			balanceAmount = ManualAdviceUtil.getBalanceAmount(maList);
 		}
 
 		if (balanceAmount.compareTo(detail.getReceiptAmount()) < 0) {
 			setError(detail, ManualKnockOffUploadError.MKOU_1010);
 			return;
 		}
+
+		BigDecimal alcamount = BigDecimal.ZERO;
 
 		for (ManualKnockOffUpload alloc : allocations) {
 			UploadAlloctionDetail uad = new UploadAlloctionDetail();
@@ -184,33 +213,29 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 			receiptDataValidator.validateAllocations(uad);
 
+			alcamount = alcamount.add(uad.getPaidAmount());
+
 			if (!uad.getErrorDetails().isEmpty()) {
-				detail.setProgress(EodConstants.PROGRESS_FAILED);
-				detail.setErrorCode(uad.getErrorDetails().get(0).getCode());
-				detail.setErrorDesc(uad.getErrorDetails().get(0).getError());
+				setFailureStatus(detail, uad.getErrorDetails().get(0));
 				return;
 			}
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
+		if (alcamount.compareTo(detail.getReceiptAmount()) > 0) {
+			setError(detail, ManualKnockOffUploadError.MKOU_1017);
+			return;
+		}
 
+		setSuccesStatus(detail);
 	}
 
 	private void setError(ManualKnockOffUpload detail, ManualKnockOffUploadError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
 	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
 
 			Date appDate = SysParamUtil.getAppDate();
 
@@ -218,66 +243,28 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<ManualKnockOffUpload> details = manualKnockOffUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
 
 				for (ManualKnockOffUpload fc : details) {
 					fc.setAppDate(appDate);
 					fc.setAllocations(manualKnockOffUploadDAO.getAllocations(fc.getId(), header.getId()));
 					doValidate(header, fc);
-					fc.setUserDetails(header.getUserDetails());
+					prepareUserDetails(header, fc);
 
 					if (fc.getProgress() == EodConstants.PROGRESS_SUCCESS) {
-						txStatus = transactionManager.getTransaction(txDef);
-
-						createReceipt(fc, header.getEntityCode());
-
-						transactionManager.commit(txStatus);
-					}
-
-					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
-					} else {
-						sucessRecords++;
+						createReceipt(fc, header);
 					}
 				}
 
 				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
 					manualKnockOffUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
 
 					List<FileUploadHeader> headerList = new ArrayList<>();
 					headerList.add(header);
 
 					updateHeader(headerList, true);
-
-					logger.info("Manual KnockOff Process is Initiated");
-
-					transactionManager.commit(txStatus);
 				} catch (Exception e) {
-					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
-
-					if (txStatus != null) {
-						transactionManager.rollback(txStatus);
-					}
-				} finally {
-					txStatus = null;
+					logger.error(Literal.EXCEPTION, e);
 				}
 
 				logger.info("Processed the File {}", header.getFileName());
@@ -286,93 +273,88 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void createReceipt(ManualKnockOffUpload fc, String entityCode) {
-		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+	private void createReceipt(ManualKnockOffUpload fc, FileUploadHeader header) {
+		fc.setBalanceAmount(fc.getReceiptAmount());
 
-		rud.setReference(fc.getReference());
-		rud.setFinID(fc.getReferenceID());
-		rud.setAllocationType(fc.getAllocationType());
+		FinanceType finType = finReceiptHeaderDAO.getRepayHierarchy(fc.getFinanceMain());
 
-		rud.setValueDate(fc.getAppDate());
-		rud.setRealizationDate(fc.getAppDate());
-		rud.setReceivedDate(fc.getAppDate());
-		rud.setReceiptAmount(fc.getReceiptAmount());
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode("E".equals(fc.getExcessType()) ? ReceiptMode.EXCESS : ReceiptMode.PAYABLE);
-		rud.setReceiptPurpose("SP");
-		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rud.setReceiptChannel(PennantConstants.List_Select);
-
-		List<UploadAlloctionDetail> list = new ArrayList<>();
-		for (ManualKnockOffUpload alloc : fc.getAllocations()) {
-			UploadAlloctionDetail uad = new UploadAlloctionDetail();
-
-			uad.setRootId(String.valueOf(alloc.getFeeId()));
-			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
-			uad.setReferenceCode(alloc.getCode());
-			uad.setStrPaidAmount(String.valueOf(alloc.getAmount()));
-			uad.setPaidAmount(alloc.getAmount());
-
-			list.add(uad);
+		if (finType == null) {
+			setFailureStatus(fc, "Loan Type is invalid.");
+			return;
 		}
 
-		rud.setListAllocationDetails(list);
+		fc.setFinType(finType);
+		prepareUserDetails(header, fc);
 
-		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
-
-		fsi.setReqType("Post");
-		fsi.setReceiptUpload(true);
-		fsi.setRequestSource(RequestSource.UPLOAD);
-		fsi.setLoggedInUser(fc.getUserDetails());
-		fsi.setKnockOffReceipt(true);
-
-		if (!"E".equals(fc.getExcessType()) && !"A".equals(fc.getExcessType())) {
-			fsi.setAdviseId(fc.getAdviseId());
+		List<FinServiceInstruction> fsiList = new ArrayList<>();
+		if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(fc.getExcessType())) {
+			fsiList.addAll(prepareRCDForExcess(header, fc));
 		}
 
-		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
-			fsi.setReceiptDetail(null);
-			fsi.setReceiptDetails(receiptService.prepareReceiptDetails(fc.getExcessList(), rud));
+		if (RepayConstants.EXAMOUNTTYPE_PAYABLE.equals(fc.getExcessType())) {
+			fsiList.addAll(prepareRCDForPayable(header, fc));
 		}
 
-		FinanceDetail fd = receiptService.receiptTransaction(fsi);
+		TransactionStatus txStatus = getTransactionStatus();
 
-		FinScheduleData schd = fd.getFinScheduleData();
-		if (!schd.getErrorDetails().isEmpty()) {
-			ErrorDetail error = schd.getErrorDetails().get(0);
-			fc.setProgress(EodConstants.PROGRESS_FAILED);
-			fc.setErrorCode(error.getCode());
-			fc.setErrorDesc(error.getError());
-		} else {
-			fc.setReceiptID(fd.getReceiptId());
-			fc.setProgress(EodConstants.PROGRESS_SUCCESS);
+		try {
+			for (FinServiceInstruction fsi : fsiList) {
+				FinanceDetail fd = receiptService.receiptTransaction(fsi);
+
+				FinScheduleData schd = fd.getFinScheduleData();
+				if (!schd.getErrorDetails().isEmpty()) {
+					if (txStatus != null) {
+						transactionManager.rollback(txStatus);
+					}
+
+					setFailureStatus(fc, schd.getErrorDetails().get(0));
+					return;
+				}
+			}
+
+			setSuccesStatus(fc);
+			transactionManager.commit(txStatus);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+
+			if (txStatus != null) {
+				transactionManager.rollback(txStatus);
+			}
+
+			setFailureStatus(fc, e.getMessage());
 		}
 	}
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
 
-			manualKnockOffUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+			headers.forEach(h1 -> {
+				h1.setRemarks(REJECT_DESC);
+				h1.getUploadDetails().addAll(manualKnockOffUploadDAO.getDetails(h1.getId()));
+			});
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
+			manualKnockOffUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
+
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
 		}
+	}
+
+	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.MANUAL_KNOCKOFF.name(), manualKnockOffUploadProcessRecord, this, "ManualKnockOff");
 	}
 
 	@Override
@@ -383,6 +365,207 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 	@Override
 	public ProcessRecord getProcessRecord() {
 		return manualKnockOffUploadProcessRecord;
+	}
+
+	@Override
+	public boolean isInProgress(Long headerID, Object... args) {
+		return manualKnockOffUploadDAO.isInProgress(headerID, (String) args[0]);
+	}
+
+	@Override
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
+		// Implemented for process record.
+	}
+
+	private BigDecimal getEmiAmount(List<ManualKnockOffUpload> allocations) {
+		BigDecimal emiAmount = BigDecimal.ZERO;
+		for (ManualKnockOffUpload detail : allocations) {
+			if (Allocation.EMI.equals(detail.getCode())) {
+				emiAmount = emiAmount.add(detail.getAmount());
+			}
+		}
+
+		return emiAmount;
+	}
+
+	private boolean isValidAlloc(List<ManualKnockOffUpload> allocations) {
+		BigDecimal emiAmount = getEmiAmount(allocations);
+
+		if (emiAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			return true;
+		}
+
+		for (ManualKnockOffUpload detail : allocations) {
+			String alloc = detail.getCode();
+			if (detail.getAmount().compareTo(BigDecimal.ZERO) > 0
+					&& (Allocation.PRI.equals(alloc) || Allocation.PFT.equals(alloc))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private List<FinServiceInstruction> prepareRCDForExcess(FileUploadHeader header, ManualKnockOffUpload fc) {
+		List<FinServiceInstruction> fsiList = new ArrayList<>();
+
+		List<FinExcessAmount> excessList = fc.getExcessList().stream()
+				.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
+				.collect(Collectors.toList());
+
+		for (FinExcessAmount fea : excessList) {
+			BigDecimal payableAmount = fea.getBalanceAmt();
+
+			if (fc.getBalanceAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+
+			if (payableAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			if (payableAmount.compareTo(fc.getBalanceAmount()) >= 0) {
+				payableAmount = fc.getBalanceAmount();
+				fc.setBalanceAmount(BigDecimal.ZERO);
+			} else {
+				fc.setBalanceAmount(fc.getBalanceAmount().subtract(payableAmount));
+			}
+
+			Date valueDate = receiptService.getExcessBasedValueDate(fc.getAppDate(), fea.getFinID(), fc.getAppDate(),
+					fea, FinServiceEvent.SCHDRPY);
+			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.EXCESS, valueDate);
+			fsi.setAdviseId(fea.getExcessID());
+			fsi.getReceiptDetail().setPayAgainstID(fea.getExcessID());
+			fsiList.add(fsi);
+		}
+
+		return fsiList;
+	}
+
+	private List<FinServiceInstruction> prepareRCDForPayable(FileUploadHeader header, ManualKnockOffUpload fc) {
+		List<FinServiceInstruction> fsiList = new ArrayList<>();
+
+		List<ManualAdvise> advises = fc.getAdvises().stream()
+				.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
+				.collect(Collectors.toList());
+
+		for (ManualAdvise ma : advises) {
+			BigDecimal payableAmount = ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()));
+
+			if (payableAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+
+			if (fc.getBalanceAmount().compareTo(BigDecimal.ZERO) <= 0) {
+				break;
+			}
+
+			if (payableAmount.compareTo(fc.getBalanceAmount()) >= 0) {
+				payableAmount = fc.getBalanceAmount();
+				fc.setBalanceAmount(BigDecimal.ZERO);
+			} else {
+				fc.setBalanceAmount(fc.getBalanceAmount().subtract(payableAmount));
+			}
+
+			FinServiceInstruction fsi = getFSI(header, fc, payableAmount, ReceiptMode.PAYABLE, ma.getValueDate());
+			fsi.setAdviseId(ma.getAdviseID());
+			fsi.getReceiptDetail().setPayAgainstID(ma.getAdviseID());
+			fsiList.add(fsi);
+		}
+
+		return fsiList;
+	}
+
+	private FinServiceInstruction getFSI(FileUploadHeader header, ManualKnockOffUpload fc, BigDecimal receiptAmount,
+			String receiptMode, Date valueDate) {
+		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+
+		rud.setReference(fc.getReference());
+		rud.setFinID(fc.getReferenceID());
+		rud.setAllocationType(fc.getAllocationType());
+		rud.setReceiptAmount(receiptAmount);
+		rud.setValueDate(valueDate);
+		rud.setRealizationDate(valueDate);
+		rud.setReceivedDate(valueDate);
+		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rud.setReceiptMode(receiptMode);
+		rud.setReceiptPurpose("SP");
+		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rud.setReceiptChannel(PennantConstants.List_Select);
+		rud.setLoggedInUser(fc.getUserDetails());
+
+		FinReceiptData frd = new FinReceiptData();
+		frd.setPresentment(false);
+		FinReceiptHeader frh = new FinReceiptHeader();
+		frh.setValueDate(valueDate);
+		frd.setReceiptHeader(frh);
+
+		String repayHierarchy = "";
+
+		try {
+			repayHierarchy = FinanceUtil.getRepayHierarchy(frd, fc.getFinanceMain(), fc.getFinType());
+		} catch (AppException e) {
+			setFailureStatus(fc, e.getMessage());
+			return new FinServiceInstruction();
+		}
+
+		rud.setListAllocationDetails(prepareAllocations(fc, receiptAmount, repayHierarchy));
+
+		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, header.getEntityCode());
+		fsi.setReqType("Post");
+		fsi.setReceiptUpload(true);
+		fsi.setRequestSource(RequestSource.UPLOAD);
+		fsi.setKnockOffReceipt(true);
+		fsi.setUploadAllocationDetails(rud.getListAllocationDetails());
+		fsi.setKnockoffType(KnockOffType.MANUAL.code());
+
+		return fsi;
+	}
+
+	private List<UploadAlloctionDetail> prepareAllocations(ManualKnockOffUpload fc, BigDecimal receiptAmount,
+			String repayHierarchy) {
+		List<UploadAlloctionDetail> list = new ArrayList<>();
+
+		String[] relHierarchy = repayHierarchy.split("\\|");
+
+		for (String rh : relHierarchy) {
+			String[] hier = rh.split(",");
+			for (String hi : hier) {
+
+				if (receiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
+				}
+
+				for (ManualKnockOffUpload alloc : fc.getAllocations()) {
+					if (receiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
+						break;
+					}
+
+					String allocType = Allocation.getCode(alloc.getCode());
+					if (hi.equals(allocType)) {
+						UploadAlloctionDetail uad = new UploadAlloctionDetail();
+						uad.setAllocationType(allocType);
+						uad.setReferenceCode(alloc.getCode());
+
+						BigDecimal paidAmount = receiptAmount;
+						if (receiptAmount.compareTo(alloc.getBalanceAmount()) > 0) {
+							paidAmount = alloc.getBalanceAmount();
+						}
+
+						receiptAmount = receiptAmount.subtract(paidAmount);
+						alloc.setBalanceAmount(alloc.getBalanceAmount().subtract(paidAmount));
+
+						uad.setStrPaidAmount(String.valueOf(paidAmount));
+						uad.setPaidAmount(paidAmount);
+
+						list.add(uad);
+						continue;
+					}
+				}
+			}
+		}
+
+		return list;
 	}
 
 	@Autowired
@@ -421,4 +604,8 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
 }

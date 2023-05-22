@@ -223,7 +223,7 @@ public class BranchCashLimitListCtrl extends GFCBaseListCtrl<BranchCashLimit> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where BranchCode = ?");
 
 		if (doCheckAuthority(branchcashlimit, whereCond.toString(), new Object[] { branchcashlimit.getBranchCode() })) {

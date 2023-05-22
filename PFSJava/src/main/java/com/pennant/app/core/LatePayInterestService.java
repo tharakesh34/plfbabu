@@ -43,8 +43,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinOverDueCharges;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -53,6 +54,7 @@ import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LatePayInterestService extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LatePayInterestService.class);
@@ -167,13 +169,13 @@ public class LatePayInterestService extends ServiceHelper {
 					profitDaysBasis, penaltyRate);
 			penalty = CalculationUtil.roundAmount(penalty, roundingMode, roundingTarget);
 
-			odcrNext.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
+			odcrNext.setODDays(DateUtil.getDaysBetween(dateCur, dateNext));
 			odcrNext.setPenaltyAmtPerc(penaltyRate);
 			odcrNext.setPenalty(penalty);
 			odcrNext.setPenaltyBal(
 					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid().subtract(odcrCur.getWaivedAmt())));
 
-			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
+			odcrCur.setODDays(DateUtil.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
 			odcrCur.setPenalty(penalty);
 			odcrCur.setPenaltyBal(
@@ -239,7 +241,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 				for (FinOverDueCharges odc : odcList) {
 					Date postDate = odc.getPostDate();
-					dueDays = DateUtility.getDaysBetween(postDate, monthEndDate);
+					dueDays = DateUtil.getDaysBetween(postDate, monthEndDate);
 					if (postDate.compareTo(monthEndDate) < 0) {
 						prvMnthLPIAmt = prvMnthLPIAmt.add(odc.getAmount());
 					} else if (postDate.compareTo(monthEndDate) == 0) {
@@ -279,7 +281,7 @@ public class LatePayInterestService extends ServiceHelper {
 		odc.setOdPri(od.getFinCurODPri());
 		odc.setOdPft(od.getFinCurODPft());
 		odc.setFinOdTillDate(od.getFinODTillDate());
-		odc.setDueDays(DateUtility.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
+		odc.setDueDays(DateUtil.getDaysBetween(od.getFinODSchdDate(), od.getFinODTillDate()));
 		odc.setChargeType(RepayConstants.FEE_TYPE_LPI);
 
 		return odc;

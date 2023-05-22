@@ -40,7 +40,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -49,21 +48,23 @@ import com.pennant.backend.dao.amtmasters.ExpenseTypeDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.amtmasters.ExpenseType;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -264,6 +265,11 @@ public class ProjectedAmortizationService {
 				nextSchd = curSchd;
 			} else {
 				nextSchd = schedules.get(i + 1);
+			}
+
+			if (!curSchd.isRepayOnSchDate()) {
+				i++;
+				continue;
 			}
 
 			prvSchdDate = prvSchd.getSchDate();
@@ -849,13 +855,16 @@ public class ProjectedAmortizationService {
 		this.projectedAmortizationDAO.saveBatchProjIncomeAMZ(calProjIncomeAMZList);
 
 		// Post Accounting
-		Long accountingSetId = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.INDAS,
+		Long accountingSetId = AccountingEngine.getAccountSetID(fm, AccountingEvent.INDAS,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.INDAS);
 
-		aeEvent.getAcSetIDList().add(accountingSetId);
+		if (accountingSetId != null && accountingSetId > 0) {
+			aeEvent.getAcSetIDList().add(accountingSetId);
+		}
+
 		Date appDate = SysParamUtil.getAppDate();
 		aeEvent.setValueDate(appDate);
 		aeEvent.setPostDate(appDate);
@@ -886,6 +895,7 @@ public class ProjectedAmortizationService {
 			for (FeeType feeType : feeTypes) {
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ", BigDecimal.ZERO);
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ_N", BigDecimal.ZERO);
+				dataMap.put(feeType.getFeeTypeCode() + "_AMZ_BAL", BigDecimal.ZERO);
 			}
 
 			dataMap.put("MBD_AMZ", BigDecimal.ZERO);
@@ -899,8 +909,30 @@ public class ProjectedAmortizationService {
 			aeEvent.setFinReference(amz.getFinReference());
 			aeEvent.setEntityCode(amz.getEntityCode());
 			aeEvent.setFinType(amz.getFinType());
-			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());// Current Month Amortized Amount
-			dataMap.put(amz.getFeeTypeCode() + "_AMZ_N", amz.getAmortizedAmount());// Till Date Amortized Amount
+			if (!fm.isFinIsActive()) {
+				BigDecimal amzTillClosure = BigDecimal.ZERO;
+				Date monthStart = DateUtil.getMonthStart(finEODEvent.getEventFromDate());
+				Date maturityDate = profitDetailsDAO.getMaturityDate(fm.getFinID(), finEODEvent.getAppDate());
+
+				int daysTillClosure = DateUtil.getDaysBetween(monthStart, fm.getClosedDate());
+				int remDaysTillMaturity = DateUtil.getDaysBetween(monthStart, maturityDate);
+
+				if (daysTillClosure > 0) {
+					BigDecimal feePerDay = amz.getCurMonthAmz().divide(new BigDecimal(remDaysTillMaturity), 0,
+							RoundingMode.HALF_DOWN);
+					amzTillClosure = feePerDay.multiply(new BigDecimal(daysTillClosure));
+				}
+
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ", amzTillClosure);
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ_BAL", (amz.getCurMonthAmz().subtract(amzTillClosure)));
+
+			} else {
+				/* Current Month Amortized Amount */
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());
+				/* Till Date Amortized Amount */
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ_N", amz.getAmortizedAmount());
+				dataMap.put(amz.getFeeTypeCode() + "_AMZ_BAL", BigDecimal.ZERO);
+			}
 
 			aeEvent.setDataMap(dataMap);
 
@@ -921,7 +953,7 @@ public class ProjectedAmortizationService {
 		List<ProjectedAmortization> projIncomeAMZList = new ArrayList<ProjectedAmortization>(1);
 
 		List<ProjectedAmortization> finIncomeAMZList = finEODEvent.getIncomeAMZList();
-		Date curMonthEnd = DateUtility.getMonthEnd(finEODEvent.getEventFromDate());
+		Date curMonthEnd = DateUtil.getMonthEnd(finEODEvent.getEventFromDate());
 
 		for (ProjectedAmortization incomeAMZ : finIncomeAMZList) {
 			// TODO : Avoid Write Off loans from 2nd month onwards, Same is handled in Preparation

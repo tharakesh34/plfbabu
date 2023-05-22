@@ -62,7 +62,7 @@ public class LimitUtilization implements Serializable {
 	}
 
 	public LimitUtilization() {
-
+	    super();
 	}
 
 	public String getReferenceNum() {

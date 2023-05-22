@@ -1,6 +1,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,7 +16,6 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SessionUserDetails;
@@ -75,6 +75,8 @@ public class FinanceDataDefaulting {
 		// Get the logged in users one time and set to avoid multiple calls
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		fm.setUserDetails(userDetails);
+		fm.setCreatedBy(userDetails.getUserId());
+		fm.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 
 		if (!PennantConstants.VLD_CRT_SCHD.equals(vldGroup) || StringUtils.isNotEmpty(fm.getCustCIF())) {
 			if (StringUtils.isNotBlank(coreBankId)) {
@@ -784,7 +786,7 @@ public class FinanceDataDefaulting {
 				Date rvwDate = FrequencyUtil
 						.getNextDate(fm.getGrcPftRvwFrq(), 1, finStartDate, HolidayHandlerTypes.MOVE_NONE, false)
 						.getNextFrequencyDate();
-				rvwDate = DateUtility.getDBDate(DateUtility.format(rvwDate, PennantConstants.DBDateFormat));
+				rvwDate = DateUtil.getDatePart(rvwDate);
 
 				if (fm.getCalGrcEndDate() != null && rvwDate != null) {
 					if (fm.getCalGrcEndDate().compareTo(rvwDate) < 0) {
@@ -1055,6 +1057,7 @@ public class FinanceDataDefaulting {
 			opr.setODAllowWaiver(finType.isODAllowWaiver());
 			opr.setODMaxWaiverPerc(finType.getODMaxWaiverPerc());
 			opr.setODRuleCode(finType.getODRuleCode());
+			opr.setOdMinAmount(finType.getOdMinAmount());
 
 			schdData.setFinODPenaltyRate(opr);
 
@@ -1137,7 +1140,7 @@ public class FinanceDataDefaulting {
 
 		if (StringUtils.isNotBlank(frq)) {
 			if (!StringUtils.startsWith(frq, FrequencyCodeTypes.FRQ_DAILY)) {
-				String frqDay = String.valueOf(DateUtility.getDay(frqDate));
+				String frqDay = String.valueOf(DateUtil.getDay(frqDate));
 				frqDay = StringUtils.leftPad(frqDay, 2, "0");
 				frq = new StringBuilder(5).append(frq.substring(0, 3)).append(frqDay).toString();
 			}
@@ -1295,7 +1298,7 @@ public class FinanceDataDefaulting {
 			Mandate mandate = fd.getMandate();
 			mandate.setStartDate(mandate.getStartDate() == null ? fm.getFinStartDate() : mandate.getStartDate());
 			if (!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
-				mandate.setExpiryDate(DateUtility.addDays(fm.getMaturityDate(), 1));
+				mandate.setExpiryDate(DateUtil.addDays(fm.getMaturityDate(), 1));
 			}
 
 		}

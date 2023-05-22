@@ -16,22 +16,27 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements ChequeUploadDAO {
 
+	public ChequeUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<ChequeUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select ID, HeaderId, ChequeDetailsId");
+		StringBuilder sql = new StringBuilder("Select ID, HeaderId, RecordSeq, ChequeDetailsId");
 		sql.append(", ChequeHeaderId, BankBranchId, FinID, FinReference, AccountNo, ChequeSerialNo, ChequeDate");
 		sql.append(", EmiRefNo, Amount, ChequeCcy,Active, DocumentName, DocumentRef, ChequeType, ChequeStatus");
-		sql.append(", AccountType, AccHolderName, Action, IfscCode, Micr, Progress, Status, ErrorCode, ErrorDesc");
+		sql.append(", AccountType, AccHolderName, Action, Ifsc, Micr, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From CHEQUES_UPLOAD");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			ChequeUpload pdc = new ChequeUpload();
 
 			pdc.setId(rs.getLong("ID"));
 			pdc.setHeaderId(rs.getLong("HeaderId"));
+			pdc.setRecordSeq(rs.getLong("RecordSeq"));
 			pdc.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			pdc.setReference(rs.getString("FinReference"));
 
@@ -53,7 +58,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 			cd.setChequeStatus(rs.getString("ChequeStatus"));
 			cd.setAccountType(rs.getString("AccountType"));
 			cd.setAccHolderName(rs.getString("AccHolderName"));
-			cd.setIfsc(rs.getString("IfscCode"));
+			cd.setIfsc(rs.getString("Ifsc"));
 			cd.setMicr(rs.getString("Micr"));
 
 			pdc.setChequeDetail(cd);
@@ -65,7 +70,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 			pdc.setErrorDesc(rs.getString("ErrorDesc"));
 
 			return pdc;
-		});
+		}, headerID, "S");
 
 	}
 
@@ -99,7 +104,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update CHEQUES_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderId = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -112,8 +117,8 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 
@@ -132,7 +137,7 @@ public class ChequeUploadDAOImpl extends SequenceDao<ChequeUpload> implements Ch
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" cu.ACTION, cu.CHEQUETYPE, cu.FINREFERENCE");
 		sql.append(", cu.CHEQUESERIALNO, cu.ACCOUNTTYPE, cu.ACCHOLDERNAME, cu.ACCOUNTNO");
-		sql.append(",cu.IFSCCODE, cu.MICR, cu.AMOUNT,cu.ID, cu.CHEQUEDETAILSID");
+		sql.append(",cu.IFSC, cu.MICR, cu.AMOUNT,cu.ID, cu.CHEQUEDETAILSID");
 		sql.append(", uh.APPROVEDON, uh.CREATEDON, cu.STATUS, cu.ERRORCODE, cu.ERRORDESC");
 		sql.append(" ,uh.CREATEDBY,uh.APPROVEDBY,cu.CHEQUEDATE");
 		sql.append(" From CHEQUES_UPLOAD cu");

@@ -44,14 +44,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class StatusMovementService extends ServiceHelper {
-
-	private static final long serialVersionUID = 4165353615228874397L;
 	private static Logger logger = LogManager.getLogger(StatusMovementService.class);
 
 	static final String NORM_PD = "select * from FinPftDetails where CurODDays=1 and PrvODDate = ? and  CustId = ?";
@@ -87,7 +86,7 @@ public class StatusMovementService extends ServiceHelper {
 
 		try {
 			statement = connection.prepareStatement(sql);
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
+			statement.setDate(1, JdbcUtil.getDate(DateUtil.getDatePart(valueDate)));
 			resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
@@ -126,7 +125,7 @@ public class StatusMovementService extends ServiceHelper {
 
 		try {
 			statement = connection.prepareStatement(sql);
-			statement.setDate(1, DateUtility.getDBDate(valueDate.toString()));
+			statement.setDate(1, JdbcUtil.getDate(DateUtil.getDatePart(valueDate)));
 			statement.setLong(2, custId);
 			resultSet = statement.executeQuery();
 
@@ -168,7 +167,7 @@ public class StatusMovementService extends ServiceHelper {
 		aeEvent.setAccountingEvent(event);
 		aeEvent.setBranch(resultSet.getString("FinBranch"));
 		aeEvent.setCcy(resultSet.getString("FinCcy"));
-		aeEvent.setPostDate(DateUtility.getSysDate());
+		aeEvent.setPostDate(DateUtil.getSysDate());
 		aeEvent.setPostDate(valueDate);
 		aeEvent.setSchdDate(resultSet.getDate("NextRpySchDate"));
 		aeEvent.setCustID(resultSet.getLong("CustID"));

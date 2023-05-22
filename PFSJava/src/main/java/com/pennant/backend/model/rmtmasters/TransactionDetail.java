@@ -44,7 +44,7 @@ public class TransactionDetail implements Serializable {
 	private String glCode;
 
 	public TransactionDetail() {
-
+	    super();
 	}
 
 	// ******************************************************//

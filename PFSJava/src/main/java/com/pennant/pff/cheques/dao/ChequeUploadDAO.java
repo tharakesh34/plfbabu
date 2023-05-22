@@ -9,7 +9,7 @@ public interface ChequeUploadDAO {
 
 	void update(List<ChequeUpload> detailsList);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 }

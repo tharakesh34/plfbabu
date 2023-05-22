@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.WrongValueException;
@@ -66,7 +64,6 @@ import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
@@ -80,7 +77,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.UploadHandler;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.util.ExcelUtil;
@@ -93,8 +90,8 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.file.UploadContants.Status;
+import com.pennanttech.pff.file.UploadStatus;
 import com.pennanttech.pff.file.UploadTypes;
 
 public class FileUploadList extends Window implements Serializable {
@@ -243,7 +240,6 @@ public class FileUploadList extends Window implements Serializable {
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Progress"), FLEX_MIN));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label.RecordStatus"), FLEX_MIN));
 		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_Download"), FLEX_MIN));
-		listhead.appendChild(getHFlexListHeader(Labels.getLabel("label_VIEW"), FLEX_MIN));
 
 		box.appendChild(listhead);
 
@@ -478,6 +474,7 @@ public class FileUploadList extends Window implements Serializable {
 			String name = media.getName();
 
 			this.fileUploadHeader.setMedia(media);
+			this.fileUploadHeader.setFile(new File(media.getName()));
 			this.uploadFileName.setText(name);
 			this.fileUploadHeader.setFileName(name);
 		});
@@ -630,6 +627,10 @@ public class FileUploadList extends Window implements Serializable {
 			this.entityCode.setValue("", "");
 		}
 
+		if (StringUtils.isNotBlank(this.entityCode.getValue())) {
+			Clients.clearWrongValue(entityCode);
+		}
+
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -638,65 +639,21 @@ public class FileUploadList extends Window implements Serializable {
 
 		this.entityCode.clearErrorMessage();
 
-		DataEngineStatus status = new DataEngineStatus();
-		status.setName(this.type.name().concat("_UPLOAD"));
-		status.setFileName(this.fileUploadHeader.getFileName());
-
-		this.fileUploadHeader.setDeStatus(status);
 		this.fileUploadHeader.setEntityCode(this.entityCode.getValue());
-
-		ProcessDTO processDTO = new ProcessDTO();
-
-		processDTO.setHeader(this.fileUploadHeader);
-		processDTO.setDataSource(this.dataSource);
-		processDTO.setService(this.uploadService);
-		processDTO.setUserID(this.userId);
 
 		doWriteComponentsToBean(this.fileUploadHeader);
 
-		DataEngineImport engine = prepareDataEngine(status, processDTO);
+		UploadHandler dataEngine = new UploadHandler(type.name().concat("_UPLOAD"), this.dataSource);
 
 		try {
-			engine.checkFileSanity(status.getName());
-		} catch (AppException e) {
+			dataEngine.importFile(this.fileUploadHeader);
+		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
-			return;
 		}
-
-		try {
-			new Process(engine, processDTO).run();
-		} catch (AppException e) {
-			MessageUtil.showError(e.getMessage());
-			return;
-		}
-
-		logger.info("Waiting for Data Engine Response...");
-		do {
-			//
-		} while (this.fileUploadHeader.getId() <= 0 && this.fileUploadHeader.getExecutionID() <= Long.MIN_VALUE);
-
-		logger.info("Received Data Engine Response...");
 
 		doSearch(true);
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private DataEngineImport prepareDataEngine(DataEngineStatus status, ProcessDTO processDTO) {
-		FileUploadHeader uploadHeader = processDTO.getHeader();
-		Date appDate = uploadHeader.getAppDate();
-		DataEngineImport engine = new DataEngineImport(processDTO.getDataSource(), processDTO.getUserID(),
-				App.DATABASE.name(), true, appDate);
-
-		engine.setExecutionStatus(status);
-		engine.setFile(uploadHeader.getFile());
-		engine.setMedia(uploadHeader.getMedia());
-		engine.setValueDate(appDate);
-
-		if (processDTO.getService().getProcessRecord() != null) {
-			engine.setProcessRecord(processDTO.getService().getProcessRecord());
-		}
-		return engine;
 	}
 
 	private void search(boolean isApprove) {
@@ -706,6 +663,7 @@ public class FileUploadList extends Window implements Serializable {
 		if (!"M".equals(this.stage) && !list.isEmpty()) {
 			this.checkBoxComp.setDisabled(false);
 		}
+
 		listbox.clearSelection();
 
 		list.forEach(h1 -> {
@@ -714,7 +672,6 @@ public class FileUploadList extends Window implements Serializable {
 		});
 
 		listWrapper.initList(list, listbox, paging);
-
 	}
 
 	private void doSearch(boolean upload) {
@@ -945,7 +902,7 @@ public class FileUploadList extends Window implements Serializable {
 	private void onClickSearch() {
 		if (this.fromDate.getValue() != null) {
 			this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_ToDate.value"), false,
-					DateUtil.addDays(this.fromDate.getValue(), -1), null, true));
+					this.fromDate.getValue(), null, true));
 			try {
 				this.toDate.getValue();
 			} catch (WrongValueException e) {
@@ -958,6 +915,10 @@ public class FileUploadList extends Window implements Serializable {
 
 	private void uploadRefresh() {
 		headerRefresh();
+
+		this.fileUploadHeader.setMedia(null);
+		this.fileUploadHeader.setFileName(null);
+		this.fileUploadHeader.setFile(null);
 
 		if (!this.entityCode.isReadonly()) {
 			this.entityCode.clearErrorMessage();
@@ -1027,11 +988,7 @@ public class FileUploadList extends Window implements Serializable {
 
 	private void headerRefresh() {
 		this.fileUploadHeader.setId(Long.MIN_VALUE);
-		this.fileUploadHeader.setFileName(null);
-		this.fileUploadHeader.setFile(null);
-		this.fileUploadHeader.setMedia(null);
-		this.fileUploadHeader.setDeStatus(new DataEngineStatus());
-		this.fileUploadHeader.setExecutionID(Long.MIN_VALUE);
+
 		this.fileUploadHeader.setTotalRecords(0);
 		this.fileUploadHeader.setSuccessRecords(0);
 		this.fileUploadHeader.setFailureRecords(0);
@@ -1055,6 +1012,12 @@ public class FileUploadList extends Window implements Serializable {
 			MessageUtil.showError(
 					Labels.getLabel("DOWNLOAD_MANDATORY", new Object[] { "Upload ID : (" + uploadIDs + ")" }));
 			return;
+		}
+
+		for (FileUploadHeader header : selectedHeaders) {
+			header.setLastMntBy(this.userId);
+			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			header.setProgress(UploadStatus.REJECTED.status());
 		}
 
 		uploadService.doReject(selectedHeaders);
@@ -1081,13 +1044,13 @@ public class FileUploadList extends Window implements Serializable {
 		for (FileUploadHeader header : selectedHeaders) {
 			header.setLastMntBy(this.userId);
 			header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			uploadService.updateInProcessStatus(header.getId(), Status.IN_PROCESS.getValue());
+			header.setApprovedBy(this.userId);
+			header.setApprovedOn(new Timestamp(System.currentTimeMillis()));
+			header.setProgress(UploadStatus.APPROVE.status());
+			uploadService.update(header);
+
 			headers.add(header);
 		}
-
-		headers = headers.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId()))
-				.collect(Collectors.toList());
-		uploadService.doApprove(headers);
 
 		search(true);
 		logger.debug(Literal.LEAVING);
@@ -1271,10 +1234,6 @@ public class FileUploadList extends Window implements Serializable {
 		return toolBar;
 	}
 
-	private void removeSpace(ExtendedCombobox extendedCombobox) {
-		extendedCombobox.removeChild(extendedCombobox.getFirstChild());
-	}
-
 	private Listbox getOperators(Integer... operaotors) {
 		Listbox box = new Listbox();
 		box.setModel(SearchOperators.getOperators(operaotors));
@@ -1315,7 +1274,6 @@ public class FileUploadList extends Window implements Serializable {
 		buttons.add("REFRESH");
 		buttons.add(Labels.getLabel("label_Download"));
 		buttons.add(Labels.getLabel("btnBrowse.label"));
-		buttons.add(Labels.getLabel("label_View"));
 
 		return JdbcUtil.getInCondition(buttons);
 	}
@@ -1328,6 +1286,7 @@ public class FileUploadList extends Window implements Serializable {
 			long id = uph.getId();
 
 			if (id <= 0) {
+				fileName.setValue("", "");
 				return;
 			}
 
@@ -1370,24 +1329,7 @@ public class FileUploadList extends Window implements Serializable {
 			lc = new Listcell(String.valueOf(uph.getFailureRecords()));
 			lc.setParent(item);
 
-			switch (Status.value(uph.getProgress())) {
-			case IMPORTED:
-				lc = new Listcell("Import");
-				break;
-			case IMPORT_IN_PROCESS:
-				lc = new Listcell("In Progress..");
-				break;
-			case IMPORT_FAILED:
-				lc = new Listcell("Failed");
-				break;
-			case DOWNLOADED:
-				lc = new Listcell("Downloaded");
-				break;
-			default:
-				lc = new Listcell("");
-				break;
-			}
-
+			lc = new Listcell(UploadStatus.valueOf(uph.getProgress()).name());
 			lc.setParent(item);
 
 			lc = new Listcell(uph.getRecordStatus());
@@ -1395,26 +1337,11 @@ public class FileUploadList extends Window implements Serializable {
 
 			Button dowButton = getButton(Labels.getLabel("label_Download"), String.valueOf(id));
 			dowButton.addEventListener(Events.ON_CLICK, event -> onClickDownload(uph));
-			dowButton.setDisabled(true);
+			dowButton.setDisabled(false);
 
 			lc = new Listcell();
 			lc.appendChild(dowButton);
 			lc.setParent(item);
-
-			Button viewButton = getButton(Labels.getLabel("label_Exceptions"), String.valueOf(id));
-			viewButton.addEventListener(Events.ON_CLICK, event -> onClickView(uph));
-			viewButton.setDisabled(true);
-
-			lc = new Listcell();
-			lc.appendChild(viewButton);
-			lc.setParent(item);
-
-			DataEngineStatus deStatus = uploadService.getDEStatus(uph.getExecutionID());
-
-			if (deStatus != null) {
-				dowButton.setDisabled(!((int) deStatus.getSuccessRecords() > 0));
-				viewButton.setDisabled(!((int) deStatus.getFailedRecords() > 0));
-			}
 
 			uph.setDownloadReq(!dowButton.isDisabled());
 
@@ -1454,154 +1381,16 @@ public class FileUploadList extends Window implements Serializable {
 		}
 
 		private void onClickDownload(FileUploadHeader fuph) {
-			String name = fuph.getType().concat("_DOWNLOAD");
-			fileDownload(name, fuph);
-		}
-
-		private void onClickView(FileUploadHeader uph) {
-			Map<String, Object> map = new HashMap<>();
-
-			map.put("List", uph.getDataEngineLog());
-			map.put("preview", false);
-			map.put("BatchId", uph.getExecutionID());
 			try {
-				Executions.createComponents("~./data-engine/pages/ExceptionLog.zul", null, map);
-			} catch (final Exception e) {
-				e.getMessage();
+				new UploadHandler().downloadFile(fuph);
+			} catch (AppException e) {
+				MessageUtil.showError(e.getMessage());
+			}
+
+			if ("A".equals(fuph.getStage())) {
+				uploadService.updateDownloadStatus(fuph.getId(), UploadStatus.DOWNLOADED.status());
 			}
 		}
+
 	}
-
-	private class ProcessDTO implements Serializable {
-		private static final long serialVersionUID = -341504661579686922L;
-
-		private FileUploadHeader header;
-		private transient UploadService service;
-		private transient DataSource dataSource;
-		private long userID;
-
-		public ProcessDTO() {
-			super();
-		}
-
-		public FileUploadHeader getHeader() {
-			return header;
-		}
-
-		public void setHeader(FileUploadHeader header) {
-			this.header = header;
-		}
-
-		public UploadService getService() {
-			return service;
-		}
-
-		public void setService(UploadService service) {
-			this.service = service;
-		}
-
-		public DataSource getDataSource() {
-			return dataSource;
-		}
-
-		public void setDataSource(DataSource dataSource) {
-			this.dataSource = dataSource;
-		}
-
-		public long getUserID() {
-			return userID;
-		}
-
-		public void setUserID(long userID) {
-			this.userID = userID;
-		}
-	}
-
-	private class Process implements Runnable {
-		private ProcessDTO processDTO;
-		private DataEngineImport engine;
-
-		public Process(DataEngineImport engine, ProcessDTO processDTO) {
-			this.engine = engine;
-			this.processDTO = processDTO;
-		}
-
-		@Override
-		public void run() {
-			FileUploadHeader uploadHeader = this.processDTO.getHeader();
-			Date appDate = uploadHeader.getAppDate();
-
-			uploadHeader.setId(this.processDTO.getService().saveHeader(uploadHeader, TableType.MAIN_TAB));
-			uploadHeader.setAppDate(appDate == null ? SysParamUtil.getAppDate() : appDate);
-
-			Map<String, Object> parameterMap = new HashMap<>();
-			parameterMap.put("HEADER_ID", uploadHeader.getId());
-			parameterMap.put("FILE_UPLOAD_HEADER", uploadHeader);
-			engine.setParameterMap(parameterMap);
-
-			DataEngineStatus status = uploadHeader.getDeStatus();
-
-			if (this.processDTO.getService().getValidateRecord() != null) {
-				engine.setValidateRecord(this.processDTO.getService().getValidateRecord());
-			}
-
-			try {
-				engine.importData(status.getName());
-
-				DataEngineStatus latestStatus = engine.getLatestExecution(status.getName());
-				status.setDataEngineLogList(latestStatus.getDataEngineLogList());
-
-				if ("F".equals(status.getStatus())) {
-
-					if (status.getRemarks().isEmpty()) {
-						status.setRemarks("Seems Upload file doesn't contain any data");
-					}
-
-					update(uploadHeader, status);
-					throw new AppException(status.getRemarks());
-				}
-
-			} catch (Exception e) {
-				status.setRemarks(e.getMessage());
-				update(uploadHeader, status);
-				throw new AppException(e.getMessage());
-			}
-
-			String deStatus = status.getStatus();
-
-			do {
-				update(uploadHeader, status);
-				if ("S".equals(deStatus) || "F".equals(deStatus)) {
-					break;
-				}
-			} while ("S".equals(deStatus) || "F".equals(deStatus));
-		}
-
-		private void update(FileUploadHeader uploadHeader, DataEngineStatus status) {
-			int totalRecords = (int) status.getTotalRecords();
-			int successRecords = (int) status.getSuccessRecords();
-			int failedRecords = (int) status.getFailedRecords();
-
-			uploadHeader.setTotalRecords(totalRecords);
-			uploadHeader.setSuccessRecords(successRecords);
-			uploadHeader.setFailureRecords(failedRecords);
-
-			if ("S".equals(status.getStatus())) {
-				uploadHeader.setProgress(Status.IMPORTED.getValue());
-			} else {
-				uploadHeader.setProgress(Status.IMPORT_FAILED.getValue());
-			}
-
-			uploadHeader.setRemarks(status.getRemarks());
-			uploadHeader.setExecutionID(status.getId());
-			uploadHeader.setDataEngineLog(status.getDataEngineLogList());
-
-			if (status.getId() <= 0) {
-				uploadHeader.setExecutionID(0);
-			}
-
-			this.processDTO.getService().update(uploadHeader);
-		}
-	}
-
 }

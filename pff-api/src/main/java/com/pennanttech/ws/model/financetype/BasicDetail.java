@@ -21,7 +21,7 @@ public class BasicDetail implements Serializable {
 	private static final long serialVersionUID = -3980105614314704735L;
 
 	public BasicDetail() {
-
+	    super();
 	}
 
 	private String finCcy;

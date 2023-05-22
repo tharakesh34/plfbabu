@@ -8,16 +8,16 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class BlacklistCustomerListModelItemRenderer implements ListitemRenderer<BlackListCustomers>, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public BlacklistCustomerListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class BlacklistCustomerListModelItemRenderer implements ListitemRenderer<
 		Listcell lc;
 		lc = new Listcell(blacklistCustomer.getCustCIF());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(blacklistCustomer.getCustDOB()));
+		lc = new Listcell(DateUtil.formatToLongDate(blacklistCustomer.getCustDOB()));
 		lc.setParent(item);
 
 		if (StringUtils.isEmpty(blacklistCustomer.getCustCompName())) {

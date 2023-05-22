@@ -123,7 +123,6 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 		onChangeInstrumentType();
 
 		logger.debug(Literal.LEAVING);
-
 	}
 
 	private void onChangeInstrumentType() {
@@ -367,6 +366,7 @@ public class PresentmentExcludeCodeDialogCtrl extends GFCBaseCtrl<PresentmentExc
 
 		doWriteBeanToComponents(aBounceCode);
 		setDialog(DialogType.EMBEDDED);
+		onChangeInstrumentType();
 
 		logger.debug(Literal.LEAVING);
 	}

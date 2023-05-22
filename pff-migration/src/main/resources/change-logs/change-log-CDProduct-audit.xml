@@ -546,5 +546,47 @@
 		<addPrimaryKey tableName="AdtTransactionMapping" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
 			constraintName="PK_TransactionMapping" />
 	</changeSet>
+	
+	<changeSet id="PSD#212388_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'adtcd_products');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212388" author="Gireesh.G">
+		<modifyDataType tableName="ADTCD_PRODUCTS" columnName="MODELID" newDataType="varchar(20)" />
+	</changeSet>
 
+	<changeSet id="PSD#212388.1_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'adtcd_products');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#213586_pre" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'adtcd_products');
+			]]>
+		</sql>
+	</changeSet>
+	 
+	 
+	 <changeSet id="PSD#213586" author="Poojitha.M">
+		<modifyDataType tableName="ADTCD_PRODUCTS" columnName="MODELDESCRIPTION" newDataType="varchar(50)" />
+		<modifyDataType tableName="ADTCD_PRODUCTS" columnName="ASSETDESCRIPTION" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="PSD#213586_post" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'adtcd_products');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

@@ -39,13 +39,13 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
@@ -137,7 +137,7 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.mobileNo.setValue(PennantApplicationUtil.amountFormate(
 					customerFinanceDetail.getFinAmount().add(customerFinanceDetail.getFeeChargeAmt()),
 					CurrencyUtil.getFormat(customerFinanceDetail.getFinCcy())));
-			this.emailID.setValue(DateUtility.formatToLongDate(customerFinanceDetail.getFinStartDate()));
+			this.emailID.setValue(DateUtil.formatToLongDate(customerFinanceDetail.getFinStartDate()));
 		} else {
 			this.row1.setVisible(false);
 			this.row2.setVisible(false);
@@ -169,14 +169,14 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			String date = "";
 			if (detailsLog.getLogTime() != null) {
-				date = DateUtility.formatToLongDate(detailsLog.getLogTime());
+				date = DateUtil.formatToLongDate(detailsLog.getLogTime());
 			}
 			lc = new Listcell(date);
 			lc.setParent(item);
 
 			String logTime = "";
 			if (detailsLog.getLogTime() != null) {
-				logTime = DateUtility.format(detailsLog.getLogTime(), DateUtility.DateFormat.LONG_TIME.getPattern());
+				logTime = DateUtil.format(detailsLog.getLogTime(), DateUtil.DateFormat.LONG_TIME.getPattern());
 			}
 			lc = new Listcell(logTime);
 			lc.setParent(item);

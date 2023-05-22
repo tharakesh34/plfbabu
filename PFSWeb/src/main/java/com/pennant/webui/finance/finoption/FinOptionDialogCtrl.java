@@ -43,7 +43,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -82,7 +81,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.staticlist.AppStaticList;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private static final long serialVersionUID = 8661799804403963415L;
@@ -112,7 +111,6 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private boolean newCustomer;
 	private boolean fromLoan;
 	private boolean isFinanceProcess = false;
-	private FinOption finOption;
 	private String moduleDefiner;
 
 	protected Tabs finOptionTabs;
@@ -903,7 +901,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 									"The number of roles should not exceed more than 5.");
 						}
 
-						StringBuffer data = new StringBuffer();
+						StringBuilder data = new StringBuilder();
 						for (String role : roles.keySet()) {
 							if (data.length() > 0) {
 								data.append(",");
@@ -1133,8 +1131,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				String receivableDateLabel = Labels.getLabel("label_FinOptionDialog_CurrentOptionDate.value");
 				if (selectedOptionDate == null) {
 					currentOption.setConstraint(new PTDateValidator(receivableDateLabel, true));
-				} else if (DateUtility.compare(selectedOptionDate, appDate) < 0
-						|| DateUtility.compare(selectedOptionDate, maturityDate) > 0) {
+				} else if (DateUtil.compare(selectedOptionDate, appDate) < 0
+						|| DateUtil.compare(selectedOptionDate, maturityDate) > 0) {
 
 					if (maturityDate == loanStartDt) {
 						currentOption
@@ -1288,8 +1286,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
-		Cloner cloner = new Cloner();
-		aFinMaintainInstruction = cloner.deepClone(finMaintainInstruction);
+		aFinMaintainInstruction = ObjectUtil.clone(finMaintainInstruction);
 
 		doClearMessage();
 

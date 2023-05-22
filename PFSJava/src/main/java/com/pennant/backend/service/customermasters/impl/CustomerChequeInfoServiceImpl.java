@@ -28,7 +28,6 @@ public class CustomerChequeInfoServiceImpl implements CustomerChequeInfoService 
 
 	@Override
 	public CustomerChequeInfo getCustomerChequeInfoById(long custId, int chequeSeq) {
-		// TODO Auto-generated method stub
 		return getCustomerChequeInfoDAO().getCustomerChequeInfoById(custId, chequeSeq, "_AView");
 	}
 

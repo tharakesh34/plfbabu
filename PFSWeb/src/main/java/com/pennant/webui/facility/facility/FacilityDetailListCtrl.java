@@ -48,7 +48,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.FacilityDetail;
 import com.pennant.backend.model.commitment.Commitment;
@@ -61,6 +60,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -601,7 +601,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 	}
 
 	private String formatdDate(Date date) {
-		return DateUtility.formatToLongDate(date);
+		return DateUtil.formatToLongDate(date);
 	}
 
 	private String formatdAmount(BigDecimal amount, int finFormatter) {
@@ -662,7 +662,7 @@ public class FacilityDetailListCtrl extends GFCBaseListCtrl<FacilityDetail> {
 
 	@SuppressWarnings("unused")
 	private String getTenor(Date startDate, Date maturityDate) {
-		int months = DateUtility.getMonthsBetween(startDate, maturityDate);
+		int months = DateUtil.getMonthsBetween(startDate, maturityDate);
 		int years = months / 12;
 		int remaining = months % 12;
 		return getTenorDesc(years, remaining);

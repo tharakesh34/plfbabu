@@ -13,7 +13,7 @@ public class ReceiptUploadLog extends ReceiptUploadHeader {
 	private AtomicInteger failRecords = new AtomicInteger(0);
 
 	public ReceiptUploadLog() {
-
+	    super();
 	}
 
 	public ReceiptUploadLog(long headerId) {

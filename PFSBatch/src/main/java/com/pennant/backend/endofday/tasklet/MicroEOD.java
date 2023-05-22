@@ -54,11 +54,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennant.backend.util.BatchUtil;
@@ -200,10 +200,8 @@ public class MicroEOD implements Tasklet {
 					eodService.prepareFinEODEvents(custEODEvent);
 					logger.info("Preparing EOD Events for the Customer ID {} >> completed.", custId);
 					customerQueuing.setLoanExist(true);
-				} else {
-					eodService.loadAutoRefund(custEODEvent);
 				}
-
+				
 				txStatus = transactionManager.getTransaction(txDef);
 
 				if (customerQueuing.isLoanExist()) {
@@ -212,9 +210,6 @@ public class MicroEOD implements Tasklet {
 					eodService.doUpdate(custEODEvent, customerQueuing.isLimitRebuild());
 				} else {
 					logger.info("There is no active loans exists for the customer ID {}", custId);
-
-					eodService.processAutoRefund(custEODEvent);
-
 					if (customerQueuing.isLimitRebuild()) {
 						eodService.processCustomerRebuild(custId, true);
 					}

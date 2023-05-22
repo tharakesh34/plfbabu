@@ -233,6 +233,7 @@ public class AEAmountCodes implements Serializable {
 	// OEM Subvention amount code
 	private BigDecimal oemSbvAmount = BigDecimal.ZERO;
 	private BigDecimal advInst = BigDecimal.ZERO;
+	private BigDecimal accrTillBd = BigDecimal.ZERO;
 	private BigDecimal prvMthAcr = BigDecimal.ZERO;
 	private BigDecimal ae_cbret = BigDecimal.ZERO;
 	private BigDecimal cbret_igst = BigDecimal.ZERO;
@@ -260,6 +261,10 @@ public class AEAmountCodes implements Serializable {
 	private boolean npa;
 	private String npaClass;
 	private String npaSubClass;
+	private BigDecimal instRTot = BigDecimal.ZERO;
+	private BigDecimal pftRB = BigDecimal.ZERO;
+	private BigDecimal priPaidWO = BigDecimal.ZERO;
+	private BigDecimal pftPaidWO = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
@@ -451,6 +456,7 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_pastCpzChg", this.pastCpzChg);
 		map.put("ae_oemSbvAmount", this.oemSbvAmount);
 		map.put("ae_advInst", this.advInst);
+		map.put("ae_accrTillBd", this.accrTillBd);
 		map.put("ae_prvMthAcr", this.prvMthAcr);
 		map.put("ae_isWriteOff", this.isWriteOff);
 		map.put("ae_prvMntAmz", this.prvMntAmz);
@@ -469,6 +475,10 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_npa", this.npa);
 		map.put("ae_npaClass", this.npaClass);
 		map.put("ae_npaSubClass", this.npaSubClass);
+		map.put("ae_pftRB", this.pftRB);
+		map.put("ae_instRTot", this.instRTot);
+		map.put("ae_priPaidWO", this.priPaidWO);
+		map.put("ae_pftPaidWO", this.pftPaidWO);
 
 		return map;
 	}
@@ -1897,6 +1907,14 @@ public class AEAmountCodes implements Serializable {
 		this.advInst = advInst;
 	}
 
+	public BigDecimal getAccrTillBd() {
+		return accrTillBd;
+	}
+
+	public void setAccrTillBd(BigDecimal accrTillBd) {
+		this.accrTillBd = accrTillBd;
+	}
+
 	public BigDecimal getPrvMthAcr() {
 		return prvMthAcr;
 	}
@@ -2055,6 +2073,38 @@ public class AEAmountCodes implements Serializable {
 
 	public void setNpaSubClass(String npaSubClass) {
 		this.npaSubClass = npaSubClass;
+	}
+
+	public BigDecimal getInstRTot() {
+		return instRTot;
+	}
+
+	public void setInstRTot(BigDecimal instRTot) {
+		this.instRTot = instRTot;
+	}
+
+	public BigDecimal getPftRB() {
+		return pftRB;
+	}
+
+	public void setPftRB(BigDecimal pftRB) {
+		this.pftRB = pftRB;
+	}
+
+	public BigDecimal getPriPaidWO() {
+		return priPaidWO;
+	}
+
+	public void setPriPaidWO(BigDecimal priPaidWO) {
+		this.priPaidWO = priPaidWO;
+	}
+
+	public BigDecimal getPftPaidWO() {
+		return pftPaidWO;
+	}
+
+	public void setPftPaidWO(BigDecimal pftPaidWO) {
+		this.pftPaidWO = pftPaidWO;
 	}
 
 }

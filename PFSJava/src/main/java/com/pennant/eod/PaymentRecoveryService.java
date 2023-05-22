@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.RepayConstants;
@@ -22,6 +21,7 @@ import com.pennant.eod.beans.PaymentRecoveryDetail;
 import com.pennant.eod.beans.PaymentRecoveryHeader;
 import com.pennant.eod.dao.PaymentRecoveryDetailDAO;
 import com.pennant.eod.dao.PaymentRecoveryHeaderDAO;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class PaymentRecoveryService {
@@ -65,7 +65,7 @@ public class PaymentRecoveryService {
 
 			// to calculate the number of the records in the file
 			String ref = dataSet.getFinReference() + "/" + dataSet.getFinEvent() + "/" + dataSet.getTransOrder() + "/"
-					+ DateUtility.format(dataSet.getValueDate(), BatchFileUtil.DATE_FORMAT_YMd);
+					+ DateUtil.format(dataSet.getValueDate(), BatchFileUtil.DATE_FORMAT_YMd);
 
 			// get derived entry with the matching transaction order
 			ReturnDataSet otherleg = getMatchingEntry(dataSet.getTransOrder(), listoftransactions);

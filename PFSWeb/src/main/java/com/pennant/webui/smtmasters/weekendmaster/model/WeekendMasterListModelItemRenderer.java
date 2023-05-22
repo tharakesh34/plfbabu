@@ -46,7 +46,7 @@ public class WeekendMasterListModelItemRenderer implements ListitemRenderer<Week
 	private static final long serialVersionUID = -7702036064069683433L;
 
 	public WeekendMasterListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -60,9 +60,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.extension.PartnerBankExtension;
 import com.pennant.webui.util.WindowBaseCtrl;
 import com.pennanttech.extension.Services;
@@ -196,6 +197,8 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			Executions.sendRedirect("/csrfLogout.zul");
 		} else if ((pwdExpDate != null && pwdExpDate.before(DateUtil.getSysDate()))) {
 			Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
+			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
+					new MenuItemOnCloseListener());
 		} else {
 			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
 					new MenuItemOnCloseListener());
@@ -254,10 +257,11 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		case "menu_Item_AssetSubClassCodes":
 		case "menu_Item_AssetClassSetup":
 		case "menu_Item_NPA_Report":
-			return ImplementationConstants.ALLOW_NPA;
+			return NpaAndProvisionExtension.ALLOW_NPA;
 		case "menu_Item_ManualProvisioning":
+			return NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION;
 		case "menu_Item_Provision_Report":
-			return ImplementationConstants.ALLOW_PROVISION;
+			return NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION;
 		case "menu_Item_LoanDownSizing":
 			return ImplementationConstants.ALLOW_LOAN_DOWNSIZING;
 		case "menu_Item_PMAY":
@@ -288,6 +292,9 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return this.glemsCollateralProcess != null;
 		case "menu_Item_FinTypePartnerbankMapping":
 			return PartnerBankExtension.BRANCH_WISE_MAPPING;
+		case "menu_Item_HoldMarkingUpload_Maker":
+		case "menu_Item_HoldMarkingUpload_Approver":
+			return MandateExtension.ALLOW_HOLD_MARKING;
 		default:
 			break;
 		}
@@ -348,15 +355,15 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 		LoggedInUser user = userWorkspace.getLoggedInUser();
 
-		if (user.getLogonFromTime() != null && DateUtility.compareTime(new Date(System.currentTimeMillis()),
-				user.getLogonFromTime(), false) == -1) {
+		if (user.getLogonFromTime() != null
+				&& DateUtil.compareTime(new Date(System.currentTimeMillis()), user.getLogonFromTime(), false) == -1) {
 			MessageUtil.showInfo("OPS_NOT_ALLOWED_BEFORE",
 					DateUtil.format(user.getLogonFromTime(), DateFormat.SHORT_TIME));
 			return;
 		}
 
 		if (user.getLogonToTime() != null
-				&& DateUtility.compareTime(new Date(System.currentTimeMillis()), user.getLogonToTime(), false) == 1) {
+				&& DateUtil.compareTime(new Date(System.currentTimeMillis()), user.getLogonToTime(), false) == 1) {
 			MessageUtil.showInfo("OPS_NOT_ALLOWED_AFTER",
 					DateUtil.format(user.getLogonToTime(), DateFormat.SHORT_TIME));
 			return;

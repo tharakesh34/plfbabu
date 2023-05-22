@@ -178,7 +178,7 @@ public class LocalityListCtrl extends GFCBaseListCtrl<Locality> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =?");
 
 		if (doCheckAuthority(locality, whereCond.toString(), new Object[] { locality.getId() })) {

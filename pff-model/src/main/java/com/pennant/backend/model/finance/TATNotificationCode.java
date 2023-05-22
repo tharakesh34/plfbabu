@@ -15,7 +15,7 @@ public class TATNotificationCode implements Serializable {
 	private String time;
 
 	public TATNotificationCode() {
-
+	    super();
 	}
 
 	public TATNotificationCode(long id) {

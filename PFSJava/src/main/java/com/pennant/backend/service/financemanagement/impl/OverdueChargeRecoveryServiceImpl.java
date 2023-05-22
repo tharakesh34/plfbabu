@@ -35,7 +35,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -57,7 +56,6 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private OverdueChargeRecoveryDAO overdueChargeRecoveryDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	public OverdueChargeRecoveryServiceImpl() {
 		super();
@@ -314,9 +312,4 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 	public void setOverdueChargeRecoveryDAO(OverdueChargeRecoveryDAO overdueChargeRecoveryDAO) {
 		this.overdueChargeRecoveryDAO = overdueChargeRecoveryDAO;
 	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
 }

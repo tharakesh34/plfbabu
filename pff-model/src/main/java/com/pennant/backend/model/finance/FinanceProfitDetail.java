@@ -212,6 +212,7 @@ public class FinanceProfitDetail implements Serializable {
 	private boolean writeoffLoan = false;
 
 	private int extODDays = 0;
+	private String curDPDString;
 
 	private EventProperties eventProperties = new EventProperties();
 
@@ -391,6 +392,7 @@ public class FinanceProfitDetail implements Serializable {
 		entity.setEventProperties(this.eventProperties);
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setExtODDays(this.extODDays);
+		entity.setCurDPDString(this.curDPDString);
 
 		return entity;
 	}
@@ -1933,4 +1935,13 @@ public class FinanceProfitDetail implements Serializable {
 	public void setExtODDays(int extODDays) {
 		this.extODDays = extODDays;
 	}
+
+	public String getCurDPDString() {
+		return curDPDString;
+	}
+
+	public void setCurDPDString(String curDPDString) {
+		this.curDPDString = curDPDString;
+	}
+
 }

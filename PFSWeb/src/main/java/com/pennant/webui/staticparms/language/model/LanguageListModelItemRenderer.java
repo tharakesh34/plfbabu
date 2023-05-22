@@ -45,7 +45,7 @@ public class LanguageListModelItemRenderer implements ListitemRenderer<Language>
 	private static final long serialVersionUID = -5331036558999131544L;
 
 	public LanguageListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

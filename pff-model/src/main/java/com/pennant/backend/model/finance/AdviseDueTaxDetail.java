@@ -18,7 +18,7 @@ public class AdviseDueTaxDetail implements Serializable {
 	private Long invoiceID;
 
 	public AdviseDueTaxDetail() {
-
+	    super();
 	}
 
 	// ******************************************************//

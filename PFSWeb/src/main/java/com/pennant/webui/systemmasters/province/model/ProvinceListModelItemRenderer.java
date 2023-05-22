@@ -44,7 +44,7 @@ public class ProvinceListModelItemRenderer implements ListitemRenderer<Province>
 	private static final long serialVersionUID = -3187829903184756130L;
 
 	public ProvinceListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

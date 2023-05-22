@@ -86,7 +86,6 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -94,6 +93,7 @@ import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -162,6 +162,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -172,7 +173,7 @@ import com.pennanttech.pff.external.insurance.InsuranceCalculatorService;
 import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
 import com.pennanttech.pff.model.InsPremiumCalculatorResponse;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/configuration/VASRecording/vASRecordingDialog.zul file. <br>
@@ -819,21 +820,21 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							finFeeDetail.setRemainingFeeOriginal(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
+						}
 
-							if (VASConsatnts.VAS_PAYMENT_COLLECTION.equals(modeOfPayment)) {
+						if (VASConsatnts.VAS_PAYMENT_COLLECTION.equals(modeOfPayment)) {
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+							finFeeDetail.setPaidAmountOriginal(BigDecimal.ZERO);
+							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+							finFeeDetail.setPaidAmount(BigDecimal.ZERO);
+
+							finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
+							finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+							finFeeDetail.setRemainingFee(aVASRecording.getFee());
+						} else if (VASConsatnts.VAS_PAYMENT_DEDUCTION.equals(modeOfPayment)) {
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+							if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
 								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-								finFeeDetail.setPaidAmountOriginal(BigDecimal.ZERO);
-								finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
-								finFeeDetail.setPaidAmount(BigDecimal.ZERO);
-
-								finFeeDetail.setRemainingFeeOriginal(aVASRecording.getFee());
-								finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-								finFeeDetail.setRemainingFee(aVASRecording.getFee());
-							} else if (VASConsatnts.VAS_PAYMENT_DEDUCTION.equals(modeOfPayment)) {
-								finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
-								if (ImplementationConstants.DEFAULT_VAS_MODE_OF_PAYMENT) {
-									finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
-								}
 							}
 						}
 
@@ -1400,7 +1401,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		if (!this.medicalStatus.isDisabled()) {
 			this.medicalStatus.setConstraint(
-					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_MedicalStatus.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_VASConfigurationDialog_MedicalStatus.value"),
 							PennantStaticListUtil.getMedicalStatusList(), this.medicalApplicable.isChecked()));
 		}
 
@@ -2935,8 +2936,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		if (getFinanceDetail() != null) {
 			FinanceDetail detail = getFinanceDetail();
 
-			Cloner cloner = new Cloner();
-			FinanceDetail clonedDetail = cloner.deepClone(detail);
+			FinanceDetail clonedDetail = ObjectUtil.clone(detail);
 
 			CustomerDetails customerDetails = clonedDetail.getCustomerDetails();
 			formatCustomerData(customerDetails.getCustomer());
@@ -3028,7 +3028,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private void formatCustomerData(Customer customer) {
 		Date dob = customer.getCustDOB();
 		if (dob != null) {
-			customer.setCustDOB(DateUtility.getDate(DateUtility.format(dob, DateFormat.SHORT_DATE.getPattern())));
+			customer.setCustDOB(DateUtil.getDate(DateUtil.format(dob, DateFormat.SHORT_DATE.getPattern())));
 			customer.setCustomerAge(new BigDecimal(getAge(dob)));
 		}
 	}
@@ -3046,7 +3046,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		int years = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, dob);
+			int months = DateUtil.getMonthsBetween(appDate, dob);
 			years = months / 12;
 		}
 		return years;
@@ -3180,7 +3180,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		List<CustomerAddres> customerAddres = details.getAddressList();
 		List<CustomerDocument> custDoc = details.getCustomerDocumentsList();
 
-		String date = DateUtility.format(customer.getCustDOB(), "dd-MMM-yyyy");
+		String date = DateUtil.format(customer.getCustDOB(), "dd-MMM-yyyy");
 
 		formData.put("Title", customer.getLovDescCustSalutationCodeName());
 		formData.put("FirstName", customer.getCustFName());

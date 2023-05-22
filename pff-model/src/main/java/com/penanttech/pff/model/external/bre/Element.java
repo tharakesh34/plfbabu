@@ -232,6 +232,7 @@ public class Element {
 
 	@JsonCreator
 	public Element() {
+	    super();
 	}
 
 	public String getAddressCategory() {

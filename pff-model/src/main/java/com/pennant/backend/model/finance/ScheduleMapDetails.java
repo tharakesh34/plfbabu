@@ -17,7 +17,7 @@ public class ScheduleMapDetails implements java.io.Serializable {
 	private List<String> lovDescFinRefences;
 
 	public ScheduleMapDetails() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

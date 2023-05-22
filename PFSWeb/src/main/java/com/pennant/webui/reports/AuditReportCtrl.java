@@ -21,13 +21,13 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -87,8 +87,8 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String reportName = "";
 
-		this.fromDate.setConstraint(new PTDateValidator("From Date", true, null, DateUtility.getSysDate(), true));
-		this.toDate.setConstraint(new PTDateValidator("To Date", true, null, DateUtility.getSysDate(), true));
+		this.fromDate.setConstraint(new PTDateValidator("From Date", true, null, DateUtil.getSysDate(), true));
+		this.toDate.setConstraint(new PTDateValidator("To Date", true, null, DateUtil.getSysDate(), true));
 
 		try {
 			if (!this.comboModuleList.isDisabled() && this.comboModuleList.getSelectedIndex() <= 0) {
@@ -111,7 +111,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 				throw new WrongValueException(fromDate, Labels.getLabel("label_AuditReport_FromDate.NotGreater"));
 			}
 			map.put("fromDate",
-					DateUtility.getDate(DateUtility.format(fromDate.getValue(), PennantConstants.dateFormat)));
+					DateUtil.getDate(DateUtil.format(fromDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -119,7 +119,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			if (toDate.getValue() == null) {
 				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
 			}
-			map.put("toDate", DateUtility.getDate(DateUtility.format(toDate.getValue(), PennantConstants.dateFormat)));
+			map.put("toDate", DateUtil.getDate(DateUtil.format(toDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -134,9 +134,9 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		wve = null;
 
 		StringBuilder where = new StringBuilder(" Where AuditDateTime >= '");
-		where.append(DateUtility.format(fromDate.getValue(), PennantConstants.DBDateFormat));
+		where.append(DateUtil.format(fromDate.getValue(), PennantConstants.DBDateFormat));
 		where.append("' AND AuditDateTime <= '");
-		where.append(DateUtility.format(toDate.getValue(), PennantConstants.DBDateFormat));
+		where.append(DateUtil.format(toDate.getValue(), PennantConstants.DBDateFormat));
 		where.append(" 23:59:59'");
 
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_AUDIT) + "/" + reportName + ".jasper";

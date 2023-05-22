@@ -29,11 +29,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.finance.AutoRefundLoan;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -192,7 +192,7 @@ public interface FinanceMainDAO {
 
 	boolean isDeveloperFinance(long finID, String type, boolean wif);
 
-	FinanceMain getFinanceDetailsByFinRefence(long finID, String type);
+	FinanceMain getFinanceDetailsByFinRefence(String finReference);
 
 	String getFinanceType(String finReference, TableType tabelType);
 
@@ -422,9 +422,19 @@ public interface FinanceMainDAO {
 
 	List<Long> getFinIDsByCustomer(CustomerCoreBank customerCoreBank);
 
+	List<FinanceMain> getFinDetailsByFinType(String finType);
+
+	int updateFinRepayMethod(long finID, String finRepayMethod);
+
 	FinanceMain getBasicDetails(String finReference, TableType tableType);
 
-	SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType);
+	void updateNPA(long finID, boolean undernpa);
+
+	Date getMaturityDatebyFinID(long finID);
+
+	FinanceMain getFinanceMainForLien(long finID);
+
+	SourcingDetails getSourcingDetails(long finID, TableType tableType);
 
 	List<Long> getFinIDsByCustID(Long custID, TableType tableType);
 }

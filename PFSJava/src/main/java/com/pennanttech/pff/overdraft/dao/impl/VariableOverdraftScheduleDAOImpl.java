@@ -108,29 +108,28 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, finEvent },
-					(rs, rowNum) -> {
-						VariableOverdraftSchdHeader varODSchd = new VariableOverdraftSchdHeader();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				VariableOverdraftSchdHeader varODSchd = new VariableOverdraftSchdHeader();
 
-						varODSchd.setId(rs.getLong("Id"));
-						varODSchd.setFileName(rs.getString("FileName"));
-						varODSchd.setTransactionDate(rs.getDate("TransactionDate"));
-						varODSchd.setTotalSchedules(rs.getInt("TotalSchedules"));
-						varODSchd.setFinEvent(rs.getString("FinEvent"));
-						varODSchd.setFinReference(rs.getString("FinReference"));
-						varODSchd.setVersion(rs.getInt("Version"));
-						varODSchd.setLastMntBy(rs.getLong("LastMntBy"));
-						varODSchd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-						varODSchd.setRecordStatus(rs.getString("RecordStatus"));
-						varODSchd.setRoleCode(rs.getString("RoleCode"));
-						varODSchd.setNextRoleCode(rs.getString("NextRoleCode"));
-						varODSchd.setTaskId(rs.getString("TaskId"));
-						varODSchd.setNextTaskId(rs.getString("NextTaskId"));
-						varODSchd.setRecordType(rs.getString("RecordType"));
-						varODSchd.setWorkflowId(rs.getLong("WorkflowId"));
+				varODSchd.setId(rs.getLong("Id"));
+				varODSchd.setFileName(rs.getString("FileName"));
+				varODSchd.setTransactionDate(rs.getDate("TransactionDate"));
+				varODSchd.setTotalSchedules(rs.getInt("TotalSchedules"));
+				varODSchd.setFinEvent(rs.getString("FinEvent"));
+				varODSchd.setFinReference(rs.getString("FinReference"));
+				varODSchd.setVersion(rs.getInt("Version"));
+				varODSchd.setLastMntBy(rs.getLong("LastMntBy"));
+				varODSchd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				varODSchd.setRecordStatus(rs.getString("RecordStatus"));
+				varODSchd.setRoleCode(rs.getString("RoleCode"));
+				varODSchd.setNextRoleCode(rs.getString("NextRoleCode"));
+				varODSchd.setTaskId(rs.getString("TaskId"));
+				varODSchd.setNextTaskId(rs.getString("NextTaskId"));
+				varODSchd.setRecordType(rs.getString("RecordType"));
+				varODSchd.setWorkflowId(rs.getLong("WorkflowId"));
 
-						return varODSchd;
-					});
+				return varODSchd;
+			}, finReference, finEvent);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -152,7 +151,7 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			VariableOverdraftSchdDetail varODSchdDtl = new VariableOverdraftSchdDetail();
 
 			varODSchdDtl.setId(rs.getLong("Id"));
@@ -163,7 +162,7 @@ public class VariableOverdraftScheduleDAOImpl extends SequenceDao<VariableOverdr
 			varODSchdDtl.setReason(rs.getString("Reason"));
 
 			return varODSchdDtl;
-		});
+		}, headerId);
 	}
 
 	@Override

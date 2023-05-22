@@ -211,7 +211,7 @@ public class InstrumentwiseLimitListCtrl extends GFCBaseListCtrl<InstrumentwiseL
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(instrumentwiselimit, whereCond.toString(), new Object[] { instrumentwiselimit.getId() })) {

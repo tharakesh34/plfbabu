@@ -228,7 +228,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override
@@ -254,7 +254,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		public OnSortEventListener() {
-
+		    super();
 		}
 
 		@Override

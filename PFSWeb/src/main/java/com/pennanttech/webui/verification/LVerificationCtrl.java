@@ -418,6 +418,8 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 			if (vrf.getAgencyName() != null) {
 				agency.setValue(String.valueOf(vrf.getAgencyName()));
 				agency.setAttribute("agencyId", vrf.getAgency());
+			} else if (vrf.getAgency() != null) {
+				agency.setAttribute("agencyId", vrf.getAgency());
 			}
 			listCell.appendChild(agency);
 			listCell.setParent(item);
@@ -1024,7 +1026,9 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		Verification verification = (Verification) listitem.getAttribute("vrf");
 
 		Label agency = ((Label) getComponent(listitem, "Agency"));
-		verification.setAgency(Long.parseLong(agency.getAttribute("agencyId").toString()));
+		if (agency != null && agency.getAttribute("agencyId") != null) {
+			verification.setAgency(Long.parseLong(agency.getAttribute("agencyId").toString()));
+		}
 
 		if (!initType) {
 			try {

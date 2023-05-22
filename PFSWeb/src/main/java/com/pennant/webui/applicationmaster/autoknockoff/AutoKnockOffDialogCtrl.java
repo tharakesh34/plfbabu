@@ -95,8 +95,7 @@ public class AutoKnockOffDialogCtrl extends GFCBaseCtrl<AutoKnockOff> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.autoKnockOff.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.autoKnockOff.getId());
 	}
 
 	/**

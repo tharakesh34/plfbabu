@@ -99,7 +99,6 @@ import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.UserWorkspace;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
@@ -806,6 +805,12 @@ public class ExtendedFieldsGenerator extends AbstractController {
 									detail.isFieldMandatory(), false));
 						}
 
+						if (currencyBox.getActualValue() != null) {
+							currencyBox.setConstraint(new PTDecimalValidator(detail.getFieldLabel(), getCcyFormat(),
+									detail.isFieldMandatory(), false, detail.getFieldMinValue(),
+									detail.getFieldMaxValue()));
+						}
+
 						values.put(detail.getFieldName(),
 								PennantApplicationUtil.unFormateAmount(currencyBox.getActualValue(), ccyFormat));
 					} catch (WrongValueException we) {
@@ -1195,16 +1200,16 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			switch (value[0]) {
 			case "RANGE":
 				dateValidator = new PTDateValidator(label, isMandatory,
-						DateUtility.parse(value[1], PennantConstants.dateFormat),
-						DateUtility.parse(value[2], PennantConstants.dateFormat), true);
+						DateUtil.parse(value[1], PennantConstants.dateFormat),
+						DateUtil.parse(value[2], PennantConstants.dateFormat), true);
 				break;
 			case "FUTURE_DAYS":
 				dateValidator = new PTDateValidator(label, isMandatory, null,
-						DateUtility.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])), true);
+						DateUtil.addDays(SysParamUtil.getAppDate(), Integer.parseInt(value[1])), true);
 				break;
 			case "PAST_DAYS":
 				dateValidator = new PTDateValidator(label, isMandatory,
-						DateUtility.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1]))), null, true);
+						DateUtil.addDays(SysParamUtil.getAppDate(), -(Integer.parseInt(value[1]))), null, true);
 				break;
 			case "FUTURE_TODAY":
 				dateValidator = new PTDateValidator(label, isMandatory, true, null, true);
@@ -1214,7 +1219,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					dateValidator = new PTDateValidator(label, isMandatory, null, true, true);
 				} else {
 					dateValidator = new PTDateValidator(label, isMandatory, null,
-							DateUtility.addDays(SysParamUtil.getAppDate(), 1), false);
+							DateUtil.addDays(SysParamUtil.getAppDate(), 1), false);
 				}
 				break;
 			case "FUTURE":
@@ -1295,6 +1300,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public final class onMultiSelectionItemSelected implements EventListener<Event> {
 
 		public onMultiSelectionItemSelected() {
+		    super();
 		}
 
 		@Override
@@ -1337,6 +1343,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	public final class onMultiSelButtonClick implements EventListener<Event> {
 
 		public onMultiSelButtonClick() {
+		    super();
 		}
 
 		@Override
@@ -1719,7 +1726,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				try {
 					Object dateVal = fieldValueMap.get(detail.getFieldName());
 					if (dateVal != null) {
-						Date date = DateUtility.parse(dateVal.toString(), DateFormat.SHORT_DATE.getPattern());
+						Date date = DateUtil.parse(dateVal.toString(), DateFormat.SHORT_DATE.getPattern());
 						datebox.setValue(date);
 					}
 				} catch (Exception e) {
@@ -1736,7 +1743,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					datebox.setValue(SysParamUtil.getAppDate());
 				} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 						detail.getFieldDefaultValue())) {
-					datebox.setValue(DateUtility.getSysDate());
+					datebox.setValue(DateUtil.getSysDate());
 				}
 
 			} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME, detail.getFieldType().trim())) {
@@ -1744,7 +1751,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					datebox.setText(SysParamUtil.getAppDate(DateFormat.SHORT_DATE_TIME.getPattern()));
 				} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 						detail.getFieldDefaultValue())) {
-					datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME.getPattern()));
+					datebox.setText(DateUtil.getSysDate(DateFormat.SHORT_DATE_TIME.getPattern()));
 				}
 			}
 		}
@@ -1772,7 +1779,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			timebox.setValue((Date) fieldValueMap.get(detail.getFieldName()));
 		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 			if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME, detail.getFieldDefaultValue())) {
-				timebox.setValue(DateUtility.getTimestamp(new Date()));
+				timebox.setValue(DateUtil.getTimestamp(new Date()));
 			}
 		}
 		return timebox;
@@ -2797,7 +2804,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 						if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSTIME,
 								detail.getFieldDefaultValue())) {
-							timebox.setValue(DateUtility.getTimestamp(new Date()));
+							timebox.setValue(DateUtil.getTimestamp(new Date()));
 						}
 					}
 				} else if (component instanceof Datebox) {
@@ -2815,7 +2822,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 								datebox.setValue(SysParamUtil.getAppDate());
 							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 									detail.getFieldDefaultValue())) {
-								datebox.setValue(DateUtility.getSysDate());
+								datebox.setValue(DateUtil.getSysDate());
 							}
 
 						} else if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_DATETIME,
@@ -2825,7 +2832,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 								datebox.setText(SysParamUtil.getAppDate(DateFormat.SHORT_DATE_TIME.getPattern()));
 							} else if (StringUtils.equals(ExtendedFieldConstants.DFTDATETYPE_SYSDATE,
 									detail.getFieldDefaultValue())) {
-								datebox.setText(DateUtility.getSysDate(DateFormat.SHORT_DATE_TIME.getPattern()));
+								datebox.setText(DateUtil.getSysDate(DateFormat.SHORT_DATE_TIME.getPattern()));
 							}
 						}
 					}
@@ -3162,7 +3169,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		int years = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (dob.compareTo(appDate) < 0) {
-			int months = DateUtility.getMonthsBetween(appDate, dob);
+			int months = DateUtil.getMonthsBetween(appDate, dob);
 			years = months / 12;
 		}
 		return years;

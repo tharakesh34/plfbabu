@@ -125,10 +125,10 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -149,7 +149,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.web.util.ComponentUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptDialog.zul
@@ -297,8 +297,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (arguments.containsKey("receiptHeader")) {
 				receiptHeader = (FinReceiptHeader) arguments.get("receiptHeader");
 
-				Cloner cloner = new Cloner();
-				FinReceiptHeader befImage = cloner.deepClone(receiptHeader);
+				FinReceiptHeader befImage = ObjectUtil.clone(receiptHeader);
 				receiptHeader.setBefImage(befImage);
 
 			}
@@ -1401,8 +1400,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		receiptHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptHeader aReceiptHeader = cloner.deepClone(receiptHeader);
+		FinReceiptHeader aReceiptHeader = ObjectUtil.clone(receiptHeader);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -1826,10 +1824,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		Map<String, Object> map = null;
-		long accountingSetID = 0;
+		Long accountingSetID = 0L;
 		if (this.groupbox_Finance.isVisible()) {
 			map = feeReceiptService.getGLSubHeadCodes(rch.getFinID());
-			accountingSetID = AccountingConfigCache.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
+			accountingSetID = AccountingEngine.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
 					FinanceConstants.MODULEID_FINTYPE);
 		} else {
 			accountingSetID = getFeeReceiptService().getAccountingSetId(AccountingEvent.FEEPAY, AccountingEvent.FEEPAY);
@@ -1870,7 +1868,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		feeReceiptService.prepareFeeRulesMap(receiptHeader, dataMap);
 
-		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
+		if (accountingSetID != null && accountingSetID > 0) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
 
 			if (map != null) {

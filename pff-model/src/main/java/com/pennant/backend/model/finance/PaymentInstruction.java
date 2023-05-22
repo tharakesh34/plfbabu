@@ -32,6 +32,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -50,36 +51,49 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long paymentInstructionId = Long.MIN_VALUE;
+	@XmlElement
 	private long paymentId;
 
 	private String paymentType;
+	@XmlElement(name = "paymentDate")
 	private Date postDate;
 	private BigDecimal paymentAmount = BigDecimal.ZERO;
+	@XmlElement
 	private long partnerBankId;
 	private String partnerBankCode;
 	private String partnerBankName;
-
+	@XmlElement
 	private String remarks;
 	private long bankBranchId;
+	@XmlElement
 	private String bankBranchIFSC;
 	private String bankBranchCode;
+	@XmlElement
 	private String issuingBank;
 	private String issuingBankName;
+	@XmlElement
 	private String favourName;
+	@XmlElement
 	private String payableLoc;
+	@XmlElement
 	private String printingLoc;
 	private String printingLocDesc;
+	@XmlElement
 	private Date valueDate;
+
 	private String favourNumber;// Cheque/DD Number
+	@XmlElement
 	private String accountNo;// beneficiaryAccNo
 	private String acctHolderName;
 	private String phoneCountryCode;// Need to add
+	@XmlElement
 	private String phoneNumber;
 	private String paymentCCy;
 
 	private String pCCityName;
 	private String branchDesc;
 	private String bankName;
+	@XmlElement
 	private String status;
 	private String clearingStatus;
 
@@ -89,7 +103,9 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private long finID;
 	private String finReference;
 	private Date clearingDate;
+	@XmlElement
 	private String transactionRef;
+	@XmlElement
 	private String rejectReason;
 	private String partnerBankAc;
 	private String partnerBankAcType;
@@ -104,6 +120,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private boolean apiRequest = false; // for Refund Upload
 	private boolean paymentProcReq = false;
 	private String branchBankCode;
+	@XmlElement
 	private String lei;
 	private String finType;
 	private String finBranch;

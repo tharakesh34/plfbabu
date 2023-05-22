@@ -64,7 +64,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public FinODDetails getFinODDetailsForBatch(long finID, Date schdDate) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinCurODAmt, FinCurODPri, FinCurODPft, FinODTillDate, FinCurODDays");
-		sql.append(", FinLMdfDate, LpCpz, LpCpzAmount, LpCurCpzBal");
+		sql.append(", FinLMdfDate, LpCpz, LpCpzAmount, LpCurCpzBal, PayableAmount");
 		sql.append(" From FinODDetails_View");
 		sql.append(" Where FinID = ? and FinODSchdDate = ?");
 
@@ -82,6 +82,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				fod.setLpCpz(rs.getBoolean("LpCpz"));
 				fod.setLpCpzAmount(rs.getBigDecimal("LpCpzAmount"));
 				fod.setLpCurCpzBal(rs.getBigDecimal("LpCurCpzBal"));
+				fod.setPayableAmount(rs.getBigDecimal("PayableAmount"));
 
 				return fod;
 			}, finID, schdDate);
@@ -129,6 +130,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				ps.setBigDecimal(index++, fd.getLpCpzAmount());
 				ps.setBigDecimal(index++, fd.getLpCurCpzBal());
 				ps.setBigDecimal(index++, fd.getCurOverdraftTxnChrg());
+				ps.setBigDecimal(index++, fd.getPayableAmount());
 
 				ps.setLong(index++, fd.getFinID());
 				ps.setDate(index, JdbcUtil.getDate(fd.getFinODSchdDate()));
@@ -148,7 +150,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", TotPenaltyAmt = ?, TotWaived = ?, TotPenaltyPaid = ?, TotPenaltyBal = ?, FinLMdfDate = ?");
 		sql.append(", LPIAmt = ?, LPIPaid = ?, LPIBal = ?, LPIWaived = ?, CurOverdraftTxnChrg = ?");
 		sql.append(", FinMaxODAmt = ?, FinMaxODPri = ?, FinMaxODPft = ? ");
-		sql.append(", LppDueAmt = ?, LppDueTillDate = ?, LpiDueAmt = ?, LpiDueTillDate = ?");
+		sql.append(", LppDueAmt = ?, LppDueTillDate = ?, LpiDueAmt = ?, LpiDueTillDate = ?, PayableAmount = ?");
 		sql.append(" Where FinID = ? and FinODSchdDate = ? and FinODFor = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -183,6 +185,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				ps.setDate(index++, JdbcUtil.getDate(od.getLppDueTillDate()));
 				ps.setBigDecimal(index++, od.getLpiDueAmt());
 				ps.setDate(index++, JdbcUtil.getDate(od.getLpiDueTillDate()));
+				ps.setBigDecimal(index++, od.getPayableAmount());
 
 				ps.setLong(index++, od.getFinID());
 				ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
@@ -230,7 +233,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" Set TotPenaltyAmt = (? + TotPenaltyAmt)");
 		sql.append(", TotWaived = (? + TotWaived)");
 		sql.append(", TotPenaltyPaid = (? + TotPenaltyPaid)");
-		sql.append(", TotPenaltyBal = (? + TotPenaltyBal)");
+		sql.append(", TotPenaltyBal = (? + TotPenaltyBal) , PayableAmount = (? + PayableAmount)");
 		sql.append(" Where FinID = ? and FinODSchdDate = ?");
 		return sql.toString();
 	}
@@ -241,6 +244,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		ps.setBigDecimal(index++, od.getTotWaived());
 		ps.setBigDecimal(index++, od.getTotPenaltyPaid());
 		ps.setBigDecimal(index++, od.getTotPenaltyBal());
+		ps.setBigDecimal(index++, od.getPayableAmount());
 
 		ps.setLong(index++, od.getFinID());
 		ps.setDate(index, JdbcUtil.getDate(od.getFinODSchdDate()));
@@ -312,7 +316,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public int getPendingOverDuePayment(long finID) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinCurODAmt > ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, BigDecimal.ZERO);
 	}
@@ -321,7 +325,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public int getFinODDays(long finID) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinCurODAmt <> ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, BigDecimal.ZERO);
 
@@ -375,7 +379,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	public int getFinCurSchdODDays(long finID, Date finODSchdDate) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinODSchdDate = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finID, finODSchdDate);
 	}
@@ -390,7 +394,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
 		sql.append(", FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal");
 		sql.append(", PresentmentId, CurOverdraftTxnChrg, MaxOverdraftTxnChrg");
-		sql.append(", LppDueAmt, LppDueTillDate, LpiDueAmt, LpiDueTillDate");
+		sql.append(", LppDueAmt, LppDueTillDate, LpiDueAmt, LpiDueTillDate, ODMinAmount, PayableAmount");
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ?");
 
@@ -454,6 +458,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			odd.setLppDueTillDate(rs.getDate("LppDueTillDate"));
 			odd.setLpiDueAmt(rs.getBigDecimal("LpiDueAmt"));
 			odd.setLpiDueTillDate(rs.getDate("LpiDueTillDate"));
+			odd.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+			odd.setPayableAmount(rs.getBigDecimal("PayableAmount"));
 
 			return odd;
 		});
@@ -692,8 +698,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid");
 		sql.append(", TotPenaltyBal, LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
-		sql.append(", FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal");
-		sql.append(", CurOverdraftTxnChrg, MaxOverdraftTxnChrg, LppDueAmt, LppDueTillDate, LpiDueAmt, LpiDueTillDate");
+		sql.append(", FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal, LockODRecalCal, CurOverdraftTxnChrg");
+		sql.append(
+				", MaxOverdraftTxnChrg, LppDueAmt, LppDueTillDate, LpiDueAmt, LpiDueTillDate, ODMinAmount, PayableAmount");
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ?");
 
@@ -750,6 +757,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			fod.setLppDueTillDate(rs.getTimestamp("LppDueTillDate"));
 			fod.setLpiDueAmt(rs.getBigDecimal("LpiDueAmt"));
 			fod.setLpiDueTillDate(rs.getTimestamp("LpiDueTillDate"));
+			fod.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+			fod.setPayableAmount(rs.getBigDecimal("PayableAmount"));
 
 			return fod;
 		});
@@ -768,64 +777,67 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, LpCpz, LpCpzAmount, LpCurCpzBal, ODChargeCalOn, ODChargeAmtOrPerc");
 		sql.append(", ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode, CurOverdraftTxnChrg, MaxOverdraftTxnChrg");
-		sql.append(", LppDueAmt, LppDueTillDate, LpiDueAmt, LpiDueTillDate");
+		sql.append(", LppDueAmt, LppDueTillDate, LpiDueAmt, LpiDueTillDate, ODMinAmount, PayableAmount");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				FinODDetails odd = odList.get(i);
+				int index = 0;
 
-				int index = 1;
-
-				ps.setLong(index++, odd.getFinID());
-				ps.setString(index++, odd.getFinReference());
-				ps.setDate(index++, JdbcUtil.getDate(odd.getFinODSchdDate()));
-				ps.setString(index++, odd.getFinODFor());
-				ps.setString(index++, odd.getFinBranch());
-				ps.setString(index++, odd.getFinType());
-				ps.setLong(index++, odd.getCustID());
-				ps.setDate(index++, JdbcUtil.getDate(odd.getFinODTillDate()));
-				ps.setBigDecimal(index++, odd.getFinCurODAmt());
-				ps.setBigDecimal(index++, odd.getFinCurODPri());
-				ps.setBigDecimal(index++, odd.getFinCurODPft());
-				ps.setBigDecimal(index++, odd.getFinMaxODAmt());
-				ps.setBigDecimal(index++, odd.getFinMaxODPri());
-				ps.setBigDecimal(index++, odd.getFinMaxODPft());
-				ps.setInt(index++, odd.getGraceDays());
-				ps.setBoolean(index++, odd.isIncGraceDays());
-				ps.setInt(index++, odd.getFinCurODDays());
-				ps.setBigDecimal(index++, odd.getTotPenaltyAmt());
-				ps.setBigDecimal(index++, odd.getTotWaived());
-				ps.setBigDecimal(index++, odd.getTotPenaltyPaid());
-				ps.setBigDecimal(index++, odd.getTotPenaltyBal());
-				ps.setDate(index++, JdbcUtil.getDate(odd.getFinLMdfDate()));
-				ps.setBigDecimal(index++, odd.getLPIAmt());
-				ps.setBigDecimal(index++, odd.getLPIPaid());
-				ps.setBigDecimal(index++, odd.getLPIBal());
-				ps.setBigDecimal(index++, odd.getLPIWaived());
-				ps.setBoolean(index++, odd.isApplyODPenalty());
-				ps.setBoolean(index++, odd.isODIncGrcDays());
-				ps.setString(index++, odd.getODChargeType());
-				ps.setInt(index++, odd.getODGraceDays());
-				ps.setBoolean(index++, odd.isLpCpz());
-				ps.setBigDecimal(index++, odd.getLpCpzAmount());
-				ps.setBigDecimal(index++, odd.getLpCurCpzBal());
-				ps.setString(index++, odd.getODChargeCalOn());
-				ps.setBigDecimal(index++, odd.getODChargeAmtOrPerc());
-				ps.setBoolean(index++, odd.isODAllowWaiver());
-				ps.setBigDecimal(index++, odd.getODMaxWaiverPerc());
-				ps.setString(index++, odd.getODRuleCode());
-				ps.setBigDecimal(index++, odd.getCurOverdraftTxnChrg());
-				ps.setBigDecimal(index++, odd.getMaxOverdraftTxnChrg());
-				ps.setBigDecimal(index++, odd.getLppDueAmt());
-				ps.setDate(index++, JdbcUtil.getDate(odd.getLppDueTillDate()));
-				ps.setBigDecimal(index++, odd.getLpiDueAmt());
-				ps.setDate(index, JdbcUtil.getDate(odd.getLpiDueTillDate()));
+				ps.setLong(++index, odd.getFinID());
+				ps.setString(++index, odd.getFinReference());
+				ps.setDate(++index, JdbcUtil.getDate(odd.getFinODSchdDate()));
+				ps.setString(++index, odd.getFinODFor());
+				ps.setString(++index, odd.getFinBranch());
+				ps.setString(++index, odd.getFinType());
+				ps.setLong(++index, odd.getCustID());
+				ps.setDate(++index, JdbcUtil.getDate(odd.getFinODTillDate()));
+				ps.setBigDecimal(++index, odd.getFinCurODAmt());
+				ps.setBigDecimal(++index, odd.getFinCurODPri());
+				ps.setBigDecimal(++index, odd.getFinCurODPft());
+				ps.setBigDecimal(++index, odd.getFinMaxODAmt());
+				ps.setBigDecimal(++index, odd.getFinMaxODPri());
+				ps.setBigDecimal(++index, odd.getFinMaxODPft());
+				ps.setInt(++index, odd.getGraceDays());
+				ps.setBoolean(++index, odd.isIncGraceDays());
+				ps.setInt(++index, odd.getFinCurODDays());
+				ps.setBigDecimal(++index, odd.getTotPenaltyAmt());
+				ps.setBigDecimal(++index, odd.getTotWaived());
+				ps.setBigDecimal(++index, odd.getTotPenaltyPaid());
+				ps.setBigDecimal(++index, odd.getTotPenaltyBal());
+				ps.setDate(++index, JdbcUtil.getDate(odd.getFinLMdfDate()));
+				ps.setBigDecimal(++index, odd.getLPIAmt());
+				ps.setBigDecimal(++index, odd.getLPIPaid());
+				ps.setBigDecimal(++index, odd.getLPIBal());
+				ps.setBigDecimal(++index, odd.getLPIWaived());
+				ps.setBoolean(++index, odd.isApplyODPenalty());
+				ps.setBoolean(++index, odd.isODIncGrcDays());
+				ps.setString(++index, odd.getODChargeType());
+				ps.setInt(++index, odd.getODGraceDays());
+				ps.setBoolean(++index, odd.isLpCpz());
+				ps.setBigDecimal(++index, odd.getLpCpzAmount());
+				ps.setBigDecimal(++index, odd.getLpCurCpzBal());
+				ps.setString(++index, odd.getODChargeCalOn());
+				ps.setBigDecimal(++index, odd.getODChargeAmtOrPerc());
+				ps.setBoolean(++index, odd.isODAllowWaiver());
+				ps.setBigDecimal(++index, odd.getODMaxWaiverPerc());
+				ps.setString(++index, odd.getODRuleCode());
+				ps.setBigDecimal(++index, odd.getCurOverdraftTxnChrg());
+				ps.setBigDecimal(++index, odd.getMaxOverdraftTxnChrg());
+				ps.setBigDecimal(++index, odd.getLppDueAmt());
+				ps.setDate(++index, JdbcUtil.getDate(odd.getLppDueTillDate()));
+				ps.setBigDecimal(++index, odd.getLpiDueAmt());
+				ps.setDate(++index, JdbcUtil.getDate(odd.getLpiDueTillDate()));
+				ps.setBigDecimal(++index, odd.getOdMinAmount());
+				ps.setBigDecimal(++index, odd.getPayableAmount());
 			}
 
 			@Override
@@ -844,7 +856,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", TotPenaltyBal, LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
 		sql.append(", LpCpz, LpCpzAmount, LpCurCpzBal, FinLMdfDate, ODRuleCode");
-		sql.append(", CurOverdraftTxnChrg, MaxOverdraftTxnChrg");
+		sql.append(", CurOverdraftTxnChrg, MaxOverdraftTxnChrg, ODMinAmount, PayableAmount");
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ?");
 
@@ -912,6 +924,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			fod.setODRuleCode(rs.getString("ODRuleCode"));
 			fod.setCurOverdraftTxnChrg(rs.getBigDecimal("CurOverdraftTxnChrg"));
 			fod.setMaxOverdraftTxnChrg(rs.getBigDecimal("MaxOverdraftTxnChrg"));
+			fod.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+			fod.setPayableAmount(rs.getBigDecimal("PayableAmount"));
 
 			return fod;
 		});
@@ -946,7 +960,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custId);
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
 			FinODDetails od = new FinODDetails();
 
 			od.setFinID(rs.getLong("FinID"));
@@ -965,7 +979,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal");
 		sql.append(", LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
-		sql.append(", FinLMdfDate, ODRuleCode, CurOverdraftTxnChrg, MaxOverdraftTxnChrg");
+		sql.append(", FinLMdfDate, ODRuleCode, CurOverdraftTxnChrg, MaxOverdraftTxnChrg, ODMinAmount, PayableAmount");
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ?");
 
@@ -1024,6 +1038,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				od.setODRuleCode(rs.getString("ODRuleCode"));
 				od.setCurOverdraftTxnChrg(rs.getBigDecimal("CurOverdraftTxnChrg"));
 				od.setMaxOverdraftTxnChrg(rs.getBigDecimal("MaxOverdraftTxnChrg"));
+				od.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+				od.setPayableAmount(rs.getBigDecimal("PayableAmount"));
 
 				return od;
 			}, parameters);
@@ -1055,7 +1071,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(", TotPenaltyBal, LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
 		sql.append(", LpCpz, LpCpzAmount, LpCurCpzBal, FinLMdfDate, ODRuleCode");
-		sql.append(", PresentmentId, CurOverdraftTxnChrg, MaxOverdraftTxnChrg");
+		sql.append(", PresentmentId, CurOverdraftTxnChrg, MaxOverdraftTxnChrg, ODMinAmount, PayableAmount");
 		sql.append(" from FinODDetails");
 		sql.append(" Where FinID = ?");
 
@@ -1104,6 +1120,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 			od.setPresentmentID(rs.getLong("PresentmentId"));
 			od.setCurOverdraftTxnChrg(rs.getBigDecimal("CurOverdraftTxnChrg"));
 			od.setMaxOverdraftTxnChrg(rs.getBigDecimal("MaxOverdraftTxnChrg"));
+			od.setOdMinAmount(rs.getBigDecimal("ODMinAmount"));
+			od.setPayableAmount(rs.getBigDecimal("PayableAmount"));
 
 			return od;
 		}));
@@ -1115,7 +1133,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" FinODTillDate = ?, FinCurODAmt = ?, FinCurODPri = ?, FinCurODPft = ?, FinCurODDays = ?");
 		sql.append(", TotPenaltyAmt = ?, TotWaived = ?, TotPenaltyPaid = ?, TotPenaltyBal = ?, FinLMdfDate = ?");
 		sql.append(", LPIPaid = ?, LPIBal = ?, LPIWaived = ?, LpCpz = ?, LpCpzAmount = ?, LpCurCpzBal = ?");
-		sql.append(", CurOverdraftTxnChrg = ?");
+		sql.append(", CurOverdraftTxnChrg = ?, PayableAmount = ?");
 		sql.append(" Where FinID = ? and FinODSchdDate = ?");
 		return sql;
 	}
@@ -1126,7 +1144,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" FinODDetails Set");
 		sql.append(" FinCurODAmt = ?, FinCurODPri = ?, FinCurODPft = ?, FinCurODDays = ?");
 		sql.append(", TotPenaltyAmt = ?, TotWaived = ?, TotPenaltyPaid = ?, TotPenaltyBal = ?, FinLMdfDate = ?");
-		sql.append(", LPIPaid = ?, LPIBal = ?, LPIWaived = ?, LpCpz = ?, LpCpzAmount = ?, LpCurCpzBal = ?");
+		sql.append(
+				", LPIPaid = ?, LPIBal = ?, LPIWaived = ?, LpCpz = ?, LpCpzAmount = ?, LpCurCpzBal = ?, PayableAmount = ?");
 		sql.append(" Where FinID = ? and FinODSchdDate = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1164,6 +1183,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		ps.setBoolean(index++, fd.isLpCpz());
 		ps.setBigDecimal(index++, fd.getLpCpzAmount());
 		ps.setBigDecimal(index++, fd.getLpCurCpzBal());
+		ps.setBigDecimal(index++, fd.getPayableAmount());
 
 		ps.setLong(index++, fd.getFinID());
 		ps.setDate(index, JdbcUtil.getDate(fd.getFinODSchdDate()));
@@ -1213,6 +1233,15 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+	}
+
+	@Override
+	public void delete(long finID) {
+		String sql = "Delete from FinODDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql.toString(), finID);
 	}
 
 	@Override

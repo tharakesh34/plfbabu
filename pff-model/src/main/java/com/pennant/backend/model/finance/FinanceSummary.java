@@ -224,6 +224,9 @@ public class FinanceSummary implements Serializable {
 	private String migratedNo;
 	private Date lastInstDate;
 
+	private String createdName;
+	private String approvedName;
+
 	public FinanceSummary() {
 		super();
 	}
@@ -1229,6 +1232,22 @@ public class FinanceSummary implements Serializable {
 		this.overDueEMI = overDueEMI;
 	}
 
+	public String getCreatedName() {
+		return this.createdName;
+	}
+
+	public void setCreatedName(String createdName) {
+		this.createdName = createdName;
+	}
+
+	public String getApprovedName() {
+		return this.approvedName;
+	}
+
+	public void setApprovedName(String approvedName) {
+		this.approvedName = approvedName;
+	}
+
 	public String getVehicleNo() {
 		return vehicleNo;
 	}
@@ -1252,5 +1271,4 @@ public class FinanceSummary implements Serializable {
 	public void setLastInstDate(Date lastInstDate) {
 		this.lastInstDate = lastInstDate;
 	}
-
 }

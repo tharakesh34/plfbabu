@@ -44,7 +44,7 @@ public class CourseTypeListModelItemRenderer implements ListitemRenderer<CourseT
 	private static final long serialVersionUID = 1L;
 
 	public CourseTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -10,7 +10,7 @@ public class CustomerDirectorComparator implements Comparator<Object>, Serializa
 	private static final long serialVersionUID = 6780367280268538892L;
 
 	public CustomerDirectorComparator() {
-
+	    super();
 	}
 
 	@Override

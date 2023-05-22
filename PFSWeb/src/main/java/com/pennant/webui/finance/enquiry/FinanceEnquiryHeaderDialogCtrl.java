@@ -65,18 +65,21 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -235,7 +238,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private TdsReceivablesTxnService tdsReceivablesTxnService;
 	protected boolean customer360;
 	private boolean isModelWindow = false;
-	private VASRecordingDAO vASRecordingDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDao;
@@ -267,6 +269,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CreditApplicationReviewService creditApplicationReviewService;
 	@Autowired
 	private ManualAdviseDAO manualAdviseDAO;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	@Autowired
+	private SanctionConditionsDAO sanctionConditionsDAO;
 
 	/**
 	 * default constructor.<br>
@@ -341,36 +346,43 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for appending Child window on selection of Menu Enquiry
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doFillDialogWindow() throws InterruptedException {
+	public void doFillDialogWindow() {
 		logger.debug("Entering");
 
 		FinanceEnquiry enquiry = getFinanceEnquiry();
+		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 
 		this.finReference_header.setValue(enquiry.getFinReference());
 
 		this.setModule("LOAN");
 		this.finStatus_header.setValue(enquiry.getFinStatus());
 
-		if (enquiry.isFinIsActive()) {
-			this.finStatus_header.setValue("Active");
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
+			this.finStatus_header.setValue(Labels.getLabel("label_Status_Cancelled"));
 		} else {
-			this.finStatus_header.setValue("Matured");
+			if (enquiry.isFinIsActive()) {
+				this.finStatus_header.setValue("Active");
+			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+				this.finStatus_header.setValue(Labels.getLabel("label_Closed"));
+			} else {
+				this.finStatus_header.setValue("Matured");
+			}
 		}
 
 		if (StringUtils.contains(enquiry.getRecordStatus(), "Reject") && !enquiry.isFinIsActive()) {
 			this.finStatus_header.setValue(Labels.getLabel("label_Rejected"));
 		}
 
-		String closingStatus = StringUtils.trimToEmpty(enquiry.getClosingStatus());
 		if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Normal");
 		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Cancelled");
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-			this.finStatus_Reason.setValue("Settled");
+			String closureType = finReceiptHeaderDAO.getClosureTypeValue(this.finID, FinServiceEvent.EARLYSETTLE);
+			if (closureType != null) {
+				this.finStatus_Reason.setValue(closureType);
+			}
 		}
 		if (enquiry.isWriteoffLoan()) {
 			this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
@@ -925,7 +937,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("enquiry", true);
 			map.put("finReference", this.finReference);
 
-			Provision provision = provisionService.getProvisionDetail(this.finReference);
+			Provision provision = provisionService.getProvisionDetail(this.finID);
 			map.put("provision", provision);
 			if (provision == null) {
 				MessageUtil.showMessage("Provision Details are not available.");
@@ -960,6 +972,21 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				path = "/WEB-INF/pages/Finance/PDC/ChequeDetailDialog.zul";
 
 			}
+		} else if ("FINSUM".equals(this.enquiryType)) {
+			FinanceDetail fd = new FinanceDetail();
+			CustomerDetails cd = new CustomerDetails();
+			Customer cs = new Customer();
+			FinanceMain fm = this.financeMainDAO.getFinanceMain(this.finID);
+
+			cs.setCustCIF(fm.getCustCIF());
+			cd.setCustomer(cs);
+			fd.setCustomerDetails(cd);
+			fd.getFinScheduleData().setFinanceMain(fm);
+			fd.setSanctionDetailsList(this.sanctionConditionsDAO.getSanctionConditions(this.finID));
+			map.put("financeDetail", fd);
+			map.put("isEnquiry", true);
+			map.put("basicDetailgrid", this.grid_BasicDetails);
+			path = "/WEB-INF/pages/Finance/FinanceMain/FinancialSummaryDialog.zul";
 		}
 
 		if (StringUtils.isNotEmpty(path)) {
@@ -995,8 +1022,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		creditReviewDetail = this.creditApplicationReviewService.getCreditReviewDetailsByLoanType(creditReviewDetail);
-		return creditReviewDetail;
+		CreditReviewDetails newCreditReviewDetail = this.creditApplicationReviewService
+				.getCreditReviewDetailsByLoanType(creditReviewDetail);
+		if (newCreditReviewDetail == null && "DEFAULT".equals(financeMain.getLovEligibilityMethod())) {
+			creditReviewDetail.setEmploymentType(null);
+			newCreditReviewDetail = this.creditApplicationReviewService
+					.getCreditReviewDetailsByLoanType(creditReviewDetail);
+		}
+		return newCreditReviewDetail;
 	}
 
 	public String getModule() {
@@ -1105,9 +1138,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for OnClick Event on Menu Item Enqiries
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onFilterMenuItem(ForwardEvent event) throws InterruptedException {
+	public void onFilterMenuItem(ForwardEvent event) {
 		if (event.getData() != null) {
 			ValueLabel enquiry = (ValueLabel) event.getData();
 			this.enquiryType = enquiry.getValue();
@@ -1118,9 +1150,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean generateReport(String reportName, Object object, List listData, boolean isRegenerate, int reportType,
-			String userName, Window window) throws InterruptedException {
+	public boolean generateReport(String reportName, Object object, List<Object> listData, boolean isRegenerate,
+			int reportType, String userName, Window window) {
 
 		if (isRegenerate) {
 			try {
@@ -1135,7 +1166,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		return false;
 	}
 
-	private void createReport(String reportName, Object object, List listData, String userName, Window dialogWindow) {
+	private void createReport(String reportName, Object object, List<Object> listData, String userName,
+			Window dialogWindow) {
 		logger.debug("Entering");
 		try {
 			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
@@ -1170,9 +1202,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * When user clicks on button "button_Print" button
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnPrint(Event event) throws InterruptedException {
+	public void onClick$btnPrint(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
@@ -1287,10 +1318,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 						// PSD#183407
 						fee.setFeeTypeDesc(fee.getVasReference());
-						/*
-						 * String productCode = vASRecordingDAO.getProductCodeByReference(fee.getFinReference(),
-						 * fee.getVasReference()); fee.setFeeTypeDesc(productCode);
-						 */
 					}
 				}
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
@@ -1322,9 +1349,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnClose(Event event) throws InterruptedException {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -1504,10 +1530,6 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
-	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
-		this.vASRecordingDAO = vASRecordingDAO;
-	}
-
 	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
@@ -1553,6 +1575,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
 		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 
 }

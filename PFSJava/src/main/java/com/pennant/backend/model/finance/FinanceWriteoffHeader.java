@@ -11,9 +11,10 @@ public class FinanceWriteoffHeader implements Serializable {
 	private String finReference;
 	private FinanceWriteoff financeWriteoff;
 	private FinanceDetail financeDetail;
+	private String finSource;
 
 	public FinanceWriteoffHeader() {
-
+	    super();
 	}
 
 	public long getFinID() {
@@ -46,6 +47,14 @@ public class FinanceWriteoffHeader implements Serializable {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public String getFinSource() {
+		return finSource;
+	}
+
+	public void setFinSource(String finSource) {
+		this.finSource = finSource;
 	}
 
 }

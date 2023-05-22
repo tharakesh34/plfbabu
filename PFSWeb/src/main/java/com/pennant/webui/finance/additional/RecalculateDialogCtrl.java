@@ -54,7 +54,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.RecalculateService;
@@ -72,6 +71,7 @@ import com.pennant.webui.finance.financemain.ManualScheduleDialogCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -325,7 +325,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (isDefaultToMDT) {
 			FinanceScheduleDetail curSchd = schedules.get(schedules.size() - 1);
 			comboitem = new Comboitem();
-			comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+			comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 			comboitem.setValue(curSchd.getSchDate());
 			dateCombobox.appendChild(comboitem);
 			dateCombobox.setSelectedItem(comboitem);
@@ -343,7 +343,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						curBussDate = fm.getEventFromDate();
 					}
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curBussDate) + " " + curSchd.getSpecifier());
+					comboitem.setLabel(DateUtil.formatToLongDate(curBussDate) + " " + curSchd.getSpecifier());
 					comboitem.setValue(curBussDate);
 					dateCombobox.appendChild(comboitem);
 					dateCombobox.setSelectedItem(comboitem);
@@ -393,7 +393,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 				if (getFinanceScheduleDetail() != null
@@ -453,8 +453,8 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbTillDate,
 							Labels.getLabel("DATE_ALLOWED_RANGE",
 									new String[] { Labels.getLabel("label_RecalculateDialog_TillDate.value"),
-											DateUtility.formatToLongDate(finMain.getFinStartDate()),
-											DateUtility.formatToLongDate(finMain.getMaturityDate()) }));
+											DateUtil.formatToLongDate(finMain.getFinStartDate()),
+											DateUtil.formatToLongDate(finMain.getMaturityDate()) }));
 				}
 				// if schdpftBal greater than zero throw validation
 				if (this.cbTillDate.getSelectedItem().getAttribute("pftBal") != null) {
@@ -837,7 +837,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (fillAfter.compareTo(curSchd.getSchDate()) < 0) {
 
 					comboitem = new Comboitem();
-					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+					comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
 				}

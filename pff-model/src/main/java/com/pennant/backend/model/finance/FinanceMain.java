@@ -66,16 +66,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"repayProfitRate", "repayBaseRate", "repaySpecialRate", "repayMargin", "scheduleMethod", "repayFrq",
 		"nextRepayDate", "repayPftFrq", "nextRepayPftDate", "repayRvwFrq", "nextRepayRvwDate", "repayCpzFrq",
 		"nextRepayCpzDate", "maturityDate", "finRepayPftOnFrq", "rpyMinRate", "rpyMaxRate", "finContractDate",
-		"finPurpose", "finLimitRef", "finCommitmentRef", "dsaCode", "accountsOfficer", "salesDepartment", "dmaCode",
-		"referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz",
-		"maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw",
+		"finPurpose", "finLimitRef", "finCommitmentRef", "dsaCode", "dsaName", "dsaCodeDesc", "accountsOfficer",
+		"salesDepartment", "dmaCode", "referralId", "employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz",
+		"reAgeCpz", "maxUnplannedEmi", "maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw",
 		"planEMIHAlwInGrace", "planEMIHMethod", "planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz",
 		"firstDisbDate", "lastDisbDate", "stage", "status", "product", "advTerms", "closedDate", "fixedRateTenor",
 		"fixedTenorRate", "eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor",
 		"offerProduct", "offerAmount", "custSegmentation", "baseProduct", "processType", "bureauTimeSeries",
 		"campaignName", "existingLanRefNo", "leadSource", "poSource", "rsa", "verification", "sourChannelCategory",
 		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps", "calcOfSteps", "stepsAppliedFor",
-		"noOfGrcSteps" })
+		"noOfGrcSteps", "mandateID", "finIsActive" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -145,7 +145,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String dsaCode;
 	@XmlElement(name = "dsaCode")
 	private String dsaCodeReference;
+	@XmlElement
 	private String dsaName;
+	@XmlElement
 	private String dsaCodeDesc;
 	private String lovDescAccountsOfficer;
 	private String lovDescSourceCity;
@@ -201,8 +203,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String lovDescSourcingBranch;
 	@XmlElement
 	private String sourChannelCategory;
-	private Long asmName;
 	@XmlElement(name = "asmName")
+	private Long asmName;
 	private String lovDescAsmName;
 
 	// Payment type check
@@ -435,6 +437,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date recalToDate;
 	private String recalType;
 	private String recalSchdMethod;
+	@XmlElement
 	private BigDecimal desiredProfit = BigDecimal.ZERO;
 	private String rvwRateApplFor;
 	private boolean lovDescAdjClosingBal;
@@ -593,6 +596,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String productCategory;
 
 	/* Mandate */
+	@XmlElement
 	private Long mandateID;
 	private Long securityMandateID;
 
@@ -606,7 +610,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String dmaCode;
 	@XmlElement(name = "dmaCode")
 	private String dmaCodeReference;
+	@XmlElement
 	private String dmaCodeDesc;
+	@XmlElement
 	private String dmaName;
 	@XmlElement
 	private String referralId;
@@ -720,6 +726,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean chgDropLineSchd = false;
 	private Long assignmentId;
 	private long promotionSeqId = 0;
+	@XmlElement
 	private String loanCategory;
 	private boolean allowSubvention;
 	private Map<String, Object> glSubHeadCodes = new HashMap<>();
@@ -758,6 +765,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private boolean skipRateReset = false;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 	private String cancelRemarks;
+	private String cancelType;
 	private Map<String, Object> extendedFields = new HashMap<>();
 	private String hunterStatus;
 	private int autoRejectionDays;
@@ -850,8 +858,17 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String reason;
 	private boolean underSettlement;
 	private boolean isEOD;
+	private Date grcStartDate;
+	private boolean underNpa;
+	private String custCoreBank;
+	private String closureType;
+	private long createdBy;
+	private Timestamp createdOn;
+	private Long approvedBy;
+	private Timestamp approvedOn;
 	private String loanName;
 	private Date custDOB;
+	private boolean oldActiveState;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1040,6 +1057,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		// cancelReason
 		excludeFields.add("cancelReason");
 		excludeFields.add("cancelRemarks");
+		excludeFields.add("cancelType");
 		excludeFields.add("extendedFields");
 		excludeFields.add("autoApprove");
 		// hunterStatus
@@ -1097,8 +1115,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("holdStatus");
 		excludeFields.add("reason");
 		excludeFields.add("isEOD");
+		excludeFields.add("grcStartDate");
+		excludeFields.add("custCoreBank");
+		excludeFields.add("closureType");
 		excludeFields.add("loanName");
 		excludeFields.add("custDOB");
+		excludeFields.add("oldActiveState");
 
 		return excludeFields;
 	}
@@ -1531,6 +1553,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setSkipRateReset(this.skipRateReset);
 		this.detailsList.stream().forEach(e -> entity.getDetailsList().add(e == null ? null : e.copyEntity()));
 		entity.setCancelRemarks(this.cancelRemarks);
+		entity.setCancelType(this.cancelType);
 		entity.setExtendedFields(this.extendedFields);
 		entity.setHunterStatus(this.hunterStatus);
 		entity.setAutoRejectionDays(this.autoRejectionDays);
@@ -1597,6 +1620,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setSanBasedPft(this.sanBasedPft);
 		entity.setCpzPosIntact(this.cpzPosIntact);
 		entity.setModuleDefiner(this.moduleDefiner);
+		entity.setUnderNpa(this.underNpa);
+		entity.setUnderSettlement(this.underSettlement);
+		entity.setCreatedBy(this.createdBy);
+		entity.setCreatedOn(this.createdOn);
+		entity.setApprovedBy(this.approvedBy);
+		entity.setApprovedOn(this.approvedOn);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -3552,14 +3581,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.finIsAlwMD = finIsAlwMD;
 	}
 
-	public boolean istDSApplicable() {
-		return tDSApplicable;
-	}
-
-	public void settDSApplicable(boolean tDSApplicable) {
-		this.tDSApplicable = tDSApplicable;
-	}
-
 	public int getPlanEMIHLockPeriod() {
 		return planEMIHLockPeriod;
 	}
@@ -4786,6 +4807,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.cancelRemarks = cancelRemarks;
 	}
 
+	public String getCancelType() {
+		return cancelType;
+	}
+
+	public void setCancelType(String cancelType) {
+		this.cancelType = cancelType;
+	}
+
 	public List<ReasonDetails> getDetailsList() {
 		return detailsList;
 	}
@@ -5600,6 +5629,70 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.isEOD = isEOD;
 	}
 
+	public Date getGrcStartDate() {
+		return grcStartDate;
+	}
+
+	public void setGrcStartDate(Date grcStartDate) {
+		this.grcStartDate = grcStartDate;
+	}
+
+	public boolean isUnderNpa() {
+		return underNpa;
+	}
+
+	public void setUnderNpa(boolean underNpa) {
+		this.underNpa = underNpa;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
+	}
+
+	public String getClosureType() {
+		return closureType;
+	}
+
+	public void setClosureType(String closureType) {
+		this.closureType = closureType;
+	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(Long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
+
 	public String getLoanName() {
 		return loanName;
 	}
@@ -5615,4 +5708,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setCustDOB(Date custDOB) {
 		this.custDOB = custDOB;
 	}
+
+	public boolean isOldActiveState() {
+		return oldActiveState;
+	}
+
+	public void setOldActiveState(boolean oldActiveState) {
+		this.oldActiveState = oldActiveState;
+	}
+
 }

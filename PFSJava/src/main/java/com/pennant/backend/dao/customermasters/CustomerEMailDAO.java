@@ -55,4 +55,7 @@ public interface CustomerEMailDAO {
 
 	List<String> getCustEmailsByCustomerId(long custId);
 
+	List<CustomerEMail> getCustomerEMailById(long id, long mailPriority);
+
+	List<CustomerEMail> getCustomerEMailById(long id, String typeCode);
 }

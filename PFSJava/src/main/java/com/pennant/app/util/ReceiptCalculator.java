@@ -60,7 +60,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -102,6 +101,7 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -114,15 +114,15 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
-import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
 import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReceiptCalculator {
 	private static Logger logger = LogManager.getLogger(ReceiptCalculator.class);
@@ -136,7 +136,6 @@ public class ReceiptCalculator {
 	private LatePayMarkingService latePayMarkingService;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-	private AssetClassificationService assetClassificationService;
 
 	private static final String DESC_INC_TAX = " (Inclusive)";
 	private static final String DESC_EXC_TAX = " (Exclusive)";
@@ -1080,7 +1079,7 @@ public class ReceiptCalculator {
 		Date reqMaxODDate = valueDate;
 		if (!ImplementationConstants.LPP_CALC_SOD) {
 			if (!isGoldLoan) {
-				reqMaxODDate = DateUtility.addDays(valueDate, -1);
+				reqMaxODDate = DateUtil.addDays(valueDate, -1);
 			}
 		}
 
@@ -1198,7 +1197,7 @@ public class ReceiptCalculator {
 		BigDecimal adviseDue = BigDecimal.ZERO;
 
 		for (ManualAdvise advise : adviseList) {
-			if (fm.isOverdraftTxnChrgReq() && DateUtil.compare(advise.getDueDate(), null) == 0) {
+			if (fm.isOverdraftTxnChrgReq() && rd.isPresentment() && DateUtil.compare(advise.getDueDate(), null) == 0) {
 				continue;
 			}
 			boolean isTdsApplicable = false;
@@ -1214,11 +1213,11 @@ public class ReceiptCalculator {
 					bounceFeeType = feeTypeDAO.getTaxDetailByCode(Allocation.BOUNCE);
 				}
 
-				if (bounceFeeType != null && bounceFeeType.isTaxApplicable()
-						&& !rd.getReceiptHeader().isExcldTdsCal()) {
+				if (bounceFeeType != null && bounceFeeType.isTaxApplicable()) {
 					taxType = bounceFeeType.getTaxComponent();
+					isTdsApplicable = bounceFeeType.isTdsReq();
 				}
-				isTdsApplicable = bounceFeeType.isTdsReq();
+
 				type = Allocation.BOUNCE;
 				desc = "Bounce Charges";
 				advID = advise.getAdviseID();
@@ -1247,7 +1246,7 @@ public class ReceiptCalculator {
 			allocDetail.setValueDate(advise.getValueDate());
 
 			BigDecimal tdsAmount = BigDecimal.ZERO;
-			if (TDSCalculator.isTDSApplicable(fm, isTdsApplicable)) {
+			if (TDSCalculator.isTDSApplicable(fm, isTdsApplicable) && !rd.getReceiptHeader().isExcldTdsCal()) {
 				BigDecimal taxableAmount = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(taxType)) {
 					taxableAmount = allocDetail.getTotRecv().subtract(allocDetail.getDueGST());
@@ -1333,7 +1332,10 @@ public class ReceiptCalculator {
 			xcessPayable.setReserved(BigDecimal.ZERO);
 			xcessPayable.setBalanceAmt(xcessPayable.getAvailableAmt().subtract(xcessPayable.getTotPaidNow()));
 			xcessPayable.setReceiptID(excess.getReceiptID());
-			xcessPayableList.add(xcessPayable);
+			if (xcessPayable.getAvailableAmt().compareTo(BigDecimal.ZERO) > 0
+					|| excess.getReservedAmt().compareTo(BigDecimal.ZERO) > 0) {
+				xcessPayableList.add(xcessPayable);
+			}
 		}
 
 		receiptData.getReceiptHeader().setXcessPayables(xcessPayableList);
@@ -1346,7 +1348,7 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(amountType)
 				&& FinServiceEvent.EARLYSETTLE.equals(rch.getReceiptPurpose()) && AdvanceType.hasAdvInterest(fm)
-				&& fm.istDSApplicable()) {
+				&& fm.isTDSApplicable()) {
 			amount = rd.getIntTdsUnpaid();
 		}
 
@@ -1838,10 +1840,9 @@ public class ReceiptCalculator {
 			tempOdList.add(fod.copyEntity());
 		}
 
-		BigDecimal balAmount = BigDecimal.ZERO;
-		if (rd.isAdjSchedule()) {
-			balAmount = rch.getBalAmount();
-		} else {
+		BigDecimal balAmount = rch.getBalAmount();
+
+		if (!rd.isAdjSchedule()) {
 			balAmount = rch.getReceiptAmount();
 			rch.setBalAmount(balAmount);
 		}
@@ -2555,6 +2556,7 @@ public class ReceiptCalculator {
 		movement.setAdviseType(AdviseType.RECEIVABLE.id());
 		movement.setMovementDate(valueDate);
 		movement.setMovementAmount(allocate.getPaidNow());
+		movement.setTaxComponent(allocate.getTaxType());
 
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
 			movement.setPaidAmount(allocate.getPaidNow().subtract(allocate.getPaidGST()));
@@ -2664,18 +2666,11 @@ public class ReceiptCalculator {
 		FinScheduleData schData = fd.getFinScheduleData();
 		List<FinanceScheduleDetail> schedules = schData.getFinanceScheduleDetails();
 
-		// Penal after schedule collection OR along
-		/* String repayHierarchy = scheduleData.getFinanceType().getRpyHierarchy(); */
-
 		FinanceMain fm = schData.getFinanceMain();
-		long finID = fm.getFinID();
 
 		EventProperties eventProperties = fm.getEventProperties();
-		String repayHierarchy = getRepayHierarchyOnNPA(finID);
-
-		if ("".equals(repayHierarchy)) {
-			repayHierarchy = schData.getFinanceType().getRpyHierarchy();
-		}
+		FinanceType finType = finReceiptHeaderDAO.getRepayHierarchy(fm);
+		String repayHierarchy = FinanceUtil.getRepayHierarchy(rd, fm, finType);
 
 		if (repayHierarchy.contains("CS")) {
 			rch.setPenalSeparate(true);
@@ -2715,10 +2710,6 @@ public class ReceiptCalculator {
 		}
 
 		return rd;
-	}
-
-	private String getRepayHierarchyOnNPA(long finID) {
-		return assetClassificationService.getNpaRepayHierarchy(finID);
 	}
 
 	public FinReceiptData calApportion(char[] rpyOrder, FinReceiptData rd) {
@@ -2785,9 +2776,7 @@ public class ReceiptCalculator {
 		int receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 
 		BigDecimal balPri = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
-		BigDecimal balAmount = BigDecimal.ZERO;
-		BigDecimal paidNow = BigDecimal.ZERO;
-		BigDecimal waivedNow = BigDecimal.ZERO;
+
 		if (balPri.compareTo(BigDecimal.ZERO) <= 0) {
 			return receiptData;
 		}
@@ -2807,7 +2796,7 @@ public class ReceiptCalculator {
 		if (allocate == null) {
 			return receiptData;
 		}
-		balAmount = rch.getBalAmount();
+		BigDecimal balAmount = rch.getBalAmount();
 		if (receiptData.isAdjSchedule()) {
 			rph = rcdList.get(receiptData.getRcdIdx()).getRepayHeader();
 		}
@@ -2819,6 +2808,7 @@ public class ReceiptCalculator {
 			balAmount = allocate.getPaidAvailable();
 		}
 
+		BigDecimal waivedNow = BigDecimal.ZERO;
 		if (allocate.getWaivedAvailable().compareTo(balPri) > 0) {
 			waivedNow = balPri;
 		} else {
@@ -2827,7 +2817,7 @@ public class ReceiptCalculator {
 
 		balPri = balPri.subtract(waivedNow);
 
-		// Adjust Paid Amount
+		BigDecimal paidNow = BigDecimal.ZERO;
 		if (balAmount.compareTo(BigDecimal.ZERO) > 0) {
 			if (balAmount.compareTo(balPri) >= 0) {
 				paidNow = balPri;
@@ -2836,17 +2826,16 @@ public class ReceiptCalculator {
 			}
 		}
 
-		balAmount = balAmount.subtract(paidNow);
 		rch.setBalAmount(rch.getBalAmount().subtract(paidNow));
 		updateAllocation(allocate, paidNow, waivedNow, BigDecimal.ZERO, BigDecimal.ZERO,
 				receiptData.getFinanceDetail());
 		if (receiptData.isAdjSchedule() && paidNow.add(waivedNow).compareTo(BigDecimal.ZERO) > 0) {
-			rph.setRepayAmount(rph.getRepayAmount().add(paidNow));
-			rph.setPriAmount(rph.getPriAmount().add(paidNow));
-			/*
-			 * if (isFutPri) { rph.setFutPriAmount(rph.getFutPriAmount().add(paidNow)); }
-			 */
-			rph.setTotalWaiver(rph.getTotalWaiver().add(waivedNow));
+			if (rph != null) {
+				rph.setRepayAmount(rph.getRepayAmount().add(paidNow));
+				rph.setPriAmount(rph.getPriAmount().add(paidNow));
+				rph.setTotalWaiver(rph.getTotalWaiver().add(waivedNow));
+			}
+
 			receiptData = updateRPS(receiptData, allocate, "PRI");
 			allocate.setPaidNow(BigDecimal.ZERO);
 			allocate.setWaivedNow(BigDecimal.ZERO);
@@ -3645,6 +3634,11 @@ public class ReceiptCalculator {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		partPayAmount = getPartPaymentAmount(receiptData);
 		remainingBal = partPayAmount.subtract(rch.getTotalFees().getPaidAmount());
+
+		if (remainingBal.compareTo(BigDecimal.ZERO) <= 0) {
+			remainingBal = BigDecimal.ZERO;
+		}
+
 		rch.setPartPayAmount(remainingBal);
 		rch.setBalAmount(remainingBal);
 
@@ -3895,8 +3889,7 @@ public class ReceiptCalculator {
 			List<Taxes> taxDetails = header.getTaxDetails();
 			if (CollectionUtils.isNotEmpty(taxDetails)) {
 				for (Taxes taxDetail : taxDetails) {
-					Cloner cloner = new Cloner();
-					Taxes taxes = cloner.deepClone(taxDetail);
+					Taxes taxes = ObjectUtil.clone(taxDetail);
 					taxes.setId(Long.MIN_VALUE);
 					taxHeader.getTaxDetails().add(taxes);
 				}
@@ -5242,10 +5235,4 @@ public class ReceiptCalculator {
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
-
-	@Autowired
-	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
-		this.assetClassificationService = assetClassificationService;
-	}
-
 }

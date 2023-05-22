@@ -946,8 +946,7 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.authorizationLimit.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.authorizationLimit.getId());
 	}
 
 	public void onAuthorizationLimitDetailItemDoubleClicked(Event event) {

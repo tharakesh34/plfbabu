@@ -8,7 +8,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.pennant.app.util.DateUtility;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -59,7 +59,7 @@ public class Dataset {
 			return null;
 		}
 
-		return DateUtility.getDate(data[index].getContents());
+		return DateUtil.getDate(data[index].getContents());
 	}
 
 	public static boolean getBoolean(Cell[] data, int index) {

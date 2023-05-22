@@ -40,7 +40,7 @@ public class SubHeadRule implements Serializable {
 	 */
 
 	public SubHeadRule() {
-
+	    super();
 	}
 
 	// ******************************************************//

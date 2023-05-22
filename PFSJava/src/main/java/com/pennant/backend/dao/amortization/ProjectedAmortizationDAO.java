@@ -28,8 +28,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.amortization.AmortizationQueuing;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 
 public interface ProjectedAmortizationDAO {
 

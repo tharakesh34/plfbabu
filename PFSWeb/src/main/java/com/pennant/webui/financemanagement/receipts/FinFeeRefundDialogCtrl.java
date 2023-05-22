@@ -103,7 +103,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -112,7 +112,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundDialog.zul
@@ -213,8 +213,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 			if (arguments.containsKey("finFeeRefundHeader")) {
 				feeRefundHeader = (FinFeeRefundHeader) arguments.get("finFeeRefundHeader");
 
-				Cloner cloner = new Cloner();
-				FinFeeRefundHeader befImage = cloner.deepClone(feeRefundHeader);
+				FinFeeRefundHeader befImage = ObjectUtil.clone(feeRefundHeader);
 				feeRefundHeader.setBefImage(befImage);
 
 			}
@@ -1237,9 +1236,10 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		finFeeRefundService.prepareFeeRulesMap(this.feeRefundHeader, dataMap, userBranch);
 
 		// Fetch Accounting Set ID
-		long accountingSetID = AccountingConfigCache.getAccountSetID(this.feeRefundHeader.getFinType(),
+		Long accountingSetID = AccountingEngine.getAccountSetID(this.feeRefundHeader.getFinType(),
 				AccountingEvent.FEEREFUND, FinanceConstants.MODULEID_FINTYPE);
-		if (accountingSetID != 0 && accountingSetID != Long.MIN_VALUE) {
+
+		if (accountingSetID != null && accountingSetID > 0) {
 			aeEvent.getAcSetIDList().add(accountingSetID);
 			aeEvent.setDataMap(dataMap);
 			engineExecution.getAccEngineExecResults(aeEvent);

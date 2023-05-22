@@ -68,7 +68,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.endofday.main.AMZBatchAdmin;
 import com.pennant.backend.endofday.main.AMZBatchMonitor;
@@ -80,6 +79,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -138,6 +138,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	public class AMZJob implements Runnable {
 
 		public AMZJob() {
+		    super();
 		}
 
 		@Override
@@ -264,11 +265,11 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	private void setDates() {
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
 
-		Date nextAMZMonth = DateUtility.addDays(prvAMZMonth, 1);
-		nextAMZMonth = DateUtility.getMonthEnd(nextAMZMonth);
+		Date nextAMZMonth = DateUtil.addDays(prvAMZMonth, 1);
+		nextAMZMonth = DateUtil.getMonthEnd(nextAMZMonth);
 
-		lable_LastAMZMonth_Date.setValue(DateUtility.format(prvAMZMonth, DateFormat.LONG_MONTH.getPattern()));
-		lable_NextAMZMonth_Date.setValue(DateUtility.format(nextAMZMonth, DateFormat.LONG_MONTH.getPattern()));
+		lable_LastAMZMonth_Date.setValue(DateUtil.format(prvAMZMonth, DateFormat.LONG_MONTH.getPattern()));
+		lable_NextAMZMonth_Date.setValue(DateUtil.format(nextAMZMonth, DateFormat.LONG_MONTH.getPattern()));
 	}
 
 	/**
@@ -280,10 +281,10 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 		String msg = "";
 		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
-		Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
-		amzMonth = DateUtility.getMonthEnd(amzMonth);
+		Date amzMonth = DateUtil.addDays(prvAMZMonth, 1);
+		amzMonth = DateUtil.getMonthEnd(amzMonth);
 
-		String strAMZMonth = DateUtility.format(amzMonth, DateFormat.LONG_MONTH.getPattern());
+		String strAMZMonth = DateUtil.format(amzMonth, DateFormat.LONG_MONTH.getPattern());
 
 		// Validate EOD is in progress or not
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
@@ -622,7 +623,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 		if (!listitem.hasFellow(threadId + AmortizationConstants.STATUS))
 			listcell.setParent(listitem);
 
-		listcell = new Listcell(DateUtility.timeBetween(status.getEndTime(), status.getStartTime()));
+		listcell = new Listcell(DateUtil.timeBetween(status.getEndTime(), status.getStartTime()));
 		listcell.setParent(listitem);
 
 		listBoxThread.appendChild(listitem);

@@ -386,7 +386,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tanId }, Date.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, tanId);
 	}
 
 	@Override
@@ -400,7 +400,7 @@ public class TdsReceivablesTxnDAOImpl extends SequenceDao<TdsReceivablesTxn> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tanId }, Date.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, tanId);
 	}
 
 	@Override

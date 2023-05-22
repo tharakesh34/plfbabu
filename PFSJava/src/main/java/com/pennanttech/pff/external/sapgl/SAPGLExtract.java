@@ -37,7 +37,6 @@ public class SAPGLExtract extends DataEngineExport {
 	private Date endDate;
 	private Date appDate;
 	private String entityCode = null;
-	private String entityDescription = null;
 
 	public SAPGLExtract(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
@@ -46,7 +45,6 @@ public class SAPGLExtract extends DataEngineExport {
 
 	public void extractReport(String[] entityDetails, Date startDate, Date endDate) throws Exception {
 		this.entityCode = entityDetails[0];
-		this.entityDescription = entityDetails[1];
 		this.startDate = startDate;
 		this.endDate = endDate;
 
@@ -101,7 +99,7 @@ public class SAPGLExtract extends DataEngineExport {
 
 	private Date getCurrentTrialBalanceStartDate() throws Exception {
 		String query = "SELECT STARTDATE from TRIAL_BALANCE_HEADER WHERE ID = (select MAX(ID) from TRIAL_BALANCE_HEADER WHERE DIMENSION = ?) AND DIMENSION = ? AND ENTITYCODE = ?";
-		return jdbcTemplate.queryForObject(query, new Object[] { "STATE", "STATE", entityCode }, Date.class);
+		return jdbcTemplate.queryForObject(query, Date.class, "STATE", "STATE", entityCode);
 	}
 
 	private Map<String, TrailBalance> getTransactions() throws Exception {
@@ -457,12 +455,12 @@ public class SAPGLExtract extends DataEngineExport {
 		sql.append(" SELECT BSCHL, SUM(WRBTR) WRBTR FROM TRANSACTION_DETAIL_REPORT");
 		sql.append(" WHERE ENTITY = ? AND LINK = ? GROUP BY BSCHL");
 
-		jdbcTemplate.query(sql.toString(), new Object[] { entity, pageItr }, new RowCallbackHandler() {
+		jdbcTemplate.query(sql.toString(), new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				map.put(rs.getInt("BSCHL"), rs.getBigDecimal("WRBTR"));
 			}
-		});
+		}, entity, pageItr);
 
 		return map;
 	}

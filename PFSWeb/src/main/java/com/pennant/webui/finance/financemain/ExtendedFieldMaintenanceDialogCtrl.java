@@ -70,7 +70,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFieldMaintenance> {
 
@@ -472,8 +472,7 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 		logger.debug(Literal.ENTERING);
 
 		ExtendedFieldMaintenance extFieldsMaint = new ExtendedFieldMaintenance();
-		Cloner cloner = new Cloner();
-		extFieldsMaint = cloner.deepClone(getExtendedFieldMaintenance());
+		extFieldsMaint = ObjectUtil.clone(getExtendedFieldMaintenance());
 		extFieldsMaint.setEvent(getExtendedFieldHeader().getEvent());
 		doWriteComponentsToBean(extFieldsMaint);
 

@@ -58,7 +58,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -84,6 +83,7 @@ import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -892,8 +892,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.finFlags_contractPrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_noOfTerms
 					.setValue(String.valueOf(financeFlag.getNumberOfTerms() + financeFlag.getGraceTerms()));
-			this.finFlags_startDate.setValue(DateUtility.formatToLongDate(financeFlag.getFinStartDate()));
-			this.finFlags_maturityDate.setValue(DateUtility.formatToLongDate(financeFlag.getMaturityDate()));
+			this.finFlags_startDate.setValue(DateUtil.formatToLongDate(financeFlag.getFinStartDate()));
+			this.finFlags_maturityDate.setValue(DateUtil.formatToLongDate(financeFlag.getMaturityDate()));
 			this.finFlags_purchasePrice.setValue(CurrencyUtil.parse(financeFlag.getFinAmount(), ccyFormatter));
 			this.finFlags_otherExp.setValue(CurrencyUtil.parse(financeFlag.getFeeChargeAmt(), ccyFormatter));
 			this.finFlags_totalCost.setValue(CurrencyUtil.parse(
@@ -977,8 +977,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 			this.finFlags_contractPrice.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 			this.finFlags_noOfTerms
 					.setValue(String.valueOf(financeMain.getNumberOfTerms() + financeMain.getGraceTerms()));
-			this.finFlags_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-			this.finFlags_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+			this.finFlags_startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+			this.finFlags_maturityDate.setValue(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 			this.finFlags_purchasePrice.setValue(CurrencyUtil.parse(financeMain.getFinAmount(), ccyFormatter));
 			this.finFlags_otherExp.setValue(CurrencyUtil.parse(financeMain.getFeeChargeAmt(), ccyFormatter));
 			this.finFlags_totalCost.setValue(CurrencyUtil.parse(

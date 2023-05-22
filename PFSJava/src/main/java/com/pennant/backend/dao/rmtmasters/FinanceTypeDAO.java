@@ -88,5 +88,7 @@ public interface FinanceTypeDAO {
 
 	List<String> getFinanceTypeList();
 
+	boolean isAllowCancelFin(String finType);
+
 	boolean isFinTypeExists(String finType);
 }

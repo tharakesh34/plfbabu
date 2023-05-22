@@ -368,7 +368,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 	public List<Long> getClusterByPartnerbankCode(long partnerbankId) {
 		String sql = "Select Distinct ClusterId From FinTypePartnerBanks Where partnerbankId = ? and ClusterId is not null";
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, JdbcUtil.getLong(partnerbankId));
@@ -479,6 +479,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 			item.setName(rs.getString("Name"));
 			item.setClusterType(rs.getString("ClusterType"));
 			item.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			item.setDivisionCode(rs.getString("FinDivision"));
 		}
 
 		if (tableType.getSuffix().contains("Aview")) {
@@ -507,7 +508,8 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		sql.append(" Id, FinType, Purpose, PaymentMode, PartnerBankID, VanApplicable, BranchCode, ClusterId");
 
 		if (tableType.getSuffix().contains("View")) {
-			sql.append(", PartnerBankName, PartnerBankCode, BranchDesc, ClusterCode, Name, ClusterType, FintypeDesc");
+			sql.append(", PartnerBankName, PartnerBankCode, BranchDesc, ClusterCode");
+			sql.append(", Name, ClusterType, FintypeDesc, FinDivision");
 		}
 
 		if (tableType.getSuffix().contains("Aview")) {

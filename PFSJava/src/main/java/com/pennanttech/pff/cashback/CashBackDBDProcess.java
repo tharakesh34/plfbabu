@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.CashBackDetailDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
@@ -19,6 +18,7 @@ import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.finance.CashBackProcessService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.subvention.dao.SubventionProcessDAO;
 
 public class CashBackDBDProcess {
@@ -52,14 +52,14 @@ public class CashBackDBDProcess {
 			Date cbDate = null;
 			// Identify the date on which date cash back should be automated
 			if (StringUtils.equals(detail.getType(), "DBD")) {
-				cbDate = DateUtility.addMonths(detail.getFinStartDate(), promotion.getDlrCbToCust());
+				cbDate = DateUtil.addMonths(detail.getFinStartDate(), promotion.getDlrCbToCust());
 			} else if (StringUtils.equals(detail.getType(), "MBD")) {
-				cbDate = DateUtility.addMonths(detail.getFinStartDate(), promotion.getMnfCbToCust());
+				cbDate = DateUtil.addMonths(detail.getFinStartDate(), promotion.getMnfCbToCust());
 			} else {
-				cbDate = DateUtility.addMonths(detail.getFinStartDate(), promotion.getDlrCbToCust());
+				cbDate = DateUtil.addMonths(detail.getFinStartDate(), promotion.getDlrCbToCust());
 			}
 
-			if (DateUtility.compare(appDate, cbDate) != 0) {
+			if (DateUtil.compare(appDate, cbDate) != 0) {
 				continue;
 			}
 

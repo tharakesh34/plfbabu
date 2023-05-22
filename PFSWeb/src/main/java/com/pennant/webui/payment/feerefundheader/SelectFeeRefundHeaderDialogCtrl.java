@@ -26,6 +26,7 @@ package com.pennant.webui.payment.feerefundheader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,8 +47,10 @@ import com.pennant.app.core.FinOverDueService;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.feerefund.FeeRefundHeader;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
 import com.pennant.backend.service.finance.FinanceDetailService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.pff.holdrefund.dao.HoldRefundUploadDAO;
@@ -72,6 +75,8 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 	private PaymentHeaderService paymentHeaderService;
 	private HoldRefundUploadDAO holdRefundUploadDAO;
 	private FinOverDueService finOverDueService;
+
+	private ManualAdviseService manualAdviseService;
 
 	public SelectFeeRefundHeaderDialogCtrl() {
 		super();
@@ -132,6 +137,11 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 		logger.debug("Leaving");
 	}
 
+	private boolean isValidateCancelManualAdvise(long finID) {
+		List<ManualAdvise> list = manualAdviseService.getCancelledManualAdvise(finID);
+		return list.stream().anyMatch(m -> m.getStatus() == null);
+	}
+
 	/**
 	 * When user clicks on button "btnProceed" button
 	 * 
@@ -161,7 +171,7 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 
 		String rcdMntnSts = fm.getRcdMaintainSts();
 
-		if (StringUtils.isNotEmpty(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(rcdMntnSts) && (FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) ? isValidateCancelManualAdvise(finID) : true)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}
@@ -270,6 +280,11 @@ public class SelectFeeRefundHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup
 	@Autowired
 	public void setFinOverDueService(FinOverDueService finOverDueService) {
 		this.finOverDueService = finOverDueService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
 	}
 
 }

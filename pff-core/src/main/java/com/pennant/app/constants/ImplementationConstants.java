@@ -4,9 +4,6 @@ import org.springframework.stereotype.Component;
 
 import com.pennanttech.extension.FeatureExtension;
 import com.pennanttech.pff.Module;
-import com.pennanttech.pff.npa.NpaScope;
-import com.pennanttech.pff.provision.ProvisionBook;
-import com.pennanttech.pff.provision.ProvisionReversalStage;
 
 @Component
 public class ImplementationConstants {
@@ -141,6 +138,7 @@ public class ImplementationConstants {
 		GENERATECIBIL_BTN_MANDATORY = getValueAsBoolean("GENERATECIBIL_BTN_MANDATORY", false);
 		ALLOW_ALL_SERV_RCDS = getValueAsBoolean("ALLOW_ALL_SERV_RCDS", false);
 		TV_FINALVAL_AMOUNT_VALD = getValueAsBoolean("TV_FINALVAL_AMOUNT_VALD", false);
+		TV_FINALVAL_COP_AMOUNT_VALD = getValueAsBoolean("TV_FINALVAL_COP_AMOUNT_VALD", false);
 		CUST_ADDR_AUTO_FILL = getValueAsBoolean("CUST_ADDR_AUTO_FILL", true);
 		SHOW_CUST_EMP_DETAILS = getValueAsBoolean("SHOW_CUST_EMP_DETAILS", true);
 		SHOW_CUST_SHARE_HOLDER_DETAILS = getValueAsBoolean("SHOW_CUST_SHARE_HOLDER_DETAILS", true);
@@ -280,15 +278,6 @@ public class ImplementationConstants {
 		ALLOW_STEP_RECAL_PRORATA = getValueAsBoolean("ALLOW_STEP_RECAL_PRORATA", false);
 		RECEIPT_DUPLICATE_FORMAT = getValueAsString("RECEIPT_DUPLICATE_FORMAT", "TR_VD_AMT");
 		CUSTOMER_PAN_VALIDATION_STOP = getValueAsBoolean("CUSTOMER_PAN_VALIDATION_STOP", false);
-		ALLOW_NPA = getValueAsBoolean("ALLOW_NPA", false);
-		ALLOW_PROVISION = getValueAsBoolean("ALLOW_PROVISION", false);
-		NPA_SCOPE = (NpaScope) getValueAsObject("NPA_SCOPE", NpaScope.LOAN);
-		PROVISION_REVERSAL_REQ = getValueAsBoolean("PROVISION_REVERSAL_REQ", false);
-		PROVISION_BOOKS = (ProvisionBook) getValueAsObject("PROVISION_BOOKS", ProvisionBook.NO_PROVISION);
-		PROVISION_REVERSAL_STAGE = (ProvisionReversalStage) getValueAsObject("PROVISION_REVERSAL_STAGE",
-				ProvisionReversalStage.SOM);
-		ALLOW_EXTENDEDFIELDS_IN_WORKFLOW = getValueAsBoolean("ALLOW_EXTENDEDFIELDS_IN_WORKFLOW", false);
-		PROVISION_POSTINGS_REQ = getValueAsBoolean("PROVISION_POSTINGS_REQ", true);
 		RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT",
 				true);
 		RECEIPT_ALLOW_FULL_WAIVER = getValueAsBoolean("RECEIPT_ALLOW_FULL_WAIVER", false);
@@ -297,6 +286,33 @@ public class ImplementationConstants {
 		COLLECTION_DOWNLOAD_REQ = getValueAsBoolean("COLLECTION_DOWNLOAD_REQ", true);
 
 		AUTO_WAIVER_REQUIRED_FROMSCREEN = getValueAsBoolean("AUTO_WAIVER_REQUIRED_FROMSCREEN", false);
+
+		LOAN_PURPOSE_MANDATORY = getValueAsBoolean("LOAN_PURPOSE_MANDATORY", false);
+		GUARANTOR_EMAIL_MANDATORY = getValueAsBoolean("GUARANTOR_EMAIL_MANDATORY", true);
+		ALLOW_IMD_WITHOUT_REALIZED = getValueAsBoolean("ALLOW_IMD_WITHOUT_REALIZED", false);
+
+		SOA_INSTALlEMENT_BIFURCATION = getValueAsBoolean("SOA_INSTALlEMENT_BIFURCATION", false);
+		AUTO_KNOCK_OFF_ON_DUE_DATE = getValueAsBoolean("AUTO_KNOCK_OFF_ON_DUE_DATE", true);
+		DUE_DATE_RECEIPT_CREATION = getValueAsBoolean("DUE_DATE_RECEIPT_CREATION", true);
+		AUTO_EXTRACTION = getValueAsBoolean("AUTO_EXTRACTION", true);
+		AUTO_APPROVAL = getValueAsBoolean("AUTO_APPROVAL", false);
+		APPROVE_ON_LOAN_ORG = getValueAsBoolean("APPROVE_ON_LOAN_ORG", false);
+		UPLOAD_ENITITY_CODE_MANDATORY = getValueAsBoolean("UPLOAD_ENITITY_CODE_MANDATORY", false);
+		AUTO_DOWNLOAD = getValueAsBoolean("AUTO_DOWNLOAD", false);
+		AUTO_UPLOAD = getValueAsBoolean("AUTO_UPLOAD", false);
+		ALLOW_CO_APP = getValueAsBoolean("ALLOW_CO_APP", false);
+		PARTNER_BANK_WISE_EXTARCTION = getValueAsBoolean("PARTNER_BANK_WISE_EXTARCTION", false);
+		FRQ_DES_CHANGE_ON_EXTRACTION = getValueAsBoolean("FRQ_DES_CHANGE_ON_EXTRACTION", false);
+		PARTNER_BANK_REQ = getValueAsBoolean("PARTNER_BANK_REQ", false);
+		SWAP_EFFECTIVE_DATE_DEFAULT = getValueAsBoolean("SWAP_EFFECTIVE_DATE_DEFAULT", false);
+		ACCOUNT_DETAILS_READONLY = getValueAsBoolean("ACCOUNT_DETAILS_READONLY", false);
+		ALLOW_CONSECUTIVE_BOUNCE = getValueAsBoolean("ALLOW_CONSECUTIVE_BOUNCE", false);
+		EXPIRY_DATE_MANDATORY = getValueAsBoolean("EXPIRY_DATE_MANDATORY", true);
+		ALLOW_CANCEL_LOAN_AFTER_PAYMENTS = getValueAsBoolean("ALLOW_CANCEL_LOAN_AFTER_PAYMENTS", false);
+		ALLOW_LIEN = getValueAsBoolean("ALLOW_LIEN", false);
+		ALW_AUTO_CROSS_LOAN_KNOCKOFF = getValueAsBoolean("ALW_AUTO_CROSS_LOAN_KNOCKOFF", false);
+		FEE_ODC_DISABLE = getValueAsBoolean("FEE_ODC_DISABLE", false);
+		AGR_ACTVITY_INCL_ROLES = getValueAsString("AGR_ACTVITY_INCL_ROLES", "");
 
 		setVerificationConstants();
 	}
@@ -397,6 +413,7 @@ public class ImplementationConstants {
 	public static boolean COAPP_PANNUMBER_NON_MANDATORY;
 	public static boolean GENERATECIBIL_BTN_MANDATORY;
 	public static boolean TV_FINALVAL_AMOUNT_VALD;
+	public static boolean TV_FINALVAL_COP_AMOUNT_VALD;
 
 	// FIXME>>HL >>
 	public static boolean ALLOW_LOAN_SPLIT;
@@ -503,6 +520,10 @@ public class ImplementationConstants {
 	public static boolean ALLOW_ZERO_STEP_AMOUNT_PERC;
 	public static boolean ALLOW_STEP_RECAL_PRORATA;
 	public static boolean CUSTOMER_PAN_VALIDATION_STOP;
+	public static boolean LOAN_PURPOSE_MANDATORY;
+	public static boolean GUARANTOR_EMAIL_MANDATORY;
+	public static boolean ALLOW_IMD_WITHOUT_REALIZED;
+	public static boolean FEE_ODC_DISABLE;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis
@@ -557,14 +578,6 @@ public class ImplementationConstants {
 	 * Parameter for to allow the 'DISBINS' postings while disbursement instructions download.
 	 */
 	public static boolean DISB_INST_POST_DWNLD;
-	public static boolean ALLOW_NPA;
-	public static boolean ALLOW_PROVISION;
-	public static NpaScope NPA_SCOPE;
-	public static ProvisionBook PROVISION_BOOKS;
-	public static boolean PROVISION_REVERSAL_REQ;
-	public static ProvisionReversalStage PROVISION_REVERSAL_STAGE;
-	public static boolean ALLOW_EXTENDEDFIELDS_IN_WORKFLOW;
-	public static boolean PROVISION_POSTINGS_REQ;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER_ACKNOWLEDGEMENT;
 	public static boolean RECEIPT_ALLOW_FULL_WAIVER;
 	public static boolean ALLOW_CERSAI;
@@ -624,6 +637,93 @@ public class ImplementationConstants {
 	public static boolean CUSTOMIZED_SOAREPORT;
 	public static boolean COLLECTION_DOWNLOAD_REQ;
 	public static boolean AUTO_WAIVER_REQUIRED_FROMSCREEN;
+	public static boolean AUTO_KNOCK_OFF_ON_DUE_DATE;
+	/*
+	 * In Transactions Details “Instalment Due” & “Receipt” Entries to be reflected with bifurcation “Principal” &
+	 * “Interest” :: true for AXIS
+	 */
+	public static boolean SOA_INSTALlEMENT_BIFURCATION;
+
+	/**
+	 * Feature extension to create the receipts on due date or response upload, default value is true.
+	 */
+	public static boolean DUE_DATE_RECEIPT_CREATION;
+
+	/**
+	 * Feature extension to enable or disable auto extraction.
+	 */
+	public static boolean AUTO_EXTRACTION;
+
+	/**
+	 * Feature extension to enable or disable auto approval.
+	 */
+	public static boolean AUTO_APPROVAL;
+
+	/**
+	 * Feature extension to allow the mandate approval even the loan in origination.
+	 */
+	public static boolean APPROVE_ON_LOAN_ORG;
+
+	/**
+	 * Feature extension whether the Entity-Code is mandatory or not for mandate response file upload. .
+	 */
+	public static boolean UPLOAD_ENITITY_CODE_MANDATORY;
+
+	/**
+	 * Feature extension for mandate registration request auto download
+	 */
+	public static boolean AUTO_DOWNLOAD;
+
+	/**
+	 * Feature extension for mandate registration response auto upload.
+	 */
+	public static boolean AUTO_UPLOAD;
+
+	/**
+	 * Feature extension to allow Co-Applicants for mandate creation in loan queue.
+	 */
+	public static boolean ALLOW_CO_APP;
+
+	/**
+	 * Feature extension to extract the registration file against to partner bank wise
+	 */
+	public static boolean PARTNER_BANK_WISE_EXTARCTION;
+
+	/**
+	 * Feature extension to change the frequency description in registration file
+	 */
+	public static boolean FRQ_DES_CHANGE_ON_EXTRACTION;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean PARTNER_BANK_REQ;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean SWAP_EFFECTIVE_DATE_DEFAULT;
+
+	/**
+	 * Feature extension to capture partner bank in mandate creation
+	 */
+	public static boolean ACCOUNT_DETAILS_READONLY;
+
+	/**
+	 * Feature extension to for Consecutive Hold Reason
+	 */
+	public static String CONSECUTIVE_HOLD_REASON = "CONSECUTIVE BOUNCE";
+
+	public static boolean ALLOW_CONSECUTIVE_BOUNCE;
+	public static boolean ALLOW_CANCEL_LOAN_AFTER_PAYMENTS;
+
+	/**
+	 * Feature Extension to no mandate the expiry date
+	 */
+	public static boolean EXPIRY_DATE_MANDATORY;
+	public static boolean ALLOW_LIEN;
+	public static boolean ALW_AUTO_CROSS_LOAN_KNOCKOFF;
+	public static String AGR_ACTVITY_INCL_ROLES;
 
 	private static void setVerificationConstants() {
 		VER_INIT_FROM_OUTSIDE = getValueAsBoolean("VER_INIT_FROM_OUTSIDE", false);

@@ -26,7 +26,6 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
@@ -274,7 +273,7 @@ public class EodJobListener implements JobExecutionListener {
 			eod.setProcessedCustomers(String.valueOf(StepUtil.PREPARE_CUSTOMER_QUEUE.getProcessedRecords()));
 			eod.setStartTime(DateUtil.format(startTime, DateFormat.LONG_TIME));
 			eod.setEndTime(DateUtil.format(endTime, DateFormat.LONG_TIME));
-			eod.setCompletedTime(DateUtility.timeBetween(endTime, startTime));
+			eod.setCompletedTime(DateUtil.timeBetween(endTime, startTime));
 			eod.setTotalLoans("0");
 
 			for (StepExecution stepExecution : jobExecution.getStepExecutions()) {

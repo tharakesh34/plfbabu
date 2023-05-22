@@ -7,8 +7,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.organization.OrganizationType;
 import com.pennanttech.pff.organization.model.Organization;
 
@@ -33,7 +33,7 @@ public class OrganizationListModelItemRender implements ListitemRenderer<Organiz
 		lc.setParent(item);
 		lc = new Listcell(org.getName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(org.getDate_Incorporation()));
+		lc = new Listcell(DateUtil.formatToLongDate(org.getDate_Incorporation()));
 		lc.setParent(item);
 		lc = new Listcell(org.getRecordStatus());
 		lc.setParent(item);

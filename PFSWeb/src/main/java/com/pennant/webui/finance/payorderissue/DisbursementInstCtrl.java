@@ -50,7 +50,6 @@ import org.zkoss.zul.Listitem;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.configuration.VASRecording;
@@ -72,6 +71,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -248,7 +248,7 @@ public class DisbursementInstCtrl {
 
 			Listgroup listgroup = new Listgroup();
 			Listcell lc;
-			String label = DateUtility.formatToLongDate(groupDate);
+			String label = DateUtil.formatToLongDate(groupDate);
 			label = label.concat(" , ") + key;
 			lc = new Listcell(label);
 			lc.setStyle("font-weight:bold");
@@ -755,7 +755,7 @@ public class DisbursementInstCtrl {
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 						&& financeDisbursement.getDisbSeq() == 1) {
 
-					totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+					totdisbAmt = totdisbAmt.subtract(main.getDownPaySupl());
 					totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 					if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 						totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());
@@ -784,7 +784,7 @@ public class DisbursementInstCtrl {
 		if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 				&& financeDisbursement.getDisbSeq() == 1) {
 
-			totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
+			totdisbAmt = totdisbAmt.subtract(main.getDownPaySupl());
 			totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
 			if (FinanceConstants.BPI_DISBURSMENT.equals(main.getBpiTreatment())) {
 				totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());

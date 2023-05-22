@@ -102,8 +102,7 @@ public class IRRFeeTypeDialogCtrl extends GFCBaseCtrl<IRRFeeType> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.iRRFeeType.getIRRID()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.iRRFeeType.getIRRID());
 	}
 
 	/**

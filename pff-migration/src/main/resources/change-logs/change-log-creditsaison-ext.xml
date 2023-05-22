@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfext,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	 <changeSet id="ST#144.61.2" author="ramya.v">
+		<createTable tableName="Presentment_Staging">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="TxnRef" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="CycleType" type="char(2)" />
+			<column name="InstrumentMode" type="char(1)" />
+			<column name="PresentationDate" type="datetime" />
+			<column name="BankCode" type="varchar(8)" />
+			<column name="ProductCode" type="varchar(8)" />
+			<column name="CustomerId" type="varchar(20)" />
+			<column name="AgreementNo" type="varchar(20)" />
+			<column name="PresentmentAmount" type="decimal(18,0)" />
+			<column name="EMINo" type="int" />
+			<column name="TxnTypeCode" type="bigint" />
+			<column name="SourceCode" type="bigint" />
+			<column name="BRCode" type="varchar(20)" />
+			<column name="UMRNNo" type="varchar(50)" />
+			<column name="BankName" type="varchar(50)" />
+			<column name="MICRCode" type="varchar(20)" />
+			<column name="AccountNo" type="varchar(18)" />
+			<column name="DestAccHolder" type="varchar(100)" />
+			<column name="AccType" type="char(2)" />
+			<column name="BankAddress" type="varchar(200)" />
+			<column name="ResubFlag" type="char(1)" />
+			<column name="OrginSystem" type="varchar(10)" />
+			<column name="DataGenDate" type="datetime" />
+			<column name="SpecialHitFile" type="bigint" />
+			<column name="UserId" type="varchar(10)" />
+			<column name="BatchId" type="bigint" />
+			<column name="JobId" type="varchar(20)" />
+			<column name="PickupBatchId" type="varchar(16)" />
+			<column name="PresentmentStatus" type="char(1)" />
+			<column name="Reason" type="varchar(20)" />
+			<column name="Progress" type="int" />
+			<column name="RespBatchId" type="varchar(10)" />
+			<column name="Presentmentref" type="varchar(30)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#144.62.1" author="ramya.v">
+		<addPrimaryKey tableName="Presentment_Staging" columnNames="Id" constraintName="PK_PreStagingreq_Id" />
+	</changeSet>
+
+	<changeSet id="ST#144.63.1" author="ramya.v">
+		<addUniqueConstraint tableName="Presentment_Staging" columnNames="TxnRef"
+			constraintName="UK_PreStagingreq_TXN_REF" />
+	</changeSet>
+
+	<changeSet id="ST#144.77" author="ramya.v">
+		<createTable tableName="Presentment_Staging_log">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="StageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="TxnRef" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)" />
+			<column name="CycleType" type="char(2)" />
+			<column name="InstrumentMode" type="char(1)" />
+			<column name="PresentationDate" type="datetime" />
+			<column name="BankCode" type="varchar(8)" />
+			<column name="ProductCode" type="varchar(8)" />
+			<column name="CustomerId" type="varchar(20)" />
+			<column name="AgreementNo" type="varchar(20)" />
+			<column name="PresentmentAmount" type="decimal(18,0)" />
+			<column name="EMINo" type="int" />
+			<column name="TxnTypeCode" type="bigint" />
+			<column name="SourceCode" type="bigint" />
+			<column name="BRCode" type="varchar(20)" />
+			<column name="UMRNNo" type="varchar(50)" />
+			<column name="BankName" type="varchar(50)" />
+			<column name="MICRCode" type="varchar(20)" />
+			<column name="AccountNo" type="varchar(18)" />
+			<column name="DestAccHolder" type="varchar(100)" />
+			<column name="AccType" type="char(2)" />
+			<column name="BankAddress" type="varchar(200)" />
+			<column name="ResubFlag" type="char(1)" />
+			<column name="OrginSystem" type="varchar(10)" />
+			<column name="DataGenDate" type="datetime" />
+			<column name="SpecialHitFile" type="bigint" />
+			<column name="UserId" type="varchar(10)" />
+			<column name="BatchId" type="bigint" />
+			<column name="JobId" type="varchar(20)" />
+			<column name="PickupBatchId" type="varchar(16)" />
+			<column name="PresentmentStatus" type="char(1)" />
+			<column name="Reason" type="varchar(20)" />
+			<column name="Progress" type="int" />
+			<column name="RespBatchId" type="varchar(10)" />
+			<column name="Presentmentref" type="varchar(30)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#144.78" author="ramya.v">
+		<addPrimaryKey tableName="Presentment_Staging_log" columnNames="Id" constraintName="PK_PreStaginglog_Id" />
+	</changeSet>
+
+	<changeSet id="ST#144.79" author="ramya.v">
+		<addUniqueConstraint tableName="Presentment_Staging_log" columnNames="TxnRef"
+			constraintName="UK_PreStaginglog_TXN_REF" />
+	</changeSet>
+
+	<changeSet id="ST#144.79.01" author="ramya.v">
+		<modifyDataType tableName="Presentment_Staging" columnName="PresentmentStatus"
+			newDataType="VARCHAR(5)" />
+	</changeSet>
+
+	<changeSet id="ST#144.79.02" author="ramya.v">
+		<modifyDataType tableName="Presentment_Staging_log" columnName="PresentmentStatus"
+			newDataType="VARCHAR(5)" />
+	</changeSet>
+	 
+	<changeSet id="ST#144.79.05" author="ramya.v">
+		<addColumn tableName="Presentment_Staging">
+			<column name="utrNumber" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#144.79.06" author="ramya.v">
+		<addColumn tableName="Presentment_Staging_log">
+			<column name="utrNumber" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+</databaseChangeLog>

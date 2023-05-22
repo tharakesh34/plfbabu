@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window>
+		<window id="windowSelectGenerateLetter" apply="${selectGenerateLetterCtrl}" width="65%" height="300px"
+			style="align:start;" sizable="false" closable="true">
+
+			<borderlayout id="blSelectGenerateLetter">
+				<north>
+					<div sclass="z-toolbar">
+						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+							<toolbar align="start" sclass="toolbar-start">
+
+							</toolbar>
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label id="label_title" value="${c:l('window_GenerateLetter.title')}"
+									sclass="label-heading" />
+							</toolbar>
+							<!-- <toolbar align="center" sclass="toolbar-center"> <label  sclass="label-heading" /> </toolbar> -->
+							<toolbar align="end" sclass="toolbar-end">
+								<button id="btnClose" label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}"
+									sclass="z-toolbarbutton" />
+							</toolbar>
+						</hbox>
+					</div>
+				</north>
+				<center border="none">
+					<groupbox>
+						<grid sclass="GridLayoutNoBorder" sizedByContent="true" style="border:0px; padding:0px;">
+							<columns>
+								<column width="250px" />
+								<column width="500px" />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_GenerateLetterDialog_LetterType')}"
+										style="padding-left:12px;" />
+										<hbox>
+										  <space spacing="2px" sclass="mandatory" />
+									      <combobox id="letterType" width="180px"  />
+									   </hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_ExcessTransferMaker_LoanReference.value')}"
+										style="padding-left:12px;" />
+										<hbox>
+										  <space spacing="2px" sclass="mandatory" />
+									      <textbox id="finReference" width="250px" />
+									   </hbox>
+								</row>
+								<row>
+									<cell />
+									<cell>
+										<div>
+											<hbox>
+												<button id="btnProceed"
+													label="${c:l('label_GenerateLetterMaker_btnProceed.value')}" width="88px" sclass="z-toolbarbutton" />
+											</hbox>
+										</div>
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</center>
+				<south border="none" />
+			</borderlayout>
+		</window>
+	</window>
+</zk>

@@ -427,7 +427,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		String sql = "Select Max(PaymentSeq) From FinAdvancePayments Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 	}
 
 	@Override
@@ -470,7 +470,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
 	}
 
 	@Override
@@ -492,9 +492,9 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 	public void updateLinkedTranId(FinAdvancePayments fap) {
 		String sql = "Update FinAdvancePayments Set LinkedTranId = ? Where PaymentId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
 			ps.setLong(index++, fap.getLinkedTranId());
@@ -765,5 +765,16 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			return null;
 		}
 
+	}
+
+	@Override
+	public List<String> getFinAdvancePaymentsStatus(final long finID) {
+		String sql = "Select Status From FinAdvancePayments Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			return rs.getString(1);
+		}, finID);
 	}
 }

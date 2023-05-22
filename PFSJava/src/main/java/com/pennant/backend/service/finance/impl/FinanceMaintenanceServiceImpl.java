@@ -99,9 +99,9 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -113,7 +113,7 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.overdue.constants.ChargeType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService implements FinanceMaintenanceService {
 	private static final Logger logger = LogManager.getLogger(FinanceMaintenanceServiceImpl.class);
@@ -130,6 +130,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	private ISRADetailService israDetailService;
 	private CustomerDataService customerDataService;
 	private CollateralSetupService collateralSetupService;
+	private LienService lienService;
 
 	public FinanceMaintenanceServiceImpl() {
 		super();
@@ -144,7 +145,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		schdData.setFinServiceInstructions(getFinServiceInstructions(finID, procEdtEvent));
+		schdData.setFinServiceInstructions(finServiceInstructionDAO.getFinServiceInstructions(finID, procEdtEvent));
 
 		List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
 
@@ -298,8 +299,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
@@ -859,8 +859,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
@@ -911,10 +910,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		}
 
 		long linkedTranId = 0;
-		long accountsetID = AccountingConfigCache.getAccountSetID(fm.getFinType(), accEventCode,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountsetID = AccountingEngine.getAccountSetID(fm, accEventCode, FinanceConstants.MODULEID_FINTYPE);
 
-		if (accountsetID > 0) {
+		if (accountsetID != null && accountsetID > 0) {
 			AEEvent aeEvent = AEAmounts.procAEAmounts(fm, schdData.getFinanceScheduleDetails(), profitDetail,
 					accEventCode, appDate, fm.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -926,8 +924,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 			aeEvent.setDataMap(dataMap);
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
-					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
+
+			aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, aeEvent.getAccountingEvent(),
+					FinanceConstants.MODULEID_FINTYPE));
+
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 			if (!aeEvent.isPostingSucess()) {
@@ -936,6 +936,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 			linkedTranId = aeEvent.getLinkedTranId();
+		}
+
+		if (ImplementationConstants.ALLOW_LIEN) {
+			fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
+			if (InstrumentType.isSI(fm.getFinRepayMethod())) {
+				lienService.save(fd, true);
+			} else {
+				lienService.update(fd);
+			}
 		}
 
 		fm.setRcdMaintainSts("");
@@ -1075,7 +1084,30 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinScheduleData finScheduleData = fd.getFinScheduleData();
 
 		if (CollectionUtils.isNotEmpty(finScheduleData.getFinServiceInstructions())) {
-			finServiceInstructionDAO.saveList(finScheduleData.getFinServiceInstructions(), "");
+			List<FinServiceInstruction> oldList = finServiceInstructionDAO.getFinServiceInstructions(finID, "",
+					FinServiceEvent.BASICMAINTAIN);
+
+			List<FinServiceInstruction> newList = new ArrayList<>();
+			if (CollectionUtils.isNotEmpty(oldList)) {
+				for (FinServiceInstruction newFr : finScheduleData.getFinServiceInstructions()) {
+					boolean isOld = false;
+					for (FinServiceInstruction oldFr : oldList) {
+						if (oldFr.getServiceSeqId() == newFr.getServiceSeqId()) {
+							isOld = true;
+							break;
+						}
+					}
+					if (!isOld) {
+						newList.add(newFr);
+					}
+				}
+			} else {
+				newList.addAll(finScheduleData.getFinServiceInstructions());
+			}
+			if (CollectionUtils.isNotEmpty(newList)) {
+				finServiceInstructionDAO.saveList(newList, "");
+			}
+
 		}
 
 		// Extended field Details
@@ -2144,4 +2176,10 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
 		this.collateralSetupService = collateralSetupService;
 	}
+
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
+	}
+
 }

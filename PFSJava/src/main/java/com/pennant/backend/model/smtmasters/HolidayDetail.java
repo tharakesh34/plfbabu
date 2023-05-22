@@ -17,7 +17,7 @@ public class HolidayDetail implements java.io.Serializable {
 	private boolean newRecord = false;
 
 	public HolidayDetail() {
-
+	    super();
 	}
 
 	public HolidayDetail(String holidayCode, String holidayCodeDesc, BigDecimal holidayYear, String holidayType,

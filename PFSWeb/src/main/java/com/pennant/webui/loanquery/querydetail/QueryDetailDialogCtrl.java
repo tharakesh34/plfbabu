@@ -205,8 +205,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.queryDetail.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.queryDetail.getId());
 	}
 
 	/**

@@ -61,6 +61,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 public class ScheduleGenerator {
 
 	public ScheduleGenerator() {
+	    super();
 	}
 
 	private static final Logger logger = LogManager.getLogger(ScheduleGenerator.class);
@@ -73,7 +74,7 @@ public class ScheduleGenerator {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		int fixedRateTenor = financeMain.getFixedRateTenor();
 		BigDecimal fixedTenorRate = financeMain.getFixedTenorRate();
-		Date fixedTenorEndDate = DateUtility.addMonths(financeMain.getGrcPeriodEndDate(),
+		Date fixedTenorEndDate = DateUtil.addMonths(financeMain.getGrcPeriodEndDate(),
 				fixedRateTenor > 0 ? fixedRateTenor : 0);
 
 		boolean isOverdraft = false;
@@ -199,11 +200,11 @@ public class ScheduleGenerator {
 		for (int i = 0; i < finScheduleDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleDetails.get(i);
 
-			if (DateUtility.compare(curSchd.getSchDate(), prvGraceEnd) < 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), prvGraceEnd) < 0) {
 				prvSchdGrcEnd = curSchd;
 			}
 
-			if (DateUtility.compare(curSchd.getSchDate(), prvGraceEnd) == 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), prvGraceEnd) == 0) {
 				newGrcSchdMethod = curSchd.getSchdMethod();
 
 				if (prvSchdGrcEnd != null) {
@@ -219,7 +220,7 @@ public class ScheduleGenerator {
 				}
 			}
 
-			if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) <= 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), newSchdAfter) <= 0) {
 				finScheduleData.setScheduleMap(curSchd);
 				iUntouch = i;
 				continue;
@@ -276,7 +277,7 @@ public class ScheduleGenerator {
 			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(finScheduleData.getFinanceMain().getBpiPftDaysBasis());
 			} else {
-				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
 					curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
 				} else {
 					curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
@@ -285,7 +286,7 @@ public class ScheduleGenerator {
 
 			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(financeMain));
 
-			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				// Bugfix:Removed '=' condition to fix ROI Issue in Change Moratorium at GraceEnd
 				if (DateUtil.compare(curSchd.getSchDate(), newSchdAfter) >= 0) {
 					if (prvSchd != null) {
@@ -318,7 +319,7 @@ public class ScheduleGenerator {
 					}
 				}
 
-				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0) {
 					curSchd.setSchdMethod(newGrcSchdMethod);
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
 
@@ -374,7 +375,7 @@ public class ScheduleGenerator {
 			}
 
 			if (StringUtils.isNotBlank(curSchd.getBaseRate())) {
-				if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), appDate) >= 0) {
 					BigDecimal calrate = RateUtil.rates(curSchd.getBaseRate(), financeMain.getFinCcy(),
 							curSchd.getSplRate(), curSchd.getMrgRate(), curSchd.getSchDate(), minRate, maxRate)
 							.getNetRefRateLoan();
@@ -431,8 +432,8 @@ public class ScheduleGenerator {
 
 		if (ImplementationConstants.ALLOW_FDD_ON_RVW_DATE) {
 
-			Date fddLockPeriodDate = DateUtility.addDays(evtFromDate, scheduleData.getFinanceType().getFddLockPeriod());
-			fddLockPeriodDate = DateUtility.addDays(fddLockPeriodDate, 1);
+			Date fddLockPeriodDate = DateUtil.addDays(evtFromDate, scheduleData.getFinanceType().getFddLockPeriod());
+			fddLockPeriodDate = DateUtil.addDays(fddLockPeriodDate, 1);
 
 			boolean isFrqDate = FrequencyUtil.isFrqDate(frequency, fddLockPeriodDate);
 
@@ -454,7 +455,7 @@ public class ScheduleGenerator {
 		for (int i = 1; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
 			curSchd = scheduleData.getFinanceScheduleDetails().get(i);
 			Date schdDate = curSchd.getSchDate();
-			if (DateUtility.compare(schdDate, evtFromDate) < 0 || DateUtility.compare(schdDate, evtToDate) > 0) {
+			if (DateUtil.compare(schdDate, evtFromDate) < 0 || DateUtil.compare(schdDate, evtToDate) > 0) {
 				continue;
 			}
 
@@ -462,7 +463,7 @@ public class ScheduleGenerator {
 			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(scheduleData.getFinanceMain().getBpiPftDaysBasis());
 			} else {
-				if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
+				if (DateUtil.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
 					curSchd.setPftDaysBasis(finMain.getGrcProfitDaysBasis());
 				} else {
 					curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
@@ -470,14 +471,14 @@ public class ScheduleGenerator {
 			}
 
 			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(finMain));
-			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
+			if (DateUtil.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
 				curSchd.setSchdMethod(finMain.getGrcSchdMthd());
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
 			} else {
-				if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) == 0) {
+				if (DateUtil.compare(schdDate, finMain.getGrcPeriodEndDate()) == 0) {
 					curSchd.setSchdMethod(finMain.getGrcSchdMthd());
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
-				} else if (DateUtility.compare(schdDate, finMain.getMaturityDate()) == 0) {
+				} else if (DateUtil.compare(schdDate, finMain.getMaturityDate()) == 0) {
 					curSchd.setSchdMethod(finMain.getScheduleMethod());
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
 				} else {
@@ -754,7 +755,7 @@ public class ScheduleGenerator {
 				FinanceScheduleDetail prvSchd = null;
 				for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 					FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-					if (DateUtility.compare(curSchd.getSchDate(), financeMain.getEventFromDate()) >= 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), financeMain.getEventFromDate()) >= 0) {
 						if (prvSchd == null) {
 							startCalFrom = FrequencyUtil.getNextDate(financeMain.getRepayRvwFrq(), 1,
 									financeMain.getFinStartDate(), "A", false).getNextFrequencyDate();
@@ -763,7 +764,7 @@ public class ScheduleGenerator {
 									.getNextDate(financeMain.getRepayRvwFrq(), 1, prvSchd.getSchDate(), "A", false)
 									.getNextFrequencyDate();
 						}
-						if (DateUtility.compare(startCalFrom, financeMain.getMaturityDate()) >= 0) {
+						if (DateUtil.compare(startCalFrom, financeMain.getMaturityDate()) >= 0) {
 							startCalFrom = financeMain.getMaturityDate();
 						}
 						break;
@@ -804,12 +805,12 @@ public class ScheduleGenerator {
 			// To Check schedule date is found with grace period end date
 			FinanceScheduleDetail schedule = null;
 			if (finScheduleData.getScheduleMap() != null && finScheduleData.getScheduleMap()
-					.containsKey(DateUtility.getDate(
-							DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
+					.containsKey(DateUtil.getDate(
+							DateUtil.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
 							PennantConstants.DBDateFormat))) {
 				schedule = finScheduleData.getScheduleMap()
-						.get(DateUtility.getDate(
-								DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
+						.get(DateUtil.getDate(
+								DateUtil.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
 								PennantConstants.DBDateFormat));
 			} else {
 
@@ -835,19 +836,19 @@ public class ScheduleGenerator {
 
 			String frequency = serviceInst.getRepayPftFrq();
 			Date recalFrom = grcStartDate;
-			if (DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
+			if (DateUtil.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
 				recalFrom = financeMain.getGrcPeriodEndDate();
 			}
 			if (!StringUtils.equals(frequency, serviceInst.getRepayFrq())) {
 				recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0).getNextFrequencyDate();
-				if (DateUtility.compare(recalFrom, rpyStartDate) > 0) {
+				if (DateUtil.compare(recalFrom, rpyStartDate) > 0) {
 					recalFrom = rpyStartDate;
 				}
 			} else {
 				recalFrom = rpyStartDate;
 			}
 
-			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
+			recalFrom = DateUtil.getDatePart(recalFrom);
 
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayPftFrq(), recalFrom,
 					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_PFT, false, true);
@@ -860,20 +861,20 @@ public class ScheduleGenerator {
 
 				String frequency = serviceInst.getRepayRvwFrq();
 				Date recalFrom = grcStartDate;
-				if (DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
+				if (DateUtil.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
 					recalFrom = financeMain.getGrcPeriodEndDate();
 				}
 				if (!StringUtils.equals(frequency, serviceInst.getRepayFrq())) {
 					recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0)
 							.getNextFrequencyDate();
-					if (DateUtility.compare(recalFrom, rpyStartDate) > 0) {
+					if (DateUtil.compare(recalFrom, rpyStartDate) > 0) {
 						recalFrom = rpyStartDate;
 					}
 				} else {
 					recalFrom = rpyStartDate;
 				}
 
-				recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
+				recalFrom = DateUtil.getDatePart(recalFrom);
 
 				finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayRvwFrq(), recalFrom,
 						financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_RVW, false, true);
@@ -889,19 +890,19 @@ public class ScheduleGenerator {
 
 			String frequency = serviceInst.getRepayCpzFrq();
 			Date recalFrom = grcStartDate;
-			if (DateUtility.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
+			if (DateUtil.compare(recalFrom, financeMain.getGrcPeriodEndDate()) <= 0) {
 				recalFrom = financeMain.getGrcPeriodEndDate();
 			}
 			if (!StringUtils.equals(frequency, serviceInst.getRepayFrq())) {
 				recalFrom = FrequencyUtil.getNextDate(frequency, 1, recalFrom, "A", false, 0).getNextFrequencyDate();
-				if (DateUtility.compare(recalFrom, rpyStartDate) > 0) {
+				if (DateUtil.compare(recalFrom, rpyStartDate) > 0) {
 					recalFrom = rpyStartDate;
 				}
 			} else {
 				recalFrom = rpyStartDate;
 			}
 
-			recalFrom = DateUtility.getDBDate(DateUtility.format(recalFrom, PennantConstants.DBDateFormat));
+			recalFrom = DateUtil.getDatePart(recalFrom);
 
 			finScheduleData = getSchedule(finScheduleData, serviceInst.getRepayCpzFrq(), recalFrom,
 					financeMain.getMaturityDate(), CalculationConstants.SCHDFLAG_CPZ, false, true);
@@ -974,16 +975,16 @@ public class ScheduleGenerator {
 				FinanceScheduleDetail schedule = null;
 
 				if (finScheduleData.getScheduleMap().containsKey(
-						DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)))) {
+						DateUtil.getDate(DateUtil.format(calendar.getTime(), PennantConstants.dateFormat)))) {
 
 					schedule = finScheduleData.getScheduleMap().get(
-							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
+							DateUtil.getDate(DateUtil.format(calendar.getTime(), PennantConstants.dateFormat)));
 				} else {
 					schedule = new FinanceScheduleDetail();
 					schedule.setSchDate(
-							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
+							DateUtil.getDate(DateUtil.format(calendar.getTime(), PennantConstants.dateFormat)));
 					schedule.setDefSchdDate(
-							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
+							DateUtil.getDate(DateUtil.format(calendar.getTime(), PennantConstants.dateFormat)));
 				}
 
 				// SET various schedule flags
@@ -1118,7 +1119,7 @@ public class ScheduleGenerator {
 		for (int i = 0; i < financeDisbursements.size(); i++) {
 			if (financeDisbursements.get(i).getDisbDate() != null
 					&& financeDisbursements.get(i).getDisbAmount() == null) {
-				errorParm2[0] = DateUtility.formatToShortDate(financeDisbursements.get(i).getDisbDate());
+				errorParm2[0] = DateUtil.formatToShortDate(financeDisbursements.get(i).getDisbDate());
 				errorParm2[1] = PennantJavaUtil.getLabel("label_DisbursementAmount");
 				return getErrorDetail("Schedule", "30517", errorParm2, errorParm2);
 			}
@@ -1130,16 +1131,16 @@ public class ScheduleGenerator {
 		}
 
 		if (financeMain.getGrcPeriodEndDate().before(financeDisbursements.get(0).getDisbDate())) {
-			errorParm2[0] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
-			errorParm2[1] = DateUtility.formatToShortDate(financeDisbursements.get(0).getDisbDate());
+			errorParm2[0] = DateUtil.formatToShortDate(financeMain.getGrcPeriodEndDate());
+			errorParm2[1] = DateUtil.formatToShortDate(financeDisbursements.get(0).getDisbDate());
 			return getErrorDetail("Schedule", "30518", errorParm2, errorParm2);
 		}
 
 		if (financeDisbursements.get(financeDisbursements.size() - 1).getDisbDate()
 				.after(financeMain.getMaturityDate())) {
-			errorParm2[0] = DateUtility
+			errorParm2[0] = DateUtil
 					.formatToShortDate(financeDisbursements.get(financeDisbursements.size() - 1).getDisbDate());
-			errorParm2[1] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
+			errorParm2[1] = DateUtil.formatToShortDate(financeMain.getMaturityDate());
 			return getErrorDetail("Schedule", "30519", errorParm2, errorParm2);
 		}
 
@@ -1183,8 +1184,8 @@ public class ScheduleGenerator {
 		}
 
 		if (financeMain.getNextRepayDate().before(financeMain.getGrcPeriodEndDate())) {
-			errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayDate());
-			errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
+			errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextRepayDate());
+			errorParm2[1] = DateUtil.formatToShortDate(financeMain.getGrcPeriodEndDate());
 			return getErrorDetail("Schedule", "30522", errorParm2, errorParm2);
 		}
 
@@ -1195,14 +1196,14 @@ public class ScheduleGenerator {
 		}
 
 		if (financeMain.getNextRepayPftDate().before(financeMain.getGrcPeriodEndDate())) {
-			errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayPftDate());
-			errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
+			errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextRepayPftDate());
+			errorParm2[1] = DateUtil.formatToShortDate(financeMain.getGrcPeriodEndDate());
 			return getErrorDetail("Schedule", "30523", errorParm2, errorParm2);
 		}
 
 		if (financeMain.getMaturityDate().before(financeMain.getNextRepayDate())) {
-			errorParm2[0] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
-			errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextRepayDate());
+			errorParm2[0] = DateUtil.formatToShortDate(financeMain.getMaturityDate());
+			errorParm2[1] = DateUtil.formatToShortDate(financeMain.getNextRepayDate());
 			return getErrorDetail("Schedule", "30527", errorParm2, errorParm2);
 		}
 
@@ -1236,8 +1237,8 @@ public class ScheduleGenerator {
 				}
 
 				if (financeMain.getNextGrcPftRvwDate().after(financeMain.getGrcPeriodEndDate())) {
-					errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcPftRvwDate());
-					errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
+					errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextGrcPftRvwDate());
+					errorParm2[1] = DateUtil.formatToShortDate(financeMain.getGrcPeriodEndDate());
 					return getErrorDetail("Schedule", "30520", errorParm2, errorParm2);
 				}
 
@@ -1258,14 +1259,14 @@ public class ScheduleGenerator {
 				}
 
 				if (financeMain.getNextGrcCpzDate().after(financeMain.getGrcPeriodEndDate())) {
-					errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcCpzDate());
-					errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
+					errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextGrcCpzDate());
+					errorParm2[1] = DateUtil.formatToShortDate(financeMain.getGrcPeriodEndDate());
 					return getErrorDetail("Schedule", "30512", errorParm2, errorParm2);
 				}
 
 				if (financeMain.getNextGrcCpzDate().before(financeMain.getNextGrcPftDate())) {
-					errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcCpzDate());
-					errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextGrcPftDate());
+					errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextGrcCpzDate());
+					errorParm2[1] = DateUtil.formatToShortDate(financeMain.getNextGrcPftDate());
 					// return getErrorDetail("Schedule", "30526", errorParm2, errorParm2);
 				}
 
@@ -1287,8 +1288,8 @@ public class ScheduleGenerator {
 			}
 
 			if (financeMain.getNextRepayRvwDate().before(financeMain.getGrcPeriodEndDate())) {
-				errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayRvwDate());
-				errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
+				errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextRepayRvwDate());
+				errorParm2[1] = DateUtil.formatToShortDate(financeMain.getGrcPeriodEndDate());
 				return getErrorDetail("Schedule", "30524", errorParm2, errorParm2);
 			}
 		}
@@ -1308,8 +1309,8 @@ public class ScheduleGenerator {
 
 			if (SysParamUtil.isAllowed("VALIDATION_REQ_NEXT_REPAYMENT_DATE")) {
 				if (financeMain.getNextRepayCpzDate().before(financeMain.getNextRepayPftDate())) {
-					errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayCpzDate());
-					errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextRepayPftDate());
+					errorParm2[0] = DateUtil.formatToShortDate(financeMain.getNextRepayCpzDate());
+					errorParm2[1] = DateUtil.formatToShortDate(financeMain.getNextRepayPftDate());
 					return getErrorDetail("Schedule", "30528", errorParm2, errorParm2);
 				}
 			}
@@ -1337,7 +1338,7 @@ public class ScheduleGenerator {
 	}
 
 	private static Date formatDate(Date date) {
-		return DateUtility.getDate(DateUtility.format(date, PennantConstants.DBDateFormat),
+		return DateUtil.getDate(DateUtil.format(date, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 	}
 

@@ -44,7 +44,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.model.finance.FinChangeCustomer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.HoldDisbursement;
@@ -96,7 +95,6 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	List<JointAccountDetail> joinAccountDetail = null;
 	private String custChangeRoles = SysParamUtil.getValueAsString(SMTParameterConstants.CUST_CHANGE_ROLES);
 	private static final String FINCHANGECUSTOMER = "FinChangeCustomer";
-	private FinanceWriteoffDAO financeWriteoffDAO;
 	private FinanceDetailService financeDetailService;
 	private String module = null;
 
@@ -226,12 +224,6 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (StringUtils.isNotEmpty(rcdMntnSts)
 				&& (!FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) || !FinServiceEvent.HOLDDISB.equals(rcdMntnSts))) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
-			return;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			MessageUtil.showMessage(Labels.getLabel("label_Writeoff_Loan"));
 			return;
 		}
 
@@ -424,12 +416,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		this.finChangeCustomerService = finChangeCustomerService;
 	}
 
-	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
-		this.financeWriteoffDAO = financeWriteoffDAO;
-	}
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
-
 }

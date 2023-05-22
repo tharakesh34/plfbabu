@@ -79,7 +79,7 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 		log.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				ErrorDetail ed = new ErrorDetail();
 				ed.setCode(rs.getString("Code"));
 				ed.setLanguage(rs.getString("Language"));
@@ -98,7 +98,7 @@ public class ErrorDetailDAOImpl extends BasicDao<ErrorDetail> implements ErrorDe
 				ed.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ed;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in ErrorDetails{} for the specified Code >> {}", type, id);
 		}

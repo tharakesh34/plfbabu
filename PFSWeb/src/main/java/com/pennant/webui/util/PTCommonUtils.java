@@ -23,12 +23,11 @@ public class PTCommonUtils implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private PTCommonUtils() {
+	    super();
 	}
 
 	/**
-	 * EN: Creates the TapPanels Content from a loaded zul-template. The caller mainController can be overhanded.<br>
-	 * DE: Erzeugt den Inhalt des tabPanels aus einer zul-Datei. Der aufrufende MainController selbst kann übergeben
-	 * werden.
+	 * EN: Creates the TapPanels Content from a loaded zul-template. The caller mainController can be overhanded.
 	 * 
 	 * @param tabPanelID
 	 * @param mainCtrl

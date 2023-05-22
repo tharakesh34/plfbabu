@@ -45,7 +45,7 @@ public class AuthorizationListModelItemRenderer implements ListitemRenderer<Auth
 	private static final long serialVersionUID = 1L;
 
 	public AuthorizationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

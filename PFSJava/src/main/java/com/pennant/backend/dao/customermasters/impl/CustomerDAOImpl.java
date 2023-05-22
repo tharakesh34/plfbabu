@@ -45,7 +45,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -57,6 +56,7 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -177,6 +177,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CasteId");
 		sql.append(", ReligionId, SubCategory, MarginDeviation, ResidentialStatus");
 		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification, Vip");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCustTypeCodeName, LovDescCustMaritalStsName, LovDescCustEmpStsName");
@@ -351,6 +352,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setSubCategory(rs.getString("SubCategory"));
 				c.setMarginDeviation(rs.getBoolean("MarginDeviation"));
 				c.setResidentialStatus(rs.getString("ResidentialStatus"));
+				c.setCreatedBy(rs.getLong("CreatedBy"));
+				c.setCreatedOn(rs.getTimestamp("CreatedOn"));
+				c.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+				c.setApprovedOn(rs.getTimestamp("ApprovedOn"));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					c.setLovDescCustTypeCodeName(rs.getString("LovDescCustTypeCodeName"));
@@ -493,164 +498,170 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo, Dnd");
 		sql.append(", OtherCaste, OtherReligion, NatureOfBusiness, EntityType, CustResidentialSts, Qualification");
 		sql.append(", Vip, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId, CasteId, ReligionId, SubCategory, MarginDeviation, ResidentialStatus)");
+		sql.append(", RecordType, WorkflowId, CasteId, ReligionId, SubCategory, MarginDeviation, ResidentialStatus");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index++, c.getCustID());
-			ps.setString(index++, c.getCustCIF());
-			ps.setString(index++, c.getCustCoreBank());
-			ps.setString(index++, c.getCustCtgCode());
-			ps.setString(index++, c.getCustTypeCode());
-			ps.setString(index++, c.getCustSalutationCode());
-			ps.setString(index++, c.getCustFName());
-			ps.setString(index++, c.getCustMName());
-			ps.setString(index++, c.getCustLName());
-			ps.setString(index++, c.getCustShrtName());
-			ps.setString(index++, c.getCustFNameLclLng());
-			ps.setString(index++, c.getCustMNameLclLng());
-			ps.setString(index++, c.getCustLNameLclLng());
-			ps.setString(index++, c.getCustShrtNameLclLng());
-			ps.setString(index++, c.getCustDftBranch());
-			ps.setString(index++, c.getCustGenderCode());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
-			ps.setString(index++, c.getCustPOB());
-			ps.setString(index++, c.getCustCOB());
-			ps.setString(index++, c.getCustPassportNo());
-			ps.setString(index++, c.getCustMotherMaiden());
-			ps.setBoolean(index++, c.isCustIsMinor());
-			ps.setString(index++, c.getCustReferedBy());
-			ps.setString(index++, c.getCustDSA());
-			ps.setString(index++, c.getCustDSADept());
-			ps.setLong(index++, c.getCustRO1());
-			ps.setString(index++, c.getCustRO2());
-			ps.setLong(index++, c.getCustGroupID());
-			ps.setString(index++, c.getCustSts());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustStsChgDate()));
-			ps.setString(index++, c.getCustGroupSts());
-			ps.setBoolean(index++, c.isCustIsBlocked());
-			ps.setBoolean(index++, c.isCustIsActive());
-			ps.setBoolean(index++, c.isCustIsClosed());
-			ps.setString(index++, c.getCustInactiveReason());
-			ps.setBoolean(index++, c.isCustIsDecease());
-			ps.setBoolean(index++, c.isCustIsDormant());
-			ps.setBoolean(index++, c.isCustIsDelinquent());
-			ps.setBoolean(index++, c.isCustIsTradeFinCust());
-			ps.setString(index++, c.getCustTradeLicenceNum());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustTradeLicenceExpiry()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustPassportExpiry()));
-			ps.setString(index++, c.getCustVisaNum());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustVisaExpiry()));
-			ps.setBoolean(index++, c.isCustIsStaff());
-			ps.setString(index++, c.getCustStaffID());
-			ps.setString(index++, c.getCustIndustry());
-			ps.setString(index++, c.getCustSector());
-			ps.setString(index++, c.getCustSubSector());
-			ps.setString(index++, c.getCustProfession());
-			ps.setBigDecimal(index++, c.getCustTotalIncome());
-			ps.setString(index++, c.getCustMaritalSts());
-			ps.setString(index++, c.getCustEmpSts());
-			ps.setString(index++, c.getCustSegment());
-			ps.setString(index++, c.getCustSubSegment());
-			ps.setBoolean(index++, c.isCustIsBlackListed());
-			ps.setString(index++, c.getCustBLRsnCode());
-			ps.setBoolean(index++, c.isCustIsRejected());
-			ps.setString(index++, c.getCustRejectedRsn());
-			ps.setString(index++, c.getCustBaseCcy());
-			ps.setString(index++, c.getCustLng());
-			ps.setString(index++, c.getCustParentCountry());
-			ps.setString(index++, c.getCustResdCountry());
-			ps.setString(index++, c.getCustRiskCountry());
-			ps.setString(index++, c.getCustNationality());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustClosedOn()));
-			ps.setString(index++, c.getCustStmtFrq());
-			ps.setBoolean(index++, c.isCustIsStmtCombined());
-			ps.setTimestamp(index++, c.getCustStmtLastDate());
-			ps.setTimestamp(index++, c.getCustStmtNextDate());
-			ps.setString(index++, c.getCustStmtDispatchMode());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustFirstBusinessDate()));
-			ps.setString(index++, c.getCustAddlVar81());
-			ps.setString(index++, c.getCustAddlVar82());
-			ps.setString(index++, c.getCustAddlVar83());
-			ps.setString(index++, c.getCustAddlVar84());
-			ps.setString(index++, c.getCustAddlVar85());
-			ps.setString(index++, c.getCustAddlVar86());
-			ps.setString(index++, c.getCustAddlVar87());
-			ps.setString(index++, c.getCustAddlVar88());
-			ps.setString(index++, c.getCustAddlVar89());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate1()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate2()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate3()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate4()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate5()));
-			ps.setString(index++, c.getCustAddlVar1());
-			ps.setString(index++, c.getCustAddlVar2());
-			ps.setString(index++, c.getCustAddlVar3());
-			ps.setString(index++, c.getCustAddlVar4());
-			ps.setString(index++, c.getCustAddlVar5());
-			ps.setString(index++, c.getCustAddlVar6());
-			ps.setString(index++, c.getCustAddlVar7());
-			ps.setString(index++, c.getCustAddlVar8());
-			ps.setString(index++, c.getCustAddlVar9());
-			ps.setString(index++, c.getCustAddlVar10());
-			ps.setString(index++, c.getCustAddlVar11());
-			ps.setBigDecimal(index++, c.getCustAddlDec1());
-			ps.setDouble(index++, c.getCustAddlDec2());
-			ps.setDouble(index++, c.getCustAddlDec3());
-			ps.setDouble(index++, c.getCustAddlDec4());
-			ps.setDouble(index++, c.getCustAddlDec5());
-			ps.setInt(index++, c.getCustAddlInt1());
-			ps.setInt(index++, c.getCustAddlInt2());
-			ps.setInt(index++, c.getCustAddlInt3());
-			ps.setInt(index++, c.getCustAddlInt4());
-			ps.setInt(index++, c.getCustAddlInt5());
-			ps.setBoolean(index++, c.isDedupFound());
-			ps.setBoolean(index++, c.isSkipDedup());
-			ps.setBigDecimal(index++, c.getCustTotalExpense());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
-			ps.setInt(index++, c.getNoOfDependents());
-			ps.setString(index++, c.getCustCRCPR());
-			ps.setString(index++, c.getCustSourceID());
-			ps.setBoolean(index++, c.isJointCust());
-			ps.setString(index++, c.getJointCustName());
-			ps.setDate(index++, JdbcUtil.getDate(c.getJointCustDob()));
-			ps.setString(index++, c.getCustRelation());
-			ps.setString(index++, c.getContactPersonName());
-			ps.setString(index++, c.getEmailID());
-			ps.setString(index++, c.getPhoneNumber());
-			ps.setBoolean(index++, c.isSalariedCustomer());
-			ps.setString(index++, c.getApplicationNo());
-			ps.setBoolean(index++, c.isDnd());
-			ps.setString(index++, c.getOtherCaste());
-			ps.setString(index++, c.getOtherReligion());
-			ps.setString(index++, c.getNatureOfBusiness());
-			ps.setString(index++, c.getEntityType());
-			ps.setString(index++, c.getCustResidentialSts());
-			ps.setString(index++, c.getQualification());
-			ps.setBoolean(index++, c.isVip());
-			ps.setInt(index++, c.getVersion());
-			ps.setLong(index++, c.getLastMntBy());
-			ps.setTimestamp(index++, c.getLastMntOn());
-			ps.setString(index++, c.getRecordStatus());
-			ps.setString(index++, c.getRoleCode());
-			ps.setString(index++, c.getNextRoleCode());
-			ps.setString(index++, c.getTaskId());
-			ps.setString(index++, c.getNextTaskId());
-			ps.setString(index++, c.getRecordType());
-			ps.setLong(index++, c.getWorkflowId());
-			ps.setLong(index++, c.getCasteId());
-			ps.setLong(index++, c.getReligionId());
-			ps.setString(index++, c.getSubCategory());
-			ps.setBoolean(index++, c.isMarginDeviation());
-			ps.setString(index, c.getResidentialStatus());
+			ps.setLong(++index, c.getCustID());
+			ps.setString(++index, c.getCustCIF());
+			ps.setString(++index, c.getCustCoreBank());
+			ps.setString(++index, c.getCustCtgCode());
+			ps.setString(++index, c.getCustTypeCode());
+			ps.setString(++index, c.getCustSalutationCode());
+			ps.setString(++index, c.getCustFName());
+			ps.setString(++index, c.getCustMName());
+			ps.setString(++index, c.getCustLName());
+			ps.setString(++index, c.getCustShrtName());
+			ps.setString(++index, c.getCustFNameLclLng());
+			ps.setString(++index, c.getCustMNameLclLng());
+			ps.setString(++index, c.getCustLNameLclLng());
+			ps.setString(++index, c.getCustShrtNameLclLng());
+			ps.setString(++index, c.getCustDftBranch());
+			ps.setString(++index, c.getCustGenderCode());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(++index, c.getCustPOB());
+			ps.setString(++index, c.getCustCOB());
+			ps.setString(++index, c.getCustPassportNo());
+			ps.setString(++index, c.getCustMotherMaiden());
+			ps.setBoolean(++index, c.isCustIsMinor());
+			ps.setString(++index, c.getCustReferedBy());
+			ps.setString(++index, c.getCustDSA());
+			ps.setString(++index, c.getCustDSADept());
+			ps.setLong(++index, c.getCustRO1());
+			ps.setString(++index, c.getCustRO2());
+			ps.setLong(++index, c.getCustGroupID());
+			ps.setString(++index, c.getCustSts());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustStsChgDate()));
+			ps.setString(++index, c.getCustGroupSts());
+			ps.setBoolean(++index, c.isCustIsBlocked());
+			ps.setBoolean(++index, c.isCustIsActive());
+			ps.setBoolean(++index, c.isCustIsClosed());
+			ps.setString(++index, c.getCustInactiveReason());
+			ps.setBoolean(++index, c.isCustIsDecease());
+			ps.setBoolean(++index, c.isCustIsDormant());
+			ps.setBoolean(++index, c.isCustIsDelinquent());
+			ps.setBoolean(++index, c.isCustIsTradeFinCust());
+			ps.setString(++index, c.getCustTradeLicenceNum());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustTradeLicenceExpiry()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustPassportExpiry()));
+			ps.setString(++index, c.getCustVisaNum());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustVisaExpiry()));
+			ps.setBoolean(++index, c.isCustIsStaff());
+			ps.setString(++index, c.getCustStaffID());
+			ps.setString(++index, c.getCustIndustry());
+			ps.setString(++index, c.getCustSector());
+			ps.setString(++index, c.getCustSubSector());
+			ps.setString(++index, c.getCustProfession());
+			ps.setBigDecimal(++index, c.getCustTotalIncome());
+			ps.setString(++index, c.getCustMaritalSts());
+			ps.setString(++index, c.getCustEmpSts());
+			ps.setString(++index, c.getCustSegment());
+			ps.setString(++index, c.getCustSubSegment());
+			ps.setBoolean(++index, c.isCustIsBlackListed());
+			ps.setString(++index, c.getCustBLRsnCode());
+			ps.setBoolean(++index, c.isCustIsRejected());
+			ps.setString(++index, c.getCustRejectedRsn());
+			ps.setString(++index, c.getCustBaseCcy());
+			ps.setString(++index, c.getCustLng());
+			ps.setString(++index, c.getCustParentCountry());
+			ps.setString(++index, c.getCustResdCountry());
+			ps.setString(++index, c.getCustRiskCountry());
+			ps.setString(++index, c.getCustNationality());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustClosedOn()));
+			ps.setString(++index, c.getCustStmtFrq());
+			ps.setBoolean(++index, c.isCustIsStmtCombined());
+			ps.setTimestamp(++index, c.getCustStmtLastDate());
+			ps.setTimestamp(++index, c.getCustStmtNextDate());
+			ps.setString(++index, c.getCustStmtDispatchMode());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustFirstBusinessDate()));
+			ps.setString(++index, c.getCustAddlVar81());
+			ps.setString(++index, c.getCustAddlVar82());
+			ps.setString(++index, c.getCustAddlVar83());
+			ps.setString(++index, c.getCustAddlVar84());
+			ps.setString(++index, c.getCustAddlVar85());
+			ps.setString(++index, c.getCustAddlVar86());
+			ps.setString(++index, c.getCustAddlVar87());
+			ps.setString(++index, c.getCustAddlVar88());
+			ps.setString(++index, c.getCustAddlVar89());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate1()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate2()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate3()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate4()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate5()));
+			ps.setString(++index, c.getCustAddlVar1());
+			ps.setString(++index, c.getCustAddlVar2());
+			ps.setString(++index, c.getCustAddlVar3());
+			ps.setString(++index, c.getCustAddlVar4());
+			ps.setString(++index, c.getCustAddlVar5());
+			ps.setString(++index, c.getCustAddlVar6());
+			ps.setString(++index, c.getCustAddlVar7());
+			ps.setString(++index, c.getCustAddlVar8());
+			ps.setString(++index, c.getCustAddlVar9());
+			ps.setString(++index, c.getCustAddlVar10());
+			ps.setString(++index, c.getCustAddlVar11());
+			ps.setBigDecimal(++index, c.getCustAddlDec1());
+			ps.setDouble(++index, c.getCustAddlDec2());
+			ps.setDouble(++index, c.getCustAddlDec3());
+			ps.setDouble(++index, c.getCustAddlDec4());
+			ps.setDouble(++index, c.getCustAddlDec5());
+			ps.setInt(++index, c.getCustAddlInt1());
+			ps.setInt(++index, c.getCustAddlInt2());
+			ps.setInt(++index, c.getCustAddlInt3());
+			ps.setInt(++index, c.getCustAddlInt4());
+			ps.setInt(++index, c.getCustAddlInt5());
+			ps.setBoolean(++index, c.isDedupFound());
+			ps.setBoolean(++index, c.isSkipDedup());
+			ps.setBigDecimal(++index, c.getCustTotalExpense());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(++index, c.getNoOfDependents());
+			ps.setString(++index, c.getCustCRCPR());
+			ps.setString(++index, c.getCustSourceID());
+			ps.setBoolean(++index, c.isJointCust());
+			ps.setString(++index, c.getJointCustName());
+			ps.setDate(++index, JdbcUtil.getDate(c.getJointCustDob()));
+			ps.setString(++index, c.getCustRelation());
+			ps.setString(++index, c.getContactPersonName());
+			ps.setString(++index, c.getEmailID());
+			ps.setString(++index, c.getPhoneNumber());
+			ps.setBoolean(++index, c.isSalariedCustomer());
+			ps.setString(++index, c.getApplicationNo());
+			ps.setBoolean(++index, c.isDnd());
+			ps.setString(++index, c.getOtherCaste());
+			ps.setString(++index, c.getOtherReligion());
+			ps.setString(++index, c.getNatureOfBusiness());
+			ps.setString(++index, c.getEntityType());
+			ps.setString(++index, c.getCustResidentialSts());
+			ps.setString(++index, c.getQualification());
+			ps.setBoolean(++index, c.isVip());
+			ps.setInt(++index, c.getVersion());
+			ps.setLong(++index, c.getLastMntBy());
+			ps.setTimestamp(++index, c.getLastMntOn());
+			ps.setString(++index, c.getRecordStatus());
+			ps.setString(++index, c.getRoleCode());
+			ps.setString(++index, c.getNextRoleCode());
+			ps.setString(++index, c.getTaskId());
+			ps.setString(++index, c.getNextTaskId());
+			ps.setString(++index, c.getRecordType());
+			ps.setLong(++index, c.getWorkflowId());
+			ps.setLong(++index, c.getCasteId());
+			ps.setLong(++index, c.getReligionId());
+			ps.setString(++index, c.getSubCategory());
+			ps.setBoolean(++index, c.isMarginDeviation());
+			ps.setString(++index, c.getResidentialStatus());
+			ps.setObject(++index, c.getCreatedBy());
+			ps.setTimestamp(++index, c.getCreatedOn());
+			ps.setObject(++index, c.getApprovedBy());
+			ps.setTimestamp(++index, c.getApprovedOn());
 		});
 
 		return c.getId();
@@ -692,6 +703,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", WorkflowId = ?, CasteId = ?, ReligionId = ?, SubCategory = ?, ApplicationNo = ?");
 		sql.append(", Dnd = ?, ResidentialStatus = ?, OtherCaste= ?, OtherReligion= ?, NatureOfBusiness= ?");
 		sql.append(", EntityType= ?, CustResidentialSts= ?, Qualification= ?, Vip = ?");
+		sql.append(", ApprovedBy= ?, ApprovedOn= ?");
 		sql.append(" Where CustID = ?");
 
 		if (!type.endsWith("_Temp")) {
@@ -701,159 +713,160 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setString(index++, c.getCustCtgCode());
-			ps.setString(index++, c.getCustCoreBank());
-			ps.setString(index++, c.getCustTypeCode());
-			ps.setString(index++, c.getCustSalutationCode());
-			ps.setString(index++, c.getCustFName());
-			ps.setString(index++, c.getCustMName());
-			ps.setString(index++, c.getCustLName());
-			ps.setString(index++, c.getCustShrtName());
-			ps.setString(index++, c.getCustFNameLclLng());
-			ps.setString(index++, c.getCustMNameLclLng());
-			ps.setString(index++, c.getCustLNameLclLng());
-			ps.setString(index++, c.getCustShrtNameLclLng());
-			ps.setString(index++, c.getCustDftBranch());
-			ps.setString(index++, c.getCustGenderCode());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
-			ps.setString(index++, c.getCustPOB());
-			ps.setString(index++, c.getCustCOB());
-			ps.setString(index++, c.getCustPassportNo());
-			ps.setString(index++, c.getCustMotherMaiden());
-			ps.setBoolean(index++, c.isCustIsMinor());
-			ps.setString(index++, c.getCustReferedBy());
-			ps.setString(index++, c.getCustDSA());
-			ps.setString(index++, c.getCustDSADept());
-			ps.setLong(index++, c.getCustRO1());
-			ps.setString(index++, c.getCustRO2());
-			ps.setString(index++, c.getCustRelation());
-			ps.setLong(index++, c.getCustGroupID());
-			ps.setString(index++, c.getCustSts());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustStsChgDate()));
-			ps.setString(index++, c.getCustGroupSts());
-			ps.setBoolean(index++, c.isCustIsBlocked());
-			ps.setBoolean(index++, c.isCustIsActive());
-			ps.setBoolean(index++, c.isCustIsClosed());
-			ps.setString(index++, c.getCustInactiveReason());
-			ps.setBoolean(index++, c.isCustIsDecease());
-			ps.setBoolean(index++, c.isCustIsDormant());
-			ps.setBoolean(index++, c.isCustIsDelinquent());
-			ps.setBoolean(index++, c.isCustIsTradeFinCust());
-			ps.setString(index++, c.getCustTradeLicenceNum());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustTradeLicenceExpiry()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustPassportExpiry()));
-			ps.setString(index++, c.getCustVisaNum());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustVisaExpiry()));
-			ps.setBoolean(index++, c.isCustIsStaff());
-			ps.setString(index++, c.getCustStaffID());
-			ps.setString(index++, c.getCustIndustry());
-			ps.setString(index++, c.getCustSector());
-			ps.setString(index++, c.getCustSubSector());
-			ps.setString(index++, c.getCustProfession());
-			ps.setBigDecimal(index++, c.getCustTotalIncome());
-			ps.setString(index++, c.getCustMaritalSts());
-			ps.setString(index++, c.getCustEmpSts());
-			ps.setString(index++, c.getCustSegment());
-			ps.setString(index++, c.getCustSubSegment());
-			ps.setBoolean(index++, c.isCustIsBlackListed());
-			ps.setString(index++, c.getCustBLRsnCode());
-			ps.setBoolean(index++, c.isCustIsRejected());
-			ps.setString(index++, c.getCustRejectedRsn());
-			ps.setString(index++, c.getCustBaseCcy());
-			ps.setString(index++, c.getCustLng());
-			ps.setString(index++, c.getCustParentCountry());
-			ps.setString(index++, c.getCustResdCountry());
-			ps.setString(index++, c.getCustRiskCountry());
-			ps.setString(index++, c.getCustNationality());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustClosedOn()));
-			ps.setString(index++, c.getCustStmtFrq());
-			ps.setBoolean(index++, c.isCustIsStmtCombined());
-			ps.setTimestamp(index++, c.getCustStmtLastDate());
-			ps.setBoolean(index++, c.isMarginDeviation());
-			ps.setTimestamp(index++, c.getCustStmtNextDate());
-			ps.setString(index++, c.getCustStmtDispatchMode());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustFirstBusinessDate()));
-			ps.setString(index++, c.getCustAddlVar81());
-			ps.setString(index++, c.getCustAddlVar82());
-			ps.setString(index++, c.getCustAddlVar83());
-			ps.setString(index++, c.getCustAddlVar84());
-			ps.setString(index++, c.getCustAddlVar85());
-			ps.setString(index++, c.getCustAddlVar86());
-			ps.setString(index++, c.getCustAddlVar87());
-			ps.setString(index++, c.getCustAddlVar88());
-			ps.setString(index++, c.getCustAddlVar89());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate1()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate2()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate3()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate4()));
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustAddlDate5()));
-			ps.setString(index++, c.getCustAddlVar1());
-			ps.setString(index++, c.getCustAddlVar2());
-			ps.setString(index++, c.getCustAddlVar3());
-			ps.setString(index++, c.getCustAddlVar4());
-			ps.setString(index++, c.getCustAddlVar5());
-			ps.setString(index++, c.getCustAddlVar6());
-			ps.setString(index++, c.getCustAddlVar7());
-			ps.setString(index++, c.getCustAddlVar8());
-			ps.setString(index++, c.getCustAddlVar9());
-			ps.setString(index++, c.getCustAddlVar10());
-			ps.setString(index++, c.getCustAddlVar11());
-			ps.setBigDecimal(index++, c.getCustAddlDec1());
-			ps.setDouble(index++, c.getCustAddlDec2());
-			ps.setDouble(index++, c.getCustAddlDec3());
-			ps.setDouble(index++, c.getCustAddlDec4());
-			ps.setDouble(index++, c.getCustAddlDec5());
-			ps.setInt(index++, c.getCustAddlInt1());
-			ps.setInt(index++, c.getCustAddlInt2());
-			ps.setInt(index++, c.getCustAddlInt3());
-			ps.setInt(index++, c.getCustAddlInt4());
-			ps.setInt(index++, c.getCustAddlInt5());
-			ps.setBoolean(index++, c.isDedupFound());
-			ps.setBoolean(index++, c.isSkipDedup());
-			ps.setBigDecimal(index++, c.getCustTotalExpense());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
-			ps.setInt(index++, c.getNoOfDependents());
-			ps.setString(index++, c.getCustCRCPR());
-			ps.setString(index++, c.getCustSourceID());
-			ps.setBoolean(index++, c.isJointCust());
-			ps.setString(index++, c.getJointCustName());
-			ps.setDate(index++, JdbcUtil.getDate(c.getJointCustDob()));
-			ps.setString(index++, c.getContactPersonName());
-			ps.setString(index++, c.getEmailID());
-			ps.setString(index++, c.getPhoneNumber());
-			ps.setBoolean(index++, c.isSalariedCustomer());
-			ps.setInt(index++, c.getVersion());
-			ps.setLong(index++, c.getLastMntBy());
-			ps.setTimestamp(index++, c.getLastMntOn());
-			ps.setString(index++, c.getRecordStatus());
-			ps.setString(index++, c.getRoleCode());
-			ps.setString(index++, c.getNextRoleCode());
-			ps.setString(index++, c.getTaskId());
-			ps.setString(index++, c.getNextTaskId());
-			ps.setString(index++, c.getRecordType());
-			ps.setLong(index++, c.getWorkflowId());
-			ps.setLong(index++, c.getCasteId());
-			ps.setLong(index++, c.getReligionId());
-			ps.setString(index++, c.getSubCategory());
-			ps.setString(index++, c.getApplicationNo());
-			ps.setBoolean(index++, c.isDnd());
-			ps.setString(index++, c.getResidentialStatus());
-			ps.setString(index++, c.getOtherCaste());
-			ps.setString(index++, c.getOtherReligion());
-			ps.setString(index++, c.getNatureOfBusiness());
-			ps.setString(index++, c.getEntityType());
-			ps.setString(index++, c.getCustResidentialSts());
-			ps.setString(index++, c.getQualification());
-			ps.setBoolean(index++, c.isVip());
+			ps.setString(++index, c.getCustCtgCode());
+			ps.setString(++index, c.getCustCoreBank());
+			ps.setString(++index, c.getCustTypeCode());
+			ps.setString(++index, c.getCustSalutationCode());
+			ps.setString(++index, c.getCustFName());
+			ps.setString(++index, c.getCustMName());
+			ps.setString(++index, c.getCustLName());
+			ps.setString(++index, c.getCustShrtName());
+			ps.setString(++index, c.getCustFNameLclLng());
+			ps.setString(++index, c.getCustMNameLclLng());
+			ps.setString(++index, c.getCustLNameLclLng());
+			ps.setString(++index, c.getCustShrtNameLclLng());
+			ps.setString(++index, c.getCustDftBranch());
+			ps.setString(++index, c.getCustGenderCode());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(++index, c.getCustPOB());
+			ps.setString(++index, c.getCustCOB());
+			ps.setString(++index, c.getCustPassportNo());
+			ps.setString(++index, c.getCustMotherMaiden());
+			ps.setBoolean(++index, c.isCustIsMinor());
+			ps.setString(++index, c.getCustReferedBy());
+			ps.setString(++index, c.getCustDSA());
+			ps.setString(++index, c.getCustDSADept());
+			ps.setLong(++index, c.getCustRO1());
+			ps.setString(++index, c.getCustRO2());
+			ps.setString(++index, c.getCustRelation());
+			ps.setLong(++index, c.getCustGroupID());
+			ps.setString(++index, c.getCustSts());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustStsChgDate()));
+			ps.setString(++index, c.getCustGroupSts());
+			ps.setBoolean(++index, c.isCustIsBlocked());
+			ps.setBoolean(++index, c.isCustIsActive());
+			ps.setBoolean(++index, c.isCustIsClosed());
+			ps.setString(++index, c.getCustInactiveReason());
+			ps.setBoolean(++index, c.isCustIsDecease());
+			ps.setBoolean(++index, c.isCustIsDormant());
+			ps.setBoolean(++index, c.isCustIsDelinquent());
+			ps.setBoolean(++index, c.isCustIsTradeFinCust());
+			ps.setString(++index, c.getCustTradeLicenceNum());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustTradeLicenceExpiry()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustPassportExpiry()));
+			ps.setString(++index, c.getCustVisaNum());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustVisaExpiry()));
+			ps.setBoolean(++index, c.isCustIsStaff());
+			ps.setString(++index, c.getCustStaffID());
+			ps.setString(++index, c.getCustIndustry());
+			ps.setString(++index, c.getCustSector());
+			ps.setString(++index, c.getCustSubSector());
+			ps.setString(++index, c.getCustProfession());
+			ps.setBigDecimal(++index, c.getCustTotalIncome());
+			ps.setString(++index, c.getCustMaritalSts());
+			ps.setString(++index, c.getCustEmpSts());
+			ps.setString(++index, c.getCustSegment());
+			ps.setString(++index, c.getCustSubSegment());
+			ps.setBoolean(++index, c.isCustIsBlackListed());
+			ps.setString(++index, c.getCustBLRsnCode());
+			ps.setBoolean(++index, c.isCustIsRejected());
+			ps.setString(++index, c.getCustRejectedRsn());
+			ps.setString(++index, c.getCustBaseCcy());
+			ps.setString(++index, c.getCustLng());
+			ps.setString(++index, c.getCustParentCountry());
+			ps.setString(++index, c.getCustResdCountry());
+			ps.setString(++index, c.getCustRiskCountry());
+			ps.setString(++index, c.getCustNationality());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustClosedOn()));
+			ps.setString(++index, c.getCustStmtFrq());
+			ps.setBoolean(++index, c.isCustIsStmtCombined());
+			ps.setTimestamp(++index, c.getCustStmtLastDate());
+			ps.setBoolean(++index, c.isMarginDeviation());
+			ps.setTimestamp(++index, c.getCustStmtNextDate());
+			ps.setString(++index, c.getCustStmtDispatchMode());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustFirstBusinessDate()));
+			ps.setString(++index, c.getCustAddlVar81());
+			ps.setString(++index, c.getCustAddlVar82());
+			ps.setString(++index, c.getCustAddlVar83());
+			ps.setString(++index, c.getCustAddlVar84());
+			ps.setString(++index, c.getCustAddlVar85());
+			ps.setString(++index, c.getCustAddlVar86());
+			ps.setString(++index, c.getCustAddlVar87());
+			ps.setString(++index, c.getCustAddlVar88());
+			ps.setString(++index, c.getCustAddlVar89());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate1()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate2()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate3()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate4()));
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustAddlDate5()));
+			ps.setString(++index, c.getCustAddlVar1());
+			ps.setString(++index, c.getCustAddlVar2());
+			ps.setString(++index, c.getCustAddlVar3());
+			ps.setString(++index, c.getCustAddlVar4());
+			ps.setString(++index, c.getCustAddlVar5());
+			ps.setString(++index, c.getCustAddlVar6());
+			ps.setString(++index, c.getCustAddlVar7());
+			ps.setString(++index, c.getCustAddlVar8());
+			ps.setString(++index, c.getCustAddlVar9());
+			ps.setString(++index, c.getCustAddlVar10());
+			ps.setString(++index, c.getCustAddlVar11());
+			ps.setBigDecimal(++index, c.getCustAddlDec1());
+			ps.setDouble(++index, c.getCustAddlDec2());
+			ps.setDouble(++index, c.getCustAddlDec3());
+			ps.setDouble(++index, c.getCustAddlDec4());
+			ps.setDouble(++index, c.getCustAddlDec5());
+			ps.setInt(++index, c.getCustAddlInt1());
+			ps.setInt(++index, c.getCustAddlInt2());
+			ps.setInt(++index, c.getCustAddlInt3());
+			ps.setInt(++index, c.getCustAddlInt4());
+			ps.setInt(++index, c.getCustAddlInt5());
+			ps.setBoolean(++index, c.isDedupFound());
+			ps.setBoolean(++index, c.isSkipDedup());
+			ps.setBigDecimal(++index, c.getCustTotalExpense());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(++index, c.getNoOfDependents());
+			ps.setString(++index, c.getCustCRCPR());
+			ps.setString(++index, c.getCustSourceID());
+			ps.setBoolean(++index, c.isJointCust());
+			ps.setString(++index, c.getJointCustName());
+			ps.setDate(++index, JdbcUtil.getDate(c.getJointCustDob()));
+			ps.setString(++index, c.getContactPersonName());
+			ps.setString(++index, c.getEmailID());
+			ps.setString(++index, c.getPhoneNumber());
+			ps.setBoolean(++index, c.isSalariedCustomer());
+			ps.setInt(++index, c.getVersion());
+			ps.setLong(++index, c.getLastMntBy());
+			ps.setTimestamp(++index, c.getLastMntOn());
+			ps.setString(++index, c.getRecordStatus());
+			ps.setString(++index, c.getRoleCode());
+			ps.setString(++index, c.getNextRoleCode());
+			ps.setString(++index, c.getTaskId());
+			ps.setString(++index, c.getNextTaskId());
+			ps.setString(++index, c.getRecordType());
+			ps.setLong(++index, c.getWorkflowId());
+			ps.setLong(++index, c.getCasteId());
+			ps.setLong(++index, c.getReligionId());
+			ps.setString(++index, c.getSubCategory());
+			ps.setString(++index, c.getApplicationNo());
+			ps.setBoolean(++index, c.isDnd());
+			ps.setString(++index, c.getResidentialStatus());
+			ps.setString(++index, c.getOtherCaste());
+			ps.setString(++index, c.getOtherReligion());
+			ps.setString(++index, c.getNatureOfBusiness());
+			ps.setString(++index, c.getEntityType());
+			ps.setString(++index, c.getCustResidentialSts());
+			ps.setString(++index, c.getQualification());
+			ps.setBoolean(++index, c.isVip());
+			ps.setObject(++index, c.getApprovedBy());
+			ps.setTimestamp(++index, c.getApprovedOn());
 
-			ps.setLong(index++, c.getCustID());
+			ps.setLong(++index, c.getCustID());
 
 			if (!type.endsWith("_Temp")) {
-				ps.setInt(index, c.getVersion() - 1);
+				ps.setInt(++index, c.getVersion() - 1);
 			}
-
 		});
 
 		if (recordCount <= 0) {
@@ -1326,42 +1339,48 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustSector, CustSubSector, CustMaritalSts, CustEmpSts, CustIsBlackListed");
 		sql.append(", CustBlackListDate, NoOfDependents, CustBaseCcy, CustNationality, JointCust");
 		sql.append(", ExistCustID, ElgRequired, SalariedCustomer, EmpName, EmpDept");
-		sql.append(", EmpDesg, TotalIncome, TotalExpense, CustSalutationCode, CustSegment)");
+		sql.append(", EmpDesg, TotalIncome, TotalExpense, CustSalutationCode, CustSegment");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setLong(index++, c.getCustID());
-			ps.setString(index++, c.getCustCRCPR());
-			ps.setString(index++, c.getCustCtgCode());
-			ps.setString(index++, c.getCustTypeCode());
-			ps.setString(index++, c.getCustShrtName());
-			ps.setString(index++, c.getCustGenderCode());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
-			ps.setString(index++, c.getCustSector());
-			ps.setString(index++, c.getCustSubSector());
-			ps.setString(index++, c.getCustMaritalSts());
-			ps.setString(index++, c.getCustEmpSts());
-			ps.setBoolean(index++, c.isCustIsBlackListed());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
-			ps.setInt(index++, c.getNoOfDependents());
-			ps.setString(index++, c.getCustBaseCcy());
-			ps.setString(index++, c.getCustNationality());
-			ps.setBoolean(index++, c.isJointCust());
-			ps.setLong(index++, c.getExistCustID());
-			ps.setBoolean(index++, c.isElgRequired());
-			ps.setBoolean(index++, c.isSalariedCustomer());
-			ps.setLong(index++, c.getEmpName());
-			ps.setString(index++, c.getEmpDept());
-			ps.setString(index++, c.getEmpDesg());
-			ps.setBigDecimal(index++, c.getTotalIncome());
-			ps.setBigDecimal(index++, c.getTotalExpense());
-			ps.setString(index++, c.getCustSalutationCode());
-			ps.setString(index, c.getCustSegment());
+			ps.setLong(++index, c.getCustID());
+			ps.setString(++index, c.getCustCRCPR());
+			ps.setString(++index, c.getCustCtgCode());
+			ps.setString(++index, c.getCustTypeCode());
+			ps.setString(++index, c.getCustShrtName());
+			ps.setString(++index, c.getCustGenderCode());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(++index, c.getCustSector());
+			ps.setString(++index, c.getCustSubSector());
+			ps.setString(++index, c.getCustMaritalSts());
+			ps.setString(++index, c.getCustEmpSts());
+			ps.setBoolean(++index, c.isCustIsBlackListed());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(++index, c.getNoOfDependents());
+			ps.setString(++index, c.getCustBaseCcy());
+			ps.setString(++index, c.getCustNationality());
+			ps.setBoolean(++index, c.isJointCust());
+			ps.setLong(++index, c.getExistCustID());
+			ps.setBoolean(++index, c.isElgRequired());
+			ps.setBoolean(++index, c.isSalariedCustomer());
+			ps.setLong(++index, c.getEmpName());
+			ps.setString(++index, c.getEmpDept());
+			ps.setString(++index, c.getEmpDesg());
+			ps.setBigDecimal(++index, c.getTotalIncome());
+			ps.setBigDecimal(++index, c.getTotalExpense());
+			ps.setString(++index, c.getCustSalutationCode());
+			ps.setString(++index, c.getCustSegment());
+			ps.setObject(++index, c.getCreatedBy());
+			ps.setTimestamp(++index, c.getCreatedOn());
+			ps.setObject(++index, c.getApprovedBy());
+			ps.setTimestamp(++index, c.getApprovedOn());
 		});
 
 		return c.getCustID();
@@ -1379,41 +1398,44 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(", CustBaseCcy = ?, CustNationality = ?, JointCust = ?, ExistCustID = ?, ElgRequired = ?");
 		sql.append(", SalariedCustomer = ?, EmpName = ?, EmpDept = ?, EmpDesg = ?, TotalIncome = ?");
 		sql.append(", TotalExpense = ?, CustSalutationCode = ?, CustSegment = ?");
+		sql.append(", ApprovedBy = ?, ApprovedOn = ?");
 		sql.append(" Where CustID = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
+			int index = 0;
 
-			ps.setString(index++, c.getCustCRCPR());
-			ps.setString(index++, c.getCustCtgCode());
-			ps.setString(index++, c.getCustTypeCode());
-			ps.setString(index++, c.getCustShrtName());
-			ps.setString(index++, c.getCustGenderCode());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustDOB()));
-			ps.setString(index++, c.getCustSector());
-			ps.setString(index++, c.getCustSubSector());
-			ps.setString(index++, c.getCustMaritalSts());
-			ps.setString(index++, c.getCustEmpSts());
-			ps.setBoolean(index++, c.isCustIsBlackListed());
-			ps.setDate(index++, JdbcUtil.getDate(c.getCustBlackListDate()));
-			ps.setInt(index++, c.getNoOfDependents());
-			ps.setString(index++, c.getCustBaseCcy());
-			ps.setString(index++, c.getCustNationality());
-			ps.setBoolean(index++, c.isJointCust());
-			ps.setLong(index++, c.getExistCustID());
-			ps.setBoolean(index++, c.isElgRequired());
-			ps.setBoolean(index++, c.isSalariedCustomer());
-			ps.setLong(index++, c.getEmpName());
-			ps.setString(index++, c.getEmpDept());
-			ps.setString(index++, c.getEmpDesg());
-			ps.setBigDecimal(index++, c.getTotalIncome());
-			ps.setBigDecimal(index++, c.getTotalExpense());
-			ps.setString(index++, c.getCustSalutationCode());
-			ps.setString(index++, c.getCustSegment());
+			ps.setString(++index, c.getCustCRCPR());
+			ps.setString(++index, c.getCustCtgCode());
+			ps.setString(++index, c.getCustTypeCode());
+			ps.setString(++index, c.getCustShrtName());
+			ps.setString(++index, c.getCustGenderCode());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustDOB()));
+			ps.setString(++index, c.getCustSector());
+			ps.setString(++index, c.getCustSubSector());
+			ps.setString(++index, c.getCustMaritalSts());
+			ps.setString(++index, c.getCustEmpSts());
+			ps.setBoolean(++index, c.isCustIsBlackListed());
+			ps.setDate(++index, JdbcUtil.getDate(c.getCustBlackListDate()));
+			ps.setInt(++index, c.getNoOfDependents());
+			ps.setString(++index, c.getCustBaseCcy());
+			ps.setString(++index, c.getCustNationality());
+			ps.setBoolean(++index, c.isJointCust());
+			ps.setLong(++index, c.getExistCustID());
+			ps.setBoolean(++index, c.isElgRequired());
+			ps.setBoolean(++index, c.isSalariedCustomer());
+			ps.setLong(++index, c.getEmpName());
+			ps.setString(++index, c.getEmpDept());
+			ps.setString(++index, c.getEmpDesg());
+			ps.setBigDecimal(++index, c.getTotalIncome());
+			ps.setBigDecimal(++index, c.getTotalExpense());
+			ps.setString(++index, c.getCustSalutationCode());
+			ps.setString(++index, c.getCustSegment());
+			ps.setObject(++index, c.getApprovedBy());
+			ps.setTimestamp(++index, c.getApprovedOn());
 
-			ps.setLong(index, c.getCustID());
+			ps.setLong(++index, c.getCustID());
 		});
 
 		if (recordCount <= 0) {
@@ -1671,13 +1693,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	public List<FinanceEnquiry> getCustomerFinanceDetailById(Customer customer) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinReference, fm.FinType, fm.FinStatus, fm.FinStartDate, fm.FinCcy, fm.FinAmount");
-		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue ");
+		sql.append(", fm.DownPayment, fm.FeeChargeAmt, fm.FinCurrAssetValue, fm.FinIsActive");
 		sql.append(", fm.FinRepaymentAmount, fm.NumberOfTerms, ft.FintypeDesc as LovDescFinTypeName");
-		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount");
+		sql.append(", coalesce(t6.MaxinstAmount, 0) MaxInstAmount, t6.NOinst, t6.NOPaidinst");
+		sql.append(", c.CreatedBy, c.CreatedOn, c.ApprovedBy, c.ApprovedOn");
 		sql.append(" from FinanceMain fm");
 		sql.append(" inner join Customers c on c.CustID = fm.CustID");
 		sql.append(" inner join RMTfinanceTypes ft on ft.Fintype = fm.FinType");
-		sql.append(" left join (select FinReference, (NSchdPri+NSchdPft) MaxInstAmount");
+		sql.append(" left join (select FinReference, NOinst, NOPaidinst, (NSchdPri+NSchdPft) MaxInstAmount");
 		sql.append(" from FinPftdetails) t6 on t6.FinReference = fm.Finreference");
 		if (CustomerExtension.CUST_CORE_BANK_ID) {
 			sql.append(" where c.CustCoreBank = ?");
@@ -1699,11 +1722,17 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
 			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 			fm.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
 			fm.setNumberOfTerms(rs.getInt("NumberOfTerms"));
 			fm.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
 			fm.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
-
+			fm.setNOInst(rs.getInt("NOinst"));
+			fm.setNOPaidinst(rs.getInt("NOPaidinst"));
+			fm.setCreatedBy(rs.getLong("CreatedBy"));
+			fm.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			fm.setApprovedBy(rs.getLong("ApprovedBy"));
+			fm.setApprovedOn(rs.getTimestamp("ApprovedOn"));
 			return fm;
 		}, CustomerExtension.CUST_CORE_BANK_ID ? customer.getCustCoreBank() : customer.getCustID());
 	}
@@ -1791,7 +1820,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public void updateCustSuspenseDetails(Customer aCustomer, String tableType) {
 
-		StringBuffer updateSql = new StringBuffer();
+		StringBuilder updateSql = new StringBuilder();
 		updateSql.append("UPDATE Customers");
 		updateSql.append(tableType);
 		updateSql.append(
@@ -1812,7 +1841,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	@Override
 	public void saveCustSuspMovements(Customer aCustomer) {
 
-		StringBuffer insertSql = new StringBuffer();
+		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("INSERT INTO CustSuspMovements ");
 		insertSql.append("(CustID, CustSuspEffDate, CustSuspAprDate, CustSuspMvtType, CustSuspRemarks) ");
 		insertSql.append(" VALUES(:CustID, :CustSuspEffDate, :CustSuspAprDate, :CustSuspMvtType, :CustSuspRemarks) ");
@@ -1830,7 +1859,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select T1.CustSuspRemarks FROM CustSuspMovements T1 INNER JOIN ");
 		selectSql.append(
 				" (Select CustID,MAX(CustSuspEffDate) MaxSuspEffDate FROM CustSuspMovements Group by CustID) T2 ");
@@ -1852,7 +1881,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustID", custID);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustID, CustCIF, CustShrtName, CustDftBranch, CustSts, CustStsChgDate, custSuspSts,");
 		selectSql.append(" CasteId, ReligionId, SubCategory,");
 		selectSql.append(" custSuspDate, custSuspTrigger From Customers ");
@@ -1885,7 +1914,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		source.addValue("ColumnName", columnName);
 		source.addValue("Value", value);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM ");
 		selectSql.append(tableName);
 		selectSql.append(" WHERE ");
@@ -2222,8 +2251,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public int getCustomerCountByCustID(long custID, String type) {
-		// TODO Auto-generated method stub
-
 		Customer customer = new Customer();
 		customer.setCustID(custID);
 
@@ -2579,14 +2606,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custCIF, custCIF },
-					new RowMapper<Long>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<Long>() {
 
-						@Override
-						public Long mapRow(ResultSet rs, int arg1) throws SQLException {
-							return rs.getLong("CustId");
-						}
-					});
+				@Override
+				public Long mapRow(ResultSet rs, int arg1) throws SQLException {
+					return rs.getLong("CustId");
+				}
+			}, custCIF, custCIF);
 
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
@@ -2651,13 +2677,13 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { custId }, new RowMapper<String>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<String>() {
 
 				@Override
 				public String mapRow(ResultSet rs, int arg1) throws SQLException {
 					return rs.getString("CustCIF");
 				}
-			});
+			}, custId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2676,7 +2702,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<Customer>() {
+			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<Customer>() {
 
 				@Override
 				public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -2686,7 +2712,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 					return c;
 				}
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2992,7 +3018,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public CustomerCoreBank getCoreBankByCustID(long custID) {
-		String sql = "Select c.CustId,c.CustCoreBank From Customers c where CustID = ?";
+		String sql = "Select c.CustId, c.CustCoreBank From Customers c where CustID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -3349,14 +3375,14 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		StringBuilder sql = new StringBuilder();
 		switch (tableType) {
 		case MAIN_TAB:
-			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(" Select c.CustCIF, c.CustID, c.CustSalutationCode, c.CustFName");
 			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers c");
 			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
 			sql.append(" Inner Join FinJointAccountDetails ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
 			sql.append(" Where fm.finID = ?");
 			break;
 		case TEMP_TAB:
-			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(" Select c.CustCIF, c.CustID, c.CustSalutationCode, c.CustFName");
 			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers_Temp c");
 			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
 			sql.append(" Inner Join FinJointAccountDetails_Temp ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
@@ -3365,7 +3391,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		case BOTH_TAB:
 			object = new Object[] { 1, finID, 1, finID };
 
-			sql.append(" Select c.CustID, c.CustSalutationCode, c.CustFName");
+			sql.append(" Select c.CustCIF, c.CustID, c.CustSalutationCode, c.CustFName");
 			sql.append(", c.CustMName, c.CustLName, ja.CatOfcoApplicant From Customers_Temp c");
 			sql.append(" Inner Join FinanceMain fm on fm.FinIsActive = ?");
 			sql.append(" Inner Join FinJointAccountDetails_Temp ja on ja.FinID = fm.FinID and ja.CustCIF = C.CustCIF");
@@ -3386,6 +3412,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			Customer c = new Customer();
+			c.setCustCIF(rs.getString("CustCIF"));
 			c.setCustID(rs.getLong("CustID"));
 			c.setCustSalutationCode(rs.getString("CustSalutationCode"));
 			c.setCustFName(rs.getString("CustFName"));

@@ -74,7 +74,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.rmtmasters.accountingset.model.TransactionEntryListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -84,6 +83,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
  * This is the controller class for the /WEB-INF/pages/RulesFactory/AccountingSet/accountingSetDialog.zul file.
@@ -221,8 +221,8 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.eventCode.setMaxlength(8);
-		this.accountSetCode.setMaxlength(8);
+		this.eventCode.setMaxlength(10);
+		this.accountSetCode.setMaxlength(10);
 		this.accountSetCodeName.setMaxlength(50);
 		this.eventCode.setMandatoryStyle(true);
 		this.eventCode.setModuleName("AccountEngineEvent");/*
@@ -231,7 +231,7 @@ public class AccountingSetDialogCtrl extends GFCBaseCtrl<AccountingSet> {
 															 */
 		this.eventCode.setValidateColumns(new String[] { "AEEventCode" });
 
-		List<String> eventCodes = PennantAppUtil.getExcludedAccEvents();
+		List<String> eventCodes = AccountingEvent.getExcludedAccEvents();
 
 		int i = eventCodes.size();
 		Filter[] filter = new Filter[i];

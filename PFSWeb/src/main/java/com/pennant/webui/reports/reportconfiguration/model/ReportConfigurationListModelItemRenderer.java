@@ -44,7 +44,7 @@ public class ReportConfigurationListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 9199981912283581234L;
 
 	public ReportConfigurationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -253,7 +253,7 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		sql.append(" pinCodeId, pinCode, city, areaName, active,groupId, serviceable,");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("pCCountry,pCProvince,");
+			sql.append(" pCCountry, pCProvince, LovDescPCProvinceName, pCCityName,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -379,6 +379,81 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 		}, new PinCodesRM());
 	}
 
+	@Override
+	public PinCode getPinCodeById(long pinCodeId) {
+		StringBuilder sql = getPinCodeQuery();
+		sql.append(" Where PinCodeId = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new PinCodeQueryRM(), pinCodeId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public PinCode getPinCode(String code) {
+		StringBuilder sql = getPinCodeQuery();
+		sql.append(" Where PinCode = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), new PinCodeQueryRM(), code);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	private StringBuilder getPinCodeQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PinCodeId, PinCode, City, AreaName");
+		sql.append(", Active, GroupId, Serviceable, rm.PCCountry, rm.PCProvince");
+		sql.append(", p.Version, p.LastMntOn, p.LastMntBy,p.RecordStatus, p.RoleCode");
+		sql.append(", p.NextRoleCode, p.TaskId, p.NextTaskId, p.RecordType, p.WorkflowId");
+		sql.append(" From PinCodes p");
+		sql.append(" Inner Join RMTProvincevsCity rm ON p.city = rm.pccity");
+		return sql;
+	}
+
+	private class PinCodeQueryRM implements RowMapper<PinCode> {
+		private PinCodeQueryRM() {
+			super();
+		}
+
+		@Override
+		public PinCode mapRow(ResultSet rs, int rowNum) throws SQLException {
+			PinCode pinCode = new PinCode();
+
+			pinCode.setPinCodeId(rs.getLong("PinCodeId"));
+			pinCode.setPinCode(rs.getString("PinCode"));
+			pinCode.setCity(rs.getString("City"));
+			pinCode.setAreaName(rs.getString("AreaName"));
+			pinCode.setActive(rs.getBoolean("Active"));
+			pinCode.setGroupId(JdbcUtil.getLong(rs.getObject("GroupId")));
+			pinCode.setServiceable(rs.getBoolean("Serviceable"));
+			pinCode.setpCCountry(rs.getString("PCCountry"));
+			pinCode.setPCProvince(rs.getString("PCProvince"));
+			pinCode.setpCProvince(rs.getString("PCProvince"));
+			pinCode.setVersion(rs.getInt("Version"));
+			pinCode.setLastMntBy(rs.getLong("LastMntBy"));
+			pinCode.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			pinCode.setRecordStatus(rs.getString("RecordStatus"));
+			pinCode.setRoleCode(rs.getString("RoleCode"));
+			pinCode.setNextRoleCode(rs.getString("NextRoleCode"));
+			pinCode.setTaskId(rs.getString("TaskId"));
+			pinCode.setNextTaskId(rs.getString("NextTaskId"));
+			pinCode.setRecordType(rs.getString("RecordType"));
+			pinCode.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return pinCode;
+		}
+	}
+
 	private class PinCodesRM implements RowMapper<PinCode> {
 
 		private PinCodesRM() {
@@ -408,4 +483,5 @@ public class PinCodeDAOImpl extends SequenceDao<PinCode> implements PinCodeDAO {
 			return pc;
 		}
 	}
+
 }

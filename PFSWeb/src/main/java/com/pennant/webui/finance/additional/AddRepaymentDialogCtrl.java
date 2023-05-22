@@ -49,7 +49,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
@@ -66,6 +65,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -462,7 +462,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 
@@ -532,7 +532,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				if (includeFromDate && curSchd.getSchDate().compareTo(fillAfter) >= 0) {
@@ -696,7 +696,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						.compareTo((Date) this.cbRepayToDate.getSelectedItem().getValue()) < 0) {
 					throw new WrongValueException(this.cbFromDate, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] {
 							Labels.getLabel("label_ChangeRepaymentDialog_CalFromDate.value"),
-							DateUtility.formatToLongDate((Date) this.cbRepayToDate.getSelectedItem().getValue()) }));
+							DateUtil.formatToLongDate((Date) this.cbRepayToDate.getSelectedItem().getValue()) }));
 				}
 
 				finServiceInstruction.setRecalFromDate((Date) this.cbFromDate.getSelectedItem().getValue());
@@ -720,7 +720,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						throw new WrongValueException(this.cbTillDate,
 								Labels.getLabel("DATE_ALLOWED_AFTER",
 										new String[] { Labels.getLabel("label_ChangeRepaymentDialog_CalToDate.value"),
-												DateUtility.formatToLongDate(
+												DateUtil.formatToLongDate(
 														(Date) this.cbRepayToDate.getSelectedItem().getValue()) }));
 					}
 				} else {
@@ -730,7 +730,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						throw new WrongValueException(this.cbTillDate,
 								Labels.getLabel("DATE_ALLOWED_AFTER",
 										new String[] { Labels.getLabel("label_ChangeRepaymentDialog_CalToDate.value"),
-												DateUtility.formatToLongDate(
+												DateUtil.formatToLongDate(
 														(Date) this.cbRepayToDate.getSelectedItem().getValue()) }));
 					}
 				}

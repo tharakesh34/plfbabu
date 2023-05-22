@@ -3,19 +3,26 @@ package com.pennant.pff.core.engine.accounting;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AccountEngineExecution;
+import com.pennant.backend.dao.bmtmasters.AccountEngineEventDAO;
 import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.event.PostingEvent;
 import com.pennanttech.pennapps.core.AppException;
@@ -25,10 +32,12 @@ import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class AccountingEngine {
 	private static final Logger logger = LogManager.getLogger(AccountingEngine.class);
+
 	private static PostingEventFactory factory;
 	private static PostingsDAO postingsDAO;
 	private static AccountEngineExecution engineExecution;
 	private static FinStageAccountingLogDAO finStageAccountingLogDAO;
+	private static AccountEngineEventDAO accountEngineEventDAO;
 
 	public static List<ReturnDataSet> execute(String accEvent, PostingDTO postingDTO) {
 		List<ReturnDataSet> transactions = new ArrayList<>();
@@ -164,8 +173,119 @@ public class AccountingEngine {
 
 		for (Long linkedTranId : excdTranIdList) {
 			getReversalsByLinkedTranID(linkedTranId);
-			logger.debug("Reverse Transaction Success for Transaction ID : " + linkedTranId);
+			logger.debug("Reverse Transaction Success for Transaction ID : {}", linkedTranId);
 		}
+	}
+
+	public static Long getAccountSetID(String finType, String eventCode, int moduleID) {
+		FinanceMain fm = new FinanceMain();
+		fm.setFinType(finType);
+
+		return getAccountSetID(fm, eventCode, moduleID);
+	}
+
+	public static Long getAccountSetID(FinanceMain fm, String eventCode) {
+		int moduleID = FinanceConstants.MODULEID_FINTYPE;
+
+		if (StringUtils.isNotBlank(fm.getPromotionCode())) {
+			moduleID = FinanceConstants.MODULEID_PROMOTION;
+		}
+
+		return getAccountSetID(fm, eventCode, moduleID);
+	}
+
+	public static Long getAccountSetID(FinanceMain fm, String eventCode, int moduleID) {
+		String derivedEventCode = null;
+
+		if (fm.isUnderSettlement()) {
+			derivedEventCode = eventCode + "_S";
+		} else if (fm.isUnderNpa()) {
+			derivedEventCode = eventCode + "_N";
+		} else if (fm.isWriteoffLoan()) {
+			derivedEventCode = eventCode + "_W";
+		}
+
+		Long accountSetID = null;
+
+		if (derivedEventCode != null) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), derivedEventCode, moduleID);
+		}
+
+		if (accountSetID == null || accountSetID <= 0) {
+			accountSetID = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), eventCode, moduleID);
+		}
+
+		return accountSetID;
+	}
+
+	public static List<AccountEngineEvent> getEvents() {
+		List<AccountEngineEvent> list = accountEngineEventDAO.getAccountEngineEvents();
+
+		List<AccountEngineEvent> tempList = list.stream().filter(aeEvent -> aeEvent.getAEEventCode().endsWith("_S")
+				|| aeEvent.getAEEventCode().endsWith("_N") || aeEvent.getAEEventCode().endsWith("_W")).toList();
+
+		list.removeAll(tempList);
+
+		return list;
+	}
+
+	public static List<AccountEngineEvent> getServicingEvents() {
+		List<AccountEngineEvent> list = getEvents();
+
+		List<AccountEngineEvent> tempList = list.stream()
+				.filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSP)).toList();
+
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
+			tempList = list.stream().filter(aeEvent -> aeEvent.getAEEventCode().equals(AccountingEvent.ADDDBSF))
+					.toList();
+		}
+
+		list.removeAll(tempList);
+
+		return list;
+	}
+
+	public static List<AccountEngineEvent> getOrginationEvents() {
+		List<AccountEngineEvent> list = new ArrayList<>();
+		List<AccountEngineEvent> tempList = getEvents();
+
+		for (AccountEngineEvent aevent : tempList) {
+			String aeEventCode = aevent.getAEEventCode();
+			if (aeEventCode.equals(AccountingEvent.ADDDBSP)) {
+				list.add(aevent);
+			}
+
+			if (ImplementationConstants.ALLOW_ADDDBSF
+					&& (aeEventCode.equals(AccountingEvent.ADDDBSN) || aeEventCode.equals(AccountingEvent.ADDDBSF))) {
+				list.add(aevent);
+			}
+		}
+
+		return list;
+	}
+
+	public static List<AccountEngineEvent> getOverDraftEvents() {
+		List<AccountEngineEvent> list = new ArrayList<>();
+		List<AccountEngineEvent> tempList = getEvents();
+
+		for (AccountEngineEvent aevent : tempList) {
+			if (aevent.getAEEventCode().equals(AccountingEvent.CMTDISB)) {
+				list.add(aevent);
+			}
+		}
+
+		return list;
+	}
+
+	public static List<AccountingSet> getAccountingSetEvents() {
+		List<AccountingSet> list = accountEngineEventDAO.getAccountSetEvents();
+
+		List<AccountingSet> tempList = list.stream().filter(as -> as.getEventCode().endsWith("_S")
+				|| as.getEventCode().endsWith("_N") || as.getEventCode().endsWith("_W")).toList();
+
+		list.removeAll(tempList);
+
+		return list;
 	}
 
 	private static PostingEvent getPostingEvent(String eventName) {
@@ -186,6 +306,10 @@ public class AccountingEngine {
 
 	public static void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
 		AccountingEngine.finStageAccountingLogDAO = finStageAccountingLogDAO;
+	}
+
+	public static void setAccountEngineEventDAO(AccountEngineEventDAO accountEngineEventDAO) {
+		AccountingEngine.accountEngineEventDAO = accountEngineEventDAO;
 	}
 
 }

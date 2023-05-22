@@ -9,8 +9,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinApprovalStsInquiryListModelItemRenderer
 		implements ListitemRenderer<CustomerFinanceDetail>, Serializable {
@@ -42,7 +42,7 @@ public class FinApprovalStsInquiryListModelItemRenderer
 		lc = new Listcell(CurrencyUtil.format(finAmount, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(enquiry.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(enquiry.getFinStartDate()));
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getNextRoleDesc());
 		lc.setParent(item);

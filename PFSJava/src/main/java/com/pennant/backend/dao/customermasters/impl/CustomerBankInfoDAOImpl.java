@@ -239,7 +239,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	 */
 	public void deleteByCustomer(long custID, String type) {
 		logger.debug("Entering");
-		int recordCount = 0;
+
 		CustomerBankInfo customerBankInfo = new CustomerBankInfo();
 		customerBankInfo.setCustID(custID);
 		StringBuilder deleteSql = new StringBuilder();
@@ -251,7 +251,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -377,7 +377,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BankCode", bankCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM BMTBankDetail");
 		selectSql.append(" WHERE ");
 		selectSql.append("BankCode= :BankCode");
@@ -399,7 +399,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("AcType", accType);
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM RMTAccountTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("AcType= :AcType");
@@ -421,7 +421,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BankId", id);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerBankInfo");
 
 		selectSql.append(" WHERE BankId = :BankId");

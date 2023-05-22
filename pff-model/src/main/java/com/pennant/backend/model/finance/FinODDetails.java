@@ -121,12 +121,8 @@ public class FinODDetails implements Serializable {
 	private Date lppDueTillDate;
 	private BigDecimal lpiDueAmt = BigDecimal.ZERO;
 	private Date lpiDueTillDate;
+	private BigDecimal odMinAmount = BigDecimal.ZERO;
 
-	/*
-	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
-	 * inserted rcdAction = "U" record to be updated rcdAction = "D" record to be deleted
-	 * 
-	 */
 	private String rcdAction = "";
 
 	public FinODDetails() {
@@ -198,6 +194,7 @@ public class FinODDetails implements Serializable {
 		entity.setLppDueTillDate(this.lppDueTillDate);
 		entity.setLpiDueAmt(this.lpiDueAmt);
 		entity.setLpiDueTillDate(this.lpiDueTillDate);
+		entity.setOdMinAmount(this.odMinAmount);
 
 		return entity;
 	}
@@ -705,5 +702,13 @@ public class FinODDetails implements Serializable {
 
 	public void setLpiDueTillDate(Date lpiDueTillDate) {
 		this.lpiDueTillDate = lpiDueTillDate;
+	}
+
+	public BigDecimal getOdMinAmount() {
+		return odMinAmount;
+	}
+
+	public void setOdMinAmount(BigDecimal odMinAmount) {
+		this.odMinAmount = odMinAmount;
 	}
 }

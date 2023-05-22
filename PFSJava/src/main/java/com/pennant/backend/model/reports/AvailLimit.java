@@ -18,7 +18,7 @@ public class AvailLimit {
 	private String limitRemarks = "";
 
 	public AvailLimit() {
-
+	    super();
 	}
 
 	// ******************************************************//

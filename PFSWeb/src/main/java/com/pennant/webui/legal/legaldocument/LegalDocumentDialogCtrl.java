@@ -168,8 +168,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.legalDocument.getLegalDocumentId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.legalDocument.getLegalDocumentId());
 	}
 
 	/**
@@ -803,21 +802,21 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		if (!this.documentTypeMaker.isDisabled()) {
-			this.documentTypeMaker.setConstraint(new PTListValidator(
+			this.documentTypeMaker.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalDocumentDialog_DocumentTypeMaker.value"), listDocumentType, true));
 		}
 		if (!this.documentCategory.isDisabled()) {
 			this.documentCategory.setConstraint(
-					new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentCategory.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_LegalDocumentDialog_DocumentCategory.value"),
 							getListDocumentCategory(), false));
 		}
 		if (!this.scheduleType.isDisabled()) {
-			this.scheduleType.setConstraint(new PTListValidator(
+			this.scheduleType.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalDocumentDialog_ScheduleType.value"), listScheduleType, false));
 		}
 		if (!this.documentTypeVerify.isDisabled()) {
 			this.documentTypeVerify.setConstraint(
-					new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentTypeVerify.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_LegalDocumentDialog_DocumentTypeVerify.value"),
 							listDocumentTypeVerify, true));
 		}
 		if (!this.documentRemarks.isReadonly()) {
@@ -833,11 +832,11 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		}
 		if (!this.documentTypeApprove.isDisabled()) {
 			this.documentTypeApprove.setConstraint(
-					new PTListValidator(Labels.getLabel("label_LegalDocumentDialog_DocumentTypeApprove.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_LegalDocumentDialog_DocumentTypeApprove.value"),
 							listDocumentTypeApprove, true));
 		}
 		if (!this.documentAccepted.isDisabled()) {
-			this.documentAccepted.setConstraint(new PTListValidator(
+			this.documentAccepted.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_LegalDocumentDialog_DocumentAccepted.value"), listDocumentAccepted, true));
 		}
 

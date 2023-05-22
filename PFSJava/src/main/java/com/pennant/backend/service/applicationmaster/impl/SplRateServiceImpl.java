@@ -32,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -44,6 +43,7 @@ import com.pennant.backend.service.applicationmaster.SplRateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Service implementation for methods that depends on <b>SplRate</b>.<br>
@@ -113,7 +113,7 @@ public class SplRateServiceImpl extends GenericService<SplRate> implements SplRa
 			getSplRateDAO().save(splRate, tableType);
 			auditHeader.getAuditDetail().setModelData(splRate);
 			auditHeader.setAuditReference(splRate.getSRType() + PennantConstants.KEY_SEPERATOR
-					+ DateUtility.format(splRate.getSREffDate(), PennantConstants.DBDateFormat));
+					+ DateUtil.format(splRate.getSREffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getSplRateDAO().update(splRate, tableType);
 		}

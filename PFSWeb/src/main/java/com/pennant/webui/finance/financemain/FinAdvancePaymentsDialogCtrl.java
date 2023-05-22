@@ -78,7 +78,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
@@ -139,6 +138,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -195,6 +195,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox branch;
 	protected Textbox city;
 	protected Space contactNumber;
+	protected Space leiNum;
 	// protected Textbox phoneCountryCode;
 	// protected Textbox phoneAreaCode;
 	protected Textbox phoneNumber;
@@ -304,6 +305,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private boolean populateBenfiryDetails = false;
 	private transient FinTypePartnerBankService finTypePartnerBankService;
 	private transient ClusterService clusterService;
+	private boolean leiMandatory = false;
 
 	/**
 	 * default constructor.<br>
@@ -643,7 +645,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						aFinAdvancePayments.getBeneficiaryAccNo(), aFinAdvancePayments.getiFSC());
 			}
 			doWriteBeanToComponents(aFinAdvancePayments);
-			if (poIssued) {
+			if (!enqModule && poIssued) {
 				doReadOnly();
 				this.btnSave.setVisible(true);
 				this.btnGetCustBeneficiary.setVisible(false);
@@ -781,8 +783,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.vasReference.setDisabled(true);
 		if (enqModule) {
 			this.btnPennyDropResult.setVisible(false);
+			this.btnUploadDoc.setVisible(false);
+			this.btnGetCustBeneficiary.setVisible(false);
 		}
-
+		this.pennyDropResult.setReadonly(true);
+		this.txnDetails.setReadonly(true);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -1115,7 +1120,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						&& curDisb.getDisbSeq() == 1) {
 					otherExp = otherExp.add(financeMain.getDeductFeeDisb());
 
-					disbAmount = disbAmount.subtract(financeMain.getDownPayment());
+					disbAmount = disbAmount.subtract(financeMain.getDownPaySupl());
 					disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
 					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment())
 							.equals(FinanceConstants.BPI_DISBURSMENT)) {
@@ -1196,6 +1201,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			this.pennyDropResult.setValue("");
 		}
+
+		if (disbAmount.compareTo(FinanceConstants.LEI_NUM_LIMIT) > 0) {
+			this.leiNum.setSclass("mandatory");
+			leiMandatory = true;
+		}
+
 		setDisbDocument(aFinAdvnancePayments);
 
 		logger.debug("Leaving");
@@ -1274,7 +1285,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 
 			comboitem = new Comboitem();
-			String label = DateUtility.formatToLongDate(disbursement.getDisbDate());
+			String label = DateUtil.formatToLongDate(disbursement.getDisbDate());
 			label = label.concat(" , ") + disbursement.getDisbSeq();
 			comboitem.setLabel(label);
 			comboitem.setValue(disbursement.getDisbDate());
@@ -1454,8 +1465,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							if (this.llDate.getValue().before(disbursement.getDisbDate())
 									|| this.llDate.getValue().after(financeMain.getMaturityDate())) {
 
-								String maturityDate = DateUtility.formatToLongDate(financeMain.getMaturityDate());
-								String disbDate = DateUtility.formatToLongDate(disbursement.getDisbDate());
+								String maturityDate = DateUtil.formatToLongDate(financeMain.getMaturityDate());
+								String disbDate = DateUtil.formatToLongDate(disbursement.getDisbDate());
 
 								throw new WrongValueException(this.llDate,
 										Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
@@ -1821,7 +1832,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			 * PennantRegularExpressions.REGEX_ADDRESS, false)); }
 			 */
 			if (!this.valueDate.isDisabled()) {
-				Date todate = DateUtility.addMonths(SysParamUtil.getAppDate(), 6);
+				Date todate = DateUtil.addMonths(SysParamUtil.getAppDate(), 6);
 				this.valueDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_ValueDate.value"), true,
 								SysParamUtil.getAppDate(), todate, true));
@@ -1856,10 +1867,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 
-		if (this.leiNumber.isVisible()) {
+		if (this.leiNumber.isVisible() && !this.leiNumber.getValue().isEmpty()) {
 			this.leiNumber
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LEI.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM, false));
+		}
+
+		if (leiMandatory && this.leiNumber.getValue().isEmpty()) {
+			this.leiNumber.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LEI.value"), null, true));
 		}
 
 		logger.debug("Leaving");
@@ -1876,6 +1892,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.beneficiaryAccNo.setConstraint("");
 		this.paymentType.setConstraint("");
 		this.beneficiaryName.setConstraint("");
+		this.leiNumber.setConstraint("");
 		this.description.setConstraint("");
 		this.llReferenceNo.setConstraint("");
 		this.llDate.setConstraint("");

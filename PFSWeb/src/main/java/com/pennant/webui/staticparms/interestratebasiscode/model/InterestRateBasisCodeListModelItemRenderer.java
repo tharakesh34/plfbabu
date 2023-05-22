@@ -46,7 +46,7 @@ public class InterestRateBasisCodeListModelItemRenderer
 	private static final long serialVersionUID = 5364048272277594011L;
 
 	public InterestRateBasisCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

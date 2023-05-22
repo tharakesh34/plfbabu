@@ -47,4 +47,6 @@ public interface BeneficiaryDAO {
 	int getBranch(long bankBranchID, String type);
 
 	int getDefaultsBeneficiary(long custID, long id, String type);
+
+	boolean checkCustID(long custID);
 }

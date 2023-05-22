@@ -23,7 +23,7 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_108("Excess type should be 'E'(Excess Amount) OR 'A'(EMI in advance) OR Payable Advise."),
 
-	MKOU_109("Insufficent Balance in Excess Type"),
+	MKOU_109("Insufficient Balance in Excess Type"),
 
 	MKOU_1010("Receipt amount should be less than or equal to balance amount."),
 
@@ -31,7 +31,15 @@ public enum ManualKnockOffUploadError {
 
 	MKOU_1012("Its not a payable advise"),
 
-	MKOU_1013("AdviseID is Mandatory when excess type is Payable");
+	MKOU_1013("FeeTypeCode is Mandatory when excess type is Payable"),
+
+	MKOU_1014("Either principal or interest amount should be given or only emi"),
+
+	MKOU_1015("Other Receipt is inprogress"),
+
+	MKOU_1016("Record is already initiated by other process, unable to proceed."),
+
+	MKOU_1017("Allocated Amount should not be less than Receipt Amount.");
 
 	private String description;
 

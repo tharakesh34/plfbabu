@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -48,6 +46,8 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -66,14 +66,19 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.constants.EodConstants;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.extension.PresentmentExtension;
+import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
+import com.pennant.pff.holdmarking.model.HoldMarkingHeader;
+import com.pennant.pff.holdmarking.upload.dao.HoldMarkingDetailDAO;
+import com.pennant.pff.holdmarking.upload.dao.HoldMarkingHeaderDAO;
 import com.pennant.pff.mandate.ChequeSatus;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
@@ -130,6 +135,8 @@ public class PresentmentEngine {
 	private MandateDAO mandateDAO;
 	private MandateStatusDAO mandateStatusDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private HoldMarkingDetailDAO holdMarkingDetailDAO;
+	private HoldMarkingHeaderDAO holdMarkingHeaderDAO;
 
 	/* Service's */
 	private OverdrafLoanService overdrafLoanService;
@@ -1067,6 +1074,8 @@ public class PresentmentEngine {
 
 			financeMainDAO.updateSchdVersion(fm, false);
 
+			pd.setSchdVersion(pd.getSchdVersion() + 1);
+
 			if (!excess.isEmpty()) {
 				finExcessAmountDAO.updateExcessAmtList(excess);
 			}
@@ -1483,6 +1492,47 @@ public class PresentmentEngine {
 			errorDesc = (errorDesc.length() >= 1000) ? errorDesc.substring(0, 998) : errorDesc;
 		}
 		presentmentDetailDAO.updatePresentmentDetail(pd);
+
+		if (InstrumentType.SI.code().equals(pd.getMandateType()) && RepayConstants.PEXC_BOUNCE.equals(pd.getStatus())) {
+
+			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
+				return;
+			}
+
+			int count = 0;
+			Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+			long userId = 1000;
+
+			HoldMarkingHeader hmh = new HoldMarkingHeader();
+			hmh.setFinReference(pd.getFinReference());
+			hmh.setFinID(pd.getFinID());
+			hmh.setAccountNumber(pd.getAccountNo());
+			hmh.setHoldAmount(pd.getPresentmentAmt());
+			hmh.setBalance(pd.getPresentmentAmt());
+
+			long headerId = holdMarkingHeaderDAO.saveHeader(hmh);
+
+			HoldMarkingDetail hmd = new HoldMarkingDetail();
+			hmd.setHoldID(hmh.getHoldID());
+			hmd.setHeaderID(headerId);
+			hmd.setFinReference(pd.getFinReference());
+			hmd.setFinID(pd.getFinID());
+			hmd.setHoldType(PennantConstants.HOLD_MARKING);
+			hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
+			hmd.setMovementDate(pd.getAppDate());
+			hmd.setStatus(InsuranceConstants.SUCCESS);
+			hmd.setAmount(pd.getPresentmentAmt());
+			hmd.setLogID(++count);
+			hmd.setHoldReleaseReason("Presentment Bounce");
+			hmd.setCreatedBy(userId);
+			hmd.setCreatedOn(currentTime);
+			hmd.setLastMntBy(userId);
+			hmd.setLastMntOn(currentTime);
+			hmd.setApprovedOn(currentTime);
+			hmd.setApprovedBy(userId);
+
+			holdMarkingDetailDAO.saveDetail(hmd);
+		}
 	}
 
 	private void holdMandate(PresentmentDetail pd) {
@@ -1703,8 +1753,10 @@ public class PresentmentEngine {
 		aeEvent.setDataMap(dataMap);
 
 		try {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finType, AccountingEvent.PRSNTRSP,
-					FinanceConstants.MODULEID_FINTYPE));
+
+			aeEvent.getAcSetIDList().add(
+					AccountingEngine.getAccountSetID(fm, AccountingEvent.PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
+
 			aeEvent.setDataMap(dataMap);
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		} catch (Exception e) {
@@ -1736,13 +1788,15 @@ public class PresentmentEngine {
 
 		long finID = pd.getFinID();
 
+		boolean oldFinIsActive = fm.isFinIsActive();
+
 		try {
 			fm = repaymentPostingsUtil.updateStatus(fm, appDate, schedules, pftDetail, overDueList, null);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		if (!fm.isFinIsActive()) {
+		if (oldFinIsActive && !fm.isFinIsActive()) {
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, pd.getSchDate());
 			financeProfitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
@@ -1998,6 +2052,16 @@ public class PresentmentEngine {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setHoldMarkingDetailDAO(HoldMarkingDetailDAO holdMarkingDetailDAO) {
+		this.holdMarkingDetailDAO = holdMarkingDetailDAO;
+	}
+
+	@Autowired
+	public void setHoldMarkingHeaderDAO(HoldMarkingHeaderDAO holdMarkingHeaderDAO) {
+		this.holdMarkingHeaderDAO = holdMarkingHeaderDAO;
 	}
 
 }

@@ -198,7 +198,7 @@ public class TaxDetailListCtrl extends GFCBaseListCtrl<TaxDetail> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =?");
 
 		if (doCheckAuthority(taxdetail, whereCond.toString(), new Object[] { taxdetail.getId() })) {

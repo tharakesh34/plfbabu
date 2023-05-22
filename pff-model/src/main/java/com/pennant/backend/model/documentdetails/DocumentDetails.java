@@ -1,8 +1,10 @@
 package com.pennant.backend.model.documentdetails;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -77,6 +79,8 @@ public class DocumentDetails extends AbstractWorkflowEntity {
 	private boolean docIsPdfExtRequired = false;
 	@XmlElement
 	private String remarks;
+	@XmlElement
+	private List<DocumentDetails> documents = new ArrayList<>();
 
 	@XmlElement
 	private WSReturnStatus returnStatus;
@@ -233,6 +237,7 @@ public class DocumentDetails extends AbstractWorkflowEntity {
 		excludeFields.add("lovDescCustShrtName");
 		excludeFields.add("refId");
 		excludeFields.add("docTypeId");
+		excludeFields.add("documents");
 
 		return excludeFields;
 	}
@@ -685,6 +690,14 @@ public class DocumentDetails extends AbstractWorkflowEntity {
 
 	public void setDocTypeId(int docTypeId) {
 		this.docTypeId = docTypeId;
+	}
+
+	public List<DocumentDetails> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<DocumentDetails> documents) {
+		this.documents = documents;
 	}
 
 }

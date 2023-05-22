@@ -180,6 +180,7 @@
 													<label id="label_FinanceMainDialog_BusinessVertical"
 														value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
 													<hbox>
+														<space spacing="2px" />
 														<textbox id="businessVertical" width="250px" readonly="true" />
 													</hbox>
 												</row>
@@ -1491,7 +1492,13 @@
 														<checkbox id="odTDSApplicable" checked="false" />
 													</hbox>
 												</row>
-
+												<row id="row_odMinAmount" visible="false">
+													<label   value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+													<hbox>
+													<space  spacing="2px"/>
+														<decimalbox id="odMinAmount" width="120px" />
+													</hbox>
+												</row>
 												<row id="row_ODMinCapAmount" visible="false">
 													<label id="label_FinanceMainDialog_ODMinCapAmount"
 														value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />

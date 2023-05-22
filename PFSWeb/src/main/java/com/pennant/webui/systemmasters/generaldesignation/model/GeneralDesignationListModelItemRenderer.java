@@ -44,7 +44,7 @@ public class GeneralDesignationListModelItemRenderer implements ListitemRenderer
 	private static final long serialVersionUID = -2846271541734692954L;
 
 	public GeneralDesignationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

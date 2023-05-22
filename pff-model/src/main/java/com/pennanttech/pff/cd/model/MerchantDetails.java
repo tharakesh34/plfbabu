@@ -11,7 +11,7 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 
 	private long merchantId = Long.MIN_VALUE;
 	private String merchantName;
-	private BigDecimal storeId;
+	private Long storeId;
 	private String storeName;
 	private String storeAddressLine1;
 	private String storeAddressLine2;
@@ -57,11 +57,11 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 		this.merchantName = merchantName;
 	}
 
-	public BigDecimal getStoreId() {
+	public Long getStoreId() {
 		return storeId;
 	}
 
-	public void setStoreId(BigDecimal storeId) {
+	public void setStoreId(Long storeId) {
 		this.storeId = storeId;
 	}
 

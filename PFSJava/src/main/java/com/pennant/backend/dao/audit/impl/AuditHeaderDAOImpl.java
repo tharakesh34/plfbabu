@@ -216,7 +216,7 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 		sql.append(whereCondition);
 		sql.append(" and Version = ? order by AuditId desc");
 
-		return jdbcOperations.query(sql.toString(), arguments, new ResultSetExtractor<Boolean>() {
+		return jdbcOperations.query(sql.toString(), new ResultSetExtractor<Boolean>() {
 			@Override
 			public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
 				if (rs.next()) {
@@ -230,6 +230,6 @@ public class AuditHeaderDAOImpl extends SequenceDao<AuditHeader> implements Audi
 				return true;
 			}
 
-		});
+		}, arguments);
 	}
 }

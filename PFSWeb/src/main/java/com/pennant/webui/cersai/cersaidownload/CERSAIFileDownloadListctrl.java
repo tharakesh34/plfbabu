@@ -20,7 +20,6 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.CersaiConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -29,6 +28,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.cersai.CERSAIDownloadProcess;
 
@@ -167,7 +167,7 @@ public class CERSAIFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> {
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.formatToLongDate(fileDownlaod.getEndTime()));
+			lc = new Listcell(DateUtil.formatToLongDate(fileDownlaod.getEndTime()));
 			lc.setParent(item);
 
 			lc = new Listcell(fileDownlaod.getStatus());

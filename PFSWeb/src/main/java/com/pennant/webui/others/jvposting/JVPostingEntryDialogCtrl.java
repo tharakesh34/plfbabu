@@ -72,6 +72,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.HostAccountStatus;
 import com.pennant.pff.accounting.TransactionType;
 import com.pennant.util.ErrorControl;
@@ -907,9 +908,14 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	public void doWriteBeanToComponents(JVPostingEntry aJVPostingEntry) {
 		logger.debug("Entering");
 		doFillBatchDetails();
-		this.account.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getAccount()));
 
+		String hostAccount = AccountingConfigCache.getAccountMapping(aJVPostingEntry.getAccount());
+		this.account.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getAccount()));
+		this.account.setDescription(hostAccount);
+
+		String debitHostAccount = AccountingConfigCache.getAccountMapping(aJVPostingEntry.getDebitAccount());
 		this.debitAccount.setValue(PennantApplicationUtil.formatAccountNumber(aJVPostingEntry.getDebitAccount()));
+		this.debitAccount.setDescription(debitHostAccount);
 
 		this.accountName.setValue(aJVPostingEntry.getAccountName());
 		this.label_AccountCurrency.setValue(aJVPostingEntry.getAccCCy());
@@ -922,6 +928,9 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			this.valueDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.postingDate.setValue(aJVPostingEntry.getPostingDate());
+			this.valueDate.setValue(aJVPostingEntry.getValueDate());
+		}
+		if (aJVPostingEntry.getValueDate() != null) {
 			this.valueDate.setValue(aJVPostingEntry.getValueDate());
 		}
 		this.txnReference.setValue((int) aJVPostingEntry.getTxnReference());
@@ -1517,7 +1526,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 					jvPostingEntryList.add(jvPostingEntry);
 					JVPostingEntry otherentry = doCheckAndPrepareOtherLeg(jvPostingEntry, list);
 					if (StringUtils.equals(otherentry.getTxnEntry(), AccountConstants.TRANTYPE_DEBIT)) {
-						otherentry.setAccount(otherentry.getDebitAccount());
+						otherentry.setDebitAccount(otherentry.getAccount());
 					} else {
 						otherentry.setAccount(otherentry.getAccount());
 					}
@@ -1530,7 +1539,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 
 		if (!recordAdded) {
 			aJVPostingEntry.setTxnEntry(AccountConstants.TRANTYPE_CREDIT);
-			aJVPostingEntry.setTDSAdjReq(false);
+			aJVPostingEntry.setTDSAdjReq(this.tdsAdjustmentReq.isChecked());
 			jvPostingEntryList.add(aJVPostingEntry);
 
 			JVPostingEntry debitEntry = new JVPostingEntry();
@@ -1571,12 +1580,11 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 	public JVPostingEntry doCheckAndPrepareOtherLeg(JVPostingEntry aJVPostingEntry, List<JVPostingEntry> list) {
 		JVPostingEntry otherentry = getEntryList(aJVPostingEntry.getTxnReference(), list);
 		if (otherentry != null) {
-			BeanUtils.copyProperties(aJVPostingEntry, otherentry);
 			otherentry.setTxnReference(aJVPostingEntry.getTxnReference() + 1);
 			otherentry.setTxnEntry(AccountConstants.TRANTYPE_DEBIT);
-			otherentry.setAccount(PennantApplicationUtil.unFormatAccountNumber(this.debitAccount.getValue()));
 			otherentry.setTxnCode(this.debitTxnCode.getValidatedValue());
 			otherentry.setDerivedTxnRef(aJVPostingEntry.getTxnReference());
+			otherentry.setDebitAccount(otherentry.getAccount());
 		}
 		return otherentry;
 	}
@@ -1592,6 +1600,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 			this.account.setValue(accountMapping.getAccount(), accountMapping.getHostAccount());
 			getJVPostingEntry().setAcType(accountMapping.getAccountType());
 			getJVPostingEntry().setAccountName(accountMapping.getAccountTypeDesc());
+			this.accountName.setValue(accountMapping.getAccountTypeDesc());
 		}
 		logger.debug("Leaving");
 

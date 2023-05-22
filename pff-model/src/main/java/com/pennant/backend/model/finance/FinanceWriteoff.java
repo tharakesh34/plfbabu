@@ -35,7 +35,7 @@ public class FinanceWriteoff implements Serializable {
 	private long linkedTranId = 0;
 
 	public FinanceWriteoff() {
-
+	    super();
 	}
 
 	public long getFinID() {

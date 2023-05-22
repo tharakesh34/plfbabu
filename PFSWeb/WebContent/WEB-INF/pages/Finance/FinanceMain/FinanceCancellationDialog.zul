@@ -39,7 +39,7 @@
 
 							<!-- SEARCH AREA -->
 							<toolbar align="center" sclass="toolbar-center">
-								<label value="${c:l('window_FinanceMainDialog.title')}" sclass="label-heading" />
+								<label value="${c:l('window_LoanCancellationDialog.title')}" sclass="label-heading" />
 							</toolbar>
 
 							<!-- CRUD BUTTONS -->
@@ -297,6 +297,13 @@
 													<hbox>
 														<space spacing="2px" id="space_applicationNo" />
 														<uppercasebox id="applicationNo" width="170px" visible="true" />
+													</hbox>
+												</row>
+												<row>
+													<label value="${c:l('label_FinanceMainDialog_CancelType.value')}" />
+													<hbox>
+														<space spacing="2px" sclass="mandatory" />
+														<combobox id="cancelType" width="275px" readonly="true" />
 													</hbox>
 												</row>
 												<row id="row_CancelReason">
@@ -730,6 +737,14 @@
 													<hbox>
 														<space spacing="2px" />
 														<checkbox id="odTDSApplicable" checked="false" />
+													</hbox>
+												</row>
+												
+												<row id="row_odMinAmount" visible="false">
+													<label   value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+													<hbox>
+													<space  spacing="2px"/>
+														<decimalbox id="odMinAmount" width="120px" />
 													</hbox>
 												</row>
 											</rows>

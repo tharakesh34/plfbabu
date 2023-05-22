@@ -13,34 +13,8 @@
            http://www.springframework.org/schema/context
           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<global-method-security secured-annotations="enabled" />
 
-	<http auto-config="false" use-expressions="false" disable-url-rewriting="true"
-		entry-point-ref="authenticationEntryPoint">
-		<custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
-		<custom-filter before="LOGOUT_FILTER" ref="logoutFilter" />
-		<custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
-		<!-- <custom-filter after="SESSION_MANAGEMENT_FILTER" ref="sessionFixationProtectionFilter" /> -->
-
-		<intercept-url pattern="/pages/**" access="IS_AUTHENTICATED_REMEMBERED" />
-		<intercept-url pattern="/WEB-INF/pages/**" access="IS_AUTHENTICATED_REMEMBERED" />
-		<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
-		<csrf request-matcher-ref="csrfRequestMatcher" />
-
-		<headers>
-			<cache-control />
-			<content-type-options />
-			<frame-options policy="SAMEORIGIN" />
-			<hsts />
-			<header name="server" value="${server.server-header}" />
-			<xss-protection />
-		</headers>
-
-		<session-management session-authentication-strategy-ref="sas" />
-
-	</http>
-
+	
 	<beans:bean id="authenticationEntryPoint"
 		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
 		<beans:constructor-arg value="/loginDialog.zul" />
@@ -124,9 +98,6 @@
 		</beans:property>
 	</beans:bean>
 
-	<!-- <beans:bean id="sessionFixationProtectionFilter" class="com.pennanttech.pennapps.web.security.filter.SessionFixationProtectionFilter" 
-		/> -->
-
 	<beans:bean id="sas"
 		class="org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy">
 		<beans:constructor-arg>
@@ -164,12 +135,20 @@
 		<beans:constructor-arg value="/timeout.zul" />
 		<beans:constructor-arg ref="redirectStrategy" />
 	</beans:bean>
+	
+	<beans:bean id="userService" class="com.pennanttech.framework.security.core.service.UserServiceImpl" />
 
-	<beans:bean id="httpFirewall" class="org.springframework.security.web.firewall.DefaultHttpFirewall">
+	<beans:bean id="userDAO" class="com.pennant.backend.dao.impl.UserDAOImpl" parent="secBasicDao" />
+	
+	<beans:bean id="securityRightDAO" class="com.pennant.backend.dao.administration.impl.SecurityRightDAOImpl" parent="secSequenceDao" />
+	
+	<beans:bean id="secLoginlogDAO" class="com.pennant.backend.dao.impl.SecLoginlogDAOImpl" parent="secSequenceDao" />
+
+	<!-- <beans:bean id="httpFirewall" class="org.springframework.security.web.firewall.DefaultHttpFirewall">
 		<beans:property name="allowUrlEncodedSlash" value="true" />
 	</beans:bean>
 
-	<http-firewall ref="httpFirewall" />
+	<http-firewall ref="httpFirewall" /> -->
 
 	<beans:bean id="googleCaptcha" class="com.pennapps.web.security.GoogleCaptcha"/>
 	

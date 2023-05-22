@@ -45,7 +45,7 @@ public class FinCreditRevSubCategoryListModelItemRenderer
 	private static final long serialVersionUID = 1L;
 
 	public FinCreditRevSubCategoryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

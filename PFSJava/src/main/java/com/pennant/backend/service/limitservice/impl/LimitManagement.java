@@ -87,7 +87,6 @@ public class LimitManagement {
 
 		BigDecimal tranAmt = BigDecimal.ZERO;
 		BigDecimal reservTranAmt = BigDecimal.ZERO;
-		BigDecimal cmtReserve = null;
 
 		if (LimitConstants.BLOCK.equals(tranType)) {
 			tranAmt = finMain.getFinAssetValue();
@@ -671,7 +670,7 @@ public class LimitManagement {
 					details.setUtilisedLimit(details.getUtilisedLimit().add(limitAmount));
 				}
 
-				details.setOsPriBal(details.getOsPriBal().subtract(limitAmount));
+				details.setOsPriBal(details.getOsPriBal().add(limitAmount));
 				limitDetailDAO.updateReserveUtilise(details, "");
 			}
 			break;

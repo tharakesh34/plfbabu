@@ -37,4 +37,12 @@ public interface CollateralRestService {
 	@Path("/collateralService/getCollaterals/{cif}")
 	public CollateralDetail getCollaterals(@PathParam("cif") String cif) throws ServiceException;
 
+	@POST
+	@Path("/collateralService/pendingUpdateCollateral")
+	public WSReturnStatus pendingUpdateCollateral(CollateralSetup collateralSetup) throws ServiceException;
+
+	@GET
+	@Path("/collateralService/getPendingCollaterals/{cif}")
+	public CollateralDetail getPendingCollaterals(@PathParam("cif") String cif) throws ServiceException;
+
 }

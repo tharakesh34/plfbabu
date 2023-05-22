@@ -35,7 +35,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.others.JVPosting;
@@ -48,6 +47,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>JVPosting model</b> class.<br>
@@ -150,7 +150,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		JVPosting jVPosting = getJVPosting();
 		StringBuilder sql = new StringBuilder("Select *  From JVPostings_View");
 		sql.append(" Where Batch ='" + batchName + "' and PostingDate='"
-				+ DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateTimeFormat) + "'");
+				+ DateUtil.format(DateUtil.getSysDate(), PennantConstants.DBDateTimeFormat) + "'");
 
 		logger.debug(Literal.SQL + sql.toString());
 

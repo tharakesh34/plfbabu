@@ -11,7 +11,7 @@ public class LimitCodeDetail implements Serializable {
 	private String limitDesc;
 
 	public LimitCodeDetail() {
-
+	    super();
 	}
 
 	public LimitCodeDetail(long id) {

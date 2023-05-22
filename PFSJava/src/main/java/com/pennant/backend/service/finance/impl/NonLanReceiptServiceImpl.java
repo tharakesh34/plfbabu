@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
@@ -78,7 +77,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.logging.dao.InterfaceLoggingDAO;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implements NonLanReceiptService {
 	private static final Logger logger = LogManager.getLogger(NonLanReceiptServiceImpl.class);
@@ -162,8 +161,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 		boolean changeStatus = false;
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
@@ -361,8 +359,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 		String roleCode = receiptHeader.getRoleCode();
@@ -844,9 +841,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		String finReference = fsi.getExternalReference();
 		String entity = fsi.getEntity();
 		String receiptSource = fsi.getReceiptSource();
-		String parm1 = null;
 		String recaginst = fsi.getRecAgainst();
-		String receivedFrom = fsi.getReceivedFrom();
 		String cif = fsi.getCustCIF();
 
 		RECEIPT_MODES = PennantApplicationUtil.getActiveFieldCodeList(RepayConstants.RECEIPT_MODE);
@@ -893,10 +888,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 					+ "' or '" + RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE + "'");
 			return receiptData;
 		}
-		/*
-		 * if (StringUtils.isBlank(receivedFrom)) { finScheduleData = setErrorToFSD(finScheduleData, "90502",
-		 * "ReceivedFrom"); return receiptData; }
-		 */
+
 		if (StringUtils.isBlank(finReference)) {
 			finScheduleData = setErrorToFSD(finScheduleData, "90502", "Loan Reference");
 			return receiptData;
@@ -925,9 +917,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(finReference, "_AView", false);
 			finScheduleData.setFinanceMain(financeMain);
 		} else {
-			Cloner cloner = new Cloner();
-			FinServiceInstruction tempFsi = cloner.deepClone(finScheduleData.getFinServiceInstruction());
-			FinReceiptHeader rch = cloner.deepClone(receiptData.getReceiptHeader());
+			FinServiceInstruction tempFsi = ObjectUtil.clone(finScheduleData.getFinServiceInstruction());
+			FinReceiptHeader rch = ObjectUtil.clone(receiptData.getReceiptHeader());
 
 			if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 				logger.debug("Leaving");
@@ -1328,56 +1319,19 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		return fsi;
 	}
 
-	private void setDefaultDateFormats(FinServiceInstruction finServInst) {
-		if (finServInst.getFromDate() != null) {
-			finServInst.setFromDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getFromDate(), PennantConstants.DBDateFormat)));
-		}
-
-		if (finServInst.getToDate() != null) {
-			finServInst.setToDate(
-					DateUtility.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getRecalFromDate() != null) {
-			finServInst.setRecalFromDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRecalFromDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getRecalToDate() != null) {
-			finServInst.setRecalToDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getGrcPeriodEndDate() != null) {
-			finServInst.setGrcPeriodEndDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getNextGrcRepayDate() != null) {
-			finServInst.setNextGrcRepayDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getNextRepayDate() != null) {
-			finServInst.setNextRepayDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getNextRepayDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getReceivedDate() != null) {
-			finServInst.setReceivedDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getReceivedDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getValueDate() != null) {
-			finServInst.setValueDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getValueDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getDepositDate() != null) {
-			finServInst.setDepositDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getDepositDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getRealizationDate() != null) {
-			finServInst.setRealizationDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRealizationDate(), PennantConstants.DBDateFormat)));
-		}
-		if (finServInst.getInstrumentDate() != null) {
-			finServInst.setInstrumentDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getInstrumentDate(), PennantConstants.DBDateFormat)));
-		}
+	private void setDefaultDateFormats(FinServiceInstruction fsi) {
+		fsi.setFromDate(DateUtil.getDatePart(fsi.getFromDate()));
+		fsi.setToDate(DateUtil.getDatePart(fsi.getToDate()));
+		fsi.setRecalFromDate(DateUtil.getDatePart(fsi.getRecalFromDate()));
+		fsi.setRecalToDate(DateUtil.getDatePart(fsi.getRecalToDate()));
+		fsi.setGrcPeriodEndDate(DateUtil.getDatePart(fsi.getGrcPeriodEndDate()));
+		fsi.setNextGrcRepayDate(DateUtil.getDatePart(fsi.getNextGrcRepayDate()));
+		fsi.setNextRepayDate(DateUtil.getDatePart(fsi.getNextRepayDate()));
+		fsi.setReceivedDate(DateUtil.getDatePart(fsi.getReceivedDate()));
+		fsi.setValueDate(DateUtil.getDatePart(fsi.getValueDate()));
+		fsi.setDepositDate(DateUtil.getDatePart(fsi.getDepositDate()));
+		fsi.setRealizationDate(DateUtil.getDatePart(fsi.getRealizationDate()));
+		fsi.setInstrumentDate(DateUtil.getDatePart(fsi.getInstrumentDate()));
 	}
 
 	@Override

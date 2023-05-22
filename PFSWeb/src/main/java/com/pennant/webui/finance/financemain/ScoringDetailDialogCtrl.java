@@ -508,27 +508,7 @@ public class ScoringDetailDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 		if (refDetails != null && !refDetails.isEmpty()) {
 			FinanceReferenceDetail scoringGroup = refDetails.get(0);
 
-			if (isExecute) {
-				this.setScoreExecuted(true);
-
-				/*
-				 * fieldsandvalues = new HashMap<String, Object>(); engine = new
-				 * ScriptEngineManager().getEngineByName("JavaScript"); if(getFinanceDetail().getCustomerScoringCheck()
-				 * != null){ fieldsandvalues = getFinanceDetail().getCustomerScoringCheck().getDeclaredFieldValues(); }
-				 * 
-				 * //Corporate Financial Scoring Details long custId =
-				 * getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID();//set year by confirmation
-				 * fieldsandvalues.putAll(getCreditReviewSummaryData().setDataMap(custId, 2012, custCtgType, true));
-				 * 
-				 * ArrayList<String> keyset = new ArrayList<String>(fieldsandvalues.keySet()); for (int i = 0; i <
-				 * keyset.size(); i++) { Object var=fieldsandvalues.get(keyset.get(i)); if (var instanceof String) {
-				 * var=var.toString().trim(); if("--".equals(var)){ var = String.valueOf(BigDecimal.ZERO); } }
-				 * engine.put(keyset.get(i),var ); }
-				 */
-			} else {
-				this.setScoreExecuted(false);
-			}
-
+			this.setScoreExecuted(isExecute);
 			this.minScore.setValue(scoringGroup.getLovDescminScore());
 			this.overrideScore.setValue(scoringGroup.getLovDescoverrideScore());
 

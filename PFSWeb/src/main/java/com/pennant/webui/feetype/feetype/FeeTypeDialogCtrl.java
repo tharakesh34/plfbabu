@@ -60,6 +60,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.util.ErrorControl;
@@ -437,7 +438,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.dueAccSet.setDescColumn("AccountSetCodeName");
 		this.dueAccSet.setValidateColumns(new String[] { "AccountSetCode", "AccountSetCodeName" });
 		this.dueAccSet.setMandatoryStyle(true);
-
+		this.dueAccSet.setList(AccountingEngine.getAccountingSetEvents());
 		this.dueAccRow.setVisible(dueCreationReq);
 		this.tdsRow.setVisible(ImplementationConstants.ALLOW_TDS_ON_FEE);
 
@@ -577,6 +578,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			if (this.tdsReq.isChecked()) {
 				readOnlyComponent(true, this.tdsReq);
 			}
+		}
+
+		if (Allocation.ODC.equals(this.feeTypeCode.getValue()) && FeeExtension.FEE_ODC_DISABLE) {
+			this.feeTypeDesc.setReadonly(true);
+			this.amortzReq.setDisabled(true);
+			this.tdsReq.setDisabled(true);
+			this.incomeOrExpenseAcType.setReadonly(true);
+			this.waiverOrRefundAcType.setReadonly(true);
+			this.taxComponent.setDisabled(true);
+			this.taxApplicable.setDisabled(true);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1106,6 +1117,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	}
 
 	private void doSetDueAccReq(boolean dueAccReq) {
+		this.dueAccReq.setVisible(dueCreationReq);
 		if (dueAccReq) {
 			this.dueAccSet.setReadonly(isReadOnly("FeeTypeDialog_AmortizationRequired"));
 		} else {

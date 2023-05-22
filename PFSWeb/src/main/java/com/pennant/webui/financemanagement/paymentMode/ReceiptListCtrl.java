@@ -594,7 +594,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		private static final long serialVersionUID = 8848425569301884635L;
 
 		public ReceiptListModelItemRenderer() {
-
+			super();
 		}
 
 		@Override
@@ -633,16 +633,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			}
 			lc.setParent(item);
 
-			String knockOffType = finReceiptHeader.getKnockOffType();
-			if (KnockOffType.AUTO.code().equals(knockOffType)) {
-				lc = new Listcell("Auto");
-			} else if (KnockOffType.MANUAL.code().equals(knockOffType)) {
-				lc = new Listcell("Manual");
-			} else if (KnockOffType.CROSS_LOAN.code().equals(knockOffType)) {
-				lc = new Listcell("Cross Loan");
-			} else {
-				lc = new Listcell("");
-			}
+			lc = new Listcell(KnockOffType.getDesc(finReceiptHeader.getKnockOffType()));
 			lc.setParent(item);
 
 			String receiptMode = finReceiptHeader.getReceiptMode();

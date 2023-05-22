@@ -1118,7 +1118,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		}
 		if (!this.recommendations.isDisabled()) {
 			this.recommendations.setConstraint(
-					new PTListValidator(Labels.getLabel("label_RiskContainmentUnitDialog_Recommendations.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_RiskContainmentUnitDialog_Recommendations.value"),
 							RCUStatus.getList(), true));
 		}
 		if (!this.reason.isReadonly()) {

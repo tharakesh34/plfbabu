@@ -11,10 +11,10 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Object>, Serializable {
 
@@ -42,7 +42,7 @@ public class LoanEnquiryPostingsListItemRenderer implements ListitemRenderer<Obj
 
 			Listcell lc;
 			ReturnDataSet entry = (ReturnDataSet) data;
-			lc = new Listcell(DateUtility.getDBDate(entry.getValueDate().toString()).toString());
+			lc = new Listcell(DateUtil.formatToLongDate(entry.getValueDate()));
 			lc.setParent(item);
 			lc = new Listcell(
 					PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));

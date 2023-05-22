@@ -12,6 +12,7 @@ import com.pennapps.core.ws.model.ReturnStatus;
 public class BatchJob implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private long id;
 	private String jobName;
 	private Long jobInstanceId;
 	private Long jobExecutionId;
@@ -25,9 +26,25 @@ public class BatchJob implements Serializable {
 	private List<StepDetail> steps = new ArrayList<>();
 	private ReturnStatus returnStatus = new ReturnStatus();
 	private JobInstance lastJobInstance;
+	private String batchType;
+	private int totalRecords;
+	private int processRecords;
+	private int successRecords;
+	private int failedRecords;
+	private String Remarks;
+	private int progress;
+	private int processedRecords;
 
 	public BatchJob() {
 		super();
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getJobName() {
@@ -132,6 +149,70 @@ public class BatchJob implements Serializable {
 
 	public void setLastJobInstance(JobInstance lastJobInstance) {
 		this.lastJobInstance = lastJobInstance;
+	}
+
+	public String getBatchType() {
+		return batchType;
+	}
+
+	public void setBatchType(String batchType) {
+		this.batchType = batchType;
+	}
+
+	public int getTotalRecords() {
+		return totalRecords;
+	}
+
+	public void setTotalRecords(int totalRecords) {
+		this.totalRecords = totalRecords;
+	}
+
+	public int getProcessRecords() {
+		return processRecords;
+	}
+
+	public void setProcessRecords(int processRecords) {
+		this.processRecords = processRecords;
+	}
+
+	public int getSuccessRecords() {
+		return successRecords;
+	}
+
+	public void setSuccessRecords(int successRecords) {
+		this.successRecords = successRecords;
+	}
+
+	public int getFailedRecords() {
+		return failedRecords;
+	}
+
+	public void setFailedRecords(int failedRecords) {
+		this.failedRecords = failedRecords;
+	}
+
+	public String getRemarks() {
+		return Remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		Remarks = remarks;
+	}
+
+	public int getProgress() {
+		return progress;
+	}
+
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
+
+	public int getProcessedRecords() {
+		return processedRecords;
+	}
+
+	public void setProcessedRecords(int processedRecords) {
+		this.processedRecords = processedRecords;
 	}
 
 }

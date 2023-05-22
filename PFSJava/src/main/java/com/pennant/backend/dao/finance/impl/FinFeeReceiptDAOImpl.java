@@ -409,4 +409,48 @@ public class FinFeeReceiptDAOImpl extends SequenceDao<FinFeeReceipt> implements 
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public List<FinFeeReceipt> getFinFeeReceiptByFeeType(String finrReference, String feeType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ID, FeeID, ReceiptID, PaidAmount, PaidTds, ReceiptAmount, ReceiptType");
+		sql.append(", FeeTypeCode, FeeTypeDesc, FeeTypeID, TransactionRef, FavourNumber, VasReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinFeeReceipts_Tview");
+		sql.append(" Where Finreference = ? And FeeTypeCode = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinFeeReceipt feeRec = new FinFeeReceipt();
+
+			feeRec.setId(rs.getLong("ID"));
+			feeRec.setFeeID(rs.getLong("FeeID"));
+			feeRec.setReceiptID(rs.getLong("ReceiptID"));
+			feeRec.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			feeRec.setPaidTds(rs.getBigDecimal("PaidTds"));
+			feeRec.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+			feeRec.setReceiptType(rs.getString("ReceiptType"));
+			feeRec.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			feeRec.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			feeRec.setFeeTypeId(rs.getLong("FeeTypeID"));
+			feeRec.setTransactionRef(rs.getString("TransactionRef"));
+			feeRec.setFavourNumber(rs.getString("FavourNumber"));
+			feeRec.setVasReference(rs.getString("VasReference"));
+			feeRec.setVersion(rs.getInt("Version"));
+			feeRec.setLastMntBy(rs.getLong("LastMntBy"));
+			feeRec.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			feeRec.setRecordStatus(rs.getString("RecordStatus"));
+			feeRec.setRoleCode(rs.getString("RoleCode"));
+			feeRec.setNextRoleCode(rs.getString("NextRoleCode"));
+			feeRec.setTaskId(rs.getString("TaskId"));
+			feeRec.setNextTaskId(rs.getString("NextTaskId"));
+			feeRec.setRecordType(rs.getString("RecordType"));
+			feeRec.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return feeRec;
+		}, finrReference, feeType);
+
+	}
+
 }

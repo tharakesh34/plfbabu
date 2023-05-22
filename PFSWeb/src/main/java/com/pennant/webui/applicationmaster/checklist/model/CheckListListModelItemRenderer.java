@@ -45,7 +45,7 @@ public class CheckListListModelItemRenderer implements ListitemRenderer<CheckLis
 	private static final long serialVersionUID = 1L;
 
 	public CheckListListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

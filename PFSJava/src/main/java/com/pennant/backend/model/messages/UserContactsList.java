@@ -9,7 +9,7 @@ public class UserContactsList implements java.io.Serializable {
 	private String contactsList;
 
 	public UserContactsList() {
-
+	    super();
 	}
 
 	public String getUsrID() {

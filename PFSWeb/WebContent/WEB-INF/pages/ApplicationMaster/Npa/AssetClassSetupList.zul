@@ -56,11 +56,6 @@
 									<listbox id="sortOperator_Entity" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="entity" width="72px" maxlength="8" />
-									<label id="label_AssetClassSetupList_RepayHierarchy"
-										value="${c:l('label_AssetClassSetupList_RepayHierarchy.value')}" />
-									<listbox id="sortOperator_RepayHierarchy" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="rpyHierarchy" width="72px" maxlength="8" />
 								</row>
 								<row>
 									<label id="label_AssetClassSetupList_RecordStatus"
@@ -81,8 +76,6 @@
 							<listhead sizable="true">
 								<listheader id="listheader_Entity"
 									label="${c:l('listheader_AssetClassSetupList_Entity.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RepaymentHierarchy"
-									label="${c:l('listheader_AssetClassSetupList_NPARepaymentHierarchy.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"

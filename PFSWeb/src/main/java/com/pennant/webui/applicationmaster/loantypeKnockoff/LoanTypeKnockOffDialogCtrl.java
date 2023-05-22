@@ -91,8 +91,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.finTypeKnockOff.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.finTypeKnockOff.getId());
 	}
 
 	public void onCreate$window_LoanTypeKnockOffDialog(Event event) {
@@ -903,6 +902,18 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 	 */
 	protected boolean doProcess(FinTypeKnockOff aKnockOff, String tranType) {
 		logger.debug(Literal.ENTERING);
+
+		List<FinTypeKnockOff> knockOffMapping = aKnockOff.getLoanTypeKonckOffMapping();
+		List<FinTypeKnockOff> tempKnockOffMapping = new ArrayList<>();
+
+		for (FinTypeKnockOff KM : knockOffMapping) {
+			if (KM.getRecordType() != null && PennantConstants.RECORD_TYPE_CAN.equals(KM.getRecordType())) {
+				tempKnockOffMapping.add(KM);
+			}
+		}
+
+		knockOffMapping.removeAll(tempKnockOffMapping);
+		aKnockOff.setLoanTypeKonckOffMapping(knockOffMapping);
 
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;

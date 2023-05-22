@@ -46,7 +46,7 @@ public class HolidayMasterListModelItemRenderer implements ListitemRenderer<Holi
 	private static final long serialVersionUID = 1L;
 
 	public HolidayMasterListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

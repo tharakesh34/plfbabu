@@ -1,7 +1,5 @@
 package com.pennanttech.pff.cd.service.impl;
 
-import java.math.BigDecimal;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -170,7 +168,7 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 
 		// Get the model object.
 		MerchantDetails merchantDetails = (MerchantDetails) auditDetail.getModelData();
-		BigDecimal storeId = merchantDetails.getStoreId();
+		Long storeId = merchantDetails.getStoreId();
 		int posId = merchantDetails.getPOSId();
 
 		// Check the unique keys.

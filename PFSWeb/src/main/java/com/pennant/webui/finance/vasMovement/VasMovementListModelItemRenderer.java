@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.VasMovement;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -46,7 +46,7 @@ public class VasMovementListModelItemRenderer implements ListitemRenderer<VasMov
 	private static final long serialVersionUID = 1L;
 
 	public VasMovementListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
@@ -62,11 +62,11 @@ public class VasMovementListModelItemRenderer implements ListitemRenderer<VasMov
 		lc.setParent(item);
 		lc = new Listcell(vasMoment.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(vasMoment.getFinStartdate()));
+		lc = new Listcell(DateUtil.formatToLongDate(vasMoment.getFinStartdate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(vasMoment.getNumberOfTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(vasMoment.getMaturityDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(vasMoment.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(vasMoment.getFinCcy());
 		lc.setParent(item);

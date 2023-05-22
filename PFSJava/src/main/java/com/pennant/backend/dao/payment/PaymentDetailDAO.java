@@ -27,7 +27,7 @@ package com.pennant.backend.dao.payment;
 import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.payment.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface PaymentDetailDAO extends BasicCrudDao<PaymentDetail> {

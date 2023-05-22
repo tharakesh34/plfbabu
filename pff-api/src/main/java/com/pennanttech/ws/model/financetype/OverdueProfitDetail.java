@@ -14,7 +14,7 @@ public class OverdueProfitDetail implements Serializable {
 	private static final long serialVersionUID = -2555526236766955537L;
 
 	public OverdueProfitDetail() {
-
+	    super();
 	}
 
 	private String pastduePftCalMthd;

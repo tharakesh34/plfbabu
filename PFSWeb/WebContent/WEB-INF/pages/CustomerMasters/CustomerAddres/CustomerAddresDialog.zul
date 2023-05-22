@@ -127,10 +127,7 @@
 							</row>
 							<row>
 								<label id="label_CustomerAddresDialog_CustDistrict" value="${c:l('label_CustomerAddresDialog_CustDistrict.value')}" />
-								<hbox>
-									<space spacing="2px" />
-									<textbox id="custDistrict" width="250px" />
-								</hbox>
+								<extendedcombobox id="custDistrict" />
 								<label id="label_CustomerAddresDialog_CustAddrProvince" value="${c:l('label_CustomerAddresDialog_CustAddrProvince.value')}" />
 								<extendedcombobox id="custAddrProvince" />
 							</row>

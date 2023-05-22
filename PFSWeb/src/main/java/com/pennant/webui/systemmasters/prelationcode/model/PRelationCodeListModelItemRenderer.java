@@ -45,7 +45,7 @@ public class PRelationCodeListModelItemRenderer implements ListitemRenderer<PRel
 	private static final long serialVersionUID = 4872966285218448333L;
 
 	public PRelationCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

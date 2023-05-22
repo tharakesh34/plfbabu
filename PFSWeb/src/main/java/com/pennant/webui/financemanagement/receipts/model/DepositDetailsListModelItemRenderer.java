@@ -47,7 +47,7 @@ public class DepositDetailsListModelItemRenderer implements ListitemRenderer<Dep
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public DepositDetailsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

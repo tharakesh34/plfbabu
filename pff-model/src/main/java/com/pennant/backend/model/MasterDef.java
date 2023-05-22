@@ -33,6 +33,7 @@ public class MasterDef {
 	private String keyType;
 	private String keyCode;
 	private boolean validationReq;
+	private boolean proceedException;
 
 	public String getMasterType() {
 		return masterType;
@@ -64,6 +65,14 @@ public class MasterDef {
 
 	public void setValidationReq(boolean validationReq) {
 		this.validationReq = validationReq;
+	}
+
+	public boolean isProceedException() {
+		return proceedException;
+	}
+
+	public void setProceedException(boolean proceedException) {
+		this.proceedException = proceedException;
 	}
 
 }

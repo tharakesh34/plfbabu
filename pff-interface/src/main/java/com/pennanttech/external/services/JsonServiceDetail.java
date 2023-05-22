@@ -30,6 +30,8 @@ public class JsonServiceDetail implements Serializable {
 	private String proxyUrl;
 	private int proxyPort = 0;
 	private HttpHeaders responseHeaders;
+	private String certificateFileName;
+	private String certificatePassword;
 
 	public String getReference() {
 		return reference;
@@ -182,4 +184,21 @@ public class JsonServiceDetail implements Serializable {
 	public void setResponseHeaders(HttpHeaders responseHeaders) {
 		this.responseHeaders = responseHeaders;
 	}
+
+	public String getCertificateFileName() {
+		return certificateFileName;
+	}
+
+	public void setCertificateFileName(String certificateFileName) {
+		this.certificateFileName = certificateFileName;
+	}
+
+	public String getCertificatePassword() {
+		return certificatePassword;
+	}
+
+	public void setCertificatePassword(String certificatePassword) {
+		this.certificatePassword = certificatePassword;
+	}
+
 }

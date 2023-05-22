@@ -99,6 +99,8 @@
 			<menuItem id="menu_Item_Designation"
 				zulNavigation="/WEB-INF/pages/SystemMaster/Designation/DesignationList.zul"
 				rightName="menuItem_SystemMaster_Designation" />
+			<menuItem id="menuItem_Customer_Service_Branch" zulNavigation="/WEB-INF/pages/NOC/ServiceBranchList.zul"
+				rightName="menuItem_Customer_Service_Branch" />
 		</menu>
 		<menu id="menu_Category_SegmentationMasters">
 			<menuItem id="menu_Item_CustomerType"
@@ -372,6 +374,13 @@
 			<menuItem id="menu_Item_AutoKnockoff"
 				zulNavigation="/WEB-INF/pages/ApplicationMaster/AutoKnockOff/AutoKnockOffList.zul"
 				rightName="menu_Item_AutoKnockOff" />
+				
+			<menuItem id="menu_Item_LoanTypeWriteOff"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/LoanTypeWriteOff/LoanTypeWriteOffList.zul"
+				rightName="menu_Item_LoanTypeWriteOff" />		
+			<menuItem id="menu_Item_LoanTypeLetterMapping"
+				zulNavigation="/WEB-INF/pages/NOC/LoanTypeLetterMappingList.zul"
+				rightName="menu_Item_LoanTypeLetterMapping" />
 
 			<menuItem id="menu_Item_PANLetterMapping"
 				zulNavigation="/WEB-INF/pages/SystemMaster/PANMapping/CustTypePANMappingList.zul"
@@ -482,8 +491,8 @@
 		<menuItem id="menu_Item_DueDateLogicRule"
 			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/DueDateRuleList.zul"
 			rightName="menuItem_RulesFactory_DueDateLogicRule" />
-		<menuItem id="menu_Item_Auto_Refund_Reserve_Rule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
-			rightName="menuItem_RulesFactory_AutoRefundRule" />
+		<menuItem id="menu_Item_Auto_Refund_Reserve_Rule"
+			zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul" rightName="menuItem_RulesFactory_AutoRefundRule" />
 	</menu>
 
 	<!-- Solution Factory -->
@@ -875,12 +884,9 @@
 			<menuItem id="menu_Item_FinFeeRefunds"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundsList.zul"
 				rightName="menuItem_FinanceManagement_FinFeeRefunds" />
-			<menuItem id="menu_Item_ReceiptUpload"
-				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N"
-				rightName="menu_Item_ReceiptUpload" />
-			<menuItem id="menu_Item_ReceiptUploadApproval"
-				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y"
-				rightName="menu_Item_ReceiptUploadApprover" />
+			<!-- <menuItem id="menu_Item_ReceiptUpload" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N" 
+				rightName="menu_Item_ReceiptUpload" /> <menuItem id="menu_Item_ReceiptUploadApproval" zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y" 
+				rightName="menu_Item_ReceiptUploadApprover" /> -->
 			<menuItem id="menu_Item_ExcessAmountTransfer"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/ExcessTransfer/ExcessTransferList.zul"
 				rightName="menuItem_ExcessTransferMaster_ExcessTransfer" />
@@ -896,7 +902,9 @@
 			<menuItem id="menu_Item_CrossLoanKnockoffApprover"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_APPROVER"
 				rightName="menu_Item_CrossLoanKnockoffApprover" />
-			<menuItem id="menu_Item_CrossLoanKnockoffEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_ENQUIRY" rightName="menu_Item_NewCrossLoanKnockOffEnquiry"/>
+			<menuItem id="menu_Item_CrossLoanKnockoffEnquiry"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_ENQUIRY"
+				rightName="menu_Item_NewCrossLoanKnockOffEnquiry" />
 			<menu id="menu_CrossLoanKnockOff_upload">
 				<menuItem id="menu_Item_CrossLoanKnockOff_Maker"
 					zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffUploadList.zul?stage=M"
@@ -905,12 +913,37 @@
 					zulNavigation="/WEB-INF/pages/CrossLoanKnockOff/CrossLoanKnockOffUploadList.zul?stage=A"
 					rightName="menu_Item_CrossLoanKnockOff_Approver" />
 			</menu>
+			<menu id="menu_Create_Receipt_Upload">
+				<menuItem id="menu_Item_Create_Receipt_Upload_Maker"
+					zulNavigation="/WEB-INF/pages/Receipts/CreateReceiptUploadList.zul?stage=M"
+					rightName="menu_Item_Create_Receipt_Upload_Maker" />
+				<menuItem id="menu_Item_Create_Receipt_Upload_Approver"
+					zulNavigation="/WEB-INF/pages/Receipts/CreateReceiptUploadList.zul?stage=A"
+					rightName="menu_Item_Create_Receipt_Upload_Approver" />
+			</menu>
+			<menu id="menu_Category_ReceiptStatusUpload">
+				<menuItem id="menu_Item_ReceiptStatusUpload_Maker"
+					zulNavigation="/WEB-INF/pages/Receipts/ReceiptStatusUpload.zul?stage=M"
+					rightName="menu_Item_Receipt_Status_Upload_Maker" />
+				<menuItem id="menu_Item_ReceiptStatusUpload_Approver"
+					zulNavigation="/WEB-INF/pages/Receipts/ReceiptStatusUpload.zul?stage=A"
+					rightName="menu_Item_Receipt_Status_Upload_Approver" />
+			</menu>
 			<menuItem id="menu_Item_CrossLoanKnockoffCancelMaker"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_CANCEL_MAKER"
 				rightName="menu_Item_CancelCrossLoanKnockoffMaker" />
 			<menuItem id="menu_Item_CrossLoanKnockoffKnockoffCancelApprover"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/CrossLoanKnockOffList.zul?module=CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER"
 				rightName="menu_Item_CancelCrossLoanKnockoffApprover" />
+		</menu>
+		
+		<menu id="menu_Item_Loan_Closure_Upload">
+			<menuItem id="menu_Item_Loan_Closure_Upload_Maker"
+				zulNavigation="/WEB-INF/pages/Receipts/LoanClosureUploadList.zul?stage=M"
+				rightName="menu_Item_Loan_Closure_Upload_Maker" />
+			<menuItem id="menu_Item_Loan_Closure_Upload_Approver"
+				zulNavigation="/WEB-INF/pages/Receipts/LoanClosureUploadList.zul?stage=A"
+				rightName="menu_Item_Loan_Closure_Upload_Approver" />
 		</menu>
 
 		<menu id="menu_Category_NonLanReceipts">
@@ -1058,6 +1091,9 @@
 				zulNavigation="/WEB-INF/pages/Settlement/SettlementList.zul?module=SETTLEMENT_CANCEL"
 				rightName="menu_Item_SettlementCancellation" />
 		</menu>
+		<menuItem id="menuItem_Generate_Letter"
+				zulNavigation="/WEB-INF/pages/NOC/GenerateLetterList.zul" rightName="menuItem_Generate_Letter" />
+		
 
 	</menu>
 
@@ -1167,7 +1203,7 @@
 			<menuItem id="menu_Item_ExternalUplaods"
 				zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul" rightName="menu_Item_ExternalUpload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessUpload"
-				zulNavigation="/WEB-INF/pages/Financee/cd/CDSettlementUpload.zul" rightName="menuItem_Settlement_Process_Upload" />
+				zulNavigation="/WEB-INF/pages/Financee/Cd/CDSettlementUpload.zul" rightName="menuItem_Settlement_Process_Upload" />
 			<menuItem id="menu_Item_DataEngine_SettlementProcessDownload"
 				zulNavigation="/WEB-INF/pages/Finance/Cd/CDSettlementDownload.zul" rightName="menuItem_Settlement_Process_Download" />
 			<menuItem id="menu_Item_DataEngine_ODSettlementProcessUpload"
@@ -1237,13 +1273,17 @@
 			rightName="menu_Item_RePresentUploadApprover" /> </menu> -->
 
 		<!-- Fee Waiver Upload -->
+		<!-- <menu id="menu_Category_FeeWaiverUpload"> <menuItem id="menu_Item_FeeWaiverUpload_Maker" zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadDialog.zul" 
+			rightName="menu_Item_FeeWaiverUpload_Maker" /> <menuItem id="menu_Item_FeeWaiverUpload_Approver" zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadList.zul?module=FeeWaiverApprover" 
+			rightName="menu_Item_FeeWaiverUpload_Approver" /> -->
+		<!-- Bulk Fee Waiver New -->
 		<menu id="menu_Category_FeeWaiverUpload">
-			<menuItem id="menu_Item_FeeWaiverUpload_Maker"
-				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadDialog.zul"
-				rightName="menu_Item_FeeWaiverUpload_Maker" />
-			<menuItem id="menu_Item_FeeWaiverUpload_Approver"
-				zulNavigation="/WEB-INF/pages/Finance/UploadFeeWaiver/FeeWaiverUploadList.zul?module=FeeWaiverApprover"
-				rightName="menu_Item_FeeWaiverUpload_Approver" />
+			<menuItem id="menu_Item_BulkFeeWaiverUpload_Maker"
+				zulNavigation="/WEB-INF/pages/FeeWaivers/Upload/BulkFeeWaiverList.zul?stage=M"
+				rightName="menu_Item_Fee_Waiver_Upload_Maker" />
+			<menuItem id="menu_Item_BulkFeeWaiverUpload_Approver"
+				zulNavigation="/WEB-INF/pages/FeeWaivers/Upload/BulkFeeWaiverList.zul?stage=A"
+				rightName="menu_Item_Fee_Waiver_Upload_Approver" />
 		</menu>
 		<menu id="menu_Category_ManualKnockOff">
 			<menuItem id="menu_Item_KnockOffUp_Maker"
@@ -1270,13 +1310,125 @@
 				zulNavigation="/WEB-INF/pages/ManualRefund/PaymentInstructionUploadList.zul?stage=A"
 				rightName="menu_Item_ManualRefUpload_Approver" />
 		</menu>
-		<menu id="menu_Category_BulkOverduePenaltyDetailsUpload">
-			<menuItem id="menu_Item_BulkOverduePenaltyDetailsUpload_Maker"
-				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=M"
-				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Maker" />
-			<menuItem id="menu_Item_BulkOverduePenaltyDetailsUpload_Approver"
-				zulNavigation="/WEB-INF/pages/LPPUpload/LPPUploadList.zul?stage=A"
-				rightName="menu_Item_BulkOverduePenaltyDetailsUpload_Approver" />
+		<menu id="menu_Category_LoanCancel">
+			<menuItem id="menu_Item_LoanCancelUpload_Maker"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationUploadList.zul?stage=M"
+				rightName="menu_Item_LoanCancelUpload_Maker" />
+			<menuItem id="menu_Item_LoanCancelUpload_Approver"
+				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceCancellationUploadList.zul?stage=A"
+				rightName="menu_Item_LoanCancelUpload_Approver" />
+		</menu>
+		<menu id="menu_Item_Cust_kyc_Dtls_Upload">
+			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Maker"
+				zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=M"
+				rightName="menu_Item_Cust_kyc_Dtls_Upload_Maker" />
+			<menuItem id="menu_Item_Cust_kyc_Dtls_Upload_Approver"
+				zulNavigation="WEB-INF/pages/CustomerMasters/Customer/KycDetailsUploadList.zul?stage=A"
+				rightName="menu_Item_Cust_kyc_Dtls_Upload_Approver" />
+		</menu>
+		<menu id="menu_Category_BulkHostGLUpload">
+			<menuItem id="menu_Item_BulkHostGLUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HostGLMappingUpload/HostGLMappingUploadList.zul?stage=M"
+				rightName="menu_Item_BulkHostGLUpload_Maker" />
+			<menuItem id="menu_Item_BulkHostGLUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HostGLMappingUpload/HostGLMappingUploadList.zul?stage=A"
+				rightName="menu_Item_BulkHostGLUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_MiscellaneousPostingUpload">
+			<menuItem id="menu_Item_MiscellaneousPostingUpload_Maker"
+				zulNavigation="/WEB-INF/pages/MiscellaneousPostingUpload/MiscellaneousPostingUploadList.zul?stage=M"
+				rightName="menu_Item_MiscellaneousPostingUpload_Maker" />
+			<menuItem id="menu_Item_MiscellaneousPostingUpload_Approver"
+				zulNavigation="/WEB-INF/pages/MiscellaneousPostingUpload/MiscellaneousPostingUploadList.zul?stage=A"
+				rightName="menu_Item_MiscellaneousPostingUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_Lien">
+			<menuItem id="menu_Item_LienUpload_Maker"
+				zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=M" rightName="menu_Item_LienUpload_Maker" />
+			<menuItem id="menu_Item_LienUpload_Approver"
+				zulNavigation="/WEB-INF/pages/LIENUpload/LienUploadList.zul?stage=A" rightName="menu_Item_LienUpload_Approver" />
+		</menu>
+
+		<menu id="menu_Category_WriteOffUpload">
+			<menuItem id="menu_Item_WriteOffUpload_Maker"
+				zulNavigation="/WEB-INF/pages/WriteOffUpload/WriteOffUploadList.zul?stage=M"
+				rightName="menu_Item_WriteOffUpload_Maker" />
+			<menuItem id="menu_Item_WriteOffUpload_Approver"
+				zulNavigation="/WEB-INF/pages/WriteOffUpload/WriteOffUploadList.zul?stage=A"
+				rightName="menu_Item_WriteOffUpload_Approver" />
+		</menu>
+		
+		<menu id="menu_Category_RevWriteOffUpload">
+			<menuItem id="menu_Item_RevWriteOffUpload_Maker"
+				zulNavigation="/WEB-INF/pages/RevWriteOffUpload/RevWriteOffUploadList.zul?stage=M"
+				rightName="menu_Item_RevWriteOffUpload_Maker" />
+			<menuItem id="menu_Item_RevWriteOffUpload_Approver"
+				zulNavigation="/WEB-INF/pages/RevWriteOffUpload/RevWriteOffUploadList.zul?stage=A"
+				rightName="menu_Item_RevWriteOffUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_BulkBranchChangeUpload">
+			<menuItem id="menu_Item_BulkBranchChangeUpload_Maker"
+				zulNavigation="/WEB-INF/pages/BranchChangeUpload/BranchChangeUploadList.zul?stage=M"
+				rightName="menu_Item_BulkBranchChangeUpload_Maker" />
+			<menuItem id="menu_Item_BulkBranchChangeUpload_Approver"
+				zulNavigation="/WEB-INF/pages/BranchChangeUpload/BranchChangeUploadList.zul?stage=A"
+				rightName="menu_Item_BulkBranchChangeUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_BlockAutoGenerateLetterUpload">
+			<menuItem id="menu_Item_BlockAutoGenerateLetterUpload_Maker"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/BlockAutoGenLetterUploadList.zul?stage=M"
+				rightName="menu_Item_BlockAutoGenerateLetterUpload_Maker" />
+			<menuItem id="menu_Item_BlockAutoGenerateLetterUpload_Approver"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/BlockAutoGenLetterUploadList.zul?stage=A"
+				rightName="menu_Item_BlockAutoGenerateLetterUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_Loan_Letter_Upload">
+			<menuItem id="menu_Item_loan_letter_upload_Maker"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/LoanLetterUploadList.zul?stage=M"
+				rightName="menu_Item_loan_letter_upload_Maker" />
+			<menuItem id="menu_Item_loan_letter_upload_Approver"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/LoanLetterUploadList.zul?stage=A"
+				rightName="menu_Item_loan_letter_upload_Approver" />
+		</menu>
+		<menu id="menu_Category_Letter_Courier_Details_Upload">
+			<menuItem id="menu_Item_courier_details_upload_Maker"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/CourierDetailUploadList.zul?stage=M"
+				rightName="menu_Item_courier_details_upload_Maker" />
+			<menuItem id="menu_Item_courier_details_upload_Approver"
+				zulNavigation="/WEB-INF/pages/NOC/Upload/CourierDetailUploadList.zul?stage=A"
+				rightName="menu_Item_courier_details_upload_Approver" />
+		</menu>
+		<menu id="menu_Category_Provision_Upload">
+			<menuItem id="menu_Item_Provision_Upload_Maker"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionUploadList.zul?stage=M"
+				rightName="menu_Item_Provision_Upload_Maker" />
+			<menuItem id="menu_Item_Provision_Upload_Approver"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/Provision/ProvisionUploadList.zul?stage=A"
+				rightName="menu_Item_Provision_Upload_Approver" />
+	  </menu>
+	  <menu id="menu_Category_BulkLoanOverduePenaltyDetailsUpload">
+			<menuItem id="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Maker"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanUploadList.zul?stage=M"
+				rightName="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Maker" />
+			<menuItem id="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Approver"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanUploadList.zul?stage=A"
+				rightName="menu_Item_BulkLoanOverduePenaltyDetailsUpload_Approver" />
+		</menu>
+		<menu id="menu_Category_BulkLoanTypeOverduePenaltyDetailsUpload">
+			<menuItem id="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Maker"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanTypeUploadList.zul?stage=M"
+				rightName="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Maker" />
+			<menuItem id="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Approver"
+				zulNavigation="/WEB-INF/pages/LPPUpload/LPPLoanTypeUploadList.zul?stage=A"
+				rightName="menu_Item_BulkLoanTypeOverduePenaltyDetailsUpload_Approver" />
+	   </menu>
+	   <menu id="menu_Category_HoldMarkingUpload">
+			<menuItem id="menu_Item_HoldMarkingUpload_Maker"
+				zulNavigation="/WEB-INF/pages/HoldMarking/Upload/HoldMarkingUploadList.zul?stage=M"
+				rightName="menu_Item_HoldMarkingUpload_Maker" />
+			<menuItem id="menu_Item_HoldMarkingUpload_Approver"
+				zulNavigation="/WEB-INF/pages/HoldMarking/Upload/HoldMarkingUploadList.zul?stage=A"
+				rightName="menu_Item_HoldMarkingUpload_Approver" />
 		</menu>
 	</menu>
 	<!-- Insurance Module -->
@@ -1531,8 +1683,11 @@
 		<menuItem id="menu_Item_PmayEnquiry" zulNavigation="/WEB-INF/pages/SystemMaster/PMAY/PMAYList.zul?module=E"
 			rightName="menu_Item_PmayEnquiry" />
 		<menuItem id="menu_Item_TdsReceivablesTxnEnquiry"
-			zulNavigation="/WEB-INF/pages/tds.receivables/TdsReceivablesTxnCancel/TdsReceivablesTxnCancelList.zul?enqiryModule=Y"
+			zulNavigation="/WEB-INF/pages/Finance/TdsReceivablesTxnCancel/TdsReceivablesTxnCancelList.zul?enqiryModule=Y"
 			rightName="menu_Item_TdsReceivablesTxnEnquiry" />
+		<menu id="menu_Category_LienEnquiry">
+			<menuItem id="menu_Item_LienEnquiry" zulNavigation="/WEB-INF/pages/LienEnquiry/SelectLienEnquiry.zul" rightName="menu_Item_Lien_Enquiry"/>
+		</menu>
 	</menu>
 
 	<menu id="menu_Category_CIBIL">
@@ -1781,6 +1936,8 @@
 			<menuItem id="menu_Item_Repayementschedule_cashflowReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_Repayementschedule_cashflowReport" />
+			<menuItem id="menu_Item_MasterLoanReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_MasterLoanReport" />
 		</menu>
 
 		<menu id="menu_Category_Legal">
@@ -1822,6 +1979,10 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menuItem_pastdueSummaryretail" />
 			<menuItem id="menu_Item_PastDue" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_PastDueReports_PastDue" />
+			<menuItem id="menu_Item_DueVSCollection"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_DueVSCollection" />
+			<menuItem id="menu_Item_AdvanceInterestReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_AdvanceInterestReport" />
 		</menu>
 		<menu id="menu_Category_Payments">
 			<menuItem id="menu_Item_ManualPaymentsDue"
@@ -2077,6 +2238,8 @@
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_ReceiptclearancestsRpt" />
 			<menuItem id="menu_Item_TotalDisbReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_TotalDisbReport" />
+			<menuItem id="menu_Item_SanctionConditionsReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_SanctionConditionsReport" />
 		</menu>
 		<menuItem id="menu_Item_MiscellaneouspostUploadStsrpt"
 			zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
@@ -2088,6 +2251,11 @@
 		<menu id="menu_Category_Provision_Report">
 			<menuItem id="menu_Item_Provision_Report"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_Provision_Report" />
+		</menu>
+		<menu id="menu_Item_UnAuthorizedTransactionReport">
+			<menuItem id="menu_Item_UnAuthorizedTransactionReport"
+				zulNavigation="/WEB-INF/pages/Reports/UnAuthorizedTransaction.zul"
+				rightName="menu_Item_UnAuthorized_Transaction_Report" />
 		</menu>
 		<!-- <menu id="menu_Category_SCM" rightName=""> <menuItem id="menu_Item_DeliveryOrder" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
 			rightName="" /> <menuItem id="menu_Item_GoodsReceipt" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" 
@@ -2522,8 +2690,7 @@
 		rightName= "menuItem_Enquiry_DeviationEnquiry"/> -->
 	<!-- <menuItem id="menu_Item_DDAEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDAEnquiryList.zul" rightName= 
 		"menuItem_Enquiry_DeviationEnquiry"/> -->
-	<!-- <menuItem id="menu_Item_FinMandateEnquiry"
-		zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FinMandateEnquiryList.zul"
+	<!-- <menuItem id="menu_Item_FinMandateEnquiry" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/FinMandateEnquiryList.zul" 
 		rightName="menuItem_Enquiry_FinMandate" /> -->
 	<!-- <menuItem id="menu_Item_DDARepresentment" zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/DDARepresentmentList.zul" 
 		rightName="menuItem_Enquiry_WIFFinanceMain"/> -->

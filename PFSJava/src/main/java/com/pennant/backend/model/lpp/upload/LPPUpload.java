@@ -23,6 +23,7 @@ public class LPPUpload extends UploadDetails {
 	private String remarks;
 	private LoggedInUser userDetails;
 	private int pickUpFlag;
+	private BigDecimal oDMinAmount = BigDecimal.ZERO;
 
 	public LPPUpload() {
 		super();
@@ -146,6 +147,14 @@ public class LPPUpload extends UploadDetails {
 
 	public void setPickUpFlag(int pickUpFlag) {
 		this.pickUpFlag = pickUpFlag;
+	}
+
+	public BigDecimal getODMinAmount() {
+		return oDMinAmount;
+	}
+
+	public void setODMinAmount(BigDecimal oDMinAmount) {
+		this.oDMinAmount = oDMinAmount;
 	}
 
 }

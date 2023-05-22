@@ -41,12 +41,12 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -168,7 +168,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 				lc = new Listcell(CurrencyUtil.format(detail.getAmount(), ccyFormatter));
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.formatToLongDate(detail.getLastMntOn()));
+				lc = new Listcell(DateUtil.formatToLongDate(detail.getLastMntOn()));
 				lc.setParent(item);
 
 				Button b = new Button();

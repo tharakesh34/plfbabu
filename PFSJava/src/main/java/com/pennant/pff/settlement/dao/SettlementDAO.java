@@ -45,4 +45,6 @@ public interface SettlementDAO {
 	int updateThreadID(long from, long to, int threadID);
 
 	void updateProgress(long finID, int progress);
+
+	boolean isSettlementInitiated(long finID);
 }

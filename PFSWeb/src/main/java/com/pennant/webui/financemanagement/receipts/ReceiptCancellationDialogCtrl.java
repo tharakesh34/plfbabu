@@ -83,7 +83,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BounceReason;
@@ -128,6 +127,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -135,7 +135,7 @@ import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationDialog.zul
@@ -310,12 +310,11 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				setReceiptHeader((FinReceiptHeader) arguments.get("receiptHeader"));
 				FinReceiptHeader befImage = new FinReceiptHeader();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(getReceiptHeader());
+				befImage = ObjectUtil.clone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
 				if (getReceiptHeader().getManualAdvise() != null) {
-					ManualAdvise adviseBefImage = cloner.deepClone(getReceiptHeader().getManualAdvise());
+					ManualAdvise adviseBefImage = ObjectUtil.clone(getReceiptHeader().getManualAdvise());
 					getReceiptHeader().getManualAdvise().setBefImage(adviseBefImage);
 				}
 			}
@@ -689,8 +688,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		logger.debug("Entering");
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
+		FinReceiptHeader aReceiptHeader = ObjectUtil.clone(getReceiptHeader());
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		boolean recReject = false;
@@ -1131,8 +1129,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			// Making Single Set of Repay Schedule Details and sent to Rendering
 			if (!rpySchdList.isEmpty()) {
 
-				Cloner cloner = new Cloner();
-				List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+				List<RepayScheduleDetail> tempRpySchdList = ObjectUtil.clone(rpySchdList);
 				Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 
 				for (RepayScheduleDetail rpySchd : tempRpySchdList) {
@@ -1435,7 +1432,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1472,7 +1469,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), finFormatter));

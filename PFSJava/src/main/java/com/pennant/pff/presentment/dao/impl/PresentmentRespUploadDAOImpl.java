@@ -27,9 +27,13 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpload>
 		implements PresentmentRespUploadDAO {
 
+	public PresentmentRespUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<PresentmentRespUpload> getDetails(long headerID) {
-		StringBuilder sql = new StringBuilder("Select Id, Header_Id");
+		StringBuilder sql = new StringBuilder("Select Id, HeaderId, RecordSeq");
 		sql.append(", FinId, FinReference, Presentment_Reference, Host_Reference, Instalment_No, Amount_Cleared");
 		sql.append(", Clearing_Date, Clearing_Status, Bounce_Code, Bounce_Remarks, Reason_Code, Bank_Code");
 		sql.append(", Bank_Name, Branch_Code, Branch_Name, Partner_Bank_Code, Partner_Bank_Name, Bank_Address");
@@ -37,17 +41,16 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
 		sql.append(", FateCorrection, ErrorCode, ErrorDesc, Progress, Status");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
-		sql.append(" Where Header_ID = ?");
+		sql.append(" Where HeaderID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, headerID);
-		}, (rs, rownum) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			PresentmentRespUpload fc = new PresentmentRespUpload();
 
 			fc.setId(rs.getLong("Id"));
-			fc.setHeaderId(rs.getLong("Header_Id"));
+			fc.setHeaderId(rs.getLong("HeaderId"));
+			fc.setRecordSeq(rs.getLong("RecordSeq"));
 			fc.setReferenceID(rs.getLong("FinId"));
 			fc.setReference(rs.getString("FinReference"));
 			fc.setPresentmentReference(rs.getString("Presentment_Reference"));
@@ -85,7 +88,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 			fc.setStatus(rs.getString("Status"));
 
 			return fc;
-		});
+		}, headerID, "S");
 
 	}
 
@@ -180,7 +183,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", Corporate_User_Name, Dest_Acc_Holder, Debit_Credit_Flag, Process_Flag, Thread_Id, Utr_Number");
 		sql.append(", FateCorrection, ErrorCode, ErrorDesc");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD");
-		sql.append(" Where Header_ID = ? and Progress = ?");
+		sql.append(" Where HeaderID = ? and Progress = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -197,8 +200,8 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
-		String sql = "Update PRESENTMENT_RESP_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where Header_ID = ?";
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
+		String sql = "Update PRESENTMENT_RESP_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -210,8 +213,8 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 
@@ -232,7 +235,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 		sql.append(", ru.Clearing_Status, ru.Umrn_No, ru.FateCorrection, ru.Status, ru.ErrorCode");
 		sql.append(", ru.ErrorDesc, uh.CreatedBy, uh.ApprovedBy");
 		sql.append(" From PRESENTMENT_RESP_UPLOAD ru");
-		sql.append(" Inner Join File_Upload_Header uh on uh.ID = ru.Header_ID");
+		sql.append(" Inner Join File_Upload_Header uh on uh.ID = ru.HeaderID");
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();
@@ -241,7 +244,7 @@ public class PresentmentRespUploadDAOImpl extends SequenceDao<PresentmentRespUpl
 	@Override
 	public boolean isProcessed(String reference, Date clearingDate) {
 		StringBuilder sql = new StringBuilder("Select count(ID) From FILE_UPLOAD_HEADER Where Type = ? and Id IN (");
-		sql.append("Select Header_Id From PRESENTMENT_RESP_UPLOAD ru");
+		sql.append("Select HeaderId From PRESENTMENT_RESP_UPLOAD ru");
 		sql.append(" Inner Join PresentmentDetails pd on pd.PRESENTMENTID = ru.PRESENTMENTID");
 		sql.append(" and pd.FateCorrection = ? Where ru.FinReference = ?");
 		sql.append(" and ru.CLEARING_DATE = ? and ru.Progress = ?)");

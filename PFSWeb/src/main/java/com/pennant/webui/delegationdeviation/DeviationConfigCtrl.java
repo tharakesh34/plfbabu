@@ -100,7 +100,7 @@ public class DeviationConfigCtrl {
 	private static final String BOOLEAN_FALSE = "0";
 
 	public DeviationConfigCtrl() {
-
+	    super();
 	}
 
 	// Setters & Getters

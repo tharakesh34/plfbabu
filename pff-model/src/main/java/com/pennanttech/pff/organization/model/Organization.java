@@ -20,7 +20,6 @@ public class Organization extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long organizationId;
-	private long id;
 	private Long custId;
 	private String cif;
 	private String name;

@@ -44,6 +44,7 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
@@ -502,7 +503,7 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 		// Data Type
 		if (!this.dataType.isDisabled()) {
 			this.dataType
-					.setConstraint(new PTListValidator(Labels.getLabel("label_DeviationParamDialog_DataType.value"),
+					.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_DeviationParamDialog_DataType.value"),
 							PennantStaticListUtil.getDeviationDataTypes(), true));
 		}
 		logger.debug("Leaving");

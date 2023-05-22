@@ -312,7 +312,7 @@ public class AuthorizationLimitListCtrl extends GFCBaseListCtrl<AuthorizationLim
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =? ");
 
 		if (doCheckAuthority(authorizationlimit, whereCond.toString(), new Object[] { authorizationlimit.getId() })) {

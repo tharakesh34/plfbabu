@@ -37,6 +37,7 @@ public class PosidexCustomer extends Posidex implements Serializable {
 	private List<PosidexCustomerLoan> posidexCustomerLoans = new ArrayList<PosidexCustomerLoan>();
 
 	public PosidexCustomer() {
+	    super();
 	}
 
 	public String getFirstName() {

@@ -61,7 +61,7 @@ public interface FinTypePartnerBankService {
 	int getPartnerBankCount(String finType, String paymentType, String purpose, long partnerBankID);
 
 	List<FinTypePartnerBank> getFinTypePartnerBanks(FinTypePartnerBank fpb);
-	
+
 	FinTypePartnerBank getFinTypePartnerBank(FinTypePartnerBank fpb);
 
 	public List<Long> getByClusterAndPartnerbank(long partnerbankId);

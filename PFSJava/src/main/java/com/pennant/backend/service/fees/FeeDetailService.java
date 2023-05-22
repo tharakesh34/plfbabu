@@ -52,7 +52,6 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.GSTCalculator;
@@ -131,8 +130,7 @@ public class FeeDetailService {
 				feeRuleCodes.add(fee.getRuleCode());
 			}
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
-				BigDecimal totalGST = GSTCalculator.getExclusiveGST(fee.getPaidAmount(), gstPercentages)
-						.gettGST();
+				BigDecimal totalGST = GSTCalculator.getExclusiveGST(fee.getPaidAmount(), gstPercentages).gettGST();
 				fee.setPaidAmountOriginal(fee.getPaidAmount());
 				fee.setPaidAmount(fee.getPaidAmountOriginal().add(totalGST));
 			}
@@ -184,15 +182,6 @@ public class FeeDetailService {
 						throw new AppException("", e);
 					}
 				}
-			}
-		}
-
-		// Calculating GST
-		for (FinFeeDetail finFeeDetail : feeList) {
-			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
-				this.finFeeDetailService.calculateFees(finFeeDetail, schdData, getDealerTaxPercentages(fd));
-			} else {
-				this.finFeeDetailService.calculateFees(finFeeDetail, fm, getGSTPercentages(fd));
 			}
 		}
 
@@ -617,7 +606,7 @@ public class FeeDetailService {
 			}
 
 			if (fm != null && fm.getFinStartDate() != null) {
-				int finAge = DateUtility.getMonthsBetween(SysParamUtil.getAppDate(), fm.getFinStartDate());
+				int finAge = DateUtil.getMonthsBetween(SysParamUtil.getAppDate(), fm.getFinStartDate());
 				executionMap.put("finAgetilldate", finAge);
 			}
 		}

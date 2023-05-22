@@ -4,15 +4,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionDefinition;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -31,32 +30,40 @@ import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.excess.service.ExcessTransferService;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
-import com.pennanttech.dataengine.ValidateRecord;
+import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.file.UploadTypes;
+import com.pennapps.core.util.ObjectUtil;
 
-public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
+public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl<ExcessTransferUpload> {
 	private static final Logger logger = LogManager.getLogger(ExcessTransferUploadServiceImpl.class);
 
 	private ExcessTransferUploadDAO excessTransferUploadDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private ExcessTransferService excessTransferService;
-	private ValidateRecord excessTransferUploadValidateRecord;
+
+	public ExcessTransferUploadServiceImpl() {
+		super();
+	}
+
+	@Override
+	protected ExcessTransferUpload getDetail(Object object) {
+		if (object instanceof ExcessTransferUpload detail) {
+			return detail;
+		}
+
+		throw new AppException(IN_VALID_OBJECT);
+	}
 
 	@Override
 	public void doValidate(FileUploadHeader header, Object object) {
-		ExcessTransferUpload detail = null;
-
-		if (object instanceof ExcessTransferUpload) {
-			detail = (ExcessTransferUpload) object;
-		}
-
-		if (detail == null) {
-			throw new AppException("Invalid Data transferred...");
-		}
+		ExcessTransferUpload detail = getDetail(object);
 
 		String reference = detail.getReference();
+		detail.setReference(reference);
 
 		logger.info("Validating the Data for the reference {}", reference);
 
@@ -77,7 +84,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		detail.setReference(reference);
 		detail.setReferenceID(fm.getFinID());
 
 		String transferFrom = detail.getTransferFromType();
@@ -110,71 +116,45 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
-		detail.setErrorCode("");
-		detail.setErrorDesc("");
-
+		setSuccesStatus(detail);
+		detail.setStatus("C");
 	}
 
 	private void setError(ExcessTransferUpload detail, ExcessTransferError error) {
-		detail.setProgress(EodConstants.PROGRESS_FAILED);
-		detail.setErrorCode(error.name());
-		detail.setErrorDesc(error.description());
+		setFailureStatus(detail, error.name(), error.description());
+		detail.setStatus("R");
 	}
 
 	@Override
 	public void doApprove(List<FileUploadHeader> headers) {
 		new Thread(() -> {
-
-			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
-			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			TransactionStatus txStatus = null;
+			Date appDate = SysParamUtil.getAppDate();
 
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 
 				List<ExcessTransferUpload> details = excessTransferUploadDAO.getDetails(header.getId());
-
-				header.setTotalRecords(details.size());
-				int sucessRecords = 0;
-				int failRecords = 0;
+				header.getUploadDetails().addAll(details);
+				List<ExcessTransferUpload> process = new ArrayList<>();
 
 				for (ExcessTransferUpload fc : details) {
+					fc.setAppDate(appDate);
 					doValidate(header, fc);
 
 					if (fc.getProgress() == EodConstants.PROGRESS_FAILED) {
-						failRecords++;
+						setFailureStatus(fc);
 					} else {
-						sucessRecords++;
+						setSuccesStatus(fc);
+						process.add(fc);
 					}
 				}
 
+				TransactionStatus txStatus = getTransactionStatus();
 				try {
-					txStatus = transactionManager.getTransaction(txDef);
-
-					excessTransferUploadDAO.update(details);
-
-					header.setSuccessRecords(sucessRecords);
-					header.setFailureRecords(failRecords);
-
-					StringBuilder remarks = new StringBuilder("Process Completed");
-
-					if (failRecords > 0) {
-						remarks.append(" with exceptions, ");
-					}
-
-					remarks.append(" Total Records : ").append(header.getTotalRecords());
-					remarks.append(" Success Records : ").append(sucessRecords);
-					remarks.append(" Failed Records : ").append(failRecords);
-
-					List<FileUploadHeader> headerList = new ArrayList<>();
-					headerList.add(header);
-
-					updateHeader(headerList, true);
-
+					process(process);
 					transactionManager.commit(txStatus);
 				} catch (Exception e) {
-					logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+					logger.error(Literal.EXCEPTION, e);
 
 					if (txStatus != null) {
 						transactionManager.rollback(txStatus);
@@ -183,9 +163,17 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					txStatus = null;
 				}
 
-				logger.info("Excess Transfer Process is Initiated");
+				try {
+					excessTransferUploadDAO.update(details);
 
-				process(header.getId());
+					List<FileUploadHeader> headerList = new ArrayList<>();
+					headerList.add(header);
+
+					updateHeader(headerList, true);
+
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
 
 				logger.info("Processed the File {}", header.getFileName());
 			}
@@ -194,11 +182,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 	}
 
-	private void process(long headerID) {
-		List<ExcessTransferUpload> process = excessTransferUploadDAO.getProcess(headerID);
-
-		Date appDate = SysParamUtil.getAppDate();
-
+	private void process(List<ExcessTransferUpload> process) {
 		for (ExcessTransferUpload exc : process) {
 			List<FinExcessTransfer> transferList = new ArrayList<>();
 
@@ -206,8 +190,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 					exc.getTransferFromType());
 
 			List<FinExcessAmount> excessList = existingExcess.stream()
-					.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate()))
-					.collect(Collectors.toList());
+					.sorted((l1, l2) -> DateUtil.compare(l1.getValueDate(), l2.getValueDate())).toList();
 
 			BigDecimal transferAmount = exc.getTransferAmount();
 			for (FinExcessAmount excess : excessList) {
@@ -235,7 +218,7 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 				transfer.setFinReference(exc.getReference());
 				transfer.setTransferFromType(exc.getTransferFromType());
 				transfer.setTransferToType(exc.getTransferToType());
-				transfer.setTransferDate(excess.getValueDate() == null ? appDate : excess.getValueDate());
+				transfer.setTransferDate(excess.getValueDate() == null ? exc.getAppDate() : excess.getValueDate());
 				transfer.setTransferAmount(amount);
 				transfer.setTransferFromId(excess.getExcessID());
 				transfer.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -254,10 +237,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			}
 
 			approveExcess(exc, transferList);
-
-			if (EodConstants.PROGRESS_FAILED == exc.getProgress()) {
-				updateFailRecords(1, 1, exc.getHeaderId());
-			}
 		}
 	}
 
@@ -266,13 +245,10 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 			try {
 				excessTransferService.doApprove(getAuditHeader(fet, PennantConstants.TRAN_WF));
 			} catch (Exception e) {
-				exc.setErrorCode(ERR_CODE);
-				exc.setErrorDesc(getErrorMessage(e));
-				exc.setProgress(EodConstants.PROGRESS_FAILED);
-				excessTransferUploadDAO.updateFailure(exc);
+				setFailureStatus(exc, getErrorMessage(e));
+				exc.setStatus("R");
 			}
 		}
-		transferList.clear();
 	}
 
 	private AuditHeader getAuditHeader(FinExcessTransfer transfer, String tranType) {
@@ -282,23 +258,23 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 
 	@Override
 	public void doReject(List<FileUploadHeader> headers) {
-		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).collect(Collectors.toList());
+		List<Long> headerIdList = headers.stream().map(FileUploadHeader::getId).toList();
 
-		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition(
-				TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-		TransactionStatus txStatus = null;
+		TransactionStatus txStatus = getTransactionStatus();
 
 		try {
-			txStatus = transactionManager.getTransaction(txDef);
+			headers.forEach(h1 -> {
+				h1.setRemarks(REJECT_DESC);
+				h1.getUploadDetails().addAll(excessTransferUploadDAO.getDetails(h1.getId()));
+			});
 
-			excessTransferUploadDAO.update(headerIdList, ERR_CODE, ERR_DESC, EodConstants.PROGRESS_FAILED);
+			excessTransferUploadDAO.update(headerIdList, REJECT_CODE, REJECT_DESC);
 
-			headers.forEach(h1 -> h1.setRemarks(ERR_DESC));
 			updateHeader(headers, false);
 
 			transactionManager.commit(txStatus);
 		} catch (Exception e) {
-			logger.error(ERROR_LOG, e.getCause(), e.getMessage(), e.getLocalizedMessage(), e);
+			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
@@ -307,13 +283,38 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	}
 
 	@Override
+	public void uploadProcess() {
+		uploadProcess(UploadTypes.EXCESS_TRANSFER.name(), this, "ExcessTransferUpload");
+	}
+
+	@Override
 	public String getSqlQuery() {
 		return excessTransferUploadDAO.getSqlQuery();
 	}
 
 	@Override
-	public ValidateRecord getValidateRecord() {
-		return excessTransferUploadValidateRecord;
+	public void validate(DataEngineAttributes attributes, MapSqlParameterSource paramSource) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		ExcessTransferUpload transfer = (ExcessTransferUpload) ObjectUtil.valueAsObject(paramSource,
+				ExcessTransferUpload.class);
+
+		transfer.setReference(ObjectUtil.valueAsString(paramSource.getValue("finReference")));
+
+		Map<String, Object> parameterMap = attributes.getParameterMap();
+
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+
+		transfer.setHeaderId(header.getId());
+		transfer.setAppDate(header.getAppDate());
+
+		doValidate(header, transfer);
+
+		updateProcess(header, transfer, paramSource);
+
+		header.getUploadDetails().add(transfer);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Autowired
@@ -334,12 +335,6 @@ public class ExcessTransferUploadServiceImpl extends AUploadServiceImpl {
 	@Autowired
 	public void setExcessTransferService(ExcessTransferService excessTransferService) {
 		this.excessTransferService = excessTransferService;
-	}
-
-	@Autowired
-	public void setExcessTransferUploadValidateRecord(
-			ExcessTransferUploadValidateRecord excessTransferUploadValidateRecord) {
-		this.excessTransferUploadValidateRecord = excessTransferUploadValidateRecord;
 	}
 
 }

@@ -10,8 +10,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.provision.service.ProvisionService;
@@ -27,7 +27,7 @@ public class ProvisionCalcQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		if (!ImplementationConstants.ALLOW_PROVISION) {
+		if (!NpaAndProvisionExtension.ALLOW_PROVISION) {
 			return RepeatStatus.FINISHED;
 		}
 

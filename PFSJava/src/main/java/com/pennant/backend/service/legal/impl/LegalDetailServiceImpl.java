@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
@@ -94,10 +93,11 @@ import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>LegalDetail</b>.<br>
@@ -636,8 +636,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			}
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		LegalDetail legalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(legalDetail.getRecordType())) {
@@ -1270,7 +1269,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			for (LegalDocument legalDocument : documentList) {
 				if (legalDocument.getDocumentDate() != null) {
 					legalDocument.setDocumentDateStr(
-							DateUtility.format(legalDocument.getDocumentDate(), DateFormat.SHORT_DATE.getPattern()));
+							DateUtil.format(legalDocument.getDocumentDate(), DateFormat.SHORT_DATE.getPattern()));
 					legalDocument.setDocumentAcceptedName(PennantStaticListUtil.getlabelDesc(
 							legalDocument.getDocumentAccepted(), PennantStaticListUtil.getDocumentAcceptedList()));
 					legalDocument.setDocumentTypeApproveName(PennantStaticListUtil.getlabelDesc(
@@ -1285,13 +1284,13 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		List<LegalECDetail> ecDetailsList = legalDetail.getEcdDetailsList();
 		if (CollectionUtils.isNotEmpty(ecDetailsList)) {
 			for (LegalECDetail legalECDetail : ecDetailsList) {
-				legalECDetail.setStrECDate(
-						DateUtility.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
+				legalECDetail
+						.setStrECDate(DateUtil.format(legalECDetail.getEcDate(), DateFormat.SHORT_DATE.getPattern()));
 			}
 		}
 		if (legalDetail.getPropertyDetailECDate() != null) {
 			legalDetail.setStrPropertyDetailECDate(
-					DateUtility.format(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
+					DateUtil.format(legalDetail.getPropertyDetailECDate(), DateFormat.SHORT_DATE.getPattern()));
 		}
 
 		StringBuilder sb = null;

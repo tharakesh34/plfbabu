@@ -32,7 +32,6 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
-import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -59,7 +58,6 @@ public class TanDetailListCtrl extends GFCBaseCtrl<TanAssignment> {
 	protected Button btnAdd_AddTanDetail;
 	protected Listbox listBoxTanDetail;
 	protected Groupbox finBasicdetails;
-	private Tab parentTab = null;
 
 	private TanAssignment tanAssignment;
 	private FinanceDetail financeDetail;
@@ -101,10 +99,6 @@ public class TanDetailListCtrl extends GFCBaseCtrl<TanAssignment> {
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "TanDetailList");
-			}
-
-			if (arguments.containsKey("parentTab")) {
-				parentTab = (Tab) arguments.get("parentTab");
 			}
 
 			if (arguments.containsKey("financeDetail")) {
@@ -668,11 +662,6 @@ public class TanDetailListCtrl extends GFCBaseCtrl<TanAssignment> {
 		TanAssignment aTanAssignment = (TanAssignment) item.getAttribute("data");
 
 		TanDetail tanDetail = aTanAssignment.getTanDetail();
-
-		if ("Saved".equals(tanDetail.getRecordStatus())) {
-			MessageUtil.showError("Adjustment transaction is pending for this TanNumber at certificate adjustment");
-			return;
-		}
 
 		List<TdsReceivablesTxn> tdsreceivable = tdsReceivablesTxnService
 				.getTdsReceivablesTxnsByFinRef(aTanAssignment.getFinReference(), TableType.TEMP_TAB);

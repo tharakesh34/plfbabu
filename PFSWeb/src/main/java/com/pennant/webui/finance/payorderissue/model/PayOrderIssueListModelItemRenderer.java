@@ -45,7 +45,7 @@ public class PayOrderIssueListModelItemRenderer implements ListitemRenderer<PayO
 	private static final long serialVersionUID = -3304155174434504951L;
 
 	public PayOrderIssueListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

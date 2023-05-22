@@ -93,7 +93,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 
 		try {
 
-			return this.jdbcOperations.queryForObject(sql.toString(), object, new RowMapper<BuilderCompany>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<BuilderCompany>() {
 				@Override
 				public BuilderCompany mapRow(ResultSet rs, int rowNum) throws SQLException {
 					BuilderCompany ca = new BuilderCompany();
@@ -167,7 +167,7 @@ public class BuilderCompanyDAOImpl extends SequenceDao<BuilderCompany> implement
 
 					return ca;
 				}
-			});
+			}, object);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

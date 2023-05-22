@@ -45,7 +45,7 @@ public class AgreementDefinitionListModelItemRenderer implements ListitemRendere
 	private static final long serialVersionUID = 1277410242979825193L;
 
 	public AgreementDefinitionListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

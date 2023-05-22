@@ -21,7 +21,7 @@ public class PutCallAlertslItemRenderer implements ListitemRenderer<FinOption>, 
 	private transient List<Property> listFrequency = AppStaticList.getFrequencies();
 
 	public PutCallAlertslItemRenderer() {
-
+	    super();
 	}
 
 	@Override

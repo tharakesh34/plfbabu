@@ -22,12 +22,11 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.service.incomeamortization.impl.AmortizationProcess;
 import com.pennant.backend.util.PennantConstants;
@@ -36,6 +35,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -184,7 +184,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 		// Application Deployment Date and AMZ Month End
 		Date startDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
-		Date monthEndDate = DateUtility.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
+		Date monthEndDate = DateUtil.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
 
 		if (startDate != null && monthEndDate != null) {
 
@@ -280,7 +280,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 				this.label_Status.setValue(Labels.getLabel("label_Inprogress"));
 			}
 
-			fillComboBox(this.monthEndDate, DateUtility.format(amzLog.getMonthEndDate(), PennantConstants.DBDateFormat),
+			fillComboBox(this.monthEndDate, DateUtil.format(amzLog.getMonthEndDate(), PennantConstants.DBDateFormat),
 					this.datesList, "");
 		} else {
 			doReadOnly(false);
@@ -363,11 +363,11 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
 
-		Date amzMonth = DateUtility.getMonthStart(SysParamUtil.getAppDate());
-		amzMonth = DateUtility.addDays(amzMonth, -1);
+		Date amzMonth = DateUtil.getMonthStart(SysParamUtil.getAppDate());
+		amzMonth = DateUtil.addDays(amzMonth, -1);
 
-		monthEndList.add(new ValueLabel(DateUtility.format(amzMonth, PennantConstants.DBDateFormat),
-				DateUtility.format(amzMonth, DateFormat.LONG_MONTH.getPattern())));
+		monthEndList.add(new ValueLabel(DateUtil.format(amzMonth, PennantConstants.DBDateFormat),
+				DateUtil.format(amzMonth, DateFormat.LONG_MONTH.getPattern())));
 
 		return monthEndList;
 	}
@@ -382,7 +382,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 		Date appDate = SysParamUtil.getAppDate();
 
 		// Allow previous up to one year
-		Date prvYrDate = DateUtility.addYears(appDate, -1);
+		Date prvYrDate = DateUtil.addYears(appDate, -1);
 		if (prvYrDate.compareTo(startDate) > 0) {
 			startDate = prvYrDate;
 		}

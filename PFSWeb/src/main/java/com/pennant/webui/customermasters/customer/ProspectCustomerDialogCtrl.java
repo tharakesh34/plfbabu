@@ -56,7 +56,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/customerDialog.zul file.
@@ -407,8 +407,7 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 		logger.debug("Entering");
 
 		Customer aCustomer = new Customer();
-		Cloner cloner = new Cloner();
-		aCustomer = cloner.deepClone(this.customer);
+		aCustomer = ObjectUtil.clone(this.customer);
 
 		// BeanUtils.copyProperties(aCustomer, this.customer);
 		doWriteComponentsToBean(aCustomer);

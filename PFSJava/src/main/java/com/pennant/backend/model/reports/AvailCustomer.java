@@ -41,7 +41,7 @@ public class AvailCustomer {
 	private String limitFlag = "F";
 
 	public AvailCustomer() {
-
+	    super();
 	}
 
 	// ******************************************************//

@@ -36,7 +36,7 @@ public class BuilderTable implements java.io.Serializable {
 	private String character_maximum_length;
 
 	public BuilderTable() {
-
+	    super();
 	}
 
 	public void setId(long id) {

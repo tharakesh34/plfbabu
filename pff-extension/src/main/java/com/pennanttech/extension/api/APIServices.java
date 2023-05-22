@@ -191,8 +191,14 @@ public class APIServices {
 		services.add("enableUser");
 		services.add("expireUser");
 		services.add("getCustomerEmployment");
+		services.add("updateMandateStatus");
+		services.add("changeRepaymentMethod");
+		services.add("createPaymentInstruction");
+		services.add("getPaymentInstruction");
+		services.add("updatePaymentInstruction");
 		services.add("getPDCEnquiry");
 		services.add("getPDCDetails");
+		services.add("cancelLoan");
 		services.add("getGuarantorDetails");
 		services.add("getSourcingDetails");
 		services.add("getLoanBalanceDetails");
@@ -209,6 +215,7 @@ public class APIServices {
 		services.add("getLoansByProductShrtNameAndDateOfBirth");
 		services.add("getCustomerDataByCIF");
 		services.add("getLoansByNameAndEMIAmount");
+		services.add("getRateChangeDetails");
 
 		return services;
 	}

@@ -37,11 +37,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail> {
-
-	/**
-	 * 
-	 * 
-	 */
 	private static final long serialVersionUID = -1289603949144743239L;
 	private static final Logger logger = LogManager.getLogger(EventFeeDetailsDialogCtrl.class);
 
@@ -238,10 +233,6 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 				// Fee Amount Calculation
 				calculatedAmt = calculatedAmt.divide(calcPerc, 0, RoundingMode.HALF_DOWN);
 			}
-		}
-		BigDecimal taxableAmt = calculatedAmt;
-		if (StringUtils.equals(feeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-
 		}
 
 		calculatedAmt = calculatedAmt.multiply(newPercent).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_DOWN);

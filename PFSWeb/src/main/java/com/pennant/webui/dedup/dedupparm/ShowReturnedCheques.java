@@ -41,13 +41,13 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.returnedcheques.ReturnedCheques;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * @author sreeravali.s
@@ -100,9 +100,9 @@ public class ShowReturnedCheques extends Window implements Serializable {
 		now.add(Calendar.MONTH, -12);
 		now.getTime();
 
-		String dd = DateUtility.formatToShortDate(now.getTime());
+		String dd = DateUtil.formatToShortDate(now.getTime());
 
-		Date date = DateUtility.getDate(dd);
+		Date date = DateUtil.getDate(dd);
 		for (int i = 0; i < dedupListSize.size(); i++) {
 			if (date.before(dedupListSize.get(i).getReturnDate())
 					|| date.equals(dedupListSize.get(i).getReturnDate())) {
@@ -269,7 +269,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	final class ReturnedChequeItemRenderer implements ListitemRenderer<Object> {
 
 		public ReturnedChequeItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -286,7 +286,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 					lc = new Listcell(fieldValue);
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
-					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+					lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(BigDecimal.class)) {
 					BigDecimal decfieldValue = (BigDecimal) data.getClass().getMethod(fieldMethod).invoke(data);
 					if (StringUtils.isNotEmpty(returnedCheques.getCurrency())) {
@@ -343,7 +343,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-
+		    super();
 		}
 
 		@Override
@@ -359,7 +359,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-
+		    super();
 		}
 
 		@Override
@@ -373,7 +373,7 @@ public class ShowReturnedCheques extends Window implements Serializable {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override

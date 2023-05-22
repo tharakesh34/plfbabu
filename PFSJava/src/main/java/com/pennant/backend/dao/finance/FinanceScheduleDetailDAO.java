@@ -148,5 +148,7 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceScheduleDetail getNextSchd(long finID, Date appDate, boolean businessDate);
 
+	void updateWriteOffDetail(long finID);
+
 	List<FinanceScheduleDetail> getBasicDetails(long finID);
 }

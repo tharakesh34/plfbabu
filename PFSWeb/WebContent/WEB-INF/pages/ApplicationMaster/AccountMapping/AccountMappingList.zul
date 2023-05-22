@@ -63,7 +63,7 @@
 									<uppercasebox id="account" width="100px" maxlength="15" />
 									<label id="label_AccountMappingList_HostAccount" value="${c:l('label_AccountMappingList_HostAccount.value')}" />
 									<listbox id="sortOperator_hostAccount" width="43px" mold="select" rows="1" />
-									<textbox id="hostAccount" width="100px" maxlength="15" />
+									<textbox id="hostAccount" width="100px" maxlength="20" />
 								</row>
 								<row>
 									<label id="label_AccountMappingList_AccountType" value="${c:l('label_AccountMappingList_AccountType.value')}" />

@@ -12,6 +12,7 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 	private Date eodDate;
 	private String entityCode;
 	private long custID;
+	private String custCoreBank;
 	private String custCategoryCode;
 	private String finType;
 	private String product;
@@ -37,13 +38,21 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 	private Long effFinID;
 	private String effFinReference;
 	private boolean linkedLoan;
-
+	private Date derivedPastDueDate;
 	private Date finStartDate;
 	private Date maturityDate;
-
 	private int effPastDueDays;
 	private Date effPastDueDate;
 	private int effNpaPastDueDays;
+	private BigDecimal emiRe = BigDecimal.ZERO;
+	private BigDecimal instIncome = BigDecimal.ZERO;
+	private BigDecimal futurePri = BigDecimal.ZERO;
+	private BigDecimal prvEmiRe = BigDecimal.ZERO;
+	private BigDecimal prvInstIncome = BigDecimal.ZERO;
+	private BigDecimal prvFuturePri = BigDecimal.ZERO;
+	private boolean selfEffected;
+	private boolean writeOffLoan;
+	private boolean underSettlement;
 
 	public NpaProvisionStage() {
 		super();
@@ -79,6 +88,14 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 
 	public void setCustID(long custID) {
 		this.custID = custID;
+	}
+
+	public String getCustCoreBank() {
+		return custCoreBank;
+	}
+
+	public void setCustCoreBank(String custCoreBank) {
+		this.custCoreBank = custCoreBank;
 	}
 
 	public String getCustCategoryCode() {
@@ -319,6 +336,86 @@ public class NpaProvisionStage extends AbstractWorkflowEntity {
 
 	public void setEffNpaPastDueDays(int effNpaPastDueDays) {
 		this.effNpaPastDueDays = effNpaPastDueDays;
+	}
+
+	public BigDecimal getEmiRe() {
+		return emiRe;
+	}
+
+	public void setEmiRe(BigDecimal emiRe) {
+		this.emiRe = emiRe;
+	}
+
+	public BigDecimal getInstIncome() {
+		return instIncome;
+	}
+
+	public void setInstIncome(BigDecimal instIncome) {
+		this.instIncome = instIncome;
+	}
+
+	public BigDecimal getFuturePri() {
+		return futurePri;
+	}
+
+	public void setFuturePri(BigDecimal futurePri) {
+		this.futurePri = futurePri;
+	}
+
+	public BigDecimal getPrvEmiRe() {
+		return prvEmiRe;
+	}
+
+	public void setPrvEmiRe(BigDecimal prvEmiRe) {
+		this.prvEmiRe = prvEmiRe;
+	}
+
+	public BigDecimal getPrvInstIncome() {
+		return prvInstIncome;
+	}
+
+	public void setPrvInstIncome(BigDecimal prvInstIncome) {
+		this.prvInstIncome = prvInstIncome;
+	}
+
+	public BigDecimal getPrvFuturePri() {
+		return prvFuturePri;
+	}
+
+	public void setPrvFuturePri(BigDecimal prvFuturePri) {
+		this.prvFuturePri = prvFuturePri;
+	}
+
+	public Date getDerivedPastDueDate() {
+		return derivedPastDueDate;
+	}
+
+	public void setDerivedPastDueDate(Date derivedPastDueDate) {
+		this.derivedPastDueDate = derivedPastDueDate;
+	}
+
+	public boolean isSelfEffected() {
+		return selfEffected;
+	}
+
+	public void setSelfEffected(boolean selfEffected) {
+		this.selfEffected = selfEffected;
+	}
+
+	public boolean isWriteOffLoan() {
+		return writeOffLoan;
+	}
+
+	public void setWriteOffLoan(boolean writeOffLoan) {
+		this.writeOffLoan = writeOffLoan;
+	}
+
+	public boolean isUnderSettlement() {
+		return underSettlement;
+	}
+
+	public void setUnderSettlement(boolean underSettlement) {
+		this.underSettlement = underSettlement;
 	}
 
 }
