@@ -219,15 +219,27 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		}
 
 		boolean feeExists = false;
+		BigDecimal amount = detail.getWaivedAmount();
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 			if (fwd.getFeeTypeCode().equals(detail.getFeeTypeCode())) {
 				feeExists = true;
-				BigDecimal remainingFee = fwd.getReceivableAmount().subtract(fwd.getReceivedAmount());
 
-				if (detail.getWaivedAmount().compareTo(remainingFee) > 0) {
-					setError(detail, BulkFeeWaiverUploadError.FWU_006);
-					return fwh;
+				BigDecimal remainingFee = fwd.getReceivableAmount().subtract(fwd.getReceivedAmount());
+				if (amount.compareTo(remainingFee) > 0) {
+					fwd.setCurrWaiverAmount(remainingFee);
+					fwd.setWaivedAmount(remainingFee);
+				} else {
+					fwd.setCurrWaiverAmount(amount);
+					fwd.setWaivedAmount(amount);
 				}
+				amount = amount.subtract(fwd.getWaivedAmount());
+				continue;
+
+			}
+
+			if (amount.compareTo(BigDecimal.ZERO) != 0) {
+				setError(detail, BulkFeeWaiverUploadError.FWU_006);
+				return fwh;
 			}
 		}
 
@@ -283,8 +295,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 		}
 
-		BigDecimal amount = detail.getWaivedAmount();
-
 		if (!FinServiceEvent.FEEWAIVERS.equals(fm.getRcdMaintainSts())) {
 			fwh.setNewRecord(true);
 		}
@@ -295,16 +305,15 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 			String feetypecode = StringUtils.trimToEmpty(detail.getFeeTypeCode());
+			BigDecimal amount = fwd.getWaivedAmount();
 			if (feetypecode.equals(StringUtils.trimToEmpty(fwd.getFeeTypeCode()))) {
 				fwd.setLastMntOn(fwh.getLastMntOn());
-				fwd.setCurrWaiverAmount(amount);
 				if (amount.compareTo(BigDecimal.ZERO) == 0) {
 					fwd.setCurrWaiverGST(BigDecimal.ZERO);
 					fwd.setCurrActualWaiver(BigDecimal.ZERO);
 				}
 				prepareGST(fwd, amount, taxPercentages);
 				fwd.setBalanceAmount(fwd.getReceivableAmount().subtract(fwd.getCurrWaiverAmount()));
-				break;
 			}
 		}
 	}
@@ -315,7 +324,6 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		if (fwh.isNewRecord()) {
 			for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 				if (isValidRecord(detail, fwd)) {
-					fwd.setWaivedAmount(detail.getWaivedAmount());
 					fwd.setFeeTypeCode(detail.getFeeTypeCode());
 					fwdList.add(fwd);
 				}

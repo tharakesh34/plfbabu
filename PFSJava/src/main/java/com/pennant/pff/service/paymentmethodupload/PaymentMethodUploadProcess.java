@@ -376,7 +376,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			fd.getFinScheduleData().setFinanceMain(fm);
 			fd.getFinScheduleData().getFinanceMain().setBefImage(fm);
-			fd.setMandate(mandateService.getMandate(fd.getFinScheduleData().getFinanceMain().getMandateID()));
+			fd.setMandate(mandateService.getMandate(changePayment.getMandateId()));
 
 			if (ImplementationConstants.ALLOW_LIEN) {
 				fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
