@@ -32,4 +32,6 @@
 	<include file="change-logs/change-log-6.1.0-audit.xml" />
 	<include file="change-logs/change-log-6.2.0-audit.xml" />
 	<include file="change-logs/change-log-6.3.0-audit.xml" />
+	<include file="change-logs/change-log-6.4.0-audit.xml" />
+
 </databaseChangeLog>

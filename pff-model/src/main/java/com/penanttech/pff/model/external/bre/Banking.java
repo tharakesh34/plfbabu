@@ -12,6 +12,7 @@ public class Banking {
 
 	@JsonCreator
 	public Banking() {
+	    super();
 	}
 
 	@XmlElement(name = "element")

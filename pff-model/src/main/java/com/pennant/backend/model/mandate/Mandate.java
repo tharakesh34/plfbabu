@@ -50,7 +50,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"branchCode", "iFSC", "mICR", "accType", "accNumber", "accHolderName", "jointAccHolderName", "openMandate",
 		"startDate", "expiryDate", "maxLimit", "periodicity", "phoneCountryCode", "phoneAreaCode", "phoneNumber",
 		"status", "active", "totEMIAmount", "barCodeNumber", "amountInWords", "entityCode", "swapIsActive",
-		"partnerBankId", "partnerBankName", "returnStatus" })
+		"partnerBankId", "partnerBankName", "returnStatus", "mandateStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "mandate")
 public class Mandate extends AbstractWorkflowEntity {
@@ -202,11 +202,13 @@ public class Mandate extends AbstractWorkflowEntity {
 	private String strExternalMandate;
 	private String strOpenMandate;
 	private String strSwapIsActive;
+	private String strSecurityMandate;
 	private Date schdDate;
 	private int instalmentNo;
-	private String strSecurityMandate;
 
 	private ErrorDetail error;
+	@XmlElement
+	private Boolean mandateStatus;
 
 	public Mandate() {
 		super();
@@ -275,6 +277,8 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("strExternalMandate");
 		excludeFields.add("strOpenMandate");
 		excludeFields.add("strSwapIsActive");
+		excludeFields.add("mandateStatus");
+		excludeFields.add("strSecurityMandate");
 		excludeFields.add("schdDate");
 		excludeFields.add("instalmentNo");
 		excludeFields.add("strSecurityMandate");
@@ -1093,6 +1097,22 @@ public class Mandate extends AbstractWorkflowEntity {
 		this.strSwapIsActive = strSwapIsActive;
 	}
 
+	public Boolean getMandateStatus() {
+		return mandateStatus;
+	}
+
+	public void setMandateStatus(Boolean mandateStatus) {
+		this.mandateStatus = mandateStatus;
+	}
+
+	public String getStrSecurityMandate() {
+		return strSecurityMandate;
+	}
+
+	public void setStrSecurityMandate(String strSecurityMandate) {
+		this.strSecurityMandate = strSecurityMandate;
+	}
+
 	public Date getSchdDate() {
 		return schdDate;
 	}
@@ -1108,13 +1128,4 @@ public class Mandate extends AbstractWorkflowEntity {
 	public void setInstalmentNo(int instalmentNo) {
 		this.instalmentNo = instalmentNo;
 	}
-
-	public String getStrSecurityMandate() {
-		return strSecurityMandate;
-	}
-
-	public void setStrSecurityMandate(String strSecurityMandate) {
-		this.strSecurityMandate = strSecurityMandate;
-	}
-
 }

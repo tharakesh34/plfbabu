@@ -235,7 +235,7 @@
 									<row>
 										<label id="label_LEI" value="${c:l('label_FinAdvancePaymentsDialog_LEI.value')}" />
 										<hbox>
-											<space spacing="2px"/>
+											<space spacing="2px" id="leiNum"/>
 											<textbox id="leiNumber" maxlength="100"/>
 										</hbox>
 									</row>

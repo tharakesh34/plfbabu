@@ -934,7 +934,62 @@
 	<jaxws:endpoint id="securityUserSoapService" implementor="#securityUserService" address="/securityUserSoap"
 		publish="false" />
 		
+	<!-- Refund API gateway -->
+	<bean id="wsRefundUploadWebServiceImpl" class="com.pennanttech.controller.RefundUploadWebServiceImpl" />
+
+	<!-- rest container -->
+	<jaxrs:server id="refundUploadRestService" address="/refundService" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsRefundUploadWebServiceImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<jaxws:endpoint id="refundUploadSoapService" implementor="#wsRefundUploadWebServiceImpl" address="/refundUploadSoap"
+		publish="false" />
 		
+	<!-- Payment Instructions Services gateway -->
+	<!-- rest container -->
+	<bean id="wsPaymentInstructionWebServiceImpl" class="com.pennanttech.service.impl.PaymentInstructionWebServiceImpl" />
+	<jaxrs:server id="paymentInstructionRestService" address="/paymentInstructionRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsPaymentInstructionWebServiceImpl" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<ref bean="exceptionMapper" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- soap container -->
+	<jaxws:endpoint id="paymentInstructionSOAPService" implementor="#wsPaymentInstructionWebServiceImpl"
+		address="/paymentInstructionSoap" publish="false" />
+	
 	<!-- Finance Enquiry/Loan API gateway -->
 	<bean id="wsFinanceEnquiryService" class="com.pennanttech.service.impl.FinanceEnquiryWebServiceImpl" />
 	<!-- rest container -->

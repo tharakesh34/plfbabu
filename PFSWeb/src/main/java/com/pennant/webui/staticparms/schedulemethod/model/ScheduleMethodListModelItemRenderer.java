@@ -44,7 +44,7 @@ public class ScheduleMethodListModelItemRenderer implements ListitemRenderer<Sch
 	private static final long serialVersionUID = -1371764366423030379L;
 
 	public ScheduleMethodListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

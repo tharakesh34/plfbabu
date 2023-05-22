@@ -9,9 +9,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 
 public class LegalVerificationListModelItemRender implements ListitemRenderer<LegalVerification>, Serializable {
@@ -44,7 +44,7 @@ public class LegalVerificationListModelItemRender implements ListitemRenderer<Le
 		lc = new Listcell(
 				PennantStaticListUtil.getlabelDesc(value, PennantStaticListUtil.getLegalVerificationCategories()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(lv.getCreatedOn()));
+		lc = new Listcell(DateUtil.formatToLongDate(lv.getCreatedOn()));
 		lc.setParent(item);
 		lc = new Listcell(lv.getRecordStatus());
 		lc.setParent(item);

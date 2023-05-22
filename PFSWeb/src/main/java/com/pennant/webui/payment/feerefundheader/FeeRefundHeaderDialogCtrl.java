@@ -69,7 +69,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -87,7 +86,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.TaxAmountSplit;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.feerefund.FeeRefundDetailService;
 import com.pennant.backend.service.feerefund.FeeRefundHeaderService;
@@ -99,9 +97,10 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.feerefund.FeeRefundUtil;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
@@ -416,7 +415,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 		this.lbl_LoanType.setValue(this.fm.getFinType() + "-" + this.fm.getLovDescFinTypeName());
 		this.lbl_CustCIF.setValue(this.fm.getLovDescCustCIF() + "-" + this.fm.getLovDescCustShrtName());
 		this.lbl_Currency.setValue(this.fm.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.fm.getFinCcy()));
-		this.lbl_startDate.setValue(DateUtility.format(this.fm.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_startDate.setValue(DateUtil.format(this.fm.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_MaturityDate.setValue(DateUtil.format(this.fm.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 		this.lbl_ODAgainstLoan.setValue(CurrencyUtil.format(frh.getOverDueAgainstLoan()));
 		this.lbl_ODAgainstCustomer.setValue(CurrencyUtil.format(frh.getOverDueAgainstCustomer()));
@@ -522,7 +521,7 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		}
 		if (!onLoadProcess) {
-			long accountsetId = AccountingConfigCache.getAccountSetID(this.fm.getFinType(), AccountingEvent.PAYMTINS,
+			Long accountsetId = AccountingEngine.getAccountSetID(this.fm, AccountingEvent.PAYMTINS,
 					FinanceConstants.MODULEID_FINTYPE);
 			final Map<String, Object> map = new HashMap<>();
 			map.put("feeRefundInstruction", fri);
@@ -1065,15 +1064,13 @@ public class FeeRefundHeaderDialogCtrl extends GFCBaseCtrl<FeeRefundHeader> {
 
 		List<FeeRefundDetail> feeRefundDetailsList = this.feeRefundHeader.getFeeRefundDetailList();
 		List<Long> feeTypeCodes = new ArrayList<>();
-		List<FeeType> feeTypesList = new ArrayList<>();
 
 		for (FeeRefundDetail frd : feeRefundDetailsList) {
 			feeTypeCodes.add(frd.getReceivableFeeTypeID());
 		}
 
-		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
-			feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeCodes, "");
-			aeEvent.setFeesList(feeTypesList);
+		if (!feeTypeCodes.isEmpty()) {
+			aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingById(feeTypeCodes));
 		}
 
 		logger.debug(Literal.LEAVING);

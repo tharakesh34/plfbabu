@@ -15,7 +15,7 @@ public class AvailCollateral {
 	private String collateralDesc = "";
 
 	public AvailCollateral() {
-
+	    super();
 	}
 
 	// ******************************************************//

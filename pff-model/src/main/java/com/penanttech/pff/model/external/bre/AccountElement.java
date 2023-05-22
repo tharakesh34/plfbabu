@@ -70,6 +70,7 @@ public class AccountElement implements Serializable {
 
 	@JsonCreator
 	public AccountElement() {
+	    super();
 	}
 
 	public String getBureauTenure() {

@@ -43,7 +43,7 @@ public class AcademicListModelItemRenderer implements ListitemRenderer<Academic>
 	private static final long serialVersionUID = 3736186724610414895L;
 
 	public AcademicListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

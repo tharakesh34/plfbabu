@@ -55,7 +55,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -73,6 +72,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
@@ -323,11 +323,11 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		try {
 			aCustomer.setCustSuspDate(this.custSuspDate.getValue());
 			Date appStartDate = SysParamUtil.getAppDate();
-			if (DateUtility.compare(this.custSuspDate.getValue(), appStartDate) > 0) {
+			if (DateUtil.compare(this.custSuspDate.getValue(), appStartDate) > 0) {
 				throw new WrongValueException(this.custSuspDate,
 						Labels.getLabel("DATE_ALLOWED_MAXDATE_EQUAL",
-								new String[] { DateUtility.formatToLongDate(this.custSuspDate.getValue()),
-										DateUtility.formatToLongDate(appStartDate) }));
+								new String[] { DateUtil.formatToLongDate(this.custSuspDate.getValue()),
+										DateUtil.formatToLongDate(appStartDate) }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -835,8 +835,8 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 
 						// Save Customer Suspense movements
 						aCustomer.setCustSuspMvtType("N");
-						aCustomer.setCustSuspAprDate(DateUtility.getTimestamp(new Date()));
-						aCustomer.setCustSuspEffDate(DateUtility.getTimestamp(new Date()));
+						aCustomer.setCustSuspAprDate(DateUtil.getTimestamp(new Date()));
+						aCustomer.setCustSuspEffDate(DateUtil.getTimestamp(new Date()));
 						getCustomerService().saveCustSuspMovements(aCustomer);
 						deleteNotes = true;
 					}

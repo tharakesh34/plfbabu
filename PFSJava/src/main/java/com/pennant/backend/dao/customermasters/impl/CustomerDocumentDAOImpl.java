@@ -36,6 +36,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.ExternalDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
@@ -586,7 +587,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 
 	@Override
 	public List<String> getDuplicateDocByTitle(String docCategory, String docNumber) {
-		StringBuffer sql = new StringBuffer("Select c.CustCIF");
+		StringBuilder sql = new StringBuilder("Select c.CustCIF");
 		sql.append(" From Customers c");
 		sql.append(" Inner Join CustomerDocuments_View cd on cd.CustID = c.CustID");
 		sql.append(" Where cd.CustDocCategory = ? and cd.CustDocTitle = ?");
@@ -733,5 +734,27 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, custId, docType) > 0;
+	}
+
+	@Override
+	public List<Customer> getCustIdByDocTitle(String custDocTitle) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" C.CustID, C.CustCIF, C.CustShrtName");
+		sql.append(" From Customers C");
+		sql.append(" inner join CustomerDocuments_View CD on CD.CustID = C.CustID");
+		sql.append(" Where CustDocTitle = ? and CustDocCategory = ?");
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, custDocTitle);
+			ps.setString(2, "03");
+		}, (rs, rowNum) -> {
+			Customer customer = new Customer();
+
+			customer.setCustID(rs.getLong("CustID"));
+			customer.setCustCIF(rs.getString("CustCIF"));
+			customer.setCustShrtName(rs.getString("CustShrtName"));
+
+			return customer;
+		});
 	}
 }

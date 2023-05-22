@@ -46,7 +46,7 @@ public class GuarantorDetailListModelItemRenderer implements ListitemRenderer<Gu
 	private static final long serialVersionUID = 1L;
 
 	public GuarantorDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

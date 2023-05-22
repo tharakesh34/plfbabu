@@ -84,7 +84,7 @@ import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -173,7 +173,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	public long saveFinExpenseMovements(FinExpenseMovements expense) {
 		FinanceMain fm = expense.getFinanceMain();
 
-		long accountingID = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.EXPENSE,
+		Long accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.EXPENSE,
 				FinanceConstants.MODULEID_FINTYPE);
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.EXPENSE);
@@ -185,7 +185,11 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setEntityCode(fm.getEntityCode());
 		aeEvent.setFinType(fm.getFinType());
-		aeEvent.getAcSetIDList().add(accountingID);
+
+		if (accountingID != null && accountingID > 0) {
+			aeEvent.getAcSetIDList().add(accountingID);
+		}
+
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

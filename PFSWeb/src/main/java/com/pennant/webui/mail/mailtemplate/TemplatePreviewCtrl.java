@@ -30,12 +30,12 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -241,16 +241,15 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 								if (db.getFormat().equals(PennantConstants.dateTimeFormat)) {
 									method = data.getClass().getDeclaredMethod("set" + getFieldValue(db.getId()),
 											Timestamp.class);
-									ts = new Timestamp(DateUtility
-											.parse(DateUtility.format(db.getValue(), PennantConstants.DBDateTimeFormat),
+									ts = new Timestamp(DateUtil
+											.parse(DateUtil.format(db.getValue(), PennantConstants.DBDateTimeFormat),
 													PennantConstants.DBDateTimeFormat)
 											.getTime());
 									method.invoke(data, ts);
 								} else {
 									method = data.getClass().getDeclaredMethod("set" + getFieldValue(db.getId()),
 											Date.class);
-									date = DateUtility.getDBDate(
-											DateUtility.format(db.getValue(), PennantConstants.DBDateFormat));
+									date = DateUtil.getDatePart(db.getValue());
 									method.invoke(data, date);
 								}
 

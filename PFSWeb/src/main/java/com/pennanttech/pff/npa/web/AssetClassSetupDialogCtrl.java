@@ -23,6 +23,7 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Space;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -31,7 +32,6 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -54,8 +54,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	protected Window window_AssetClassSetupDialog;
 	protected ExtendedCombobox entityCode;
-	protected Space space_RpyHierarchy;
-	protected Uppercasebox rpyHierarchy;
+	protected Textbox code;
+	protected Textbox description;
 	protected Button btnNew_AssetClassSetupDialog;
 
 	protected Listbox listBoxAssetClassSetup;
@@ -143,8 +143,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		this.entityCode.setValueColumn("entityCode");
 		this.entityCode.setDescColumn("entityDesc");
 		this.entityCode.setValidateColumns(new String[] { "entityCode" });
-
-		this.rpyHierarchy.setMaxlength(20);
+		this.code.setMaxlength(10);
+		this.description.setMaxlength(50);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -297,8 +297,10 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	public void doWriteBeanToComponents(AssetClassSetupHeader assetClassSetupHeader) {
 		logger.debug(Literal.ENTERING);
 
+		this.code.setValue(assetClassSetupHeader.getCode());
+		this.description.setValue(assetClassSetupHeader.getDescription());
+
 		this.entityCode.setValue(assetClassSetupHeader.getEntityCode());
-		this.rpyHierarchy.setValue(assetClassSetupHeader.getRepayHierarchy());
 		this.recordStatus.setValue(assetClassSetupHeader.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -322,7 +324,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		}
 
 		try {
-			assetClassSetupHeader.setRepayHierarchy(this.rpyHierarchy.getValue().toUpperCase());
+			assetClassSetupHeader.setCode(this.code.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			assetClassSetupHeader.setDescription(this.description.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -390,10 +398,15 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 					new PTStringValidator(Labels.getLabel("label_AssetClassSetupDialog_Entity.value"), null, true));
 		}
 
-		if (!this.rpyHierarchy.isReadonly()) {
-			this.rpyHierarchy.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_RepayHierarchy.value"),
-							PennantRegularExpressions.REGEX_REPAY_HIERARCHY, true));
+		if (!this.code.isReadonly()) {
+			this.code.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Code.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE, true));
+		}
+		if (!this.description.isReadonly()) {
+			this.description.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_AssetClassificationHeaderDialog_Description.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_FSLASH_SPACE, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -463,6 +476,25 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		listcell.appendChild(hbox);
 		listitem.appendChild(listcell);
 
+		Intbox npaAge = new Intbox();
+		npaAge.setWidth("80px");
+		if (acsd.getNpaAge() != 0) {
+			npaAge.setValue(acsd.getNpaAge());
+		} else {
+			npaAge.setValue(0);
+		}
+		npaAge.setId("npaAge".concat(String.valueOf(acsd.getKeyvalue())));
+		readOnlyComponent(true, npaAge);
+		hbox = new Hbox();
+		hbox.appendChild(npaAge);
+		listcell = new Listcell();
+		listcell.appendChild(hbox);
+		listcell.setParent(listitem);
+
+		listitem.setAttribute("data", acsd);
+
+		this.listBoxAssetClassSetup.appendChild(listitem);
+
 		listcell = new Listcell();
 		hbox = new Hbox();
 		ExtendedCombobox assestClassCode = new ExtendedCombobox();
@@ -500,7 +532,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		listcell = new Listcell();
 		hbox = new Hbox();
 		ExtendedCombobox assetSubClassCode = new ExtendedCombobox();
-		assetSubClassCode.setWidth("100px");
+		assetSubClassCode.setWidth("170px");
 		assetSubClassCode.setModuleName("AssetSubClassCode");
 		assetSubClassCode.setValueColumn("Code");
 		assetSubClassCode.setDescColumn("Description");
@@ -541,35 +573,16 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		npa_CheckBox.setWidth("50px");
 		lc_NPACheckBox.appendChild(npa_CheckBox);
 		listitem.appendChild(lc_NPACheckBox);
-
-		Intbox npaAge = new Intbox();
-		npaAge.setWidth("80px");
-		if (acsd.getNpaAge() != 0) {
-			npaAge.setValue(acsd.getNpaAge());
-		} else {
-			npaAge.setValue(0);
-		}
-		npaAge.setId("npaAge".concat(String.valueOf(acsd.getKeyvalue())));
-		readOnlyComponent(true, npaAge);
-		hbox = new Hbox();
-		hbox.appendChild(npaAge);
-		listcell = new Listcell();
-		listcell.appendChild(hbox);
-		listcell.setParent(listitem);
-
-		listitem.setAttribute("data", acsd);
-
-		this.listBoxAssetClassSetup.appendChild(listitem);
 	}
 
 	public void onChangeAssetClassCode(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
-		Hbox hbox = (Hbox) getComponent(listitem, 2);
+		Hbox hbox = (Hbox) getComponent(listitem, 3);
 		ExtendedCombobox assestClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assestClassCode);
 		AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
 
-		hbox = (Hbox) getComponent(listitem, 3);
+		hbox = (Hbox) getComponent(listitem, 4);
 		ExtendedCombobox assetSubClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assetSubClassCode);
 
@@ -585,13 +598,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	public void onChangeAssetSubClassCode(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
-		Hbox hbox = (Hbox) getComponent(listitem, 2);
+		Hbox hbox = (Hbox) getComponent(listitem, 3);
 		ExtendedCombobox assestClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assestClassCode);
 
 		AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
 
-		hbox = (Hbox) getComponent(listitem, 3);
+		hbox = (Hbox) getComponent(listitem, 4);
 		ExtendedCombobox assetSubClassCode = (ExtendedCombobox) hbox.getLastChild();
 		Clients.clearWrongValue(assetSubClassCode);
 
@@ -617,7 +630,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 	private boolean validateSubClassCode(AssetSubClassCode ascc, int keyValue) {
 		for (Listitem component : listBoxAssetClassSetup.getItems()) {
-			Hbox hbox = (Hbox) getComponent(component, 3);
+			Hbox hbox = (Hbox) getComponent(component, 4);
 			ExtendedCombobox extendedCombobox = (ExtendedCombobox) hbox.getLastChild();
 			Clients.clearWrongValue(extendedCombobox);
 			int key = Integer.parseInt(extendedCombobox.getId().replaceAll("assetSubClassCode", ""));
@@ -656,7 +669,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	public void onChecknpaCheckbox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		Listitem listitem = (Listitem) event.getData();
-		Checkbox checkbox = (Checkbox) getComponent(listitem, 4);
+		Checkbox checkbox = (Checkbox) getComponent(listitem, 5);
 		int keyValue = Integer.parseInt(checkbox.getId().replaceAll("NPACheckBox_", ""));
 		if (validateNPAStage(keyValue, checkbox.isChecked())) {
 			checkbox.setChecked(true);
@@ -670,7 +683,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 			for (Listitem component : listBoxAssetClassSetup.getItems()) {
 				Listitem item = (Listitem) component;
-				Checkbox itemCheckbox = (Checkbox) getComponent(item, 4);
+				Checkbox itemCheckbox = (Checkbox) getComponent(item, 5);
 				int id = Integer.parseInt(itemCheckbox.getId().replaceAll("NPACheckBox_", ""));
 				if (keyValue >= id) {
 					continue;
@@ -680,13 +693,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 				setNPAAging(item, prvDPDMax);
 			}
 		} else {
-			Intbox npaAge = (Intbox) getComponent(listitem, 5).getLastChild();
+			Intbox npaAge = (Intbox) getComponent(listitem, 2).getLastChild();
 			npaAge.setValue(0);
 			Intbox npaDPDMax = (Intbox) getComponent(listitem, 1).getLastChild();
 			int prvDPDMax = npaDPDMax.getValue();
 			for (Listitem component : listBoxAssetClassSetup.getItems()) {
 				Listitem item = (Listitem) component;
-				Checkbox itemCheckbox = (Checkbox) getComponent(item, 4);
+				Checkbox itemCheckbox = (Checkbox) getComponent(item, 5);
 				int id = Integer.parseInt(itemCheckbox.getId().replaceAll("NPACheckBox_", ""));
 				if (keyValue > id) {
 					continue;
@@ -708,7 +721,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		}
 		for (Listitem component : listBoxAssetClassSetup.getItems()) {
 			Listitem item = (Listitem) component;
-			Checkbox checkbox = (Checkbox) getComponent(item, 4);
+			Checkbox checkbox = (Checkbox) getComponent(item, 5);
 			int id = Integer.parseInt(checkbox.getId().replaceAll("NPACheckBox_", ""));
 			if (keyValue - 1 == id) {
 				if (checkbox.isChecked()) {
@@ -723,7 +736,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	private void setNPAAging(Listitem listitem, int prvDPDMax) {
 		Intbox npaDPDMax = (Intbox) getComponent(listitem, 1).getLastChild();
 		int curDPDMax = npaDPDMax.getValue();
-		Intbox npaAge = (Intbox) getComponent(listitem, 5).getLastChild();
+		Intbox npaAge = (Intbox) getComponent(listitem, 2).getLastChild();
 		npaAge.setValue(curDPDMax - prvDPDMax);
 	}
 
@@ -749,6 +762,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	 */
 	private void doRemoveValidation() {
 		this.entityCode.setConstraint("");
+		this.code.setConstraint("");
+		this.description.setConstraint("");
 	}
 
 	/**
@@ -757,6 +772,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 	@Override
 	protected void doClearMessage() {
 		this.entityCode.setErrorMessage("");
+		this.code.setErrorMessage("");
+		this.description.setErrorMessage("");
 	}
 
 	/**
@@ -819,12 +836,14 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		if (this.assetClassSetupHeader.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			readOnlyComponent(false, this.entityCode);
+			readOnlyComponent(false, this.code);
+			readOnlyComponent(false, this.description);
 		} else {
 			this.btnCancel.setVisible(true);
 			readOnlyComponent(true, this.entityCode);
+			readOnlyComponent(true, this.code);
+			readOnlyComponent(true, this.description);
 		}
-
-		this.rpyHierarchy.setDisabled(isReadOnly("AssetClassSetupDialog_RepayHierarchy"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -850,8 +869,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.entityCode);
-		this.rpyHierarchy.setDisabled(true);
-		this.space_RpyHierarchy.setSclass("");
+		readOnlyComponent(true, this.code);
+		readOnlyComponent(true, this.description);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -864,16 +883,13 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$rpyHierarchy(Event event) {
-		this.rpyHierarchy.setValue(this.rpyHierarchy.getValue().toUpperCase());
-	}
-
 	/**
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
 		this.entityCode.setValue("");
-		this.rpyHierarchy.setValue("");
+		this.code.setValue("");
+		this.description.setValue("");
 	}
 
 	/**
@@ -904,7 +920,11 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			doSetValidation();
 			// fill the Promotion object with the components data
 			doWriteComponentsToBean(assetClassSetupHeader);
+		}
 
+		if (this.listBoxAssetClassSetup.getItems().isEmpty()) {
+			MessageUtil.showError("Asset Classification Setup Details can't be blank ");
+			return;
 		}
 
 		isNew = assetClassSetupHeader.isNewRecord();
@@ -1142,6 +1162,14 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 
 			try {
 				hbox = (Hbox) getComponent(listitem, 2);
+				Intbox npaAge = (Intbox) hbox.getFirstChild();
+				assetClassSetupDetail.setNpaAge(npaAge.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				hbox = (Hbox) getComponent(listitem, 3);
 				ExtendedCombobox assestClassCode = (ExtendedCombobox) hbox.getLastChild();
 				AssetClassCode object = (AssetClassCode) assestClassCode.getObject();
 				Clients.clearWrongValue(assestClassCode);
@@ -1156,7 +1184,7 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			}
 
 			try {
-				hbox = (Hbox) getComponent(listitem, 3);
+				hbox = (Hbox) getComponent(listitem, 4);
 				ExtendedCombobox assestClassSubCode = (ExtendedCombobox) hbox.getLastChild();
 				AssetSubClassCode object = (AssetSubClassCode) assestClassSubCode.getObject();
 				Clients.clearWrongValue(assestClassSubCode);
@@ -1171,16 +1199,8 @@ public class AssetClassSetupDialogCtrl extends GFCBaseCtrl<AssetClassSetupHeader
 			}
 
 			try {
-				Checkbox npaStage = (Checkbox) getComponent(listitem, 4);
+				Checkbox npaStage = (Checkbox) getComponent(listitem, 5);
 				assetClassSetupDetail.setNpaStage(npaStage.isChecked());
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				hbox = (Hbox) getComponent(listitem, 5);
-				Intbox npaAge = (Intbox) hbox.getFirstChild();
-				assetClassSetupDetail.setNpaAge(npaAge.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

@@ -44,13 +44,13 @@ import org.springframework.batch.core.job.flow.FlowExecutionStatus;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.eod.EODConfigDAO;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class EndOfMonthDecider implements JobExecutionDecider {
@@ -99,7 +99,7 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 			boolean monthEnd = false;
 
 			if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_MTH_END) {
-				if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
+				if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0) {
 					monthEnd = true;
 				}
 			} else if (amzPostingEvent == AccountConstants.AMZ_POSTING_APP_EXT_MTH_END) {

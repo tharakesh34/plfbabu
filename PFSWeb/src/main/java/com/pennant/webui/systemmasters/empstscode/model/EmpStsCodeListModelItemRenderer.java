@@ -45,7 +45,7 @@ public class EmpStsCodeListModelItemRenderer implements ListitemRenderer<EmpStsC
 	private static final long serialVersionUID = 6423359151100839127L;
 
 	public EmpStsCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

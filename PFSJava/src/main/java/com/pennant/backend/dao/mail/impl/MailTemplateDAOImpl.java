@@ -76,7 +76,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				MailTemplate t = new MailTemplate();
 
 				t.setTemplateId(rs.getLong("TemplateId"));
@@ -107,7 +107,7 @@ public class MailTemplateDAOImpl extends SequenceDao<MailTemplate> implements Ma
 				t.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return t;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record are not found in Templates{} for the TemplateId >> {}", type, id);
 		}

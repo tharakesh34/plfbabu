@@ -21,7 +21,7 @@ public class CovenantAlertsModelItemRenderer implements ListitemRenderer<Covenan
 	private transient List<Property> listFrequency = AppStaticList.getFrequencies();
 
 	public CovenantAlertsModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

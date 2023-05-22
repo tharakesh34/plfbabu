@@ -63,7 +63,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -104,6 +103,7 @@ import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -3237,7 +3237,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 		try {
 			if (this.auditedDate.getValue() != null) {
-				creditReviewMainCtgDetails.setAuditedDate(DateUtility.formatToShortDate(this.auditedDate.getValue()));
+				creditReviewMainCtgDetails.setAuditedDate(DateUtil.formatToShortDate(this.auditedDate.getValue()));
 			} else {
 				throw new WrongValueException(this.auditedDate,
 						Labels.getLabel("FIELD_NO_EMPTY",

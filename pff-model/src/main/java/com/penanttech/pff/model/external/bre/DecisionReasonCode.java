@@ -13,6 +13,7 @@ public class DecisionReasonCode implements Serializable {
 
 	@JsonCreator
 	public DecisionReasonCode() {
+	    super();
 	}
 
 	ArrayList<String> item;

@@ -114,8 +114,7 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.nPAProvisionHeader.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.nPAProvisionHeader.getId());
 	}
 
 	/**
@@ -1038,92 +1037,6 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Make mandatory , un-mandatory and defaults based on check box setting.
-	 * 
-	 * @param isChecked
-	 * @param sequence
-	 */
-	private void setProvisionDetailsValues(int selSequence, boolean isChecked) {
-		logger.debug(Literal.ENTERING);
-
-		if (this.listBoxProvisionDeatils != null && this.listBoxProvisionDeatils.getItems().size() > 0) {
-
-			for (int i = 0; i < listBoxProvisionDeatils.getItems().size(); i++) {
-
-				Listitem item = listBoxProvisionDeatils.getItems().get(i);
-				int stageOrder = Integer.parseInt(item.getId().replaceAll("listitem_", ""));
-
-				Checkbox nPAActive = (Checkbox) listBoxProvisionDeatils.getFellowIfAny("NPACheckBox_" + stageOrder);
-				int sequence = (int) nPAActive.getAttribute("Sequence");
-
-				if (isChecked) {
-					if (sequence < selSequence) {
-						setProvisionDetailDefaults(item, stageOrder, false);
-					} else {
-						setProvisionDetailDefaults(item, stageOrder, true);
-					}
-				} else {
-					setProvisionDetailDefaults(item, stageOrder, false);
-				}
-
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Setting defaults based NPA checking
-	 * 
-	 * @param item
-	 * @param stageOrder
-	 * @param b
-	 */
-	private void setProvisionDetailDefaults(Listitem item, int stageOrder, boolean mandatory) {
-		logger.debug(Literal.ENTERING);
-
-		Checkbox npaCheckbox = (Checkbox) listBoxProvisionDeatils.getFellowIfAny("NPACheckBox_" + stageOrder);
-		Combobox npaPymn = (Combobox) listBoxProvisionDeatils.getFellowIfAny("NPAPymntApprtn_" + stageOrder);
-		Intbox dpdDays = (Intbox) listBoxProvisionDeatils.getFellowIfAny("DPDDays_" + stageOrder);
-		Decimalbox intSecPerc = (Decimalbox) listBoxProvisionDeatils.getFellowIfAny("IntSecPercDec_" + stageOrder);
-		Decimalbox intUnSecPerc = (Decimalbox) listBoxProvisionDeatils.getFellowIfAny("IntUnSecPercDec_" + stageOrder);
-		Decimalbox regSecPerc = (Decimalbox) listBoxProvisionDeatils.getFellowIfAny("RegSecPercDec_" + stageOrder);
-		Decimalbox regUnSecPerc = (Decimalbox) listBoxProvisionDeatils.getFellowIfAny("RegUnSecPercDec_" + stageOrder);
-
-		Space dpdDaysSpace = (Space) listBoxProvisionDeatils.getFellowIfAny("Space_DPDDays_" + stageOrder);
-		Space npaPymnSpace = (Space) listBoxProvisionDeatils.getFellowIfAny("Space_NPAPymntApprtn_" + stageOrder);
-		Space intSecPercSpace = (Space) listBoxProvisionDeatils.getFellowIfAny("Space_IntSecPercDec_" + stageOrder);
-		Space intUnSecPercSpace = (Space) listBoxProvisionDeatils.getFellowIfAny("Space_IntUnSecPercDec_" + stageOrder);
-		Space regSecPercSpace = (Space) listBoxProvisionDeatils.getFellowIfAny("Space_RegSecPercDec_" + stageOrder);
-		Space regUnSecPercSpace = (Space) listBoxProvisionDeatils.getFellowIfAny("Space_RegUnSecPercDec_" + stageOrder);
-
-		if (mandatory) {
-			npaCheckbox.setChecked(true);
-			npaPymnSpace.setSclass(PennantConstants.mandateSclass);
-			dpdDaysSpace.setSclass(PennantConstants.mandateSclass);
-			intSecPercSpace.setSclass(PennantConstants.mandateSclass);
-			intUnSecPercSpace.setSclass(PennantConstants.mandateSclass);
-			regSecPercSpace.setSclass(PennantConstants.mandateSclass);
-			regUnSecPercSpace.setSclass(PennantConstants.mandateSclass);
-		} else {
-			npaCheckbox.setChecked(false);
-			dpdDays.setValue(0);
-			fillComboBox(npaPymn, "", PennantStaticListUtil.getNPAPaymentTypes(), "");
-			intSecPerc.setValue(BigDecimal.ZERO);
-			intUnSecPerc.setValue(BigDecimal.ZERO);
-			regSecPerc.setValue(BigDecimal.ZERO);
-			regUnSecPerc.setValue(BigDecimal.ZERO);
-
-			npaPymnSpace.setSclass("");
-			dpdDaysSpace.setSclass("");
-			intSecPercSpace.setSclass("");
-			intUnSecPercSpace.setSclass("");
-			regSecPercSpace.setSclass("");
-			regUnSecPercSpace.setSclass("");
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	// Copy Button
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -1177,16 +1090,6 @@ public class NPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvisionHeader
 		}
 		space.setParent(hbox);
 		hbox.appendChild(component);
-	}
-
-	/**
-	 * Getting decimal value
-	 * 
-	 * @param decimalbox
-	 * @return
-	 */
-	private BigDecimal getDecimalValue(Decimalbox decimalbox) {
-		return decimalbox.getValue() == null ? BigDecimal.ZERO : decimalbox.getValue();
 	}
 
 	/**

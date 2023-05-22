@@ -43,6 +43,7 @@ import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Model class for the <b>FinanceType table</b>.<br>
@@ -248,6 +249,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean schdOnPMTCal;
 	private Long regProvRule;
 	private Long intProvRule;
+	private long assetClassSetup;
+	private String assetClassSetupCode;
+	private String assetClassSetupDesc;
 
 	private boolean overdraftTxnChrgReq;
 	private long overdraftTxnChrgFeeType = Long.MIN_VALUE;
@@ -260,7 +264,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	// Loan Purpose
 	private String allowedLoanPurposes;
 	private String specificLoanPurposes;
-
+	private boolean allowCancelFin;
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -357,6 +361,12 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean allowAutoRefund;
 	private BigDecimal maxAutoRefund = BigDecimal.ZERO;
 	private BigDecimal minAutoRefund = BigDecimal.ZERO;
+	private String npaRpyHierarchy;
+	private BigDecimal odMinAmount = BigDecimal.ZERO;
+	private String writeOffRepayHry;
+	private String matureRepayHry;
+	private String presentmentRepayHry;
+	private RequestSource requestSource = RequestSource.UI;
 
 	public FinanceType() {
 		super();
@@ -552,6 +562,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setDefaultOCR(this.defaultOCR);
 		entity.setAllowedLoanPurposes(this.allowedLoanPurposes);
 		entity.setSpecificLoanPurposes(this.specificLoanPurposes);
+		entity.setAllowCancelFin(this.allowCancelFin);
 		entity.setUserDetails(this.userDetails);
 		this.auditDetailMap.entrySet().stream().forEach(e -> {
 			List<AuditDetail> newList = new ArrayList<AuditDetail>();
@@ -644,6 +655,13 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setAllowAutoRefund(this.allowAutoRefund);
 		entity.setMaxAutoRefund(this.maxAutoRefund);
 		entity.setMinAutoRefund(this.minAutoRefund);
+		entity.setNpaRpyHierarchy(this.npaRpyHierarchy);
+		entity.setAssetClassSetup(this.assetClassSetup);
+		entity.setAssetClassSetupCode(this.assetClassSetupCode);
+		entity.setAssetClassSetupDesc(this.assetClassSetupDesc);
+		entity.setWriteOffRepayHry(this.writeOffRepayHry);
+		entity.setPresentmentRepayHry(this.presentmentRepayHry);
+		entity.setMatureRepayHry(this.matureRepayHry);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -655,6 +673,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setVersion(super.getVersion());
 		entity.setLastMntBy(super.getLastMntBy());
 		entity.setLastMntOn(super.getLastMntOn());
+		entity.setOdMinAmount(this.odMinAmount);
+		entity.setRequestSource(this.requestSource);
+
 		return entity;
 	}
 
@@ -701,6 +722,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("alwVan");
 		excludeFields.add("vanAllocationMethod");
 		excludeFields.add("feetype");
+		excludeFields.add("assetClassSetupCode");
+		excludeFields.add("assetClassSetupDesc");
+		excludeFields.add("requestSource");
 		return excludeFields;
 	}
 
@@ -2851,4 +2875,85 @@ public class FinanceType extends AbstractWorkflowEntity {
 	public void setMinAutoRefund(BigDecimal minAutoRefund) {
 		this.minAutoRefund = minAutoRefund;
 	}
+
+	public String getNpaRpyHierarchy() {
+		return npaRpyHierarchy;
+	}
+
+	public void setNpaRpyHierarchy(String npaRpyHierarchy) {
+		this.npaRpyHierarchy = npaRpyHierarchy;
+	}
+
+	public long getAssetClassSetup() {
+		return assetClassSetup;
+	}
+
+	public void setAssetClassSetup(long assetClassSetup) {
+		this.assetClassSetup = assetClassSetup;
+	}
+
+	public String getAssetClassSetupCode() {
+		return assetClassSetupCode;
+	}
+
+	public void setAssetClassSetupCode(String assetClassSetupCode) {
+		this.assetClassSetupCode = assetClassSetupCode;
+	}
+
+	public String getAssetClassSetupDesc() {
+		return assetClassSetupDesc;
+	}
+
+	public void setAssetClassSetupDesc(String assetClassSetupDesc) {
+		this.assetClassSetupDesc = assetClassSetupDesc;
+	}
+
+	public BigDecimal getOdMinAmount() {
+		return odMinAmount;
+	}
+
+	public void setOdMinAmount(BigDecimal odMinAmount) {
+		this.odMinAmount = odMinAmount;
+	}
+
+	public boolean isAllowCancelFin() {
+		return allowCancelFin;
+	}
+
+	public void setAllowCancelFin(boolean allowCancelFin) {
+		this.allowCancelFin = allowCancelFin;
+	}
+
+	public String getWriteOffRepayHry() {
+		return writeOffRepayHry;
+	}
+
+	public void setWriteOffRepayHry(String writeOffRepayHry) {
+		this.writeOffRepayHry = writeOffRepayHry;
+	}
+
+	public String getMatureRepayHry() {
+		return matureRepayHry;
+	}
+
+	public void setMatureRepayHry(String matureRepayHry) {
+		this.matureRepayHry = matureRepayHry;
+	}
+
+	public String getPresentmentRepayHry() {
+		return presentmentRepayHry;
+	}
+
+	public void setPresentmentRepayHry(String presentmentRepayHry) {
+		this.presentmentRepayHry = presentmentRepayHry;
+	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
 }

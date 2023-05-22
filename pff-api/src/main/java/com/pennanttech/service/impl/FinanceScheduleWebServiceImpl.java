@@ -56,6 +56,7 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 		FinScheduleData newSchdData = null;
 
 		validationUtility.validate(schdData, SaveValidationGroup.class);
+		financeDataValidation.doBasicMandatoryValidations(fd);
 
 		try {
 			FinanceMain fm = schdData.getFinanceMain();
@@ -223,6 +224,7 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(schdData, SaveValidationGroup.class);
+		financeDataValidation.doBasicMandatoryValidations(fd);
 
 		try {
 			// for logging purpose

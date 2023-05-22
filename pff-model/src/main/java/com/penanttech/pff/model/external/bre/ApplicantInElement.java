@@ -44,7 +44,7 @@ public class ApplicantInElement {
 
 	@JsonCreator
 	public ApplicantInElement() {
-
+	    super();
 	}
 
 	public ApplicantDetails getApplicantDetails() {

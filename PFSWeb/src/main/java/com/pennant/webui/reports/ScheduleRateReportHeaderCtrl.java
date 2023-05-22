@@ -49,7 +49,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -63,6 +62,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -290,10 +290,10 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
 			prvSchd = scheduleDetails.get(i - 1);
-			if (DateUtility.compare(curSchd.getSchDate(), startDate) < 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), startDate) < 0) {
 				continue;
 			}
-			if ((DateUtility.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
+			if ((DateUtil.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
 				break;
 			}
 
@@ -305,7 +305,7 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 			Date toDate = null;
 
 			boolean startDateisFrqDate = false;
-			if (DateUtility.compare(prvSchd.getSchDate(), startDate) < 0) {
+			if (DateUtil.compare(prvSchd.getSchDate(), startDate) < 0) {
 				fromDate = startDate;
 			} else {
 				fromDate = prvSchd.getSchDate();
@@ -313,20 +313,20 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 			}
 
 			boolean endDateisFrqDate = false;
-			if (DateUtility.compare(curSchd.getSchDate(), endDate) > 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), endDate) > 0) {
 				toDate = endDate;
 				endDateCompleted = true;
 			} else {
 				toDate = curSchd.getSchDate();
 				endDateisFrqDate = true;
-				if (DateUtility.compare(curSchd.getSchDate(), endDate) == 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), endDate) == 0) {
 					endDateCompleted = true;
 				}
 			}
 
-			rateReport.setStartDate(DateUtility.formatToLongDate(fromDate));
-			rateReport.setEndDate(DateUtility.formatToLongDate(toDate));
-			rateReport.setDays(String.valueOf(DateUtility.getDaysBetween(fromDate, toDate)));
+			rateReport.setStartDate(DateUtil.formatToLongDate(fromDate));
+			rateReport.setEndDate(DateUtil.formatToLongDate(toDate));
+			rateReport.setDays(String.valueOf(DateUtil.getDaysBetween(fromDate, toDate)));
 			rateReport.setRate(PennantApplicationUtil.formatRate(prvSchd.getCalculatedRate().doubleValue(), 9));
 
 			if (startDateisFrqDate && endDateisFrqDate) {
@@ -357,7 +357,7 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}

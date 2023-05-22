@@ -9,7 +9,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -17,6 +16,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
@@ -134,7 +134,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 		this.schdl_odYears.setValue(String.valueOf(financeMain.getNumberOfTerms() / 12));
 		this.schdl_odMonths.setValue(String.valueOf(financeMain.getNumberOfTerms() % 12));
 		this.schdl_odBranch.setValue(financeMain.getFinBranch());
-		this.schdl_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
+		this.schdl_startDate.setValue(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
 		this.schdl_odLimit.setValue(
 				CurrencyUtil.parse(financeMain.getFinAssetValue(), CurrencyUtil.getFormat(financeMain.getFinCcy())));
 		this.schdl_dropLineFrequency
@@ -151,7 +151,7 @@ public class OverdraftScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSc
 
 			item = new Listitem();
 			Listcell lc = new Listcell(
-					DateUtility.format(curSchd.getDroplineDate(), DateFormat.SHORT_DATE.getPattern()));
+					DateUtil.format(curSchd.getDroplineDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setStyle("font-weight:bold;");
 			item.appendChild(lc);
 

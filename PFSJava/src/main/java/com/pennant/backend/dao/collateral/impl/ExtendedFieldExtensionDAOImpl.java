@@ -82,14 +82,12 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(extendedFieldExtension);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
 	}
 
 	@Override
@@ -146,10 +144,9 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(),
-				new Object[] { extendedFieldExtension.getId(), extendedFieldExtension.getExtenrnalRef(),
-						extendedFieldExtension.getModeStatus(), extendedFieldExtension.getInstructionUID() },
-				Integer.class) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, extendedFieldExtension.getId(),
+				extendedFieldExtension.getExtenrnalRef(), extendedFieldExtension.getModeStatus(),
+				extendedFieldExtension.getInstructionUID()) > 0;
 	}
 
 	@Override
@@ -160,9 +157,8 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(),
-				new Object[] { extendedFieldExtension.getId(), extendedFieldExtension.getExtenrnalRef(),
-						extendedFieldExtension.getModeStatus(), extendedFieldExtension.getInstructionUID() },
-				Integer.class) > 0;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, extendedFieldExtension.getId(),
+				extendedFieldExtension.getExtenrnalRef(), extendedFieldExtension.getModeStatus(),
+				extendedFieldExtension.getInstructionUID()) > 0;
 	}
 }

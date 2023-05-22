@@ -19,7 +19,6 @@ import org.zkoss.zul.Button;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -36,6 +35,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 
@@ -115,18 +115,18 @@ public class FinScheduleReportGenerator {
 
 						// If loop repeated when schedule date is more than
 						// existing dropline date
-						if (prvODDate != null && DateUtility.compare(odSchedule.getDroplineDate(), prvODDate) <= 0) {
+						if (prvODDate != null && DateUtil.compare(odSchedule.getDroplineDate(), prvODDate) <= 0) {
 							continue;
 						}
 
 						// overdraft created
-						if (DateUtility.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) == 0
+						if (DateUtil.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) == 0
 								&& StringUtils.isEmpty(label)) {
 
 							// Check Drop line exists or not in Same schedule
 							// Date
 							limitRcdOnSchDate = true;
-							if (DateUtility.compare(odSchedule.getDroplineDate(),
+							if (DateUtil.compare(odSchedule.getDroplineDate(),
 									aFinanceMain.getFinStartDate()) == 0) {
 								label = Labels.getLabel("label_limitOverdraft");
 								odCount = 0;
@@ -141,9 +141,9 @@ public class FinScheduleReportGenerator {
 						}
 
 						// for limit Expiry
-						if (DateUtility.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0
-								&& DateUtility.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) == 0
-								&& DateUtility.compare(odSchedule.getDroplineDate(), prvSchDetail.getSchDate()) > 0
+						if (DateUtil.compare(odSchedule.getDroplineDate(), aFinanceMain.getMaturityDate()) == 0
+								&& DateUtil.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) == 0
+								&& DateUtil.compare(odSchedule.getDroplineDate(), prvSchDetail.getSchDate()) > 0
 								&& StringUtils.isEmpty(label)) {
 							label = Labels.getLabel("label_LimitExpiry");
 							isODLimitExpiry = true;
@@ -155,8 +155,8 @@ public class FinScheduleReportGenerator {
 							}
 						} else {
 							// Rendering Limit Drop Details
-							if (DateUtility.compare(odSchedule.getDroplineDate(), prvSchDetail.getSchDate()) > 0
-									&& DateUtility.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) <= 0
+							if (DateUtil.compare(odSchedule.getDroplineDate(), prvSchDetail.getSchDate()) > 0
+									&& DateUtil.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) <= 0
 									&& StringUtils.isEmpty(label)) {
 								label = Labels.getLabel("label_LimitDrop");
 								// If Limit Drop Amount not exists and Limit
@@ -173,11 +173,11 @@ public class FinScheduleReportGenerator {
 						if (odRcdExistsOnDate) {
 							data.setLabel(label);
 
-							String strDate = DateUtility.formatToLongDate(odSchedule.getDroplineDate());
+							String strDate = DateUtil.formatToLongDate(odSchedule.getDroplineDate());
 							if ((curSchd.isRvwOnSchDate()
 									&& curSchd.getSchDate().compareTo(odSchedule.getDroplineDate()) == 0)
 									|| curSchd.getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0) {
-								strDate = DateUtility.formatToLongDate(odSchedule.getDroplineDate())
+								strDate = DateUtil.formatToLongDate(odSchedule.getDroplineDate())
 										+ (reportGeneration ? "" : " [R]");
 							}
 							data.setSchDate(strDate);
@@ -233,7 +233,7 @@ public class FinScheduleReportGenerator {
 							data.setTotalAmount("");
 							reportList.add(data);
 
-							if (DateUtility.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) == 0
+							if (DateUtil.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) == 0
 									|| limitRcdOnSchDate) {
 								count = 2;
 							} else {
@@ -263,8 +263,8 @@ public class FinScheduleReportGenerator {
 								// If Schedule Date not render for Maturity
 								// Date, then only increase Limit Drop Schedule
 								// count
-								if (DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getMaturityDate()) != 0
-										|| DateUtility.compare(odSchedule.getDroplineDate(),
+								if (DateUtil.compare(curSchd.getSchDate(), aFinanceMain.getMaturityDate()) != 0
+										|| DateUtil.compare(odSchedule.getDroplineDate(),
 												curSchd.getSchDate()) < 0) {
 									odCount = odCount + 1;
 								}
@@ -289,10 +289,10 @@ public class FinScheduleReportGenerator {
 							// If loop repeated when schedule date is more than
 							// existing dropline date
 							if (prvODDate != null
-									&& DateUtility.compare(odSchedule.getDroplineDate(), prvODDate) <= 0) {
+									&& DateUtil.compare(odSchedule.getDroplineDate(), prvODDate) <= 0) {
 								continue;
 							}
-							if (DateUtility.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) > 0) {
+							if (DateUtil.compare(odSchedule.getDroplineDate(), curSchd.getSchDate()) > 0) {
 								isLoopRepeat = false;
 							}
 							break;
@@ -311,7 +311,7 @@ public class FinScheduleReportGenerator {
 					label = Labels.getLabel("label_listcell_BPIAmount.label");
 					if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
 						label = Labels.getLabel("label_listcell_BPICalculated.label",
-								new String[] { DateUtility.formatToLongDate(curSchd.getDefSchdDate()) });
+								new String[] { DateUtil.formatToLongDate(curSchd.getDefSchdDate()) });
 					}
 				} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 					label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
@@ -341,12 +341,12 @@ public class FinScheduleReportGenerator {
 				if (count == 1) {
 					if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 							&& !reportGeneration) {
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 					} else {
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					}
 					data.setNoOfDays(String
-							.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+							.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 				} else {
 					data.setSchDate("");
 				}
@@ -377,12 +377,12 @@ public class FinScheduleReportGenerator {
 					if (count == 1) {
 						if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 								&& !reportGeneration) {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 						} else {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 						}
 						data.setNoOfDays(String
-								.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+								.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					} else {
 						data.setSchDate("");
 					}
@@ -394,7 +394,7 @@ public class FinScheduleReportGenerator {
 			if (curSchd.isDisbOnSchDate()) {
 
 				BigDecimal advEMi = BigDecimal.ZERO;
-				if (DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getFinStartDate()) == 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), aFinanceMain.getFinStartDate()) == 0) {
 					advEMi = aFinanceMain.getAdvanceEMI();
 				}
 
@@ -408,7 +408,7 @@ public class FinScheduleReportGenerator {
 					if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus())) {
 						continue;
 					}
-					if (DateUtility.compare(curDisb.getDisbDate(), curSchd.getSchDate()) == 0) {
+					if (DateUtil.compare(curDisb.getDisbDate(), curSchd.getSchDate()) == 0) {
 
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
 
@@ -437,12 +437,12 @@ public class FinScheduleReportGenerator {
 							if (curSchd.getSchDate()
 									.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 									|| curSchd.isRvwOnSchDate() && !reportGeneration) {
-								data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+								data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 							} else {
-								data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+								data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 							}
 							data.setNoOfDays(String.valueOf(
-									DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+									DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 						} else {
 							data.setSchDate("");
 						}
@@ -546,12 +546,12 @@ public class FinScheduleReportGenerator {
 					if (count == 1) {
 						if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 								|| curSchd.isRvwOnSchDate() && !reportGeneration) {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 						} else {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 						}
 						data.setNoOfDays(String
-								.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+								.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					} else {
 						data.setSchDate("");
 					}
@@ -577,7 +577,7 @@ public class FinScheduleReportGenerator {
 						label = Labels.getLabel("label_listcell_BPIAmount.label");
 						if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
 							label = Labels.getLabel("label_listcell_BPICalculated.label",
-									new String[] { DateUtility.formatToLongDate(curSchd.getDefSchdDate()) });
+									new String[] { DateUtil.formatToLongDate(curSchd.getDefSchdDate()) });
 						}
 					} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 						label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
@@ -611,12 +611,12 @@ public class FinScheduleReportGenerator {
 					if (count == 1) {
 						if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 								|| curSchd.isRvwOnSchDate() && !reportGeneration) {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 						} else {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 						}
 						data.setNoOfDays(String
-								.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+								.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					} else {
 						data.setSchDate("");
 					}
@@ -630,7 +630,7 @@ public class FinScheduleReportGenerator {
 				data = new FinanceScheduleReportData();
 				data.setInstNumber(getInstNumber(curSchd.getInstNumber(), count));
 				data.setLabel(Labels.getLabel("listcell_EMIHold_label",
-						new String[] { DateUtility.formatToLongDate(curSchd.getDefSchdDate()) }));
+						new String[] { DateUtil.formatToLongDate(curSchd.getDefSchdDate()) }));
 				data.setPftAmount("");
 				data.setSchdPft("");
 				data.setTdsAmount("");
@@ -669,11 +669,11 @@ public class FinScheduleReportGenerator {
 				data.setLabel(label);
 				if (count == 1) {
 					data.setNoOfDays(String
-							.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+							.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					if (curSchd.isRvwOnSchDate() && !reportGeneration) {
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 					} else {
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					}
 				} else {
 					data.setSchDate("");
@@ -701,11 +701,11 @@ public class FinScheduleReportGenerator {
 				for (int j = 0; j < getFinanceRepayments().size(); j++) {
 					data = new FinanceScheduleReportData();
 					data.setLabel(Labels.getLabel("label_listcell_AmountPaid.label", new String[] {
-							DateUtility.formatToLongDate(getFinanceRepayments().get(j).getFinPostDate()) }));
+							DateUtil.formatToLongDate(getFinanceRepayments().get(j).getFinPostDate()) }));
 					if (count == 1) {
 						data.setNoOfDays(String
-								.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+								.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					} else {
 						data.setSchDate("");
 					}
@@ -736,11 +736,11 @@ public class FinScheduleReportGenerator {
 					OverdueChargeRecovery recovery = getPenalties().get(j);
 					data = new FinanceScheduleReportData();
 					data.setLabel(Labels.getLabel("label_listcell_PenaltyPaid.label",
-							new String[] { DateUtility.formatToLongDate(recovery.getMovementDate()) }));
+							new String[] { DateUtil.formatToLongDate(recovery.getMovementDate()) }));
 					if (count == 1) {
 						data.setNoOfDays(String
-								.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+								.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					} else {
 						data.setSchDate("");
 					}
@@ -769,11 +769,11 @@ public class FinScheduleReportGenerator {
 				data.setLabel(Labels.getLabel("label_listcell_Writeoff.label"));
 				if (count == 1) {
 					data.setNoOfDays(String
-							.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+							.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					if (curSchd.isRvwOnSchDate() && !reportGeneration) {
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 					} else {
-						data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+						data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 					}
 				} else {
 					data.setSchDate("");
@@ -830,7 +830,7 @@ public class FinScheduleReportGenerator {
 									label = Labels.getLabel("label_listcell_BPIAmount.label");
 									if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
 										label = Labels.getLabel("label_listcell_BPICalculated.label", new String[] {
-												DateUtility.formatToLongDate(curSchd.getDefSchdDate()) });
+												DateUtil.formatToLongDate(curSchd.getDefSchdDate()) });
 									}
 								} else if (StringUtils.equals(curSchd.getBpiOrHoliday(),
 										FinanceConstants.FLAG_HOLIDAY)) {
@@ -860,12 +860,12 @@ public class FinScheduleReportGenerator {
 								if (curSchd.getSchDate()
 										.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 										|| curSchd.isRvwOnSchDate() && !reportGeneration) {
-									data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+									data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 								} else {
-									data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+									data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 								}
 								data.setNoOfDays(String.valueOf(
-										DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+										DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 								reportList.add(data);
 								count = 2;
 							}
@@ -882,7 +882,7 @@ public class FinScheduleReportGenerator {
 								label = Labels.getLabel("label_listcell_BPIAmount.label");
 								if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
 									label = Labels.getLabel("label_listcell_BPICalculated.label",
-											new String[] { DateUtility.formatToLongDate(curSchd.getDefSchdDate()) });
+											new String[] { DateUtil.formatToLongDate(curSchd.getDefSchdDate()) });
 								}
 							} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 								label = Labels.getLabel("label_listcell_PlanEMIHMonth.label");
@@ -910,12 +910,12 @@ public class FinScheduleReportGenerator {
 							if (curSchd.getSchDate()
 									.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 									|| curSchd.isRvwOnSchDate() && !reportGeneration) {
-								data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+								data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 							} else {
-								data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+								data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 							}
 							data.setNoOfDays(String.valueOf(
-									DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+									DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 							reportList.add(data);
 							count = 2;
 						}
@@ -965,8 +965,8 @@ public class FinScheduleReportGenerator {
 						data.setLabel(Labels.getLabel("label_listcell_reviewRate.label"));
 						if (count == 1) {
 							data.setNoOfDays(String.valueOf(
-									DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate())
+									DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate())
 									+ (reportGeneration ? "" : "[R]"));
 						} else {
 							data.setSchDate("");
@@ -1053,12 +1053,12 @@ public class FinScheduleReportGenerator {
 					if (count == 1) {
 						if (curSchd.getSchDate().compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) == 0
 								&& !reportGeneration) {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()) + "[R]");
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()) + "[R]");
 						} else {
-							data.setSchDate(DateUtility.formatToLongDate(curSchd.getSchDate()));
+							data.setSchDate(DateUtil.formatToLongDate(curSchd.getSchDate()));
 						}
 						data.setNoOfDays(String
-								.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+								.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					} else {
 						data.setSchDate("");
 					}
@@ -1114,9 +1114,9 @@ public class FinScheduleReportGenerator {
 				data.setLabel(Labels.getLabel("label_listcell_reviewRate.label"));
 				if (count == 1) {
 					data.setNoOfDays(String
-							.valueOf(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
+							.valueOf(DateUtil.getDaysBetween(curSchd.getSchDate(), prvSchDetail.getSchDate())));
 					data.setSchDate(
-							DateUtility.formatToLongDate(curSchd.getSchDate()) + (reportGeneration ? "" : "[R]"));
+							DateUtil.formatToLongDate(curSchd.getSchDate()) + (reportGeneration ? "" : "[R]"));
 				} else {
 					data.setSchDate("");
 				}
@@ -1211,9 +1211,9 @@ public class FinScheduleReportGenerator {
 				data.setLimitDrop(formatAmt(BigDecimal.ZERO, false, false));
 				data.setTotalLimit(formatAmt(BigDecimal.ZERO, false, false));
 				data.setAvailLimit(formatAmt(BigDecimal.ZERO, false, false));
-				data.setSchDate(DateUtility.formatToLongDate(advEmiSch.getSchDate()));
+				data.setSchDate(DateUtil.formatToLongDate(advEmiSch.getSchDate()));
 				data.setNoOfDays(
-						String.valueOf(DateUtility.getDaysBetween(advEmiSch.getSchDate(), prvSchDetail.getSchDate())));
+						String.valueOf(DateUtil.getDaysBetween(advEmiSch.getSchDate(), prvSchDetail.getSchDate())));
 				reportList.add(data);
 				prvSchDetail = advEmiSch;
 			}
@@ -1292,7 +1292,7 @@ public class FinScheduleReportGenerator {
 				data.setSchDate("");
 				data.setLabel(Labels.getLabel("label_listcell_totalGrcDays.label"));
 				data.setPftAmount(String
-						.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(),
+						.valueOf(DateUtil.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(),
 								getFinScheduleData().getFinanceMain().getGrcPeriodEndDate())));
 				data.setSchdPft("");
 				data.setSchdFee("");
@@ -1310,7 +1310,7 @@ public class FinScheduleReportGenerator {
 			data.setSchDate("");
 			data.setLabel(Labels.getLabel("label_listcell_totalDays.label"));
 			data.setPftAmount(
-					String.valueOf(DateUtility.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(),
+					String.valueOf(DateUtil.getDaysBetween(getFinScheduleData().getFinanceMain().getFinStartDate(),
 							getFinScheduleData().getFinanceMain().getMaturityDate())));
 			data.setSchdPft("");
 			data.setSchdFee("");
@@ -1353,7 +1353,7 @@ public class FinScheduleReportGenerator {
 			FinanceScheduleDetail aScheduleDetail = getFinScheduleData().getFinanceScheduleDetails().get(i);
 			data = new FinanceGraphReportData();
 			data.setRecordNo(i);
-			data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
+			data.setSchDate(DateUtil.formatToLongDate(aScheduleDetail.getSchDate()));
 
 			if (i == size - 1) {
 				data.setProfitBal(BigDecimal.ZERO);

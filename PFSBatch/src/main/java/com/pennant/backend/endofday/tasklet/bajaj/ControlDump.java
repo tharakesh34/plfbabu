@@ -58,7 +58,7 @@ public class ControlDump implements Tasklet {
 
 			DataEngineStatus status = ControlDumpExtract.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new ControlDumpProcessThread(new Long(1000))).start();
+			new Thread(new ControlDumpProcessThread(1000L)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 

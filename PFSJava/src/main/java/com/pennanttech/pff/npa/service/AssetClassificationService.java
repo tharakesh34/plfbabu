@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.app.core.CustEODEvent;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennanttech.pff.npa.model.AssetClassSetupHeader;
 import com.pennanttech.pff.npa.model.AssetClassification;
 import com.pennanttech.pff.provision.model.NpaProvisionStage;
@@ -18,6 +18,8 @@ public interface AssetClassificationService {
 	void createSnapshots(Date appDate);
 
 	long prepareQueue();
+
+	void handleFailures();
 
 	long getQueueCount();
 
@@ -43,7 +45,9 @@ public interface AssetClassificationService {
 
 	void setLoanInfo(AssetClassification ac);
 
-	void doPostNpaChange(AssetClassification npaAc);
+	boolean doPostNpaChange(AssetClassification npaAc, Long npaMovemntId);
+
+	void doReversalNpaPostings(AssetClassification npaAc);
 
 	void updateClassification(AssetClassification ac);
 
@@ -53,6 +57,16 @@ public interface AssetClassificationService {
 
 	String getNpaRepayHierarchy(long finID);
 
-	void doProcessEarlySettlement(long finID);
+	void doCloseLoan(long finID);
+
+	Long getNpaMovemntId(long finID);
+
+	void saveNpaMovement(AssetClassification npa);
+
+	void updateNpaMovement(long id, AssetClassification npa);
+
+	AssetClassification getNpaMovemnt(long finID);
+
+	void saveNpaTaggingMovement(AssetClassification npa);
 
 }

@@ -57,7 +57,7 @@ public class Posidex implements Tasklet {
 
 			DataEngineStatus status = PosidexDataExtarct.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new PosidexProcessThread(new Long(1000))).start();
+			new Thread(new PosidexProcessThread(1000L)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 

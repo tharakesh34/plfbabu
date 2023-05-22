@@ -65,7 +65,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -95,7 +94,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the
@@ -160,7 +159,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	private String userRole = "";
 	private int finFormatter;
 	private boolean isFinanceProcess = false;
-	private boolean workflow = false;
 	Date appDate = SysParamUtil.getAppDate();
 	Date appStartDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 	private String inputSource = "customer";
@@ -270,10 +268,6 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			}
 			if (arguments.containsKey("financialSummaryDialogCtrl")) {
 				setNewCustomer(true);
-			}
-
-			if (getCustomerDialogCtrl() != null) {
-				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
 
 			if (arguments.containsKey("samplingDialogCtrl")) {
@@ -680,8 +674,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.mob.setValue(liability.getMob());
 
 		if (liability.getExtLiabilitiesPayments().size() > 0) {
-			Cloner cloner = new Cloner();
-			CustomerExtLiability detail = (CustomerExtLiability) cloner.deepClone(liability);
+			CustomerExtLiability detail = (CustomerExtLiability) ObjectUtil.clone(liability);
 			List<ExtLiabilityPaymentdetails> extPaymentsData = detail.getExtLiabilitiesPayments();
 			for (int i = 0; i < extPaymentsData.size(); i++) {
 				if (extPaymentsData.get(i).getKeyValue() == 0) {
@@ -1728,7 +1721,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	public void onFulfill$bankName(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = bankName.getObject();
-		int accNoLength = 0;
+
 		if (dataObject == null || dataObject instanceof String) {
 			this.bankName.setValue("");
 			this.bankName.setDescription("");
@@ -1897,10 +1890,9 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 				noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? tenure
 						: this.noOfInstallmentMonths.getValue();
-				String date = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.DBDateFormat);
-				int emiList = DateUtility.getMonthsBetween(finDate.getValue(), appDate);
-				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-						noOfmonths, emiList);
+				Date date = SysParamUtil.getAppDate();
+				int emiList = DateUtil.getMonthsBetween(finDate.getValue(), appDate);
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(date, noOfmonths, emiList);
 
 				ExtLiabilityPaymentdetails installmentDetails = new ExtLiabilityPaymentdetails();
 				installmentDetails.setNewRecord(true);
@@ -2004,7 +1996,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths, int emiList) {
 		Date dtStartDate = startDate;
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, -noOfMonths);
+		Date dtEndDate = DateUtil.addMonths(dtStartDate, -noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -2018,7 +2010,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) > 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);

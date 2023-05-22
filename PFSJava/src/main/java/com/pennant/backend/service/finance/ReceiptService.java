@@ -19,6 +19,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
@@ -149,7 +150,15 @@ public interface ReceiptService {
 
 	boolean doProcessTerminationExcess(FinReceiptData receiptData);
 
-	List<FinReceiptDetail> prepareReceiptDetails(List<FinExcessAmount> excessList, ReceiptUploadDetail rud);
+	List<FinReceiptDetail> prepareRCDForExcess(List<FinExcessAmount> excessList, ReceiptUploadDetail rud);
+
+	List<FinReceiptDetail> prepareRCDForMA(List<ManualAdvise> manualAdviseList, ReceiptUploadDetail rud);
 
 	List<OverdueChargeRecovery> prepareODCRecovery(Long finID);
+
+	FinReceiptData getDues(String finReference, Date valueDate, Date appDate, String event);
+
+	FinReceiptData prepareFinReceiptData(FinServiceInstruction fsi, FinanceDetail fd);
+
+	Date getExcessBasedValueDate(Date receiptDt, long finID, Date appDate, FinExcessAmount fea, String receiptPurpose);
 }

@@ -38,14 +38,6 @@ public class AccountingConfigCache {
 				}
 			});
 
-	private static LoadingCache<String, AccountType> accountTypeCache = CacheBuilder.newBuilder()
-			.expireAfterAccess(12, TimeUnit.HOURS).build(new CacheLoader<String, AccountType>() {
-				@Override
-				public AccountType load(String acType) throws Exception {
-					return getAccountTypeById(acType);
-				}
-			});
-
 	private static LoadingCache<String, Long> finTypeAccountCache = CacheBuilder.newBuilder()
 			.expireAfterAccess(12, TimeUnit.HOURS).build(new CacheLoader<String, Long>() {
 				@Override

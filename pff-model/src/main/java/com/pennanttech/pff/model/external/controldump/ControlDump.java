@@ -122,7 +122,7 @@ public class ControlDump implements Serializable {
 	private Date createdOn;
 
 	public ControlDump() {
-
+	    super();
 	}
 
 	public String getAgreementNo() {

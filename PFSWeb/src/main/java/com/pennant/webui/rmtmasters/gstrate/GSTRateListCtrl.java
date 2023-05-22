@@ -207,7 +207,7 @@ public class GSTRateListCtrl extends GFCBaseListCtrl<GSTRate> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =? ");
 
 		if (doCheckAuthority(gstrate, whereCond.toString(), new Object[] { gstrate.getId() })) {

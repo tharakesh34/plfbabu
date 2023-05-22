@@ -48,7 +48,7 @@ public class CustomerIncomeListModelItemRenderer implements ListitemRenderer<Cus
 	private static final long serialVersionUID = 816239347392992946L;
 
 	public CustomerIncomeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

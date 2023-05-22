@@ -87,6 +87,20 @@ public class MasterDefUtil {
 		return false;
 	}
 
+	public static MasterDef getMasterDefByType(DocType docType) {
+		if (masterDefList == null) {
+			loadMasterDef();
+		}
+
+		for (MasterDef masterDef : masterDefList) {
+			if (docType.name().equals(masterDef.getKeyType())) {
+				return masterDef;
+			}
+		}
+
+		return null;
+	}
+
 	private static Map<String, String> addressTypes;
 
 	public static String getAddressCode(AddressType addrType) {

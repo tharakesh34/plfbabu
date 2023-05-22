@@ -37,7 +37,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
@@ -170,7 +169,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 				if (nextFrequencyDate != null && frequencyDate != null) {
 					nextFrequencyDate = DateUtil.getDatePart(nextFrequencyDate);
 					frequencyDate = DateUtil.getDatePart(frequencyDate);
-					if (DateUtility.compare(nextFrequencyDate, nextFrequencyDate) == 0) {
+					if (DateUtil.compare(nextFrequencyDate, nextFrequencyDate) == 0) {
 						if ("M".equals(frequence)) {
 							frequencyDate = DateUtil.addMonths(frequencyDate, 1);
 						} else if ("Q".equals(frequence)) {
@@ -801,12 +800,6 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			return auditDetails;
 		}
 
-		String usrLanguage = PennantConstants.default_Language;
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		if (financeMain != null && financeMain.getUserDetails() != null) {
-			usrLanguage = financeMain.getUserDetails().getLanguage();
-		}
-
 		for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
 			boolean isAllowedMethod = false;
 			boolean isDocumentReceived = false;
@@ -925,7 +918,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			for (CovenantDocument document : covenantDocuments) {
 				if (document.getFrequencyDate() != null && (DateUtil.compare(document.getFrequencyDate(),
 						covenant.getReceivableDate()) == 0
-						|| DateUtility.compare(document.getFrequencyDate(), covenant.getNextFrequencyDate()) == 0)) {
+						|| DateUtil.compare(document.getFrequencyDate(), covenant.getNextFrequencyDate()) == 0)) {
 					continue;
 				}
 				if (document.getFrequencyDate() != null

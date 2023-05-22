@@ -39,7 +39,7 @@ public class AECommitment {
 	private boolean custIsStaff;
 
 	public AECommitment() {
-
+	    super();
 	}
 
 	// ******************************************************//

@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
 import org.zkoss.json.JSONArray;
@@ -185,6 +186,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Tab tab_Fee;
 	protected Tab tab_Vas;
 	protected Tab tab_expense;
+	protected Tab tab_amount;
 
 	protected Grid grid_Basicdetails;
 	protected Column column_CustomerData;
@@ -776,6 +778,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		tab_expense.setVisible(
 				ImplementationConstants.ALLOW_IND_AS && AccountingEvent.EXPENSE.equals(lovDescEventCodeName2)
 						|| AccountingEvent.INDAS.equals(lovDescEventCodeName2));
+
+		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(lovDescEventCodeName2)) {
+			this.tab_Vas.setVisible(false);
+			this.tab_expense.setVisible(false);
+		}
 
 		try {
 			// fill the components with the data
@@ -1658,6 +1665,15 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		List<AmountCode> amountCodesList = new ArrayList<AmountCode>();
 		JdbcSearchObject<AmountCode> searchObj = new JdbcSearchObject<AmountCode>(AmountCode.class);
 		searchObj.addTabelName("BMTAmountCodes");
+
+		if (allowedevent.endsWith("_S")) {
+			allowedevent = allowedevent.replace("_S", "");
+		} else if (allowedevent.endsWith("_N")) {
+			allowedevent = allowedevent.replace("_N", "");
+		} else if (allowedevent.endsWith("_W")) {
+			allowedevent = allowedevent.replace("_W", "");
+		}
+
 		if (allowedevent != null) {
 			searchObj.addFilter(new Filter("AllowedEvent", allowedevent, Filter.OP_EQUAL));
 			if (!this.accountingSetDialogCtrl.entryByInvestment.isChecked()) {
@@ -1667,6 +1683,42 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			}
 		}
 		amountCodesList = this.pagedListService.getBySearchObject(searchObj);
+
+		if (AccountingEvent.BRNCHG.equals(allowedevent)) {
+			List<AccountType> accounTypeList = accountingSetService.getAccountTypes();
+
+			for (AccountType accountType : accounTypeList) {
+				AmountCode ac = new AmountCode();
+
+				if (AccountingEvent.LIABILITY.equals(accountType.getGroupCode())) {
+					ac.setAmountCode("L_" + accountType.getAcType() + "_old_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+
+				ac = new AmountCode();
+
+				if (AccountingEvent.LIABILITY.equals(accountType.getGroupCode())) {
+					ac.setAmountCode("L_" + accountType.getAcType() + "_new_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+
+				if ("ASSET".equals(accountType.getGroupCode())) {
+					ac.setAmountCode("A_" + accountType.getAcType() + "_old_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+
+				ac = new AmountCode();
+
+				if ("ASSET".equals(accountType.getGroupCode())) {
+					ac.setAmountCode("A_" + accountType.getAcType() + "_new_branch".toUpperCase());
+					ac.setAmountCodeDesc(accountType.getAcTypeDesc());
+					amountCodesList.add(ac);
+				}
+			}
+		}
 
 		for (int i = 0; i < amountCodesList.size(); i++) {
 			Listitem item = new Listitem();
@@ -1910,6 +1962,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
 			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
 			feeMap.put("_AMZ_N", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ_N"));
+			feeMap.put("_AMZ_BAL", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ_BAL"));
 			return feeMap;
 		}
 
@@ -2432,6 +2485,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		return accountingSetService;
 	}
 
+	@Autowired
 	public void setAccountingSetService(AccountingSetService accountingSetService) {
 		this.accountingSetService = accountingSetService;
 	}

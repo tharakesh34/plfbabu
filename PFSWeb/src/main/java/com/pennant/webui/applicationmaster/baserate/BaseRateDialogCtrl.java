@@ -46,7 +46,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -60,6 +59,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -320,7 +320,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 		}
 
 		if (aBaseRate.getBREffDate() != null
-				&& DateUtility.compare(aBaseRate.getBREffDate(), SysParamUtil.getAppDate()) < 0) {
+				&& DateUtil.compare(aBaseRate.getBREffDate(), SysParamUtil.getAppDate()) < 0) {
 			this.bRRate.setDisabled(true);
 		}
 
@@ -516,17 +516,17 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	public void dateValidation() {
 		Date curBussniessDate = SysParamUtil.getAppDate();
 		int daysBackward = SysParamUtil.getValueAsInt("BVRC");
-		Date dateBackward = DateUtility.addDays(curBussniessDate, daysBackward * -1);
+		Date dateBackward = DateUtil.addDays(curBussniessDate, daysBackward * -1);
 
 		int daysForward = SysParamUtil.getValueAsInt("FVRC");
-		Date dateForward = DateUtility.addDays(curBussniessDate, daysForward);
+		Date dateForward = DateUtil.addDays(curBussniessDate, daysForward);
 
 		if (this.bREffDate.getValue().before(dateBackward) || this.bREffDate.getValue().after(dateForward)) {
 			throw new WrongValueException(bREffDate,
 					Labels.getLabel("DATE_ALLOWED_RANGE",
 							new String[] { Labels.getLabel("label_BaseRateDialog_BREffDate.value"),
-									DateUtility.formatToShortDate(dateBackward),
-									DateUtility.formatToShortDate(dateForward) }));
+									DateUtil.formatToShortDate(dateBackward),
+									DateUtil.formatToShortDate(dateForward) }));
 		}
 	}
 
@@ -864,7 +864,7 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	@Override
 	protected String getReference() {
 		return getBaseRate().getBRType() + PennantConstants.KEY_SEPERATOR
-				+ DateUtility.format(getBaseRate().getBREffDate(), PennantConstants.DBDateFormat);
+				+ DateUtil.format(getBaseRate().getBREffDate(), PennantConstants.DBDateFormat);
 	}
 
 	// ******************************************************//

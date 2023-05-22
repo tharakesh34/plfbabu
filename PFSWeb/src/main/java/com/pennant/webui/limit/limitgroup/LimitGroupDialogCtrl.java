@@ -740,7 +740,7 @@ public class LimitGroupDialogCtrl extends GFCBaseCtrl<LimitGroup> {
 		}
 		// Group OF
 		if (!this.groupOf.isDisabled()) {
-			this.groupOf.setConstraint(new PTListValidator(Labels.getLabel("label_LimitGroupDialog_GroupOf.value"),
+			this.groupOf.setConstraint(new PTListValidator<ValueLabel>(Labels.getLabel("label_LimitGroupDialog_GroupOf.value"),
 					PennantStaticListUtil.getGroupOfList(), true));
 		}
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();

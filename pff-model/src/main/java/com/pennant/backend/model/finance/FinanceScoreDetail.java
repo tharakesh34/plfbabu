@@ -25,7 +25,7 @@ public class FinanceScoreDetail implements Serializable {
 	private FinanceScoreDetail befImage;
 
 	public FinanceScoreDetail() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

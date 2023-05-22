@@ -22,12 +22,11 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.service.incomeamortization.IncomeAmortizationService;
 import com.pennant.backend.service.incomeamortization.impl.CalAvgPOSProcess;
 import com.pennant.backend.util.AmortizationConstants;
@@ -37,6 +36,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -113,7 +113,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	private void prepareMonthEndList() throws ParseException {
 
 		// Application Deployment Date
-		Date startDate = getFormatDate(DateUtility.parseShortDate(AmortizationConstants.AMZ_RECALSTARTDATE));
+		Date startDate = getFormatDate(DateUtil.parseShortDate(AmortizationConstants.AMZ_RECALSTARTDATE));
 		Date appDate = SysParamUtil.getAppDate();
 
 		// Prepare 12 Months list From any Deployment Date to Application Date
@@ -212,8 +212,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 		logger.debug(Literal.ENTERING);
 
 		// Application Deployment Date and AMZ Month End
-		Date startDate = getFormatDate(DateUtility.parseShortDate(AmortizationConstants.AMZ_RECALSTARTDATE));
-		Date monthEndDate = DateUtility.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
+		Date startDate = getFormatDate(DateUtil.parseShortDate(AmortizationConstants.AMZ_RECALSTARTDATE));
+		Date monthEndDate = DateUtil.getDate(amzMonthEnd, PennantConstants.DBDateFormat);
 
 		if (startDate != null && monthEndDate != null) {
 
@@ -336,7 +336,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 				this.label_Status.setValue(Labels.getLabel("label_Inprogress_CalAvgPOS"));
 			}
 
-			fillComboBox(this.monthEndDate, DateUtility.format(amzLog.getMonthEndDate(), PennantConstants.DBDateFormat),
+			fillComboBox(this.monthEndDate, DateUtil.format(amzLog.getMonthEndDate(), PennantConstants.DBDateFormat),
 					this.datesList, "");
 		} else {
 			doReadOnly(false);
@@ -417,7 +417,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * @return
 	 */
 	private static Date getFormatDate(Date date) {
-		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
+		return DateUtil.getDatePart(date);
 	}
 
 	// getters / setters

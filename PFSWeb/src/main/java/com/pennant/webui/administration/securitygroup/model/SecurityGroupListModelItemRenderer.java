@@ -44,6 +44,7 @@ public class SecurityGroupListModelItemRenderer implements ListitemRenderer<Secu
 	private static final long serialVersionUID = -3424682216721299542L;
 
 	public SecurityGroupListModelItemRenderer() {
+	    super();
 	}
 
 	@Override

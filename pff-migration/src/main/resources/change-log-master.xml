@@ -43,9 +43,7 @@
 	<include file="change-logs/change-log-batch_jobs.xml" />
 	<include file="change-logs/change-log-6.3.0.xml" />
 	<include file="change-logs/change-log-menu-rights.xml" />
-	<include file="change-logs/change-log-hdfc.xml" />
-	<include file="change-logs/change-log-menu-rights.xml" />
+	<include file="change-logs/change-log-6.4.0.xml"/>
 	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
-	<include file="change-logs/change-log-hdfc_day_0.xml" />
 </databaseChangeLog>

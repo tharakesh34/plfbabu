@@ -43,7 +43,7 @@ public class FacilityReferenceDetailListModelItemRenderer implements ListitemRen
 	private static final long serialVersionUID = 1L;
 
 	public FacilityReferenceDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

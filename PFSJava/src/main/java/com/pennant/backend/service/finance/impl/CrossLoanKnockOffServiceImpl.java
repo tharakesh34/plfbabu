@@ -2,8 +2,6 @@ package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentDetailDAO;
 import com.pennant.backend.dao.receipts.CrossLoanKnockOffDAO;
@@ -22,29 +19,22 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.crossloanknockoff.CrossLoanKnockoffUpload;
 import com.pennant.backend.model.finance.CrossLoanKnockOff;
 import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
-import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.CrossLoanKnockOffService;
 import com.pennant.backend.service.finance.FinanceMainService;
-import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.knockoff.KnockOffType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -53,7 +43,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
@@ -71,13 +60,13 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private ReceiptDataValidator receiptDataValidator;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentDetailDAO paymentDetailDAO;
-	private ReceiptCancellationService receiptCancellationService;
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader);
+
 		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
@@ -120,6 +109,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			transfer.setLastMntOn(clk.getLastMntOn());
 			transfer.setRecordStatus(clk.getRecordStatus());
 			transfer.setUserDetails(clk.getUserDetails());
+
+			clk.setKnockOffId(rch.getReceiptID());
+			clk.setReceiptMode(rch.getReceiptMode());
+			clk.setSubReceiptMode(rch.getSubReceiptMode());
 		}
 
 		AuditHeader ah = getAuditHeader(frd, PennantConstants.TRAN_WF);
@@ -184,11 +177,22 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
+
 		CrossLoanKnockOff clk = new CrossLoanKnockOff();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), clk);
 		CrossLoanTransfer clt = clk.getCrossLoanTransfer();
 		clt.setUserDetails(clk.getUserDetails());
 		clk.getCrossLoanTransfer().setValueDate(clk.getValueDate());
+
+		FinReceiptData frd = clk.getFinReceiptData();
+
+		if (frd != null) {
+			FinReceiptHeader rch = frd.getReceiptHeader();
+
+			clk.setKnockOffId(rch.getReceiptID());
+			clk.setReceiptMode(rch.getReceiptMode());
+			clk.setSubReceiptMode(rch.getSubReceiptMode());
+		}
 
 		if (crossLoanKnockOffDAO.cancelReferenceID(clk.getKnockOffId())) {
 			auditHeader.setErrorDetails(new ErrorDetail("30550", "Excess Receipt is cancelled", null));
@@ -225,7 +229,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 				clk.setRecordType("");
 
 				if (RequestSource.UPLOAD.name().equals(clk.getRequestSource())) {
-					FinanceDetail fd = createReceipt(clk);
+					FinanceDetail fd = receiptService.receiptTransaction(clk.getFinServiceInstruction());
 					FinScheduleData schd = fd.getFinScheduleData();
 
 					if (!schd.getErrorDetails().isEmpty()) {
@@ -312,6 +316,10 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			rch.setRcdMaintainSts(FinServiceEvent.RECEIPT);
 			rch.setLastMntOn(ckk.getLastMntOn());
 			rch.setRecordStatus(ckk.getRecordStatus());
+
+			ckk.setKnockOffId(rch.getReceiptID());
+			ckk.setReceiptMode(rch.getReceiptMode());
+			ckk.setSubReceiptMode(rch.getSubReceiptMode());
 		}
 
 		AuditHeader ah = getAuditHeader(frd, PennantConstants.TRAN_WF);
@@ -394,6 +402,7 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		return auditDetail;
 	}
 
+	@Override
 	public void executeAccounting(CrossLoanTransfer crossLoan) {
 		logger.debug(Literal.ENTERING);
 
@@ -415,7 +424,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			amountCodes = new AEAmountCodes();
 		}
 
-		aeEvent.setBranch(crossLoan.getUserDetails().getBranchCode());
 		aeEvent.setCcy(main.getFinCcy());
 		amountCodes.setUserBranch(crossLoan.getUserDetails().getBranchCode());
 		amountCodes.setEntitycode(main.getEntityCode());
@@ -453,7 +461,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 			amountCodes2 = new AEAmountCodes();
 		}
 
-		aeEvent1.setBranch(crossLoan.getUserDetails().getBranchCode());
 		aeEvent1.setCcy(fm.getFinCcy());
 		amountCodes2.setEntitycode(fm.getEntityCode());
 		amountCodes2.setUserBranch(crossLoan.getUserDetails().getBranchCode());
@@ -471,73 +478,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 		crossLoan.setToLinkedTranId(aeEvent1.getLinkedTranId());
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private FinanceDetail createReceipt(CrossLoanKnockOff clko) {
-		CrossLoanKnockoffUpload clku = clko.getCrossLoanKnockoffUpload();
-
-		ReceiptUploadDetail rud = new ReceiptUploadDetail();
-
-		String entityCode = clku.getEntityCode();
-
-		rud.setReference(clku.getToFinReference());
-		rud.setFinID(clku.getToFm().getFinID());
-		rud.setAllocationType(clku.getAllocationType());
-		Date appDate = SysParamUtil.getAppDate();
-		rud.setValueDate(clko.getValueDate());
-		rud.setRealizationDate(appDate);
-		rud.setReceivedDate(appDate);
-		rud.setReceiptAmount(clku.getExcessAmount());
-		rud.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		rud.setReceiptMode((RepayConstants.EXAMOUNTTYPE_EXCESS.equals(clku.getExcessType())) ? ReceiptMode.EXCESS
-				: ReceiptMode.PAYABLE);
-		rud.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		rud.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		rud.setReceiptChannel(PennantConstants.List_Select);
-
-		List<UploadAlloctionDetail> list = new ArrayList<>();
-
-		for (CrossLoanKnockoffUpload alloc : clku.getAllocations()) {
-			UploadAlloctionDetail uad = new UploadAlloctionDetail();
-
-			uad.setRootId(String.valueOf(alloc.getFeeId()));
-			uad.setAllocationType(Allocation.getCode(alloc.getCode()));
-			uad.setReferenceCode(alloc.getCode());
-			uad.setStrPaidAmount(String.valueOf(PennantApplicationUtil.formateAmount(alloc.getAmount(), 2)));
-
-			receiptDataValidator.validateAllocations(uad);
-
-			if (!uad.getErrorDetails().isEmpty()) {
-				clku.setProgress(EodConstants.PROGRESS_FAILED);
-				clku.setErrorCode(uad.getErrorDetails().get(0).getCode());
-				clku.setErrorDesc(uad.getErrorDetails().get(0).getError());
-			}
-
-			list.add(uad);
-		}
-
-		rud.setListAllocationDetails(list);
-
-		FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, entityCode);
-
-		fsi.setReqType("Post");
-		fsi.setReceiptUpload(true);
-		fsi.setRequestSource(RequestSource.UPLOAD);
-		fsi.setLoggedInUser(clku.getUserDetails());
-		fsi.setKnockOffReceipt(true);
-		fsi.setUploadAllocationDetails(list);
-
-		if (ReceiptMode.EXCESS.equals(rud.getReceiptMode())) {
-			fsi.setReceiptDetail(null);
-			fsi.setReceiptDetails(receiptService.prepareReceiptDetails(clku.getExcessList(), rud));
-		} else if (ReceiptMode.PAYABLE.equals(rud.getReceiptMode())) {
-			fsi.setAdviseId(clku.getManualAdvise().getAdviseID());
-		}
-
-		fsi.setKnockOffReceipt(true);
-		fsi.setKnockoffType(KnockOffType.CROSS_LOAN.code());
-
-		return receiptService.receiptTransaction(fsi);
 	}
 
 	@Override
@@ -603,10 +543,5 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	@Autowired
 	public void setPaymentDetailDAO(PaymentDetailDAO paymentDetailDAO) {
 		this.paymentDetailDAO = paymentDetailDAO;
-	}
-
-	@Autowired
-	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
-		this.receiptCancellationService = receiptCancellationService;
 	}
 }

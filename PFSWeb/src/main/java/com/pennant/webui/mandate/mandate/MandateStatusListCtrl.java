@@ -41,11 +41,11 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * ************************************************************<br>
@@ -115,7 +115,7 @@ public class MandateStatusListCtrl extends GFCBaseCtrl<MandateStatus> implements
 			lc.setParent(item);
 			lc = new Listcell(mandateStatus.getReason());
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(mandateStatus.getChangeDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(mandateStatus.getChangeDate()));
 			lc.setParent(item);
 			this.listBoxMandateStatus.appendChild(item);
 

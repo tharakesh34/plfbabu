@@ -45,7 +45,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zhtml.Textarea;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -67,7 +66,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
@@ -130,6 +128,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LogManager.getLogger(FinancialSummaryDialogCtrl.class);
 	protected Window window_financialSummaryDialog;
+	protected Groupbox basicGb;
+
 	private Textbox custCif;
 	private Textbox lanNo;
 	private Datebox businessDate;
@@ -185,9 +185,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	ArrayList<ValueLabel> documentTypes = PennantAppUtil.getDocumentTypes();
 
 	private FinanceDetail financeDetail = null;
-	private boolean newFinance = false;
 	Tab parenttab = null;
-	private Component parent = null;
 	private boolean isFinanceProcess = false;
 	private Object financeMainDialogCtrl;
 
@@ -269,20 +267,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DeviationHelper deviationHelper;
 
 	private boolean isbasicDetailsVisible = false;
-	private boolean isbtDetailsVisible = false;
 	private boolean iscustomerDetailsVisible = false;
 	private boolean isdueDiligenceDetailsVisible = false;
 	private boolean isreferencesVisible = false;
 	private boolean iscollateralDetailsVisible = false;
-	private boolean isassetDetailsVisible = false;
-	private boolean issynopsisAndPdDetailsVisible = false;
 	private boolean isdeviationsDetailsVisible = false;
 	private boolean isrecommendationNoteDetailsVisible = false;
 	private boolean isdealRecommendationMeritsDetailsVisible = false;
 	private boolean issanctionConditionsDetailsVisible = false;
 	private boolean isrisksAndMitigantsDetailsVisible = false;
 	private boolean isinterfacesDetailsVisible = false;
-	private boolean isscoringDetailsVisible = false;
 	private boolean iseligibilityDetailsVisible = false;
 	private boolean isrecommendationsDetailsVisible = false;
 	private boolean isqueriesDetailsVisible = false;
@@ -320,14 +314,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		setPageComponents(window_financialSummaryDialog);
 
 		try {
-			if (event.getTarget().getParent() != null) {
-				parent = event.getTarget().getParent();
-			}
-
 			if (arguments.containsKey("financeDetail")) {
 				isFinanceProcess = true;
 				financeDetail = (FinanceDetail) arguments.get("financeDetail");
-				newFinance = true;
 			}
 			if (arguments.containsKey("tab")) {
 				parenttab = (Tab) arguments.get("tab");
@@ -344,8 +333,10 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
 					((FinanceMainBaseCtrl) financeMainDialogCtrl).setFinancialSummaryDialogCtrl(this);
 				}
-				newFinance = true;
+			}
 
+			if (arguments.containsKey("isEnquiry")) {
+				this.enqiryModule = (boolean) arguments.get("isEnquiry");
 			}
 
 			if (isWorkFlowEnabled()) {
@@ -395,9 +386,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		doWriteBeanToComponents(financeDetail);
 		doReadOnly();
 
+		if (this.enqiryModule) {
+			this.basicGb.setVisible(false);
+		}
+		this.window.setHeight(this.borderLayoutHeight - 120 + "px");
+
 		try {
-			getFinanceMainDialogCtrl().getClass().getMethod("setFinancialSummaryDialogCtrl", this.getClass())
-					.invoke(getFinanceMainDialogCtrl(), this);
+			if (getFinanceMainDialogCtrl() != null) {
+				getFinanceMainDialogCtrl().getClass().getMethod("setFinancialSummaryDialogCtrl", this.getClass())
+						.invoke(getFinanceMainDialogCtrl(), this);
+			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
@@ -415,7 +413,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			gb_basicDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_btDetails")) {
-			isbtDetailsVisible = true;
 			imgBtDetails.setStyle("display:block");
 			gb_btDetails.setVisible(true);
 
@@ -440,11 +437,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			gb_collateralDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_assetDetails")) {
-			isassetDetailsVisible = true;
 			gb_assetDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_synopsisAndPdDetails")) {
-			issynopsisAndPdDetailsVisible = true;
 			imgSynopsisandpddetails.setStyle("display:block");
 			gb_synopsisAndPdDetails.setVisible(true);
 		}
@@ -465,7 +460,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (cetGroupBoxesVisibility.contains("gb_sanctionConditionsDetails")) {
 			issanctionConditionsDetailsVisible = true;
-			imgSanctionConditions.setStyle("display:block");
+			if (!this.enqiryModule) {
+				imgSanctionConditions.setStyle("display:block");
+			}
 			gb_sanctionConditionsDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_risksAndMitigants")) {
@@ -479,7 +476,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			gb_interfacesDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_scoringDetails")) {
-			isscoringDetailsVisible = true;
 			imgScoring.setStyle("display:block");
 			gb_scoringDetails.setVisible(true);
 
@@ -789,7 +785,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		lc = new Listcell("NA");
 		lc.setParent(item);
 		if (!StringUtils.equals(customerType, "Guarantor")) {
-			lc = new Listcell(String.valueOf(DateUtility.getYearsBetween(maturityDate, custDob)));
+			lc = new Listcell(String.valueOf(DateUtil.getYearsBetween(maturityDate, custDob)));
 			lc.setParent(item);
 		} else {
 			lc = new Listcell("NA");
@@ -948,6 +944,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				lc = new Listcell(sanctionConditions.getSanctionCondition());
 				lc.setParent(item);
 				lc = new Listcell(sanctionConditions.getStatus());
+				lc.setParent(item);
+				lc = new Listcell(sanctionConditions.getRemarks());
 				lc.setParent(item);
 				item.setAttribute("data", sanctionConditions);
 				ComponentsCtrl.applyForward(item,
@@ -1325,6 +1323,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private void doCheckRights() {
 		logger.debug("Entering");
 		getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
+		if (this.enqiryModule) {
+			this.btnNew_NewSanctionConditions.setVisible(false);
+		}
 
 		// Customer related List Buttons
 		/*
@@ -1388,6 +1389,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("newRecord", "true");
 		map.put("isFinanceProcess", isFinanceProcess);
 		map.put("roleCode", getRole());
+		map.put("isEnquiry", this.enqiryModule);
 
 		if (getFinanceMainDialogCtrl() != null) {
 			map.put("financeMainDialogCtrl", getFinanceMainDialogCtrl());

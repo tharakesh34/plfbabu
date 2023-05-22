@@ -173,25 +173,13 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 	@Override
 	public List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, FeeID, FeeOrder, FinEvent, CalculatedAmount, ActualAmountOriginal");
-		sql.append(", ActualAmount, WaivedAmount, WaivedGST, NetAmountOriginal, NetAmountGST, NetAmount");
-		sql.append(", PaidAmount, PaidAmountGST, PaidAmountOriginal, RemainingFee, RemainingFeeGST");
-		sql.append(", RemainingFeeOriginal, VasReference, Status, ReferenceId");
-		sql.append(", FeeScheduleMethod, ActPercentage, PaidTDS, RemTDS, NetTDS");
-		sql.append(", TaxHeaderId, TaxApplicable, ActualAmount, RecordType, LastMntOn, RecordStatus");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent, TdsReq");
-		}
-
-		sql.append(", WaivedGST, ReferenceId");
-		sql.append(" from FinFeeDetail");
-		sql.append(StringUtils.trimToEmpty(type));
+		StringBuilder sql = getSelectQuery(false, type);
 		sql.append(" Where FinReference = ? and ActualAmount > ?");
 		sql.append(" and FeeScheduleMethod in (?, ?) and OriginationFee = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
+
+		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper(type, false);
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -201,55 +189,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, "DISB");
 			ps.setString(index++, "PBCU");
 			ps.setInt(index, 1);
-		}, (rs, num) -> {
-			FinFeeDetail ffd = new FinFeeDetail();
+		}, rowMapper);
 
-			ffd.setFinID(rs.getLong("FinID"));
-			ffd.setFinReference(rs.getString("FinReference"));
-			ffd.setFeeID(rs.getLong("FeeID"));
-			ffd.setFeeOrder(rs.getInt("FeeOrder"));
-			ffd.setFinEvent(rs.getString("FinEvent"));
-			ffd.setCalculatedAmount(rs.getBigDecimal("CalculatedAmount"));
-			ffd.setActualAmountOriginal(rs.getBigDecimal("ActualAmountOriginal"));
-			ffd.setActualAmount(rs.getBigDecimal("ActualAmount"));
-			ffd.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-			ffd.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-			ffd.setNetAmountOriginal(rs.getBigDecimal("NetAmountOriginal"));
-			ffd.setNetAmountGST(rs.getBigDecimal("NetAmountGST"));
-			ffd.setNetAmount(rs.getBigDecimal("NetAmount"));
-			ffd.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-			ffd.setPaidAmountGST(rs.getBigDecimal("PaidAmountGST"));
-			ffd.setPaidAmountOriginal(rs.getBigDecimal("PaidAmountOriginal"));
-			ffd.setRemainingFee(rs.getBigDecimal("RemainingFee"));
-			ffd.setRemainingFeeGST(rs.getBigDecimal("RemainingFeeGST"));
-			ffd.setRemainingFeeOriginal(rs.getBigDecimal("RemainingFeeOriginal"));
-			ffd.setVasReference(rs.getString("VasReference"));
-			ffd.setStatus(rs.getString("Status"));
-			ffd.setReferenceId(rs.getLong("ReferenceId"));
-			ffd.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
-			ffd.setActPercentage(rs.getBigDecimal("ActPercentage"));
-			ffd.setPaidTDS(rs.getBigDecimal("PaidTDS"));
-			ffd.setRemTDS(rs.getBigDecimal("RemTDS"));
-			ffd.setNetTDS(rs.getBigDecimal("NetTDS"));
-			ffd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
-			ffd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
-			ffd.setActualAmount(rs.getBigDecimal("ActualAmount"));
-			ffd.setRecordType(rs.getString("RecordType"));
-			ffd.setRecordStatus(rs.getString("RecordStatus"));
-			ffd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-
-			if (StringUtils.trimToEmpty(type).contains("View")) {
-				ffd.setFeeTypeCode(rs.getString("FeeTypeCode"));
-				ffd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				ffd.setTaxComponent(rs.getString("TaxComponent"));
-				ffd.setTdsReq(rs.getBoolean("TdsReq"));
-			}
-
-			ffd.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-			ffd.setReferenceId(JdbcUtil.getLong(rs.getLong("ReferenceId")));
-
-			return ffd;
-		});
 	}
 
 	@Override

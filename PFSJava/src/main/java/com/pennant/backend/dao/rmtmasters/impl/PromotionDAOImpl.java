@@ -80,7 +80,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		PromotionRowMapper rowMapper = new PromotionRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionCode }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, promotionCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -410,7 +410,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		PromotionRowMapper rowMapper = new PromotionRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { promotionId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, promotionId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -602,8 +602,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		PromotionRowMapper rowMapper = new PromotionRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { promotion.getPromotionCode(), promotion.getReferenceID() }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, promotion.getPromotionCode(),
+					promotion.getReferenceID());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -12,7 +12,7 @@ public class BMTRBFldCriterias {
 	private String rbFldCriteriaValues;
 
 	public BMTRBFldCriterias() {
-
+	    super();
 	}
 
 	// ******************************************************//

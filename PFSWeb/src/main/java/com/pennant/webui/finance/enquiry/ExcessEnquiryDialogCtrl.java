@@ -185,10 +185,6 @@ public class ExcessEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				excessType = String.valueOf(AdviseType.PAYABLE.id());
 			}
 
-			if (AdviseType.isSettlement(fa.getAmountType())) {
-				excessType = String.valueOf(AdviseType.Settlement.id());
-			}
-
 			List<FinExcessAmount> feaList = map.get(excessType);
 
 			if (feaList == null) {

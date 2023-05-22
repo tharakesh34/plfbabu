@@ -83,4 +83,12 @@
 		<property name="minIdle" value="0" />
 		<property name="maxIdle" value="8" />
 	</bean>
+	
+	<bean id="coreDBDatasource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${pffextjdbc.driverClassName}" />
+		<property name="url" value="${pffextjdbc.url}" />
+		<property name="username" value="${pffextjdbc.username}" />
+		<property name="password" value="${pffextjdbc.password}" />
+	</bean>
 </beans>

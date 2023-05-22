@@ -72,11 +72,11 @@
 	</bean>
 	<!-- WIF Loan Calculator -->
 	<bean id="financeDetailController" class="com.pennanttech.controller.FinanceDetailController" autowire="byName"
-		scope="prototype" parent="summaryDetailService" />
+		scope="prototype" parent="absractController" />
 
 	<!-- Finance/Loan Services -->
 	<bean id="finServiceInstController" class="com.pennanttech.controller.FinServiceInstController" autowire="byName"
-		scope="prototype" parent="summaryDetailService" />
+		scope="prototype" parent="absractController" />
 
 	<!-- FinanceType/LoanType controller -->
 	<bean id="financeTypeController" class="com.pennanttech.controller.FinanceTypeController" autowire="byName"
@@ -98,10 +98,10 @@
 
 	<!-- CreateFinance/Loan controller -->
 	<bean id="createFinanceControllerTarget" class="com.pennanttech.controller.CreateFinanceController"
-		autowire="byName" scope="prototype" parent="summaryDetailService">
+		autowire="byName" scope="prototype" parent="absractController">
 	</bean>
 
-	<bean id="summaryDetailService" class="com.pennanttech.controller.SummaryDetailService" autowire="byName" />
+	<bean id="summaryDetailService" class="com.pennant.backend.service.finance.impl.SummaryDetailService" autowire="byName" />
 
 	<!-- Mandate controller -->
 	<bean id="mandateController" class="com.pennanttech.controller.MandateController" autowire="byName"
@@ -139,7 +139,7 @@
 
 	<!-- Statement controller -->
 	<bean id="finStatementController" class="com.pennanttech.controller.FinStatementController" autowire="byName"
-		scope="prototype" parent="summaryDetailService" />
+		scope="prototype" parent="absractController" />
 
 	<!-- VAS controller -->
 	<bean id="vasController" class="com.pennanttech.controller.VASController" autowire="byName" scope="prototype">
@@ -234,6 +234,9 @@
 	
 	<bean id ="absractService" class="com.pennant.pff.api.service.AbstractService" abstract="true"/>
 	
+	<bean id="paymentInstructionController" class="com.pennanttech.controller.PaymentInstructionController" autowire="byName"
+		scope="prototype" />
+
 	<bean id="financeEnquiryController" class="com.pennanttech.controller.FinanceEnquiryController" autowire="byName"
 		scope="prototype" parent="absractController">
 	</bean>

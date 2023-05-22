@@ -57,7 +57,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
@@ -77,6 +76,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -355,7 +355,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 
 						if ("CustAge".equalsIgnoreCase(fieldName) && customer != null) {
 							intbox.setValue(
-									DateUtility.getYearsBetween(customer.getCustDOB(), DateUtility.getSysDate()));
+									DateUtil.getYearsBetween(customer.getCustDOB(), DateUtil.getSysDate()));
 						} else {
 							intbox.setValue(0);
 						}
@@ -562,8 +562,7 @@ public class CustomerEligibilityCheckDialogCtrl extends GFCBaseCtrl<CustomerElig
 					} else {
 						resultValue = "0";
 					}
-					eligibilityRule.setElgAmount(new BigDecimal(resultValue)); // FIXME only amount field is available,
-																				// logic to be verified.
+					eligibilityRule.setElgAmount(new BigDecimal(resultValue));
 					break;
 
 				case OBJECT:

@@ -14,7 +14,6 @@
 			classpath:applicationContext-db.xml,
 			classpath:applicationContext-txn.xml,
 			classpath:applicationContext-daos.xml,
- 			classpath:securityContext.xml,
  			classpath:interfaceContext-core.xml,
  			classpath:interfaceContext.xml,
  			classpath:extensionContext.xml
@@ -210,7 +209,7 @@
 	<!-- When a request URI refers to a directory, the default servlet looks for the "welcome file" within that directory and 
 		display the corresponding resource URI. -->
 	<welcome-file-list>
-		<welcome-file>/pages/index.zul</welcome-file>
+		<welcome-file>pages/index.zul</welcome-file>
 		<welcome-file>loginDialog.zul</welcome-file>
 	</welcome-file-list>
 </web-app>

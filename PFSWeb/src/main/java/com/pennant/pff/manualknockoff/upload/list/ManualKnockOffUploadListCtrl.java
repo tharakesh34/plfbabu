@@ -13,8 +13,8 @@ public class ManualKnockOffUploadListCtrl extends AUploadListCtrl {
 
 	protected Window window;
 
-	protected ManualKnockOffUploadListCtrl(@Autowired UploadService manualKnockOffUploadServiceImpl) {
-		super(manualKnockOffUploadServiceImpl, UploadTypes.MANUAL_KNOCKOFF);
+	protected ManualKnockOffUploadListCtrl(@Autowired UploadService manualKnockOffUploadService) {
+		super(manualKnockOffUploadService, UploadTypes.MANUAL_KNOCKOFF);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class CityListModelItemRenderer implements ListitemRenderer<City>, Serial
 	private static final long serialVersionUID = -5018118741984246012L;
 
 	public CityListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

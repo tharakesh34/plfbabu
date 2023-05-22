@@ -55,7 +55,7 @@ public class CreditReviewSubCtgDetails {
 	private String year3USDConvstn = "";
 
 	public CreditReviewSubCtgDetails() {
-
+	    super();
 	}
 
 	public String getSubCategoryDesc() {

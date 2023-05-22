@@ -31,7 +31,7 @@ public class TestPosidexResponseService {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			responceService.receiveResponse(new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate());
+			responceService.receiveResponse(1000L, DateUtil.getSysDate(), DateUtil.getSysDate());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

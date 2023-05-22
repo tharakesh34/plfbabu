@@ -240,6 +240,7 @@
 													</hbox>
 													<label value="${c:l('label_CollateralSetupDialog_CersaiModificationDate.value')}" />
 													<hbox>
+													<space spacing="2px" />
 													<datebox id="cersaiModificationDate" disabled="true" />
 													</hbox>
 												</row>

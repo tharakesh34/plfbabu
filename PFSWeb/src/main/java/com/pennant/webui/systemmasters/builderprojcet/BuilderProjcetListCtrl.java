@@ -209,7 +209,7 @@ public class BuilderProjcetListCtrl extends GFCBaseListCtrl<BuilderProjcet> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  id =?");
 
 		if (doCheckAuthority(builderprojcet, whereCond.toString(), new Object[] { builderprojcet.getId() })) {

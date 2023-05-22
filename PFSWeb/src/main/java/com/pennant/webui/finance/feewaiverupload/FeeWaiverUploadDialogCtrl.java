@@ -45,7 +45,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -316,8 +315,8 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		StringBuilder condition = new StringBuilder();
 		condition.append("Where FILENAME in (" + "'" + fileName + "'" + ")");
 		if (this.dateOfUpload.getValue() != null) {
-			String uploadDate = DateUtility.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
-			condition.append("and UploadedDate in (" + "'" + DateUtility.getDBDate(uploadDate).toString() + "'" + ")");
+			String uploadDate = DateUtil.formatToFullDate(this.dateOfUpload.getValue()).toString();
+			condition.append("and UploadedDate in (" + "'" + uploadDate + "'" + ")");
 		}
 
 		String whereCond = new String(condition);
@@ -381,8 +380,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
-				MessageUtil.showError(
-						"The uploaded file could not be recognized. Please upload a valid xlsx file.");
+				MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid xlsx file.");
 				this.media = null;
 				return;
 			} else {
@@ -525,7 +523,6 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-
 
 		boolean feeExistsforLan = false;
 		for (FeeWaiverDetail waiverdetail : fwh.getFeeWaiverDetails()) {
@@ -1031,8 +1028,7 @@ public class FeeWaiverUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 			}
 		} else {
-			throw new AppException(
-					"The uploaded file could not be recognized. Please upload a valid xlsx file.");
+			throw new AppException("The uploaded file could not be recognized. Please upload a valid xlsx file.");
 		}
 
 		logger.debug(Literal.LEAVING);

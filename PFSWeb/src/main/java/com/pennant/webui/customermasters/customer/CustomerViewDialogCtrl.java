@@ -61,7 +61,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
@@ -109,6 +108,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -345,12 +345,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<CustomerIncome> incomeList = new ArrayList<CustomerIncome>();
 
 	private CustomerDetails customerDetails;
-	private transient CustomerListCtrl customerListCtrl;
 
 	// Declaration of Service(s) & DAO(s)
 	private transient CustomerDetailsService customerDetailsService;
 	private int ccyFormatter = 0;
-	private int old_ccyFormatter = 0;
 	private String moduleType = "";
 	protected Div divKeyDetails;
 	protected Grid grid_KYCDetails;
@@ -457,7 +455,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 			Customer customer = customerDetails.getCustomer();
 			ccyFormatter = CurrencyUtil.getFormat(customer.getCustBaseCcy());
-			old_ccyFormatter = ccyFormatter;
 
 			if (isFinanceProcess || isEnqProcess) {
 				if (arguments.containsKey("roleCode")) {
@@ -471,14 +468,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				} else {
 					doLoadWorkFlow(customer.isWorkflow(), customer.getWorkflowId(), customer.getNextTaskId());
 				}
-			}
-
-			// READ OVERHANDED params !
-			// we get the customerListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit
-			// or delete customer here.
-			if (arguments.containsKey("customerListCtrl")) {
-				customerListCtrl = (CustomerListCtrl) arguments.get("customerListCtrl");
 			}
 
 			if (arguments.containsKey("module")) {
@@ -736,11 +725,11 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custSubSegment.setValue("- - - - - - - - -");
 			}
 
-			custDOB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			custDOB.setValue(DateUtil.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
-			custDOBB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			custDOBB.setValue(DateUtil.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
@@ -1032,12 +1021,12 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				custSubSectorr.setStyle("color:orange;");
 				custSubSectorr.setValue("- - - - - - - - -");
 			}
-			custDOB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			custDOB.setValue(DateUtil.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
-			corpcustDOBB.setValue(DateUtility.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
+			corpcustDOBB.setValue(DateUtil.format(aCustomer.getCustDOB(), "dd/MM/yyyy"));
 			if (aCustomer.getCustDOB() != null) {
 				i++;
 			}
@@ -1808,10 +1797,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc = new Listcell(customerDocument.getCustDocSysName());
 					lc.setStyle("font-size: 14px");
 					lc.setParent(item);
-					lc = new Listcell(DateUtility.formatToLongDate(customerDocument.getCustDocIssuedOn()));
+					lc = new Listcell(DateUtil.formatToLongDate(customerDocument.getCustDocIssuedOn()));
 					lc.setStyle("font-size: 14px");
 					lc.setParent(item);
-					lc = new Listcell(DateUtility.formatToLongDate(customerDocument.getCustDocExpDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(customerDocument.getCustDocExpDate()));
 					lc.setStyle("font-size: 14px");
 					lc.setParent(item);
 					item.setAttribute("data", customerDocument);
@@ -1945,7 +1934,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			for (CustomerChequeInfo custChequeInfo : customerChequeInfoDetails) {
 				Listitem item = new Listitem();
 				Listcell lc;
-				lc = new Listcell(DateUtility.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
+				lc = new Listcell(DateUtil.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				lc = new Listcell(
@@ -1989,7 +1978,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc = new Listcell();
 					lc.setStyle("font-size: 14px");
 				} else {
-					lc = new Listcell(DateUtility.formatToLongDate(custExtLiability.getFinDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(custExtLiability.getFinDate()));
 					lc.setStyle("font-size: 14px");
 				}
 				lc.setParent(item);
@@ -2040,7 +2029,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				int format = CurrencyUtil.getFormat(finEnquiry.getFinCcy());
 				Listitem item = new Listitem();
-				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				Listcell lc = new Listcell(DateUtil.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getLovDescFinTypeName());
@@ -2307,7 +2296,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(financeMain.getFinCcy());
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				if (financeMain.getFinBranch() == null || financeMain.getFinBranch().isEmpty()) {
@@ -2646,10 +2635,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(collateralSetup.getCollateralCcy());
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(collateralSetup.getExpiryDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(collateralSetup.getExpiryDate()));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(collateralSetup.getNextReviewDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(collateralSetup.getNextReviewDate()));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				lc = new Listcell(
@@ -2763,7 +2752,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						CurrencyUtil.getFormat(customerFinance.getFinCcy())));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(customerFinance.getFinStartDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(customerFinance.getFinStartDate()));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				lc = new Listcell(customerFinance.getNextRoleDesc());
@@ -2995,7 +2984,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(productOfferdts.getOfferAmount().toString());
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(productOfferdts.getOfferDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(productOfferdts.getOfferDate()));
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				lc = new Listcell(productOfferdts.getStatus());

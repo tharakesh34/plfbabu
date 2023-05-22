@@ -16,6 +16,7 @@ public class ServiceExceptionDetails implements Serializable {
 	private String faultMessage;
 
 	public ServiceExceptionDetails() {
+	    super();
 	}
 
 	public String getFaultCode() {

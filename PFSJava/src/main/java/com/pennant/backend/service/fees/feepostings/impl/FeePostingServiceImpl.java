@@ -35,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.AccountEngineExecution;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -69,10 +68,11 @@ import com.pennant.pff.accounting.PostAgainst;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * @author murthy.y
@@ -294,8 +294,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FeePostings feePostings = new FeePostings("");
 		BeanUtils.copyProperties((FeePostings) auditHeader.getAuditDetail().getModelData(), feePostings);
 
@@ -595,14 +594,14 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		if (feePostings.getValueDate() == null) {
 			feePostings.setValueDate(SysParamUtil.getAppDate());
 		} else {
-			Date minReqPostingDate = DateUtility.addDays(SysParamUtil.getAppDate(),
+			Date minReqPostingDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 					-SysParamUtil.getValueAsInt(SMTParameterConstants.FEE_POSTING_DATE_BACK_DAYS));
 			if (feePostings.getValueDate().before(minReqPostingDate)
 					|| feePostings.getValueDate().after(SysParamUtil.getAppDate())) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Value Date";
-				valueParm[1] = DateUtility.formatToLongDate(minReqPostingDate);
-				valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
+				valueParm[1] = DateUtil.formatToLongDate(minReqPostingDate);
+				valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getAppDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 			}
 		}

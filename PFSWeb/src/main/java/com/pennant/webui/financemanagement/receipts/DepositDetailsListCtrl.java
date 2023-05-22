@@ -224,7 +224,7 @@ public class DepositDetailsListCtrl extends GFCBaseListCtrl<DepositDetails> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		} else {
-			StringBuffer whereCond = new StringBuffer();
+			StringBuilder whereCond = new StringBuilder();
 			whereCond.append("  where  DepositId =? ");
 
 			if (doCheckAuthority(depositDetails, whereCond.toString(),

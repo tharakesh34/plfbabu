@@ -45,32 +45,5 @@
 				<element name="max">500</element>
 			</constraint>
 		</field>
-		<!-- <field name="validateCovenantType">
-			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
-				<message>postponeDays applicable only for alwPostpone</message>
-				<groups>
-					<value>com.pennant.validation.CreateFinanceGroup</value>
-					<value>com.pennant.validation.CreateFinancewithWIFGroup</value>
-				</groups>
-
-				<element name="lang">javascript</element>
-				<element name="script">
-					if (_this.alwPostpone) {
-					if (_this.postponeDays >0) {
-					true;
-					} else {
-					false;
-					}
-					} else {
-					if
-					(_this.postponeDays >0) {
-					false;
-					} else {
-					true;
-					}
-					}
-				</element>
-			</constraint>
-		</field> -->
 	</bean>
 </constraint-mappings>

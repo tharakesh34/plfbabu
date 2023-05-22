@@ -1234,6 +1234,13 @@
 														<checkbox id="odTDSApplicable" checked="false" />
 													</hbox>
 												</row>
+												<row>
+													<label value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+													<hbox>
+														<space spacing="2px" />
+														<decimalbox id="odMinAmount" width="120px" readonly="true" />
+													</hbox>
+												</row>
 												<row id="row_ODMinCapAmount" visible="false">
 													<label id="label_FinanceMainDialog_ODMinCapAmount" value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
 													<hbox>

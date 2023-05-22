@@ -54,6 +54,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class RateUtil implements Serializable {
 	private static final long serialVersionUID = 3360714221070313516L;
@@ -95,7 +96,7 @@ public class RateUtil implements Serializable {
 
 		if (!error) {
 			String[] valueParm = new String[2];
-			valueParm[1] = DateUtility.format(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
+			valueParm[1] = DateUtil.format(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
 
 			String[] errorParm = new String[2];
 			errorParm[1] = PennantJavaUtil.getLabel("label_Date") + ": " + valueParm[1];
@@ -354,7 +355,7 @@ public class RateUtil implements Serializable {
 
 		if (!error) {
 			String[] valueParm = new String[2];
-			valueParm[1] = DateUtility.format(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
+			valueParm[1] = DateUtil.format(rateDetail.getValueDate(), PennantConstants.DBDateFormat);
 
 			String[] errorParm = new String[2];
 			errorParm[1] = PennantJavaUtil.getLabel("label_Date") + ": " + valueParm[1];

@@ -22,7 +22,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.npa.dao.AssetClassSetupDAO;
-import com.pennanttech.pff.npa.dao.AssetClassificationDAO;
 import com.pennanttech.pff.npa.model.AssetClassSetupDetail;
 import com.pennanttech.pff.npa.model.AssetClassSetupHeader;
 import com.pennanttech.pff.npa.service.AssetClassSetupService;
@@ -33,7 +32,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private AssetClassSetupDAO assetClassSetupDAO;
-	private AssetClassificationDAO assetClassificationDAO;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -141,8 +139,7 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
 			tranType = PennantConstants.TRAN_DEL;
-			assetClassSetupDAO.deleteDetailBySetupID(assetClassSetupHeader.getId(), "");
-			assetClassSetupDAO.delete(assetClassSetupHeader, TableType.MAIN_TAB);
+			assetClassSetupDAO.softDelete(assetClassSetupHeader.getId(), TableType.MAIN_TAB);
 		} else {
 			assetClassSetupHeader.setRoleCode("");
 			assetClassSetupHeader.setNextRoleCode("");
@@ -246,23 +243,26 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 
-		AssetClassSetupHeader assetClassSetupHeader = (AssetClassSetupHeader) auditDetail.getModelData();
+		AssetClassSetupHeader ach = (AssetClassSetupHeader) auditDetail.getModelData();
 
-		String recordType = assetClassSetupHeader.getRecordType();
-		String entityCode = assetClassSetupHeader.getEntityCode();
-		boolean newRecord = assetClassSetupHeader.isNewRecord();
+		String recordType = ach.getRecordType();
+		String entityCode = ach.getEntityCode();
+		boolean newRecord = ach.isNewRecord();
 
 		if (newRecord && PennantConstants.RECORD_TYPE_NEW.equals(recordType)) {
-			if (newRecord && assetClassSetupDAO.isAssetEntityCodeExists(entityCode, TableType.VIEW)) {
-				String[] parameters = new String[1];
+			if (newRecord && assetClassSetupDAO.isAssetEntityCodeExists(entityCode, ach.getCode(), TableType.VIEW)) {
+				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("label_EntityCode") + ": " + entityCode;
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
+				parameters[1] = PennantJavaUtil.getLabel("label_AssetClassSetupDialog_AssetClassSetupCode") + ": "
+						+ ach.getCode();
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, null));
 			}
 		}
 
-		if (PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
-			long npaclassID = assetClassSetupHeader.getId();
-			if (assetClassificationDAO.checkDependency(npaclassID)) {
+		boolean checkDependency = assetClassSetupDAO.checkDependency(ach.getId());
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(ach.getRecordType())) {
+			if (checkDependency) {
 				auditDetail.setErrorDetail(new ErrorDetail("90290", null));
 			}
 		}
@@ -348,10 +348,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 				assetClassSetupDAO.updateDetail(assetClassSetupDetail, type);
 			}
 
-			if (deleteRecord) {
-				assetClassSetupDAO.deleteDetail(assetClassSetupDetail, type);
-			}
-
 			if (approveRec) {
 				assetClassSetupDetail.setRecordType(rcdType);
 				assetClassSetupDetail.setRecordStatus(recordStatus);
@@ -367,7 +363,7 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 	private List<AuditDetail> setAuditDataForDetail(AssetClassSetupHeader acsh, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new AssetClassSetupDetail(),
 				new AssetClassSetupDetail().getExcludeFields());
 
@@ -520,11 +516,6 @@ public class AssetClassSetupServiceImpl extends GenericService<AssetClassSetupHe
 
 	public void setAssetClassSetupDAO(AssetClassSetupDAO assetClassSetupDAO) {
 		this.assetClassSetupDAO = assetClassSetupDAO;
-	}
-
-	@Autowired
-	public void setAssetClassificationDAO(AssetClassificationDAO assetClassificationDAO) {
-		this.assetClassificationDAO = assetClassificationDAO;
 	}
 
 }

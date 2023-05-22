@@ -45,7 +45,7 @@ public class FrequencyListModelItemRenderer implements ListitemRenderer<Frequenc
 	private static final long serialVersionUID = 194466328972174678L;
 
 	public FrequencyListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class FinanceApplicationCodeListModelItemRenderer
 	private static final long serialVersionUID = -6336194516320385692L;
 
 	public FinanceApplicationCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

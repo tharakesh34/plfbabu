@@ -181,7 +181,7 @@ public class NPABucketListCtrl extends GFCBaseListCtrl<NPABucket> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  BucketID =? ");
 
 		if (doCheckAuthority(npabucket, whereCond.toString(), new Object[] { npabucket.getBucketID() })) {

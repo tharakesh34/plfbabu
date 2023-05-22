@@ -6,7 +6,6 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -52,7 +51,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);
@@ -93,7 +92,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		boolean isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(fm.getFinID(), fromDate, isWIF);
 		if (!isFromDateExists) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtil.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 
@@ -107,7 +106,7 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		// It shouldn't be past date when compare to appdate
 		if (isFromDateExists && fromDate.compareTo(SysParamUtil.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtil.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 
@@ -132,16 +131,16 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		// ToDate shouldn't be past date when compare to appdate
 		if (isToDateExists && fromDate.compareTo(SysParamUtil.getAppDate()) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtil.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 
 		/* ToDate shouldn't be before fromdate */
 		if (DateUtil.compare(fromDate, toDate) >= 0) {
 			String[] valueParm = new String[3];
-			valueParm[0] = "To Date:" + DateUtility.formatToShortDate(toDate);
-			valueParm[1] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			valueParm[2] = "Maturity Date:" + DateUtility.formatToShortDate(fm.getMaturityDate());
+			valueParm[0] = "To Date:" + DateUtil.formatToShortDate(toDate);
+			valueParm[1] = "From Date:" + DateUtil.formatToShortDate(fromDate);
+			valueParm[2] = "Maturity Date:" + DateUtil.formatToShortDate(fm.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90350", "", valueParm), lang));
 		}
 

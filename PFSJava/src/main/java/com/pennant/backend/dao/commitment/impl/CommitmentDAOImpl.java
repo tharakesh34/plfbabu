@@ -41,7 +41,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.commitment.Commitment;
@@ -470,7 +470,7 @@ public class CommitmentDAOImpl extends BasicDao<Commitment> implements Commitmen
 		logger.debug("Entering");
 
 		boolean cmtExpired = false;
-		Date dateValueDate = DateUtility.getAppValueDate();
+		Date dateValueDate = SysParamUtil.getAppValueDate();
 		if (cmtExpDate.compareTo(dateValueDate) < 0) {
 			cmtExpired = true;
 		}

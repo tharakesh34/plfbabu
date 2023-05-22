@@ -71,7 +71,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
@@ -526,7 +525,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setValue(recalType);
 				comboitem.setLabel(Labels.getLabel("label_" + recalType));
 				fm.setRecalType(recalType);
-				int months = DateUtility.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
+				int months = DateUtil.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
 				fm.setAdjTerms(months);
 				fm.setRecalToDate(fm.getMaturityDate());
 				for (FinanceScheduleDetail finSch : fsdList) {
@@ -547,7 +546,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (ImplementationConstants.ALLOW_STEP_RECAL_PRORATA) {
 				fm.setStepRecalOnProrata(true);
 				for (FinanceScheduleDetail finSch : fsdList) {
-					if (DateUtility.compare(finSch.getSchDate(), fm.getGrcPeriodEndDate()) <= 0) {
+					if (DateUtil.compare(finSch.getSchDate(), fm.getGrcPeriodEndDate()) <= 0) {
 						continue;
 					}
 					if (!finSch.isRepayOnSchDate()) {
@@ -566,7 +565,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		fm.setRecalFromDate(recalFromDate);
 		comboitem = new Comboitem();
-		comboitem.setLabel(DateUtility.formatToLongDate(recalFromDate));
+		comboitem.setLabel(DateUtil.formatToLongDate(recalFromDate));
 		comboitem.setValue(recalFromDate);
 		cbFromDate.appendChild(comboitem);
 		cbFromDate.setSelectedItem(comboitem);
@@ -630,7 +629,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (isDevFinance) {
 				for (int i = 0; i <= sdSize - 1; i++) {
 					FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
-					if (DateUtility.compare(curSchd.getSchDate(), this.fromDate.getValue()) <= 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), this.fromDate.getValue()) <= 0) {
 						continue;
 					}
 					recalFrom = curSchd.getSchDate();
@@ -638,26 +637,26 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			}
 
-			if (DateUtility.compare(this.fromDate.getValue(), appDate) < 0
-					|| DateUtility.compare(this.fromDate.getValue(), maturityDate) >= 0
+			if (DateUtil.compare(this.fromDate.getValue(), appDate) < 0
+					|| DateUtil.compare(this.fromDate.getValue(), maturityDate) >= 0
 							&& !this.fromDate.isReadonly()) {
 				isValidDate = false;
 				throw new WrongValueException(this.fromDate,
 						Labels.getLabel("DATE_ALLOWED_MINDATE_EQUAL",
 								new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
-										DateUtility.formatToLongDate(appDate),
-										DateUtility.formatToLongDate(maturityDate) }));
+										DateUtil.formatToLongDate(appDate),
+										DateUtil.formatToLongDate(maturityDate) }));
 			}
-			if ((DateUtility.compare(this.fromDate.getValue(), lastPaidDate) <= 0
-					|| DateUtility.compare(this.fromDate.getValue(), maturityDate) >= 0)
-					&& DateUtility.compare(this.fromDate.getValue(), finMain.getFinStartDate()) != 0
+			if ((DateUtil.compare(this.fromDate.getValue(), lastPaidDate) <= 0
+					|| DateUtil.compare(this.fromDate.getValue(), maturityDate) >= 0)
+					&& DateUtil.compare(this.fromDate.getValue(), finMain.getFinStartDate()) != 0
 					&& !this.fromDate.isReadonly()) {
 				isValidDate = false;
 				throw new WrongValueException(this.fromDate,
 						Labels.getLabel("DATE_ALLOWED_RANGE",
 								new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
-										DateUtility.formatToLongDate(lastPaidDate),
-										DateUtility.formatToLongDate(maturityDate) }));
+										DateUtil.formatToLongDate(lastPaidDate),
+										DateUtil.formatToLongDate(maturityDate) }));
 			}
 
 			// Last Disbursement Date
@@ -740,7 +739,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						List<FinanceScheduleDetail> schList = aFinScheduleData.getFinanceScheduleDetails();
 						BigDecimal closingbal = BigDecimal.ZERO;
 						for (int i = 0; i < schList.size(); i++) {
-							if (DateUtility.compare(schList.get(i).getSchDate(), this.fromDate.getValue()) > 0) {
+							if (DateUtil.compare(schList.get(i).getSchDate(), this.fromDate.getValue()) > 0) {
 								break;
 							}
 							closingbal = schList.get(i).getClosingBalance();
@@ -807,9 +806,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							List<OverdraftScheduleDetail> odDetail = aFinScheduleData.getOverdraftScheduleDetails();
 							for (int j = 0; j < odDetail.size() - 1; j++) {
 
-								if (DateUtility.compare(odDetail.get(j).getDroplineDate(),
+								if (DateUtil.compare(odDetail.get(j).getDroplineDate(),
 										finSched.get(i).getSchDate()) <= 0
-										&& DateUtility.compare(odDetail.get(j + 1).getDroplineDate(),
+										&& DateUtil.compare(odDetail.get(j + 1).getDroplineDate(),
 												finSched.get(i).getSchDate()) > 0) {
 									avalLimit = odDetail.get(j).getODLimit()
 											.subtract(finSched.get(i).getClosingBalance());
@@ -934,7 +933,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbFromDate,
 							Labels.getLabel("DATE_ALLOWED_AFTER",
 									new String[] { Labels.getLabel("label_AddDisbursementDialog_FromDate.value"),
-											DateUtility.formatToLongDate(this.fromDate.getValue()) }));
+											DateUtil.formatToLongDate(this.fromDate.getValue()) }));
 				}
 				finServiceInstruction.setRecalFromDate((Date) this.cbFromDate.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
@@ -954,7 +953,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel("DATE_ALLOWED_AFTER", new String[] {
 							Labels.getLabel("label_AddDisbursementDialog_TillDate.value"),
-							DateUtility.formatToLongDate((Date) this.cbFromDate.getSelectedItem().getValue()) }));
+							DateUtil.formatToLongDate((Date) this.cbFromDate.getSelectedItem().getValue()) }));
 				}
 
 				if ((this.fromDate.getValue() != null && ((Date) this.cbTillDate.getSelectedItem().getValue())
@@ -965,7 +964,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.cbTillDate,
 							Labels.getLabel("DATE_ALLOWED_AFTER",
 									new String[] { Labels.getLabel("label_AddDisbursementDialog_TillDate.value"),
-											DateUtility.formatToLongDate((Date) this.fromDate.getValue()) }));
+											DateUtil.formatToLongDate((Date) this.fromDate.getValue()) }));
 				}
 
 				// throw Exception if the selected schedule in To Date is having profit balance
@@ -1105,9 +1104,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				aFinScheduleData.getFinanceType().getFinSchdMthd())) {
 
 			Date startDate = this.fromDate.getValue();
-			if (DateUtility.compare(this.fromDate.getValue(),
+			if (DateUtil.compare(this.fromDate.getValue(),
 					aFinScheduleData.getFinanceMain().getFinStartDate()) != 0) {
-				startDate = DateUtility.addDays(this.fromDate.getValue(), -1);
+				startDate = DateUtil.addDays(this.fromDate.getValue(), -1);
 			}
 
 			maturityDate = FrequencyUtil.getNextDate(aFinScheduleData.getFinanceMain().getRepayFrq(), 1, startDate,
@@ -1137,12 +1136,12 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				for (int i = 0; i < schList.size(); i++) {
 
 					// Schedule Date Finding after new disbursement Date & before Maturity Date
-					if (DateUtility.compare(schList.get(i).getSchDate(), maturityDate) > 0) {
+					if (DateUtil.compare(schList.get(i).getSchDate(), maturityDate) > 0) {
 						schDateAfterCurInst = schList.get(i).getSchDate();
 						break;
 					}
 
-					if (DateUtility.compare(schList.get(i).getSchDate(), maturityDate) == 0) {
+					if (DateUtil.compare(schList.get(i).getSchDate(), maturityDate) == 0) {
 						schDateAfterCurInst = null;
 						schList.get(i).setPftOnSchDate(true);
 						schList.get(i).setRepayOnSchDate(true);
@@ -1154,11 +1153,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				boolean futureRpyInst = false;
 				List<RepayInstruction> rpyInstructions = aFinScheduleData.getRepayInstructions();
 				for (int i = 0; i < rpyInstructions.size(); i++) {
-					if (DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) == 0) {
+					if (DateUtil.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) == 0) {
 						rpyInstructions.get(i).setRepayAmount(
 								rpyInstructions.get(i).getRepayAmount().add(finServiceInstruction.getAmount()));
 						rpyInstFound = true;
-					} else if (DateUtility.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) < 0) {
+					} else if (DateUtil.compare(maturityDate, rpyInstructions.get(i).getRepayDate()) < 0) {
 						futureRpyInst = true;
 						break;
 					}
@@ -1582,7 +1581,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			isOverDraft = true;
 		}
 
-		if (this.fromDate.getValue() != null && DateUtility.compare(this.fromDate.getValue(),
+		if (this.fromDate.getValue() != null && DateUtil.compare(this.fromDate.getValue(),
 				getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) < 0) {
 
 			this.cbSchdMthd.setDisabled(true);
@@ -1609,7 +1608,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		boolean isApplySanctionBasedSchd = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
 
 		// STEP POS Recalculation Type Addition Check
-		if (this.fromDate.getValue() != null && DateUtility.compare(this.fromDate.getValue(),
+		if (this.fromDate.getValue() != null && DateUtil.compare(this.fromDate.getValue(),
 				getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
 
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
@@ -1741,8 +1740,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				if (allowedDays > 0) {
-					Date minValidDate = DateUtility.addDays(appDate, allowedDays);
-					if (DateUtility.compare(curSchd.getSchDate(), minValidDate) < 0) {
+					Date minValidDate = DateUtil.addDays(appDate, allowedDays);
+					if (DateUtil.compare(curSchd.getSchDate(), minValidDate) < 0) {
 						continue;
 					}
 				}
@@ -1763,7 +1762,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 			}
@@ -1782,7 +1781,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			Collections.sort(repayInstructions, new Comparator<RepayInstruction>() {
 				@Override
 				public int compare(RepayInstruction detail1, RepayInstruction detail2) {
-					return DateUtility.compare(detail1.getRepayDate(), detail2.getRepayDate());
+					return DateUtil.compare(detail1.getRepayDate(), detail2.getRepayDate());
 				}
 			});
 		}

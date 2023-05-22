@@ -29,7 +29,6 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AssignmentDAO;
@@ -54,14 +53,14 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.AssignmentUploadService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -444,7 +443,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			// get the next schedule payment
 			for (FinanceScheduleDetail schedule : schedules) {
 
-				if (DateUtility.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) >= 0) {
+				if (DateUtil.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) >= 0) {
 					// Partial Settlement schedule
 					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
 						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) { // if schedule payment
@@ -476,7 +475,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 
 			// difference between assignment date and current schedule date
-			int effectiveDiffDays = DateUtility.getDaysBetween(assignUpload.getAssignmentDate(), curSchd.getSchDate());
+			int effectiveDiffDays = DateUtil.getDaysBetween(assignUpload.getAssignmentDate(), curSchd.getSchDate());
 
 			// Effective days Interest amount calculation
 			BigDecimal effectiveProfit = BigDecimal.ZERO;
@@ -489,7 +488,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			// Total Interest calculation from Current schedule date.
 			BigDecimal afterAssignProfit = BigDecimal.ZERO;
 			for (FinanceScheduleDetail schedule : schedules) {
-				if (DateUtility.compare(schedule.getSchDate(), nextSchd.getSchDate()) >= 0) {
+				if (DateUtil.compare(schedule.getSchDate(), nextSchd.getSchDate()) >= 0) {
 					afterAssignProfit = afterAssignProfit.add(schedule.getProfitCalc());
 				}
 			}
@@ -501,7 +500,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// get the Effective next date schedule
 			for (FinanceScheduleDetail schedule : schedules) {
-				if (DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) > 0) {
+				if (DateUtil.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) > 0) {
 					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
 							// if schedule payment and partial settlement both should be in same day
@@ -514,7 +513,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 						effectNextSchd = schedule;
 						break;
 					}
-				} else if (DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) == 0) {
+				} else if (DateUtil.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) == 0) {
 					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
 							// if schedule payment and partial settlement both should be in same day
@@ -547,7 +546,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			BigDecimal effectivePaidPriAmt = BigDecimal.ZERO;
 
 			if (effectNextSchd != null) {
-				if (DateUtility.compare(effectNextSchd.getSchDate(), nextSchd.getSchDate()) != 0) {
+				if (DateUtil.compare(effectNextSchd.getSchDate(), nextSchd.getSchDate()) != 0) {
 					effectivePaidPriAmt = effectNextSchd.getSchdPriPaid().subtract(effectNextSchd.getPartialPaidAmt()); // Because
 																														// of
 																														// Partial
@@ -605,8 +604,8 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			BigDecimal assignPartPayment = BigDecimal.ZERO;
 			for (FinanceScheduleDetail schedule : schedules) {
 				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0
-						&& DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) >= 0
-						&& DateUtility.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) <= 0) {
+						&& DateUtil.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) >= 0
+						&& DateUtil.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) <= 0) {
 					assignPartPayment = assignPartPayment.add(schedule.getPartialPaidAmt());
 				}
 			}
@@ -641,7 +640,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			aeEvent.setFinReference(finReference);
 			aeEvent.setAccountingEvent(AccountingEvent.ASSIGNMENT);
 			aeEvent.setPostDate(SysParamUtil.getAppDate());
-			aeEvent.setValueDate(DateUtility.getDerivedAppDate());
+			aeEvent.setValueDate(SysParamUtil.getDerivedAppDate());
 			aeEvent.setFinType(financeMain.getFinType());
 			aeEvent.setCustID(financeMain.getCustID());
 			aeEvent.setBranch(financeMain.getFinBranch());
@@ -649,15 +648,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			aeEvent.setEntityCode(assignment.getEntityCode());
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.getAcSetIDList().clear();
-			long accountSetId = 0;
-			if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
-				accountSetId = AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
-						AccountingEvent.ASSIGNMENT, FinanceConstants.MODULEID_PROMOTION);
-			} else {
-				accountSetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-						AccountingEvent.ASSIGNMENT, FinanceConstants.MODULEID_FINTYPE);
+			Long accountSetId = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.ASSIGNMENT);
+
+			if (accountSetId != null && accountSetId > 0) {
+				aeEvent.getAcSetIDList().add(accountSetId);
 			}
-			aeEvent.getAcSetIDList().add(accountSetId);
+
 			aeEvent.setNewRecord(true);
 
 			Set<String> excludeFees = null;
@@ -715,7 +711,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 		// get the current schedule
 		for (FinanceScheduleDetail schedule : finScheduleDetails) {
-			if (DateUtility.compare(schedule.getSchDate(), assignmentUpload.getEffectiveDate()) >= 0) {
+			if (DateUtil.compare(schedule.getSchDate(), assignmentUpload.getEffectiveDate()) >= 0) {
 				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 					if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
 						// if schedule payment and partial settlement both should be in same day
@@ -736,7 +732,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		prvSchd = finScheduleDetails.get(prvSchdCount);
 
 		// get the actual difference days from Effective date and previous schedule date
-		int effectiveDaysDiff = DateUtility.getDaysBetween(assignmentUpload.getEffectiveDate(), prvSchd.getSchDate());
+		int effectiveDaysDiff = DateUtil.getDaysBetween(assignmentUpload.getEffectiveDate(), prvSchd.getSchDate());
 
 		BigDecimal bpi1Amount = BigDecimal.ZERO;
 
@@ -759,7 +755,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		FinanceScheduleDetail curSchd = null;
 		// get the current schedule
 		for (FinanceScheduleDetail schedule : finScheduleDetails) {
-			if (DateUtility.compare(schedule.getSchDate(), assignmentUpload.getEffectiveDate()) >= 0) {
+			if (DateUtil.compare(schedule.getSchDate(), assignmentUpload.getEffectiveDate()) >= 0) {
 				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 					if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
 						// if schedule payment and partial settlement both should be in same day
@@ -782,12 +778,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		int assignDiffDays = 0;
 
 		if (curSchd != null && nextSchd != null) {
-			effectDaysDiff = DateUtility.getDaysBetween(curSchd.getSchDate(), assignmentUpload.getEffectiveDate());
+			effectDaysDiff = DateUtil.getDaysBetween(curSchd.getSchDate(), assignmentUpload.getEffectiveDate());
 			intrestAmount = curSchd.getProfitCalc().divide(new BigDecimal(curSchd.getNoOfDays()), 9,
 					RoundingMode.HALF_DOWN);// Gives 1 day profit
 			intrestAmount = intrestAmount.multiply(new BigDecimal(effectDaysDiff));
 			// Difference between assignment date and current schedule date
-			assignDiffDays = DateUtility.getDaysBetween(assignmentUpload.getAssignmentDate(), curSchd.getSchDate());
+			assignDiffDays = DateUtil.getDaysBetween(assignmentUpload.getAssignmentDate(), curSchd.getSchDate());
 
 			intrestAmount2 = nextSchd.getProfitCalc().divide(new BigDecimal(nextSchd.getNoOfDays()), 9,
 					RoundingMode.HALF_DOWN);
@@ -920,21 +916,21 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		// Effective Date
-		if (DateUtility.compare(assignmentUpload.getEffectiveDate(), SysParamUtil.getAppDate()) > 0) {
+		if (DateUtil.compare(assignmentUpload.getEffectiveDate(), SysParamUtil.getAppDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Effective date should be less than or equal to application date.";
 			} else {
 				reason = reason + " Effective date should be less than or equal to application date.";
 			}
-		} else if (fm != null && DateUtility.compare(assignmentUpload.getEffectiveDate(), fm.getFinStartDate()) == 0) {
+		} else if (fm != null && DateUtil.compare(assignmentUpload.getEffectiveDate(), fm.getFinStartDate()) == 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Effective date should be greater than Loan Start Date.";
 			} else {
 				reason = reason + " Effective date should be greater than Loan Start Date.";
 			}
-		} else if (fm != null && DateUtility.compare(assignmentUpload.getEffectiveDate(), fm.getMaturityDate()) > 0) {
+		} else if (fm != null && DateUtil.compare(assignmentUpload.getEffectiveDate(), fm.getMaturityDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Effective date should be less than Loan Maturity Date.";
@@ -944,21 +940,21 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		// Assignment Date
-		if (DateUtility.compare(assignmentUpload.getAssignmentDate(), SysParamUtil.getAppDate()) > 0) {
+		if (DateUtil.compare(assignmentUpload.getAssignmentDate(), SysParamUtil.getAppDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Assignment date should be less than or equal to application date";
 			} else {
 				reason = reason + " Assignment date should be less than or equal to application date";
 			}
-		} else if (fm != null && DateUtility.compare(assignmentUpload.getAssignmentDate(), fm.getFinStartDate()) == 0) {
+		} else if (fm != null && DateUtil.compare(assignmentUpload.getAssignmentDate(), fm.getFinStartDate()) == 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Assignment date should be greater than Loan Start Date.";
 			} else {
 				reason = reason + "Assignment date should be greater than Loan Start Date.";
 			}
-		} else if (fm != null && DateUtility.compare(assignmentUpload.getAssignmentDate(), fm.getMaturityDate()) > 0) {
+		} else if (fm != null && DateUtil.compare(assignmentUpload.getAssignmentDate(), fm.getMaturityDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Assignment date should be less than Loan Maturity Date.";
@@ -968,7 +964,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		if (errorCount == 0) {
-			if (DateUtility.compare(assignmentUpload.getEffectiveDate(), assignmentUpload.getAssignmentDate()) > 0) {
+			if (DateUtil.compare(assignmentUpload.getEffectiveDate(), assignmentUpload.getAssignmentDate()) > 0) {
 				errorCount++;
 				if (StringUtils.isBlank(reason)) {
 					reason = "Effective date should be less than or equal to assignment date.";
@@ -977,7 +973,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				}
 			} else {
 				int maxAssignDays = SysParamUtil.getValueAsInt("ASSIGNMENT_MAX_ALLOWED_DAYS");
-				int effectiveDiffDays = DateUtility.getDaysBetween(assignmentUpload.getEffectiveDate(),
+				int effectiveDiffDays = DateUtil.getDaysBetween(assignmentUpload.getEffectiveDate(),
 						assignmentUpload.getAssignmentDate());
 				if (effectiveDiffDays > maxAssignDays) {
 					errorCount++;
@@ -994,12 +990,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		if (errorCount == 0) {
-			int assignmentMonth = DateUtility.getMonth(assignmentUpload.getAssignmentDate());
-			int effectiveMonth = DateUtility.getMonth(assignmentUpload.getEffectiveDate());
-			int appMonth = DateUtility.getMonth(SysParamUtil.getAppDate());
-			int assignmentYear = DateUtility.getYear(assignmentUpload.getAssignmentDate());
-			int effectiveYear = DateUtility.getYear(assignmentUpload.getEffectiveDate());
-			int appYear = DateUtility.getYear(SysParamUtil.getAppDate());
+			int assignmentMonth = DateUtil.getMonth(assignmentUpload.getAssignmentDate());
+			int effectiveMonth = DateUtil.getMonth(assignmentUpload.getEffectiveDate());
+			int appMonth = DateUtil.getMonth(SysParamUtil.getAppDate());
+			int assignmentYear = DateUtil.getYear(assignmentUpload.getAssignmentDate());
+			int effectiveYear = DateUtil.getYear(assignmentUpload.getEffectiveDate());
+			int appYear = DateUtil.getYear(SysParamUtil.getAppDate());
 
 			if (assignmentMonth != effectiveMonth) {
 				errorCount++;

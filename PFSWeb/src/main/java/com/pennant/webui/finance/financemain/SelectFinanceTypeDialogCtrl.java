@@ -24,12 +24,14 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,10 +57,10 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -105,6 +107,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.pff.document.DocVerificationUtil;
@@ -119,6 +122,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -209,6 +213,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	// Properties related to primary identity.
 	private String primaryIdLabel;
 	private String primaryIdRegex;
+	private String primaryIdName;
 	private boolean primaryIdMandatory;
 	private boolean primaryIdMOBMandatory;
 	boolean proceedFurther = false;
@@ -455,7 +460,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		if (StringUtils.isNotBlank(this.productCategory)) {
 			Date appDate = SysParamUtil.getAppDate();
-			Date wifAvailableDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
+			Date wifAvailableDate = DateUtil.addDays(appDate, -SysParamUtil.getValueAsInt("MAX_WIF_BACKDAYS"));
 			filters[1] = new Filter("lovDescProductCodeName", this.productCategory, Filter.OP_EQUAL);
 			filters[2] = new Filter("LastMntOn", wifAvailableDate, Filter.OP_GREATER_OR_EQUAL);
 		}
@@ -831,22 +836,25 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
-		String primaryIdName = null;
 		String primaryIdNumber = this.eidNumber.getValue();
 		// Verifying/Validating the PAN Number
-		if (MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN) && StringUtils.isNotEmpty(primaryIdNumber)) {
-			primaryIdName = validatePAN(primaryIdNumber);
+		MasterDef masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
+		if (masterDef.isValidationReq() && StringUtils.isNotEmpty(primaryIdNumber)) {
+			ErrorDetail error = validatePAN(primaryIdNumber, masterDef);
+			if (error != null) {
+				MessageUtil.showMessage(error.getCode() + " : " + error.getMessage());
+				if (masterDef.isProceedException()) {
+					return;
+				}
+			}
 		}
 		processCustomer(false, isNewCustomer, primaryIdName);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private String validatePAN(String panNumber) {
-		String primaryIdName = null;
-		if (!(MasterDefUtil.isValidationReq(MasterDefUtil.DocType.PAN))) {
-			return primaryIdName;
-		}
+	private ErrorDetail validatePAN(String panNumber, MasterDef masterDef) {
+		List<ErrorDetail> errorList = new ArrayList<>();
 
 		DocVerificationHeader header = new DocVerificationHeader();
 		header.setDocNumber(panNumber);
@@ -856,13 +864,13 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 			if (err != null) {
-				MessageUtil.showMessage(err.getMessage());
+				errorList.add(err);
 			} else {
-				primaryIdName = header.getDocVerificationDetail().getFullName();
+				this.primaryIdName = header.getDocVerificationDetail().getFullName();
 				MessageUtil.showMessage(String.format("%s PAN validation successfull.", primaryIdName));
 			}
 
-			return primaryIdName;
+			return err;
 		}
 
 		String msg = Labels.getLabel("lable_Document_reverification.value", new Object[] { "PAN Number" });
@@ -872,7 +880,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 				if (err != null) {
-					MessageUtil.showMessage(err.getMessage());
+					errorList.add(err);
 				} else {
 					String fullName = header.getDocVerificationDetail().getFullName();
 					MessageUtil.showMessage(String.format("%s PAN validation successfull.", fullName));
@@ -884,7 +892,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			primaryIdName = header.getDocVerificationDetail().getFullName();
 		}
 
-		return primaryIdName;
+		if (CollectionUtils.isEmpty(errorList)) {
+			return null;
+		}
+
+		return errorList.get(0);
 	}
 
 	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName) {
@@ -897,6 +909,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else {
 			// Customer Data Fetching
 			customerDetails = fetchCustomerData(isRetail);
+
+			if (customerDetails == null) {
+				logger.debug(Literal.LEAVING);
+				return false;
+			}
+
 			if (primaryIdName != null) {
 				customerDetails.getCustomer().setPrimaryIdName(primaryIdName);
 			}
@@ -1036,7 +1054,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// Fetch & set Default statuses f
 			if (fm != null) {
 				fm.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
-				fm.setFinStatus(this.financeDetailService.getCustStatusByMinDueDays());
+				fm.setFinStatus(FinanceConstants.FINSTSRSN_SYSTEM);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -1149,6 +1167,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		fm.setBusinessVertical(user.getBusinessVertical());
 		fm.setBusinessVerticalCode(user.getBusinessVerticalCode());
 		fm.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
+		fm.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
+		fm.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 
 		showDetailView(fd);
 		return true;
@@ -1388,8 +1408,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					eidNumber.setConstraint(
 							new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, primaryIdMandatory));
 					if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY) {
-						eidNumber.setConstraint(
-								new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex, false));
+						eidNumber.setConstraint(new PTStringValidator(Labels.getLabel(primaryIdLabel), primaryIdRegex,
+								"Y".equals(isPANMandatory)));
 					}
 				}
 
@@ -1684,7 +1704,38 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			} else if (this.prospectAsCif.isChecked()) {
 				customerDetails = this.customerDetailsService.prospectAsCIF(cif);
 			} else if (this.newCust.isChecked()) {
-				customerDetails = getNewCustomerDetail(customerDetails);
+				// Check whether any other customer exists with the same primary
+				// identity.
+				Customer customer = null;
+				String primaryIdNumber = StringUtils.trimToEmpty(eidNumber.getValue());
+
+				if (StringUtils.isNotBlank(primaryIdNumber)
+						&& "Y".equals(SysParamUtil.getValueAsString("CUST_PAN_VALIDATION"))) {
+					cif = this.customerDetailsService.getEIDNumberById(primaryIdNumber,
+							this.custCtgType.getSelectedItem().getValue(), "_View");
+				}
+
+				if (StringUtils.isNotBlank(cif)) {
+					if (!ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+						String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
+								new String[] { Labels.getLabel(primaryIdLabel), cif + ". \n" });
+
+						if (MessageUtil.confirm(msg) != MessageUtil.YES) {
+							customerDetails = null;
+							return customerDetails;
+						}
+					}
+
+					customer = this.customerDetailsService.getCheckCustomerByCIF(cif);
+					if (customer == null) {
+						throw new InterfaceException("9999", "Customer Not found.");
+					}
+					customerDetails = this.customerDetailsService.getCustomerById(customer.getId());
+					this.newCust.setChecked(false);
+					this.existingCust.setChecked(true);
+				} else {
+					customerDetails = getNewCustomerDetail(customerDetails);
+				}
 			}
 
 		} catch (InterfaceException pfe) {
@@ -1830,7 +1881,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				customer.setCustSalutationCode(salutation.getSalutationCode());
 			}
 		}
-		customer.setSalariedCustomer(true);
 
 		Object salutionObj = PennantAppUtil.getSystemDefault("MaritalStatusCode", "", systemDefault);
 		if (salutionObj != null && customerDetails.getCustomer().getCustMaritalSts() == null) {
@@ -1887,11 +1937,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Entering" + event.toString());
 		changeCustCtgType();
 
-		/*
-		 * isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ); if
-		 * (StringUtils.equals("Y",isPANMandatory)) { this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
-		 * }else{ this.space_EIDNumber.setSclass(""); }
-		 */
+		isPANMandatory = SysParamUtil.getValueAsString(SMTParameterConstants.PANCARD_REQ);
+		if (StringUtils.equals("Y", isPANMandatory) && isRetailCustomer) {
+			this.space_EIDNumber.setSclass(PennantConstants.mandateSclass);
+		} else {
+			this.space_EIDNumber.setSclass("");
+		}
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -1999,7 +2050,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customerDedup.setCustResdCountry(customer.getCustResdCountry());
 			customerDedup.setCustEMail(customer.getEmailID());
 
-			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP) {
+			if (ImplementationConstants.CUSTOMER_PAN_VALIDATION_STOP && customerDetails.getExtendedDetails() != null) {
 				for (ExtendedField details : customerDetails.getExtendedDetails()) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
 						if (extFieldData.getFieldName().equalsIgnoreCase("UCIC")) {

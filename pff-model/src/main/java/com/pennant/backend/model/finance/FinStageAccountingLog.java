@@ -39,7 +39,7 @@ public class FinStageAccountingLog implements Serializable {
 	private boolean Processed = false;
 
 	public FinStageAccountingLog() {
-
+	    super();
 	}
 
 	public long getFinID() {

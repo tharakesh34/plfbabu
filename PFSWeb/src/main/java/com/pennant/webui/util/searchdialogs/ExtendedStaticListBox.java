@@ -267,7 +267,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	final class SearchBoxItemRenderer implements ListitemRenderer<ValueLabel> {
 
 		public SearchBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -330,7 +330,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	public final class OnPagingEventListener implements EventListener {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override
@@ -371,7 +371,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	final class OnCloseListener implements EventListener {
 
 		public OnCloseListener() {
-
+		    super();
 		}
 
 		@Override
@@ -391,7 +391,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	final class OnClearListener implements EventListener {
 
 		public OnClearListener() {
-
+		    super();
 		}
 
 		@Override

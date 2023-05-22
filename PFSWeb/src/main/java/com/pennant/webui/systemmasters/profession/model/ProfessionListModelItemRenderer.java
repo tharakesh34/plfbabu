@@ -45,7 +45,7 @@ public class ProfessionListModelItemRenderer implements ListitemRenderer<Profess
 	private static final long serialVersionUID = -2463856192651940409L;
 
 	public ProfessionListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

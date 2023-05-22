@@ -51,4 +51,8 @@ public interface AccountTypeDAO {
 	int getgetAccountTypeByCost(long costCenterID, String type);
 
 	boolean isExsistAccountGroup(long groupId);
+
+	boolean isExsistAccountType(String acctype);
+
+	String getGroupCodeByAccType(String acctype);
 }

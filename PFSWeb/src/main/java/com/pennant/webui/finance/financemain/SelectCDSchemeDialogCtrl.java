@@ -160,7 +160,6 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private RelationshipOfficerService relationshipOfficerService;
 	private BranchService branchService;
 	private CustomerTypeService customerTypeService;
-	private com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService;
 
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
@@ -464,8 +463,7 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			// Fetch & set Default statuses f
 			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
 				financeDetail.getFinScheduleData().getFinanceMain().setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
-				financeDetail.getFinScheduleData().getFinanceMain()
-						.setFinStatus(this.financeDetailService.getCustStatusByMinDueDays());
+				financeDetail.getFinScheduleData().getFinanceMain().setFinStatus(FinanceConstants.FINSTSRSN_SYSTEM);
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -1263,11 +1261,6 @@ public class SelectCDSchemeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setRelationshipOfficerService(RelationshipOfficerService relationshipOfficerService) {
 		this.relationshipOfficerService = relationshipOfficerService;
-	}
-
-	public void setCustomerInterfaceService(
-			com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
-		this.customerInterfaceService = customerInterfaceService;
 	}
 
 	public void setBranchService(BranchService branchService) {

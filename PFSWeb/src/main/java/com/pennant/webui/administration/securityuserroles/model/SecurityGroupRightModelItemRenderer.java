@@ -48,7 +48,7 @@ public class SecurityGroupRightModelItemRenderer implements ListitemRenderer<Sec
 	SecurityRight secRights;
 
 	public SecurityGroupRightModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

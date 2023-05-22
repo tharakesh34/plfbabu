@@ -569,5 +569,30 @@
 		<addDefaultValue columnName="ManualClassification" tableName="ADTNPA_LOAN_INFO" defaultValue="0" />
 	</changeSet>
 	
+	<changeSet id="DE#4625.1" author="nagavamsi.p">
+		<dropColumn tableName="ADTASSET_CLASS_SETUP_HEADER" columnName="RepayHierarchy" />
+	</changeSet>
+	
+	
+	<changeSet id="DE#4625.2" author="nagavamsi.p">
+		<addColumn tableName="ADTRMTFINANCETYPES">
+			<column name="NPARpyHierarchy" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="ST#4624" author="nagavamsi.p">
+		<addColumn tableName="ADTASSET_CLASS_SETUP_HEADER">
+			<column name="Active" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#4624.2.1" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				Update  ADTASSET_CLASS_SETUP_HEADER Set Active = 1;
+			]]>
+		</sql>
+	</changeSet>
 	<!-- ST#3546 :: NPA & Provision Enhancements changes end -->
 </databaseChangeLog>

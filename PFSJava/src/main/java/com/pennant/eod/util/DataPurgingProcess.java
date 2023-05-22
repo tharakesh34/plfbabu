@@ -19,7 +19,7 @@ public class DataPurgingProcess extends BasicDao<Object> {
 	private Logger logger = LogManager.getLogger(DataPurgingProcess.class);
 
 	public DataPurgingProcess() {
-
+	    super();
 	}
 
 	public String executeAuditDataPurging() {

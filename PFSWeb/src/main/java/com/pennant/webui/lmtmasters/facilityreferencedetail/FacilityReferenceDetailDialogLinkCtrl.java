@@ -1016,7 +1016,7 @@ public class FacilityReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FacilityR
 	public final class onCheckBoxCheked implements EventListener<Event> {
 
 		public onCheckBoxCheked() {
-
+		    super();
 		}
 
 		public void onEvent(Event event) {

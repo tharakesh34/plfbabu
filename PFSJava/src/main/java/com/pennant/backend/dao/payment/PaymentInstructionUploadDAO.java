@@ -7,7 +7,7 @@ import com.pennant.pff.upload.model.FileUploadHeader;
 
 public interface PaymentInstructionUploadDAO {
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	List<PaymentInstUploadDetail> getDetails(long headerID);
 

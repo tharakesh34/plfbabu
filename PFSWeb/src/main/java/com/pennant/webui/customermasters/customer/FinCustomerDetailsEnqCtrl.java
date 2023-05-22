@@ -44,7 +44,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -55,6 +54,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
@@ -204,16 +204,14 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 					this.finCustPrvYOE.setValue(employer[3]);
 				}
 				if (StringUtils.isNotBlank(custAgreementData.getCustDOB())) {
-					this.finCustFDOB.setValue(
-							DateUtility.formatToLongDate(DateUtility.getDBDate(custAgreementData.getCustDOB())));
-					this.finCustFAge.setValue(String.valueOf(DateUtility
-							.getYearsBetween(DateUtility.getDBDate(custAgreementData.getCustDOB()), appldate)));
+					Date dob = DateUtil.parseFullDate(custAgreementData.getCustDOB());
+					this.finCustFDOB.setValue(DateUtil.formatToLongDate(dob));
+					this.finCustFAge.setValue(String.valueOf(DateUtil.getYearsBetween(dob, appldate)));
 				}
 				if (jointCustAgreementData != null && StringUtils.isNotBlank(jointCustAgreementData.getCustDOB())) {
-					this.finCustSDOB.setValue(
-							DateUtility.formatToLongDate(DateUtility.getDBDate(jointCustAgreementData.getCustDOB())));
-					this.finCustSAge.setValue(String.valueOf(DateUtility
-							.getYearsBetween(DateUtility.getDBDate(jointCustAgreementData.getCustDOB()), appldate)));
+					Date dob = DateUtil.parseFullDate(jointCustAgreementData.getCustDOB());
+					this.finCustSDOB.setValue(DateUtil.formatToLongDate(dob));
+					this.finCustSAge.setValue(String.valueOf(DateUtil.getYearsBetween(dob, appldate)));
 				}
 				this.finCustSector.setValue("");// custAgreementData.getCustSector()
 				this.finCustSubSector.setValue("");// custAgreementData.getCustSubSector()
@@ -499,9 +497,9 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 			}
 		}
 		employer[1] = fromDate == null || toDate == null ? ""
-				: String.valueOf(DateUtility.getYearsBetween(fromDate, toDate));
+				: String.valueOf(DateUtil.getYearsBetween(fromDate, toDate));
 		employer[3] = fromDate == null || previousDate == null ? ""
-				: String.valueOf(DateUtility.getYearsBetween(fromDate, previousDate));
+				: String.valueOf(DateUtil.getYearsBetween(fromDate, previousDate));
 		return employer;
 	}
 
@@ -514,7 +512,7 @@ public class FinCustomerDetailsEnqCtrl extends GFCBaseCtrl<FinanceSummary> {
 	}
 
 	private String formatdDate(Date date) {
-		return DateUtility.formatToLongDate(date);
+		return DateUtil.formatToLongDate(date);
 	}
 
 	private String formatdAmount(BigDecimal amount) {

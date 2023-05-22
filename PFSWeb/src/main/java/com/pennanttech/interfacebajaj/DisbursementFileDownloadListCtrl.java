@@ -49,7 +49,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -60,6 +59,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.service.AmazonS3Bucket;
 
@@ -249,7 +249,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.format(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc = new Listcell(DateUtil.format(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());

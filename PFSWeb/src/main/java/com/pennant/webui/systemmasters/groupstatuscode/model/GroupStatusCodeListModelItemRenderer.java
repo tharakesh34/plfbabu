@@ -45,7 +45,7 @@ public class GroupStatusCodeListModelItemRenderer implements ListitemRenderer<Gr
 	private static final long serialVersionUID = 4629316685450548899L;
 
 	public GroupStatusCodeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

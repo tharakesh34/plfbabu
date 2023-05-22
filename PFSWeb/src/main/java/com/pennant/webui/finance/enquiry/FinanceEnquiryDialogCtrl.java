@@ -78,12 +78,12 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -116,6 +116,7 @@ import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -124,13 +125,18 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.pff.extension.FeeExtension;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennant.pff.noc.upload.dao.BlockAutoGenLetterUploadDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.service.SettlementService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
 /**
@@ -357,6 +363,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox profitDaysBasis_graph;
 	protected Textbox finBranch_graph;
 	protected Textbox custCIF_graph;
+
+	protected Datebox createdOn;
+	protected Textbox createdBy;
+	protected Datebox approvedOn;
+	protected Textbox approvedBy;
+
 	// not auto wired variables
 	private FinScheduleData finScheduleData; // over handed per parameters
 	private FinanceDetail financeDetail;
@@ -565,6 +577,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected A settlementEnq;
 	protected Label label_LoanBasicDetailsDialog_Settlement;
+	protected Decimalbox odMinAmount;
+	protected Label label_FinanceTypeDialog_ODMinAmount;
+	protected Row row_odMinAmount;
+	protected Uppercasebox blockAutoGenLtr;
+	protected Textbox remarksForBlock;
+
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private BlockAutoGenLetterUploadDAO blockAutoGenLetterUploadDAO;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -696,6 +716,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.utilisedFrqDef.setMaxlength(3);
 			this.frqDefferments.setMaxlength(3);
 			this.finAssetValue.setMaxlength(18);
+
 			this.finAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.collectionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 
@@ -795,7 +816,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.availableAmt.setMaxlength(18);
 		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.sourcingBranch.setMandatoryStyle(true);
-		this.provision_AssetStage.setVisible(ImplementationConstants.ALLOW_NPA);
+		this.provision_AssetStage.setVisible(NpaAndProvisionExtension.ALLOW_NPA);
 		// Field visibility & Naming for FinAsset value and finCurrent asset
 		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
@@ -1150,12 +1171,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayRvwDate_two.setValue(aFinanceMain.getNextRepayRvwDate());
 			this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 			this.finReference.setValue(aFinanceMain.getFinReference());
+			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
+
 			// KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
 			if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(aFinanceMain.getClosingStatus())) {
 				this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else {
 				if (aFinanceMain.isFinIsActive()) {
 					this.finStatus.setValue(Labels.getLabel("label_Active"));
+				} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+					this.finStatus.setValue(Labels.getLabel("label_Closed"));
 				} else {
 					this.finStatus.setValue(Labels.getLabel("label_Matured"));
 				}
@@ -1165,13 +1190,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finStatus.setValue(Labels.getLabel("label_Rejected"));
 			}
 
-			String closingStatus = StringUtils.trimToEmpty(aFinanceMain.getClosingStatus());
 			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_normal"));
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-				this.finStatus_Reason.setValue(Labels.getLabel("label_Settled"));
+				String closureType = finReceiptHeaderDAO.getClosureTypeValue(aFinanceMain.getFinID(),
+						FinServiceEvent.EARLYSETTLE);
+				if (closureType != null) {
+					this.finStatus_Reason.setValue(closureType);
+				}
 			}
 			if (aFinanceMain.isWriteoffLoan()) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Written-Off"));
@@ -1179,6 +1207,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (aFinanceMain.getHoldStatus() != null && aFinanceMain.getHoldStatus().equals("H")) {
 				this.blockRefunds.setValue(aFinanceMain.getHoldStatus());
 				this.reasonForBlock.setValue(aFinanceMain.getReason());
+			}
+			String remarks = blockAutoGenLetterUploadDAO.getRemarks(aFinanceMain.getFinID());
+			if (blockAutoGenLetterUploadDAO.isValidateAction(aFinanceMain.getFinID())) {
+				this.blockAutoGenLtr.setValue(NOCConstants.BLOCK);
+			}
+			if (remarks != null) {
+				this.remarksForBlock.setValue(remarks);
 			}
 			this.defferments.setDisabled(true);
 			this.defferments.setValue(aFinanceMain.getDefferments());
@@ -1318,7 +1353,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.totalDownPayment.setValue(CurrencyUtil.parse(aFinanceMain.getDownPayment(), formatter));
 			} else {
 				this.totalDisb.setValue(CurrencyUtil.parse(aFinanceMain.getFinCurrAssetValue(), formatter));
-				this.totalDownPayment.setValue(CurrencyUtil.parse(financeSummary.getTotalDownPayment(), formatter));
+				this.totalDownPayment.setValue(CurrencyUtil.parse(aFinanceMain.getDownPayment(), formatter));
 			}
 			this.finCurrentAssetValue.setValue(CurrencyUtil
 					.parse(aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
@@ -1653,6 +1688,15 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.underConstruction.setChecked(aFinanceMain.isAlwGrcAdj());
 		this.parentLoanReference.setValue(aFinanceMain.getParentRef());
 
+		this.createdBy.setValue(
+				(finSummary != null && this.finSummary.getCreatedName() != null) ? this.finSummary.getCreatedName()
+						: "");
+		this.createdOn.setValue(aFinanceMain.getCreatedOn());
+		this.approvedBy.setValue(
+				(finSummary != null && this.finSummary.getCreatedName() != null) ? this.finSummary.getCreatedName()
+						: "");
+		this.approvedOn.setValue(aFinanceMain.getApprovedOn());
+
 		logger.debug("Leaving");
 	}
 
@@ -1680,6 +1724,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.oDAllowWaiver.setChecked(finODPenaltyRate.isODAllowWaiver());
 		this.oDMaxWaiverPerc.setValue(finODPenaltyRate.getODMaxWaiverPerc());
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.row_odMinAmount.setVisible(true);
+			this.odMinAmount.setValue(PennantApplicationUtil.formateAmount(finODPenaltyRate.getOdMinAmount(),
+					PennantConstants.defaultCCYDecPos));
+			this.odMinAmount.setReadonly(true);
+		}
 		FinanceType financeType = new FinanceType();
 		FeeType feeType = feeTypeService.getApprovedFeeTypeById(finODPenaltyRate.getOverDraftColChrgFeeType());
 		financeType.setFeetype(feeType);
@@ -2201,6 +2251,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dftBpiTreatment.setDisabled(true);
 		this.blockRefunds.setReadonly(true);
 		this.reasonForBlock.setReadonly(true);
+		this.createdBy.setReadonly(true);
+		this.createdOn.setDisabled(true);
+		this.approvedBy.setReadonly(true);
+		this.approvedOn.setDisabled(true);
+		this.blockAutoGenLtr.setReadonly(true);
+		this.remarksForBlock.setReadonly(true);
+
 	}
 
 	/** ========================================================= */
@@ -2300,8 +2357,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Payment", CurrencyUtil.parse(listScheduleDetail.get(i).getRepayAmount(), formatter)
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Payment",
+							CurrencyUtil.parse(listScheduleDetail.get(i).getRepayAmount(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
@@ -2311,7 +2368,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"PrincipalSchd", CurrencyUtil.parse(listScheduleDetail.get(i).getPrincipalSchd(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2321,7 +2378,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"ProfitSchd", CurrencyUtil.parse(listScheduleDetail.get(i).getProfitSchd(), formatter)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2339,7 +2396,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				@Override
 				public int compare(FinanceDisbursement detail1, FinanceDisbursement detail2) {
 
-					int compareValue = DateUtility.compare(detail1.getDisbDate(), detail2.getDisbDate());
+					int compareValue = DateUtil.compare(detail1.getDisbDate(), detail2.getDisbDate());
 					if (compareValue > 1) {
 						return 1;
 					} else if (compareValue == 0) {
@@ -2594,5 +2651,15 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setSettlementService(SettlementService settlementService) {
 		this.settlementService = settlementService;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	@Autowired
+	public void setBlockAutoLetterGenerateUploadDAO(BlockAutoGenLetterUploadDAO blockAutoLetterGenerateUploadDAO) {
+		this.blockAutoGenLetterUploadDAO = blockAutoLetterGenerateUploadDAO;
 	}
 }

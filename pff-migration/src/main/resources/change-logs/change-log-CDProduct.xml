@@ -3868,4 +3868,197 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#211129_pre" author="sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'transactionmapping');
+				select deps_save_and_drop_dependencies ('plf', 'transactionmapping_temp');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="PSD#211129" author="sandeepkuamr.m">
+		<modifyDataType tableName="TRANSACTIONMAPPING" columnName="TID" newDataType="varchar(20)" />
+		<modifyDataType tableName="TRANSACTIONMAPPING_TEMP" columnName="TID" newDataType="varchar(20)" />
+	</changeSet>
+		
+	<changeSet id="PSD#211129_post" author="Sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'transactionmapping');
+				select deps_restore_dependencies ('plf', 'transactionmapping_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#211130_pre" author="sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'cd_scheme_productgroup');
+				select deps_save_and_drop_dependencies ('plf', 'cd_scheme_productgroup_temp');
+			]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="PSD#211130" author="sandeepkuamr.m">
+		<modifyDataType tableName="CD_SCHEME_PRODUCTGROUP" columnName="POSVENDOR" newDataType="varchar(20)" />
+		<modifyDataType tableName="CD_SCHEME_PRODUCTGROUP_TEMP" columnName="POSVENDOR" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#211130_post" author="Sandeepkumar.m" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'cd_scheme_productgroup');
+				select deps_restore_dependencies ('plf', 'cd_scheme_productgroup_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212745" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE FROM CATEGORYWISEEVENTS WHERE AEEVENTCODE= 'EARLYSTL' and CATEGORYCODE= 'O';
+  				INSERT INTO CATEGORYWISEEVENTS (AEEVENTCODE, CATEGORYCODE, ACTIVE, MANDATORY, SEQORDER) VALUES ('EARLYSTL', 'O', 1, 0, (Select max(seqorder)+1 from CategoryWiseEvents Where CATEGORYCODE = 'O'));
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212385" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				ALTER TABLE PROMOTIONS DROP CONSTRAINT  UK_PROMOTIONS;
+				ALTER TABLE PROMOTIONS_TEMP DROP CONSTRAINT UK_PROMOTIONS_TEMP;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212388_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'cd_products');
+				select deps_save_and_drop_dependencies ('plf', 'cd_products_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#212388" author="Gireesh.G">
+		<modifyDataType tableName="CD_PRODUCTS" columnName="MODELID" newDataType="varchar(20)" />
+		<modifyDataType tableName="CD_PRODUCTS_Temp" columnName="MODELID" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="PSD#212388_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'cd_products');
+				select deps_restore_dependencies ('plf', 'cd_products_temp');
+			]]>
+		</sql>
+	 </changeSet>
+	
+	<changeSet id="PSD#213586_pre" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'cd_products');
+				select deps_save_and_drop_dependencies ('plf', 'cd_products_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#213586" author="Poojitha.M">
+		<modifyDataType tableName="CD_PRODUCTS" columnName="MODELDESCRIPTION" newDataType="varchar(50)" />
+		<modifyDataType tableName="CD_PRODUCTS" columnName="ASSETDESCRIPTION" newDataType="varchar(50)" />
+		<modifyDataType tableName="CD_PRODUCTS_TEMP" columnName="MODELDESCRIPTION" newDataType="varchar(50)" />
+		<modifyDataType tableName="CD_PRODUCTS_TEMP" columnName="ASSETDESCRIPTION" newDataType="varchar(50)" />
+	</changeSet>
+	
+	<changeSet id="PSD#213586_post" author="Poojitha.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'cd_products');
+				select deps_restore_dependencies ('plf', 'cd_products_temp');
+			]]>
+		</sql>
+	 </changeSet>
+	 
+	 <changeSet id="PSD#214528_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'settlement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#214528" author="Gireesh.G">
+		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT DISTINCT(SR.REQUESTBATCHID),
+					DC.ID,
+					DC.NAME,
+					DC.UPLOADPATH FILELOCATION,
+					DS.FILENAME,
+					DS.ENDTIME,
+					DS.STATUS,
+					DC.ID CONFIGID,
+					DC.POSTEVENT,
+					'' HOSTREFERENCE,
+					0 TRANSACTIONAMOUNT,
+					SR.TRANSACTIONDATETIME,
+					SR.MERCHANTNAME 
+				FROM DATA_ENGINE_CONFIG DC 
+				INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME  
+				INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID = DS.ID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#214528_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'settlement_request_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#214527" author="vasudevarao.s">
+		<sql>
+			<![CDATA[
+				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) values ('Product_Category', 'Product Category', 'String', 1, 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#207.1" author="sampath.d">
+		<sql>
+			<![CDATA[
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'ae_mbd_cbret';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'mbd_cbret_ugst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'mbd_cbret_igst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'mbd_cbret_cgst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'mbd_cbret_sgst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'mbd_cbret_cess';
+				
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'ae_dbd_cbret';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'dbd_cbret_igst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'dbd_cbret_ugst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'dbd_cbret_cgst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'dbd_cbret_sgst';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT = 'CBRET' AND AMOUNTCODE = 'dbd_cbret_cess';
+
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'ae_mbd_cbret','MBD Cash Back Retained amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'mbd_cbret_igst','MBD Cash Back Retained IGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'mbd_cbret_ugst','MBD Cash Back Retained UGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'mbd_cbret_cgst','MBD Cash Back Retained CGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'mbd_cbret_sgst','MBD Cash Back Retained SGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'mbd_cbret_cess','MBD Cash Back Retained CESS amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'ae_dbd_cbret','DBD Cash Back Retained amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'dbd_cbret_igst','DBD Cash Back Retained IGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'dbd_cbret_ugst','DBD Cash Back Retained UGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'dbd_cbret_cgst','DBD Cash Back Retained CGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'dbd_cbret_sgst','DBD Cash Back Retained SGST amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO BMTAMOUNTCODES (ALLOWEDEVENT,ALLOWEDRIA,AMOUNTCODE,AMOUNTCODEDESC,AMOUNTCODEISACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CBRET',0,'dbd_cbret_cess','DBD Cash Back Retained CESS amount code',1,1,1005,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

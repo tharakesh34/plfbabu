@@ -9,7 +9,7 @@ public class CustomerCollateral implements Serializable {
 	private String collateralRef;
 
 	public CustomerCollateral() {
-
+	    super();
 	}
 
 	public String getCif() {

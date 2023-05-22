@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 
 /**
@@ -58,4 +59,6 @@ public interface FinTypeAccountingService {
 			String finType, int moduleId);
 
 	AuditDetail validationByRef(AuditDetail auditDetail, String usrLanguage, String method);
+
+	List<AccountEngineEvent> getAccountEngineEvents(String finCategory);
 }

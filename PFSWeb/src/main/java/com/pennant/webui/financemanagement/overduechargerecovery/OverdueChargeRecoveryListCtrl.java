@@ -48,11 +48,12 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -73,8 +74,10 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.util.FinanceUtil;
 
 /**
  * This is the controller class for the
@@ -127,6 +130,8 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	protected Combobox penaltyType;
 	protected Combobox chargeCalculatedOn;
 	protected Decimalbox chargeAmtOrPer;
+	protected Decimalbox odMinAmount;
+	protected Row row_odMinAmount;
 
 	private String finReference = "";
 	private Long finID;
@@ -270,6 +275,10 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		fillComboBox(this.penaltyType, rate.getODChargeType(), odcChargeType, "");
 		fillComboBox(this.chargeCalculatedOn, rate.getODChargeCalOn(), odcCalculatedOn, "");
 		this.chargeAmtOrPer.setValue(PennantApplicationUtil.formateAmount(rate.getODChargeAmtOrPerc(), ccyFormatter));
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.penaltyType))) {
+			this.row_odMinAmount.setVisible(true);
+			this.odMinAmount.setValue(CurrencyUtil.parse(rate.getOdMinAmount(), 2));
+		}
 
 		this.penaltyType.setDisabled(true);
 		this.chargeCalculatedOn.setDisabled(true);
@@ -535,8 +544,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				// this.finSchdDate.getValue() , "finSchdDate");
 
 				searchObj.addFilter(new Filter("finSchdDate",
-						DateUtility.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
-						Filter.OP_EQUAL));
+						DateUtil.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 			}
 			// Overdue Date
 			if (this.finODDate.getValue() != null) {
@@ -544,7 +552,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				// this.finODDate.getValue() , "finODDate");
 
 				searchObj.addFilter(new Filter("finODDate",
-						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
+						DateUtil.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 			}
 			// Overdue Principle
 			if (this.finODPrinciple.getValue() != null) {

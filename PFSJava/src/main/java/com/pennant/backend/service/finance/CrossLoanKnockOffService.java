@@ -17,4 +17,6 @@ public interface CrossLoanKnockOffService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	CrossLoanKnockOff getCrossLoanHeaderById(long crossLoanHeaderId, String type);
+
+	void executeAccounting(CrossLoanTransfer crossLoan);
 }

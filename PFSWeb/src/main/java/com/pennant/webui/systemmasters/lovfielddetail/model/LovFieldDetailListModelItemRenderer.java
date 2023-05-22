@@ -45,7 +45,7 @@ public class LovFieldDetailListModelItemRenderer implements ListitemRenderer<Lov
 	private static final long serialVersionUID = -5660446477604159549L;
 
 	public LovFieldDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

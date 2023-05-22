@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
@@ -68,6 +67,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Service implementation for methods that depends on <b>Customer</b>.<br>
@@ -548,9 +548,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 			auditDetail
 					.setErrorDetail(validateMasterCode("RMTCurrencies", "CcyCode", customerDetails.getCustBaseCcy()));
 		}
-		if (customerDetails.getPrimaryRelationOfficer() != 0) {
-			auditDetail.setErrorDetail(
-					validateMasterCode("AMTVehicleDealer", "DealerId", customerDetails.getPrimaryRelationOfficer()));
+		Long primaryRelationOfficer = customerDetails.getPrimaryRelationOfficer();
+
+		if (primaryRelationOfficer != null && primaryRelationOfficer > 0) {
+			auditDetail.setErrorDetail(validateMasterCode("AMTVehicleDealer", "DealerId", primaryRelationOfficer));
 		}
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -701,9 +702,9 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(customer.getCustDOB()) >= 0)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Date of Birth";
-			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+			valueParm[1] = DateUtil.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.format(appDate, PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtil.format(appDate, PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
@@ -715,9 +716,8 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 						&& custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "employment startDate:"
-							+ DateUtility.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
-					valueParm[1] = "Cust DOB:"
-							+ DateUtility.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+							+ DateUtil.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
+					valueParm[1] = "Cust DOB:" + DateUtil.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
@@ -730,10 +730,10 @@ public class CustomerServiceImpl extends GenericService<Customer> implements Cus
 				if (custDocDetails.getCustDocIssuedOn() != null) {
 					if (custDocDetails.getCustDocIssuedOn().before(customer.getCustDOB())) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "CustDocIssuedOn:" + DateUtility.format(custDocDetails.getCustDocIssuedOn(),
-								PennantConstants.XMLDateFormat);
+						valueParm[0] = "CustDocIssuedOn:"
+								+ DateUtil.format(custDocDetails.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "Cust DOB:"
-								+ DateUtility.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
+								+ DateUtil.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}

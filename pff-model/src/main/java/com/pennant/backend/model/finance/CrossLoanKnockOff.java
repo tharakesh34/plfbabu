@@ -34,6 +34,7 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 	private Date depositDate;
 	private Date realizationDate;
 	private String receiptMode;
+	private String subReceiptMode;
 	private String paymentType;
 	private String knockoffType;
 	private String receiptModeStatus;
@@ -68,6 +69,7 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		excludeFields.add("depositDate");
 		excludeFields.add("realizationDate");
 		excludeFields.add("receiptMode");
+		excludeFields.add("subReceiptMode");
 		excludeFields.add("paymentType");
 		excludeFields.add("knockoffType");
 		excludeFields.add("receiptModeStatus");
@@ -246,6 +248,14 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 
 	public void setReceiptMode(String receiptMode) {
 		this.receiptMode = receiptMode;
+	}
+
+	public String getSubReceiptMode() {
+		return subReceiptMode;
+	}
+
+	public void setSubReceiptMode(String subReceiptMode) {
+		this.subReceiptMode = subReceiptMode;
 	}
 
 	public String getPaymentType() {

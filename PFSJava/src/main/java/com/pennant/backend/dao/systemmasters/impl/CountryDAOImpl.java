@@ -254,4 +254,13 @@ public class CountryDAOImpl extends BasicDao<Country> implements CountryDAO {
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, code) > 0;
 	}
+
+	@Override
+	public boolean isActiveCountry(String code) {
+		String sql = "Select Count(CountryCode) From bmtCountries Where CountryCode = ? and CountryIsActive = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code, 1) > 0;
+	}
 }

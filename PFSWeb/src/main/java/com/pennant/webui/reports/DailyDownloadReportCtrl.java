@@ -57,13 +57,13 @@ import org.zkoss.zul.Panelchildren;
 import org.zkoss.zul.Vbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.reports.ReportsMonthEndConfiguration;
 import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JRExporterParameter;
@@ -408,10 +408,10 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 		String tempFolderLocation = PathUtil.getPath(PathUtil.REPORTS_EOMDOWNLOAD_FOLDER);
 		String folderPath = this.moduleName.getSelectedItem().getValue().toString().trim();
 		String fileLocation = tempFolderLocation + "/" + folderPath + "_"
-				+ DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
+				+ DateUtil.format(DateUtil.getSysDate(), PennantConstants.DBDateFormat) + "_"
 				+ getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
 		fileLocation = tempFolderLocation + "/" + folderPath + "_"
-				+ DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat) + "_"
+				+ DateUtil.format(DateUtil.getSysDate(), PennantConstants.DBDateFormat) + "_"
 				+ getUserWorkspace().getLoggedInUser().getUserName().toUpperCase();
 
 		File directory = new File(fileLocation);

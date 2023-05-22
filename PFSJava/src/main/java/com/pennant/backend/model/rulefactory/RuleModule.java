@@ -11,7 +11,7 @@ public class RuleModule {
 	private String rbmFldType;
 
 	public RuleModule() {
-
+	    super();
 	}
 
 	// ******************************************************//

@@ -50,6 +50,7 @@ public class SecLoginlog implements Serializable {
 	private String loginError;
 
 	public SecLoginlog() {
+	    super();
 	}
 
 	public void setId(long id) {

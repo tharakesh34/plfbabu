@@ -45,7 +45,8 @@
 			</north>
 			<center border="none" autoscroll="true">
 				<div>
-					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+					<groupbox id="gb_basicDetails" closable="true">
+						<caption label="${c:l('gp_basicDetails')}"></caption>
 						<grid id="grid_basicDetails" sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
 								<column width="150px" />
@@ -198,8 +199,8 @@
 
 
 					</div>
-					<div id="finDocumentDiv">
-						<iframe id="finDocumentPdfView" width="100%" height="100%" />
+					<div id="finDocumentDiv" height="100%">
+						<iframe id="finDocumentPdfView" width="100%"/>
 					</div>
 				</div>
 			</center>

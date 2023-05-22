@@ -36,11 +36,11 @@ package com.pennant.backend.service.incomeamortization;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.app.core.FinEODEvent;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 
 /**
  * Service declaration for methods that depends on <b>ProjectedAmortization</b>.<br>

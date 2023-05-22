@@ -54,4 +54,5 @@ public interface FinFeeReceiptDAO {
 
 	void deleteFinFeeReceiptByReceiptId(long receiptID, String suffix);
 
+	List<FinFeeReceipt> getFinFeeReceiptByFeeType(String finrReference, String feeType);
 }

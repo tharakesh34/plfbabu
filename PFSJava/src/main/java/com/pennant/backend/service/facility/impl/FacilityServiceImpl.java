@@ -37,7 +37,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
@@ -83,6 +82,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 /**
@@ -765,7 +765,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		CustomerEligibilityCheck eligibilityCheck = new CustomerEligibilityCheck();
 		Date curBussDate = SysParamUtil.getAppDate();
 		BeanUtils.copyProperties(customer, eligibilityCheck);
-		int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
+		int dobMonths = DateUtil.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
 		BigDecimal age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
 		eligibilityCheck.setCustAge(age);
 		// Minor Age Calculation
@@ -779,7 +779,7 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		eligibilityCheck.setCustTotalIncome(customer.getCustTotalIncome());
 		eligibilityCheck.setCustTotalExpense(customer.getCustTotalExpense());
 		eligibilityCheck
-				.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
+				.setBlackListExpPeriod(DateUtil.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
 		eligibilityCheck.setCustCtgCode(customer.getCustCtgCode());
 		// Finance Amount Calculations
 		List<FinanceProfitDetail> financeProfitDetailsList = customerDAO.getCustFinAmtDetails(customer.getCustID(),

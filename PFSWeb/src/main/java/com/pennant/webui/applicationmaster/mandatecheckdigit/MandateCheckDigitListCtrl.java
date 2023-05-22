@@ -184,7 +184,7 @@ public class MandateCheckDigitListCtrl extends GFCBaseListCtrl<MandateCheckDigit
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  CheckDigitValue = ?");
 
 		if (doCheckAuthority(mandatecheckdigit, whereCond.toString(),

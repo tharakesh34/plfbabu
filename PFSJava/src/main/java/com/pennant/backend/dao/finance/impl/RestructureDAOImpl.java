@@ -615,17 +615,16 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { Long.parseLong(rstTypeId) },
-					(rs, i) -> {
-						RestructureType rstType = new RestructureType();
-						rstType.setRstTypeCode(rs.getString("RstTypeCode"));
-						rstType.setRstTypeDesc(rs.getString("RstTypeDesc"));
-						rstType.setMaxEmiHoliday(rs.getInt("MaxEmiHoliday"));
-						rstType.setMaxPriHoliday(rs.getInt("MaxPriHoliday"));
-						rstType.setMaxEmiTerm(rs.getInt("MaxEmiTerm"));
-						rstType.setMaxTotTerm(rs.getInt("MaxTotTerm"));
-						return rstType;
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				RestructureType rstType = new RestructureType();
+				rstType.setRstTypeCode(rs.getString("RstTypeCode"));
+				rstType.setRstTypeDesc(rs.getString("RstTypeDesc"));
+				rstType.setMaxEmiHoliday(rs.getInt("MaxEmiHoliday"));
+				rstType.setMaxPriHoliday(rs.getInt("MaxPriHoliday"));
+				rstType.setMaxEmiTerm(rs.getInt("MaxEmiTerm"));
+				rstType.setMaxTotTerm(rs.getInt("MaxTotTerm"));
+				return rstType;
+			}, Long.parseLong(rstTypeId));
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in Restructure_Types for the specified Id >> {}", rstTypeId);
 		}

@@ -14,7 +14,7 @@ public class DashBoard implements java.io.Serializable {
 	List<SecurityRight> userAuthorities;
 
 	public DashBoard() {
-
+	    super();
 	}
 
 	public Map<String, DashboardConfiguration> getDashboardConfigMap() {

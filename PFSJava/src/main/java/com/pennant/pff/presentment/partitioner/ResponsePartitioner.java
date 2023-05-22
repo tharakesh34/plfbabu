@@ -36,7 +36,7 @@ public class ResponsePartitioner implements Partitioner, StepExecutionListener {
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
 		jobQueue.setBatchId(batchId);
-		
+
 		bjqDAO.resetSequence();
 
 		bjqDAO.handleFailures(jobQueue);

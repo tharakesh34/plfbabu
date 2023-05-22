@@ -17,6 +17,8 @@ public class FeatureExtension implements IFeatureExtension {
 	static Map<String, Object> dpdExtensions = new HashMap<>();
 	static Map<String, Object> partnerBankExtensions = new HashMap<>();
 	static Map<String, Object> receiptExtensions = new HashMap<>();
+	static Map<String, Object> lppExtensions = new HashMap<>();
+	static Map<String, Object> npaAndProvisionExtensions = new HashMap<>();
 
 	/**
 	 * <p>
@@ -119,18 +121,6 @@ public class FeatureExtension implements IFeatureExtension {
 
 		defaultExtensions.put("ALLOW_ESCROW_MODE", true);
 
-		defaultExtensions.put("ALLOW_NPA", true);
-
-		defaultExtensions.put("ALLOW_PROVISION", true);
-
-		defaultExtensions.put("PROVISION_REVERSAL_REQ", true);
-
-		defaultExtensions.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
-
-		defaultExtensions.put("NPA_SCOPE", NpaScope.CO_APPLICANT);
-
-		defaultExtensions.put("PROVISION_BOOKS", ProvisionBook.REGULATORY);
-
 		defaultExtensions.put("ALLOW_MANUAL_SCHEDULE", true);
 
 		defaultExtensions.put("RETAIL_CUST_PAN_MANDATORY", false);
@@ -162,6 +152,10 @@ public class FeatureExtension implements IFeatureExtension {
 		getPartnerBankExtensions();
 
 		getReceiptExtensions();
+
+		lppExtensions();
+
+		npaAndProvisionExtensions();
 
 	}
 
@@ -211,6 +205,16 @@ public class FeatureExtension implements IFeatureExtension {
 	}
 
 	@Override
+	public Map<String, Object> getLPPExtensions() {
+		return lppExtensions;
+	}
+
+	@Override
+	public Map<String, Object> getNpaAndProvisionExtensions() {
+		return npaAndProvisionExtensions;
+	}
+
+	@Override
 	public Map<String, Object> getPartnerBankExtensions() {
 		partnerBankExtensions.put("BRANCH_WISE_MAPPING", true);
 		partnerBankExtensions.put("MAPPING", "B");
@@ -222,6 +226,25 @@ public class FeatureExtension implements IFeatureExtension {
 	public Map<String, Object> getReceiptExtensions() {
 		receiptExtensions.put("STOP_BACK_DATED_EARLY_SETTLE", true);
 		return receiptExtensions;
+	}
+
+	private void lppExtensions() {
+		lppExtensions.put("LPP_DUE_CREATION_REQ", false);
+	}
+
+	private void npaAndProvisionExtensions() {
+
+		npaAndProvisionExtensions.put("ALLOW_NPA", true);
+
+		npaAndProvisionExtensions.put("ALLOW_PROVISION", false);
+
+		npaAndProvisionExtensions.put("PROVISION_REVERSAL_REQ", false);
+
+		npaAndProvisionExtensions.put("PROVISION_REVERSAL_STAGE", ProvisionReversalStage.SOM);
+
+		npaAndProvisionExtensions.put("NPA_SCOPE", NpaScope.LOAN);
+
+		npaAndProvisionExtensions.put("PROVISION_BOOKS", ProvisionBook.REGULATORY);
 	}
 
 }

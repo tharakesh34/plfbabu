@@ -2,6 +2,7 @@ package com.pennant.backend.model.customermasters;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +54,10 @@ public class WIFCustomer implements Serializable {
 	private String lovDescEmpDesg;
 	private String lovDescEmpDept;
 	private String lovDescCustSegmentName;
+	private long createdBy;
+	private Timestamp createdOn;
+	private long approvedBy;
+	private Timestamp approvedOn;
 
 	private BigDecimal custRepayOther = BigDecimal.ZERO;
 	private BigDecimal custRepayBank = BigDecimal.ZERO;
@@ -63,7 +68,7 @@ public class WIFCustomer implements Serializable {
 	private List<CustomerIncome> customerIncomeList;
 
 	public WIFCustomer() {
-
+	    super();
 	}
 
 	// ******************************************************//
@@ -460,6 +465,38 @@ public class WIFCustomer implements Serializable {
 
 	public void setLovDescCustSegmentName(String lovDescCustSegmentName) {
 		this.lovDescCustSegmentName = lovDescCustSegmentName;
+	}
+
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
 	}
 
 }

@@ -253,6 +253,7 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinTypeKnockOff;
+import com.pennant.backend.model.finance.FinTypeWriteOff;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -306,7 +307,6 @@ import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
-import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
@@ -350,8 +350,6 @@ import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.others.external.reports.LoanReport;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.partnerbank.PartnerBankModes;
-import com.pennant.backend.model.payment.PaymentDetail;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennant.backend.model.reports.ReportConfiguration;
@@ -448,6 +446,12 @@ import com.pennant.backend.model.vasproducttype.VASProductType;
 import com.pennant.pff.excess.model.FinExcessTransfer;
 import com.pennant.pff.model.ratechangeupload.RateChangeUploadHeader;
 import com.pennant.pff.model.subvention.SubventionHeader;
+import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
+import com.pennant.pff.noc.model.ServiceBranch;
+import com.pennant.pff.noc.model.ServiceBranchesLoanType;
+import com.pennant.pff.payment.model.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.pff.presentment.model.DueExtractionHeader;
 import com.pennant.pff.presentment.model.PresentmentExcludeCode;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
@@ -459,6 +463,7 @@ import com.pennanttech.finance.tds.cerificate.model.TanAssignment;
 import com.pennanttech.finance.tds.cerificate.model.TanDetail;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.model.dms.DMSDocumentDetails;
+import com.pennanttech.model.lien.LienDetails;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -499,6 +504,7 @@ import com.pennanttech.pff.organization.model.Organization;
 import com.pennanttech.pff.overdraft.model.OverdraftLimit;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.presentment.model.PresentmentHeader;
+import com.pennanttech.pff.provision.model.Provision;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 
 public class PennantJavaUtil {
@@ -906,7 +912,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PartnerBankModes",
 				new ModuleMapping("PartnerBankModes", PartnerBankModes.class,
 						new String[] { "PartnerBankModes", "PartnerBankModes_AView" }, masterWF,
-						new String[] { "PartnerBankCode", "PartnerBankName", "DivisionCode" }, null, 300));
+						new String[] { "PartnerBankCode", "PartnerBankName" }, null, 300));
 
 		ModuleUtil.register("FinTypePartnerBank",
 				new ModuleMapping("FinTypePartnerBank", FinTypePartnerBank.class,
@@ -959,6 +965,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches", "RMTBranches_AView" }, masterWF,
 						new String[] { "BranchCode", "BranchDesc" }, new Object[][] { { "BranchIsActive", "0", 1 } },
 						350));
+
+		ModuleUtil.register("CSDBranch",
+				new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches", "RMTBranches_AView" }, masterWF,
+						new String[] { "BranchCode", "BranchDesc" }, null, 350));
 
 		ModuleUtil.register("NonSelectAllBranch",
 				new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches", "RMTBranches_AView" }, masterWF,
@@ -1046,6 +1056,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("TransactionCode", TransactionCode.class,
 						new String[] { "BMTTransactionCode", "BMTTransactionCode_AView" }, transactionCodes_WF,
 						new String[] { "TranCode", "TranDesc" }, new Object[][] { { "TranIsActive", "0", 1 } }, 300));
+
+		ModuleUtil.register("FinTypeWriteOff",
+				new ModuleMapping("FinTypeWriteOff", FinTypeWriteOff.class,
+						new String[] { "Auto_Write_Off_Loan_Type", "Auto_Write_Off_Loan_Type_View" }, masterWF,
+						new String[] { "LoanType" }, null, 300));
 
 		ModuleUtil.register("AutoKnockOff",
 				new ModuleMapping("AutoKnockOff", AutoKnockOff.class,
@@ -1447,6 +1462,11 @@ public class PennantJavaUtil {
 						new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF,
 						new String[] { "FinType", "FinCategory", "FinTypeDesc", "FinDivision" },
 						new Object[][] { { "FinIsActive", "0", 1 }, { "Product", "0", "" } }, 600));
+
+		ModuleUtil.register("CSDFinanceType",
+				new ModuleMapping("FinanceType", FinanceType.class,
+						new String[] { "RMTFinanceTypes", "RMTFinanceTypes_AView" }, masterWF,
+						new String[] { "FinType", "FinCategory", "FinTypeDesc", "FinDivision" }, null, 600));
 
 		ModuleUtil.register("CMTFinanceType",
 				new ModuleMapping("FinanceType", FinanceType.class,
@@ -3497,7 +3517,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("EarlySettlementReason",
 				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
 						new String[] { "Id", "Code", "ReasonCategoryCode", "Description" },
-						new Object[][] { { "ReasonTypeCode", "0", "FCREASON" } }, 600));
+						new Object[][] { { "ReasonTypeCode", "0", "LOANCANCEL" } }, 600));
 		ModuleUtil.register("CustomerBankInfoAccntNumbers",
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
@@ -3667,6 +3687,11 @@ public class PennantJavaUtil {
 						"CertificateNumber", "TanNumber", "CertificateAmount", "AssessmentYear", "CertificateQuarter" },
 				null, 600));
 
+		ModuleUtil.register("CertificateEnquiry", new ModuleMapping("TdsReceivable", TdsReceivable.class,
+				new String[] { "TDS_RECEIVABLES", "TDS_RECEIVABLES_AView" }, masterWF, new String[] {
+						"CertificateNumber", "TanNumber", "CertificateAmount", "AssessmentYear", "CertificateQuarter" },
+				null, 600));
+
 		ModuleUtil.register("TdsReceivablesTxn", new ModuleMapping("TdsReceivablesTxn", TdsReceivablesTxn.class,
 				new String[] { "TDS_RECEIVABLES_TXN", "TDS_RECEIVABLES_TXN_AView" }, masterWF, null, null, 600));
 
@@ -3749,7 +3774,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("AssetClassSetupHeader",
 				new ModuleMapping("AssetClassSetupHeader", AssetClassSetupHeader.class,
 						new String[] { "Asset_Class_Setup_Header", "Asset_Class_Setup_Header_Aview" }, masterWF,
-						new String[] { "EntityCode", "RepayHierarchy" }, null, 600));
+						new String[] { "Code", "Description" }, new Object[][] { { "Active", "0", 1 } }, 600));
 
 		ModuleUtil.register("Provision",
 				new ModuleMapping("Provision", Provision.class,
@@ -3820,13 +3845,18 @@ public class PennantJavaUtil {
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
-		ModuleUtil.register("MandateUploadHeader",
-				new ModuleMapping("MandateUploadHeader", FileUploadHeader.class,
+		ModuleUtil.register("WriteOffUploadHeader",
+				new ModuleMapping("WriteOffUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
-		ModuleUtil.register("LPPUploadHeader",
-				new ModuleMapping("LPPUploadHeader", FileUploadHeader.class,
+		ModuleUtil.register("RevWriteOffUploadHeader",
+				new ModuleMapping("RevWriteOffUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("MandateUploadHeader",
+				new ModuleMapping("MandateUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
@@ -3939,6 +3969,114 @@ public class PennantJavaUtil {
 						new String[] { "CROSS_LOAN_KNOCKOFF", "RECEIPTDETAILS_TVIEW" }, "RECEIPTS_WORKFLOW",
 						new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
 
+		ModuleUtil.register("KycDetailsUploadHeader",
+				new ModuleMapping("KycDetailsUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("HostGLMappingUploadHeader",
+				new ModuleMapping("HostGLMappingUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("MiscellaneousPostingUploadHeader",
+				new ModuleMapping("MiscellaneousPostingUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("LoanCancelUploadHeader",
+				new ModuleMapping("LoanCancelUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("BulkFeeWaiverUploadHeader",
+				new ModuleMapping("BulkFeeWaiverUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("Lien",
+				new ModuleMapping("Lien", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LienEnquiry",
+				new ModuleMapping("LienEnquiry", LienDetails.class, null, masterWF, null, null, 400));
+
+		ModuleUtil.register("CreateReceiptUploadHeader",
+				new ModuleMapping("CreateReceiptUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_RECEIPTUPLOAD,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("ReceiptStatusUploadHeader",
+				new ModuleMapping("ReceiptStatusUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, WF_RECEIPTUPLOAD,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("BranchChangeUploadHeader",
+				new ModuleMapping("BranchChangeUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName", "CreatedBy", "ApprovedBy" }, null, 600));
+
+		ModuleUtil.register("ServiceBranch",
+				new ModuleMapping("ServiceBranch", ServiceBranch.class,
+						new String[] { "Service_Branches", "Service_Branches" }, masterWF,
+						new String[] { "Id", "Code" }, null, 300));
+
+		ModuleUtil.register("ServiceBranchesLoanType",
+				new ModuleMapping("ServiceBranchesLoanType", ServiceBranchesLoanType.class,
+						new String[] { "Service_Branches_LoanType", "Service_Branches_LoanType" }, masterWF,
+						new String[] { "Id", "FinType", "Branch" }, null, 300));
+
+		ModuleUtil.register("BlockAutoGenLetterUploadHeader",
+				new ModuleMapping("BlockAutoGenLetterUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LoanLetterUploadHeader",
+				new ModuleMapping("LoanLetterUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("CourierDetailUploadHeader",
+				new ModuleMapping("CourierDetailUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LoanTypeLetterMapping",
+				new ModuleMapping("LoanTypeLetterMapping", LoanTypeLetterMapping.class,
+						new String[] { "Loantype_Letter_Mapping" }, masterWF, new String[] { "FinType", "LetetrType" },
+						null, 600));
+
+		ModuleUtil.register("LoanClosureUpload",
+				new ModuleMapping("LoanClosureUpload", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("ProvisionUploadHeader",
+				new ModuleMapping("ProvisionUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LPPLoanUploadHeader",
+				new ModuleMapping("LPPLoanUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("LPPLoanTypeUploadHeader",
+				new ModuleMapping("LPPLoanTypeUploadHeader", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("HoldMarkingUpload",
+				new ModuleMapping("HoldMarkingUpload", FileUploadHeader.class,
+						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
+						new String[] { "Id", "FileName" }, null, 600));
+
+		ModuleUtil.register("GenerateLetter",
+				new ModuleMapping("GenerateLetter", GenerateLetter.class,
+						new String[] { "LETTER_GENERATE_MANUAL", "LETTER_GENERATE_MANUAL" }, masterWF,
+						new String[] { "Id", "FinID" }, null, 600));
+
 		registerCustomModules();
 	}
 
@@ -3969,8 +4107,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getFieldDetails(Object detailObject) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {
@@ -3995,8 +4133,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getExtendedFieldDetails(ExtendedFieldRender fieldRender) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (fieldRender != null) {
 
 			// Adding Map Values
@@ -4025,8 +4163,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getFieldDetails(Object detailObject, String excludeField) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {
@@ -4083,8 +4221,8 @@ public class PennantJavaUtil {
 	 */
 	public static String[] getFieldDetails(Object detailObject, Set<String> excludeFields) {
 		String[] auditField = new String[2];
-		StringBuffer fields = new StringBuffer();
-		StringBuffer values = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
+		StringBuilder values = new StringBuilder();
 		if (detailObject != null) {
 			ArrayList<String> arrayFields = getFieldList(detailObject);
 			for (int j = 0; j < arrayFields.size(); j++) {

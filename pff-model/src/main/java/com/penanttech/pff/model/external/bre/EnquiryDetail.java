@@ -12,6 +12,7 @@ public class EnquiryDetail {
 
 	@JsonCreator
 	public EnquiryDetail() {
+	    super();
 	}
 
 	@XmlElement(name = "element")

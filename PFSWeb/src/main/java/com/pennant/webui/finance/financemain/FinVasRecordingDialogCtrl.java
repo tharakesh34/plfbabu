@@ -48,7 +48,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.configuration.VASConfiguration;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -57,6 +56,7 @@ import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -289,10 +289,10 @@ public class FinVasRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				listcell = new Listcell(vasRec.getManufacturerDesc());
 				listitem.appendChild(listcell);
 
-				listcell = new Listcell(DateUtility.formatToLongDate(vasRec.getValueDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(vasRec.getValueDate()));
 				listitem.appendChild(listcell);
 
-				listcell = new Listcell(DateUtility.formatToLongDate(vasRec.getAccrualTillDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(vasRec.getAccrualTillDate()));
 				listitem.appendChild(listcell);
 
 				listcell = new Listcell(vasRec.getRecordStatus());

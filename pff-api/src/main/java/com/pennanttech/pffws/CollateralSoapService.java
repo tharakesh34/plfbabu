@@ -26,4 +26,9 @@ public interface CollateralSoapService {
 
 	public CollateralDetail getCollaterals(@WebParam(name = "cif") String cif) throws ServiceException;
 
+	public WSReturnStatus pendingUpdateCollateral(@WebParam(name = "collateral") CollateralSetup collateralSetup)
+			throws ServiceException;
+
+	public CollateralDetail getPendingCollaterals(@WebParam(name = "cif") String cif) throws ServiceException;
+
 }

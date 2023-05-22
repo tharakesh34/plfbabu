@@ -22,7 +22,7 @@ public class BatchProcessStatus implements Serializable {
 	private String remarks;
 
 	public BatchProcessStatus() {
-
+	    super();
 	}
 
 	public long getId() {

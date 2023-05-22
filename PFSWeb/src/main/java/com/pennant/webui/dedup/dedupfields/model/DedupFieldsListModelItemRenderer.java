@@ -46,7 +46,7 @@ public class DedupFieldsListModelItemRenderer implements ListitemRenderer<DedupF
 	private static final long serialVersionUID = 1L;
 
 	public DedupFieldsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

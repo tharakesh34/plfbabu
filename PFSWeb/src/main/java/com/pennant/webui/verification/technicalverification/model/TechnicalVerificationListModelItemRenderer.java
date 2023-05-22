@@ -8,8 +8,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 
 /**
@@ -48,7 +48,7 @@ public class TechnicalVerificationListModelItemRenderer
 		lc = new Listcell(tv.getAgencyName());
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(tv.getCreatedOn()));
+		lc = new Listcell(DateUtil.formatToLongDate(tv.getCreatedOn()));
 		lc.setParent(item);
 
 		lc = new Listcell(tv.getRecordStatus());

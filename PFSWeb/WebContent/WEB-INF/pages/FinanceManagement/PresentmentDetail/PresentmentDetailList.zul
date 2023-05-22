@@ -53,7 +53,7 @@
 								<row>
 									<label id="label_PresentmentHeaderList_Reference" value="${c:l('label_PresentmentHeaderList_Reference.value')}" />
 									<listbox id="sortOperator_Reference" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="reference" width="180px" maxlength="20" />
+									<textbox id="reference" width="180px" maxlength="50" />
 									<label id="label_PresentmentHeaderList_PresentmentType" value="${c:l('label_PresentmentHeaderList_PresentmentType.value')}" />
 									<listbox id="sortOperator_presentmentType" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<combobox id="presentmentType" width="200px" />									

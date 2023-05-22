@@ -51,6 +51,7 @@ public class LoanObligationElement implements Serializable {
 
 	@JsonCreator
 	public LoanObligationElement() {
+	    super();
 	}
 
 	public String getCustomerDeclaredObligation() {

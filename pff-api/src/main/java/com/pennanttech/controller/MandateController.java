@@ -9,6 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
@@ -16,6 +17,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -47,6 +49,7 @@ public class MandateController extends AbstractController {
 	private CustomerDetailsService customerDetailsService;
 	private FinanceMainService financeMainService;
 	private PennyDropService pennyDropService;
+	private MandateDAO mandateDAO;
 
 	public MandateController() {
 		super();
@@ -282,8 +285,8 @@ public class MandateController extends AbstractController {
 		}
 
 		boolean securityMandate = mandateById.isSecurityMandate();
-		
-		if(!securityMandate || !newMandateById.isSecurityMandate()){
+
+		if (!securityMandate || !newMandateById.isSecurityMandate()) {
 			return getFailedStatus();
 		}
 
@@ -370,7 +373,7 @@ public class MandateController extends AbstractController {
 		}
 
 		long mandateID = mandate.getMandateID();
-		String status = mandate.getStatus();
+		String status = mandate.getStatus().toUpperCase();
 
 		com.pennant.backend.model.mandate.MandateStatus mandateStatus = new com.pennant.backend.model.mandate.MandateStatus();
 
@@ -381,7 +384,7 @@ public class MandateController extends AbstractController {
 
 		try {
 			mandateService.saveStatus(mandateStatus);
-
+			mandateDAO.updateStatusAfterRegistration(mandate.getMandateID(), status);
 			if ((MandateStatus.isApproved(status) || MandateStatus.isAccepted(status)) && mandate.isSwapIsActive()) {
 				String type = "";
 				Long finID = financeMainService.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
@@ -517,4 +520,8 @@ public class MandateController extends AbstractController {
 		this.pennyDropService = pennyDropService;
 	}
 
+	@Autowired
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
 }

@@ -78,7 +78,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationDialog.zul
@@ -169,8 +169,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 				setReceiptHeader((FinReceiptHeader) arguments.get("receiptHeader"));
 				FinReceiptHeader befImage = new FinReceiptHeader();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(getReceiptHeader());
+				befImage = ObjectUtil.clone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
 			}
@@ -401,8 +400,7 @@ public class ReceiptRealizationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> 
 		logger.debug("Entering");
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
+		FinReceiptHeader aReceiptHeader = ObjectUtil.clone(getReceiptHeader());
 
 		if (!this.realizationDate.isDisabled()) {
 			this.realizationDate.setConstraint(

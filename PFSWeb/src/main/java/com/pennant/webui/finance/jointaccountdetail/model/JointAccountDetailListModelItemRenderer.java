@@ -44,7 +44,7 @@ public class JointAccountDetailListModelItemRenderer implements ListitemRenderer
 	private static final long serialVersionUID = 1L;
 
 	public JointAccountDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -73,7 +73,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
@@ -350,8 +350,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				}
 			}
-			Cloner cloner = new Cloner();
-			aFinanceDetail.setGurantorsDetailList(cloner.deepClone(guarantorDetailList));
+			aFinanceDetail.setGurantorsDetailList(ObjectUtil.clone(guarantorDetailList));
 		}
 		logger.debug("Leaving ");
 	}
@@ -381,8 +380,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				}
 			}
-			Cloner cloner = new Cloner();
-			aFinanceDetail.setJointAccountDetailList(cloner.deepClone(jointAccountDetailList));
+			aFinanceDetail.setJointAccountDetailList(ObjectUtil.clone(jointAccountDetailList));
 		}
 		logger.debug("Leaving ");
 	}

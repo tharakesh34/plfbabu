@@ -38,8 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
@@ -65,16 +65,20 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.mandate.FinMandateService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.pff.lien.service.LienService;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.pff.mandate.MandateStatus;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.MandateProcesses;
 
 /**
@@ -93,7 +97,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	private MandateCheckDigitDAO mandateCheckDigitDAO;
 	private BankBranchDAO bankBranchDAO;
 	private ChequeDetailDAO chequeDetailDAO;
-
+	private LienService lienService;
 	@Autowired(required = false)
 	private MandateProcesses mandateProcesses;
 
@@ -253,7 +257,9 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			mandate.setStatus(MandateStatus.NEW);
 			mandate.setRecordType("");
 			mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-
+			if (mandate.getMandateStatus() != null && mandate.getMandateStatus() == true) {
+				mandate.setStatus(DisbursementConstants.STATUS_AWAITCON);
+			}
 			String mandateType = mandate.getMandateType();
 
 			InstrumentType instrumentType = InstrumentType.valueOf(mandateType);
@@ -277,7 +283,12 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 				mandate.setStatus(MandateStatus.APPROVED);
 			}
-
+			// PSD : 194021
+			mandate.setRoleCode("");
+			mandate.setNextRoleCode("");
+			mandate.setTaskId("");
+			mandate.setNextTaskId("");
+			mandate.setWorkflowId(0);
 			getDocument(mandate);
 
 			long mandateID = mandateDAO.save(mandate, tableType);
@@ -461,8 +472,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			if (mandate.getStartDate() != null && fm.getNextRepayDate() != null
 					&& fm.getNextRepayDate().compareTo(mandate.getStartDate()) < 0) {
 				String[] errParmFrq = new String[2];
-				errParmFrq[0] = DateUtility.formatToShortDate(mandate.getStartDate());
-				errParmFrq[1] = DateUtility.formatToShortDate(firstRepayDate);
+				errParmFrq[0] = DateUtil.formatToShortDate(mandate.getStartDate());
+				errParmFrq[1] = DateUtil.formatToShortDate(firstRepayDate);
 
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65020", errParmFrq)));
 
@@ -726,6 +737,14 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			Long oldmandateID = mandate.getOldMandate();
 			String finRepayMethod = mandate.getFinRepayMethod();
 
+			FinanceDetail fd = new FinanceDetail();
+			FinanceMain fm = financeMainDAO.getFinanceMainForLien(mandate.getFinID());
+
+			fd.getFinScheduleData().setFinanceMain(fm);
+			fd.getFinScheduleData().getFinanceMain().setBefImage(fm);
+
+			fd.setMandate(mandate);
+
 			boolean securityMandate = mandate.isSecurityMandate();
 			if (securityMandate) {
 				oldmandateID = mandate.getOldSecMandate();
@@ -745,6 +764,15 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 				}
 			} else {
 				financeMainDAO.loanMandateSwapping(mandate.getFinID(), mandateID, mandateType, "", securityMandate);
+			}
+
+			if (ImplementationConstants.ALLOW_LIEN) {
+				fd.setModuleDefiner(FinServiceEvent.RPYBASICMAINTAIN);
+				if (InstrumentType.isSI(mandateType)) {
+					lienService.save(fd, true);
+				} else {
+					lienService.update(fd);
+				}
 			}
 		}
 
@@ -838,4 +866,8 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
 
+	@Autowired
+	public void setLienService(LienService lienService) {
+		this.lienService = lienService;
+	}
 }

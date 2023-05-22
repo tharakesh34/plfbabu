@@ -49,4 +49,5 @@ public interface CostCenterDAO extends BasicCrudDao<CostCenter> {
 	 */
 	boolean isDuplicateKey(long costCenterID, String costCenterCode, TableType tableType);
 
+	Long getCostCenterIDByCode(String costCenterCode);
 }

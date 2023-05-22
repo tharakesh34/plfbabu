@@ -11,13 +11,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.amortization.ProjectedAmortization;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinOverDueCharges;
@@ -29,6 +29,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.ProjectedAccrual;
+import com.pennant.backend.model.finance.ProjectedAmortization;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionAmount;
@@ -36,7 +37,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.pff.autorefund.service.AutoRefundService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -47,15 +48,11 @@ import com.pennanttech.pff.core.util.ProductUtil;
 public class LoadFinanceData extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LoadFinanceData.class);
 
-	private AutoRefundService autoRefundService;
-
 	public void prepareFinEODEvents(CustEODEvent custEODEvent) {
 		Customer customer = custEODEvent.getCustomer();
 
 		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(customer);
 		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(customer);
-
-		autoRefundService.loadAutoRefund(custEODEvent);
 
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 
@@ -80,6 +77,12 @@ public class LoadFinanceData extends ServiceHelper {
 			finEODEvent.setFinType(getFinanceType(fm.getFinType()));
 
 			FinanceProfitDetail pfd = getFinPftDetailRef(finID, custpftDet);
+
+			if (pfd == null) {
+				throw new AppException(String.format("%s FinReference is not in active state in FinPftDetails table.",
+						fm.getFinReference()));
+			}
+
 			pfd.setEventProperties(eventProperties);
 
 			finEODEvent.setFinProfitDetail(pfd);
@@ -867,10 +870,5 @@ public class LoadFinanceData extends ServiceHelper {
 
 	public static void setLogger(Logger logger) {
 		LoadFinanceData.logger = logger;
-	}
-
-	@Autowired
-	public void setAutoRefundService(AutoRefundService autoRefundService) {
-		this.autoRefundService = autoRefundService;
 	}
 }

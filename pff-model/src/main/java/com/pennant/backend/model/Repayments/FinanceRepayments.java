@@ -54,7 +54,7 @@ public class FinanceRepayments implements Serializable {
 	private long waiverId;
 
 	public FinanceRepayments() {
-
+	    super();
 	}
 
 	public FinanceRepayments copyEntity() {

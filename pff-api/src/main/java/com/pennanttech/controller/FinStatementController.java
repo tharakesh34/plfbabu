@@ -32,7 +32,6 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
@@ -41,6 +40,8 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.reports.ReportConfigurationDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.agreement.InterestCertificate;
@@ -75,6 +76,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.impl.SummaryDetailService;
 import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.FinanceConstants;
@@ -83,13 +85,13 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennant.pff.api.controller.AbstractController;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.util.CustomerUtil;
 import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
@@ -97,17 +99,18 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.statement.FinStatementRequest;
 import com.pennanttech.ws.model.statement.FinStatementResponse;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 import net.sf.jasperreports.engine.JasperRunManager;
 
-public class FinStatementController extends SummaryDetailService {
+public class FinStatementController extends AbstractController {
 	private static final Logger logger = LogManager.getLogger(FinStatementController.class);
 
 	private FinanceDetailService financeDetailService;
 	private PostingsDAO postingsDAO;
 	private CollateralSetupService collateralSetupService;
 	private FeeDetailService feeDetailService;
+	private SummaryDetailService summaryDetailService;
 
 	private ReceiptService receiptService;
 	private SOAReportGenerationService soaReportGenerationService;
@@ -116,6 +119,8 @@ public class FinStatementController extends SummaryDetailService {
 	private ReportConfiguration reportConfiguration;
 	private FeeTypeDAO feeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
+	private FinODDetailsDAO finODDetailsDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	public FinStatementResponse getStatement(List<Long> finIDList, String serviceName) {
 		logger.debug(Literal.ENTERING);
@@ -295,7 +300,7 @@ public class FinStatementController extends SummaryDetailService {
 				for (int i = 0; i < days; i++) {
 					FinanceDetail afd = new FinanceDetail();
 					afd.setFinScheduleData(schdData.copyEntity());
-					fsi.setFromDate(DateUtility.addDays(SysParamUtil.getAppDate(), i));
+					fsi.setFromDate(DateUtil.addDays(SysParamUtil.getAppDate(), i));
 
 					doProcessPayments(afd, fsi);
 
@@ -314,7 +319,8 @@ public class FinStatementController extends SummaryDetailService {
 			schdData.setFeeDues(feeDues);
 
 			// process origination fees
-			schdData.getFeeDues().addAll(getUpdatedFees(fd.getFinScheduleData().getFinFeeDetailList()));
+			schdData.getFeeDues()
+					.addAll(summaryDetailService.getUpdatedFees(fd.getFinScheduleData().getFinFeeDetailList()));
 
 			fd.setForeClosureDetails(foreClosureList);
 
@@ -371,8 +377,6 @@ public class FinStatementController extends SummaryDetailService {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		Date appDate = SysParamUtil.getAppDate();
-
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
@@ -415,12 +419,12 @@ public class FinStatementController extends SummaryDetailService {
 
 			processFeesAndCharges(schdData, finFeeDetail);
 
-			fd.setFinFeeDetails(getUpdatedFees(schdData.getFeeDues()));
+			fd.setFinFeeDetails(summaryDetailService.getUpdatedFees(schdData.getFeeDues()));
 			schdData.setFeeDues(null);
 		}
 
-		FinanceSummary summary = getFinanceSummary(fd);
-		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
+		FinanceSummary summary = summaryDetailService.getFinanceSummary(fd);
+		summary.setAdvPaymentAmount(summaryDetailService.getTotalAdvAmount(fm));
 		summary.setOutStandPrincipal(schdData.getOutstandingPri());
 		schdData.setFinanceSummary(summary);
 
@@ -440,7 +444,6 @@ public class FinStatementController extends SummaryDetailService {
 		// customer details
 		CustomerDetails cd = fd.getCustomerDetails();
 		Customer customer = cd.getCustomer();
-
 
 		cd.setCustCIF(customer.getCustCIF());
 		cd.setCustCoreBank(customer.getCustCoreBank());
@@ -510,7 +513,7 @@ public class FinStatementController extends SummaryDetailService {
 		// fore closure details
 		List<ForeClosure> foreClosureList = new ArrayList<>();
 		ForeClosure foreClosure = new ForeClosure();
-		foreClosure.setValueDate(DateUtility.getTimestamp(fsi.getFromDate()));
+		foreClosure.setValueDate(DateUtil.getTimestamp(fsi.getFromDate()));
 		BigDecimal foreCloseAmt = totPriPayNow.add(totPenaltyPayNow).add(totPftPayNow).add(totFeePayNow)
 				.subtract(totTdsReturn);
 		BigDecimal totServFees = BigDecimal.ZERO;
@@ -543,13 +546,14 @@ public class FinStatementController extends SummaryDetailService {
 
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		TaxAmountSplit taxSplit = null;
-		BigDecimal bounceGst = BigDecimal.ZERO;
-		BigDecimal receivableGst = BigDecimal.ZERO;
 		FeeType feeType = null;
 
 		if (CollectionUtils.isNotEmpty(manualAdviseFees)) {
 			for (ManualAdvise advisedFees : manualAdviseFees) {
 				FinFeeDetail feeDetail = new FinFeeDetail();
+				BigDecimal bounceGst = BigDecimal.ZERO;
+				BigDecimal receivableGst = BigDecimal.ZERO;
+
 				if (advisedFees.getBounceID() > 0) {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_BOUNCE);
 					feeDetail.setFeeID(advisedFees.getAdviseID());
@@ -570,14 +574,14 @@ public class FinStatementController extends SummaryDetailService {
 					feeDetail.setFeeCategory(FinanceConstants.FEES_AGAINST_ADVISE);
 					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
 						taxSplit = GSTCalculator.getExclusiveGST(advisedFees.getAdviseAmount(), taxPercentages);
-						receivableGst = receivableGst.add(taxSplit.gettGST());
+						receivableGst = taxSplit.gettGST();
 					}
-					totReceivableAdFee = advisedFees.getAdviseAmount().add(receivableGst);
+					totReceivableAdFee = totReceivableAdFee.add(advisedFees.getAdviseAmount().add(receivableGst));
 				}
 				feeDetail.setFeeTypeCode(advisedFees.getFeeTypeCode());
-				feeDetail.setActualAmount(advisedFees.getAdviseAmount());
+				feeDetail.setActualAmount(advisedFees.getAdviseAmount().add(bounceGst).add(receivableGst));
 				feeDetail.setPaidAmount(advisedFees.getPaidAmount());
-				feeDetail.setRemainingFee(advisedFees.getBalanceAmt());
+				feeDetail.setRemainingFee(advisedFees.getBalanceAmt().add(bounceGst).add(receivableGst));
 				feeDues.add(feeDetail);
 			}
 
@@ -754,10 +758,9 @@ public class FinStatementController extends SummaryDetailService {
 
 				List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
 						.getAllocationsSummary();
-				Cloner cloner = new Cloner();
 				receiptData.getFinanceDetail().getFinScheduleData()
 						.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
-				FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+				FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 				tempReceiptData.setForeClosureEnq(true);
 				// setOrgReceiptData(tempReceiptData);
 				receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();
@@ -910,7 +913,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 
 				int defaultDays = 7;
-				int noOfdays = DateUtility.getDaysBetween(appDate, fm.getMaturityDate());
+				int noOfdays = DateUtil.getDaysBetween(appDate, fm.getMaturityDate());
 				if (defaultDays >= noOfdays) {
 					defaultDays = noOfdays;
 				}
@@ -1496,7 +1499,7 @@ public class FinStatementController extends SummaryDetailService {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1681,7 +1684,7 @@ public class FinStatementController extends SummaryDetailService {
 		int year = 0;
 		Date appDate = SysParamUtil.getAppDate();
 		if (fromdate != null) {
-			year = DateUtility.getYear(fromdate);
+			year = DateUtil.getYear(fromdate);
 		} else {
 			year = DateUtil.getYear(appDate);
 		}
@@ -1928,4 +1931,18 @@ public class FinStatementController extends SummaryDetailService {
 		this.customerDetailsService = customerDetailsService;
 	}
 
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setSummaryDetailService(SummaryDetailService summaryDetailService) {
+		this.summaryDetailService = summaryDetailService;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
 }

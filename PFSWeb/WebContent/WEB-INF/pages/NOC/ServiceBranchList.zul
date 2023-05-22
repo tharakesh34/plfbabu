@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window>
+		<window id="windowServiceBranchList" apply="${serviceBranchListCtrl}" border="none" width="100%">
+
+			<div sclass="z-toolbar" style="padding:0" height="28px">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
+					<toolbar align="start" sclass="toolbar-start" />
+
+					<!-- SEARCH AREA -->
+					<toolbar align="center" sclass="toolbar-center">
+						<button id="btnSearch" label="${c:l('label_Filter')}"
+							autodisable="btnSearch,print,btnRefresh,btnNew" tooltiptext="${c:l('btnSearch.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+
+						<button id="print" label="${c:l('label_Print')}" autodisable="btnSearch,print,btnRefresh,btnNew"
+							tooltiptext="${c:l('print.tooltiptext')}" sclass="z-toolbarbutton" />
+					</toolbar>
+					<!-- CRUD BUTTONS -->
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btnNew" label="${c:l('label_New')}" autodisable="btnSearch,print,btnRefresh,btnNew"
+							tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton" visible="false" />
+						<button id="btnRefresh" label="${c:l('label_Refresh')}"
+							autodisable="btnSearch,print,btnRefresh,btnNew" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
+					</toolbar>
+				</hbox>
+			</div>
+
+			<borderlayout id="blServiceBranchList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true"
+							style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+								<column width="130px" />
+								<column width="50px" />
+								<column />
+							</columns>
+							<rows>
+								<row>
+									<label value="${c:l('label_ServiceBranch_Code.value')}" />
+									<listbox id="codeSort" width="43px" mold="select" rows="1" />
+									<textbox id="code" width="80px" maxlength="8" />
+									<label value="${c:l('label_ServiceBranch_Description.value')}" />
+									<listbox id="descriptionSort" width="43px" mold="select" rows="1" />
+									<textbox id="description" width="80px" maxlength="8" />
+								</row>
+								<row>
+									<label value="${c:l('label_ServiceBranch_PinCode.value')}" />
+									<listbox id="pinCodeSort" width="43px" mold="select" rows="1" />
+									<textbox id="pinCode" width="80px" maxlength="8" />
+									<label value="${c:l('label_ServiceBranch_City.Value')}" />
+									<listbox id="citySort" width="43px" mold="select" rows="1" />
+									<textbox id="city" width="80px" maxlength="8" />
+								</row>
+								<row id="row_AlwWorkflow">
+									<label value="${c:l('label_ServiceBranchList_RecordStatus.value')}" />
+									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
+									<textbox id="recordStatus" width="100px" maxlength="50" />
+									<label value="${c:l('label_ServiceBranchList_RecordType.value')}" />
+									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
+									<listbox id="recordType" width="100px" mold="select" />
+								</row>
+							</rows>
+						</grid>
+
+						<listbox id="lbServiceBranch" fixedLayout="true" span="true" sizedByContent="true"
+							emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
+							height="100%" multiple="true">
+							<listhead sizable="true">
+								<listheader id="codeHeader" label="${c:l('listheaderServiceBranch_Code.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="descriptionHeader"
+									label="${c:l('listheaderServiceBranch_Description.label')}" sort="auto" hflex="min" />
+								<listheader id="pinCodeHeader" label="${c:l('listheaderServiceBranch_PinCode.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="cityHeader" label="${c:l('listheaderServiceBranch_CityName.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}"
+									sort="auto" hflex="min" />
+							</listhead>
+
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingServiceBranchList" />
+				</south>
+			</borderlayout>
+		</window>
+	</window>
+</zk>

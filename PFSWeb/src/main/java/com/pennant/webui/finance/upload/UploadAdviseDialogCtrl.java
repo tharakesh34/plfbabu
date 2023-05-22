@@ -47,7 +47,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -73,6 +72,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -398,8 +398,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		condition.append("Where FILENAME in (" + "'" + fileName + "'" + ")");
 		condition.append("and ENTITYCode in (" + "'" + entityCode + "'" + ")");
 		if (this.dateOfUpload.getValue() != null) {
-			String uploadDate = DateUtility.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
-			condition.append("and UploadedDate in (" + "'" + DateUtility.getDBDate(uploadDate).toString() + "'" + ")");
+			String uploadDate = DateUtil.formatToFullDate(this.dateOfUpload.getValue());
+			condition.append("and UploadedDate in (" + "'" + uploadDate + "'" + ")");
 		}
 
 		String whereCond = new String(condition);
@@ -1149,7 +1149,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		String entity = this.downloadEntity.getValue();
 		String uploadDate = "";
 		if (this.dateOfUpload.getValue() != null) {
-			uploadDate = DateUtility.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
+			uploadDate = DateUtil.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
 		}
 		Filter[] filters = new Filter[1];
 

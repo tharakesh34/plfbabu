@@ -25,7 +25,6 @@ import com.northconcepts.datapipeline.core.Record;
 import com.northconcepts.datapipeline.csv.CSVWriter;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
@@ -611,7 +610,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 						}
 
 						/* Full Name */
-						StringBuffer name = new StringBuffer();
+						StringBuilder name = new StringBuilder();
 
 						String firstName = StringUtils.trimToNull(customer.getCustFName());
 						String middleName = StringUtils.trimToNull(customer.getCustFName());
@@ -881,7 +880,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 							odStartDate = DateUtil.getDatePart(od.getFinODSchdDate());
 						}
 
-						if (DateUtility.compare(odStartDate, DateUtil.getDatePart(od.getFinODSchdDate())) > 0) {
+						if (DateUtil.compare(odStartDate, DateUtil.getDatePart(od.getFinODSchdDate())) > 0) {
 							odStartDate = DateUtil.getDatePart(odStartDate);
 						}
 					}
@@ -1205,7 +1204,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				/* Full Name */
 				if (guarantorType == 2 || guarantorType == 4) {
-					StringBuffer name = new StringBuffer();
+					StringBuilder name = new StringBuilder();
 
 					String firstName = StringUtils.trimToNull(customer.getCustFName());
 					String middleName = StringUtils.trimToNull(customer.getCustMName());

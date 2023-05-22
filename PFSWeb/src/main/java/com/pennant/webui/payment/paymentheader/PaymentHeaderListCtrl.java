@@ -42,10 +42,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.webui.payment.paymentheader.model.PaymentHeaderListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -232,7 +232,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  PaymentId =? ");
 
 		if (doCheckAuthority(paymentheader, whereCond.toString(), new Object[] { paymentheader.getPaymentId() })) {

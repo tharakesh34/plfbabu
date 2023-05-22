@@ -35,7 +35,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -50,7 +49,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 	private BigDecimal cummulativePenalityAmt;
 
 	public OverdueChargeRecoveryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class OverdueChargeRecoveryListModelItemRenderer
 			int format = CurrencyUtil.getFormat(overdueChargeRecovery.getFinCcy());
 
 			Listcell lc;
-			lc = new Listcell(DateUtility.formatToLongDate(overdueChargeRecovery.getMovementDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(overdueChargeRecovery.getMovementDate()));
 			lc.setParent(item);
 
 			lc = new Listcell(String.valueOf(overdueChargeRecovery.getODDays()));

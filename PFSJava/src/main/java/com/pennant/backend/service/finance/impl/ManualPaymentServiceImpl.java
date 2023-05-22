@@ -55,7 +55,6 @@ import org.apache.logging.log4j.Logger;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.finance.limits.LimitCheckDetails;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepayCalculator;
@@ -104,10 +103,11 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ManualPaymentServiceImpl extends GenericFinanceDetailService implements ManualPaymentService {
 	private static final Logger logger = LogManager.getLogger(ManualPaymentServiceImpl.class);
@@ -266,8 +266,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail fd = repayData.getFinanceDetail();
@@ -540,8 +539,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		RepayData repayData = (RepayData) auditHeader.getAuditDetail().getModelData();
 		Date appDate = SysParamUtil.getAppDate();
@@ -1196,8 +1194,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData = calculateRepayments(repayData, fd, finServiceInst, false, null);
 
 		if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
-			Cloner cloner = new Cloner();
-			List<FinanceScheduleDetail> schedules = cloner.deepClone(schdData.getFinanceScheduleDetails());
+			List<FinanceScheduleDetail> schedules = ObjectUtil.clone(schdData.getFinanceScheduleDetails());
 			if (finServiceInst.getToDate() != null) {
 				schedules = rePrepareScheduleTerms(schedules, finServiceInst.getToDate());
 				schdData.setFinanceScheduleDetails(schedules);
@@ -1265,7 +1262,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				subHeadRule.setACCRUE(accrueValue);
 
 				// Total Tenure
-				int months = DateUtility.getMonthsBetween(fm.getMaturityDate(), fm.getFinStartDate(), false);
+				int months = DateUtil.getMonthsBetweenInclusive(fm.getMaturityDate(), fm.getFinStartDate());
 				subHeadRule.setTenure(months);
 
 			} catch (IllegalAccessException e) {
@@ -1282,10 +1279,9 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		// Calculation for Insurance Refund
 		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE) || moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
-			int months = DateUtility.getMonthsBetween(fm.getMaturityDate(),
+			int months = DateUtil.getMonthsBetween(fm.getMaturityDate(),
 					repayData.getRepayMain().getRefundCalStartDate() == null ? fm.getMaturityDate()
-							: repayData.getRepayMain().getRefundCalStartDate(),
-					true);
+							: repayData.getRepayMain().getRefundCalStartDate());
 			subHeadRule.setRemTenure(months);
 		}
 
@@ -1365,7 +1361,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}

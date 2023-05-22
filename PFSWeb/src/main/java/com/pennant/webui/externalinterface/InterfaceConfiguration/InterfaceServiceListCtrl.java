@@ -61,7 +61,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
@@ -219,7 +218,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		Listitem selectedItem = this.listBoxExternalInterfaceDialog.getSelectedItem();
 		final InterfaceServiceLog interfaceDetail = (InterfaceServiceLog) selectedItem.getAttribute("id");
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  AND  Id = ");
 		whereCond.append(interfaceDetail.getReference());
 		doShowDialogPage(interfaceDetail);
@@ -477,10 +476,10 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					if (!suntechFlag && StringUtils.containsIgnoreCase(interfaceServiceLog.getStatus(), "FAILED")) {
 						try {
 							bussinessDate = getBussinessDate();
-							Date appDate = DateUtility.addDays(SysParamUtil.getAppDate(), -1);
+							Date appDate = DateUtil.addDays(SysParamUtil.getAppDate(), -1);
 							if (StringUtils.equalsIgnoreCase(bussinessDate, interfaceServiceLog.getInterface_Info())) {
 								reProcess.setDisabled(false);
-							} else if (DateUtility.compare(appDate, interfaceServiceLog.getEodDate()) == 0) {
+							} else if (DateUtil.compare(appDate, interfaceServiceLog.getEodDate()) == 0) {
 								reProcess.setDisabled(false);
 							}
 						} catch (Exception e) {

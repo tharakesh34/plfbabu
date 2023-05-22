@@ -11,7 +11,7 @@ public class ChequeDetails {
 	private String repayAmountinWords;
 
 	public ChequeDetails() {
-
+	    super();
 	}
 
 	public String getFinBranchName() {

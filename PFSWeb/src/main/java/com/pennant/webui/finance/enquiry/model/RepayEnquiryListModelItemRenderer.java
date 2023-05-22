@@ -9,8 +9,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<FinanceRepayments>, Serializable {
 
@@ -27,7 +27,7 @@ public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<Finan
 
 		if (item instanceof Listgroup) {
 			item.appendChild(
-					new Listcell("Schedule Term : " + DateUtility.formatToLongDate(repayment.getFinSchdDate())));
+					new Listcell("Schedule Term : " + DateUtil.formatToLongDate(repayment.getFinSchdDate())));
 		} else if (item instanceof Listgroupfoot) {
 			Listcell cell = new Listcell("");
 			cell.setSpan(6);
@@ -35,7 +35,7 @@ public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<Finan
 		} else {
 
 			Listcell lc;
-			lc = new Listcell(DateUtility.formatToLongDate(repayment.getFinPostDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(repayment.getFinPostDate()));
 			lc.setParent(item);
 			lc = new Listcell(String.valueOf(repayment.getLinkedTranId()));
 			lc.setParent(item);

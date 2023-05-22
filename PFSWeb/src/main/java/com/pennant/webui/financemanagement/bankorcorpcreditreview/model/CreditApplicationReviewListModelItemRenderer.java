@@ -19,7 +19,7 @@ public class CreditApplicationReviewListModelItemRenderer
 	private static final long serialVersionUID = 2572007482335898401L;
 
 	public CreditApplicationReviewListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

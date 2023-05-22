@@ -34,7 +34,7 @@ p, li, a {
 							</p>
 							<p>You can either:
 							<ul>
-								<li><a href="<%=request.getContextPath()%>/loginDialog.zul">Go
+								<li><a href="<%=request.getContextPath()%>">Go
 										back</a> and try again.</li>
 								<li>Contact the administrator.</li>
 							</ul>

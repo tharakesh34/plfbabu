@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -36,6 +35,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.pff.mandate.MandateUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CustomizeFinanceDataValidation {
@@ -262,21 +262,21 @@ public class CustomizeFinanceDataValidation {
 							|| mandate.getExpiryDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "Mandate ExpiryDate";
-						valueParm[1] = DateUtility.formatToLongDate(DateUtility.addDays(mandate.getStartDate(), 1));
-						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						valueParm[1] = DateUtil.formatToLongDate(DateUtil.addDays(mandate.getStartDate(), 1));
+						valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", valueParm)));
 						return errorDetails;
 					}
 				}
 				if (mandate.getStartDate() != null) {
-					Date mandbackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
+					Date mandbackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 							-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 					if (mandate.getStartDate().before(mandbackDate)
 							|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "mandate start date";
-						valueParm[1] = DateUtility.formatToLongDate(mandbackDate);
-						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
+						valueParm[1] = DateUtil.formatToLongDate(mandbackDate);
+						valueParm[2] = DateUtil.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90318", valueParm)));
 					}
 				}

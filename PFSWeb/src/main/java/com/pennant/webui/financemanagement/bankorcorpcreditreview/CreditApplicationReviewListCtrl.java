@@ -41,7 +41,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -59,6 +58,7 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -111,7 +111,7 @@ public class CreditApplicationReviewListCtrl extends GFCBaseListCtrl<FinCreditRe
 
 	private boolean isMaintinence = false;
 	private String creditDivision = "";
-	int dateAppCurrentYear = DateUtility.getYear(SysParamUtil.getAppDate());
+	int dateAppCurrentYear = DateUtil.getYear(SysParamUtil.getAppDate());
 	int dateAppPrevYear = dateAppCurrentYear - 1;
 
 	/**

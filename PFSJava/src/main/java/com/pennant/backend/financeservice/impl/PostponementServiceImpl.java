@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -65,10 +64,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
-					if (DateUtility.compare(curSchd.getSchDate(),
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+					if (DateUtil.compare(curSchd.getSchDate(),
 							finScheduleData.getFinanceMain().getEventFromDate()) >= 0
-							&& DateUtility.compare(curSchd.getSchDate(),
+							&& DateUtil.compare(curSchd.getSchDate(),
 									finScheduleData.getFinanceMain().getEventToDate()) <= 0) {
 						curSchd.setRecalLock(false);
 					} else {
@@ -128,10 +127,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
-					if (DateUtility.compare(curSchd.getSchDate(),
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+					if (DateUtil.compare(curSchd.getSchDate(),
 							finScheduleData.getFinanceMain().getEventFromDate()) >= 0
-							&& DateUtility.compare(curSchd.getSchDate(),
+							&& DateUtil.compare(curSchd.getSchDate(),
 									finScheduleData.getFinanceMain().getEventToDate()) <= 0) {
 						curSchd.setRecalLock(false);
 					} else {
@@ -186,10 +185,10 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
-					if (DateUtility.compare(curSchd.getSchDate(),
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+					if (DateUtil.compare(curSchd.getSchDate(),
 							finScheduleData.getFinanceMain().getEventFromDate()) >= 0
-							&& DateUtility.compare(curSchd.getSchDate(),
+							&& DateUtil.compare(curSchd.getSchDate(),
 									finScheduleData.getFinanceMain().getEventToDate()) <= 0) {
 						curSchd.setRecalLock(false);
 					} else {
@@ -237,8 +236,8 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				|| fsi.getFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "From date";
-			valueParm[1] = "finance start date:" + DateUtility.formatToShortDate(fm.getFinStartDate());
-			valueParm[2] = "maturity date:" + DateUtility.formatToShortDate(fm.getMaturityDate());
+			valueParm[1] = "finance start date:" + DateUtil.formatToShortDate(fm.getFinStartDate());
+			valueParm[2] = "maturity date:" + DateUtil.formatToShortDate(fm.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -247,8 +246,8 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 		if (fsi.getToDate().compareTo(fm.getMaturityDate()) >= 0 || fsi.getToDate().compareTo(fsi.getFromDate()) < 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "ToDate";
-			valueParm[1] = DateUtility.formatToShortDate(fsi.getFromDate());
-			valueParm[2] = DateUtility.formatToShortDate(fm.getMaturityDate());
+			valueParm[1] = DateUtil.formatToShortDate(fsi.getFromDate());
+			valueParm[2] = DateUtil.formatToShortDate(fm.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91102", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -295,13 +294,13 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				return auditDetail;
 			} else if (fsi.getRecalFromDate().compareTo(fsi.getToDate()) <= 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
-				valueParm[1] = DateUtility.formatToShortDate(fsi.getToDate());
+				valueParm[0] = DateUtil.formatToShortDate(fsi.getRecalFromDate());
+				valueParm[1] = DateUtil.formatToShortDate(fsi.getToDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91106", "", valueParm), lang));
 			} else if (fsi.getRecalFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
-				valueParm[1] = DateUtility.formatToShortDate(fm.getMaturityDate());
+				valueParm[0] = DateUtil.formatToShortDate(fsi.getRecalFromDate());
+				valueParm[1] = DateUtil.formatToShortDate(fm.getMaturityDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91114", "", valueParm), lang));
 			}
 		}
@@ -315,8 +314,8 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				return auditDetail;
 			} else if (fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) <= 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalToDate());
-				valueParm[1] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
+				valueParm[0] = DateUtil.formatToShortDate(fsi.getRecalToDate());
+				valueParm[1] = DateUtil.formatToShortDate(fsi.getRecalFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91109", "", valueParm), lang));
 			}
 		}
@@ -330,14 +329,14 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 
 		for (FinanceScheduleDetail schDetail : schedules) {
 			// FromDate
-			if (DateUtility.compare(fsi.getFromDate(), schDetail.getSchDate()) == 0) {
+			if (DateUtil.compare(fsi.getFromDate(), schDetail.getSchDate()) == 0) {
 				isValidFromDate = true;
 				if (checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
 					return auditDetail;
 				}
 			}
 			// ToDate
-			if (DateUtility.compare(fsi.getToDate(), schDetail.getSchDate()) == 0) {
+			if (DateUtil.compare(fsi.getToDate(), schDetail.getSchDate()) == 0) {
 				isValidToDate = true;
 				if (checkIsValidRepayDate(auditDetail, schDetail, "ToDate") != null) {
 					return auditDetail;
@@ -346,7 +345,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			// RecalFromDate
 			if (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 					|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-				if (DateUtility.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtil.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 					if (checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
 						return auditDetail;
@@ -355,7 +354,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			}
 			// RecalToDate
 			if (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-				if (DateUtility.compare(fsi.getRecalToDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtil.compare(fsi.getRecalToDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalToDate = true;
 					if (checkIsValidRepayDate(auditDetail, schDetail, "RecalToDate") != null) {
 						return auditDetail;
@@ -366,23 +365,23 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 
 		if (!isValidFromDate) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
+			valueParm[0] = "FromDate:" + DateUtil.formatToShortDate(fsi.getFromDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 		if (!isValidToDate) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "ToDate:" + DateUtility.formatToShortDate(fsi.getToDate());
+			valueParm[0] = "ToDate:" + DateUtil.formatToShortDate(fsi.getToDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 		if (!isValidRecalFromDate && (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 				|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "RecalFromDate:" + DateUtility.formatToShortDate(fsi.getRecalFromDate());
+			valueParm[0] = "RecalFromDate:" + DateUtil.formatToShortDate(fsi.getRecalFromDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 		if (!isValidRecalToDate && (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "RecalToDate:" + DateUtility.formatToShortDate(fsi.getRecalToDate());
+			valueParm[0] = "RecalToDate:" + DateUtil.formatToShortDate(fsi.getRecalToDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 

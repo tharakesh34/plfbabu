@@ -45,7 +45,7 @@ public class StepPolicyListModelItemRenderer implements ListitemRenderer<StepPol
 	private static final long serialVersionUID = 2118469590661434900L;
 
 	public StepPolicyListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

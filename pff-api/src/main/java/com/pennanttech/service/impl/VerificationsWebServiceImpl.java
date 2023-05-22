@@ -38,7 +38,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.applicationmaster.ReasonCodeDAO;
@@ -67,6 +66,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.VerificationController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.Agencies;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
 import com.pennanttech.pennapps.pff.verification.LegaVerificationType;
@@ -549,7 +549,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			valueParm[0] = "VerificationDate";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		if (DateUtility.compare(fieldInvestigation.getVerifiedDate(), SysParamUtil.getAppDate()) != 0) {
+		if (DateUtil.compare(fieldInvestigation.getVerifiedDate(), SysParamUtil.getAppDate()) != 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationDate";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
@@ -1188,7 +1188,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			return returnStatus;
 		}
-		if (DateUtility.compare(verifiedDate, SysParamUtil.getAppDate()) != 0) {
+		if (DateUtil.compare(verifiedDate, SysParamUtil.getAppDate()) != 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationDate";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
@@ -1353,7 +1353,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
 			return returnStatus;
 		}
-		if (DateUtility.compare(verificationDate, SysParamUtil.getAppDate()) != 0) {
+		if (DateUtil.compare(verificationDate, SysParamUtil.getAppDate()) != 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationDate";
 			returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParm);// FIXME
@@ -2604,7 +2604,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			return returnStatus;
 		}
-		if (DateUtility.compare(verificationDate, SysParamUtil.getAppDate()) != 0) {
+		if (DateUtil.compare(verificationDate, SysParamUtil.getAppDate()) != 0) {
 			String valueParam[] = new String[2];
 			valueParam[0] = "VerificationDate";
 			returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParam);

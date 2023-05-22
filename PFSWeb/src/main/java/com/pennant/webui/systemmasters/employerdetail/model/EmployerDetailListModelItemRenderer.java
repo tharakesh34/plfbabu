@@ -33,9 +33,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.systemmasters.EmployerDetail;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -46,7 +46,7 @@ public class EmployerDetailListModelItemRenderer implements ListitemRenderer<Emp
 	private static final long serialVersionUID = 1L;
 
 	public EmployerDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class EmployerDetailListModelItemRenderer implements ListitemRenderer<Emp
 		lc.setParent(item);
 		lc = new Listcell(employerDetail.getLovDescIndustryDesc());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(employerDetail.getEstablishDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(employerDetail.getEstablishDate()));
 		lc.setParent(item);
 		lc = new Listcell(employerDetail.getEmpPOBox());
 		lc.setParent(item);

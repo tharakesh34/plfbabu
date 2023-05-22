@@ -10,7 +10,7 @@ public class CustomerPhoneComparater implements Comparator<Object>, Serializable
 	private static final long serialVersionUID = -6494243803772761322L;
 
 	public CustomerPhoneComparater() {
-
+	    super();
 	}
 
 	@Override

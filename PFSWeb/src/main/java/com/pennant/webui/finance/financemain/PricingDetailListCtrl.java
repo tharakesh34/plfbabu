@@ -110,7 +110,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/PricingDetailList.zul file.
@@ -138,9 +138,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	public Hbox hbox_Split;
 	private Component parent = null;
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
-	private boolean isWIF = false;
 	private String roleCode = "";
-	private String moduleDefiner = "";
 	public Checkbox split;
 	private Button btnAdd_AddPricingTopUp;
 	private Button btnNew_Insurance;
@@ -268,16 +266,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				this.window_PricingDetailList.setTitle("");
 			}
 
-			if (arguments.containsKey("isWIF")) {
-				isWIF = (Boolean) arguments.get("isWIF");
-			}
-
 			if (arguments.containsKey("CreditReviewData")) {
 				setCreditReviewData((CreditReviewData) arguments.get("CreditReviewData"));
-			}
-
-			if (arguments.containsKey("moduleDefiner")) {
-				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			if (arguments.containsKey("Role")) {
@@ -2457,8 +2447,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		topUpCount++;
 		FinScheduleData finSchdData = financeDetail.getFinScheduleData();
-		Cloner cloner = new Cloner();
-		FinScheduleData topUpFinSchdData = cloner.deepClone(finSchdData);
+		FinScheduleData topUpFinSchdData = ObjectUtil.clone(finSchdData);
 		doRenderItems(finType, topUpFinSchdData, true);
 
 		if (pricingDetail == null) {

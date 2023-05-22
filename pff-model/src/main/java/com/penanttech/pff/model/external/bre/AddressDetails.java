@@ -12,7 +12,7 @@ public class AddressDetails {
 
 	@JsonCreator
 	public AddressDetails() {
-
+	    super();
 	}
 
 	@XmlElement(name = "element")

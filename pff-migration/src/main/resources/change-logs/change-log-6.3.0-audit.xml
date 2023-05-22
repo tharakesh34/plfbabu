@@ -1299,21 +1299,54 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1529.6" author="Gireesh.G">
+	<changeSet id="ST#1529.1" author="Gireesh.G">
 		<addColumn tableName="ADTMANDATES">
 			<column name="ExternalMandate" type="boolean" />
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="ST#1529.6.1" author="Gireesh.G">
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				UPDATE ADTMANDATES SET EXTERNALMANDATE = 0;
+					Update ADTMANDATES M SET ExternalMandate = t2.EXTMAN from 
+					(Select MandateID, AuditID, AuditDate, AuditSeq, AuditImage, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2
+					where M.MandateID = t2.MandateID and M.AuditID = t2.AuditID and M.AuditDate = t2.AuditDate and M.AuditSeq = t2.AuditSeq and M.AuditImage = t2.AuditImage;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="mssql">
+		<sql>
+			<![CDATA[
+					UPDATE M set M.ExternalMandate = t2.EXTMAN
+						From ADTMANDATES M 
+					INNER JOIN (Select MandateID, AuditID, AuditDate, AuditSeq, AuditImage, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2 on M.MandateID = t2.MandateID
+							 and M.AuditID = t2.AuditID and M.AuditDate = t2.AuditDate and M.AuditSeq = t2.AuditSeq and M.AuditImage = t2.AuditImage;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1529.1_01" author="Gireesh.G" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO ADTMANDATES M 
+				USING (Select MandateID, AuditID, AuditDate, AuditSeq, AuditImage, case when MANDATETYPE = 'E-MANDATE' and Status = 'APPROVED' then 1
+							when MANDATETYPE = 'ECS' and Status = 'NEW' then 1
+							when MANDATETYPE = 'NACH' and Status = 'NEW' then 1
+							else 0 end EXTMAN From ADTMANDATES Where MandateRef is not null) t2 on (M.MandateID = t2.MandateID and M.AuditID = t2.AuditID and M.AuditDate = t2.AuditDate and M.AuditSeq = t2.AuditSeq and M.AuditImage = t2.AuditImage)
+				WHEN MATCHED THEN UPDATE SET 
+				M.ExternalMandate = t2.EXTMAN;
 			]]>
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1529.7" author="Gireesh.G" dbms="mssql">
+	<changeSet id="ST#1529.2" author="Gireesh.G" dbms="mssql">
 		<sql>
 			<![CDATA[	
 				ALTER TABLE ADTMANDATES ADD CONSTRAINT DF_ADTMAN_EXTERNALMANDATE DEFAULT 0 FOR EXTERNALMANDATE;
@@ -1321,7 +1354,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1529.8" author="Gireesh.G" dbms="postgresql, oracle">
+	<changeSet id="ST#1529.2" author="Gireesh.G" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ExternalMandate" tableName="ADTMANDATES" defaultValue="0" />
 	</changeSet>
 	

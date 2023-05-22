@@ -22,11 +22,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.receiptuploadqueue.ReceiptUploadQueuing;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implements ProjectedRUDAO {
 	private static Logger logger = LogManager.getLogger(ProjectedRUDAOImpl.class);
@@ -47,7 +47,7 @@ public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implement
 		ruQueuing.setEodProcess(false);
 		ruQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		ruQueuing.setUploadHeaderId(receiptUploadHeaderId);
-		ruQueuing.setStartTime(DateUtility.getSysDate());
+		ruQueuing.setStartTime(DateUtil.getSysDate());
 
 		StringBuilder sql = new StringBuilder(
 				"INSERT INTO ReceiptUploadQueuing (FINREFERENCE,UploadHeaderId, UPLOADDETAILID,JSONOBJECT, EODDATE, THREADID, PROGRESS, STARTTIME, EODPROCESS)");
@@ -155,7 +155,7 @@ public class ProjectedRUDAOImpl extends BasicDao<ReceiptUploadQueuing> implement
 		source.addValue("UploadHeaderId", uploadHeaderId);
 		source.addValue("uploadDetailId", uploadDetailId);
 		source.addValue("Progress", progress);
-		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("EndTime", DateUtil.getSysDate());
 
 		StringBuilder sql = new StringBuilder("Update ReceiptUploadQueuing set");
 		sql.append(" EndTime = :EndTime, Progress = :Progress");

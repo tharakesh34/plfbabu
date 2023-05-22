@@ -58,7 +58,7 @@ public class CDSettlementUploadCtrl extends GFCBaseCtrl<Configuration> {
 		super();
 	}
 
-	public void onCreate$window_SettlementProcessUploadDialogueCtrl(Event event) throws Exception {
+	public void onCreate$window_cdSettlementUpload(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_cdSettlementUpload);

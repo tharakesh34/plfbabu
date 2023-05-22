@@ -94,7 +94,6 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ReportsUtil;
@@ -158,12 +157,13 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Payments/ManualPayment.zul
@@ -354,8 +354,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				finRepayHeader = getRepayData().getFinRepayHeader();
 				setRepaySchdList(getRepayData().getRepayScheduleDetails());
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(financeDetail.getFinScheduleData().getFinanceMain());
+				befImage = ObjectUtil.clone(financeDetail.getFinScheduleData().getFinanceMain());
 				getRepayData().getFinanceDetail().getFinScheduleData().getFinanceMain().setBefImage(befImage);
 
 			}
@@ -468,8 +467,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
-		// Empty sent any required attributes
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		this.finType.setMaxlength(8);
@@ -619,10 +617,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			getFinanceDetail().setFinScheduleData(data);
 		} else {
 
-			Cloner cloner = new Cloner();
-			aFinanceMain = cloner.deepClone(financeMain);
-			financeScheduleDetails = cloner
-					.deepClone(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+			aFinanceMain = ObjectUtil.clone(financeMain);
+			financeScheduleDetails = ObjectUtil
+					.clone(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 		}
 
 		financeScheduleDetails = sortSchdDetails(financeScheduleDetails);
@@ -840,9 +837,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			RepayData repayData = null;
 			if (moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
-				Cloner cloner = new Cloner();
-				List<FinanceScheduleDetail> finschDetailList = cloner
-						.deepClone(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+				List<FinanceScheduleDetail> finschDetailList = ObjectUtil
+						.clone(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 				Date valueDate = this.earlySettlementDate.getValue();
 
 				if (this.earlySettlementTillDate.getSelectedItem() != null && !this.earlySettlementTillDate
@@ -918,9 +914,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (lastBussDate.compareTo(this.earlySettlementDate.getValue()) > 0
 					|| curBussDate.compareTo(this.earlySettlementDate.getValue()) < 0) {
 				throw new WrongValueException(this.earlySettlementDate,
-						Labels.getLabel("label_EarlySettlementDate",
-								new String[] { DateUtility.formatToLongDate(lastBussDate),
-										DateUtility.formatToLongDate(curBussDate) }));
+						Labels.getLabel("label_EarlySettlementDate", new String[] {
+								DateUtil.formatToLongDate(lastBussDate), DateUtil.formatToLongDate(curBussDate) }));
 			}
 
 			// Recalculation for Repayment Schedule Details
@@ -968,7 +963,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 
 						comboitem = new Comboitem();
-						comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));
+						comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()));
 						comboitem.setValue(curSchd.getSchDate());
 						earlySettlementTillDate.appendChild(comboitem);
 					}
@@ -993,8 +988,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private boolean doCheckRefundCal() throws InterruptedException {
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		RepayData aRepayData = cloner.deepClone(getRepayData());
+		RepayData aRepayData = ObjectUtil.clone(getRepayData());
 
 		int finFormatter = aRepayData.getRepayMain().getLovDescFinFormatter();
 		BigDecimal manualRefundAmt = PennantApplicationUtil.unFormateAmount(this.totRefundAmt.getValue(), finFormatter);
@@ -1029,8 +1023,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			subHeadRule.setACCRUE(accrueValue);
 
 			// Total Tenure
-			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-					false);
+			int months = DateUtil.getMonthsBetweenInclusive(financeMain.getMaturityDate(),
+					financeMain.getFinStartDate());
 			subHeadRule.setTenure(months);
 
 		} catch (IllegalAccessException e) {
@@ -1181,7 +1175,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.finSchProfitDaysBasis
 					.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(), profitDayList));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
-			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
+			this.finSchGracePeriodEndDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 
 			// Fill Effective Schedule Details
@@ -1208,7 +1202,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1358,8 +1352,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				subHeadRule.setACCRUE(accrueValue);
 
 				// Total Tenure
-				int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-						false);
+				int months = DateUtil.getMonthsBetweenInclusive(financeMain.getMaturityDate(),
+						financeMain.getFinStartDate());
 				subHeadRule.setTenure(months);
 
 			} catch (IllegalAccessException e) {
@@ -1376,10 +1370,9 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		// Calculation for Insurance Refund
 		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE) || moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
-			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(),
+			int months = DateUtil.getMonthsBetween(financeMain.getMaturityDate(),
 					repayData.getRepayMain().getRefundCalStartDate() == null ? financeMain.getMaturityDate()
-							: repayData.getRepayMain().getRefundCalStartDate(),
-					true);
+							: repayData.getRepayMain().getRefundCalStartDate());
 			subHeadRule.setRemTenure(months);
 		}
 
@@ -1471,7 +1464,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	@SuppressWarnings("unused")
 	public void doSave() {
 		logger.debug("Entering");
 
@@ -1604,8 +1596,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		aFinanceMain.setNextUserId(this.curNextUserId);
 
 		// Duplicate Creation of Object
-		Cloner cloner = new Cloner();
-		RepayData aRepayData = cloner.deepClone(data);
+		RepayData aRepayData = ObjectUtil.clone(data);
 
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
@@ -2289,7 +2280,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(CurrencyUtil.format(repaySchd.getProfitSchdBal(), finFormatter));
@@ -2528,7 +2519,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2543,7 +2534,6 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 * @throws AccountNotFoundException
 	 */
-	@SuppressWarnings("unused")
 	private boolean isValid(boolean isChgRpy, boolean isSaveProcess) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
 
@@ -2568,9 +2558,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					&& (lastBussDate.compareTo(this.earlySettlementDate.getValue()) > 0
 							|| curBussDate.compareTo(this.earlySettlementDate.getValue()) < 0)) {
 				throw new WrongValueException(this.earlySettlementDate,
-						Labels.getLabel("label_EarlySettlementDate",
-								new String[] { DateUtility.formatToLongDate(lastBussDate),
-										DateUtility.formatToLongDate(curBussDate) }));
+						Labels.getLabel("label_EarlySettlementDate", new String[] {
+								DateUtil.formatToLongDate(lastBussDate), DateUtil.formatToLongDate(curBussDate) }));
 			}
 		}
 
@@ -2606,13 +2595,12 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				boolean futureInstPaid = false;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(SysParamUtil.getAppDate(), curSchd.getSchDate()) > 0) {
+					if (DateUtil.compare(SysParamUtil.getAppDate(), curSchd.getSchDate()) > 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
 
-					if (DateUtility.compare(SysParamUtil.getAppDate(), curSchd.getSchDate()) == 0
-							|| closingBal == null) {
+					if (DateUtil.compare(SysParamUtil.getAppDate(), curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = curSchd.getClosingBalance();
 					}
 
@@ -2792,7 +2780,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Payment Amount", CurrencyUtil.parse(curSchd.getRepayAmount(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -2802,8 +2790,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Principal", CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Principal",
+							CurrencyUtil.parse(curSchd.getPrincipalSchd(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
@@ -2813,8 +2801,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Interest", CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Interest",
+							CurrencyUtil.parse(curSchd.getProfitSchd(), format).setScale(formatter,
 									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
@@ -2934,8 +2922,8 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				earlySettlement
 						.setCustShrtName(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
 			}
-			earlySettlement.setFinStartDate(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-			earlySettlement.setEarlySettlementDate(DateUtility.formatToLongDate(this.earlySettlementDate.getValue()));
+			earlySettlement.setFinStartDate(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
+			earlySettlement.setEarlySettlementDate(DateUtil.formatToLongDate(this.earlySettlementDate.getValue()));
 		}
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());

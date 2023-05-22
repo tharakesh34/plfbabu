@@ -109,9 +109,9 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.extension.FeeExtension;
 import com.pennant.pff.extension.MandateExtension;
 import com.pennant.pff.mandate.InstrumentType;
@@ -135,8 +135,9 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FinanceMainDialog.zul file.
@@ -584,7 +585,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else if (InstrumentType.isManual(finRepayMethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			readOnlyComponent(true, this.mandateRef);
 			this.mandateRef.setValue("");
-			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.mandateRef.setAttribute("mandateID", 0L);
 			this.row_Escrow.setVisible(true);
 			if (!this.escrow.isChecked()) {
 				this.customerBankAcct.setReadonly(true);
@@ -597,7 +598,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.customerBankAcct.setValue("");
 			this.customerBankAcct.setAttribute("CustBankId", null);
 			this.mandateRef.setValue("");
-			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.mandateRef.setAttribute("mandateID", 0L);
 		}
 		mandateFilter(finRepayMethod);
 		addMandateFiletrs(finRepayMethod, CustID);
@@ -742,7 +743,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Append Extended Field Details
 		appendExtendedFieldDetails(aFinanceDetail, moduleDefiner);
 
-		if (aFinanceMain.istDSApplicable() && FinServiceEvent.ORG.equals(moduleDefiner)) {
+		if (aFinanceMain.isTDSApplicable() && FinServiceEvent.BASICMAINTAIN.equals(moduleDefiner)) {
 			appendTanDetailTab();
 		}
 
@@ -796,6 +797,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.label_FinanceMainDialog_TDSType.setVisible(false);
 			this.cbTdsType.setVisible(false);
 			this.cbTdsType.setDisabled(true);
+		}
+
+		if (PennantConstants.RCD_STATUS_SUBMITTED.equals(aFinanceMain.getRecordStatus())) {
+			readOnlyComponent(isReadOnly("FinanceMainDialog_ODMinAmount"), this.odMinAmount);
 		}
 
 		logger.debug("Leaving");
@@ -1327,8 +1332,8 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			List<ReturnDataSet> returnSetEntries = null;
 			Map<String, FeeRule> map = new HashMap<>();
 
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList()
+					.add(AccountingEngine.getAccountSetID(finMain, eventCode, FinanceConstants.MODULEID_FINTYPE));
 
 			dataMap.putAll(map);
 			aeEvent.setDataMap(dataMap);
@@ -1478,6 +1483,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeAmtOrPerc.setValue(this.oldVar_oDChargeAmtOrPerc);
 		this.oDAllowWaiver.setChecked(this.oldVar_oDAllowWaiver);
 		this.oDMaxWaiverPerc.setValue(this.oldVar_oDMaxWaiverPerc);
+		this.odMinAmount.setValue(this.oldVar_odMinAmount);
 
 		this.recordStatus.setValue(this.oldVar_recordStatus);
 
@@ -1717,6 +1723,18 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (!this.odMinAmount.isDisabled()) {
+
+			if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+				if (this.odMinAmount.getValue() != null) {
+					if (this.odMinAmount.getValue().compareTo(BigDecimal.ZERO) < 0) {
+						this.odMinAmount.setConstraint(new PTDecimalValidator(
+								Labels.getLabel("label_FinanceTypeDialog_ODMinAmount.value"), 2, false, false));
+					}
+				}
+			}
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1787,6 +1805,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.oDChargeType.setConstraint("");
 		this.oDChargeAmtOrPerc.setConstraint("");
 		this.oDMaxWaiverPerc.setConstraint("");
+		this.odMinAmount.setConstraint("");
 
 		logger.debug("Leaving");
 	}
@@ -2060,8 +2079,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		boolean isNew = false;
 		FinanceMain afm = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -2329,6 +2347,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				if (validateflag) {
 					MessageUtil.showError("Minimum 1 cheque for future instalment to be available for Reference:"
 							.concat(afm.getFinReference()));
+					return;
 				}
 			}
 		}
@@ -2700,7 +2719,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Extended Field details
 		if (afinanceDetail.getExtendedFieldRender() != null) {
 			ExtendedFieldRender details = afinanceDetail.getExtendedFieldRender();
+			int seqNo = details.getSeqNo();
 			details.setReference(afinanceMain.getFinReference());
+			details.setSeqNo(++seqNo);
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(afinanceMain.getRecordStatus());
@@ -2986,6 +3007,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		if (changeAction) {
 			this.oDChargeAmtOrPerc.setValue(BigDecimal.ZERO);
+			this.odMinAmount.setValue(BigDecimal.ZERO);
 		}
 		this.space_oDChargeAmtOrPerc.setSclass("mandatory");
 		readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeCalOn"), this.oDChargeCalOn);
@@ -3006,6 +3028,25 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_oDChargeAmtOrPerc"), this.oDChargeAmtOrPerc);
 			// this.oDChargeAmtOrPerc.setMaxlength(6);
 			this.oDChargeAmtOrPerc.setFormat(PennantApplicationUtil.getAmountFormate(2));
+		}
+		this.row_odMinAmount.setVisible(false);
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			this.row_odMinAmount.setVisible(true);
+		}
+
+		this.oDIncGrcDays.setDisabled(false);
+		if (!getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_DUE_DAYS)
+				&& !getComboboxValue(this.oDChargeType).equals(ChargeType.PERC_ON_EFF_DUE_DAYS)) {
+			this.oDIncGrcDays.setDisabled(true);
+		}
+
+		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));
+	}
+
+	public void onchangeODCharges(String val) {
+		fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), ",INST,");
+		if (FinanceUtil.isMinimunODCChargeReq(getComboboxValue(this.oDChargeType))) {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), ",");
 		}
 	}
 
@@ -3278,8 +3319,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
-		Cloner cloner = new Cloner();
-		aFinanceDetail = cloner.deepClone(getFinanceDetail());
+		aFinanceDetail = ObjectUtil.clone(getFinanceDetail());
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		doWriteComponentsToBean(aFinanceDetail);
@@ -3497,7 +3537,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (dataObject instanceof String) {
 			this.mandateRef.setValue(dataObject.toString());
-			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.mandateRef.setAttribute("mandateID", 0L);
 		} else {
 			Mandate details = (Mandate) dataObject;
 			if (details != null) {
@@ -3543,13 +3583,15 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		whereCaluse.append("' )) OR MANDATEID IN (SELECT MANDATEID FROM FINANCEMAIN FM ");
 		whereCaluse.append(" WHERE FM.FINREFERENCE='");
 		whereCaluse.append(getFinanceMain().getFinReference());
-		whereCaluse.append("')))");
+		whereCaluse.append("') OR MandateID In(Select MandateID From Mandates Where (CustID in (:CUSTID)");
+		whereCaluse.append(" and OrgReference ='");
+		whereCaluse.append(getFinanceMain().getFinReference());
+		whereCaluse.append("' and (MandateType = :MANDATETYPE))))");
 		whereCaluse.append(" AND STATUS != '");
 		whereCaluse.append(MandateStatus.REJECTED);
-		whereCaluse.append("'");
+		whereCaluse.append("')");
 
 		this.mandateRef.setWhereClause(whereCaluse.toString());
-
 	}
 
 	// ******************************************************//

@@ -38,7 +38,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -52,6 +51,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -626,7 +626,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 				if (sheet.getPhysicalNumberOfRows() > 0) {
 					uploadHeader = new UploadHeader();
 					uploadHeader.setFileName(this.txtFileName.getValue());
-					uploadHeader.setTransactionDate(DateUtility.getSysDate());
+					uploadHeader.setTransactionDate(DateUtil.getSysDate());
 					uploadHeader.setModule("FinTypeExpense");
 					uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 					uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));

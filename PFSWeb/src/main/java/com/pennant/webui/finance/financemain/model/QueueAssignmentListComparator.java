@@ -10,7 +10,7 @@ public class QueueAssignmentListComparator implements Comparator<Object>, Serial
 	private static final long serialVersionUID = -8606975433219761922L;
 
 	public QueueAssignmentListComparator() {
-
+	    super();
 	}
 
 	@Override

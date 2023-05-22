@@ -99,6 +99,7 @@ public class UploadFixItemFactory implements org.zkoss.zk.ui.sys.DiskFileItemFac
 	}
 
 	private static class StreamMedia extends AMedia {
+		private static final long serialVersionUID = 6433728743566721467L;
 		private final FileItem _fi;
 
 		public StreamMedia(String name, String format, String ctype, FileItem fi) {
@@ -124,6 +125,7 @@ public class UploadFixItemFactory implements org.zkoss.zk.ui.sys.DiskFileItemFac
 	}
 
 	private static class ReaderMedia extends AMedia {
+		private static final long serialVersionUID = 6706797256929747317L;
 		private final FileItem _fi;
 		private final String _charset;
 
@@ -151,6 +153,7 @@ public class UploadFixItemFactory implements org.zkoss.zk.ui.sys.DiskFileItemFac
 	}
 
 	private static class StreamAudio extends AAudio {
+		private static final long serialVersionUID = 4709772100451190386L;
 		private final FileItem _fi;
 		private String _format;
 		private String _ctype;
@@ -182,6 +185,7 @@ public class UploadFixItemFactory implements org.zkoss.zk.ui.sys.DiskFileItemFac
 	}
 
 	private static class StreamVideo extends AVideo {
+		private static final long serialVersionUID = -2817758123878831537L;
 		private final FileItem _fi;
 		private String _format;
 		private String _ctype;

@@ -703,14 +703,14 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		logger.debug(Literal.SQL + sql.toString());
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { collateralRef }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CollateralAssignment ca = new CollateralAssignment();
 
 				ca.setSiid(rs.getLong("SiId"));
 				ca.setAssetid(rs.getLong("ASSETID"));
 
 				return ca;
-			});
+			}, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

@@ -306,7 +306,7 @@ public class IRRCalculator {
 			Collections.sort(irrCFList, new Comparator<IRRCashFlow>() {
 				@Override
 				public int compare(IRRCashFlow detail1, IRRCashFlow detail2) {
-					return DateUtility.compare(detail1.getCfDate(), detail2.getCfDate());
+					return DateUtil.compare(detail1.getCfDate(), detail2.getCfDate());
 				}
 			});
 		}
@@ -472,7 +472,7 @@ public class IRRCalculator {
 			openBalance = prvIrrSD.getClosingBalance();
 
 			if (isCalXIrr) {
-				days = DateUtility.getDaysBetween(prvIrrSD.getSchDate(), curIrrSD.getSchDate());
+				days = DateUtil.getDaysBetween(prvIrrSD.getSchDate(), curIrrSD.getSchDate());
 				dayFactor365 = BigDecimal.valueOf(days).divide(BigDecimal.valueOf(365), 9, RoundingMode.HALF_DOWN);
 				interest = CalculationUtil.calInterestWithDaysFactor(dayFactor365, openBalance, irr);
 			} else {
@@ -604,7 +604,7 @@ public class IRRCalculator {
 		for (int iCf = 0; iCf < irrCFList.size(); iCf++) {
 			IRRCashFlow cf = irrCFList.get(iCf);
 			if (isCalXIrr) {
-				int days = DateUtility.getDaysBetween(cfStartDate, cf.getCfDate());
+				int days = DateUtil.getDaysBetween(cfStartDate, cf.getCfDate());
 				df = BigDecimal.valueOf(days).divide(big365, 13, RoundingMode.HALF_DOWN);
 			} else {
 				int days = termsPerAnnum.intValue();
@@ -612,11 +612,17 @@ public class IRRCalculator {
 				df = BigDecimal.valueOf(days).divide(big360, 13, RoundingMode.HALF_DOWN);
 			}
 
-			// FIXME Review Required by PV
 			pv = irr.add(BigDecimal.ONE);
 			double pow = Math.pow(pv.doubleValue(), df.doubleValue());
 
-			if (Double.isNaN(pow)) {
+			/*
+			 * 
+			 * Double.isNaN is changed to Double.isFinite It returns false, if the argument is not a finite
+			 * floating-point value.
+			 * 
+			 * Double.isNaN is not handling for Infinite Values.
+			 */
+			if (!Double.isFinite(pow)) {
 				pow = 0;
 			}
 

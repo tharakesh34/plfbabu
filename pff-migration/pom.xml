@@ -4,7 +4,7 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-migration</artifactId>
-	<version>6.3.0</version>
+	<version>6.4.0</version>
 	<packaging>jar</packaging>
 
 	<name>pff-migration</name>
@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<liquibase.version>3.5.3</liquibase.version>
 		<liquibase.ext.version>1.3.0</liquibase.ext.version>
+		<jdk.version>17</jdk.version>
 	</properties>
 
 	<repositories>
@@ -71,7 +72,7 @@
 				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLF_HDFC_DEV1</pfs.liquibase.username>
+				<pfs.liquibase.username>PLF_HDFC_DEV2</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
@@ -81,7 +82,7 @@
 				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
-				<pfs.liquibase.username>PLFAUDIT_HDFC_DEV1</pfs.liquibase.username>
+				<pfs.liquibase.username>PLFAUDIT_HDFC_DEV2</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>
@@ -327,6 +328,28 @@
 				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
 				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
 				<pfs.liquibase.username>PLFAUDIT_HDFC_DEV1</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>HDFC_DEV2</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLF_HDFC_DEV2</pfs.liquibase.username>
+				<pfs.liquibase.password>pff123</pfs.liquibase.password>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>HDFC_DEV2_AUDIT</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@192.168.120.27:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFAUDIT_HDFC_DEV2</pfs.liquibase.username>
 				<pfs.liquibase.password>pff123</pfs.liquibase.password>
 			</properties>
 		</profile>

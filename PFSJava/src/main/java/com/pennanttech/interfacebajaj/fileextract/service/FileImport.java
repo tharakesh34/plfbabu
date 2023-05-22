@@ -29,7 +29,7 @@ import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 
 import com.northconcepts.datapipeline.core.Record;
-import com.pennant.app.util.DateUtility;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FileImport {
 	private static final Logger logger = LoggerFactory.getLogger(FileImport.class);
@@ -268,7 +268,7 @@ public class FileImport {
 	}
 
 	protected Date getDateValue(Record record, int index) {
-		return DateUtility.getDate(getStringValue(record, index), "yyyyMMdd");
+		return DateUtil.getDate(getStringValue(record, index), "yyyyMMdd");
 	}
 
 	private void setDataSource(DataSource dataSource) {
@@ -381,7 +381,7 @@ public class FileImport {
 
 	protected Date getDateValue(String record, int startPos, int endPos) {
 		if (!getFieldValue(record, startPos, endPos).isEmpty()) {
-			return DateUtility.getDate(getFieldValue(record, startPos, endPos), "yyyymmdd");
+			return DateUtil.getDate(getFieldValue(record, startPos, endPos), "yyyymmdd");
 		}
 		return null;
 	}

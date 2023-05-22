@@ -13,7 +13,7 @@ public class FinanceEnquiryPostingsComparator implements Comparator<Object>, Ser
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public FinanceEnquiryPostingsComparator() {
-
+	    super();
 	}
 
 	@Override

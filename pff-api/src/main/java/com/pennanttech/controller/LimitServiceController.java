@@ -63,7 +63,7 @@ public class LimitServiceController extends ExtendedTestClass {
 	private LimitDetailDAO limitDetailDAO;
 
 	public LimitServiceController() {
-
+	    super();
 	}
 
 	private final String PROCESS_TYPE_SAVE = "Save";
@@ -435,7 +435,7 @@ public class LimitServiceController extends ExtendedTestClass {
 				detail.setUserDetails(userDetails);
 				detail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(detail.getLimitSanctioned(),
 						CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
-				detail.setRevolving(true);
+				detail.setRevolving(detail.isRevolving());
 			}
 		}
 
@@ -464,6 +464,7 @@ public class LimitServiceController extends ExtendedTestClass {
 				}
 
 				prvLimitHeader.setActive(limitHeader.isActive());
+				prvLimitHeader.setValidateMaturityDate(limitHeader.isValidateMaturityDate());
 
 				prvLimitHeader.setNewRecord(false);
 				prvLimitHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
@@ -505,6 +506,7 @@ public class LimitServiceController extends ExtendedTestClass {
 							prvDetail.setVersion(prvDetail.getVersion() + 1);
 							prvDetail.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(
 									detail.getLimitSanctioned(), CurrencyUtil.getFormat(limitHeader.getLimitCcy())));
+							prvDetail.setRevolving(detail.isRevolving());
 						}
 					}
 				}

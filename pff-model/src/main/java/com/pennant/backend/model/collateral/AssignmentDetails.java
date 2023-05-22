@@ -1,9 +1,12 @@
 package com.pennant.backend.model.collateral;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-public class AssignmentDetails {
+public class AssignmentDetails implements Serializable {
+	private static final long serialVersionUID = 8987922026116401165L;
+
 	private String module;
 	private String reference;
 	private String currency;

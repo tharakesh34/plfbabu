@@ -17,7 +17,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.limit.LimitDetails;
 import com.pennant.backend.model.limit.LimitReferenceMapping;
@@ -27,6 +26,7 @@ import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -203,7 +203,7 @@ public class LimitCustomerReferenceDialogCtrl extends GFCBaseCtrl<LimitDetails> 
 			lc = new Listcell(PennantStaticListUtil.getlabelDesc(trandetail.getTransactionType(), list));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.format(trandetail.getTransactionDate(), DateFormat.LONG_DATE_TIME));
+			lc = new Listcell(DateUtil.format(trandetail.getTransactionDate(), DateFormat.LONG_DATE_TIME));
 			lc.setParent(item);
 			this.listBoxTransactionDetails.appendChild(item);
 		}

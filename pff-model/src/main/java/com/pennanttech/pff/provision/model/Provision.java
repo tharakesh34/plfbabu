@@ -52,8 +52,20 @@ public class Provision extends NpaProvisionStage {
 	private String custShrtName;
 	private Provision befImage;
 	private LoggedInUser userDetails;
+	private Long manualAssetClassID;
+	private String manualAssetClassCode;
+	private Long manualAssetSubClassID;
+	private String manualAssetSubClassCode;
+	private BigDecimal newRegProvisionPer = BigDecimal.ZERO;
+	private BigDecimal newRegProvisionAmt = BigDecimal.ZERO;
+	private BigDecimal newIntProvisionPer = BigDecimal.ZERO;
+	private BigDecimal newIntProvisionAmt = BigDecimal.ZERO;
 
 	private boolean newRecord = false;
+	private boolean overrideProvision = false;
+
+	private long effectiveAssetClassID;
+	private long effectiveAssetSubClassID;
 
 	public Provision() {
 		super();
@@ -97,6 +109,28 @@ public class Provision extends NpaProvisionStage {
 		excludeFields.add("linkedLoan");
 		excludeFields.add("effPastDueDays");
 		excludeFields.add("effPastDueDate");
+		excludeFields.add("manualAssetClassCode");
+		excludeFields.add("manualAssetSubClassCode");
+		excludeFields.add("custCoreBank");
+		excludeFields.add("assetClassCodes");
+		excludeFields.add("assetSubClassCodes");
+		excludeFields.add("id");
+		excludeFields.add("osPrincipal");
+		excludeFields.add("osProfit");
+		excludeFields.add("pastDueDays");
+		excludeFields.add("derivedPastDueDate");
+		excludeFields.add("effNpaPastDueDays");
+		excludeFields.add("emiRe");
+		excludeFields.add("instIncome");
+		excludeFields.add("futurePri");
+		excludeFields.add("prvEmiRe");
+		excludeFields.add("prvInstIncome");
+		excludeFields.add("prvFuturePri");
+		excludeFields.add("selfEffected");
+		excludeFields.add("writeOffLoan");
+		excludeFields.add("underSettlement");
+		excludeFields.add("effectiveAssetClassID");
+		excludeFields.add("effectiveAssetSubClassID");
 
 		return excludeFields;
 	}
@@ -431,6 +465,94 @@ public class Provision extends NpaProvisionStage {
 
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
+	}
+
+	public Long getManualAssetClassID() {
+		return manualAssetClassID;
+	}
+
+	public void setManualAssetClassID(Long manualAssetClassID) {
+		this.manualAssetClassID = manualAssetClassID;
+	}
+
+	public String getManualAssetClassCode() {
+		return manualAssetClassCode;
+	}
+
+	public void setManualAssetClassCode(String manualAssetClassCode) {
+		this.manualAssetClassCode = manualAssetClassCode;
+	}
+
+	public Long getManualAssetSubClassID() {
+		return manualAssetSubClassID;
+	}
+
+	public void setManualAssetSubClassID(Long manualAssetSubClassID) {
+		this.manualAssetSubClassID = manualAssetSubClassID;
+	}
+
+	public String getManualAssetSubClassCode() {
+		return manualAssetSubClassCode;
+	}
+
+	public void setManualAssetSubClassCode(String manualAssetSubClassCode) {
+		this.manualAssetSubClassCode = manualAssetSubClassCode;
+	}
+
+	public BigDecimal getNewRegProvisionPer() {
+		return newRegProvisionPer;
+	}
+
+	public void setNewRegProvisionPer(BigDecimal newRegProvisionPer) {
+		this.newRegProvisionPer = newRegProvisionPer;
+	}
+
+	public BigDecimal getNewRegProvisionAmt() {
+		return newRegProvisionAmt;
+	}
+
+	public void setNewRegProvisionAmt(BigDecimal newRegProvisionAmt) {
+		this.newRegProvisionAmt = newRegProvisionAmt;
+	}
+
+	public BigDecimal getNewIntProvisionPer() {
+		return newIntProvisionPer;
+	}
+
+	public void setNewIntProvisionPer(BigDecimal newIntProvisionPer) {
+		this.newIntProvisionPer = newIntProvisionPer;
+	}
+
+	public BigDecimal getNewIntProvisionAmt() {
+		return newIntProvisionAmt;
+	}
+
+	public void setNewIntProvisionAmt(BigDecimal newIntProvisionAmt) {
+		this.newIntProvisionAmt = newIntProvisionAmt;
+	}
+
+	public boolean isOverrideProvision() {
+		return overrideProvision;
+	}
+
+	public void setOverrideProvision(boolean overrideProvision) {
+		this.overrideProvision = overrideProvision;
+	}
+
+	public long getEffectiveAssetClassID() {
+		return effectiveAssetClassID;
+	}
+
+	public void setEffectiveAssetClassID(long effectiveAssetClassID) {
+		this.effectiveAssetClassID = effectiveAssetClassID;
+	}
+
+	public long getEffectiveAssetSubClassID() {
+		return effectiveAssetSubClassID;
+	}
+
+	public void setEffectiveAssetSubClassID(long effectiveAssetSubClassID) {
+		this.effectiveAssetSubClassID = effectiveAssetSubClassID;
 	}
 
 }

@@ -10,13 +10,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.eod.dao.EodDetailDAO;
 import com.pennant.eod.model.EodDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDAO {
 	private static Logger logger = LogManager.getLogger(EodDetailDAOImpl.class);
@@ -41,8 +41,8 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 	public void update(EodDetail eodDetail) {
 		logger.debug("Entering");
 
-		Date processDate = DateUtility.getDate(
-				DateUtility.format(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
+		Date processDate = DateUtil.getDate(
+				DateUtil.format(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 		eodDetail.setProcessDate(processDate);
 
@@ -62,8 +62,8 @@ public class EodDetailDAOImpl extends BasicDao<EodDetail> implements EodDetailDA
 	public void updateStatus(EodDetail eodDetail) {
 		logger.debug("Entering");
 
-		Date processDate = DateUtility.getDate(
-				DateUtility.format(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
+		Date processDate = DateUtil.getDate(
+				DateUtil.format(eodDetail.getProcessDate(), PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 		eodDetail.setProcessDate(processDate);
 

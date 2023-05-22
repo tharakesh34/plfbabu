@@ -112,6 +112,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 	private String lovDescAddrCityName;
 	@XmlElement
 	private String addrZIP;
+	private String lovDescAddrZip;
 
 	private List<FinanceExposure> primaryList = null;
 	private List<FinanceExposure> secoundaryList = null;
@@ -157,6 +158,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 		excludeFields.add("custShrtName");
 		excludeFields.add("customerDetails");
 		excludeFields.add("lovCustDob");
+		excludeFields.add("lovDescAddrZip");
 
 		return excludeFields;
 	}
@@ -557,4 +559,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity {
 	public void setLovCustDob(Date lovCustDob) {
 		this.lovCustDob = lovCustDob;
 	}
+
+	public String getLovDescAddrZip() {
+		return lovDescAddrZip;
+	}
+
+	public void setLovDescAddrZip(String lovDescAddrZip) {
+		this.lovDescAddrZip = lovDescAddrZip;
+	}
+
 }

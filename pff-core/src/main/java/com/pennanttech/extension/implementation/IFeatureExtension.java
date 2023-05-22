@@ -20,4 +20,8 @@ public interface IFeatureExtension {
 	Map<String, Object> getPartnerBankExtensions();
 
 	Map<String, Object> getReceiptExtensions();
+
+	Map<String, Object> getLPPExtensions();
+
+	Map<String, Object> getNpaAndProvisionExtensions();
 }

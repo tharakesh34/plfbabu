@@ -41,6 +41,7 @@ public class LoanElgLtvElement implements Serializable {
 	private String ltv_as_per_nhb_policy;
 
 	public LoanElgLtvElement() {
+	    super();
 	}
 
 	public String getAlwdHlLnAmt() {

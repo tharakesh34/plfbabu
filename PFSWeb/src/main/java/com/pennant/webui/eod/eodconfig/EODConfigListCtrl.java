@@ -185,7 +185,7 @@ public class EODConfigListCtrl extends GFCBaseListCtrl<EODConfig> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append(" Where EodConfigId = ?");
 
 		if (doCheckAuthority(eodconfig, whereCond.toString(), new Object[] { eodconfig.getEodConfigId() })) {

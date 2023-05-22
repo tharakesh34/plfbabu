@@ -11,7 +11,7 @@ public class AvailAccount {
 	private String convertCcy = "";
 
 	public AvailAccount() {
-
+	    super();
 	}
 
 	// ******************************************************//

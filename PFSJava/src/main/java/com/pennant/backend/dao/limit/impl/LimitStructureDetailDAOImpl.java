@@ -367,7 +367,6 @@ public class LimitStructureDetailDAOImpl extends SequenceDao<LimitDetails> imple
 
 		logger.debug(Literal.SQL + sql.toString());
 
-
 		try {
 			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				LimitStructureDetail lsd = new LimitStructureDetail();

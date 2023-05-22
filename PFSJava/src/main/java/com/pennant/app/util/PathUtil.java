@@ -58,6 +58,9 @@ public class PathUtil {
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
 	public static final String COVENANT_STATUS_REPORT = "Agreements/LOD";
 	public static final String BalanceConfirmation = "Agreements/BalanceConfirmation";
+	public static final String NOC_LETTER = "Agreements/NocLetter";
+	public static final String CLOUSER_LETTER = "Agreements/LoanClosureLetter";
+	public static final String CANCELLED_LETTER = "Agreements/LoanCancelationLetter";
 
 	// Report Detail paths
 	public static final String REPORTS_CHECKS = "Reports/Checks";
@@ -97,6 +100,7 @@ public class PathUtil {
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; // For Credit Review Details
 	public static final String EXT_LIABILITY = "ExtLiability";
 	public static final String LOAN_REPORT = "LoanReport";
+	public static final String UNAUTHORIZED_TRANSACTION = "UnAuthorizedTransactions";
 
 	/**
 	 * Method for Set Environment Variable to Root Path Location

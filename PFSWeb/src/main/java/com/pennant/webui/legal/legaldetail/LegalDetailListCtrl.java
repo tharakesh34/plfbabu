@@ -320,7 +320,7 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 			}
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  LegalReference =? ");
 
 		if (doCheckAuthority(legaldetail, whereCond.toString(), new Object[] { legaldetail.getLegalReference() })) {

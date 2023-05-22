@@ -180,8 +180,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.builderCompany.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.builderCompany.getId());
 	}
 
 	/**
@@ -936,14 +935,14 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		}
 		if (!this.apfType.isDisabled()) {
 			this.apfType.setConstraint(
-					new PTListValidator(Labels.getLabel("label_BuilderCompany_BranchAPF.value"), aPFTypeList, false));
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_BuilderCompany_BranchAPF.value"), aPFTypeList, false));
 		}
 		if (!this.cityType.isDisabled()) {
-			this.cityType.setConstraint(new PTListValidator(
+			this.cityType.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_BuilderCompanyDialog_CityType.value"), locationList, false));
 		}
 		if (!this.approved.isDisabled()) {
-			this.approved.setConstraint(new PTListValidator(
+			this.approved.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_BuilderCompanyDialog_Approved.value"), approvedList, false));
 		}
 		if (!this.city.isReadonly()) {
@@ -956,7 +955,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		}
 
 		if (!this.entityType.isDisabled()) {
-			this.entityType.setConstraint(new PTListValidator(
+			this.entityType.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_BuilderCompanyDialog_entityType.value"), builderEntityTypeList, false));
 		}
 		if (!this.code.isReadonly()) {
@@ -1057,7 +1056,7 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		}
 		if (this.apfType.getSelectedItem() != null
 				&& this.apfType.getSelectedItem().getValue().equals(PennantConstants.BRANCH_APF)) {
-			this.recommendation.setConstraint(new PTListValidator(
+			this.recommendation.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_BuilderCompanyDialog_Recommendation.value"), recommendationList, true));
 
 			String cityTypeValue = this.cityType.getSelectedItem().getValue();

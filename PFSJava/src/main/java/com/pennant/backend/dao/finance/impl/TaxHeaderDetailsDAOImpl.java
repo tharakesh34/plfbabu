@@ -64,7 +64,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { headerId }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				TaxHeader th = new TaxHeader();
 
 				th.setHeaderId(rs.getLong("HeaderId"));
@@ -81,7 +81,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 				th.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return th;
-			});
+			}, headerId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Tax Details not exists in TAX_DETAILS{} table/view for the specified HeaderId >> {}", type,
 					headerId);

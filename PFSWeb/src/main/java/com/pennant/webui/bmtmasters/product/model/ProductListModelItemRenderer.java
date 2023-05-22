@@ -44,7 +44,7 @@ public class ProductListModelItemRenderer implements ListitemRenderer<Product>, 
 	private static final long serialVersionUID = -3304155174434504951L;
 
 	public ProductListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

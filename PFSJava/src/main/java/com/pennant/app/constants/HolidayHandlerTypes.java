@@ -50,6 +50,7 @@ public class HolidayHandlerTypes {
 	public static final String HOLIDAYTYPE_PERMINENT = "P";
 
 	public HolidayHandlerTypes() {
+	    super();
 	}
 
 	// This method should be changed based on the configuration

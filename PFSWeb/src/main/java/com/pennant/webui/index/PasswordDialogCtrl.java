@@ -49,7 +49,6 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -63,6 +62,7 @@ import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.AESCipherUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -178,7 +178,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			getSecurityUser().setVersion(securityUser.getVersion() + 1);
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			int expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
-			getSecurityUser().setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), expDays));
+			getSecurityUser().setPwdExpDt(DateUtil.addDays(new Date(System.currentTimeMillis()), expDays));
 			getSecurityUser().setCreatedBy(securityUser.getCreatedBy());
 			getSecurityUser().setCreatedOn(securityUser.getCreatedOn());
 

@@ -48,7 +48,8 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantConstants;
-import com.rits.cloning.Cloner;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennapps.core.util.ObjectUtil;
 
 public class DesiredProfitCalculation {
 	private static final Logger logger = LogManager.getLogger(DesiredProfitCalculation.class);
@@ -123,13 +124,13 @@ public class DesiredProfitCalculation {
 			return;
 		}
 
-		nextRepayPftDate = DateUtility.parse(DateUtility.format(nextRepayPftDate, PennantConstants.DBDateFormat),
+		nextRepayPftDate = DateUtil.parse(DateUtil.format(nextRepayPftDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		gpEndDate = DateUtility.parse(DateUtility.format(gpEndDate, PennantConstants.DBDateFormat),
+		gpEndDate = DateUtil.parse(DateUtil.format(gpEndDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		nextRepayDate = DateUtility.parse(DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
+		nextRepayDate = DateUtil.parse(DateUtil.format(nextRepayDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
 		// Calculation process based on Repay period rate type
@@ -252,8 +253,7 @@ public class DesiredProfitCalculation {
 			String repayPftFrq, String repayFrq, Date nextRepayPftDate, Date gpEndDate, Date nextRepayDate) {
 
 		BigDecimal totDesPftAmount = BigDecimal.ZERO;
-		Cloner cloner = new Cloner();
-		FinScheduleData planDeferSchdData = cloner.deepClone(orgFinSchdData);
+		FinScheduleData planDeferSchdData = ObjectUtil.clone(orgFinSchdData);
 		FinanceMain planFinMain = planDeferSchdData.getFinanceMain();
 
 		// Maturity Date Recalculation using Number of Terms

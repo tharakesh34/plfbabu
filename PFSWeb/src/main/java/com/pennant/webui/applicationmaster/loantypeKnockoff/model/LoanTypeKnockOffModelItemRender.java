@@ -15,6 +15,7 @@ public class LoanTypeKnockOffModelItemRender implements ListitemRenderer<FinType
 	private static final long serialVersionUID = 1L;
 
 	public LoanTypeKnockOffModelItemRender() {
+	    super();
 	}
 
 	@Override

@@ -180,7 +180,7 @@ public class IRRCodeListCtrl extends GFCBaseListCtrl<IRRCode> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  IRRID =? ");
 
 		if (doCheckAuthority(irrcode, whereCond.toString(), new Object[] { irrcode.getIRRID() })) {

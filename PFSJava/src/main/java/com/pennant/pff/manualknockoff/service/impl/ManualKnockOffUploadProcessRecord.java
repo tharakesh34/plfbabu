@@ -18,6 +18,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.manualknockoff.dao.ManualKnockOffUploadDAO;
 import com.pennant.pff.upload.model.FileUploadHeader;
 import com.pennant.pff.upload.service.UploadService;
+import com.pennanttech.dataengine.CommonHeader;
 import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.Table;
@@ -31,7 +32,7 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 	private ManualKnockOffUploadDAO manualKnockOffUploadDAO;
 	@Autowired
-	private UploadService manualKnockOffUploadServiceImpl;
+	private UploadService manualKnockOffUploadService;
 
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table)
@@ -52,7 +53,10 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
+		Long recordSeq = (Long) record.getValue("RecordSeq");
+
 		mku.setHeaderId(headerID);
+		mku.setRecordSeq(recordSeq);
 
 		FileUploadHeader header = (FileUploadHeader) attributes.getParameterMap().get("FILE_UPLOAD_HEADER");
 
@@ -60,116 +64,132 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 
 		Cell rowCell = null;
 
-		for (Cell cell : headerRow) {
-			rowCell = row.getCell(readColumn);
+		try {
+			for (Cell cell : headerRow) {
+				rowCell = row.getCell(readColumn);
 
-			if (cell.getColumnIndex() > 4) {
-				break;
-			}
-
-			readColumn = cell.getColumnIndex() + 1;
-			if (rowCell == null) {
-				continue;
-			}
-
-			switch (cell.getColumnIndex()) {
-			case 0:
-				mku.setReference(rowCell.toString());
-				break;
-			case 1:
-				mku.setExcessType(rowCell.toString());
-				break;
-			case 2:
-				mku.setAllocationType(rowCell.toString());
-				break;
-			case 3:
-				String strAmount = rowCell.toString();
-				if (strAmount != null) {
-					mku.setReceiptAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+				if (cell.getColumnIndex() > 4) {
+					break;
 				}
-				break;
-			case 4:
-				String strAdviseID = rowCell.toString();
-				if (strAdviseID != null && StringUtils.isNotEmpty(strAdviseID)) {
-					mku.setAdviseId(Long.valueOf(strAdviseID));
+
+				readColumn = cell.getColumnIndex() + 1;
+				if (rowCell == null) {
+					continue;
 				}
-				break;
-			default:
-				break;
+
+				switch (cell.getColumnIndex()) {
+				case 0:
+					mku.setReference(rowCell.toString());
+					break;
+				case 1:
+					mku.setExcessType(rowCell.toString());
+					break;
+				case 2:
+					mku.setAllocationType(rowCell.toString());
+					break;
+				case 3:
+					String strAmount = rowCell.toString();
+					if (strAmount != null) {
+						mku.setReceiptAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+					}
+					break;
+				case 4:
+					mku.setFeeTypeCode(rowCell.toString());
+					break;
+				default:
+					break;
+				}
 			}
-		}
 
-		if (StringUtils.isEmpty(mku.getAllocationType())) {
-			mku.setAllocationType(AllocationType.AUTO);
-		}
+			if (StringUtils.isEmpty(mku.getAllocationType())) {
+				mku.setAllocationType(AllocationType.AUTO);
+			}
 
-		long uploadID = manualKnockOffUploadDAO.save(mku);
-		mku.setId(uploadID);
+			long uploadID = manualKnockOffUploadDAO.save(mku);
+			mku.setId(uploadID);
 
-		List<ManualKnockOffUpload> allocations = new ArrayList<>();
+			List<ManualKnockOffUpload> allocations = new ArrayList<>();
 
-		int index = 0;
-		for (Cell cell : headerRow) {
+			int index = 0;
+			for (Cell cell : headerRow) {
 
-			if (index < readColumn) {
+				if (index < readColumn) {
+					index++;
+					continue;
+				}
+
+				ManualKnockOffUpload alloc = new ManualKnockOffUpload();
+
+				String allocationType = cell.toString();
+
+				if (allocationType == null) {
+					break;
+				}
+
+				if (CommonHeader.isValid(allocationType)) {
+					continue;
+				}
+
+				alloc.setId(uploadID);
+				alloc.setHeaderId(headerID);
+				alloc.setCode(allocationType.toUpperCase());
+
+				rowCell = row.getCell(index);
+
+				if (rowCell != null) {
+
+					String strAmount = rowCell.toString();
+
+					if (StringUtils.isNotEmpty(strAmount)) {
+						BigDecimal str = BigDecimal.ZERO;
+
+						try {
+							str = new BigDecimal(strAmount);
+						} catch (NumberFormatException e) {
+							throw new AppException("Invalid amount");
+						}
+
+						if (str.compareTo(BigDecimal.ZERO) > 0) {
+							alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
+							allocations.add(alloc);
+						}
+					}
+				}
 				index++;
-				continue;
-			}
 
-			ManualKnockOffUpload alloc = new ManualKnockOffUpload();
-
-			String allocationType = cell.toString();
-
-			if (allocationType == null) {
-				break;
-			}
-
-			alloc.setId(uploadID);
-			alloc.setHeaderId(headerID);
-			alloc.setCode(allocationType.toUpperCase());
-
-			rowCell = row.getCell(index);
-
-			if (rowCell != null) {
-
-				String strAmount = rowCell.toString();
-
-				if (StringUtils.isNotEmpty(strAmount)) {
-					BigDecimal str = BigDecimal.ZERO;
-
-					try {
-						str = new BigDecimal(strAmount);
-					} catch (NumberFormatException e) {
-						throw new AppException("Invalid amount");
-					}
-
-					if (str.compareTo(BigDecimal.ZERO) > 0) {
-						alloc.setAmount(PennantApplicationUtil.unFormateAmount(strAmount, 2));
-						allocations.add(alloc);
-					}
+				if (index == 23) {
+					throw new AppException("Fee Types are exceeded the limit");
 				}
 			}
-			index++;
 
-			if (index == 23) {
-				throw new AppException("Fee Types are exceeded the limit");
+			manualKnockOffUploadDAO.saveAllocations(allocations);
+			mku.setAllocations(allocations);
+
+			manualKnockOffUploadService.doValidate(header, mku);
+
+			if (mku.getProgress() == EodConstants.PROGRESS_FAILED) {
+				record.addValue("ERRORCODE", mku.getErrorCode());
+				record.addValue("ERRORDESC", mku.getErrorDesc());
 			}
+		} catch (AppException e) {
+			mku.setStatus("F");
+			mku.setProgress(EodConstants.PROGRESS_FAILED);
+
+			record.addValue("ERRORCODE", "9999");
+			record.addValue("ERRORDESC", e.getMessage());
+
+			record.addValue("STATUS", mku.getStatus());
+			record.addValue("PROGRESS", mku.getProgress());
 		}
 
-		manualKnockOffUploadDAO.saveAllocations(allocations);
-		mku.setAllocations(allocations);
+		List<ManualKnockOffUpload> details = new ArrayList<>();
+		details.add(mku);
 
-		manualKnockOffUploadServiceImpl.doValidate(header, mku);
+		manualKnockOffUploadDAO.update(details);
 
-		if (mku.getProgress() == EodConstants.PROGRESS_FAILED) {
-			record.addValue("ERRORCODE", mku.getErrorCode());
-			record.addValue("ERRORDESC", mku.getErrorDesc());
+		manualKnockOffUploadService.updateProcess(header, mku, record);
 
-			List<ManualKnockOffUpload> details = new ArrayList<>();
-			details.add(mku);
-
-			manualKnockOffUploadDAO.update(details);
-		}
+		header.getUploadDetails().add(mku);
 
 		logger.debug(Literal.LEAVING);
 	}

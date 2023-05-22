@@ -43,7 +43,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 public class MailTemplateListModelItemRenderer implements ListitemRenderer<MailTemplate>, Serializable {
 
 	public MailTemplateListModelItemRenderer() {
-
+	    super();
 	}
 
 	private static final long serialVersionUID = -1086618969673027251L;

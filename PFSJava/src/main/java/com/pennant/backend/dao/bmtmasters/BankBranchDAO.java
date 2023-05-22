@@ -76,4 +76,10 @@ public interface BankBranchDAO {
 
 	BankBranch getPrintingLoc(long finID, String issuingBank, String paymentType);
 
+	BankBranch getBankBranchIDByIFSC(String ifsc);
+
+	Long getBankBrachByCode(String ifsc, String bankCode);
+
+	BankBranch getBankBrachDetails(String ifsc, String bankCode);
+
 }

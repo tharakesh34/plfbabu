@@ -30,7 +30,7 @@ public class CustomerLimit implements Serializable {
 	private String branchCode;
 
 	public CustomerLimit() {
-
+	    super();
 	}
 
 	// ******************************************************//

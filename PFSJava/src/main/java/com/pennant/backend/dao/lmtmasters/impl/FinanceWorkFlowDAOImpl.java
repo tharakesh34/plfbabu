@@ -295,7 +295,7 @@ public class FinanceWorkFlowDAOImpl extends BasicDao<FinanceWorkFlow> implements
 		sql.append(" INNER JOIN WorkFlowDetails WD ON WD.WorkFlowType = FWD.WorkFlowType ");
 		sql.append(" Where FWD.ModuleName= ? and FWD.FinEvent = ?");
 
-		return this.jdbcOperations.queryForList(sql.toString(), new Object[] { module, finEvent }, String.class);
+		return this.jdbcOperations.queryForList(sql.toString(), String.class, module, finEvent);
 	}
 
 	@Override

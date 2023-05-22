@@ -63,7 +63,7 @@ public class ProjectedAccrual implements Serializable {
 	private BigDecimal avgPOS = BigDecimal.ZERO;
 
 	public ProjectedAccrual() {
-
+	    super();
 	}
 
 	public ProjectedAccrual copyEntity() {

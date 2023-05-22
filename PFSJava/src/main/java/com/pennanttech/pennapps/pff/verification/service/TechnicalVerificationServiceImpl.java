@@ -68,7 +68,7 @@ import com.pennanttech.pennapps.pff.verification.fi.TVStatus;
 import com.pennanttech.pennapps.pff.verification.model.TechnicalVerification;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pff.core.TableType;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * Service implementation for methods that depends on <b>TechnicalVerification</b>.<br>
@@ -200,8 +200,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		TechnicalVerification technicalVerification = (TechnicalVerification) auditHeader.getAuditDetail()
 				.getModelData();
@@ -332,8 +331,7 @@ public class TechnicalVerificationServiceImpl extends GenericService<TechnicalVe
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 
 		TechnicalVerification tv = new TechnicalVerification();
 		BeanUtils.copyProperties(auditHeader.getAuditDetail().getModelData(), tv);

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -25,7 +24,8 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.rits.cloning.Cloner;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodService {
 
@@ -58,8 +58,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 
 		// Check Date Status Specifier
 		FinScheduleData scheduleData = null;
-		Cloner cloner = new Cloner();
-		scheduleData = cloner.deepClone(finScheduleData);
+		scheduleData = ObjectUtil.clone(finScheduleData);
 
 		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
 
@@ -112,7 +111,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);
@@ -165,7 +164,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -195,10 +194,10 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		boolean isWIF = fis.isWif();
 		// It shouldn't be past date when compare to appdate
 		Date appDate = SysParamUtil.getAppDate();
-		if (DateUtility.compare(fis.getFromDate(), appDate) < 0) {
+		if (DateUtil.compare(fis.getFromDate(), appDate) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
+			valueParm[1] = "application date:" + DateUtil.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -207,7 +206,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 		if (schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
-				if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+				if (DateUtil.compare(fromDate, schDetail.getSchDate()) == 0) {
 					isValidFromDate = true;
 					if (checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
 						return auditDetail;
@@ -217,7 +216,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 
 			if (!isValidFromDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fis.getFromDate());
+				valueParm[0] = "FromDate:" + DateUtil.formatToShortDate(fis.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 				return auditDetail;
 			}
@@ -230,7 +229,7 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "From Date:" + DateUtil.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91116", "", valueParm), lang));
 		}
 		return auditDetail;

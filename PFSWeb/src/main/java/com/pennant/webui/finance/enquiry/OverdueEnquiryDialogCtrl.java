@@ -44,7 +44,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -219,13 +218,13 @@ public class OverdueEnquiryDialogCtrl extends GFCBaseCtrl<FinODDetails> {
 				} else {
 					grcDate = DateUtil.addDays(od.getFinODSchdDate(), od.getODGraceDays() + extnODGrcDays);
 				}
-				lc = new Listcell(DateUtility.formatToLongDate(grcDate));
+				lc = new Listcell(DateUtil.formatToLongDate(grcDate));
 			} else {
-				lc = new Listcell(DateUtility.formatToLongDate(od.getFinODSchdDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(od.getFinODSchdDate()));
 			}
 
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.formatToLongDate(od.getFinODTillDate()));
+			lc = new Listcell(DateUtil.formatToLongDate(od.getFinODTillDate()));
 			lc.setParent(item);
 			lc = new Listcell(PennantApplicationUtil.amountFormate(od.getFinCurODAmt(), ccyformat));
 			lc.setParent(item);

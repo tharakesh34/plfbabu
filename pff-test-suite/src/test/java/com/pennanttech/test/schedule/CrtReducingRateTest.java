@@ -10,13 +10,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.util.Dataset;
 import com.pennanttech.util.PrintFactory;
 
@@ -38,7 +38,7 @@ public class CrtReducingRateTest {
 	@Test
 	public void testSchedule()
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
-		long t2 = DateUtility.getSysDate().getTime();
+		long t2 = DateUtil.getSysDate().getTime();
 
 		String name = Dataset.getString(data, 0);
 		PrintFactory.toConsole(name);
@@ -111,7 +111,7 @@ public class CrtReducingRateTest {
 		Assert.assertEquals(expFirstFee, actFirstFee, (name + " First Fee Amount:"));
 		Assert.assertEquals(expFeeCharge, actFeeCharge, (name + " Total Fee Amount:"));
 
-		long t3 = DateUtility.getSysDate().getTime();
+		long t3 = DateUtil.getSysDate().getTime();
 		System.out.println("Time in long " + String.valueOf(t3 - t2));
 		t1 = t1 + t3 - t2;
 		System.out.println("total Time in long " + String.valueOf(t1));

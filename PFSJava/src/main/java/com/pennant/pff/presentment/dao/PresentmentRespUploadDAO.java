@@ -19,7 +19,7 @@ public interface PresentmentRespUploadDAO {
 
 	void updateProcessingFlag(long headerID);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 

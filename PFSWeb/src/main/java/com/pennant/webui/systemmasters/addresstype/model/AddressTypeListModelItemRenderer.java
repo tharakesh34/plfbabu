@@ -46,7 +46,7 @@ public class AddressTypeListModelItemRenderer implements ListitemRenderer<Addres
 	private static final long serialVersionUID = 6352065299727172054L;
 
 	public AddressTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -43,7 +43,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -257,13 +256,21 @@ public class VariableOverdraftScheduleDialogCtrl extends GFCBaseCtrl<VariableOve
 
 		// Number of terms
 		try {
-			noOfTerms = this.financeMainBaseCtrl.odYearlyTerms.getValue();
+			if (this.financeMainBaseCtrl.odYearlyTerms.getValue() == null) {
+				noOfTerms = 0;
+			} else {
+				noOfTerms = this.financeMainBaseCtrl.odYearlyTerms.getValue();
+			}
 		} catch (WrongValueException we) {
 		}
 
 		// Number of terms
 		try {
-			noOfTerms2 = this.financeMainBaseCtrl.odMnthlyTerms.getValue();
+			if (this.financeMainBaseCtrl.odMnthlyTerms.getValue() == null) {
+				noOfTerms2 = 0;
+			} else {
+				noOfTerms2 = this.financeMainBaseCtrl.odMnthlyTerms.getValue();
+			}
 		} catch (WrongValueException we) {
 		}
 
@@ -743,7 +750,7 @@ public class VariableOverdraftScheduleDialogCtrl extends GFCBaseCtrl<VariableOve
 
 	private void saveUploadHeader() {
 		this.variableOverdraftSchdHeader.setFileName(this.txtFileName.getValue());
-		this.variableOverdraftSchdHeader.setTransactionDate(DateUtility.getSysDate());
+		this.variableOverdraftSchdHeader.setTransactionDate(DateUtil.getSysDate());
 		this.variableOverdraftSchdHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.variableOverdraftSchdHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 	}

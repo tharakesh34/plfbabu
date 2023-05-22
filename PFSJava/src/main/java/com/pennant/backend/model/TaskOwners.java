@@ -46,7 +46,7 @@ public class TaskOwners {
 	private boolean newRecord = false;
 
 	public TaskOwners() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {

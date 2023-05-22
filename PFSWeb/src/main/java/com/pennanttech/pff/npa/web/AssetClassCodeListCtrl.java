@@ -148,7 +148,7 @@ public class AssetClassCodeListCtrl extends GFCBaseListCtrl<AssetClassCode> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  And  Id = ");
 		whereCond.append(assetClassCode.getId());
 		whereCond.append(" And  version = ");

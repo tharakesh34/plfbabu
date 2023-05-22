@@ -205,7 +205,7 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		 * null))); logger.debug("Leaving"); return; }
 		 */
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  FinReference =?");
 
 		if (doCheckAuthority(holddisbursement, whereCond.toString(),

@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.pff.upload.model.UploadDetails;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -16,16 +18,19 @@ public class ManualKnockOffUpload extends UploadDetails {
 	private String excessType;
 	private String allocationType;
 	private BigDecimal receiptAmount;
-	private Long adviseId;
+	private String feeTypeCode;
 	private Long feeId;
 	private String code;
 	private BigDecimal amount;
 	private List<ManualKnockOffUpload> allocations = new ArrayList<>();
 	private LoggedInUser userDetails;
 	private List<FinExcessAmount> excessList = new ArrayList<>();
-	private ManualAdvise manualAdvise;
 	private Long receiptID;
 	private Date appDate;
+	private List<ManualAdvise> advises = new ArrayList<>();
+	private BigDecimal balanceAmount = BigDecimal.ZERO;
+	private FinanceMain financeMain;
+	private FinanceType finType;
 
 	public ManualKnockOffUpload() {
 		super();
@@ -55,12 +60,12 @@ public class ManualKnockOffUpload extends UploadDetails {
 		this.receiptAmount = receiptAmount;
 	}
 
-	public Long getAdviseId() {
-		return adviseId;
+	public String getFeeTypeCode() {
+		return feeTypeCode;
 	}
 
-	public void setAdviseId(Long adviseId) {
-		this.adviseId = adviseId;
+	public void setFeeTypeCode(String feeTypeCode) {
+		this.feeTypeCode = feeTypeCode;
 	}
 
 	public Long getFeeId() {
@@ -111,14 +116,6 @@ public class ManualKnockOffUpload extends UploadDetails {
 		this.excessList = excessList;
 	}
 
-	public ManualAdvise getManualAdvise() {
-		return manualAdvise;
-	}
-
-	public void setManualAdvise(ManualAdvise manualAdvise) {
-		this.manualAdvise = manualAdvise;
-	}
-
 	public Long getReceiptID() {
 		return receiptID;
 	}
@@ -133,6 +130,38 @@ public class ManualKnockOffUpload extends UploadDetails {
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public List<ManualAdvise> getAdvises() {
+		return advises;
+	}
+
+	public void setAdvises(List<ManualAdvise> advises) {
+		this.advises = advises;
+	}
+
+	public BigDecimal getBalanceAmount() {
+		return balanceAmount;
+	}
+
+	public void setBalanceAmount(BigDecimal balanceAmount) {
+		this.balanceAmount = balanceAmount;
+	}
+
+	public FinanceMain getFinanceMain() {
+		return financeMain;
+	}
+
+	public void setFinanceMain(FinanceMain financeMain) {
+		this.financeMain = financeMain;
+	}
+
+	public FinanceType getFinType() {
+		return finType;
+	}
+
+	public void setFinType(FinanceType finType) {
+		this.finType = finType;
 	}
 
 }

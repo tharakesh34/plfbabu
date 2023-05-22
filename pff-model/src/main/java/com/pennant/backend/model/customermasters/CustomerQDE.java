@@ -24,13 +24,15 @@
  */
 package com.pennant.backend.model.customermasters;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Model class for the <b>Customer QDE</b>.<br>
  *
  */
-public class CustomerQDE {
+public class CustomerQDE implements Serializable {
+	private static final long serialVersionUID = -7955038659330328410L;
 
 	private String custCIF;
 	private String custCoreBank;

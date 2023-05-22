@@ -19,7 +19,6 @@ import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -200,7 +199,7 @@ public class VariableOverdraftScheduleDetailDialogCtrl extends GFCBaseCtrl<Varia
 
 		FinanceMain financeMain = this.finScheduleData.getFinanceMain();
 
-		Date startDate = DateUtility.addDays(financeMain.getFinStartDate(), 1);
+		Date startDate = DateUtil.addDays(financeMain.getFinStartDate(), 1);
 
 		this.date.setConstraint(
 				new PTDateValidator(Labels.getLabel("label_VariableOverdraftScheduleDetailDialog_Date.value"), true,

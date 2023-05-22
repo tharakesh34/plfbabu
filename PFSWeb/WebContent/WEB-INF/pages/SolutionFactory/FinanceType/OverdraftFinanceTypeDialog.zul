@@ -104,6 +104,14 @@
 													<combobox id="cbfinSchdMthd" width="275px" readonly="true" />
 												</hbox>
 											</row>
+											<row>
+												<label id="label_FinanceTypeDialog_NPARepayHierarchy"
+													value="${c:l('label_FinanceTypeDialog_NPARepayHierarchy.value')}" />
+												<hbox>
+													<space id="space_npaRpyHierarchy" spacing="2px" sclass="mandatory" />
+													<uppercasebox id="npaRpyHierarchy" width="200px" />
+												</hbox>
+											</row>
 											<row id="row_DroppingMethod">
 												<label id="label_FinanceTypeDialog_DroplineOD"
 													value="${c:l('label_OverDraftFinanceTypeDialog_DroplineOD.value')}" />
@@ -156,7 +164,13 @@
 													<checkbox id="autoApprove" checked="false" />
 												</hbox>
 											</row>
-
+											<row>
+												<label value="${c:l('label_FinanceTypeDialog_AllowCancelFin.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="allowCancelFin" checked="false" />
+												</hbox>
+											</row>
 											<row>
 												<label id="label_FinanceTypeDialog_FinCollateralReq" value="${c:l('label_OverDraftFinanceTypeDialog_FinCollateralReq.value')}" />
 												<hbox>
@@ -338,6 +352,14 @@
 												<hbox>
 													<space spacing="2px" />
 													<checkbox id="tDSApplicable" checked="false" />
+												</hbox>
+											</row>
+											<row id="row_odMinAmount" visible="false">
+												<label  
+													value="${c:l('label_FinanceTypeDialog_ODMinAmount.value')}" />
+												<hbox>
+													<space  spacing="2px" />
+													<decimalbox id="odMinAmount" width="120px" />
 												</hbox>
 											</row>
 											<row id="row_finAcType" visible="false">
@@ -1624,6 +1646,26 @@
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="maxPPCalOn" readonly="true" width="200px" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox height="auto">
+									<caption label="${c:l('label_FinanceTypeDialog_AssetClassificationSetup')}" />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="300px" />
+											<column />
+											<column width="300px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													value="${c:l('label_FinanceTypeDialog_FinTypeAssetClassSetupCode.value')}" />
+												<hbox>
+													<extendedcombobox id="assetClassSetup" />
 												</hbox>
 											</row>
 										</rows>

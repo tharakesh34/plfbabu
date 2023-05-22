@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="ramya.v" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#117.1" author="ramya.v">
+		<createTable tableName="AdtPay_Ins_Upload_Header">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FileName" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Total" type="decimal(18,0)" />
+			<column name="Success" type="decimal(18,0)" />
+			<column name="Failed" type="decimal(18,0)" />
+			<column name="Entitycode" type="varchar(8)" />
+			<column name="Uploadprogress" type="int" />
+			<column name="Version" type="int" />
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedBy" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Lastmntby" type="bigint" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="Recordstatus" type="varchar(50)" />
+			<column name="Rolecode" type="varchar(100)" />
+			<column name="Nextrolecode" type="varchar(200)" />
+			<column name="Taskid" type="varchar(50)" />
+			<column name="Nexttaskid" type="varchar(200)" />
+			<column name="Recordtype" type="varchar(50)" />
+			<column name="Workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ApprovedOn" type="datetime" />
+			<column name="ApprovedBy" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#117.2" author="ramya.v">
+		<addPrimaryKey tableName="AdtPay_Ins_Upload_Header" constraintName="pk_AdtPay_Ins_Upload_Header"
+			columnNames="AuditId, AuditDate, AuditSeq, AuditImage" />
+	</changeSet>
+	
+	<changeSet id="PSD#211128.01" author="sandeepkuamr.m">
+		<modifyDataType tableName="ADTTRANSACTIONMAPPING" columnName="TID" newDataType="varchar(20)"/>
+	</changeSet>
+	
+	<changeSet id="PSD#211128.02" author="sandeepkuamr.m">
+		<modifyDataType tableName="ADTCD_SCHEME_PRODUCTGROUP" columnName="POSVENDOR" newDataType="varchar(20)"/>
+	</changeSet>
+	
+</databaseChangeLog>

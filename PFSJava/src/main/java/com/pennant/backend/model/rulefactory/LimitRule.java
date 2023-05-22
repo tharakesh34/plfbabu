@@ -64,7 +64,7 @@ public class LimitRule implements Serializable {
 	private long workflowId = 0;
 
 	public LimitRule() {
-
+	    super();
 	}
 
 	public LimitRule(long id) {

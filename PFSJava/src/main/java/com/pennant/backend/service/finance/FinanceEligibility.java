@@ -26,7 +26,7 @@ public class FinanceEligibility implements Serializable {
 	private FinanceDetail financeDetail;
 
 	public FinanceEligibility() {
-
+	    super();
 	}
 
 	// ******************************************************//

@@ -46,9 +46,9 @@ import org.springframework.batch.core.launch.support.SimpleJobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PFSBatchAdmin {
 	private static final Logger logger = LogManager.getLogger(PFSBatchAdmin.class);
@@ -108,7 +108,7 @@ public class PFSBatchAdmin {
 		jobExecution = getJobExecution();
 		jobExecution.setStatus(BatchStatus.STOPPED);
 		jobExecution.setExitStatus(ExitStatus.STOPPED);
-		jobExecution.setEndTime(DateUtility.getSysDate());
+		jobExecution.setEndTime(DateUtil.getSysDate());
 		jobRepository.update(jobExecution);
 
 		logger.debug(Literal.LEAVING);

@@ -33,8 +33,9 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -48,11 +49,13 @@ import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -547,8 +550,9 @@ public class RetailCibilReport extends BasicDao<Object> {
 		/* Written-off and Settled Status */
 		cell = row.createCell(52);
 
+		FinanceEnquiry finance = null;
 		if (customerDetal.getCustomerFinance() != null) {
-			FinanceEnquiry finance = customerDetal.getCustomerFinance();
+			finance = customerDetal.getCustomerFinance();
 
 			/* Current New Account No */
 			cell = row.createCell(35);
@@ -660,7 +664,28 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* Income */
 			cell = row.createCell(67);
-			cell.setCellValue("");
+			BigDecimal incomeAmt = writeCustomerIncomeData(customerDetal);
+			if (incomeAmt.compareTo(BigDecimal.ZERO) > 0) {
+				String income = PennantApplicationUtil.amountFormate(incomeAmt, 2);
+				income = income.replace(",", "");
+				income = income.substring(0, income.indexOf("."));
+				cell.setCellValue(income);
+			}
+			/* Monthly/Annual Income Indicator */
+			cell = row.createCell(68);
+			if (incomeAmt.compareTo(BigDecimal.ZERO) > 0) {
+				cell.setCellValue("G");
+			}
+
+			/*
+			 * Indicates whether the amount specified in the Income field is Annual or Monthly. Valid indicators are: M
+			 * = Monthly A = Annual
+			 */
+			/* Monthly/Annual Income Indicator */
+			cell = row.createCell(69);
+			if (incomeAmt.compareTo(BigDecimal.ZERO) > 0) {
+				cell.setCellValue("A");
+			}
 
 			/* Asset Classification */
 			int pastDues = 0;
@@ -678,7 +703,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 							continue;
 						}
 
-						if (DateUtility.compare(od.getFinODSchdDate(), odStartDate) < 0
+						if (DateUtil.compare(od.getFinODSchdDate(), odStartDate) < 0
 								&& od.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
 							odStartDate = od.getFinODSchdDate();
 						}
@@ -698,16 +723,20 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		/* Value of Collateral */
-		row.createCell(54);
+		BigDecimal collateralValue = getCollateralValue(customerDetal);
+		String collValue = PennantApplicationUtil.amountFormate(collateralValue, 2);
+		collValue = collValue.replace(",", "");
+		collValue = collValue.substring(0, collValue.indexOf("."));
+		cell = row.createCell(54);
+		cell.setCellValue(collValue);
 
 		/* Type of Collateral */
-		row.createCell(55);
-
-		/* Rate of Interest */
-		row.createCell(58);
+		cell = row.createCell(55);
+		cell.setCellValue(writeCollateralType(customerDetal));
 
 		/* Payment Frequency */
-		row.createCell(64);
+		cell = row.createCell(64);
+		cell.setCellValue(writePaymentFrq(finance.getRepayFrq()));
 
 		/* Credit Limit */
 		row.createCell(56);
@@ -719,18 +748,111 @@ public class RetailCibilReport extends BasicDao<Object> {
 		row.createCell(63);
 
 		/* Actual Payment Amt */
-		row.createCell(65);
+		BigDecimal instalmentPaid = finance.getInstalmentPaid();
+		String actualPaymentAmt = PennantApplicationUtil.amountFormate(instalmentPaid, 2);
+		actualPaymentAmt = actualPaymentAmt.replace(",", "");
+		actualPaymentAmt = actualPaymentAmt.substring(0, actualPaymentAmt.indexOf("."));
+		/* Actual Payment Amt */
+		cell = row.createCell(65);
+		cell.setCellValue(actualPaymentAmt);
 
 		/* Occupation Code */
 		row.createCell(66);
 
 		/* Net/Gross Income Indicator */
-		row.createCell(68);
-
-		/* Monthly/Annual Income Indicator */
-		row.createCell(69);
+		cell = row.createCell(66);
+		cell.setCellValue(writeOccupationCode(customer.getSubCategory()));
 
 		logger.info(Literal.LEAVING);
+	}
+
+	/* Valid codes are: 01 = Salaried 02 = Self Employed Professional 03 = Self Employed 04 = Others */
+	private String writeOccupationCode(String subCategory) {
+		if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SALARIED, subCategory)) {
+			subCategory = "01";
+			return subCategory;
+		} else if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SENP, subCategory)) {
+			subCategory = "03";
+			return subCategory;
+		} else if (StringUtils.equals(PennantConstants.EMPLOYMENTTYPE_SEP, subCategory)) {
+			subCategory = "02";
+			return subCategory;
+		} else {
+			subCategory = "04";
+			return subCategory;
+		}
+	}
+
+	private BigDecimal writeCustomerIncomeData(CustomerDetails customerDetail) {
+		logger.debug(Literal.ENTERING);
+		BigDecimal income = BigDecimal.ZERO;
+		List<CustomerIncome> customerIncomeList = customerDetail.getCustomerIncomeList();
+		if (CollectionUtils.isEmpty(customerIncomeList)) {
+			return income;
+		}
+		for (CustomerIncome customerIncome : customerIncomeList) {
+			if (customerIncome.getIncomeExpense().equals("INCOME")) {
+				income = income.add(customerIncome.getIncome());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return income;
+	}
+
+	private String writePaymentFrq(String repayFrq) {
+		String frequencyCode = FrequencyUtil.getFrequencyCode(repayFrq);
+		String code = "";
+		if (StringUtils.equals(FrequencyCodeTypes.FRQ_WEEKLY, frequencyCode)) {
+			code = "01";
+			return code;
+		} else if (StringUtils.equals(FrequencyCodeTypes.FRQ_FORTNIGHTLY, frequencyCode)) {
+			code = "02";
+			return code;
+		} else if (StringUtils.equals(FrequencyCodeTypes.FRQ_MONTHLY, frequencyCode)) {
+			code = "03";
+			return code;
+		} else if (StringUtils.equals(FrequencyCodeTypes.FRQ_QUARTERLY, frequencyCode)) {
+			code = "04";
+			return code;
+		}
+		return code;
+	}
+
+	/**
+	 * @param customerDetal
+	 * @return
+	 */
+	private BigDecimal getCollateralValue(CustomerDetails customerDetal) {
+		BigDecimal collateralvalue = BigDecimal.ZERO;
+		FinanceEnquiry customerFinance = customerDetal.getCustomerFinance();
+		if (customerFinance != null) {
+			List<CollateralSetup> collateralSetupDetails = customerFinance.getCollateralSetupDetails();
+			if (CollectionUtils.isNotEmpty(collateralSetupDetails)) {
+				for (CollateralSetup collateralSetup : collateralSetupDetails) {
+					collateralvalue = collateralvalue.add(collateralSetup.getBankValuation());
+				}
+			}
+		}
+
+		return collateralvalue;
+	}
+
+	private String writeCollateralType(CustomerDetails customerDetal) {
+		String collateralType = "";
+		FinanceEnquiry customerFinance = customerDetal.getCustomerFinance();
+		if (customerFinance != null) {
+			List<CollateralSetup> collateralSetupDetails = customerFinance.getCollateralSetupDetails();
+			if (CollectionUtils.isEmpty(collateralSetupDetails)) {
+				collateralType = "00";
+			} else {
+				for (CollateralSetup collateralSetup : collateralSetupDetails) {
+					if ("PROPERTY".equalsIgnoreCase(collateralSetup.getCollateralType())) {
+						collateralType = "01";
+					}
+				}
+			}
+		}
+		return collateralType;
 	}
 
 	private String getAddrTypeCode(String custAddrType) {
@@ -781,9 +903,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 		logger.info(Literal.ENTERING);
 
 		String genderCode = "";
-		if ("M".equals(customer.getCustGenderCode()) || "MALE".equals(customer.getCustGenderCode())) {
+		if ("M".equals(customer.getCustGenderCode()) || "MALE".equals(customer.getCustGenderCode())
+				|| "MA".equals(customer.getCustGenderCode())) {
 			genderCode = "2";
-		} else if ("F".equals(customer.getCustGenderCode()) || "FEMALE".equals(customer.getCustGenderCode())) {
+		} else if ("F".equals(customer.getCustGenderCode()) || "FEMALE".equals(customer.getCustGenderCode())
+				|| "FE".equals(customer.getCustGenderCode())) {
 			genderCode = "1";
 		}
 

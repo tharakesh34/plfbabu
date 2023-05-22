@@ -49,7 +49,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.UploadEvent;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
@@ -215,7 +214,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	private Configuration config = null;
 	private DataEngineStatus VAS_PREMIUM_CALCULATION_UPLOAD = new DataEngineStatus("VAS_PREMIUM_CALCULATION_UPLOAD");
 	private List<VASPremiumCalcDetails> premiumCalcDetList = new ArrayList<>();
-	private String errorMsg = null;
 	private Media media;
 	private boolean isImported;
 	private DataEngineConfig dataEngineConfig;
@@ -1592,14 +1590,14 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		// Allow Fee types
 		if (!this.allowFeeType.isDisabled()) {
 			this.allowFeeType.setConstraint(
-					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"),
 							PennantStaticListUtil.getVasAllowFeeTypes(), true));
 		}
 
 		// Allow Mode Of Payments
 		if (!this.modeOfPayment.isDisabled()) {
 			this.modeOfPayment.setConstraint(
-					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"),
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"),
 							PennantStaticListUtil.getVasModeOfPayments(), true));
 		}
 
@@ -2072,7 +2070,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		isImported = false;
 		txtFileName.setText("");
-		errorMsg = null;
 		setMedia(event.getMedia());
 
 		if (!MediaUtil.isExcel(media)) {
@@ -2081,19 +2078,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 
 		txtFileName.setText(media.getName());
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void doFileValidations() {
-		logger.debug(Literal.ENTERING);
-
-		Clients.clearWrongValue(this.txtFileName);
-		this.txtFileName.setErrorMessage("");
-
-		if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
-			throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
-		}
 
 		logger.debug(Literal.LEAVING);
 	}

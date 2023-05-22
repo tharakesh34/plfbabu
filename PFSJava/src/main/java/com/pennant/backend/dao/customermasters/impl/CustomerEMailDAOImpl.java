@@ -311,7 +311,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("EmailTypeCode", typeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT COUNT(*) FROM BMTEMailTypes");
 		selectSql.append(" WHERE ");
 		selectSql.append("EmailTypeCode= :EmailTypeCode");
@@ -336,7 +336,7 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		source.addValue("CustId", id);
 		source.addValue("CustEMailTypeCode", typeCode);
 
-		StringBuffer selectSql = new StringBuffer();
+		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT Version FROM CustomerEMails");
 
 		selectSql.append(" WHERE CustId = :CustId AND CustEMailTypeCode = :CustEMailTypeCode");
@@ -393,6 +393,72 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		logger.debug("Leaving");
 
 		return custEmailsByIDs;
+	}
+
+	@Override
+	public List<CustomerEMail> getCustomerEMailById(final long id, long mailPriority) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustEMail, CustEMailPriority, CustEMailTypeCode");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerEMails");
+		sql.append(" Where CustID = ? and CustEMailPriority = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerEMail custEmail = new CustomerEMail();
+
+			custEmail.setCustID(rs.getLong("CustID"));
+			custEmail.setCustEMail(rs.getString("CustEMail"));
+			custEmail.setCustEMailPriority((int) rs.getLong("CustEMailPriority"));
+			custEmail.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
+			custEmail.setVersion(rs.getInt("Version"));
+			custEmail.setLastMntBy(rs.getLong("LastMntBy"));
+			custEmail.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			custEmail.setRecordStatus(rs.getString("RecordStatus"));
+			custEmail.setRoleCode(rs.getString("RoleCode"));
+			custEmail.setNextRoleCode(rs.getString("NextRoleCode"));
+			custEmail.setTaskId(rs.getString("TaskId"));
+			custEmail.setNextTaskId(rs.getString("NextTaskId"));
+			custEmail.setRecordType(rs.getString("RecordType"));
+			custEmail.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return custEmail;
+		}, id, mailPriority);
+	}
+
+	@Override
+	public List<CustomerEMail> getCustomerEMailById(final long id, String typeCode) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustEMail, CustEMailPriority, CustEMailTypeCode");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From CustomerEMails");
+		sql.append(" Where CustID = ? and CustEMailTypeCode = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			CustomerEMail custEmail = new CustomerEMail();
+
+			custEmail.setCustID(rs.getLong("CustID"));
+			custEmail.setCustEMail(rs.getString("CustEMail"));
+			custEmail.setCustEMailPriority((int) rs.getLong("CustEMailPriority"));
+			custEmail.setCustEMailTypeCode(rs.getString("CustEMailTypeCode"));
+			custEmail.setVersion(rs.getInt("Version"));
+			custEmail.setLastMntBy(rs.getLong("LastMntBy"));
+			custEmail.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			custEmail.setRecordStatus(rs.getString("RecordStatus"));
+			custEmail.setRoleCode(rs.getString("RoleCode"));
+			custEmail.setNextRoleCode(rs.getString("NextRoleCode"));
+			custEmail.setTaskId(rs.getString("TaskId"));
+			custEmail.setNextTaskId(rs.getString("NextTaskId"));
+			custEmail.setRecordType(rs.getString("RecordType"));
+			custEmail.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return custEmail;
+		}, id, typeCode);
 	}
 
 }

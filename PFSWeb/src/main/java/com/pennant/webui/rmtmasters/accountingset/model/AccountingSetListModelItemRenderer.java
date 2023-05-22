@@ -44,7 +44,7 @@ public class AccountingSetListModelItemRenderer implements ListitemRenderer<Acco
 	private static final long serialVersionUID = 2572007482335898401L;
 
 	public AccountingSetListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

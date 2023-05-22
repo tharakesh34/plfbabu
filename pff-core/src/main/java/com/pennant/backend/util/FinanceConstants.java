@@ -33,6 +33,8 @@
  */
 package com.pennant.backend.util;
 
+import java.math.BigDecimal;
+
 /**
  * This stores all constants required for running the application
  */
@@ -95,6 +97,7 @@ public class FinanceConstants {
 	public static final String ODCALON_PIPD_FRQ = "PIPDF";
 	public static final String ODCALON_PIPD_EOM = "PIPDM";
 	// public static final String ODCALON_PIPD = "PIPD";
+	public static final String ODCALON_INST = "INST";
 
 	// Schedule Apportionment Types
 	public static final String PAY_APPORTIONMENT_SPRI = "SPRI";
@@ -116,7 +119,7 @@ public class FinanceConstants {
 	public static final String REF_DIVISION_CORP = "WB";
 
 	// Finance Status Reason Codes
-	public static final String FINSTSRSN_SYSTEM = "S";
+	public static final String FINSTSRSN_SYSTEM = "0";
 	public static final String FINSTSRSN_MANUAL = "M";
 	public static final String FINSTSRSN_OTHER = "O";
 
@@ -392,8 +395,6 @@ public class FinanceConstants {
 
 	public static final String ACCOUNTTYPE_FIN = "F";
 
-	// Fee Refund Constants
-	public static final int MANUAL_ADVISE_PAYABLE = 2;
 	public static final String FEE_REFUND_APPROVAL = "FEERFND";
 
 	public static final String SETTLEMENT = "SETTLEMENT";
@@ -403,4 +404,7 @@ public class FinanceConstants {
 	public static final String CROSS_LOAN_KNOCKOFF_ENQUIRY = "CROSS_LOAN_KNOCKOFF_ENQUIRY";
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_MAKER = "CROSS_LOAN_KNOCKOFF_CANCEL_MAKER";
 	public static final String CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER = "CROSS_LOAN_KNOCKOFF_CANCEL_APPROVER";
+	public static final BigDecimal LEI_NUM_LIMIT = new BigDecimal("50000000000");
+
+	public static final String CLOSE_STATUS_ACTIVE = "A";
 }

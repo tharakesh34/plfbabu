@@ -34,7 +34,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessorConstatnt;
-import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -52,7 +51,6 @@ public class Comm360DialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Groupbox finBasicdetails;
 	protected Listbox listBoxAgreements;
 	protected MasterDefService masterDefService;
-	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private FinanceDetail financeDetail;
 	private FinanceMain financeMain;
 
@@ -224,9 +222,4 @@ public class Comm360DialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	public void setMasterDefService(MasterDefService masterDefService) {
 		this.masterDefService = masterDefService;
 	}
-
-	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
-		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
-	}
-
 }

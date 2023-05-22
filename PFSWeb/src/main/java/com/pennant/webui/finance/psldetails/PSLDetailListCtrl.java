@@ -178,7 +178,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  FinReference =?");
 
 		if (doCheckAuthority(psldetail, whereCond.toString(), new Object[] { psldetail.getFinReference() })) {

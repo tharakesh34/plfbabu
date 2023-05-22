@@ -45,7 +45,7 @@ public class DispatchModeListModelItemRenderer implements ListitemRenderer<Dispa
 	private static final long serialVersionUID = -3813890359709017692L;
 
 	public DispatchModeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

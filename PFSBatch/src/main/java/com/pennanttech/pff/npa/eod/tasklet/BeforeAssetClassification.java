@@ -8,8 +8,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 
 public class BeforeAssetClassification implements Tasklet {
@@ -23,7 +23,7 @@ public class BeforeAssetClassification implements Tasklet {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date appDate = SysParamUtil.getAppDate();
 
-		if (ImplementationConstants.ALLOW_NPA) {
+		if (NpaAndProvisionExtension.ALLOW_NPA) {
 			assetClassificationService.createSnapshots(appDate);
 		}
 

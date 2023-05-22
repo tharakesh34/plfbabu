@@ -74,7 +74,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -106,21 +105,22 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.core.EventManager.Notify;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinanceBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Payments/FinanceWriteoffDialog.zul
@@ -243,8 +243,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				financeWriteoff = getFinanceWriteoffHeader().getFinanceWriteoff();
 
-				Cloner cloner = new Cloner();
-				FinanceMain befImage = cloner.deepClone(financeMain);
+				FinanceMain befImage = ObjectUtil.clone(financeMain);
 				getFinanceWriteoffHeader().getFinanceDetail().getFinScheduleData().getFinanceMain()
 						.setBefImage(befImage);
 
@@ -519,8 +518,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (!financeMain.isNewRecord()) {
 			this.finScheduleTab.setVisible(true);
 
-			Cloner cloner = new Cloner();
-			effectFinScheduleData = cloner.deepClone(financeWriteoffHeader);
+			effectFinScheduleData = ObjectUtil.clone(financeWriteoffHeader);
 			doFillScheduleList(effectFinScheduleData);
 
 		}
@@ -657,8 +655,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.listBoxSchedule.getItems().clear();
 
 		// Reset only Schedule Details Data
-		Cloner cloner = new Cloner();
-		FinanceWriteoffHeader schdData = cloner.deepClone(financeWriteoffHeader);
+		FinanceWriteoffHeader schdData = ObjectUtil.clone(financeWriteoffHeader);
 		schdData.getFinanceDetail().getFinScheduleData()
 				.setFinanceScheduleDetails(financeWriteoffService.getFinScheduleDetails(financeMain.getFinID()));
 
@@ -672,8 +669,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		// Copy Total Finance Schedule Data for Calculation without Effecting the Original Schedule Data
-		Cloner cloner = new Cloner();
-		effectFinScheduleData = cloner.deepClone(financeWriteoffHeader);
+		effectFinScheduleData = ObjectUtil.clone(financeWriteoffHeader);
 
 		BigDecimal woPriAmt = CurrencyUtil.unFormat(this.writeoffPriAmt.getValue(), format);
 		BigDecimal woPftAmt = CurrencyUtil.unFormat(this.writeoffPftAmt.getValue(), format);
@@ -746,7 +742,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -1003,8 +999,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		Cloner cloner = new Cloner();
-		FinanceWriteoffHeader aFinanceWriteoffHeader = cloner.deepClone(getFinanceWriteoffHeader());
+		FinanceWriteoffHeader aFinanceWriteoffHeader = ObjectUtil.clone(getFinanceWriteoffHeader());
 		FinanceDetail aFinanceDetail = aFinanceWriteoffHeader.getFinanceDetail();
 
 		aFinanceDetail.getFinScheduleData().setFinanceScheduleDetails(
@@ -1623,13 +1618,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 
 		AEEvent aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, curBDay, curBDay);
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, eventCode));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
@@ -1659,13 +1649,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		aeEvent.getAcSetIDList().clear();
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-					AccountingEvent.DISBINS, FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-					AccountingEvent.DISBINS, FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.DISBINS));
 
 		// loop through the disbursements.
 		if (advPayList != null && !advPayList.isEmpty()) {

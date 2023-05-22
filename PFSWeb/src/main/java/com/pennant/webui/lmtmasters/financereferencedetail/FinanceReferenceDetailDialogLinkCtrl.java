@@ -1505,7 +1505,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 	public final class onCheckBoxCheked implements EventListener<Event> {
 
 		public onCheckBoxCheked() {
-
+		    super();
 		}
 
 		public void onEvent(Event event) {

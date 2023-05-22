@@ -85,7 +85,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		RuleRowMapper rowMapper = new RuleRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, module, event);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -133,6 +133,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 			fea.setWaiver(rs.getBoolean("Waiver"));
 			fea.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
 			fea.setSQLRule(rs.getString("SQLRule"));
+			fea.setSPLRule(rs.getString("SPLRule"));
 			fea.setActualBlock(rs.getString("ActualBlock"));
 			fea.setSeqOrder(rs.getInt("SeqOrder"));
 			fea.setReturnType(rs.getString("ReturnType"));
@@ -174,7 +175,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append(" RuleId, RuleCode, RuleModule, RuleEvent, RuleCodeDesc, AllowDeviation");
 		sql.append(", CalFeeModify, FeeToFinance, WaiverDecider, Waiver, WaiverPerc, SQLRule");
 		sql.append(", ActualBlock, SeqOrder, ReturnType, DeviationType, GroupId, Revolving");
-		sql.append(", FixedOrVariableLimit, Active,  Fields, FeeTypeID");
+		sql.append(", FixedOrVariableLimit, Active,  Fields, FeeTypeID, SPLRule");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescGroupName , FeeTypeCode, FeeTypeDesc");
@@ -216,6 +217,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 					rule.setActive(rs.getBoolean("Active"));
 					rule.setFields(rs.getString("Fields"));
 					rule.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
+					rule.setSPLRule(rs.getString("SPLRule"));
 
 					if (StringUtils.trimToEmpty(type).contains("View")) {
 						rule.setLovDescGroupName(rs.getString("LovDescGroupName"));
@@ -252,7 +254,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		RuleRowMapper rowMapper = new RuleRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { ruleId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, ruleId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Rule not exist for the specified Rule Id {}, Module {} and Event {}", ruleId);
 		}
@@ -277,7 +279,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event }, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, id, module, event);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -475,9 +477,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		String updateSql = "update Rules set Active= :Active  , RecordType = :RecordType, "
 				+ "  lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + "where RuleId= :RuleId";
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug("updateSql: " + updateSql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(rule);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(updateSql, beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -789,16 +791,15 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { module, ruleCode },
-					(rs, rowNum) -> {
-						Rule rule = new Rule();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Rule rule = new Rule();
 
-						rule.setRuleModule(rs.getString("RuleModule"));
-						rule.setRuleCode(rs.getString("RuleCode"));
-						rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+				rule.setRuleModule(rs.getString("RuleModule"));
+				rule.setRuleCode(rs.getString("RuleCode"));
+				rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
 
-						return rule;
-					});
+				return rule;
+			}, module, ruleCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in Rules{} for the combination of Rule module >> {} and Rule Code >> {}",
 					type, module, ruleCode);
@@ -895,7 +896,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 
 		RuleRowMapper rowMapper = new RuleRowMapper(type);
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { ruleModule }, rowMapper);
+		return this.jdbcOperations.query(sql.toString(), rowMapper, ruleModule);
 	}
 
 	// ### 08-05-2018 Start Development Iteam 81

@@ -26,7 +26,7 @@ public class ChartUtil {
 	 * @return
 	 */
 	public static String getSetElement(List<ChartSetElement> setElements) {
-		StringBuffer setElement = new StringBuffer();
+		StringBuilder setElement = new StringBuilder();
 		if (setElements != null) {
 			for (int i = 0; i < setElements.size(); i++) {
 				setElement.append("\n");
@@ -35,6 +35,7 @@ public class ChartUtil {
 			}
 			setElement.append("\n");
 		}
+
 		return setElement.toString();
 	}
 
@@ -45,7 +46,7 @@ public class ChartUtil {
 	 * @return
 	 */
 	public static String getSetDial(List<ChartSetElement> setElements) {
-		StringBuffer setDial = new StringBuffer("<dials>");
+		StringBuilder setDial = new StringBuilder("<dials>");
 		if (setElements != null) {
 			for (int i = 0; i < setElements.size(); i++) {
 				setDial.append("<dial ");
@@ -56,6 +57,7 @@ public class ChartUtil {
 
 			setDial.append("</dials>");
 		}
+
 		return setDial.toString();
 	}
 
@@ -68,7 +70,7 @@ public class ChartUtil {
 	 */
 	public static String getSeriesTypeElements(List<ChartSetElement> setElements, String renderAs) {
 		logger.debug("Entering");
-		StringBuffer setElement = new StringBuffer();
+		StringBuilder setElement = new StringBuilder();
 		if (setElements.size() > 0) {
 			Map<String, BigDecimal> catogeries = new HashMap<String, BigDecimal>();
 			String prvSer = "";
@@ -129,6 +131,7 @@ public class ChartUtil {
 			}
 			setElement.append("</dataset> ");
 		}
+
 		logger.debug("Leaving");
 		return setElement.toString();
 	}
@@ -142,7 +145,7 @@ public class ChartUtil {
 	 * @return
 	 */
 	public static String getDrillDownTypeElements(List<ChartSetElement> setElements, String[] remarks) {
-		StringBuffer xmlData = new StringBuffer(getSetElement(setElements));
+		StringBuilder xmlData = new StringBuilder(getSetElement(setElements));
 		logger.debug("Entering");
 		// Here we are Drilling the information from inside each list element
 		// Second Level chart
@@ -195,6 +198,7 @@ public class ChartUtil {
 			xmlData.append("</chart></linkeddata>");
 		}
 		setElements = null;
+
 		logger.debug("Leaving");
 		return xmlData.toString();
 	}
@@ -314,8 +318,7 @@ public class ChartUtil {
 	 * @param buffer
 	 * @return
 	 */
-	public static StringBuffer getIntElement(String field, String value, StringBuffer buffer) {
-
+	public static StringBuilder getIntElement(String field, String value, StringBuilder buffer) {
 		if (StringUtils.isNotBlank(value)) {
 			buffer.append(field + "='");
 			buffer.append(value);
@@ -332,8 +335,7 @@ public class ChartUtil {
 	 * @param buffer
 	 * @return
 	 */
-	public static StringBuffer getIntElement(String field, double value, StringBuffer buffer) {
-
+	public static StringBuilder getIntElement(String field, double value, StringBuilder buffer) {
 		buffer.append(field + "='");
 		buffer.append(value);
 		buffer.append("' ");
@@ -348,11 +350,11 @@ public class ChartUtil {
 	 * @param buffer
 	 * @return
 	 */
-	public static StringBuffer getIntElement(String field, boolean value, StringBuffer buffer) {
-
+	public static StringBuilder getIntElement(String field, boolean value, StringBuilder buffer) {
 		if (value) {
 			buffer.append(field + "='1' ");
 		}
+
 		return buffer;
 	}
 
@@ -363,13 +365,13 @@ public class ChartUtil {
 	 * @param buffer
 	 * @return
 	 */
-	public static StringBuffer getIntElement(String field, int value, StringBuffer buffer) {
-
+	public static StringBuilder getIntElement(String field, int value, StringBuilder buffer) {
 		if (value != 0) {
 			buffer.append(field + "='");
 			buffer.append(value);
 			buffer.append("' ");
 		}
+
 		return buffer;
 	}
 

@@ -74,7 +74,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -99,6 +98,7 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -148,7 +148,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	protected Radio unConsolidated;
 	public List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>(); // autowired
 	protected Textbox auditedYear; // autowired
-	private String errorMsg = null;
 	private ExcelFileImport fileImport = null;
 	private Media media;
 	protected Textbox txtFileName;
@@ -175,7 +174,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public List<FinCreditRevSubCategory> modifiedFinCreditRevSubCategoryList = new ArrayList<FinCreditRevSubCategory>();
 	public List<CreditReviewSubCtgDetails> creditReviewSubCtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
 	private WIFCustomer wifcustomer = new WIFCustomer();
-	int currentYear = DateUtility.getYear(SysParamUtil.getAppDate());
+	int currentYear = DateUtil.getYear(SysParamUtil.getAppDate());
 	private List<FinCreditReviewDetails> finCreditReviewDetailsList = null;
 	List<Filter> filterList = null;
 	private NotificationService notificationService;
@@ -526,7 +525,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 		BeanUtils.copyProperties(this.creditReviewDetail, aCreditReviewDetails);
 		doWriteComponentsToBean(aCreditReviewDetails);
 		this.fileImport = null;
-		this.errorMsg = null;
 		media = event.getMedia();
 
 		if (!MediaUtil.isExcel(media)) {
@@ -544,16 +542,9 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 			finCreditReviewDetailsList = getCreditApplicationReviewService()
 					.getFinCreditRevDetailsByCustomerId(customer.getCustID(), "_View");
-			/*
-			 * if (finCreditReviewDetailsList.size() >= 3) { String errorMsg =
-			 * "3 Years Credit Review For The Customer with CIF Number: " + customer.getCustCIF() +
-			 * " is already in process please process it"; MessageUtil.showError(errorMsg);
-			 * this.documentName.setValue(""); return; }
-			 */
 
 			setListDetails();
 		} catch (Exception e) {
-			this.errorMsg = e.getMessage();
 			MessageUtil.showError(e);
 		}
 
@@ -647,7 +638,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 				if (k >= 4) {
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(SysParamUtil.getAppDate());
-					double year = cal.get(cal.YEAR);
+					double year = cal.get(Calendar.YEAR);
 					plYearData = new HashSet<String>();
 					bsYearData = new HashSet<String>();
 					if (StringUtils.equalsIgnoreCase("P&L", sheetName)) {
@@ -951,20 +942,10 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 					}
 
 					for (Object[] object : revData.getValue()) {
-						String dbDesc = null;
 						if (object[2] == null || object[0] == null) {
 							break;
 						}
 
-						if (object[2] != null) {
-							dbDesc = object[2].toString();
-
-						}
-						// validation for description
-						/*
-						 * if (!(desc.containsKey(dbDesc))) { MessageUtil.showMessage(dbDesc + "Invalid Description");
-						 * data.clear(); documentName.setValue(""); return; }
-						 */
 						// validation for ID
 						if (!seqId.containsKey(object[0].toString())) {
 							MessageUtil.showError(object[0].toString() + "Invalid sequence Id");

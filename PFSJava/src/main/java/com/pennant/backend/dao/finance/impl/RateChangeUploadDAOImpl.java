@@ -71,7 +71,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0 ? true : false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, name) > 0 ? true : false;
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, srCode) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, srCode) > 0;
 	}
 
 	@Override
@@ -179,14 +179,13 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" Inner Join RmtFinanceTypes FT on FT.FinType = FM.FinType");
 		sql.append(" Inner Join SmtDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
 		sql.append(" Where FM.FinReference in (Select FinReference From Ratechange_Upload_Details Where BatchId = ?)");
+		sql.append(" and FM.fincategory != ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-
-			ps.setLong(index, batchId);
-
+			ps.setLong(1, batchId);
+			ps.setString(2, "CD");
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 

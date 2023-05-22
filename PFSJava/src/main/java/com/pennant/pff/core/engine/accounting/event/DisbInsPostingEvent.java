@@ -180,19 +180,18 @@ public class DisbInsPostingEvent extends PostingEvent {
 				aeEvent.getReturnDataSet().addAll(AccountingEngine.getReversalsByLinkedTranID(linkedTranId));
 			} else {
 				String promotionCode = fm.getPromotionCode();
-				String finType = null;
 				String accountingEvent = aeEvent.getAccountingEvent();
 				int module = 0;
 
 				if (StringUtils.isNotBlank(promotionCode)) {
-					finType = promotionCode;
+					fm.setFinType(promotionCode);
 					module = FinanceConstants.MODULEID_PROMOTION;
 				} else {
-					finType = aeEvent.getFinType();
+					fm.setFinType(aeEvent.getFinType());
 					module = FinanceConstants.MODULEID_FINTYPE;
 				}
 
-				aeEvent.getAcSetIDList().add(getAccountingSetId(finType, accountingEvent, module));
+				aeEvent.getAcSetIDList().add(getAccountingSetId(fm, accountingEvent, module));
 
 			}
 

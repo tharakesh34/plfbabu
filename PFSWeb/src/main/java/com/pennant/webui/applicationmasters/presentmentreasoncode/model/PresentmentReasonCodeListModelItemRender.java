@@ -16,7 +16,7 @@ public class PresentmentReasonCodeListModelItemRender implements ListitemRendere
 	private static final long serialVersionUID = 9099171990501035267L;
 
 	public PresentmentReasonCodeListModelItemRender() {
-
+	    super();
 	}
 
 	@Override

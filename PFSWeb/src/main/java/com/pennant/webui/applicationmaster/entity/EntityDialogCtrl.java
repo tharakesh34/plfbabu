@@ -109,8 +109,7 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.entity.getEntityCode()));
-		return referenceBuffer.toString();
+		return this.entity.getEntityCode();
 	}
 
 	/**

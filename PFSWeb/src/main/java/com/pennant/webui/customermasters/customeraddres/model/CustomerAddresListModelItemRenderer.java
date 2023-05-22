@@ -46,7 +46,7 @@ public class CustomerAddresListModelItemRenderer implements ListitemRenderer<Cus
 	private static final long serialVersionUID = 1411092588536155341L;
 
 	public CustomerAddresListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

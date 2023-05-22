@@ -19,6 +19,8 @@ public class JsonRequestDetail implements Serializable {
 	private MediaType contentType;
 	private HttpMethod method;
 	private Map<String, String> headerMap;
+	private String fileName;
+	private String password;
 
 	public JsonRequestDetail() {
 		super();
@@ -103,4 +105,21 @@ public class JsonRequestDetail implements Serializable {
 	public void setAuthentcationToken(String authentcationToken) {
 		this.authentcationToken = authentcationToken;
 	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 }

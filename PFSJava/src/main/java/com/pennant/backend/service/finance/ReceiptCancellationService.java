@@ -3,8 +3,8 @@ package com.pennant.backend.service.finance;
 import java.util.List;
 import java.util.Map;
 
-import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;

@@ -13,7 +13,7 @@ public class TemplateFields implements Serializable {
 	private String fieldFormat;
 
 	public TemplateFields() {
-
+	    super();
 	}
 
 	// ******************************************************//

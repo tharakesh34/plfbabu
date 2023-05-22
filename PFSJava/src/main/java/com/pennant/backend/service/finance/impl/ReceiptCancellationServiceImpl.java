@@ -55,13 +55,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -108,10 +105,12 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -168,13 +167,13 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.eod.cache.BounceConfigCache;
 import com.pennant.pff.eod.cache.FeeTypeConfigCache;
 import com.pennant.pff.eod.cache.RuleConfigCache;
+import com.pennant.pff.extension.LPPExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -194,7 +193,7 @@ import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.presentment.model.PresentmentDetail;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHeader>
 		implements ReceiptCancellationService {
@@ -342,8 +341,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 
@@ -485,8 +483,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			return aAuditHeader;
 		}
 
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData rd = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 
 		FinReceiptHeader rch = rd.getReceiptHeader();
@@ -1235,8 +1232,8 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 				FinanceScheduleDetail curSchd = null;
 				boolean schdUpdated = false;
-				if (schdMap.containsKey(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
-					curSchd = schdMap.get(DateUtility.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
+				if (schdMap.containsKey(DateUtil.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat))) {
+					curSchd = schdMap.get(DateUtil.format(rpySchd.getSchDate(), PennantConstants.DBDateFormat));
 
 					// Principal Payment
 					if (rpySchd.getPrincipalSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
@@ -1319,7 +1316,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		List<FinOverDueCharges> updatedODAmt = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(dueMovements)) {
+		if (CollectionUtils.isNotEmpty(dueMovements) && LPPExtension.LPP_DUE_CREATION_REQ) {
 			for (FinOverDueChargeMovement movement : dueMovements) {
 				FinOverDueCharges odcAmount = new FinOverDueCharges();
 				odcAmount.setPaidAmount(movement.getPaidAmount());
@@ -1382,7 +1379,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 
 		Date valueDate = appDate;
 		if (!ImplementationConstants.LPP_CALC_SOD) {
-			valueDate = DateUtility.addDays(valueDate, -1);
+			valueDate = DateUtil.addDays(valueDate, -1);
 		}
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(fm.getFinID());
@@ -1460,10 +1457,9 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			}
 
 			Date rcptDate = rch.getReceiptDate();
-			Date rcptMonthEndDate = DateUtility.getMonthEnd(rch.getReceiptDate());
+			Date rcptMonthEndDate = DateUtil.getMonthEnd(rch.getReceiptDate());
 			boolean accrualDiffPostReq = false;
-			if (DateUtility.compare(rcptDate, rcptMonthEndDate) <= 0
-					&& DateUtility.compare(appDate, rcptMonthEndDate) > 0) {
+			if (DateUtil.compare(rcptDate, rcptMonthEndDate) <= 0 && DateUtil.compare(appDate, rcptMonthEndDate) > 0) {
 				accrualDiffPostReq = true;
 			}
 
@@ -1548,7 +1544,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			newTaxRcv.setFinReference(finReference);
 
 			if (accrualDiffPostReq) {
-				Date dateValueDate = DateUtility.addDays(DateUtility.getMonthStart(valueDate), -1);
+				Date dateValueDate = DateUtil.addDays(DateUtil.getMonthStart(valueDate), -1);
 				latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, dateValueDate,
 						schdData.getFinanceScheduleDetails(), repayments, true, true);
 
@@ -1851,7 +1847,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		// Accrual Difference Postings
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(), AccountingEvent.AMZ,
+		Long accountingID = AccountingEngine.getAccountSetID(financeMain, AccountingEvent.AMZ,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		EventProperties eventProperties = financeMain.getEventProperties();
@@ -1864,7 +1860,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			derivedAppDate = SysParamUtil.getAppDate();
 		}
 
-		if (accountingID != null && accountingID != Long.MIN_VALUE) {
+		if (accountingID != null && accountingID > 0) {
 
 			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
 
@@ -2286,7 +2282,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2802,8 +2798,7 @@ public class ReceiptCancellationServiceImpl extends GenericService<FinReceiptHea
 		}
 
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
-		Cloner cloner = new Cloner();
-		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
+		AuditHeader auditHeader = ObjectUtil.clone(aAuditHeader);
 		FinReceiptData receiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 

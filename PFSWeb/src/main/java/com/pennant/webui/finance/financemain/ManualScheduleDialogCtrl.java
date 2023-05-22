@@ -39,7 +39,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -428,7 +427,7 @@ public class ManualScheduleDialogCtrl extends GFCBaseCtrl<ManualScheduleHeader> 
 			manualSchdHeader.setValidSchdUpload(true);
 			this.txtFileName.setValue(file.getName());
 			manualSchdHeader.setFileName(this.txtFileName.getValue());
-			manualSchdHeader.setTransactionDate(DateUtility.getSysDate());
+			manualSchdHeader.setTransactionDate(DateUtil.getSysDate());
 			manualSchdHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			manualSchdHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 

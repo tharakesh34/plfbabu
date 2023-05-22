@@ -46,7 +46,7 @@ public class PromotionListModelItemRenderer implements ListitemRenderer<Promotio
 	private static final long serialVersionUID = 1L;
 
 	public PromotionListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

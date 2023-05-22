@@ -764,18 +764,17 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, collateralType },
-					(rs, i) -> {
-						FinCollaterals fc = new FinCollaterals();
+			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinCollaterals fc = new FinCollaterals();
 
-						fc.setFinReference(rs.getString("FinReference"));
-						fc.setCollateralType(rs.getString("CollateralType"));
-						fc.setFirstChequeNo(rs.getString("FirstChequeNo"));
-						fc.setLastChequeNo(rs.getString("LastChequeNo"));
-						fc.setStatus(rs.getString("Status"));
+				fc.setFinReference(rs.getString("FinReference"));
+				fc.setCollateralType(rs.getString("CollateralType"));
+				fc.setFirstChequeNo(rs.getString("FirstChequeNo"));
+				fc.setLastChequeNo(rs.getString("LastChequeNo"));
+				fc.setStatus(rs.getString("Status"));
 
-						return fc;
-					});
+				return fc;
+			}, finReference, collateralType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record is not found in FinCollaterals for the specified FinReference >> {} and CollateralType >> {}",

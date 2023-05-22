@@ -94,6 +94,7 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.CustomerController;
 import com.pennanttech.controller.CustomerDetailsController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -175,6 +176,8 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, SaveValidationGroup.class);
+		doBasicMandatoryValidations(customerDetails.getCustomer());
+
 		AuditHeader auditHeader = getAuditHeader(customerDetails, PennantConstants.TRAN_WF);
 		// set empty to null
 		setDefaults(customerDetails);
@@ -347,6 +350,7 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, UpdateValidationGroup.class);
+		doBasicMandatoryValidations(customerDetails.getCustomer());
 		// set empty to null
 		setDefaults(customerDetails);
 		WSReturnStatus status = null;
@@ -498,6 +502,8 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 		APIErrorHandlerService.logKeyFields(logFields);
 		// bean validations
 		validationUtility.validate(customerDetails, PersionalInfoGroup.class);
+		doBasicMandatoryValidations(customerDetails.getCustomer());
+
 		Customer customer = null;
 		// set empty to null
 		setDefaults(customerDetails);
@@ -4079,6 +4085,20 @@ public class CustomerWebServiceImpl extends AbstractController implements Custom
 					break;
 				}
 			}
+		}
+	}
+
+	private void doBasicMandatoryValidations(Customer c) {
+		ServiceExceptionDetails error = new ServiceExceptionDetails();
+		ServiceExceptionDetails[] execptions = new ServiceExceptionDetails[1];
+
+		if (c.isCustIsStaff() && StringUtils.isEmpty(c.getCustStaffID())
+				|| (!c.isCustIsStaff() && StringUtils.isNotEmpty(c.getCustStaffID()))) {
+			error.setFaultCode("9009");
+			error.setFaultMessage("cif is Applicable for CoOwnerBankCustomer");
+
+			execptions[0] = error;
+			throw new ServiceException(execptions);
 		}
 	}
 

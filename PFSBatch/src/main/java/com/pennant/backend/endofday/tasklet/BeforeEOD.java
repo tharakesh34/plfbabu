@@ -45,12 +45,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.core.DateService;
 import com.pennant.backend.util.BatchUtil;
+import com.pennanttech.external.BeforeEodExternalProcessHook;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 
 public class BeforeEOD implements Tasklet {
 	private Logger logger = LogManager.getLogger(BeforeEOD.class);
+
+	private BeforeEodExternalProcessHook beforeEodExternalProcessHook;
 
 	public BeforeEOD() {
 		super();
@@ -72,6 +75,10 @@ public class BeforeEOD implements Tasklet {
 		StepUtil.BEFORE_EOD.setProcessedRecords(1);
 		BatchUtil.setExecutionStatus(context, StepUtil.BEFORE_EOD);
 
+		if (beforeEodExternalProcessHook != null) {
+			beforeEodExternalProcessHook.truncateExtractionTables();
+		}
+
 		dateService.loadEODConfig();
 		logger.debug("COMPLET Before EOD On {}", valueDate);
 		return RepeatStatus.FINISHED;
@@ -86,6 +93,11 @@ public class BeforeEOD implements Tasklet {
 	@Autowired
 	public void setAssetClassificationService(AssetClassificationService assetClassificationService) {
 		this.assetClassificationService = assetClassificationService;
+	}
+
+	@Autowired(required = false)
+	public void setBeforeEodExternalProcessHook(BeforeEodExternalProcessHook beforeEodExternalProcessHook) {
+		this.beforeEodExternalProcessHook = beforeEodExternalProcessHook;
 	}
 
 }

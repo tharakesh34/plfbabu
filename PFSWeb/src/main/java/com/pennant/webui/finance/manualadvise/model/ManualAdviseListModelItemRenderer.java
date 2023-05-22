@@ -32,7 +32,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -51,33 +51,36 @@ public class ManualAdviseListModelItemRenderer implements ListitemRenderer<Manua
 	}
 
 	@Override
-	public void render(Listitem item, ManualAdvise manualAdvise, int count) {
+	public void render(Listitem item, ManualAdvise ma, int count) {
 
 		Listcell lc;
 
-		lc = new Listcell(AdviseType.adviseType(manualAdvise.getAdviseType()).name());
+		lc = new Listcell(AdviseType.adviseType(ma.getAdviseType()).name());
 		lc.setParent(item);
-		lc = new Listcell(manualAdvise.getFinReference());
+		lc = new Listcell(String.valueOf(ma.getAdviseID()));
 		lc.setParent(item);
-		lc = new Listcell(manualAdvise.getFeeTypeDesc());
+		lc = new Listcell(ma.getFinReference());
+		lc.setParent(item);
+		lc = new Listcell(ma.getFeeTypeDesc());
+		lc.setParent(item);
+		lc = new Listcell(CurrencyUtil.format(ma.getAdviseAmount(),
+				CurrencyUtil.getFormat(String.valueOf(PennantConstants.defaultCCYDecPos))));
 		lc.setParent(item);
 
-		if (ImplementationConstants.MANUAL_ADVISE_FUTURE_DATE) {
-			String status = manualAdvise.getStatus();
-			if (PennantConstants.MANUALADVISE_CANCEL.equals(status)) {
-				status = PennantConstants.RCD_STATUS_CANCELLED;
-			} else if (PennantConstants.MANUALADVISE_MAINTAIN.equals(status)) {
-				status = PennantConstants.RCD_UPD;
-			}
-			lc = new Listcell(StringUtils.trimToEmpty(status));
-			lc.setParent(item);
+		String status = ma.getStatus();
+		if (PennantConstants.MANUALADVISE_CANCEL.equals(status)) {
+			status = PennantConstants.RCD_STATUS_CANCELLED;
+		} else if (PennantConstants.MANUALADVISE_MAINTAIN.equals(status)) {
+			status = PennantConstants.RCD_UPD;
 		}
+		lc = new Listcell(StringUtils.trimToEmpty(status));
+		lc.setParent(item);
 
-		lc = new Listcell(manualAdvise.getRecordStatus());
+		lc = new Listcell(ma.getRecordStatus());
 		lc.setParent(item);
-		lc = new Listcell(PennantJavaUtil.getLabel(manualAdvise.getRecordType()));
+		lc = new Listcell(PennantJavaUtil.getLabel(ma.getRecordType()));
 		lc.setParent(item);
-		item.setAttribute("adviseID", manualAdvise.getAdviseID());
+		item.setAttribute("adviseID", ma.getAdviseID());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onManualAdviseItemDoubleClicked");
 	}

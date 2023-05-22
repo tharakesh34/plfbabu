@@ -80,7 +80,6 @@ import com.pennant.FrequencyBox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -603,7 +602,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_MandateDialog_btnSave"));
 		}
 
-		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), this.btnCtroller_ClassPrefix, true, this.btnNew,
+		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), btnCtroller_ClassPrefix, true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
 	}
 
@@ -960,21 +959,20 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	}
 
 	private void doEditFieldByInstrument(InstrumentType instrumentType) {
-		if (instrumentType == InstrumentType.SI || instrumentType == InstrumentType.DAS) {
+		if (InstrumentType.SI == instrumentType || InstrumentType.DAS == instrumentType) {
 			doSetReadOnly();
 			this.emandateRow.setVisible(false);
 			this.dasGroupbox.setVisible(false);
 			this.accDetailsGroupbox.setVisible(false);
 			this.mandateSwapGroupbox.setVisible(false);
 			this.mandateDetailsGroupbox.setVisible(false);
-			this.otherDetailsGroupbox.setVisible(false);
 			this.openMandate.setChecked(false);
 			this.useExisting.setChecked(false);
 		} else if (!enqModule || !fromLoanEnquiry) {
 			doEdit();
 		}
 
-		if (instrumentType == InstrumentType.EMANDATE) {
+		if (InstrumentType.EMANDATE == instrumentType) {
 			this.emandateRow.setVisible(true);
 			readOnlyComponent(isReadOnly("MandateDialog_eMandateReferenceNo"), this.eMandateReferenceNo);
 			readOnlyComponent(isReadOnly("MandateDialog_eMandateSource"), this.eMandateSource);
@@ -983,6 +981,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (instrumentType == InstrumentType.DAS) {
 			this.dasGroupbox.setVisible(true);
 			this.dasRow.setVisible(true);
+			this.otherDetailsGroupbox.setVisible(false);
 
 			if (fromLoan) {
 				this.mandateSwapGroupbox.setVisible(false);
@@ -997,16 +996,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		}
 
-		if (instrumentType == InstrumentType.SI) {
-
-			if (fromLoan) {
-				this.mandateSwapGroupbox.setVisible(false);
-			} else {
-				this.mandateSwapGroupbox.setVisible(true);
-			}
-
+		if (InstrumentType.SI == instrumentType) {
+			this.mandateSwapGroupbox.setVisible(!fromLoan);
 			this.accDetailsGroupbox.setVisible(true);
+			this.otherDetailsGroupbox.setVisible(true);
+			this.partnerBankRow.setVisible(false);
 
+			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapMandate);
+			readOnlyComponent(isReadOnly("MandateDialog_SwapEffectiveDate"), this.swapEffectiveDate);
 			readOnlyComponent(isReadOnly("MandateDialog_BankBranchID"), this.bankBranchID);
 			readOnlyComponent(isReadOnly("MandateDialog_AccNumber"), this.accNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_AccType"), this.accType);
@@ -1407,7 +1404,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private void doSetReadOnly() {
 		readOnlyComponent(true, this.useExisting);
 		readOnlyComponent(true, this.mandateRef);
-		readOnlyComponent(true, this.btnPennyDropResult);
+		readOnlyComponent(isReadOnly("button_MandateDialog_btnPennyDropResult"), this.btnPennyDropResult);
 		readOnlyComponent(true, this.custID);
 		readOnlyComponent(true, this.entityCode);
 		readOnlyComponent(true, this.finReference);
@@ -1864,7 +1861,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			aMandate.setInputDate(
-					DateUtility.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+					DateUtil.getDate(DateUtil.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1915,7 +1912,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			if (aMandate.isSwapIsActive()) {
-				aMandate.setSwapEffectiveDate(DateUtility
+				aMandate.setSwapEffectiveDate(DateUtil
 						.getDate(DateUtil.format(this.swapEffectiveDate.getValue(), PennantConstants.dateFormat)));
 			} else {
 				aMandate.setSwapEffectiveDate(null);
@@ -2064,12 +2061,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				throw new WrongValueException(this.swapEffectiveDate,
 						Labels.getLabel("DATE_ALLOWED_AFTER",
 								new String[] { Labels.getLabel("label_MandateDialog_SwapEffectiveDate.value"),
-										DateUtility.formatToShortDate(SysParamUtil.getAppDate()) }));
+										DateUtil.formatToShortDate(SysParamUtil.getAppDate()) }));
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 		return wve;
+
 	}
 
 	private void showErrorDetails(List<WrongValueException> wve) {
@@ -2280,7 +2278,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (this.mandateSwapGroupbox.isVisible()) {
 			doSetSwapValidation(validate);
 		}
-
 	}
 
 	private void doRemoveValidation() {
@@ -2526,11 +2523,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		String[] words = amtInWords.split(" ");
 		StringBuilder amount = new StringBuilder();
-
 		for (int i = 0; i < words.length; i++) {
 			if (!words[i].isEmpty()) {
 				amount.append(Character.toUpperCase(words[i].charAt(0))).append(words[i].substring(1)).append(" ");
-
 			}
 		}
 
@@ -3039,7 +3034,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		if (manFinanceExposureDetails != null) {
 			for (FinanceEnquiry finEnquiry : manFinanceExposureDetails) {
 				Listitem item = new Listitem();
-				Listcell lc = new Listcell(DateUtility.formatToLongDate(finEnquiry.getFinStartDate()));
+				Listcell lc = new Listcell(DateUtil.formatToLongDate(finEnquiry.getFinStartDate()));
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getLovDescFinTypeName());
 				lc.setParent(item);
@@ -3065,13 +3060,6 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				this.listBoxMandateFinExposure.appendChild(item);
 
 			}
-		}
-	}
-
-	private void doSetSwapValidation(boolean validate) {
-		if (this.swapMandate.isChecked() && this.swapEffectiveDate.getValue() == null) {
-			this.swapEffectiveDate.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_MandateDialog_SwapEffectiveDate.value"), true));
 		}
 	}
 
@@ -3112,6 +3100,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	@Qualifier(value = "bankAccountValidationService")
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
 		this.bankAccountValidationService = bankAccountValidationService;
+	}
+
+	private void doSetSwapValidation(boolean validate) {
+		if (this.swapMandate.isChecked() && this.swapEffectiveDate.getValue() == null) {
+			this.swapEffectiveDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_MandateDialog_SwapEffectiveDate.value"), true));
+		}
 	}
 
 	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {

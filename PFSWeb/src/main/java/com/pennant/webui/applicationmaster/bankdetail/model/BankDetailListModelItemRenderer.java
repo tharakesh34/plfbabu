@@ -45,7 +45,7 @@ public class BankDetailListModelItemRenderer implements ListitemRenderer<BankDet
 	private static final long serialVersionUID = -6336194516320385692L;
 
 	public BankDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

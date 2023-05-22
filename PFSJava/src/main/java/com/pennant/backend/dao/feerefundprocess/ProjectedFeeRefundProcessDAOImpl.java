@@ -23,11 +23,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.feerefundqueue.FeeRefundProcessQueuing;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ProjectedFeeRefundProcessDAOImpl extends BasicDao<FeeRefundProcessQueuing>
 		implements ProjectedFeeRefundProcessDAO {
@@ -49,7 +49,7 @@ public class ProjectedFeeRefundProcessDAOImpl extends BasicDao<FeeRefundProcessQ
 		frpQueuing.setEodProcess(false);
 		frpQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		frpQueuing.setFeeRefundHeaderId(id);
-		frpQueuing.setStartTime(DateUtility.getSysDate());
+		frpQueuing.setStartTime(DateUtil.getSysDate());
 
 		StringBuilder sql = new StringBuilder(
 				"INSERT INTO FeeRefundProcessQueuing (FINREFERENCE,FeeRefundHeaderId,JSONOBJECT, EODDATE, THREADID, PROGRESS, STARTTIME, EODPROCESS)");
@@ -162,7 +162,7 @@ public class ProjectedFeeRefundProcessDAOImpl extends BasicDao<FeeRefundProcessQ
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FeeRefundHeaderId", feeRefundId);
 		source.addValue("Progress", progress);
-		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("EndTime", DateUtil.getSysDate());
 
 		StringBuilder sql = new StringBuilder("Update FeeRefundProcessQueuing set");
 		sql.append(" EndTime = :EndTime, Progress = :Progress");

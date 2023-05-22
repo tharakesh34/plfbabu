@@ -68,7 +68,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
@@ -92,7 +91,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinCovenantMaintanceDialogCtrl;
-import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -157,7 +155,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 	private Covenant covenant;
 	private transient boolean newFinance;
-	private FinanceMainBaseCtrl financeMainDialogCtrl;
 	private boolean newRecord;
 	private boolean newCustomer;
 	private List<Covenant> covenants;
@@ -230,7 +227,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			setCovenantsListCtrl((CovenantsListCtrl) arguments.get("covenantsListCtrl"));
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
-				financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
 				setNewCustomer(true);
 				setNewFinance(true);
 				this.covenant.setWorkflowId(0);
@@ -833,7 +829,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 							"The number of roles should not exceed more than 5.");
 				}
 
-				StringBuffer data = new StringBuffer();
+				StringBuilder data = new StringBuilder();
 				for (String role : roles.keySet()) {
 					if (data.length() > 0) {
 						data.append(",");
@@ -1082,8 +1078,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			String receivableDateLabel = Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value");
 			if (receivableDate == null) {
 				this.receivableDate.setConstraint(new PTDateValidator(receivableDateLabel, true));
-			} else if (DateUtility.compare(receivableDate, loanStartDt) < 0
-					|| DateUtility.compare(receivableDate, maturityDate) > 0) {
+			} else if (DateUtil.compare(receivableDate, loanStartDt) < 0
+					|| DateUtil.compare(receivableDate, maturityDate) > 0) {
 				this.receivableDate.setConstraint(
 						new PTDateValidator(receivableDateLabel, true, loanStartDt, maturityDate, false));
 			}
@@ -1129,7 +1125,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			if (this.documentRecievedDate.getValue() == null) {
 				this.documentRecievedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantsDialog_DocumentRecievedDate.value"), true));
-			} else if (DateUtility.compare(this.documentRecievedDate.getValue(), appDate) > 0) {
+			} else if (DateUtil.compare(this.documentRecievedDate.getValue(), appDate) > 0) {
 				throw new WrongValueException(this.documentRecievedDate, Labels.getLabel("DATE_NO_FUTURE",
 						new String[] { Labels.getLabel("label_CovenantsDialog_DocumentRecievedDate.value") }));
 			}
@@ -1139,13 +1135,13 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			if (this.extendedDate.getValue() == null) {
 				this.extendedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true));
-			} else if (DateUtility.compare(this.extendedDate.getValue(), receivableDate) <= 0
+			} else if (DateUtil.compare(this.extendedDate.getValue(), receivableDate) <= 0
 					&& getComboboxValue(this.covenantFrequency).equals("#")
 					&& this.covenantNextFrequencyDate.getValue() == null) {
 				this.extendedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true,
 								receivableDate, maturityDate, false));
-			} else if (DateUtility.compare(this.extendedDate.getValue(), receivableDate) <= 0 || DateUtility
+			} else if (DateUtil.compare(this.extendedDate.getValue(), receivableDate) <= 0 || DateUtil
 					.compare(this.extendedDate.getValue(), this.covenantNextFrequencyDate.getValue()) >= 0) {
 				this.extendedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true,
@@ -1157,7 +1153,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				&& !this.covenantNextFrequencyDate.getValue().equals("")) {
 			if (this.covenantFrequency.getSelectedItem().getValue() == "O" && this.pdd.isChecked()
 					&& this.alertDays.getValue() != null && this.alertDays.getValue() != 0) {
-				int days = DateUtility.getDaysBetween(loanStartDt, this.receivableDate.getValue());
+				int days = DateUtil.getDaysBetween(loanStartDt, this.receivableDate.getValue());
 				this.alertDays.setConstraint(new PTNumberValidator(
 						Labels.getLabel("label_CovenantsDialog_AlertDays.value"), true, false, 0, days));
 			}

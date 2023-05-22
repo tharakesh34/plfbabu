@@ -119,12 +119,7 @@ public class FinFeeGSTDetailsDialogCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
-
-		// this.listBoxFinFeeGSTDetails.setHeight(this.borderLayoutHeight - (this.listBoxFinFeeGSTDetails.getItemCount()
-		// * 20) + "px");
-
-		logger.debug("Leaving");
+		// No properties to set for the fields.
 	}
 
 	/**

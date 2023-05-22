@@ -320,7 +320,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" olt.ID, olt.LimitID, oll.FinID, oll.FinReference, olt.ActualLimit");
 		sql.append(", olt.MonthlyLimit, olt.TxnAmount, olt.Narration, olt.TxnType");
-		sql.append(", olt.ActualLimitBal, olt.MonthlyLimitBal, olt.TxnCharge, olt.TxnDate");
+		sql.append(", olt.ActualLimitBal, olt.MonthlyLimitBal, olt.TxnCharge, olt.TxnDate, olt.ValueDate");
 		sql.append(" From OverDraft_Loan_Transactions olt");
 		sql.append(" Inner Join OverDraft_Loan_Limits oll on oll.ID = olt.LimitID");
 		sql.append(" Where oll.FinID = ?");
@@ -344,6 +344,7 @@ public class OverdraftLimitDAOImpl extends SequenceDao<OverdraftLimit> implement
 					odld.setMonthlyLimitBal(rs.getBigDecimal("MonthlyLimitBal"));
 					odld.setTxnCharge(rs.getBigDecimal("TxnCharge"));
 					odld.setTxnDate(JdbcUtil.getDate(rs.getDate("TxnDate")));
+					odld.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 
 					return odld;
 				});

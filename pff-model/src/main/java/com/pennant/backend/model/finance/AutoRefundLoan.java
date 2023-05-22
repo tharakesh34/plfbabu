@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.pennant.backend.model.payment.PaymentDetail;
+import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class AutoRefundLoan implements Serializable {
@@ -35,6 +35,8 @@ public class AutoRefundLoan implements Serializable {
 	private Date closedNDate;
 	private boolean alwRefundByCheque;
 	private BigDecimal overDueAmount = BigDecimal.ZERO;
+	private FinanceProfitDetail profitDetail;
+	private List<FinODDetails> finODDetails = new ArrayList<>(1);
 	private List<FinExcessAmount> excessList = new ArrayList<>();
 	private List<ManualAdvise> payableList = new ArrayList<>();
 	private List<ManualAdvise> receivableList = new ArrayList<>();
@@ -43,6 +45,8 @@ public class AutoRefundLoan implements Serializable {
 	private boolean writeOffLoan;
 	private Date businessDate;
 	private Date appDate;
+	private Date closedDate;
+	private int closedLoanHoldRefundDays;
 
 	private ErrorDetail error = new ErrorDetail();
 
@@ -226,6 +230,22 @@ public class AutoRefundLoan implements Serializable {
 		this.overDueAmount = overDueAmount;
 	}
 
+	public FinanceProfitDetail getProfitDetail() {
+		return profitDetail;
+	}
+
+	public void setProfitDetail(FinanceProfitDetail profitDetail) {
+		this.profitDetail = profitDetail;
+	}
+
+	public List<FinODDetails> getFinODDetails() {
+		return finODDetails;
+	}
+
+	public void setFinODDetails(List<FinODDetails> finODDetails) {
+		this.finODDetails = finODDetails;
+	}
+
 	public List<FinExcessAmount> getExcessList() {
 		return excessList;
 	}
@@ -296,6 +316,22 @@ public class AutoRefundLoan implements Serializable {
 
 	public void setError(ErrorDetail error) {
 		this.error = error;
+	}
+
+	public Date getClosedDate() {
+		return closedDate;
+	}
+
+	public void setClosedDate(Date closedDate) {
+		this.closedDate = closedDate;
+	}
+
+	public int getClosedLoanHoldRefundDays() {
+		return closedLoanHoldRefundDays;
+	}
+
+	public void setClosedLoanHoldRefundDays(int closedLoanHoldRefundDays) {
+		this.closedLoanHoldRefundDays = closedLoanHoldRefundDays;
 	}
 
 }

@@ -183,7 +183,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
@@ -201,7 +200,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.Allocation;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public abstract class GenericFinanceDetailService extends GenericService<FinanceDetail> {
 	private static final Logger logger = LogManager.getLogger(GenericFinanceDetailService.class);
@@ -1201,8 +1200,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		 * FinanceConstants.MODULEID_PROMOTION)); }
 		 */
 
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-				FinanceConstants.MODULEID_FINTYPE));
+		aeEvent.getAcSetIDList()
+				.add(AccountingEngine.getAccountSetID(finMain, eventCode, FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
@@ -1262,12 +1261,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public List<ReturnDataSet> procesSubVenAccounting(AEEvent aeEvent, FinanceDetail fd, boolean doPostings) {
 		String event = AccountingEvent.MANSUB;
-		int moduleId = FinanceConstants.MODULEID_FINTYPE;
-		String finType = fd.getFinScheduleData().getFinanceMain().getFinType();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
 		aeEvent.setAccountingEvent(event);
 		aeEvent.getAcSetIDList().clear();
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finType, event, moduleId));
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, event, FinanceConstants.MODULEID_FINTYPE));
+
 		aeEvent.setLinkedTranId(0);
 
 		if (doPostings) {
@@ -1419,11 +1418,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 			List<FinServiceInstruction> serviceInsts = schdData.getFinServiceInstructions();
 
-			Cloner cloner = new Cloner();
 			int instruction = 0;
 			for (FinServiceInstruction inst : serviceInsts) {
 
-				AEAmountCodes tempAmountCodes = cloner.deepClone(amountCodes);
+				AEAmountCodes tempAmountCodes = ObjectUtil.clone(amountCodes);
 				aeEvent.setDataMap(new HashMap<>());
 
 				if (!feesExecuted) {// No segregation of fees based on instruction
@@ -1601,7 +1599,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private void setFeesesForAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		List<FeeType> feeTypesList = new ArrayList<>();
 		List<Long> feeTypeIds = new ArrayList<>();
 
 		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
@@ -1610,8 +1607,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				feeTypeIds.add(finFeeDetail.getFeeTypeID());
 			}
 			if (!feeTypeIds.isEmpty()) {
-				feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeIds, "");
-				aeEvent.setFeesList(feeTypesList);
+				aeEvent.setFeesList(feeTypeService.getFeeTypesForAccountingById(feeTypeIds));
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -1853,6 +1849,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				penaltyRate.setODAllowWaiver(false);
 				penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 				penaltyRate.setODRuleCode("");
+				penaltyRate.setOdMinAmount(BigDecimal.ZERO);
 			}
 
 			penaltyRate.setFinID(finID);
@@ -2306,14 +2303,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.customerStatusCodeDAO = customerStatusCodeDAO;
 	}
 
+	@Autowired
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	@Autowired
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
+	@Autowired
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
@@ -2331,6 +2331,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
+	@Autowired
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
@@ -2356,10 +2357,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.scoringDetailService = scoringDetailService;
 	}
 
+	@Autowired
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
 		this.checkListDetailService = checkListDetailService;
 	}
 
+	@Autowired
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
@@ -2380,14 +2383,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
+	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Autowired
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
+	@Autowired
 	public void setRecoveryDAO(OverdueChargeRecoveryDAO recoveryDAO) {
 		this.recoveryDAO = recoveryDAO;
 	}
@@ -2396,6 +2402,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeSuspHeadDAO = financeSuspHeadDAO;
 	}
 
+	@Autowired
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
@@ -2408,10 +2415,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.customerDAO = customerDAO;
 	}
 
+	@Autowired
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
 	}
 
+	@Autowired
 	public void setFinFeeChargesDAO(FinFeeChargesDAO finFeeChargesDAO) {
 		this.finFeeChargesDAO = finFeeChargesDAO;
 	}
@@ -2420,6 +2429,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
 
+	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
@@ -2452,6 +2462,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.blacklistCustomerDAO = blacklistCustomerDAO;
 	}
 
+	@Autowired
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
@@ -2464,6 +2475,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.customerDedupDAO = customerDedupDAO;
 	}
 
+	@Autowired
 	public void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
 		this.finStageAccountingLogDAO = finStageAccountingLogDAO;
 	}
@@ -2480,6 +2492,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
+	@Autowired
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
 	}
@@ -2496,6 +2509,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finFlagDetailsDAO = finFlagDetailsDAO;
 	}
 
+	@Autowired
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
@@ -2530,10 +2544,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.finPlanEmiHolidayDAO = finPlanEmiHolidayDAO;
 	}
 
+	@Autowired
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
+	@Autowired
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
 	}
@@ -2563,6 +2579,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.queryDetailService = queryDetailService;
 	}
 
+	@Autowired
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
 	}

@@ -45,7 +45,7 @@ public class CurrencyListModelItemRenderer implements ListitemRenderer<Currency>
 	private static final long serialVersionUID = 9199981912283581234L;
 
 	public CurrencyListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

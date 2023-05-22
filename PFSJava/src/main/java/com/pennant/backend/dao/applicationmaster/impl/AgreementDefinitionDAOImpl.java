@@ -307,4 +307,29 @@ public class AgreementDefinitionDAOImpl extends SequenceDao<AgreementDefinition>
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
+	@Override
+	public AgreementDefinition getTemplate(long templateId) {
+		StringBuilder sql = new StringBuilder("Select AggId, AggCode, AggName, AggDesc");
+		sql.append(", AggReportName, AggReportPath, AggIsActive, AggType");
+		sql.append(" From BMTAggrementDef");
+		sql.append(" Where AggId = ? and AggisActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			AgreementDefinition item = new AgreementDefinition();
+
+			item.setAggId(rs.getLong("AggId"));
+			item.setAggCode(rs.getString("AggCode"));
+			item.setAggName(rs.getString("AggName"));
+			item.setAggDesc(rs.getString("AggDesc"));
+			item.setAggReportName(rs.getString("AggReportName"));
+			item.setAggReportPath(rs.getString("AggReportPath"));
+			item.setAggIsActive(rs.getBoolean("AggIsActive"));
+			item.setAggtype(rs.getString("AggType"));
+
+			return item;
+		}, templateId, 1);
+	}
+
 }

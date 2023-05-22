@@ -45,7 +45,7 @@ public class OverdueChargeListModelItemRenderer implements ListitemRenderer<Over
 	private static final long serialVersionUID = 7335935028165679463L;
 
 	public OverdueChargeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

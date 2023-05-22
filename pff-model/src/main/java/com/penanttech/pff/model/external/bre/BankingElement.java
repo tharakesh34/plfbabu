@@ -50,6 +50,7 @@ public class BankingElement {
 
 	@JsonCreator
 	public BankingElement() {
+	    super();
 	}
 
 	public String getBankName() {

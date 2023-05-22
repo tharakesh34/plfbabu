@@ -87,6 +87,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainListModelItemRenderer;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
@@ -483,7 +484,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// CAST AND STORE THE SELECTED OBJECT
 		final FinanceMain afm = (FinanceMain) item.getAttribute("data");
 
-		if (ImplementationConstants.ALLOW_EXTENDEDFIELDS_IN_WORKFLOW) {
+		if (NpaAndProvisionExtension.ALLOW_EXTENDEDFIELDS_IN_WORKFLOW) {
 			financeDetailService.addExtFieldsToAttributes(afm);
 		}
 

@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zss.api.Importer;
@@ -35,13 +37,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CostComponentDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
@@ -57,6 +59,8 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.pff.service.hook.ExtendedCreditReviewHook;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
@@ -71,6 +75,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceMainBaseCtrl financeMainDialogCtrl = null;
 	private boolean isReadOnly;
 	private boolean enqiryModule;
+	private boolean isValidationAlw;
 
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
@@ -78,7 +83,13 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceDetail fd;
 	private Tab parentTab;
 
+	private List<Verification> verifications;
+
 	int format = PennantConstants.defaultCCYDecPos;
+
+	@Autowired(required = false)
+	@Qualifier("extendedCreditReviewHook")
+	private ExtendedCreditReviewHook extendedCreditReviewHook;
 
 	public FinanceSpreadSheetCtrl() {
 		super();
@@ -128,6 +139,14 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
 
+			if (arguments.containsKey("isValidationAlw")) {
+				this.isValidationAlw = (boolean) arguments.get("isValidationAlw");
+			}
+
+			if (arguments.containsKey("verifications")) {
+				this.verifications = (List<Verification>) arguments.get("verifications");
+			}
+
 			if (this.creditReviewDetails != null) {
 				doShowDialog();
 			}
@@ -168,17 +187,24 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap) {
 		String employmentType = (String) dataMap.get("CUST_EMPLOYMENT_TYPE");
 
+		if ("#".equals(employmentType) && isValidationAlw) {
+			throw new AppException("Employment Type rquired for Co-Applicants.");
+		} else if ("#".equals(employmentType)) {
+			return null;
+		}
+
 		return getSheet(sheetNamePrefix, book, dataMap, employmentType);
 	}
 
-	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String eligibilityMethod) {
+	private Sheet getSheet(String sheetNamePrefix, Book book, Map<String, Object> dataMap, String employmentType) {
 		String custCIF = (String) dataMap.get("CIF");
 		String sheetName = sheetNamePrefix;
 
-		/*
-		 * if (StringUtils.isNoneEmpty(eligibilityMethod)) { sheetName =
-		 * sheetNamePrefix.concat("_").concat(eligibilityMethod); }
-		 */
+		if ("#".equals(employmentType) && isValidationAlw) {
+			throw new AppException("Employment Type rquired for Customer.");
+		} else if ("#".equals(employmentType)) {
+			return null;
+		}
 
 		Sheet sourceSheet = book.getSheet(sheetName);
 
@@ -186,7 +212,7 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			throw new AppException(sheetName + " Sheet not found.");
 		}
 
-		sheetName = sheetName.concat("_").concat(eligibilityMethod).concat("_").concat(custCIF);
+		sheetName = sheetName.concat("_").concat(employmentType).concat("_").concat(custCIF);
 
 		return SheetCopier.clone(sheetName, sourceSheet);
 	}
@@ -242,37 +268,40 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			/*
 			 * Setting applicant data to corresponding cell based on the configuration, either from Fields or FieldKeys
 			 */
-			try {
-				Sheet sheet = getSheet("APP", book, applicantDataMap, "");
+			String employmentType = (String) applicantDataMap.get("CUST_EMPLOYMENT_TYPE");
+			Sheet appSheet = getSheet("APP", book, applicantDataMap, employmentType);
 
-				doSetData(sheet);
-
-				if (!enqiryModule) {
-					doSetScreenData(sheet, applicantDataMap);
-				}
-
-				spreadSheet.setSelectedSheet(sheet.getSheetName());
-			} catch (Exception e) {
-				throw e;
+			if (appSheet == null) {
+				return;
 			}
+
+			doSetData(appSheet);
+
+			if (!enqiryModule) {
+				doSetScreenData(appSheet, applicantDataMap);
+				doSetVarificationData(appSheet);
+			}
+
+			spreadSheet.setSelectedSheet(appSheet.getSheetName());
 
 			/* Setting co-applicant data to corresponding cell based on the configuration either from Fields or */
 			for (Entry<String, Map<String, Object>> coAppData : coApplicantData.entrySet()) {
-				try {
-					Map<String, Object> coappData = coAppData.getValue();
-					Sheet sheet = getSheet("CO_APP", book, coappData);
+				Map<String, Object> coappData = coAppData.getValue();
+				Sheet coAppSheet = getSheet("CO_APP", book, coappData);
 
-					doSetData(sheet);
-
-					Map<String, Object> modicoappData = new HashMap<String, Object>();
-					for (Entry<String, Object> data : coappData.entrySet()) {
-						modicoappData.put("CO_APP_" + data.getKey(), data.getValue());
-					}
-
-					doSetScreenData(sheet, modicoappData);
-				} catch (Exception e) {
-					//
+				if (coAppSheet == null) {
+					return;
 				}
+
+				doSetData(coAppSheet);
+
+				Map<String, Object> modicoappData = new HashMap<String, Object>();
+				for (Entry<String, Object> data : coappData.entrySet()) {
+					modicoappData.put("CO_APP_" + data.getKey(), data.getValue());
+				}
+
+				doSetScreenData(coAppSheet, modicoappData);
+
 			}
 
 			setFinalSheet(book, applicantDataMap);
@@ -376,10 +405,6 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 		String prefix1 = prefix;
 
-		if (prefix.startsWith("APP")) {
-			prefix1 = "CO_" + prefix;
-		}
-
 		Book book = spreadSheet.getBook();
 		int numberOfSheets = book.getNumberOfSheets();
 
@@ -396,7 +421,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				if (finalFormula.length() > 0) {
 					finalFormula = finalFormula + "+";
 				}
-
+				if (sheetName.contains("-")) {
+					sheetName = "'" + sheetName + "'";
+				}
 				finalFormula = finalFormula + sheetName + "!" + reference;
 			}
 		}
@@ -441,8 +468,12 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		if (range == null || range.isWholeColumn()) {
 			return;
 		}
+		CellData cellData = range.getCellData();
+		CellType cellType = cellData.getType();
 
-		CellType cellType = range.getCellData().getType();
+		if (cellData.isFormula()) {
+			return;
+		}
 
 		if (cellType != null && object == null) {
 			switch (cellType) {
@@ -508,6 +539,14 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return convertStringToMap(creditReviewDetails.getFieldKeys());
 	}
 
+	private Map<String, Object> getProtectedFieldsBySheet() {
+		return convertStringToMap(creditReviewDetails.getProtectedCells());
+	}
+
+	private Map<String, Object> getFormulaFieldsBySheet() {
+		return convertStringToMap(creditReviewDetails.getFormulaCells());
+	}
+
 	private String[] getFields(Object object) {
 		String[] fields = null;
 		if (object == null || StringUtils.isEmpty(object.toString())) {
@@ -560,6 +599,30 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			}
 		}
 
+		if (creditReviewDetails.getProtectedCells() != null) {
+			Map<String, Object> protectedCellsBySheet = getProtectedFieldsBySheet();
+			for (Entry<String, Object> fieldMap : protectedCellsBySheet.entrySet()) {
+				if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						fieldName = StringUtils.trim(fieldName);
+						protectField(sheet, fieldName);
+					}
+				}
+			}
+		}
+
+		if (creditReviewDetails.getFormulaCells() != null) {
+			Map<String, Object> formulaCellsBySheet = getFormulaFieldsBySheet();
+			for (Entry<String, Object> fieldMap : formulaCellsBySheet.entrySet()) {
+				if (sheet.getSheetName().startsWith(fieldMap.getKey())) {
+					for (String fieldName : getFields(fieldMap.getValue())) {
+						fieldName = StringUtils.trim(fieldName);
+						setFormula(sheet, fieldName);
+					}
+				}
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -593,6 +656,54 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void doSetVarificationData(Sheet sheet) {
+		if (this.verifications == null) {
+			return;
+		}
+
+		try {
+
+			String marketValueFiedls = SysParamUtil.getValueAsString("CREDIT_MARKET_VALUATION");
+			if (StringUtils.isEmpty(marketValueFiedls)) {
+				return;
+			}
+			BigDecimal value1 = null;
+			BigDecimal value2 = null;
+			String[] arr = marketValueFiedls.split(",");
+			for (int i = 0; i < this.verifications.size(); i++) {
+				Verification verification = this.verifications.get(i);
+				if (verification.getReinitid() == null && !StringUtils.isEmpty(verification.getFinalValDecision())) {
+					if (verification.getAgencyName() == null) {
+						continue;
+					}
+
+					if (value1 == null) {
+						value1 = verification.getValuationAmount();
+						continue;
+					}
+
+					value2 = verification.getValuationAmount();
+					break;
+
+				}
+			}
+
+			if (value1 == null) {
+				value1 = BigDecimal.ZERO;
+			}
+
+			if (value2 == null) {
+				value2 = BigDecimal.ZERO;
+			}
+
+			setCellValue(sheet, arr[0], PennantApplicationUtil.formateAmount(value1, 2));
+			setCellValue(sheet, arr[1], PennantApplicationUtil.formateAmount(value2, 2));
+
+		} catch (Exception e) {
+			logger.error(e);
+		}
 	}
 
 	/**
@@ -657,6 +768,24 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			CellStyle cellStyle = range.getCellStyle();
 			EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
 			newStyle.setLocked(false);
+			range.setCellStyle(newStyle);
+		}
+	}
+
+	private void protectField(Sheet sheet, String fieldName) {
+
+		if (isReadOnly) {
+			return;
+		}
+
+		fieldName = StringUtils.trim(fieldName);
+
+		Range range = getRange(sheet, fieldName);
+
+		if (range != null) {
+			CellStyle cellStyle = range.getCellStyle();
+			EditableCellStyle newStyle = range.getCellStyleHelper().createCellStyle(cellStyle);
+			newStyle.setLocked(true);
 			range.setCellStyle(newStyle);
 		}
 	}
@@ -972,22 +1101,43 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		Date date = SysParamUtil.getAppDate();
 		BigDecimal lessThan2years = BigDecimal.ZERO;
 		BigDecimal greaterThan2years = BigDecimal.ZERO;
+		BigDecimal greaterThan12months = BigDecimal.ZERO;
 
 		for (FinanceEnquiry financeEnquiry : list) {
 
-			int years = DateUtility.getYearsBetween(financeEnquiry.getFinStartDate(), date);
+			int years = DateUtil.getYearsBetween(financeEnquiry.getFinStartDate(), date);
 			if (years <= 2) {
 				lessThan2years = lessThan2years.add(financeEnquiry.getMaxInstAmount());
 			} else {
 				greaterThan2years = greaterThan2years.add(financeEnquiry.getMaxInstAmount());
 			}
 
+			if ((financeEnquiry.getNOInst() - financeEnquiry.getNOPaidinst()) > 12) {
+				greaterThan12months = greaterThan12months.add(financeEnquiry.getMaxInstAmount());
+			}
+
+		}
+
+		List<CustomerExtLiability> list2 = cd.getCustomerExtLiabilityList();
+		if (list2 != null) {
+			for (CustomerExtLiability custExt : list2) {
+				if (custExt.getBalanceTenure() > 12) {
+					BigDecimal installAmount = custExt.getInstalmentAmount();
+					if (installAmount == null) {
+						installAmount = BigDecimal.ZERO;
+					}
+					greaterThan12months = greaterThan12months.add(installAmount);
+				}
+			}
 		}
 		dataMap.put("CUST_EXPOS_LESS2", PennantApplicationUtil.formateAmount(lessThan2years, format));
 		dataMap.put("CUST_EXPOS_GREATER2", PennantApplicationUtil.formateAmount(greaterThan2years, format));
+		dataMap.put("CUST_OBLIGATION",
+				PennantApplicationUtil.formateAmount(lessThan2years.add(greaterThan2years), format));
 
 		BigDecimal custObligation = lessThan2years.add(greaterThan2years);
 		dataMap.put("CUST_OBLIGATION", PennantApplicationUtil.formateAmount(custObligation, format));
+		dataMap.put("CUST_OBLIGATION_GREATER12", PennantApplicationUtil.formateAmount(greaterThan12months, format));
 	}
 
 	private void setCollateralData(Map<String, Object> dataMap) {
@@ -1136,7 +1286,9 @@ public class FinanceSpreadSheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	public void doSaveScoreDetail(FinanceDetail afd) {
-		// TODO Auto-generated method stub
+		if (extendedCreditReviewHook != null) {
+			extendedCreditReviewHook.saveExtCreditReviewDetails(afd);
+		}
 	}
 
 	public CreditReviewData getCreditReviewData() {

@@ -63,6 +63,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.pff.template.TemplateUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -411,7 +412,7 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 		// this.aggReportPath.setValue(aAgreementDefinition.getAggReportPath());
 		this.aggIsActive.setChecked(aAgreementDefinition.isAggIsActive());
 		this.recordStatus.setValue(aAgreementDefinition.getRecordStatus());
-		fillComboBox(this.aggType, aAgreementDefinition.getAggtype(), PennantStaticListUtil.getAgreementType(), "");
+		fillComboBox(this.aggType, aAgreementDefinition.getAggtype(), TemplateUtil.getAgreementType(), "");
 		fillComboBox(this.moduleType, aAgreementDefinition.getModuleType(), PennantStaticListUtil.getModulType(), "");
 		this.allowMultiple.setChecked(aAgreementDefinition.isAllowMultiple());
 		if (this.agreementDefinition.isNewRecord()) {

@@ -43,13 +43,13 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.CustomerLimit;
 import com.pennant.backend.model.customermasters.CustomerLimitCategory;
 import com.pennant.backend.service.applicationmaster.CurrencyService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -171,7 +171,7 @@ public class CustomerLimitEnquiryCtrl extends GFCBaseCtrl<CustomerLimitCategory>
 			this.currency.setValue(customerLimit.getCurrency());
 		}
 		this.earliestExpiryDate.setValue(
-				DateUtility.formatToLongDate(DateUtility.addYears(customerLimit.getEarliestExpiryDate(), 1900)));
+				DateUtil.formatToLongDate(DateUtil.addYears(customerLimit.getEarliestExpiryDate(), 1900)));
 
 		doFilllistbox(customerLimit.getCustCIF());
 		logger.debug("Leaving");

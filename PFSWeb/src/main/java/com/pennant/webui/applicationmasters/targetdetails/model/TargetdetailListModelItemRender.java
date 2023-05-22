@@ -16,7 +16,7 @@ public class TargetdetailListModelItemRender implements ListitemRenderer<TargetD
 	private static final long serialVersionUID = 9099171990501035267L;
 
 	public TargetdetailListModelItemRender() {
-
+	    super();
 	}
 
 	@Override

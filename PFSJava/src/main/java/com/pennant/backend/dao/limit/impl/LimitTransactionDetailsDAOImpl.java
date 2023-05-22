@@ -71,28 +71,27 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { headerId, referenceCode, referenceNumber, tranType, schSeq }, (rs, i) -> {
-						LimitTransactionDetail ltd = new LimitTransactionDetail();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				LimitTransactionDetail ltd = new LimitTransactionDetail();
 
-						ltd.setTransactionId(rs.getLong("TransactionId"));
-						ltd.setReferenceCode(rs.getString("ReferenceCode"));
-						ltd.setReferenceNumber(rs.getString("ReferenceNumber"));
-						ltd.setTransactionType(rs.getString("TransactionType"));
-						ltd.setTransactionDate(rs.getTimestamp("TransactionDate"));
-						ltd.setOverrideFlag(rs.getBoolean("OverrideFlag"));
-						ltd.setTransactionAmount(rs.getBigDecimal("TransactionAmount"));
-						ltd.setSchSeq(rs.getInt("SchSeq"));
-						ltd.setTransactionCurrency(rs.getString("TransactionCurrency"));
-						ltd.setLimitCurrency(rs.getString("LimitCurrency"));
-						ltd.setLimitAmount(rs.getBigDecimal("LimitAmount"));
-						ltd.setCreatedBy(rs.getLong("CreatedBy"));
-						ltd.setCreatedOn(rs.getTimestamp("CreatedOn"));
-						ltd.setLastMntBy(rs.getLong("LastMntBy"));
-						ltd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				ltd.setTransactionId(rs.getLong("TransactionId"));
+				ltd.setReferenceCode(rs.getString("ReferenceCode"));
+				ltd.setReferenceNumber(rs.getString("ReferenceNumber"));
+				ltd.setTransactionType(rs.getString("TransactionType"));
+				ltd.setTransactionDate(rs.getTimestamp("TransactionDate"));
+				ltd.setOverrideFlag(rs.getBoolean("OverrideFlag"));
+				ltd.setTransactionAmount(rs.getBigDecimal("TransactionAmount"));
+				ltd.setSchSeq(rs.getInt("SchSeq"));
+				ltd.setTransactionCurrency(rs.getString("TransactionCurrency"));
+				ltd.setLimitCurrency(rs.getString("LimitCurrency"));
+				ltd.setLimitAmount(rs.getBigDecimal("LimitAmount"));
+				ltd.setCreatedBy(rs.getLong("CreatedBy"));
+				ltd.setCreatedOn(rs.getTimestamp("CreatedOn"));
+				ltd.setLastMntBy(rs.getLong("LastMntBy"));
+				ltd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 
-						return ltd;
-					});
+				return ltd;
+			}, headerId, referenceCode, referenceNumber, tranType, schSeq);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

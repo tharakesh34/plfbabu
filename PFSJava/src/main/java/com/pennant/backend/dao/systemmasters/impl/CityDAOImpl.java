@@ -310,4 +310,13 @@ public class CityDAOImpl extends BasicDao<City> implements CityDAO {
 		return exists;
 	}
 
+	@Override
+	public boolean isActiveCity(String code) {
+		String sql = "Select Count(PCCity) From RMTProvinceVsCity Where PCCity = ? and CityIsActive = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, code, 1) > 0;
+	}
+
 }

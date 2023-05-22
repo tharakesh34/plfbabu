@@ -32,9 +32,9 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.ReportsUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.ChequeDetails;
@@ -46,6 +46,7 @@ import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -260,7 +261,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						NumberToEnglishWords.getAmountInText(CurrencyUtil.parse(repayAmt, format),
 								getFinScheduleData().getFinanceMain().getFinCcy()).toUpperCase());
 				if (!"#".equals(this.startDate.getSelectedItem().getValue().toString())) {
-					chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility.parse(
+					chequeDetails.setAppDate(DateUtil.formatToLongDate(DateUtil.parse(
 							this.startDate.getSelectedItem().getValue().toString(), PennantConstants.DBDateFormat)));
 				}
 				chequeDetailsList.add(chequeDetails);
@@ -296,7 +297,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		for (int j = startIndex; j <= endIndex; j++) {
 			if (pDCPeriod == 0 || j % pDCPeriod == 0) {
 				chequeDetails = prepareReportObject(getFinScheduleData());
-				chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility
+				chequeDetails.setAppDate(DateUtil.formatToLongDate(DateUtil
 						.parse(this.startDate.getItemAtIndex(j).getValue().toString(), PennantConstants.DBDateFormat)));
 				if (j == endIndex) {
 					repaymentAmount = getRepayDetails(repayDetailMap, j - pDCPeriod + 1, repayDetailMap.size());
@@ -345,7 +346,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	private ChequeDetails prepareReportObject(FinScheduleData finScheduleData) {
 		ChequeDetails chequeDetails = new ChequeDetails();
 		chequeDetails.setFinBranchName(Labels.getLabel("label_ClientName"));// finScheduleData.getFinanceMain().getLovDescFinBranchName()
-		chequeDetails.setAppDate(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
+		chequeDetails.setAppDate(SysParamUtil.getAppValueDate(DateFormat.LONG_DATE));
 		chequeDetails.setCustName(finScheduleData.getFinanceMain().getLovDescCustFName() + " "
 				+ StringUtils.trimToEmpty(finScheduleData.getFinanceMain().getLovDescCustLName()));
 		chequeDetails.setFinReference(finScheduleData.getFinanceMain().getFinType() + "-"
@@ -452,7 +453,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					comboitem.setAttribute("index", count);
 					count++;
 					comboitem.setLabel(
-							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+							DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 					dateCombobox.appendChild(comboitem);
@@ -561,7 +562,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}

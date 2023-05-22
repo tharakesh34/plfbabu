@@ -187,7 +187,7 @@ public class MailTemplateData {
 	private String qryDesc;
 
 	public MailTemplateData() {
-
+	    super();
 	}
 
 	// ******************************************************//

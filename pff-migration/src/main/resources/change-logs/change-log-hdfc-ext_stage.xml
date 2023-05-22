@@ -40,4 +40,264 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="002" author="goutham.ch">
+		<createTable tableName="FINCON_GL_STG">
+			<column name="ACCOUNT" type="VARCHAR(50)" />
+			<column name="BRANCH" type="VARCHAR(50)" />
+			<column name="COSTCENTRE" type="VARCHAR(50)" />
+			<column name="BUDGET_PROJECT_CODE" type="VARCHAR(50)" />
+			<column name="CURRENCY" type="VARCHAR(50)" />
+			<column name="MIS1_DIVISION" type="VARCHAR(50)" />
+			<column name="MIS2_PSL" type="VARCHAR(50)" />
+			<column name="MIS3" type="VARCHAR(50)" />
+			<column name="PRODUCT" type="VARCHAR(50)" />
+			<column name="CATEGORY" type="VARCHAR(50)" />
+			<column name="SPARE1" type="VARCHAR(50)" />
+			<column name="SPARE2" type="VARCHAR(50)" />
+			<column name="SPARE3" type="VARCHAR(50)" />
+			<column name="SPARE4" type="VARCHAR(50)" />
+			<column name="CURRENCYCODE" type="VARCHAR(50)" />
+			<column name="DR_AMOUNT" type="bigint" />
+			<column name="CR_AMOUNT" type="bigint" />
+			<column name="EXCHANGE_DATE" type="VARCHAR(50)" />
+			<column name="EXCHANGE_RATE_TYPE" type="bigint" />
+			<column name="EXCHANGE_RATE" type="bigint" />
+			<column name="JOURNAL_SOURCE" type="VARCHAR(50)" />
+			<column name="JOURNAL_CATEGORY" type="bigint" />
+			<column name="PERIOD" type="bigint" />
+			<column name="ACC_DATE" type="datetime" />
+			<column name="BATCH_NAME" type="VARCHAR(50)" />
+			<column name="BATCH_DESC" type="VARCHAR(50)" />
+			<column name="JOURNAL_NAME" type="VARCHAR(50)" />
+			<column name="JOURNAL_DESC" type="VARCHAR(50)" />
+			<column name="LINE_NARRATION" type="VARCHAR(50)" />
+			<column name="SOURCE_GL_CODE" type="VARCHAR(50)" />
+			<column name="CONTRACT_NO" type="VARCHAR(50)" />
+			<column name="NORMAL_RATE" type="VARCHAR(50)" />
+			<column name="PENAL_INTEREST_RATE" type="VARCHAR(50)" />
+			<column name="START_DATE" type="datetime" />
+			<column name="END_DATE" type="datetime" />
+			<column name="CUST_ID" type="VARCHAR(50)" />
+			<column name="COUNTRY_OF_EXPOSURE" type="VARCHAR(50)" />
+			<column name="GRADING" type="VARCHAR(50)" />
+			<column name="INDUSTRY" type="VARCHAR(50)" />
+			<column name="SPARE" type="VARCHAR(50)" />
+			<column name="BOOKS" type="VARCHAR(50)" />
+			<column name="CONST1" type="VARCHAR(50)" />
+			<column name="CONST2" type="VARCHAR(50)" />
+			<column name="DATE_CREATED" type="datetime" />
+			<column name="EMP_NUM" type="VARCHAR(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="003" author="goutham.ch">
+		<createTable tableName="EXT_BASEL_ONE">
+			<column name="AGREEMENTID" type="VARCHAR(50)" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="REG_EMI" type="VARCHAR(10)" />
+			<column name="EXCESS_MONEY" type="bigint" />
+			<column name="ACCRUED_INT" type="bigint" />
+			<column name="UN_EARNED_INT" type="bigint" />
+			<column name="GROSS_RCVBL" type="bigint" />
+			<column name="SUS_INT" type="bigint" />
+			<column name="ASSET_CLASSIFTN_ID" type="VARCHAR(50)" />
+			<column name="SECURITIZED" type="VARCHAR(50)" />
+			<column name="EXACT_NPA_DATE" type="datetime" />
+			<column name="ANNUAL_TURNOVER" type="bigint" />
+			<column name="EXPTYPE" type="VARCHAR(50)" />
+			<column name="TENURE" type="bigint" />
+		</createTable>
+	</changeSet>
+
+
+
+	<changeSet id="004" author="goutham.ch">
+		<createTable tableName="ALM_REPORT">
+			<column name="ALM_REPORT_TYPE" type="VARCHAR(2)" />
+			<column name="ALM_REPORT_DATE" type="datetime" />
+			<column name="ACCOUNT_NUM" type="VARCHAR(20)" />
+			<column name="ACCRUALBASIS" type="VARCHAR(12)" />
+			<column name="ACCRUED_INTERESTNUMBER" type="bigint" />
+			<column name="BANKNUMBER" type="VARCHAR(50)" />
+			<column name="BRANCH" type="VARCHAR(50)" />
+			<column name="COMP_FREQ" type="bigint" />
+			<column name="COMP_FREQ_INCR" type="bigint" />
+			<column name="CURRENCY_CODE" type="VARCHAR(13)" />
+			<column name="CURRENT_BALANCE" type="bigint" />
+			<column name="DUE_DATE" type="datetime" />
+			<column name="INTT_PAYMT_FREQ" type="bigint" />
+			<column name="INTT_RATE" type="bigint" />
+			<column name="LIFE_CEILING" type="bigint" />
+			<column name="LIFE_FLOOR" type="bigint" />
+			<column name="LOAN_TYPE" type="VARCHAR(9)" />
+			<column name="MATURITY" type="datetime" />
+			<column name="ORIG_BALANCE" type="bigint" />
+			<column name="ORIG_TERM" type="bigint" />
+			<column name="ORIGINATION_DATE" type="datetime" />
+			<column name="INSTALMENT" type="bigint" />
+			<column name="PYMT_FREQ" type="VARCHAR(2)" />
+			<column name="PYMT_TYPE" type="bigint" />
+			<column name="PCT_OWNED" type="bigint" />
+			<column name="RATE_FLAG" type="VARCHAR(9)" />
+			<column name="REPRICE_INDEX" type="VARCHAR(13)" />
+			<column name="DPD" type="bigint" />
+			<column name="TOTAL_INTEREST" type="bigint" />
+			<column name="BILLED_INTEREST" type="bigint" />
+			<column name="BILLED_NOT_RECEIVED_INTEREST" type="bigint" />
+			<column name="BILLED_NOT_RECEIVED_PRINCIPAL" type="bigint" />
+			<column name="CUSTOMERNAME" type="VARCHAR(50)" />
+			<column name="PRETAXIRR" type="bigint" />
+			<column name="SCHEMEID" type="bigint" />
+			<column name="PROFESSIONCODE" type="VARCHAR(24)" />
+			<column name="BROKERID" type="bigint" />
+			<column name="PSLCTGID" type="bigint" />
+			<column name="NPA_STAGEID" type="VARCHAR(8)" />
+			<column name="WEAKER_SECTION_DESC" type="VARCHAR(50)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="005" author="r.sreeram">
+		<createTable tableName="BASELTWO">
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="ICN_STATUS" type="VARCHAR(1)" />
+			<column name="ICN_ACQUIRED" type="datetime" />
+			<column name="LOAN_APPL_DT" type="datetime" />
+			<column name="TOTAL_EMIS" type="bigint" />
+			<column name="DND" type="VARCHAR(1)" />
+			<column name="APPLIED_BEFORE" type="VARCHAR(1)" />
+			<column name="OLD_AGMTNO" type="VARCHAR(50)" />
+			<column name="MICR_LOCATION" type="VARCHAR(50)" />
+			<column name="FEES" type="bigint" />
+			<column name="FIXED_FLOAT" type="varchar(1)" />
+			<column name="DEALER_COMM" type="bigint" />
+			<column name="MANF_DISC" type="bigint" />
+			<column name="PROMOTION_CODE" type="varchar(20)" />
+			<column name="RC_AVAIL_STATUS" type="varchar(1)" />
+			<column name="RC_ACQUIRED" type="datetime" />
+			<column name="EMI_TYPE" type="varchar(5)" />
+			<column name="REST" type="varchar(5)" />
+			<column name="CUST_ACCOUNT" type="varchar(50)" />
+			<column name="NO_BOUNCES" type="bigint" />
+			<column name="CHARGES_PAID" type="bigint" />
+			<column name="PREV_NPA" type="datetime" />
+			<column name="SECURT_FLAG" type="varchar(1)" />
+			<column name="SECURT_DT" type="datetime" />
+			<column name="DPD_STRING" type="VARCHAR(250)" />
+			<column name="TOT_AMT_PAID_MNTH_CHQ" type="bigint" />
+			<column name="TOT_AMT_PAID_MNTH_CASH" type="bigint" />
+			<column name="RESCHEDULED" type="varchar(1)" />
+			<column name="RESCHEDULE_EFF_DT" type="datetime" />
+			<column name="CLOSURE_TYPE" type="varchar(10)" />
+			<column name="PRIN_LOSS_CLOSURE" type="bigint" />
+			<column name="IBPC_START" type="datetime" />
+			<column name="IBPC_END" type="datetime" />
+			<column name="MONTHS_IN_PREV_JOB" type="int" />
+			<column name="MONTHS_IN_CURR_JOB" type="int" />
+			<column name="MONTHS_IN_CURR_RESIDENCE" type="int" />
+			<column name="RENT_PM" type="bigint" />
+			<column name="DEVIATION" type="VARCHAR(1)" />
+			<column name="VEHICLE_AGE" type="int" />
+			<column name="APP_SCORE" type="int" />
+			<column name="RIC_SCORE" type="int" />
+			<column name="INCOME_PROOF_RECEIVED" type="VARCHAR(1)" />
+			<column name="TOTAL_EXPERIENCE" type="bigint" />
+			<column name="EMPLOYER_CATEGORY" type="VARCHAR(1)" />
+			<column name="MONTHS_IN_CITY" type="int" />
+			<column name="ELIGIBILITY" type="VARCHAR(1)" />
+			<column name="OBLIGATIONS" type="bigint" />
+			<column name="OBLIGATIONS_N" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="006" author="r.sreeram">
+		<createTable tableName="RPMSEXTRACT">
+			<column name="AGREEMENTID" type="bigint" />
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="STATUS" type="VARCHAR(1)" />
+			<column name="MULTI_LINK_LOAN_FLAG" type="VARCHAR(1)" />
+			<column name="PARENT_LOAN_NO" type="bigint" />
+			<column name="CUSTOMER_SEGMENT" type="bigint" />
+			<column name="GROUPID" type="bigint" />
+			<column name="GROUPDESC" type="VARCHAR(105)" />
+			<column name="GROUPCODE" type="VARCHAR(10)" />
+			<column name="REPO_SETTLED_FLAG" type="VARCHAR(2)" />
+			<column name="CLOSURE_REASON" type="VARCHAR(200)" />
+			<column name="CLOSURE_DATE" type="datetime" />
+			<column name="POS_ON_CLOSURE" type="bigint" />
+			<column name="PDC_FLAG" type="VARCHAR(1)" />
+			<column name="TOT_PRIN_WAIVE_OFF" type="bigint" />
+			<column name="TOT_INT_WAIVE_OFF" type="bigint" />
+			<column name="WOFF_CHQBOUNCE_CHARGES" type="bigint" />
+			<column name="WOFF_OVERDUE_CHARGE" type="bigint" />
+			<column name="WOFF_OTHERS" type="bigint" />
+			<column name="RAM_ID" type="varchar(18)" />
+			<column name="TURNOVER_IN_YEAR_ONE" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_ONE" type="bigint" />
+			<column name="TURNOVER_IN_YEAR_TWO" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_TWO" type="bigint" />
+			<column name="TURNOVER_IN_YEAR_THREE" type="VARCHAR(8)" />
+			<column name="TURNOVER_AMT_YEAR_THREE" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet author="goutham.ch" id="004.1">
+		<renameColumn newColumnName="ACCRUED_INTEREST" oldColumnName="ACCRUED_INTERESTNUMBER"
+			tableName="ALM_REPORT" />
+	</changeSet>
+
+
+	<changeSet id="007" author="SREERAM.R" dbms="oracle">
+		<createProcedure>
+			CREATE OR REPLACE procedure SP_FINCON_GL(exe_postdate date) AS
+			BEGIN
+			execute immediate 'truncate table
+			FINCON_GL_STG';
+			DECLARE
+			PERIOD VARCHAR2(20 CHAR);
+			ACC_DATE VARCHAR2(20 CHAR);
+			BATCH_NAME VARCHAR2(20 CHAR);
+
+
+			Begin
+			SELECT
+			TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'Mon-yy') into PERIOD FROM SMTPARAMETERS where SYSPARMCODE='APP_DATE';
+			SELECT TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'DD-Mon-YY') into ACC_DATE FROM SMTPARAMETERS where
+			SYSPARMCODE='APP_DATE';
+			SELECT TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'DD-Mon-yyyy') into BATCH_NAME FROM
+			SMTPARAMETERS where
+			SYSPARMCODE='APP_DATE';
+
+			INSERT INTO FINCON_GL_STG
+			(BRANCH,CURRENCY,CURRENCYCODE,DR_AMOUNT,CR_AMOUNT,JOURNAL_SOURCE,JOURNAL_CATEGORY,SOURCE_GL_CODE,BOOKS,CONST1,CONST2,PERIOD,ACC_DATE,BATCH_NAME,
+			JOURNAL_NAME)
+			select
+			po.postbranch AS BRANCH,
+			'INR' AS CURRENCY,
+			'INR' AS CURRENCYCODE,
+			CASE WHEN PO.DRORCR='D' THEN
+			SUM(PO.POSTAMOUNT) ELSE 0 END AS DR_AMOUNT,
+			CASE WHEN PO.DRORCR='C' THEN SUM(PO.POSTAMOUNT) ELSE 0 END AS CR_AMOUNT,
+			'PN' AS JOURNAL_SOURCE,
+			'File 1: Closing TB' AS JOURNAL_CATEGORY,
+			PERIOD,
+			ACC_DATE,
+			'PNFile 1: Closing TB'||BATCH_NAME,
+			'PNFile 1: Closing TB'|| TO_CHAR((TO_DATE((ACC_DATE),'DD-Mon-yyyy')-1),'DD-Mon-yyyy') JOURNAL_NAME,
+			AM.HOSTACCOUNT AS
+			SOURCE_GL_CODE,
+			'1' AS BOOKS,
+			'NEW' AS CONST1,
+			'A' AS CONST2
+			From postings PO
+			INNER JOIN ACCOUNTMAPPING AM ON PO.ACCOUNT =
+			AM.ACCOUNT
+			WHERE PO.POSTDATE = exe_postdate GROUP BY
+			po.postbranch,PO.DRORCR,AM.HOSTACCOUNT;
+			END;
+			COMMIT;
+			end SP_FINCON_GL;
+		</createProcedure>
+	</changeSet>
+
 </databaseChangeLog>

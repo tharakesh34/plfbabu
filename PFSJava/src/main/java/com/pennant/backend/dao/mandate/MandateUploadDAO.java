@@ -10,7 +10,7 @@ public interface MandateUploadDAO {
 
 	void update(List<MandateUpload> details);
 
-	void update(List<Long> headerIdList, String errorCode, String errorDesc, int progressFailed);
+	void update(List<Long> headerIdList, String errorCode, String errorDesc);
 
 	String getSqlQuery();
 }

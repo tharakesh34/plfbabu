@@ -54,7 +54,6 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -68,6 +67,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -119,8 +119,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.depositMovements.getMovementId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.depositMovements.getMovementId());
 	}
 
 	/**
@@ -495,7 +494,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				lc = new Listcell(depositCheque.getFavourNumber());
 				lc.setParent(item);
 				// Cheque/DD Date
-				lc = new Listcell(DateUtility.formatToLongDate(depositCheque.getReceivedDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(depositCheque.getReceivedDate()));
 				lc.setParent(item);
 				// Bank Name
 				// lc = new Listcell(depositCheque.getPartnerBankCode());

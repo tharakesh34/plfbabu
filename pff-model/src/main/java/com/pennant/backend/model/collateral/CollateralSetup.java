@@ -54,6 +54,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.pff.verification.model.Verification;
 
 /**
  * Model class for the <b>CollateralSetup table</b>.<br>
@@ -144,6 +145,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "documents")
 	@XmlElement(name = "document")
 	private List<DocumentDetails> documents = null;
+	@XmlElement
 	private List<ExtendedFieldRender> extendedFieldRenderList = new ArrayList<ExtendedFieldRender>();
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinFlagsDetail> finFlagsDetailsList;
@@ -167,6 +169,15 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	private boolean modified = false;
 	private Long assetId = null;
 	private Long siId = null;
+	@XmlElement
+	private String areaLocalityName = "";
+	@XmlElement
+	private String stateName = "";
+	@XmlElement
+	private String cityName = "";
+
+	@XmlElement
+	private List<Verification> VerificationList;
 
 	public CollateralSetup() {
 		super();
@@ -205,7 +216,10 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 		excludeFields.add("modified");
 		excludeFields.add("assetId");
 		excludeFields.add("siId");
-
+		excludeFields.add("VerificationList");
+		excludeFields.add("areaLocalityName");
+		excludeFields.add("stateName");
+		excludeFields.add("cityName");
 		return excludeFields;
 	}
 
@@ -644,5 +658,37 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setSiId(Long siId) {
 		this.siId = siId;
+	}
+
+	public List<Verification> getVerificationList() {
+		return VerificationList;
+	}
+
+	public void setVerificationList(List<Verification> verificationList) {
+		VerificationList = verificationList;
+	}
+
+	public String getAreaLocalityName() {
+		return areaLocalityName;
+	}
+
+	public void setAreaLocalityName(String areaLocalityName) {
+		this.areaLocalityName = areaLocalityName;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
 	}
 }

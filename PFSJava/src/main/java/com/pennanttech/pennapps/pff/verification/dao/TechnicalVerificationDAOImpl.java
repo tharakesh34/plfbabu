@@ -437,4 +437,20 @@ public class TechnicalVerificationDAOImpl extends SequenceDao<TechnicalVerificat
 			return null;
 		}
 	}
+
+	@Override
+	public List<Verification> getTvListByCollRefAndFinRef(String collRef, String finRef) {
+		String sql = "Select FinalValAmt, ValAsPerPE FinalValAsPerPE, ValuationAmount From Verification_TV_View Where CollateralRef = ? and KeyReference = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.query(sql, (rs, rowNum) -> {
+			Verification ver = new Verification();
+
+			ver.setFinalValAmt(rs.getBigDecimal("FinalValAmt"));
+			ver.setFinalValAsPerPE(rs.getBigDecimal("FinalValAsPerPE"));
+			ver.setValuationAmount(rs.getBigDecimal("ValuationAmount"));
+			return ver;
+		}, collRef, finRef);
+	}
 }

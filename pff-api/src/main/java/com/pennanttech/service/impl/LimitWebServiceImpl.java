@@ -44,11 +44,12 @@ import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
+import com.pennant.ws.exception.ServiceExceptionDetails;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.LimitServiceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.LimitRestService;
 import com.pennanttech.pffws.LimitSoapService;
 import com.pennanttech.util.APIConstants;
@@ -119,6 +120,8 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 
 		// bean validations
 		validationUtility.validate(limitHeader, LimitSetupGroup.class);
+		doBasicMandatoryValidations(limitHeader);
+
 		LimitHeader response = null;
 		// for logging purpose
 		String[] logFields = new String[3];
@@ -177,12 +180,29 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 		return response;
 	}
 
+	private void doBasicMandatoryValidations(LimitHeader limitHeader) {
+		ServiceExceptionDetails[] exceptions = new ServiceExceptionDetails[1];
+
+		if ((StringUtils.isNotEmpty(limitHeader.getCustCIF()) && StringUtils.isNotEmpty(limitHeader.getCustGrpCode()))
+				|| (StringUtils.isEmpty(limitHeader.getCustCIF())
+						&& StringUtils.isEmpty(limitHeader.getCustGrpCode()))) {
+			ServiceExceptionDetails error = new ServiceExceptionDetails();
+			error.setFaultCode("9009");
+			error.setFaultMessage("cif and customerGroup are mutually exclusive");
+
+			exceptions[0] = error;
+			throw new ServiceException(exceptions);
+		}
+
+	}
+
 	@Override
 	public LimitHeader createLimitSetup(LimitHeader limitHeader) {
 		logger.debug("Entering");
 
 		// bean validations
 		validationUtility.validate(limitHeader, SaveValidationGroup.class);
+		doBasicMandatoryValidations(limitHeader);
 		// for logging purpose
 		String[] logFields = new String[3];
 		logFields[0] = limitHeader.getCustCIF();
@@ -229,6 +249,7 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 
 		// bean validations
 		validationUtility.validate(limitHeader, UpdateValidationGroup.class);
+		doBasicMandatoryValidations(limitHeader);
 
 		// for logging purpose
 		String[] logFields = new String[3];

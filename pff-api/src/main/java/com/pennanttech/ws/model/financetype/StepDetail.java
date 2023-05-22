@@ -13,7 +13,7 @@ public class StepDetail implements Serializable {
 	private static final long serialVersionUID = 7907132962063203943L;
 
 	public StepDetail() {
-
+	    super();
 	}
 
 	private boolean stepFinance;

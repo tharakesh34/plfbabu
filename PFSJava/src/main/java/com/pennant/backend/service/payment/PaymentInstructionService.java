@@ -28,6 +28,8 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.pff.payment.model.PaymentDetail;
 import com.pennanttech.pff.core.TableType;
 
 public interface PaymentInstructionService {
@@ -51,4 +53,6 @@ public interface PaymentInstructionService {
 	void updateStatus(PaymentInstruction instruction, String tableType);
 
 	boolean isInProgress(long finID);
+
+	void getActualGST(PaymentDetail detail, TaxAmountSplit taxSplit);
 }

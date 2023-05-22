@@ -169,6 +169,11 @@
 		<name>org.zkoss.zk.WCS.cache</name>
 		<value>true</value>
 	</library-property>
+	
+	<library-property>
+		<name>org.zkoss.zul.css.flex</name>
+		<value>false</value>
+	</library-property>
 
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
@@ -205,6 +210,28 @@
 		       }
 		       return req;
 		   }
+		   
+		   zAu._rmDesktop = function (dt, dummy) {
+				var url = zk.ajaxURI(null, {desktop: dt, au: true}),
+					data = jq.param({dtid: dt.id, cmd_0: dummy ? 'dummy' : 'rmDesktop', opt_0: 'i'}),
+					headers = {};
+				if (zk.pfmeter) {
+					var fakeReq = {
+						setRequestHeader: function (name, value) {
+							headers[name] = value;
+						}
+					};
+					zAu._pfsend(dt, fakeReq, true, false);
+				}
+		       	var token = $("meta[name='_csrf']").attr("content");
+		       	var header = $("meta[name='_csrf_header']").attr("content");
+		       	headers[header] = token;
+				this._rmDesktopAjax(url, data, headers);
+				// B65-ZK-2210: clean up portlet2 data when desktop removed.
+				if (!dummy && zk.portlet2Data && zk.portlet2Data[dt.id]) {
+					delete zk.portlet2Data[dt.id];
+				}
+			}
 		});
 		
 		zAu.onError(function(req, errCode) {

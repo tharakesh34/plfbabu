@@ -668,7 +668,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, new Object[] { delarType, dealerId }, Integer.class);
+		return jdbcOperations.queryForObject(sql, Integer.class, delarType, dealerId);
 	}
 
 	@Override

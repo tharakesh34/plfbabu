@@ -1,9 +1,10 @@
 package com.pennant.webservice.services;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.RequestDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.externalinput.ExtFinanceData;
@@ -85,7 +86,7 @@ public class ExtFinanceService {
 			extFinanceData.setGrcSchdMthd(extFinanceDetails.getGrcSchdMthd());
 			extFinanceData.setProfitDaysBasis(extFinanceDetails.getProfitDaysBasis());
 			extFinanceData.setLovDescCustCIF(extFinanceDetails.getLovDescCustCIF());
-			extFinanceData.setFinStartDate(DateUtility.convertFromXMLTime(extFinanceDetails.getFinStartDate()));
+			extFinanceData.setFinStartDate(convertFromXMLTime(extFinanceDetails.getFinStartDate()));
 			extFinanceData.setFinAmount(extFinanceDetails.getFinAmount());
 			extFinanceData.setDpToBank(extFinanceDetails.getDpToBank());
 			extFinanceData.setDpToSupplier(extFinanceDetails.getDpToSupplier());
@@ -133,6 +134,14 @@ public class ExtFinanceService {
 		setResponse(result);
 		logger.debug("Leaving");
 		return result;
+	}
+
+	private java.util.Date convertFromXMLTime(XMLGregorianCalendar xmlCalendar) {
+		if (xmlCalendar == null) {
+			return null;
+		}
+
+		return new java.util.Date(xmlCalendar.toGregorianCalendar().getTimeInMillis());
 	}
 
 	public PFSLoanCreationResponse getResponse() {

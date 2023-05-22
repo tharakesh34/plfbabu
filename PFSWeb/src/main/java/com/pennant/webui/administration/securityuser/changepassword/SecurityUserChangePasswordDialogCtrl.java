@@ -332,7 +332,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 */
 	final class OnChanging implements EventListener<Event> {
 		public OnChanging() {
-
+		    super();
 		}
 
 		@Override

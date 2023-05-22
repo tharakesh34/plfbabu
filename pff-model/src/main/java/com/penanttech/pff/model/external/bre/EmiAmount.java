@@ -15,6 +15,7 @@ public class EmiAmount implements Serializable {
 
 	@JsonCreator
 	public EmiAmount() {
+	    super();
 	}
 
 	ArrayList<String> item;

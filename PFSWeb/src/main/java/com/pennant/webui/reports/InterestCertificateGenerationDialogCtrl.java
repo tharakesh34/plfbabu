@@ -28,7 +28,6 @@ import org.zkoss.zul.Window;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
@@ -184,8 +183,8 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			financeYearList = new ArrayList<ValueLabel>();
 
 			if (StringUtils.equalsAnyIgnoreCase("provisional", getArgument("module"))) {
-				String year = String.valueOf(DateUtility.getYear(SysParamUtil.getAppDate()));
-				int month = DateUtility.getMonth(SysParamUtil.getAppDate());
+				String year = String.valueOf(DateUtil.getYear(SysParamUtil.getAppDate()));
+				int month = DateUtil.getMonth(SysParamUtil.getAppDate());
 				int years = -1;
 				// As of financeYear Start from April
 				if (month >= 4) {
@@ -287,14 +286,14 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		}
 
 		Date finStartDate = fm.getFinStartDate();
-		int finStartDateMonth = DateUtility.getMonth(finStartDate);
-		String finStartDateYear = String.valueOf(DateUtility.getYear(finStartDate));
+		int finStartDateMonth = DateUtil.getMonth(finStartDate);
+		String finStartDateYear = String.valueOf(DateUtil.getYear(finStartDate));
 
-		int appDateMonth = DateUtility.getMonth(appDate);
-		int appDateDay = DateUtility.getDay(appDate);
-		int finStartDateDay = DateUtility.getDay(finStartDate);
-		int years = DateUtility.getYearsBetween(finStartDate, appDate);
-		String appDateYear = String.valueOf(DateUtility.getYear(appDate));
+		int appDateMonth = DateUtil.getMonth(appDate);
+		int appDateDay = DateUtil.getDay(appDate);
+		int finStartDateDay = DateUtil.getDay(finStartDate);
+		int years = DateUtil.getYearsBetween(finStartDate, appDate);
+		String appDateYear = String.valueOf(DateUtil.getYear(appDate));
 
 		if (finStartDateMonth < 4 && years > 0) {
 			finStartDateYear = String.valueOf(Integer.valueOf(finStartDateYear) - 1);
@@ -313,7 +312,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		if (years < 0 && finStartDateMonth < 4) {
 			// if finstartDate and appDate both are equal then we are not allowing to count years
 			// if AppDate is greater than or equal to 4 adding years with 1
-			if (DateUtility.compare(appDate, finStartDate) > 0 && appDateMonth >= 4) {
+			if (DateUtil.compare(appDate, finStartDate) > 0 && appDateMonth >= 4) {
 				years = years + 1;
 			}
 			for (int i = 0; i <= years; i++) {
@@ -325,7 +324,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 		} else if (!(finStartDateYear.equals(appDateYear) && !(finStartDateMonth < 4))) {
 			// if FinstartDateYear & appDateYear both are equal & finstartDateMonth less than 4 we are not adding
 			// into list...
-			if (years >= 1 && DateUtility.getYearsBetween(finStartDate, appDate) >= 1 && appDateMonth < 4
+			if (years >= 1 && DateUtil.getYearsBetween(finStartDate, appDate) >= 1 && appDateMonth < 4
 					&& appDateDay != finStartDateDay) {
 				// if years greater than or equal to 1 and appdate less than 4 and appdateday not equal to
 				// finstartday than subtract years - 1
@@ -453,7 +452,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			}
 
 			Date appldate = SysParamUtil.getAppDate();
-			String appDate = DateUtility.formatToLongDate(appldate);
+			String appDate = DateUtil.formatToLongDate(appldate);
 			intCert.setAppDate(appDate);
 			intCert.setFinStartDate("01-04-" + getComboboxValue(this.financeYear));
 			intCert.setFinEndDate("31-03-" + String.valueOf(Integer.valueOf(getComboboxValue(this.financeYear)) + 1));

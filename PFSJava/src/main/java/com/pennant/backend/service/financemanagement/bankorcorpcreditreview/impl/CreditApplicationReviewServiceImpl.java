@@ -34,9 +34,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.FinCreditRevSubCategoryService;
-import com.pennant.backend.service.customermasters.validation.CustomerDocumentValidation;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -51,8 +49,6 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	private CreditReviewSummaryDAO creditReviewSummaryDAO;
 	private FinCreditRevSubCategoryService finCreditRevSubCategoryService;
 	private FinCreditRevSubCategoryDAO finCreditRevSubCategoryDAO;
-	private CustomerDocumentValidation customerDocumentValidation;
-	private CustomerDocumentService customerDocumentService;
 	private CustomerDocumentDAO customerDocumentDAO;
 	private NotesDAO notesDAO;
 	private CreditReviewSummaryEntryValidation creditReviewSummaryEntryValidation;
@@ -1612,14 +1608,6 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		this.finCreditRevSubCategoryDAO = finCreditRevSubCategoryDAO;
 	}
 
-	public void setCustomerDocumentValidation(CustomerDocumentValidation customerDocumentValidation) {
-		this.customerDocumentValidation = customerDocumentValidation;
-	}
-
-	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
-		this.customerDocumentService = customerDocumentService;
-	}
-
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
@@ -1635,5 +1623,4 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-
 }

@@ -214,7 +214,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		Collections.sort(transactionEntries, new Comparator<TransactionEntry>() {
 			@Override
 			public int compare(TransactionEntry detail1, TransactionEntry detail2) {
-				return (new Integer(detail1.getTransOrder()).compareTo(new Integer(detail2.getTransOrder())));
+				return (Integer.valueOf(detail1.getTransOrder()).compareTo(Integer.valueOf(detail2.getTransOrder())));
 			}
 		});
 

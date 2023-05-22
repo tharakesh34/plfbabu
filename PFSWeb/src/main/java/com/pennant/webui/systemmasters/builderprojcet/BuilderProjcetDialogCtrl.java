@@ -199,8 +199,7 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.builderProjcet.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.builderProjcet.getId());
 	}
 
 	/**
@@ -1698,8 +1697,6 @@ public class BuilderProjcetDialogCtrl extends GFCBaseCtrl<BuilderProjcet> {
 	public void onFulfill$bankBranchID(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = bankBranchID.getObject();
-
-		int accNoLength = 0;
 
 		if (dataObject == null || dataObject instanceof String) {
 			this.bankBranchID.setValue("");

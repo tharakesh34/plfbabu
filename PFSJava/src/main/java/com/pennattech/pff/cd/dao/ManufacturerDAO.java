@@ -12,8 +12,8 @@ public interface ManufacturerDAO extends BasicCrudDao<Manufacturer> {
 
 	boolean isDuplicateKey(Manufacturer commodityType, TableType tableType);
 
-	public Map<String, Object> getGSTDataMapForManufac(String tId);
+	public Map<String, Object> getGSTDataMapForManufac(long oEMID);
 
-	public Manufacturer getDetails(String oEMID);
+	public Manufacturer getDetails(long oEMID);
 
 }

@@ -32,10 +32,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -71,7 +71,7 @@ public class LegalDetailListModelItemRenderer implements ListitemRenderer<LegalD
 		lc = new Listcell(legalDetail.getBranchDesc());
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.format(legalDetail.getLegalDate(), PennantConstants.dateFormat));
+		lc = new Listcell(DateUtil.format(legalDetail.getLegalDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 
 		if (legalDetail.isActive()) {

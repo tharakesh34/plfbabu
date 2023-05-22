@@ -99,6 +99,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		}
 
 		registerField("custCIF", listheader_CIFNo, SortOrder.NONE, cifNo, sortOperator_CIFNo, Operators.STRING);
+		registerField("FinId");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("finType", listheader_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);
@@ -171,15 +172,15 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		Listitem selectedItem = this.listBoxManualProvisioning.getSelectedItem();
 		final Provision aProvision = (Provision) selectedItem.getAttribute("data");
 
-		Provision provision = provisionService.getProvisionDetail(aProvision.getFinReference());
+		Provision provision = provisionService.getProvisionDetail(aProvision.getFinID());
 
 		if (provision == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
-		String whereCond = " AND FinReference = ? AND version = ?";
-		Object[] obj = new Object[] { provision.getFinReference(), provision.getVersion() };
+		String whereCond = " and FinID = ? AND version = ?";
+		Object[] obj = new Object[] { provision.getFinID(), provision.getVersion() };
 
 		if (doCheckAuthority(provision, whereCond, obj)) {
 			if (isWorkFlowEnabled() && provision.getWorkflowId() == 0) {

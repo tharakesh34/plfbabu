@@ -34,7 +34,6 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
@@ -54,7 +53,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -62,7 +60,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.UploadManualAdvise;
-import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -75,6 +72,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -104,7 +102,6 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	protected Listbox sortOperator_TransactionDate;
 
 	private transient UploadHeaderService uploadHeaderService;
-	private transient ManualAdviseService manualAdviseService;
 
 	private String module = "";
 	protected Button btnReject;
@@ -350,7 +347,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		uploadHeader.setNewRecord(true);
 		uploadHeader.setWorkflowId(getWorkFlowId());
 		uploadHeader.setModule(this.module);
-		uploadHeader.setTransactionDate(DateUtility.getSysDate());
+		uploadHeader.setTransactionDate(DateUtil.getSysDate());
 		uploadHeader.setMakerId(getUserWorkspace().getUserDetails().getUserId());
 
 		// Display the dialog page.
@@ -855,10 +852,4 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	public void setUploadHeaderService(UploadHeaderService uploadHeaderService) {
 		this.uploadHeaderService = uploadHeaderService;
 	}
-
-	@Autowired
-	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
-		this.manualAdviseService = manualAdviseService;
-	}
-
 }

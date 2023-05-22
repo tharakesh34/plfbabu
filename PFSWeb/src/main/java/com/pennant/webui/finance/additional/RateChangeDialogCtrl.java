@@ -61,7 +61,6 @@ import com.pennant.RateBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.model.RateDetail;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
@@ -438,11 +437,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$anyDateRateChangeFromDate(Event event) {
 		logger.debug("Entering");
 
-		Date alwdBackDate = DateUtility.addDays(SysParamUtil.getAppDate(),
+		Date alwdBackDate = DateUtil.addDays(SysParamUtil.getAppDate(),
 				-SysParamUtil.getValueAsInt(SMTParameterConstants.RATE_CHANGE_FROM_DATE_BACK_DAYS));
 
 		if (this.anyDateRateChangeFromDate != null
-				&& DateUtility.compare(this.anyDateRateChangeFromDate.getValue(), alwdBackDate) < 0) {
+				&& DateUtil.compare(this.anyDateRateChangeFromDate.getValue(), alwdBackDate) < 0) {
 
 			throw new WrongValueException(this.anyDateRateChangeFromDate,
 					Labels.getLabel("NUMBER_MINVALUE",
@@ -479,19 +478,19 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void onChange$anyDateRateChangeToDate(Event event) {
 		logger.debug("Entering");
-		if (this.anyDateRateChangeToDate != null && DateUtility.compare(this.anyDateRateChangeToDate.getValue(),
+		if (this.anyDateRateChangeToDate != null && DateUtil.compare(this.anyDateRateChangeToDate.getValue(),
 				this.anyDateRateChangeFromDate.getValue()) < 0) {
 			throw new WrongValueException(this.anyDateRateChangeToDate,
 					Labels.getLabel("NUMBER_MINVALUE",
 							new String[] { Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
 									Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value") }));
 		}
-		if (this.anyDateRateChangeToDate != null && DateUtility.compare(this.anyDateRateChangeToDate.getValue(),
+		if (this.anyDateRateChangeToDate != null && DateUtil.compare(this.anyDateRateChangeToDate.getValue(),
 				getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
 			throw new WrongValueException(this.anyDateRateChangeToDate,
 					Labels.getLabel("NUMBER_MAXVALUE",
 							new String[] { Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
-									DateUtility.format(getFinScheduleData().getFinanceMain().getMaturityDate(),
+									DateUtil.format(getFinScheduleData().getFinanceMain().getMaturityDate(),
 											PennantConstants.DBDateFormat) }));
 		}
 
@@ -525,7 +524,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (allowBackDatedRateChange) {
 			appDateValidationReq = false;
 			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
-				if (DateUtility.compare(scheduleDetail.getSchDate(), curBussDate) < 0) {
+				if (DateUtil.compare(scheduleDetail.getSchDate(), curBussDate) < 0) {
 					if (scheduleDetail.isRvwOnSchDate()) {
 						allowBackDate = scheduleDetail.getSchDate();
 					}
@@ -539,7 +538,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				// Review from Date should be Greater than the appdate
-				if (appDateValidationReq && DateUtility.compare(curSchd.getSchDate(), curBussDate) <= 0) {
+				if (appDateValidationReq && DateUtil.compare(curSchd.getSchDate(), curBussDate) <= 0) {
 					includedPrvSchTerm = false;
 					continue;
 				}
@@ -558,7 +557,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				if (allowBackDatedRateChange) {
-					if (DateUtility.compare(curSchd.getSchDate(), allowBackDate) <= 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), allowBackDate) <= 0) {
 						continue;
 					}
 				}
@@ -620,7 +619,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(
-							DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+							DateUtil.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 					comboitem.setValue(prvSchd.getSchDate());
 					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
 					dateCombobox.appendChild(comboitem);
@@ -633,7 +632,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 
@@ -686,7 +685,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (allowBackDatedRateChange) {
 			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
-				if (DateUtility.compare(scheduleDetail.getSchDate(), maturityDate) <= 0) {
+				if (DateUtil.compare(scheduleDetail.getSchDate(), maturityDate) <= 0) {
 					lastSchdDate = scheduleDetail.getSchDate();
 				}
 			}
@@ -695,7 +694,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (allowBackDatedRateChange) {
 			appDateValidationReq = false;
 			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
-				if (DateUtility.compare(scheduleDetail.getSchDate(), curBussDate) < 0) {
+				if (DateUtil.compare(scheduleDetail.getSchDate(), curBussDate) < 0) {
 					if (scheduleDetail.isRvwOnSchDate()) {
 						allowBackDate = scheduleDetail.getSchDate();
 					}
@@ -709,13 +708,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				// in Overdraft the Review from Date should be Greater than the appdate
-				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0
+				if (isOverdraft && DateUtil.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0
 						&& !allowBackDatedRateChange) {
 					continue;
 				}
 
 				if (allowBackDatedRateChange) {
-					if (DateUtility.compare(curSchd.getSchDate(), allowBackDate) <= 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), allowBackDate) <= 0) {
 						continue;
 					}
 				}
@@ -767,12 +766,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 
-				if (allowBackDatedRateChange && (DateUtility.compare(curSchd.getSchDate(), lastSchdDate) != 0)) {
+				if (allowBackDatedRateChange && (DateUtil.compare(curSchd.getSchDate(), lastSchdDate) != 0)) {
 					continue;
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 
@@ -896,14 +895,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (allowBackDatedRateChange) {
 				Date allowdBackDate = null;
 				for (FinanceScheduleDetail scheduleDetail : schdList) {
-					if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
+					if (DateUtil.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
 						if (scheduleDetail.isRvwOnSchDate()) {
 							allowdBackDate = scheduleDetail.getSchDate();
 						}
 					}
 				}
 				if ((curSchd.getSchDate().compareTo(currBussDate) < 0)
-						&& (DateUtility.compare(curSchd.getSchDate(), allowdBackDate) <= 0)) {
+						&& (DateUtil.compare(curSchd.getSchDate(), allowdBackDate) <= 0)) {
 					if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 						lastPaidDate = curSchd.getSchDate();
 					}
@@ -926,21 +925,21 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (!allowBackDatedRateChange) {
 			// Month End Date or Last installment which is Greater should be considered
-			Date mnthEndDate = DateUtility.getMonthEnd(DateUtility.addMonths(currBussDate, -1));
+			Date mnthEndDate = DateUtil.getMonthEnd(DateUtil.addMonths(currBussDate, -1));
 			if (mnthEndDate.compareTo(lastPaidDate) > 0) {
-				lastPaidDate = DateUtility.addDays(mnthEndDate, 1);
+				lastPaidDate = DateUtil.addDays(mnthEndDate, 1);
 			}
 		}
 
 		// Back Date Allowed Condition Check
-		Date alwdBackDate = DateUtility.addDays(currBussDate,
+		Date alwdBackDate = DateUtil.addDays(currBussDate,
 				-SysParamUtil.getValueAsInt(SMTParameterConstants.RATE_CHANGE_FROM_DATE_BACK_DAYS));
 		if (lastPaidDate.compareTo(alwdBackDate) < 0) {
 			lastPaidDate = alwdBackDate;
 		}
 		Date backDate = null;
 		for (FinanceScheduleDetail scheduleDetail : schdList) {
-			if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
+			if (DateUtil.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
 				if (scheduleDetail.isRvwOnSchDate()) {
 					backDate = scheduleDetail.getSchDate();
 				}
@@ -1072,7 +1071,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						&& ((Date) this.cbRecalFromDate.getSelectedItem().getValue())
 								.compareTo((Date) this.cbRateChangeFromDate.getSelectedItem().getValue()) < 0) {
 					throw new WrongValueException(this.cbRecalFromDate, Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[] { Labels.getLabel("label_RateChangeDialog_RecalFromDate.value"), DateUtility
+							new String[] { Labels.getLabel("label_RateChangeDialog_RecalFromDate.value"), DateUtil
 									.formatToLongDate((Date) this.cbRateChangeToDate.getSelectedItem().getValue()) }));
 				}
 				finMain.setRecalFromDate((Date) this.cbRecalFromDate.getSelectedItem().getValue());
@@ -1092,7 +1091,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						&& ((Date) this.cbRecalFromDate.getSelectedItem().getValue())
 								.compareTo((Date) this.cbRecalToDate.getSelectedItem().getValue()) > 0) {
 					throw new WrongValueException(this.cbRecalToDate, Labels.getLabel("DATE_ALLOWED_AFTER",
-							new String[] { Labels.getLabel("label_RateChangeDialog_RecalToDate.value"), DateUtility
+							new String[] { Labels.getLabel("label_RateChangeDialog_RecalToDate.value"), DateUtil
 									.formatToLongDate((Date) this.cbRecalFromDate.getSelectedItem().getValue()) }));
 				}
 
@@ -1219,7 +1218,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (rpyStp != null && fsd.getSchDate().compareTo(rpyStp.getStepEnd()) != 0) {
 					finMain.setRecalType(CalculationConstants.RPYCHG_ADDRECAL);
 					finMain.setRecalToDate(maturityDate);
-					int months = DateUtility.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
+					int months = DateUtil.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
 					finMain.setAdjTerms(months);
 
 					for (FinanceScheduleDetail finSch : fsdList) {
@@ -1530,7 +1529,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// RateChangeTodate is not allowed to select the maturity Date when recal type is Tilldate
 			if (this.cbRateChangeToDate.getSelectedIndex() > 0
-					&& DateUtility.compare((Date) this.cbRateChangeToDate.getSelectedItem().getValue(),
+					&& DateUtil.compare((Date) this.cbRateChangeToDate.getSelectedItem().getValue(),
 							getFinScheduleData().getFinanceMain().getMaturityDate()) == 0) {
 				throw new WrongValueException(this.cbRateChangeToDate,
 						Labels.getLabel("label_RateChange_MaturityDate"));
@@ -1646,23 +1645,23 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 										&& !curSchd.isSchPriPaid()))) {
 
 					if (allowBackDatedRateChange
-							&& DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0) {
+							&& DateUtil.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0) {
 						continue;
 					}
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(
-							DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+							DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 					comboitem.setAttribute("toSpecifier", curSchd.getSpecifier());
 					comboitem.setValue(curSchd.getSchDate());
 
-					if (includeFromDate && DateUtility.compare(curSchd.getSchDate(), fillAfter) >= 0) {
+					if (includeFromDate && DateUtil.compare(curSchd.getSchDate(), fillAfter) >= 0) {
 						dateCombobox.appendChild(comboitem);
 						if (getFinanceScheduleDetail() != null
 								&& curSchd.getSchDate().compareTo(getFinanceScheduleDetail().getSchDate()) == 0) {
 							dateCombobox.setSelectedItem(comboitem);
 						}
-					} else if (!includeFromDate && DateUtility.compare(curSchd.getSchDate(), fillAfter) > 0) {
+					} else if (!includeFromDate && DateUtil.compare(curSchd.getSchDate(), fillAfter) > 0) {
 						dateCombobox.appendChild(comboitem);
 					}
 				}
@@ -1894,7 +1893,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			} else if (anyDate.isChecked()) {
 				Date ratechgTo = (Date) this.anyDateRateChangeFromDate.getValue();
-				if (DateUtility.compare(ratechgTo, recalFrom) > 0) {
+				if (DateUtil.compare(ratechgTo, recalFrom) > 0) {
 					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo,
 							allowBackDatedRateChange);
 				} else {
@@ -1937,7 +1936,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		Date newEvtFromDate = evtFromDate;
 
 		// Calculating the number of schedules between recal from and to dates
-		while (DateUtility.compare(evtToDate, newEvtFromDate) >= 0) {
+		while (DateUtil.compare(evtToDate, newEvtFromDate) >= 0) {
 			int day = DateUtil.getDay(newEvtFromDate);
 			if (schdDay == day) {
 				schdCount = schdCount + 1;
@@ -2030,7 +2029,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Fetching the Schedule details from recal from date.
 		FinanceScheduleDetail oldRateSchd = null;
 		for (FinanceScheduleDetail detail : finSchdDetails) {
-			if (DateUtility.compare(detail.getSchDate(), evtFromDate) > 0) {
+			if (DateUtil.compare(detail.getSchDate(), evtFromDate) > 0) {
 				break;
 			}
 			oldRateSchd = detail;
@@ -2078,7 +2077,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			Date schdDate = curSchd.getSchDate();
 
 			// Setting Rates between From date and To date
-			if (DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) <= 0) {
+			if (DateUtil.compare(schdDate, evtFromDate) >= 0 && DateUtil.compare(schdDate, evtToDate) <= 0) {
 				if (curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate() || curSchd.isCpzOnSchDate()
 						|| curSchd.isDisbOnSchDate()) {
 					curSchd.setRvwOnSchDate(false);
@@ -2093,7 +2092,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (curSchd.isFrqDate()) {
 					String pftFrq = null;
 					if (finMain.isAllowGrcPeriod()
-							&& DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
+							&& DateUtil.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {
 						pftFrq = finMain.getGrcPftFrq();
 					} else {
 						pftFrq = finMain.getRepayPftFrq();
@@ -2118,7 +2117,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 			}
-			if (DateUtility.compare(schdDate, evtToDate) > 0) {
+			if (DateUtil.compare(schdDate, evtToDate) > 0) {
 				break;
 			}
 		}
@@ -2142,10 +2141,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode) || FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)
 				|| FrequencyCodeTypes.FRQ_BIMONTHLY.equals(frqCode)) {
 			mnth = FrequencyUtil.getMonthFrqValue(
-					DateUtility.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[1], frqCode);
+					DateUtil.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[1], frqCode);
 		} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode) || FrequencyCodeTypes.FRQ_2YEARLY.equals(frqCode)
 				|| FrequencyCodeTypes.FRQ_3YEARLY.equals(frqCode)) {
-			mnth = DateUtility.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[1];
+			mnth = DateUtil.format(eventFromDate, PennantConstants.DBDateFormat).split("-")[1];
 		} else {
 			mnth = "00";
 		}
@@ -2188,7 +2187,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 			Date schdDate = curSchd.getSchDate();
 
-			if (DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) <= 0) {
+			if (DateUtil.compare(schdDate, evtFromDate) >= 0 && DateUtil.compare(schdDate, evtToDate) <= 0) {
 				curSchd.setBaseRate(baseRate);
 				curSchd.setSplRate(finServiceInst.getSplRate());
 				curSchd.setMrgRate(finServiceInst.getMargin());
@@ -2204,7 +2203,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			Collections.sort(financeScheduleDetail, new Comparator<FinanceScheduleDetail>() {
 				@Override
 				public int compare(FinanceScheduleDetail detail1, FinanceScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -2234,7 +2233,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Fetching the Schedule details from recal from date.
 		for (FinanceScheduleDetail detail : financeScheduleDetails) {
-			if (DateUtility.compare(detail.getSchDate(), evtFromDate) >= 0) {
+			if (DateUtil.compare(detail.getSchDate(), evtFromDate) >= 0) {
 				break;
 			} else {
 				prevScheduleDetail = detail;
@@ -2258,7 +2257,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 			Date schdDate = curSchd.getSchDate();
 
-			if ((DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) < 0)
+			if ((DateUtil.compare(schdDate, evtFromDate) >= 0 && DateUtil.compare(schdDate, evtToDate) < 0)
 					|| (i == (sdSize - 1))) {
 				curSchd.setBaseRate(baseRate);
 				curSchd.setSplRate(finServiceInst.getSplRate());
@@ -2319,7 +2318,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		comboitem = new Comboitem();
 		Comboitem comboitem1 = new Comboitem();
-		comboitem.setLabel(DateUtility.formatToLongDate(recalFromDate));
+		comboitem.setLabel(DateUtil.formatToLongDate(recalFromDate));
 		comboitem.setValue(recalFromDate);
 		cbRecalFromDate.appendChild(comboitem1);
 		cbRecalFromDate.appendChild(comboitem);

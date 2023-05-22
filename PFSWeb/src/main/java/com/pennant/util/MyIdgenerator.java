@@ -23,7 +23,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedStaticListBox;
 public class MyIdgenerator implements IdGenerator {
 
 	public MyIdgenerator() {
-
+	    super();
 	}
 
 	public String nextComponentUuid(Desktop desktop, Component comp, ComponentInfo compInfo) {

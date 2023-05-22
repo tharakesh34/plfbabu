@@ -61,7 +61,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -74,6 +73,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -516,9 +516,9 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 			lc.setParent(item);
 			lc = new Listcell(collateralSetup.getCollateralType());
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.format(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtil.format(collateralSetup.getExpiryDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
-			lc = new Listcell(DateUtility.format(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
+			lc = new Listcell(DateUtil.format(collateralSetup.getNextReviewDate(), PennantConstants.dateFormat));
 			lc.setParent(item);
 			lc = new Listcell(collateralSetup.getRecordStatus());
 			lc.setParent(item);

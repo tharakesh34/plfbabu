@@ -101,7 +101,7 @@
 										</hlayout>
 										<label id="label_EmailId" value="${c:l('label_GuarantorDetailDialog_EmailId.value')}" />
 										<hlayout id="hlayout_EmailId" spacing="2px">
-											<space id="space_EmailId" spacing="2px" sclass="mandatory" />
+											<space id="space_EmailId" spacing="2px"/>
 											<textbox id="emailId" width="200px" />
 										</hlayout>
 									</row>
@@ -159,7 +159,7 @@
 										</hlayout>
 										<label id="label_GuarantorDetailDialog_POBox" value="${c:l('label_GuarantorDetailDialog_POBox.value')}" />
 										<hlayout spacing="2px">
-											<space id="space_poBox" spacing="2px" sclass="mandatory" />
+											<space id="space_poBox" spacing="2px" />
 											<textbox id="poBox" width="155px" />
 										</hlayout>
 									</row>
@@ -179,12 +179,9 @@
 											<textbox id="cityName" width="180px" />
 										</hbox>
 
-										<label id="label_GuarantorDetailDialog_AddrZIP" value="${c:l('label_GuarantorDetailDialog_AddrZIP.value')}"
-											visible="true" />
-										<hlayout spacing="2px">
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="addrZIP" width="155px" />
-										</hlayout>
+										<label id="label_GuarantorDetailDialog_AddrZIP"
+											value="${c:l('label_GuarantorDetailDialog_AddrZIP.value')}" />
+										<extendedcombobox id="addrPIN" />
 									</row>
 									<row id="row6">
 										<label value="Status" />

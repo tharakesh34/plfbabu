@@ -12,12 +12,14 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.pennant.app.constants.DataEngineConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.disbursement.PaymentType;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
@@ -63,6 +65,7 @@ public class OfflineDisbursementImpl implements OfflineDisbursement {
 		parameterMap.put("SEQ_LPAD_VALUE", "0");
 
 		parameterMap.put("STOP_POST_EVENTS", "Y");
+		parameterMap.put("dd_MM_yyyy", DateUtil.format(SysParamUtil.getAppDate(), "dd_MM_yyyy"));
 
 		try {
 

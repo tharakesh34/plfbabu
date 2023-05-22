@@ -16,7 +16,7 @@ public class QualificationListModelItemRenderer implements ListitemRenderer<Qual
 	private static final long serialVersionUID = -2463856192651940409L;
 
 	public QualificationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

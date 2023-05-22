@@ -35,11 +35,11 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.pff.mandate.MandateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -90,7 +90,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		ckActive.setParent(lc);
 		lc.setParent(item);
 
-		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
 
 		String status = PennantApplicationUtil.getLabelDesc(mandate.getStatus(), MandateUtil.getMandateStatus());
@@ -103,7 +103,7 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		 */
 		lc = new Listcell(status);
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(mandate.getInputDate()));
 		lc.setParent(item);
 		lc = new Listcell(mandate.getRecordStatus());
 		lc.setParent(item);

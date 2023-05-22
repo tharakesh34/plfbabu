@@ -28,6 +28,7 @@ import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
+import com.pennant.pff.extension.NpaAndProvisionExtension;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -82,7 +83,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> overDueCalOnList;
 	private static List<ValueLabel> overDueForList;
 	private static List<ValueLabel> enquiryTypes;
-	private static List<ValueLabel> templateFormats;
 	private static List<ValueLabel> ruleReturnTypes;
 	private static List<ValueLabel> fieldTypes;
 	private static List<ValueLabel> empAlocList;
@@ -102,8 +102,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> facilityApprovalFor;
 	private static List<ValueLabel> periodList;
 	private static List<ValueLabel> expenseForList;
-	private static List<ValueLabel> templateForList;
-	private static List<ValueLabel> mailTeplateModulesList;
 	private static List<ValueLabel> creditReviewAuditTypesList;
 	private static List<ValueLabel> levelOfApprovalList;
 	private static List<ValueLabel> transactionTypesList;
@@ -125,7 +123,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> checkListdeviationTypes;
 	private static List<ValueLabel> collateralTypes;
 	private static List<ValueLabel> holidayTypes;
-	private static List<ValueLabel> agreementType;
 	private static List<ValueLabel> feeToFinanceTypes;
 	private static List<ValueLabel> paymentDetails;
 	private static List<ValueLabel> payOrderStatus;
@@ -264,7 +261,6 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> vasModeOfPaymentsList;
 	private static List<ValueLabel> vasAllowFeeTypes;
 	private static List<ValueLabel> medicalStatusList;
-	private static List<ValueLabel> templateEvents;
 	private static List<Property> listCategory;
 	private static List<ValueLabel> opexFeeTypeList;
 	private static List<ValueLabel> receiptPaymentModes;
@@ -371,6 +367,10 @@ public class PennantStaticListUtil {
 	private static List<String> allowedExcessTypeList;
 	private static List<ValueLabel> enqSettlementStatus;
 	private static List<ValueLabel> excessTransferHead;
+	private static List<ValueLabel> sanctionStatusList;
+	private static List<ValueLabel> finTypeLetterType;
+	private static List<ValueLabel> finTypeLetterMappingMode;
+	private static List<ValueLabel> subCategory;
 
 	/**
 	 * Gets the list of applications.
@@ -536,6 +536,7 @@ public class PennantStaticListUtil {
 			regexType.add(getValueLabel("REGEX_SPECIAL_REGX", "label_REGEX_SPECIAL_REGX"));
 			regexType.add(getValueLabel("REGEX_TELEPHONE", "label_REGEX_TELEPHONE"));
 			regexType.add(new ValueLabel("REGEX_ADDRESS", Labels.getLabel("label_ADDRESS_REGEX")));
+			regexType.add(new ValueLabel("REGEX_MOBILE", Labels.getLabel("label_MOBILE_REGEX")));
 			if (ImplementationConstants.ALLOW_CERSAI) {
 				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPACE", Labels.getLabel("label_REGEX_ALPHANUM_SPACE")));
 				regexType.add(new ValueLabel("REGEX_ALPHANUM_SPL_CERSAI1",
@@ -1241,6 +1242,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_SchdulePrincipalInterestPastDue")));
 			overDueCalOnList.add(
 					new ValueLabel(FinanceConstants.ODCALON_PIPD_EOM, Labels.getLabel("label_SchdulePriIntPD_atEOM")));
+			overDueCalOnList
+					.add(new ValueLabel(FinanceConstants.ODCALON_INST, Labels.getLabel("label_SchduleInstlamount")));
 		}
 		return overDueCalOnList;
 	}
@@ -1322,27 +1325,17 @@ public class PennantStaticListUtil {
 
 			enquiryTypes.add(new ValueLabel("LMTENQ", Labels.getLabel("label_OverDraftLimitEnquiry")));
 
-			if (ImplementationConstants.ALLOW_NPA) {
+			if (NpaAndProvisionExtension.ALLOW_NPA) {
 				enquiryTypes.add(new ValueLabel("NPAENQ", Labels.getLabel("label_NPAEnquiry")));
 			}
 
-			if (ImplementationConstants.ALLOW_PROVISION) {
+			if (NpaAndProvisionExtension.ALLOW_PROVISION) {
 				enquiryTypes.add(new ValueLabel("PROVSNENQ", Labels.getLabel("label_ProvisionEnquiry")));
 			}
+
+			enquiryTypes.add(new ValueLabel("FINSUM", Labels.getLabel("label_FinancialSummary")));
 		}
 		return enquiryTypes;
-	}
-
-	public static List<ValueLabel> getTemplateFormat() {
-
-		if (templateFormats == null) {
-			templateFormats = new ArrayList<ValueLabel>(2);
-			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_PLAIN,
-					getLabel("common.template.format.plain")));
-			templateFormats.add(new ValueLabel(NotificationConstants.TEMPLATE_FORMAT_HTML,
-					getLabel("common.template.format.html")));
-		}
-		return templateFormats;
 	}
 
 	public static List<ValueLabel> getRuleReturnType() {
@@ -1578,6 +1571,17 @@ public class PennantStaticListUtil {
 		return subCategoryIdsList;
 	}
 
+	public static List<ValueLabel> getSubCategory() {
+		if (subCategory == null) {
+			subCategory = new ArrayList<>(5);
+			subCategory.addAll(getSubCategoryList());
+			subCategory.addAll(getSubCategoryGeneralList());
+			subCategory.addAll(getSubSectorList());
+		}
+
+		return subCategory;
+	}
+
 	/**
 	 * Method for Getting Operators in query builder
 	 */
@@ -1708,41 +1712,6 @@ public class PennantStaticListUtil {
 			expenseForList.add(new ValueLabel("A", Labels.getLabel("label_AdvBillingExpense")));
 		}
 		return expenseForList;
-	}
-
-	public static List<ValueLabel> getTemplateForList() {
-
-		if (templateForList == null) {
-			templateForList = new ArrayList<ValueLabel>(9);
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_CN,
-					Labels.getLabel("label_MailTemplateDialog_CustomerNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_AE,
-					Labels.getLabel("label_MailTemplateDialog_AlertNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SP,
-					Labels.getLabel("label_MailTemplateDialog_SourcingPartnerNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_DSAN,
-					Labels.getLabel("label_MailTemplateDialog_DSANotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_PVRN,
-					Labels.getLabel("label_MailTemplateDialog_PNNotification")));
-			templateForList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_SU,
-					Labels.getLabel("label_MailTemplateDialog_SecurityUser")));
-		}
-		return templateForList;
-	}
-
-	public static List<ValueLabel> getMailModulesList() {
-
-		if (mailTeplateModulesList == null) {
-			mailTeplateModulesList = new ArrayList<ValueLabel>(7);
-			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_FIN,
-					Labels.getLabel("label_MailTemplateDialog_Finance")));
-			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.MAIL_MODULE_PROVIDER,
-					Labels.getLabel("label_MailTemplateDialog_Provider")));
-			mailTeplateModulesList.add(new ValueLabel(NotificationConstants.TEMPLATE_FOR_OTP,
-					Labels.getLabel("label_MailTemplateDialog_OTP")));
-
-		}
-		return mailTeplateModulesList;
 	}
 
 	public static List<ValueLabel> getCustCtgType() {
@@ -1885,8 +1854,6 @@ public class PennantStaticListUtil {
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
 			// Labels.getLabel("label_ScheduleToNinstalments")));
-			// remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
-			// Labels.getLabel("label_RemFee_PaidByCustomer")));
 			// remFeeSchdMethodList.add(new
 			// ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
 			// Labels.getLabel("label_RemFee_WaivedByBank")));
@@ -2128,17 +2095,6 @@ public class PennantStaticListUtil {
 		return accTypes;
 	}
 
-	public static List<ValueLabel> getAgreementType() {
-		if (agreementType == null) {
-			agreementType = new ArrayList<ValueLabel>(2);
-			agreementType
-					.add(new ValueLabel(PennantConstants.DOC_TYPE_PDF, Labels.getLabel("label_AgreementType_PDF")));
-			agreementType
-					.add(new ValueLabel(PennantConstants.DOC_TYPE_WORD, Labels.getLabel("label_AgreementType_WORD")));
-		}
-		return agreementType;
-	}
-
 	public static List<ValueLabel> getFeeToFinanceTypes() {
 		if (feeToFinanceTypes == null) {
 			feeToFinanceTypes = new ArrayList<ValueLabel>(3);
@@ -2339,29 +2295,6 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_CrossLoanKnockOff"), "CROSCROSS_LOAN_KNOCKOFFSLOANKNOCKOFF"));
 		}
 		return events;
-	}
-
-	public static List<ValueLabel> getTemplateEvents() {
-
-		if (templateEvents == null) {
-			templateEvents = new ArrayList<>(5);
-			templateEvents.add(new ValueLabel(FinServiceEvent.ORG, Labels.getLabel("label_FinSerEvent_Origination")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.RATECHG, Labels.getLabel("label_FinSerEvent_AddRateChange")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.ADDDISB, Labels.getLabel("label_FinSerEvent_AddDisbursement")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.RECEIPT, Labels.getLabel("label_FinSerEvent_Receipt")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.COVENANT, Labels.getLabel("label_FinSerEvent_Covenants")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.PUTCALL, Labels.getLabel("label_FinSerEvent_PutCall")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.COLLATERAL_LTV_BREACHS,
-					Labels.getLabel("label_FinSerEvent_Collateral_Ltv_Breaches")));
-			templateEvents
-					.add(new ValueLabel(FinServiceEvent.CANCELFIN, Labels.getLabel("label_VasEvent_Cancellation")));
-			templateEvents.add(new ValueLabel(FinServiceEvent.DUEALERTS, Labels.getLabel("label_VasEvent_DueAlerts")));
-			templateEvents.add(new ValueLabel("SecurityUser", Labels.getLabel("label_OTP_SecurityUser")));
-		}
-		return templateEvents;
 	}
 
 	public static List<ValueLabel> getPaymentDetails() {
@@ -5625,5 +5558,18 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ExcessAdjustTo_Settlement")));
 		}
 		return excessTransferHead;
+	}
+
+	public static List<ValueLabel> getSanctionStatusList() {
+		if (sanctionStatusList == null) {
+			sanctionStatusList = new ArrayList<ValueLabel>(2);
+			sanctionStatusList.add(new ValueLabel(PennantConstants.SANCTION_PENDING,
+					Labels.getLabel("label_Sanction_Status_Pending")));
+			sanctionStatusList.add(new ValueLabel(PennantConstants.SANCTION_RECEIVED,
+					Labels.getLabel("label_Sanction_Status_Received")));
+			sanctionStatusList.add(
+					new ValueLabel(PennantConstants.SANCTION_CLOSED, Labels.getLabel("label_Sanction_Status_Closed")));
+		}
+		return sanctionStatusList;
 	}
 }

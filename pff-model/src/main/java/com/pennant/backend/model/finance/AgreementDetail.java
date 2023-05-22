@@ -266,6 +266,7 @@ public class AgreementDetail {
 
 	// Customer subcategory
 	private String custSubCategory = "";
+	private String custNatureOfBusiness = "";
 
 	private String ltvPerc = "";
 
@@ -352,6 +353,13 @@ public class AgreementDetail {
 	private String processingFeeWaivedAmt = "0.00";
 	private String processingFeeSchdMeth = "";
 
+	private String disbursementDate = "";
+
+	/**
+	 * Provides Total Eligibility Amount from CreditReview Sheet
+	 */
+	private String totalEligibilityAmount = "0.00";
+
 	/**
 	 * Provides Eligibility Method Description
 	 */
@@ -429,6 +437,14 @@ public class AgreementDetail {
 
 	public void setProcessingFeeSchdMeth(String processingFeeSchdMeth) {
 		this.processingFeeSchdMeth = processingFeeSchdMeth;
+	}
+
+	public String getDisbursementDate() {
+		return disbursementDate;
+	}
+
+	public void setDisbursementDate(String disbursementDate) {
+		this.disbursementDate = disbursementDate;
 	}
 
 	public String getActualProcessingFee() {
@@ -1084,7 +1100,10 @@ public class AgreementDetail {
 	 */
 	private String finCcy = ""; // Currency Code
 
+	private String sourcingBranch = "";
+	private String lovDescSourcingBranch = "";
 	private String pftDaysBasis = ""; // Profit Days Basis
+	private String sanctionedDate = "";
 
 	/**
 	 * Provides current loan Branch Code.
@@ -1917,6 +1936,7 @@ public class AgreementDetail {
 	public void setActualProcessFeeValueInWords(String actualProcessFeeValueInWords) {
 		this.actualProcessFeeValueInWords = actualProcessFeeValueInWords;
 	}
+
 	private String priorityNumber;
 	private String priorityEmail;
 
@@ -2710,7 +2730,7 @@ public class AgreementDetail {
 	private List<CheckListDetails> checkListDetails;
 
 	public AgreementDetail() {
-
+		super();
 	}
 
 	public List<CheckListDetails> getCheckListDetails() {
@@ -2728,7 +2748,7 @@ public class AgreementDetail {
 		private List<CheckListAnsDetails> listquestionAns;
 
 		public CheckListDetails() {
-
+			super();
 		}
 
 		public String getQuestion() {
@@ -2764,7 +2784,7 @@ public class AgreementDetail {
 		private String questionRem = "";
 
 		public CheckListAnsDetails() {
-
+			super();
 		}
 
 		public void setQuestionId(long questionId) {
@@ -2842,6 +2862,7 @@ public class AgreementDetail {
 		private String colDesc = "";
 		private String colAddrCity = "";
 		private String colLtv = "";
+		private String remarks = "";
 		private List<ExtendedDetailCollateral> extendedDetailsList = null;
 		private List<CoOwners> coOwnersList = new ArrayList<>();
 		private Map<String, Object> collMap = new HashMap<>();
@@ -2932,6 +2953,14 @@ public class AgreementDetail {
 
 		public void setCollMap(Map<String, Object> collMap) {
 			this.collMap = collMap;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
 		}
 
 		public class CoOwners {
@@ -3113,121 +3142,12 @@ public class AgreementDetail {
 
 	}
 
-	/*
-	 * public class CommidityLoanDetails { private String itemType; private String quantity; private String
-	 * unitBuyPrice; private String buyAmount; private String unitSellPrice; private String sellAmount;
-	 * 
-	 * public String getItemType() { return StringUtils.trimToEmpty(itemType); } public void setItemType(String
-	 * itemType) { this.itemType = itemType; }
-	 * 
-	 * public String getQuantity() { return StringUtils.trimToEmpty(quantity); } public void setQuantity(String
-	 * quantity) { this.quantity = quantity; }
-	 * 
-	 * public String getUnitBuyPrice() { return StringUtils.trimToEmpty(unitBuyPrice); } public void
-	 * setUnitBuyPrice(String unitBuyPrice) { this.unitBuyPrice = unitBuyPrice; }
-	 * 
-	 * public String getBuyAmount() { return StringUtils.trimToEmpty(buyAmount); } public void setBuyAmount(String
-	 * buyAmount) { this.buyAmount = buyAmount; }
-	 * 
-	 * public String getUnitSellPrice() { return StringUtils.trimToEmpty(unitSellPrice); } public void
-	 * setUnitSellPrice(String unitSellPrice) { this.unitSellPrice = unitSellPrice; }
-	 * 
-	 * public String getSellAmount() { return StringUtils.trimToEmpty(sellAmount); } public void setSellAmount(String
-	 * sellAmount) { this.sellAmount = sellAmount; }
-	 * 
-	 * }
-	 * 
-	 * public class CustomerIncomeCategory { private String incomeCategory; private List<CustomerIncomeDetails>
-	 * customerIncomeDetails;
-	 * 
-	 * public void setCustomerIncomeDetails(List<CustomerIncomeDetails> customerIncomeDetails) {
-	 * this.customerIncomeDetails = customerIncomeDetails; } public List<CustomerIncomeDetails>
-	 * getCustomerIncomeDetails() { return customerIncomeDetails; }
-	 * 
-	 * public String getIncomeCategory() { return StringUtils.trimToEmpty(incomeCategory); } public void
-	 * setIncomeCategory(String incomeCategory) { this.incomeCategory = incomeCategory; }
-	 * 
-	 * }
-	 * 
-	 * public class CustomerIncomeDetails {
-	 * 
-	 * private String incomeType; private String income; private String jointCust;
-	 * 
-	 * public String getIncomeType() { return StringUtils.trimToEmpty(incomeType); } public void setIncomeType(String
-	 * incomeType) { this.incomeType = incomeType; }
-	 * 
-	 * public String getIncome() { return StringUtils.trimToEmpty(income); } public void setIncome(String income) {
-	 * this.income = income; }
-	 * 
-	 * public String getJointCust() { return StringUtils.trimToEmpty(jointCust); } public void setJointCust(String
-	 * jointCust) { this.jointCust = jointCust; } }
-	 * 
-	 * public class CustomerCreditReview { private String categoryName; private List<CustomerCreditReviewDetails>
-	 * customerCreditReviewDetails = new ArrayList<CustomerCreditReviewDetails>();
-	 * 
-	 * public String getCategoryName() { return StringUtils.trimToEmpty(categoryName); } public void
-	 * setCategoryName(String categoryName) { this.categoryName = categoryName; }
-	 * 
-	 * public List<CustomerCreditReviewDetails> getCustomerCreditReviewDetails() { return customerCreditReviewDetails; }
-	 * public void setCustomerCreditReviewDetails( List<CustomerCreditReviewDetails> customerCreditReviewDetails) {
-	 * this.customerCreditReviewDetails = customerCreditReviewDetails; } }
-	 * 
-	 * public class CustomerCreditReviewDetails { private String subCategoryName; private String year1; private String
-	 * year2; private String year3;
-	 * 
-	 * public String getSubCategoryName() { return StringUtils.trimToEmpty(subCategoryName); } public void
-	 * setSubCategoryName(String subCategoryName) { this.subCategoryName = subCategoryName; }
-	 * 
-	 * public String getYear1() { return StringUtils.trimToEmpty(year1); } public void setYear1(String year1) {
-	 * this.year1 = year1; }
-	 * 
-	 * public String getYear2() { return StringUtils.trimToEmpty(year2); } public void setYear2(String year2) {
-	 * this.year2 = year2; }
-	 * 
-	 * public String getYear3() { return StringUtils.trimToEmpty(year3); } public void setYear3(String year3) {
-	 * this.year3 = year3; }
-	 * 
-	 * }
-	 * 
-	 * public class ScoringHeader {
-	 * 
-	 * public ScoringHeader() { }
-	 * 
-	 * private String scoringGroup; private List<ScoringDetails> scoringDetails = new ArrayList<ScoringDetails>();
-	 * 
-	 * public String getScoringGroup() { return StringUtils.trimToEmpty(scoringGroup); } public void
-	 * setScoringGroup(String scoringGroup) { this.scoringGroup = scoringGroup; }
-	 * 
-	 * public List<ScoringDetails> getScoringDetails() { return scoringDetails; } public void
-	 * setScoringDetails(List<ScoringDetails> scoringDetails) { this.scoringDetails = scoringDetails; } }
-	 * 
-	 * public class ScoringDetails {
-	 * 
-	 * public ScoringDetails() { }
-	 * 
-	 * private String scoringMetric; private String scoringDesc; private String metricMaxScore; private String
-	 * calcScore;
-	 * 
-	 * public String getScoringMetric() { return StringUtils.trimToEmpty(scoringMetric); } public void
-	 * setScoringMetric(String scoringMetric) { this.scoringMetric = scoringMetric; }
-	 * 
-	 * public String getScoringDesc() { return StringUtils.trimToEmpty(scoringDesc); } public void setScoringDesc(String
-	 * scoringDesc) { this.scoringDesc = scoringDesc; }
-	 * 
-	 * public String getMetricMaxScore() { return StringUtils.trimToEmpty(metricMaxScore); } public void
-	 * setMetricMaxScore(String metricMaxScore) { this.metricMaxScore = metricMaxScore; }
-	 * 
-	 * public String getCalcScore() { return StringUtils.trimToEmpty(calcScore); } public void setCalcScore(String
-	 * calcScore) { this.calcScore = calcScore; }
-	 * 
-	 * }
-	 */
 	public class GroupRecommendation {
 		private String userRole = "";
 		private List<Recommendation> recommendations;
 
 		public GroupRecommendation() {
-
+			super();
 		}
 
 		public void setUserRole(String userRole) {
@@ -3255,7 +3175,7 @@ public class AgreementDetail {
 		private String noteDesc = "";
 
 		public Recommendation() {
-
+			super();
 		}
 
 		public String getUserName() {
@@ -3308,7 +3228,7 @@ public class AgreementDetail {
 		private String exceptionDesc = "";
 
 		public ExceptionList() {
-
+			super();
 		}
 
 		public String getExceptionItem() {
@@ -3336,7 +3256,7 @@ public class AgreementDetail {
 		private String outstandingBalance = "";
 
 		public CustomerFinance() {
-
+			super();
 		}
 
 		public String getDealDate() {
@@ -3857,6 +3777,30 @@ public class AgreementDetail {
 
 	public void setFinCcy(String finCcy) {
 		this.finCcy = finCcy;
+	}
+
+	public String getSourcingBranch() {
+		return sourcingBranch;
+	}
+
+	public void setSourcingBranch(String sourcingBranch) {
+		this.sourcingBranch = sourcingBranch;
+	}
+
+	public String getLovDescSourcingBranch() {
+		return lovDescSourcingBranch;
+	}
+
+	public void setLovDescSourcingBranch(String lovDescSourcingBranch) {
+		this.lovDescSourcingBranch = lovDescSourcingBranch;
+	}
+
+	public String getSanctionedDate() {
+		return sanctionedDate;
+	}
+
+	public void setSanctionedDate(String sanctionedDate) {
+		this.sanctionedDate = sanctionedDate;
 	}
 
 	public String getPftDaysBasis() {
@@ -5286,6 +5230,14 @@ public class AgreementDetail {
 		this.custSubCategory = custSubCategory;
 	}
 
+	public String getCustNatureOfBusiness() {
+		return custNatureOfBusiness;
+	}
+
+	public void setCustNatureOfBusiness(String custNatureOfBusiness) {
+		this.custNatureOfBusiness = custNatureOfBusiness;
+	}
+
 	public String getLtvPerc() {
 		return ltvPerc;
 	}
@@ -5334,11 +5286,12 @@ public class AgreementDetail {
 		private String custEmpName = "";
 		private String custType = "";
 		private String custSubCategory = "";
+		private String custNatureOfBusiness = "";
 
 		private Map<String, String> extMap = new HashMap<>();
 
 		public CoApplicant() {
-
+			super();
 		}
 
 		public String getCustName() {
@@ -5653,6 +5606,14 @@ public class AgreementDetail {
 			this.custSubCategory = custSubCategory;
 		}
 
+		public String getCustNatureOfBusiness() {
+			return custNatureOfBusiness;
+		}
+
+		public void setCustNatureOfBusiness(String custNatureOfBusiness) {
+			this.custNatureOfBusiness = custNatureOfBusiness;
+		}
+
 		public Map<String, String> getExtMap() {
 			return extMap;
 		}
@@ -5910,8 +5871,10 @@ public class AgreementDetail {
 		private String remainingAmount = "";
 		private String feeTreatment = "";
 		private String feeTreatmentDesc = "";
+		private String isDeductFromDisb = "";
 
 		public CusCharge() {
+			super();
 		}
 
 		public String getFeeTreatmentDesc() {
@@ -5969,6 +5932,15 @@ public class AgreementDetail {
 		public void setFeeTreatment(String feeTreatment) {
 			this.feeTreatment = feeTreatment;
 		}
+
+		public String getIsDeductFromDisb() {
+			return isDeductFromDisb;
+		}
+
+		public void setIsDeductFromDisb(String isDeductFromDisb) {
+			this.isDeductFromDisb = isDeductFromDisb;
+		}
+
 	}
 
 	// ------------- Disbursement Details ------------//
@@ -6035,8 +6007,10 @@ public class AgreementDetail {
 		private String fileNamePrefix = "";
 		private String channel = "";
 		private String entityCode = "";
+		private String accountNumber = "";
 
 		public Disbursement() {
+			super();
 		}
 
 		public String getScheduleDisbursementDate() {
@@ -6446,6 +6420,15 @@ public class AgreementDetail {
 		public void setEntityCode(String entityCode) {
 			this.entityCode = entityCode;
 		}
+
+		public String getAccountNumber() {
+			return accountNumber;
+		}
+
+		public void setAccountNumber(String accountNumber) {
+			this.accountNumber = accountNumber;
+		}
+
 	}
 
 	// ---------- Dcument details ---------//
@@ -7348,6 +7331,7 @@ public class AgreementDetail {
 		private String contactValue = "";
 
 		public ContactDetail() {
+			super();
 		}
 
 		public String getContactType() {
@@ -7380,6 +7364,7 @@ public class AgreementDetail {
 	public class EmailDetail {
 
 		public EmailDetail() {
+			super();
 		}
 
 		private String emailType = "";
@@ -7425,6 +7410,7 @@ public class AgreementDetail {
 		private String margin = "";
 
 		public AppIncDetail() {
+			super();
 		}
 
 		public String getApplicantType() {
@@ -7522,6 +7508,7 @@ public class AgreementDetail {
 		private String margin = "";
 
 		public AppExpDetail() {
+			super();
 		}
 
 		public String getApplicantType() {
@@ -7637,6 +7624,7 @@ public class AgreementDetail {
 		private String otherFinInstitute = "";
 		private String bounceInstalmentsInSixMonths = "";
 		private String bounceInstalmentsInTwelveMonths = "";
+		private String remarks = "";
 
 		public String getFinBranchName() {
 			return finBranchName;
@@ -7647,6 +7635,7 @@ public class AgreementDetail {
 		}
 
 		public ExternalLiabilityDetail() {
+			super();
 		}
 
 		public String getAppType() {
@@ -7929,6 +7918,14 @@ public class AgreementDetail {
 			this.bounceInstalmentsInTwelveMonths = bounceInstalmentsInTwelveMonths;
 		}
 
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+
 	}
 
 	private List<InternalLiabilityDetail> internalLiabilityDetails;
@@ -7952,6 +7949,7 @@ public class AgreementDetail {
 		private String appType = "";
 
 		public InternalLiabilityDetail() {
+			super();
 		}
 
 		public String getCustCIF() {
@@ -8059,6 +8057,7 @@ public class AgreementDetail {
 		private String noEMIBounce = "";
 
 		public BankingDetail() {
+			super();
 		}
 
 		public String getApplicantType() {
@@ -8294,6 +8293,7 @@ public class AgreementDetail {
 		private String irrPercentage = "";
 
 		public IrrDetail() {
+			super();
 		}
 
 		public String getIrrCode() {
@@ -8323,6 +8323,7 @@ public class AgreementDetail {
 	}
 
 	private List<ActivityDetail> activityDetails;
+	private List<ActivityDetail> customActivityDetails;
 
 	public List<ActivityDetail> getActivityDetails() {
 		return activityDetails;
@@ -8330,6 +8331,14 @@ public class AgreementDetail {
 
 	public void setActivityDetails(List<ActivityDetail> activityDetails) {
 		this.activityDetails = activityDetails;
+	}
+
+	public List<ActivityDetail> getCustomActivityDetails() {
+		return customActivityDetails;
+	}
+
+	public void setCustomActivityDetails(List<ActivityDetail> customActivityDetails) {
+		this.customActivityDetails = customActivityDetails;
 	}
 
 	public class ActivityDetail {
@@ -8341,6 +8350,7 @@ public class AgreementDetail {
 		private String activityUser = "";
 
 		public ActivityDetail() {
+			super();
 		}
 
 		public String getRole() {
@@ -8414,6 +8424,7 @@ public class AgreementDetail {
 		private String approvalStatus = "";
 
 		public LoanDeviation() {
+			super();
 		}
 
 		public String getDeviationCode() {
@@ -8511,6 +8522,7 @@ public class AgreementDetail {
 		private String dmaName = "";
 
 		public SourcingDetail() {
+			super();
 		}
 
 		public String getDsaNameDesc() {
@@ -8619,6 +8631,7 @@ public class AgreementDetail {
 		private String applicantType = "";
 
 		public ExtendedDetail() {
+			super();
 		}
 
 		/**
@@ -8843,6 +8856,7 @@ public class AgreementDetail {
 		private String actualScore = "";
 
 		public Score() {
+			super();
 		}
 
 		public String getScoringMetrics() {
@@ -8895,6 +8909,7 @@ public class AgreementDetail {
 		private String eligibilityLimit = "";
 
 		public Eligibility() {
+			super();
 		}
 
 		public String getRuleCode() {
@@ -8973,6 +8988,7 @@ public class AgreementDetail {
 		private String collateralReference = "";
 		private String verificationType = "";
 		private String documentName = "";
+		private String documentNameDesc = "";
 		private String documentStatus = "";
 		private String recommanditionStatus = "";
 		private String finalDecision = "";
@@ -8983,6 +8999,7 @@ public class AgreementDetail {
 		private String finalValAmt = "0.00";
 
 		public VerificationDetail() {
+			super();
 		}
 
 		public String getApplicantName() {
@@ -9073,6 +9090,14 @@ public class AgreementDetail {
 			this.documentName = documentName;
 		}
 
+		public String getDocumentNameDesc() {
+			return documentNameDesc;
+		}
+
+		public void setDocumentNameDesc(String documentNameDesc) {
+			this.documentNameDesc = documentNameDesc;
+		}
+
 		public String getDocumentStatus() {
 			return documentStatus;
 		}
@@ -9157,6 +9182,7 @@ public class AgreementDetail {
 		private String status = "";
 
 		public LoanQryDetails() {
+			super();
 		}
 
 		public String getRaisedBy() {
@@ -10810,6 +10836,7 @@ public class AgreementDetail {
 		private String creditWorth = "";
 
 		public ScoreHeader() {
+			super();
 		}
 
 		public String getCustomerType() {
@@ -10875,6 +10902,7 @@ public class AgreementDetail {
 		private String custAddrPhone = "";
 
 		public CustomerAddress() {
+			super();
 		}
 
 		public String getCustAddrType() {
@@ -11280,4 +11308,13 @@ public class AgreementDetail {
 	public void setFinProduct(String finProduct) {
 		this.finProduct = finProduct;
 	}
+
+	public String getTotalEligibilityAmount() {
+		return totalEligibilityAmount;
+	}
+
+	public void setTotalEligibilityAmount(String totalEligibilityAmount) {
+		this.totalEligibilityAmount = totalEligibilityAmount;
+	}
+
 }

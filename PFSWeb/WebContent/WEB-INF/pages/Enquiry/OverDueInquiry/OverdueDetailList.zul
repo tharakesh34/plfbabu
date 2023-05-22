@@ -59,6 +59,11 @@
 									<label value="${c:l('label_OverdueChargeRecovery_chargeAmtOrPer.value')}" />
 									<decimalbox id="chargeAmtOrPer" width="250px"  />
 								</row>
+								<row id="row_odMinAmount" visible="false">
+									<label value="${c:l('label_OverdueChargeRecovery_ODMinAmount.value')}" />
+									<decimalbox id="odMinAmount" width="120px" maxlength="15"
+															readonly="true" />
+								</row>
 							</rows>
 						</grid>
 						<groupbox>

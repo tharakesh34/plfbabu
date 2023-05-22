@@ -274,9 +274,9 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 	public int deleteInEOD(long finID) {
 		String sql = "Delete From FinRepayInstruction Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.update(sql.toString(), ps -> {
+		return this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 			ps.setLong(index, finID);
 		});

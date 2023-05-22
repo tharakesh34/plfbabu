@@ -22,6 +22,8 @@ public interface AssetClassificationDAO {
 
 	long prepareQueue();
 
+	void handleFailures();
+
 	long getQueueCount();
 
 	int updateThreadID(long from, long to, int threadID);
@@ -30,9 +32,7 @@ public interface AssetClassificationDAO {
 
 	AssetClassification getClassification(long finID);
 
-	long getCustId(long finID);
-
-	List<FinanceMain> getPrimaryLoans(long custID);
+	List<FinanceMain> getPrimaryLoans(long custID, String custCoreBank);
 
 	List<FinanceMain> getCoApplicantLoans(long finID);
 
@@ -68,4 +68,17 @@ public interface AssetClassificationDAO {
 
 	boolean checkDependency(long npaClassID);
 
+	Long getNpaMovemntId(long finID);
+
+	void saveNpaMovement(AssetClassification as);
+
+	void updateNpaMovement(long id, AssetClassification as);
+
+	void saveNpaTaggingMovement(AssetClassification as);
+
+	AssetClassification getNpaMovemnt(long finID);
+
+	void updatePrvPastDuedays(AssetClassification ac);
+
+	void deleteStage(long finID);
 }

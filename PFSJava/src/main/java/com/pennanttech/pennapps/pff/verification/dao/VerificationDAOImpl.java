@@ -263,11 +263,15 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 		paramMap.addValue("verificationType", verificationType);
 		paramMap.addValue("requestType", RequestType.INITIATE.getKey());
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Message.NO_RECORD_FOUND);
+			Long verificationId = jdbcTemplate.queryForObject(sql.toString(), paramMap, Long.class);
+			if (verificationId != null) {
+				return verificationId;
+			}
+		} catch (Exception e) {
 			return null;
 		}
+
+		return null;
 	}
 
 	@Override
@@ -494,11 +498,9 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		logger.debug(Literal.SQL + sql);
 
-		Object[] args = new Object[] { referenceFor, verificationType, finReference, requestType,
-				verificationCategory };
-
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), args, Long.class);
+			return jdbcOperations.queryForObject(sql.toString(), Long.class, referenceFor, verificationType,
+					finReference, requestType, verificationCategory);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
@@ -591,18 +593,17 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { finReference, verificationType, requestType },
-				(rs, rowNum) -> {
-					Verification vf = new Verification();
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			Verification vf = new Verification();
 
-					vf.setId(rs.getLong("ID"));
-					vf.setReferenceFor(rs.getString("REFERENCEFOR"));
-					vf.setCustomerName(rs.getString("CUSTSHRTNAME"));
-					vf.setRequestType(rs.getInt("REQUESTTYPE"));
-					vf.setVerificationType(rs.getInt("VERIFICATIONTYPE"));
+			vf.setId(rs.getLong("ID"));
+			vf.setReferenceFor(rs.getString("REFERENCEFOR"));
+			vf.setCustomerName(rs.getString("CUSTSHRTNAME"));
+			vf.setRequestType(rs.getInt("REQUESTTYPE"));
+			vf.setVerificationType(rs.getInt("VERIFICATIONTYPE"));
 
-					return vf;
-				});
+			return vf;
+		}, finReference, verificationType, requestType);
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public class CommitmentSummary implements java.io.Serializable {
 	private int ccyEditField;
 
 	public CommitmentSummary() {
-
+	    super();
 	}
 
 	public long getCustID() {

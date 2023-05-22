@@ -23,6 +23,7 @@ public class AutoKnockOffData implements Serializable {
 	private String payableType;
 	private String reason;
 	private EventProperties eventProperties = new EventProperties();
+	private boolean crossLoanAutoKnockOff;
 
 	public AutoKnockOffData() {
 		super();
@@ -130,6 +131,14 @@ public class AutoKnockOffData implements Serializable {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public boolean isCrossLoanAutoKnockOff() {
+		return crossLoanAutoKnockOff;
+	}
+
+	public void setCrossLoanAutoKnockOff(boolean crossLoanAutoKnockOff) {
+		this.crossLoanAutoKnockOff = crossLoanAutoKnockOff;
 	}
 
 }

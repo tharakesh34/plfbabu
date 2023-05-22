@@ -57,7 +57,6 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
@@ -86,6 +85,7 @@ import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -517,7 +517,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (prvSchd != null && !isPrvShcdAdded) {
 					comboitem = new Comboitem();
 					comboitem.setLabel(
-							DateUtility.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
+							DateUtil.formatToLongDate(prvSchd.getSchDate()) + " " + prvSchd.getSpecifier());
 					comboitem.setValue(prvSchd.getSchDate());
 					comboitem.setAttribute("fromSpecifier", prvSchd.getSpecifier());
 					this.cbFrqFromDate.appendChild(comboitem);
@@ -525,7 +525,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 				this.cbFrqFromDate.appendChild(comboitem);
@@ -662,7 +662,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									Labels.getLabel("DATE_ALLOWED_MINDATE",
 											new String[] {
 													Labels.getLabel("label_ReScheduleDialog_GrcPeriodEndDate.value"),
-													DateUtility.formatToLongDate(fromDate) }));
+													DateUtil.formatToLongDate(fromDate) }));
 						}
 					}
 				}
@@ -714,7 +714,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.nextRepayDate,
 							Labels.getLabel("DATE_ALLOWED_MINDATE",
 									new String[] { Labels.getLabel("label_ReScheduleDialog_NextRepayDate.value"),
-											DateUtility.formatToShortDate(curBusinessDate) }));
+											DateUtil.formatToShortDate(curBusinessDate) }));
 				}
 			}
 		} catch (WrongValueException we) {
@@ -998,7 +998,7 @@ public class ReScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					int prvGrcStpTerms = 0;
 					for (FinanceScheduleDetail fsd : fsdList) {
 
-						if (fsd.isFrqDate() && DateUtility.compare(fsd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0) {
+						if (fsd.isFrqDate() && DateUtil.compare(fsd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0) {
 							grcTerms = grcTerms + 1;
 						}
 

@@ -33,19 +33,28 @@ import com.pennanttech.pff.file.UploadTypes;
 
 public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail> implements HoldRefundUploadDAO {
 
+	public HoldRefundUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<HoldRefundUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, HoldStatus, Reason, Remarks, Progress, ErrorCode, ErrorDesc From HOLD_REFUND_UPLOAD Where HeaderId = ?";
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, Id, FinID, FinReference, RecordSeq");
+		sql.append(", HoldStatus, Reason, Remarks, Progress, ErrorCode, ErrorDesc");
+		sql.append(" From HOLD_REFUND_UPLOAD");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
+		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			HoldRefundUploadDetail hrud = new HoldRefundUploadDetail();
 
 			hrud.setHeaderId(rs.getLong("HeaderId"));
 			hrud.setId(rs.getLong("Id"));
 			hrud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			hrud.setReference(rs.getString("FinReference"));
+			hrud.setRecordSeq(rs.getLong("RecordSeq"));
 			hrud.setHoldStatus(rs.getString("HoldStatus"));
 			hrud.setReason(rs.getString("Reason"));
 			hrud.setRemarks(rs.getString("Remarks"));
@@ -53,7 +62,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 			hrud.setErrorCode(rs.getString("ErrorCode"));
 			hrud.setErrorDesc(rs.getString("ErrorDesc"));
 			return hrud;
-		});
+		}, headerID, "S");
 	}
 
 	@Override
@@ -111,7 +120,7 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update HOLD_REFUND_UPLOAD set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -124,8 +133,8 @@ public class HoldRefundUploadDAOImpl extends SequenceDao<HoldRefundUploadDetail>
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

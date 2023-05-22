@@ -60,6 +60,7 @@ public abstract class AUploadListCtrl extends GFCBaseListCtrl<FileUploadHeader> 
 		if ("M".equals(stage)) {
 			header = getUploadHeader();
 			header.setCreatedBy(loggedInUser.getUserId());
+			header.setCreatedByName(loggedInUser.getUserName());
 		} else {
 			header.setType(this.type.name());
 		}

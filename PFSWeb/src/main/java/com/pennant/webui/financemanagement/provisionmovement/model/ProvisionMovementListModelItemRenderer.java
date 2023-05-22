@@ -34,9 +34,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -47,14 +47,14 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 	private static final long serialVersionUID = -4343497695244309847L;
 
 	public ProvisionMovementListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
 	public void render(Listitem item, ProvisionMovement provisionMovement, int count) {
 
 		Listcell lc;
-		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getProvMovementDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(provisionMovement.getProvMovementDate()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formateInt(provisionMovement.getProvMovementSeq()));
 		lc.setStyle("text-align:right;");
@@ -80,9 +80,9 @@ public class ProvisionMovementListModelItemRenderer implements ListitemRenderer<
 		lc = new Listcell(CurrencyUtil.format(provisionMovement.getProfitDue(), 3));
 		lc.setStyle("text-align:right;");
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getDueFromDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(provisionMovement.getDueFromDate()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(provisionMovement.getLastFullyPaidDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(provisionMovement.getLastFullyPaidDate()));
 		lc.setParent(item);
 		item.setAttribute("data", provisionMovement);
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onProvisionMovementItemDoubleClicked");

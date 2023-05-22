@@ -57,6 +57,7 @@ import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FeeScheduleCalculator {
 	private static final Logger logger = LogManager.getLogger(FeeScheduleCalculator.class);
@@ -229,7 +230,7 @@ public class FeeScheduleCalculator {
 
 			// Fee Schedule date is before event from date
 			if (feeSchdDate.compareTo(evtFromDate) < 0) {
-				feeSchdDate = DateUtility.getDBDate(DateUtility.format(feeSchdDate, PennantConstants.DBDateFormat));
+				feeSchdDate = DateUtil.getDatePart(feeSchdDate);
 				if (!avlSchdMap.containsKey(feeSchdDate)) {
 					recalFee = recalFee.add(feeSchdDetail.getSchAmount());
 					feeSchdDetails.remove(i);
@@ -583,25 +584,26 @@ public class FeeScheduleCalculator {
 		// Loop through all Fees and set fees in installment schedules
 		for (int i = 0; i < feeDetails.size(); i++) {
 			List<FinFeeScheduleDetail> feeSchdDetails = feeDetails.get(i).getFinFeeScheduleDetailList();
-			for (int j = 0; j < feeSchdDetails.size(); j++) {
-				feeSchdDetail = feeSchdDetails.get(j);
-				if (!rpySchdMap.containsKey(feeSchdDetail.getSchDate())) {
-					continue;
+			if (CollectionUtils.isNotEmpty(feeSchdDetails)) {
+				for (int j = 0; j < feeSchdDetails.size(); j++) {
+					feeSchdDetail = feeSchdDetails.get(j);
+					if (!rpySchdMap.containsKey(feeSchdDetail.getSchDate())) {
+						continue;
+					}
+
+					int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
+
+					if (schdIdx <= 0) {
+						schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
+					}
+
+					FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
+					curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
+					curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST())); // GST Fee Tax
 				}
-
-				int schdIdx = rpySchdMap.get(feeSchdDetail.getSchDate());
-
-				if (schdIdx <= 0) {
-					schdIdx = hldSchdMap.get(feeSchdDetail.getSchDate());
-				}
-
-				FinanceScheduleDetail curSchd = finSchdDetails.get(schdIdx);
-				curSchd.setFeeSchd(curSchd.getFeeSchd().add(feeSchdDetail.getSchAmount()));
-				curSchd.setFeeTax(curSchd.getFeeTax().add(feeSchdDetail.getTGST())); // GST Fee Tax
 			}
+
+			logger.debug("Leaving");
 		}
-
-		logger.debug("Leaving");
 	}
-
 }

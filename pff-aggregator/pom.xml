@@ -1,17 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.3.0</version>
+	<version>6.4.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>6.3.0</pff.version>
+		<pff.version>6.4.0</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>11</jdk.version>
+		<jdk.version>17</jdk.version>
 		<spring.version>5.3.25</spring.version>
 		<spring.security.version>5.8.2</spring.security.version>
 		<spring.batch.version>4.3.8</spring.batch.version>
@@ -67,27 +69,27 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-core</artifactId>
-				<version>1.20.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.pennanttech.pennapps.pff</groupId>
-				<artifactId>account-updater</artifactId>
-				<version>4.0.0</version>
+				<version>1.22.10.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>1.20.0</version>
+				<version>1.22.10</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pennanttech.pennapps</groupId>
+				<artifactId>pennapps-schedular</artifactId>
+				<version>1.22.10</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pennanttech.pennapps.pff</groupId>
+				<artifactId>account-updater</artifactId>
+				<version>4.1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-lic</artifactId>
 				<version>1.3.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.pennanttech.pennapps</groupId>
-				<artifactId>pennapps-schedular</artifactId>
-				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -97,7 +99,7 @@
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
 				<artifactId>data-engine</artifactId>
-				<version>4.3.11</version>
+				<version>5.0.0.16</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -496,6 +498,11 @@
 			<artifactId>js</artifactId>
 			<version>20.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>20.0.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -588,9 +595,9 @@
 			<version>5.2.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>4.1.2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>4.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
@@ -903,7 +910,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.pennant.jasper</groupId>
 			<artifactId>TrebuchetMS</artifactId>
@@ -931,56 +938,6 @@
 			<groupId>org.springframework.security.extensions</groupId>
 			<artifactId>spring-security-saml2-core</artifactId>
 			<version>1.0.3.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.owasp.esapi</groupId>
-					<artifactId>esapi</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xalan</groupId>
-					<artifactId>serializer</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.velocity</groupId>
-					<artifactId>velocity-engine-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-ext-jdk15on</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-jdk15on</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xalan</groupId>
-					<artifactId>xalan</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-httpclient</groupId>
-					<artifactId>commons-httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.velocity</groupId>
-					<artifactId>velocity</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-jdk15</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.opensaml</groupId>
-					<artifactId>xmltooling</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security.extensions</groupId>
@@ -993,24 +950,8 @@
 			<version>2.6.5</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.owasp.esapi</groupId>
-					<artifactId>esapi</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.velocity</groupId>
-					<artifactId>velocity</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.bouncycastle</groupId>
 					<artifactId>bcprov-jdk15on</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-httpclient</groupId>
-					<artifactId>commons-httpclient</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>ca.juliusdavies</groupId>
-					<artifactId>not-yet-commons-ssl</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

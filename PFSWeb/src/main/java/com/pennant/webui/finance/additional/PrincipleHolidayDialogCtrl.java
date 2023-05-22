@@ -47,7 +47,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.PrincipalHolidayService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -61,6 +60,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -283,7 +283,7 @@ public class PrincipleHolidayDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				comboitem = new Comboitem();
-				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+				comboitem.setLabel(DateUtil.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setAttribute("fromSpecifier", curSchd.getSpecifier());
 
 				if ("B".equals(curSchd.getBpiOrHoliday())) {
@@ -359,8 +359,8 @@ public class PrincipleHolidayDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
 			if (curSchd.isRepayOnSchDate()
 					|| curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-				if (DateUtility.compare(curSchd.getSchDate(), fromDate) >= 0
-						&& DateUtility.compare(curSchd.getSchDate(), toDate) <= 0) {
+				if (DateUtil.compare(curSchd.getSchDate(), fromDate) >= 0
+						&& DateUtil.compare(curSchd.getSchDate(), toDate) <= 0) {
 					adjTerms = adjTerms + 1;
 				}
 			}
@@ -376,6 +376,7 @@ public class PrincipleHolidayDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
 		getFinScheduleData().setFeeEvent(moduleDefiner);
+		getFinScheduleData().setModuleDefiner(moduleDefiner);
 
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);

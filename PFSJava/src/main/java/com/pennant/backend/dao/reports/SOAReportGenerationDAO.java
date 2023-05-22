@@ -33,6 +33,7 @@ import java.util.Map;
 
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
+import com.pennant.backend.model.finance.CrossLoanTransfer;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -144,4 +145,6 @@ public interface SOAReportGenerationDAO {
 	List<RestructureCharge> getRestructureChargeList(String finReference);
 
 	AdviseDueTaxDetail getAdviseDueTaxDetails(long adviseId);
+
+	List<CrossLoanTransfer> getCrossLoanDetail(String finReference, boolean fromRef);
 }

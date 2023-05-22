@@ -25,7 +25,6 @@
 			<listener ref="eodJobListener" />
 		</listeners>
 
-
 		<step id="beforeEOD">
 			<tasklet ref="beforeEODTaskLet" />
 			<next on="*" to="loanCancel" />
@@ -63,6 +62,7 @@
 			<next on="*" to="autoKnockOffDataBackUp" />
 			<fail on="FAILED" />
 		</step>
+
 		<step id="autoKnockOffDataBackUp">
 			<tasklet ref="autoKnockOffDataBackUpTasklet" />
 			<next on="*" to="notifyLoanClosureDetailsToEFS" />
@@ -89,6 +89,66 @@
 			<partition step="oTSMaster" partitioner="otsPartition">
 				<handler task-executor="taskExecutor" />
 			</partition>
+			<next on="*" to="excessKnockOffLoading" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="excessKnockOffLoading">
+			<tasklet ref="excessKnockOffLoadingTaskLet" />
+			<next on="*" to="excessKnockOffQueuing" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="excessKnockOffQueuing">
+			<tasklet ref="excessKnockOffQueuingTaskLet" />
+			<next on="*" to="excessKnockOffMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="excessKnockOffMaster">
+			<partition step="excessKnockOff" partitioner="excessKnockOffPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="letterGenerationQueuing" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="letterGenerationQueuing">
+			<tasklet ref="letterGenerationQueueTasklet" />
+			<next on="*" to="letterGenerationMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="letterGenerationMaster">
+			<partition step="letterGeneration" partitioner="letterGeneratePartitioner">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="letterGenerationClear" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="letterGenerationClear">
+			<tasklet ref="letterGenerationClearTasklet" />
+			<next on="*" to="autoRefundQueuing" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoRefundQueuing">
+			<tasklet ref="autoRefundQueuingTaskLet" />
+			<next on="*" to="autoRefundMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoRefundMaster">
+			<partition step="autoRefund" partitioner="autoRefundPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="clearAutoRefundQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="clearAutoRefundQueue">
+			<tasklet ref="autoRefundClearTasklet" />
 			<next on="*" to="beforeAssetClassification" />
 			<fail on="FAILED" />
 		</step>
@@ -133,6 +193,21 @@
 		</step>
 		<step id="provisionCalcMaster">
 			<partition step="provisionCalc" partitioner="provisionCalcPartition">
+				<handler task-executor="taskExecutor" />
+			</partition>
+			<next on="*" to="autoWriteOffCalcQueue" />
+			<fail on="FAILED" />
+		</step>
+
+		<!-- Auto Write Off -->
+		<step id="autoWriteOffCalcQueue">
+			<tasklet ref="autoWriteOffCalcQueueTasklet" />
+			<next on="*" to="autoWriteOffCalcMaster" />
+			<fail on="FAILED" />
+		</step>
+
+		<step id="autoWriteOffCalcMaster">
+			<partition step="autoWriteOffCalc" partitioner="autoWriteOffCalcPartition">
 				<handler task-executor="taskExecutor" />
 			</partition>
 			<next on="*" to="processINDASForInActiveFinances" />
@@ -257,6 +332,16 @@
 		</step>
 		<step id="waiverCancellation">
 			<tasklet ref="waiverCancellationTasklet" />
+			<next on="*" to="finconGLExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="finconGLExtraction">
+			<tasklet ref="finconGLExtractionTasklet" />
+			<next on="*" to="ucicExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="ucicExtraction">
+			<tasklet ref="ucicExtractionTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>
@@ -281,9 +366,27 @@
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
-	
+
 	<step id="oTSMaster" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="oTSTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<step id="excessKnockOff" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="excessKnockOffTasklet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<step id="autoRefund" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="autoRefundTasklet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
+	<step id="letterGeneration" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="letterGenerationTasklet" allow-start-if-complete="true">
 			<transaction-attributes propagation="NEVER" />
 		</tasklet>
 	</step>
@@ -318,6 +421,14 @@
 		class="com.pennanttech.pff.npa.eod.tasklet.EffAssetClassificationPartition" />
 	<bean id="provisionCalcPartition" class="com.pennanttech.pff.provision.eod.tasklet.ProvisionCalcPartition" />
 
+	<bean id="autoWriteOffCalcPartition"
+		class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcPartition" />
+	<step id="autoWriteOffCalc" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet ref="autoWriteOffClacTaskLet" allow-start-if-complete="true">
+			<transaction-attributes propagation="NEVER" />
+		</tasklet>
+	</step>
+
 
 	<step id="ledgerDownloadProcess" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet ref="ledgerDownloadProcessTaskLet" allow-start-if-complete="true">
@@ -326,7 +437,37 @@
 	</step>
 
 	<bean id="ledgerDownloadPartition" class="com.pennant.backend.ledger.eod.tasklet.LedgerDownloadPartition" />
-	
-	 <bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
 
+	<bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
+
+	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
+
+	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="almDumpService" class="com.pennanttech.external.extractions.service.ALMDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="baselTwoDumpService" class="com.pennanttech.external.extractions.service.BaselTwoDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="rpmsDumpService" class="com.pennanttech.external.extractions.service.RPMSDumpService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
+
+	<bean id="microEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.ExtExtractionDumpService">
+		<property name="baselOneDumpService" ref="baselOneDumpService" />
+		<property name="almDumpService" ref="almDumpService" />
+		<property name="baselTwoDumpService" ref="baselTwoDumpService" />
+		<property name="rpmsDumpService" ref="rpmsDumpService" />
+	</bean>
+
+	<bean id="beforeEodExternalProcessHook"
+		class="com.pennanttech.external.extractions.service.BeforeEodExternalProcessService">
+		<property name="extStageDao" ref="extStageDao" />
+	</bean>
 </beans>

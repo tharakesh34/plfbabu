@@ -46,7 +46,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RateUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -1109,7 +1108,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 				if (custExtLiability.getFinDate() == null) {
 					lc = new Listcell();
 				} else {
-					lc = new Listcell(DateUtility.formatToLongDate(custExtLiability.getFinDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(custExtLiability.getFinDate()));
 				}
 				lc.setParent(item);
 

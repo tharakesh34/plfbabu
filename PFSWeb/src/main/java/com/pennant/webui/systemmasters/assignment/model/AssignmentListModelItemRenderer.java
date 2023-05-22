@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,7 +58,7 @@ public class AssignmentListModelItemRenderer implements ListitemRenderer<Assignm
 		lc.setParent(item);
 		lc = new Listcell(assignment.getLoanType());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(assignment.getDisbDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(assignment.getDisbDate()));
 		lc.setParent(item);
 		lc = new Listcell(assignment.getOpexFeeType());
 		lc.setParent(item);

@@ -92,8 +92,7 @@ public class LegalNoteDialogCtrl extends GFCBaseCtrl<LegalNote> {
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.legalNote.getLegalNoteId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.legalNote.getLegalNoteId());
 	}
 
 	/**

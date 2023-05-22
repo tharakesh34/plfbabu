@@ -13,9 +13,7 @@ public enum AdviseType {
 
 	RECEIVABLE(1),
 
-	PAYABLE(2),
-
-	Settlement(3);
+	PAYABLE(2);
 
 	private int id;
 
@@ -39,20 +37,12 @@ public enum AdviseType {
 		return isEqual(PAYABLE, adviseType(id));
 	}
 
-	public static boolean isSettlement(int id) {
-		return isEqual(Settlement, adviseType(id));
-	}
-
 	public static boolean isReceivable(String id) {
 		return isEqual(RECEIVABLE, adviseType(id));
 	}
 
 	public static boolean isPayable(String id) {
 		return isEqual(PAYABLE, adviseType(id));
-	}
-
-	public static boolean isSettlement(String id) {
-		return isEqual(Settlement, adviseType(id));
 	}
 
 	private static boolean isEqual(AdviseType adviseType, AdviseType type) {

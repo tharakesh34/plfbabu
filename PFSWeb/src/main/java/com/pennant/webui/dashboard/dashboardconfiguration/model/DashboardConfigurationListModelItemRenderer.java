@@ -47,7 +47,7 @@ public class DashboardConfigurationListModelItemRenderer
 	private static final long serialVersionUID = -2685804825608978299L;
 
 	public DashboardConfigurationListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

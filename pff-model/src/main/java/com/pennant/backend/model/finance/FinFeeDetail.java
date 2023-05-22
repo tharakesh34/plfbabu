@@ -37,6 +37,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -115,7 +117,6 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal calculatedOn = BigDecimal.ZERO;
 	private boolean refundable;
 	private boolean alwPreIncomization;
-	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
 	private transient List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<>(1);
 	private boolean taxApplicable;
@@ -209,8 +210,12 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		entity.setRefundable(this.refundable);
 		entity.setAlwPreIncomization(this.alwPreIncomization);
 		entity.setValidateFinFeeDetail(this.validateFinFeeDetail);
-		this.finFeeScheduleDetailList.stream()
-				.forEach(e -> entity.getFinFeeScheduleDetailList().add(e == null ? null : e.copyEntity()));
+
+		if (CollectionUtils.isNotEmpty(this.finFeeScheduleDetailList)) {
+			this.finFeeScheduleDetailList.stream()
+					.forEach(e -> entity.getFinFeeScheduleDetailList().add(e == null ? null : e.copyEntity()));
+		}
+
 		entity.setTaxApplicable(this.taxApplicable);
 		entity.setTaxComponent(this.taxComponent);
 		entity.setFeeAmz(this.feeAmz);

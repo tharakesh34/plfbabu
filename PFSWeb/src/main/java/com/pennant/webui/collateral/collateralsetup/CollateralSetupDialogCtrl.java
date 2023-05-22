@@ -76,7 +76,6 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -129,6 +128,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -781,6 +781,19 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		}
 		declaredMap.put("ct_collateralType", aCollateralSetup.getCollateralType());
 		declaredMap.put("ct_collateralCcy", aCollateralSetup.getCollateralCcy());
+
+		if (this.financeDetail != null && this.financeDetail.getFinScheduleData().getFinanceMain() != null) {
+			FinanceMain fm = this.financeDetail.getFinScheduleData().getFinanceMain();
+			int pos = CurrencyUtil.getFormat(fm.getFinCcy());
+			declaredMap.put("fm_finCurrentAssetValue",
+					PennantApplicationUtil.formateAmount(fm.getFinCurrAssetValue(), pos));
+			declaredMap.put("fm_finAssetValue", PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), pos));
+			declaredMap.put("fm_finRequestedAmount", PennantApplicationUtil.formateAmount(fm.getReqLoanAmt(), pos));
+		} else {
+			declaredMap.put("fm_finCurrentAssetValue", 0);
+			declaredMap.put("fm_finAssetValue", 0);
+			declaredMap.put("fm_finRequestedAmount", 0);
+		}
 		if (this.extendedFieldRenderList != null && this.extendedFieldRenderList.size() > 0) {
 
 			ExtendedFieldRender fieldValueDetail = extendedFieldRenderList.get(0);
@@ -1146,7 +1159,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 							SysParamUtil.getAppDate(), HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate();
 					this.nextReviewDate.setValue(nextRDate);
 				} else {
-					if (DateUtility.compare(this.expiryDate.getValue(), this.nextReviewDate.getValue()) != 0
+					if (DateUtil.compare(this.expiryDate.getValue(), this.nextReviewDate.getValue()) != 0
 							&& !FrequencyUtil.isFrqDate(this.reviewFrequency.getValue(),
 									this.nextReviewDate.getValue())) {
 						throw new WrongValueException(this.nextReviewDate,
@@ -1157,7 +1170,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 				}
 				if (this.expiryDate.getValue() != null) {
-					if (DateUtility.compare(this.nextReviewDate.getValue(), this.expiryDate.getValue()) > 0) {
+					if (DateUtil.compare(this.nextReviewDate.getValue(), this.expiryDate.getValue()) > 0) {
 						this.nextReviewDate.setValue(this.expiryDate.getValue());
 					}
 				}
@@ -2647,7 +2660,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					avalUtiAmt = assignedvalue;
 					expired = true;
 				} else if (StringUtils.equals(assignmentDetail.getModule(), CommitmentConstants.MODULE_NAME)
-						&& DateUtility.compare(assignmentDetail.getCmtExpDate(), SysParamUtil.getAppDate()) < 0) {
+						&& DateUtil.compare(assignmentDetail.getCmtExpDate(), SysParamUtil.getAppDate()) < 0) {
 					avalUtiAmt = assignedvalue;
 					expired = true;
 				}
@@ -2733,7 +2746,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);
 
-				lc = new Listcell(DateUtility.format(movement.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtil.format(movement.getValueDate(), DateFormat.LONG_DATE.getPattern()));
 				item.appendChild(lc);
 				this.listBoxMovements.appendChild(item);
 			}

@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.util.Date;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -14,6 +13,7 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 import jxl.Cell;
 
@@ -46,11 +46,11 @@ public class BeanFactory {
 
 	public static final String BASE_RATE_HIGH = "MIBORHIGH";
 
-	public static final Date date_bpi = DateUtility.getDate("25/01/2017");
-	public static final Date date_bpi_1month = DateUtility.getDate("25/02/2017");
-	public static final Date date_bpi_1quarter = DateUtility.getDate("25/04/2017");
-	public static final Date date_bpi_1year = DateUtility.getDate("25/02/2018");
-	public static final Date date_bpi_1Year1quarter = DateUtility.getDate("25/04/2018");
+	public static final Date date_bpi = DateUtil.getDate("25/01/2017");
+	public static final Date date_bpi_1month = DateUtil.getDate("25/02/2017");
+	public static final Date date_bpi_1quarter = DateUtil.getDate("25/04/2017");
+	public static final Date date_bpi_1year = DateUtil.getDate("25/02/2018");
+	public static final Date date_bpi_1Year1quarter = DateUtil.getDate("25/04/2018");
 
 	public static FinScheduleData getSchedule(Cell[] cells, String prodCtg, String testType) {
 		FinScheduleData schedule = new FinScheduleData();
@@ -86,7 +86,7 @@ public class BeanFactory {
 
 		fm.setFinReference(cellStrValue);
 		fm.setFinCcy("INR");
-		fm.setFinStartDate(DateUtility.getDate("10/01/2017"));
+		fm.setFinStartDate(DateUtil.getDate("10/01/2017"));
 		fm.setFinAmount(new BigDecimal(110000000));
 		fm.setDownPayment(new BigDecimal(10000000));
 		fm.setDownPayBank(new BigDecimal(10000000));
@@ -141,14 +141,14 @@ public class BeanFactory {
 			fm.setPlanEMIHLockPeriod(6);
 			fm.setPlanEMICpz(true);
 
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/08/2017"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/06/2018"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/08/2018"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/10/2018"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/06/2019"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/10/2019"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/06/2020"));
-			schedule.getPlanEMIHDates().add(DateUtility.getDate("25/10/2020"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/08/2017"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/06/2018"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/08/2018"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/10/2018"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/06/2019"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/10/2019"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/06/2020"));
+			schedule.getPlanEMIHDates().add(DateUtil.getDate("25/10/2020"));
 		} else {
 			fm.setPlanEMIHAlw(false);
 		}
@@ -249,7 +249,7 @@ public class BeanFactory {
 		fm.setAllowRepayRvw(true);
 		fm.setRepayRvwFrq(QTLY_FRQ);
 		fm.setRepayFrq(QTLY_FRQ);
-		fm.setMaturityDate(DateUtility.getDate("25/01/2021"));
+		fm.setMaturityDate(DateUtil.getDate("25/01/2021"));
 
 		// RATE BASIS: FIXED OR REFERENCE RATE
 		cellStrValue = Dataset.getString(cells, 16);
@@ -342,7 +342,7 @@ public class BeanFactory {
 		}
 
 		fm.setAllowGrcPeriod(true);
-		fm.setGrcPeriodEndDate(DateUtility.getDate("25/01/2018"));
+		fm.setGrcPeriodEndDate(DateUtil.getDate("25/01/2018"));
 
 		cellStrValue = Dataset.getString(cells, 16);
 		if (cellStrValue.equals("FIX")) {
@@ -503,7 +503,7 @@ public class BeanFactory {
 		// Basic Details
 		// _______________________________________________________________________________________________
 		fm.setFinCcy("INR");
-		fm.setFinStartDate(DateUtility.getDate("10/01/2017"));
+		fm.setFinStartDate(DateUtil.getDate("10/01/2017"));
 		fm.setFinAmount(new BigDecimal(110000000));
 		fm.setDownPayment(new BigDecimal(10000000));
 		fm.setDownPayBank(new BigDecimal(10000000));
@@ -539,7 +539,7 @@ public class BeanFactory {
 		fm.setAllowRepayRvw(true);
 		fm.setRepayRvwFrq(MNTH_FRQ);
 		fm.setRepayFrq(MNTH_FRQ);
-		fm.setMaturityDate(DateUtility.getDate("25/01/2019"));
+		fm.setMaturityDate(DateUtil.getDate("25/01/2019"));
 		fm.setRepayBaseRate(BASE_RATE);
 		fm.setRepaySpecialRate(SPECIAL_RATE);
 		fm.setRepayMargin(MARGIN_RATE);
@@ -559,7 +559,7 @@ public class BeanFactory {
 		// Next Dates
 		if (isGraceRequired) {
 			fm.setNumberOfTerms(18);
-			fm.setNextRepayPftDate(DateUtility.getDate("25/08/2017"));
+			fm.setNextRepayPftDate(DateUtil.getDate("25/08/2017"));
 		} else {
 			fm.setNumberOfTerms(24);
 			fm.setNextRepayPftDate(date_bpi_1month);
@@ -586,7 +586,7 @@ public class BeanFactory {
 
 	private static FinanceMain setSrvGraceDetails(FinanceMain fm, Cell[] cells) {
 		fm.setAllowGrcPeriod(true);
-		fm.setGrcPeriodEndDate(DateUtility.getDate("25/07/2017"));
+		fm.setGrcPeriodEndDate(DateUtil.getDate("25/07/2017"));
 		fm.setGrcPftRate(new BigDecimal(10));
 		fm.setGrcRateBasis(CalculationConstants.RATE_BASIS_R);
 

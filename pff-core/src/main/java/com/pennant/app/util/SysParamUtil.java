@@ -34,6 +34,7 @@
 package com.pennant.app.util;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -274,6 +275,32 @@ public class SysParamUtil {
 			value = (BigDecimal) object;
 		}
 		return value;
+	}
+
+	public static java.util.Date getDerivedAppDate() {
+		java.util.Date appDate = SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_DATE.getCode());
+
+		java.util.Date sysDate = null;
+		String prodEnv = SysParamUtil.getValueAsString("IS_PROD_ENV");
+		if (StringUtils.equals(prodEnv, PennantConstants.YES)) {
+			sysDate = DateUtil.getSysDate();
+		} else {
+			sysDate = SysParamUtil.getValueAsDate("SYS_DATE");
+		}
+
+		if (DateUtil.compare(DateUtil.getMonthEnd(appDate), appDate) == 0 && DateUtil.compare(sysDate, appDate) > 0) {
+			appDate = sysDate;
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(appDate);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			appDate = calendar.getTime();
+		}
+
+		return appDate;
 	}
 
 	public static void updateParamDetails(String code, String value) {

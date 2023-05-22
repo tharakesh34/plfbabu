@@ -21,7 +21,7 @@ public class ExtendedField implements Serializable {
 	private static final long serialVersionUID = -5159335556711548402L;
 
 	public ExtendedField() {
-
+	    super();
 	}
 
 	@XmlElementWrapper(name = "extendedFields")

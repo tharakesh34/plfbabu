@@ -975,15 +975,15 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 
 		if (!this.module.isDisabled()) {
 			this.module.setConstraint(
-					new PTListValidator(Labels.getLabel("label_ExtendedFieldConfig_Module.value"), configList, true));
+					new PTListValidator<ValueLabel>(Labels.getLabel("label_ExtendedFieldConfig_Module.value"), configList, true));
 		}
 
 		if (!this.subModule.isDisabled() && this.subModule.isVisible()) {
 			if (ExtendedFieldConstants.MODULE_VERIFICATION.equals(module)) {
-				this.subModule.setConstraint(new PTListValidator(
+				this.subModule.setConstraint(new PTListValidator<ValueLabel>(
 						Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), verificatinList, true));
 			} else if (ExtendedFieldConstants.MODULE_CUSTOMER.equals(module)) {
-				this.subModule.setConstraint(new PTListValidator(
+				this.subModule.setConstraint(new PTListValidator<ValueLabel>(
 						Labels.getLabel("label_ExtendedFieldConfig_SubModule.value"), custCtgList, true));
 			}
 		}

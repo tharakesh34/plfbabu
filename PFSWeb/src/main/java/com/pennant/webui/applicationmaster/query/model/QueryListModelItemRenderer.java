@@ -45,7 +45,7 @@ public class QueryListModelItemRenderer implements ListitemRenderer<Query>, Seri
 	private static final long serialVersionUID = 1L;
 
 	public QueryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

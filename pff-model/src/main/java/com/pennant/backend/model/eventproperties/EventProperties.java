@@ -72,7 +72,6 @@ public class EventProperties implements Serializable {
 	private boolean autoRefundOverdueCheck;
 	private boolean autoRefundByCheque;
 	private boolean allowOTSOnEOD;
-
 	private boolean parameterLoaded;
 	private boolean cacheLoaded;
 

@@ -27,6 +27,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -92,6 +93,7 @@ public class FinanceEnquiry implements Serializable {
 	private String repayFrq;
 	private String ownership;
 	private int NOInst = 0;
+	private int NOPaidinst = 0;
 	private BigDecimal maxInstAmount = BigDecimal.ZERO;
 	private Date finApprovedDate;
 	private BigDecimal futureSchedulePrin;
@@ -125,6 +127,10 @@ public class FinanceEnquiry implements Serializable {
 	private boolean finOcrRequired;
 	private String loanStsDesc;
 	private String recordStatus;
+	private long createdBy;
+	private Timestamp createdOn;
+	private long approvedBy;
+	private Timestamp approvedOn;
 	// Loan Closed Date
 	private Date closedDate;
 	private boolean writeoffLoan;
@@ -134,7 +140,7 @@ public class FinanceEnquiry implements Serializable {
 	private BigDecimal advanceEMI = BigDecimal.ZERO;
 
 	public FinanceEnquiry() {
-
+	    super();
 	}
 
 	public Set<String> getExcludeFields() {
@@ -156,6 +162,7 @@ public class FinanceEnquiry implements Serializable {
 		excludeFields.add("repayFrq");
 		excludeFields.add("ownership");
 		excludeFields.add("NOInst");
+		excludeFields.add("NOPaidinst");
 		excludeFields.add("MaxInstAmount");
 		excludeFields.add("finApprovedDate");
 		excludeFields.add("futureSchedulePrin");
@@ -828,6 +835,38 @@ public class FinanceEnquiry implements Serializable {
 		this.recordStatus = recordStatus;
 	}
 
+	public long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public long getApprovedBy() {
+		return approvedBy;
+	}
+
+	public void setApprovedBy(long approvedBy) {
+		this.approvedBy = approvedBy;
+	}
+
+	public Timestamp getApprovedOn() {
+		return approvedOn;
+	}
+
+	public void setApprovedOn(Timestamp approvedOn) {
+		this.approvedOn = approvedOn;
+	}
+
 	public Date getClosedDate() {
 		return closedDate;
 	}
@@ -890,5 +929,13 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setAdvanceEMI(BigDecimal advanceEMI) {
 		this.advanceEMI = advanceEMI;
+	}
+
+	public int getNOPaidinst() {
+		return NOPaidinst;
+	}
+
+	public void setNOPaidinst(int nOPaidinst) {
+		this.NOPaidinst = nOPaidinst;
 	}
 }

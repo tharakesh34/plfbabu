@@ -9,7 +9,13 @@ public interface LPPUploadDAO {
 
 	void update(List<LPPUpload> details);
 
-	void update(List<Long> headerIds, String errorCode, String errorDesc, int progress);
+	void update(List<Long> headerIds, String errorCode, String errorDesc);
 
 	String getSqlQuery();
+
+	void save(LPPUpload lpp);
+
+	boolean isValidFinType(String fintype);
+
+	int saveByFinType(LPPUpload lpp);
 }

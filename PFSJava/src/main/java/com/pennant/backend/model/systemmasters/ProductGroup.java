@@ -16,7 +16,7 @@ public class ProductGroup extends AbstractWorkflowEntity {
 
 	private long productGroupId;
 	private String modelId;
-	private String productCategoryId;
+	private int productCategoryId;
 	private boolean active;
 	private String channel;
 	@XmlTransient
@@ -50,11 +50,11 @@ public class ProductGroup extends AbstractWorkflowEntity {
 		this.modelId = modelId;
 	}
 
-	public String getProductCategoryId() {
+	public int getProductCategoryId() {
 		return productCategoryId;
 	}
 
-	public void setProductCategoryId(String productCategoryId) {
+	public void setProductCategoryId(int productCategoryId) {
 		this.productCategoryId = productCategoryId;
 	}
 

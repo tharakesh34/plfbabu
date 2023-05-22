@@ -60,10 +60,8 @@ import com.pennant.backend.dao.applicationmaster.AssignmentDealDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.applicationmaster.Assignment;
@@ -89,7 +87,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -102,7 +100,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(OverDueRecoveryPostingsUtil.class);
 
-	private FinanceMainDAO financeMainDAO;
 	private FinODDetailsDAO finODDetailsDAO;
 	private OverdueChargeRecoveryDAO recoveryDAO;
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
@@ -110,7 +107,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	private AssignmentDAO assignmentDAO;
 	private AssignmentDealDAO assignmentDealDAO;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
-	private FinanceTypeDAO financeTypeDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
@@ -356,14 +352,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		aeEvent.setDataMap(dataMap);
 		aeEvent.getAcSetIDList().clear();
 
-		if (StringUtils.isNotBlank(fm.getPromotionCode())
-				&& (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
-					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-					aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
-		}
+		aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(fm, aeEvent.getAccountingEvent()));
 
 		// Posting details calling
 		aeEvent.setSimulateAccounting(fm.isSimulateAccounting());
@@ -974,7 +963,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		fod.setODGraceDays(penaltyRate.getODGraceDays());
 		fod.setODAllowWaiver(penaltyRate.isODAllowWaiver());
 		fod.setODMaxWaiverPerc(penaltyRate.getODMaxWaiverPerc());
-
+		fod.setOdMinAmount(penaltyRate.getOdMinAmount());
 		fod.setFinCurODAmt(queue.getSchdPft().add(queue.getSchdPri()).subtract(queue.getSchdPftPaid())
 				.subtract(queue.getSchdPriPaid()));
 		fod.setFinCurODPri(queue.getSchdPri().subtract(queue.getSchdPriPaid()));
@@ -1015,7 +1004,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		BigDecimal value = ((odCalculatedBalance.multiply(odPercent))
 				.multiply(CalculationUtil.getInterestDays(odEffectiveDate, dateValueDate, profitDayBasis)))
-						.divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
+				.divide(new BigDecimal(10000), RoundingMode.HALF_DOWN);
 
 		return value.setScale(0, RoundingMode.HALF_DOWN);
 	}
@@ -1060,9 +1049,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			// ### 06-11-2015 End
 			BigDecimal penaltyPaidNow = BigDecimal.ZERO;
 			boolean isPaidClear = false;
-
-			// Account Type Check
-			String acType = SysParamUtil.getValueAsString("ALWFULLPAY_NONTSR_ACTYPE");
 
 			paidAmount = penaltyPaidNow;
 			if (isPayNow) {
@@ -1165,10 +1151,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		return netAmount;
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
@@ -1195,10 +1177,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 	public void setAssignmentDealDAO(AssignmentDealDAO assignmentDealDAO) {
 		this.assignmentDealDAO = assignmentDealDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
 	}
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {

@@ -672,8 +672,13 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		long partnerBankId = rh.getPartnerBankId();
 		String transactionRef = rh.getTransactionRef();
 
-		return jdbcOperations.queryForObject(sql, Long.class, finID, FinServiceEvent.SCHDRPY, receiptMode,
-				partnerBankId, transactionRef, RepayConstants.PAYSTATUS_APPROVED);
+		try {
+			return jdbcOperations.queryForObject(sql, Long.class, finID, FinServiceEvent.SCHDRPY, receiptMode,
+					partnerBankId, transactionRef, RepayConstants.PAYSTATUS_APPROVED);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return 0;
+		}
 	}
 
 	@Override
@@ -742,6 +747,76 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, partnerBankId);
 			ps.setLong(2, receiptID);
+		});
+	}
+
+	@Override
+	public List<FinReceiptDetail> getReceiptDetailForCancelReversalByID(long receiptID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptID, ReceiptSeqID, ReceiptType, ReceiptPurpose, PaymentTo, PaymentType, PayAgainstID");
+		sql.append(", Amount, FavourNumber, ValueDate, BankCode, FavourName, DepositDate, DepositNo");
+		sql.append(", PaymentRef, TransactionRef, ChequeAcNo, FundingAc, ReceivedDate, Status, PayOrder, LogKey");
+		sql.append(", BankBranchID");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType");
+			sql.append(", iFSC, BranchDesc, RealizationDate");
+			if (StringUtils.trimToEmpty(type).contains("AView")) {
+				sql.append(", FeeTypeCode, FeeTypeDesc");
+			}
+		}
+
+		sql.append(" From FinReceiptDetail");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where ReceiptID = ? and Status not IN (?,?)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, receiptID);
+			ps.setString(2, "B");
+			ps.setString(3, "C");
+		}, (rs, rowNum) -> {
+			FinReceiptDetail rd = new FinReceiptDetail();
+
+			rd.setReceiptID(rs.getLong("ReceiptID"));
+			rd.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
+			rd.setReceiptType(rs.getString("ReceiptType"));
+			rd.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+			rd.setPaymentTo(rs.getString("PaymentTo"));
+			rd.setPaymentType(rs.getString("PaymentType"));
+			rd.setPayAgainstID(rs.getLong("PayAgainstID"));
+			rd.setAmount(rs.getBigDecimal("Amount"));
+			rd.setFavourNumber(rs.getString("FavourNumber"));
+			rd.setValueDate(rs.getTimestamp("ValueDate"));
+			rd.setBankCode(rs.getString("BankCode"));
+			rd.setFavourName(rs.getString("FavourName"));
+			rd.setDepositDate(rs.getTimestamp("DepositDate"));
+			rd.setDepositNo(rs.getString("DepositNo"));
+			rd.setPaymentRef(rs.getString("PaymentRef"));
+			rd.setTransactionRef(rs.getString("TransactionRef"));
+			rd.setChequeAcNo(rs.getString("ChequeAcNo"));
+			rd.setFundingAc(JdbcUtil.getLong(rs.getObject("FundingAc")));
+			rd.setReceivedDate(rs.getTimestamp("ReceivedDate"));
+			rd.setStatus(rs.getString("Status"));
+			rd.setPayOrder(rs.getInt("PayOrder"));
+			rd.setLogKey(rs.getLong("LogKey"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				rd.setBankCodeDesc(rs.getString("BankCodeDesc"));
+				rd.setFundingAcCode(rs.getString("fundingAcCode"));
+				rd.setFundingAcDesc(rs.getString("FundingAcDesc"));
+				rd.setPartnerBankAc(rs.getString("PartnerBankAc"));
+				rd.setPartnerBankAcType(rs.getString("PartnerBankAcType"));
+				rd.setRealizationDate(rs.getTimestamp("RealizationDate"));
+
+				if (StringUtils.trimToEmpty(type).contains("AView")) {
+					rd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					rd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				}
+			}
+
+			return rd;
 		});
 	}
 }

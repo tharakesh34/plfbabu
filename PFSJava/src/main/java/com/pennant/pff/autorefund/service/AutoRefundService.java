@@ -1,13 +1,14 @@
 package com.pennant.pff.autorefund.service;
 
-import com.pennant.app.core.CustEODEvent;
+import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.AutoRefundLoan;
 
 public interface AutoRefundService {
 
-	void loadAutoRefund(CustEODEvent cee);
+	AutoRefundLoan getAutoRefundDetails(long finID, EventProperties ep);
 
-	void executeRefund(CustEODEvent cee);
+	void executeRefund(AutoRefundLoan arl);
 
-	void updateRefunds(CustEODEvent cee);
+	void updateRefunds(AutoRefundLoan arl);
 
 }

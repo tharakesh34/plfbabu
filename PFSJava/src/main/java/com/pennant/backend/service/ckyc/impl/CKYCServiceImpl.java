@@ -577,34 +577,32 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 	public void saveDtl30(List<CKYCDtl30> ckycDtl30) {
 		logger.info("Entering");
-		int count = 0;
+
 		for (CKYCDtl30 ckycDtl : ckycDtl30) {
-			count = ckycDAO.saveDtl30(ckycDtl);
+			ckycDAO.saveDtl30(ckycDtl);
 		}
 
 		logger.info("Leaving");
-
 	}
 
 	public void saveDtl60(List<CKYCDtl60> ckycDtl60) {
 		logger.info("Entering");
-		int count = 0;
+
 		for (CKYCDtl60 ckycDtl : ckycDtl60) {
-			count = ckycDAO.saveDtl60(ckycDtl);
+			ckycDAO.saveDtl60(ckycDtl);
 		}
 
 		logger.info("Leaving");
-
 	}
 
 	public void saveDtl70(List<CKYCDtl70> ckycDtl70) {
 		logger.info("Entering");
-		int count = 0;
-		for (CKYCDtl70 ckycDtl : ckycDtl70) {
-			count = ckycDAO.saveDtl70(ckycDtl);
-		}
-		logger.info("Leaving");
 
+		for (CKYCDtl70 ckycDtl : ckycDtl70) {
+			ckycDAO.saveDtl70(ckycDtl);
+		}
+
+		logger.info("Leaving");
 	}
 
 	public CKYCDtl20 getDetails20(Customer customer) {
@@ -1390,7 +1388,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 		}
 		if (digits != 0) {
-			StringBuffer upBatchNo = new StringBuffer(digits);
+			StringBuilder upBatchNo = new StringBuilder(digits);
 			int zeroes = digits - (int) (Math.log(num) / Math.log(10)) - 1;
 			for (int i = 0; i < zeroes; i++) {
 				upBatchNo.append(0);
@@ -1403,7 +1401,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 	String updateDigit(long num) {
 		int digits = 2;
 		if (digits != 0) {
-			StringBuffer upBatchNo = new StringBuffer(digits);
+			StringBuilder upBatchNo = new StringBuilder(digits);
 			int zeroes = digits - (int) (Math.log(num) / Math.log(10)) - 1;
 			for (int i = 0; i < zeroes; i++) {
 				upBatchNo.append(0);

@@ -55,7 +55,6 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -80,6 +79,7 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.web.util.ComponentUtil;
@@ -549,7 +549,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 
 	private void setExpreferenceVisibile(LegalExpenses aLegalExpenses) {
 		if (aLegalExpenses.isNewRecord()) {
-			this.bookingDate.setValue(DateUtility.getSysDate());
+			this.bookingDate.setValue(DateUtil.getSysDate());
 			this.hbox_expReference.setVisible(false);
 			this.label_ExpReference.setVisible(false);
 

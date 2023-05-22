@@ -47,7 +47,7 @@ public class InterestRateTypeListModelItemRenderer implements ListitemRenderer<I
 	private static final long serialVersionUID = -2562119248315296673L;
 
 	public InterestRateTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

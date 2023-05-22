@@ -37,7 +37,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
@@ -45,6 +44,7 @@ import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>UploadHeader model</b> class.<br>
@@ -135,12 +135,12 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE ReceiptBatchFileHeader SET EndTime = :EndTime, TotalRecords = :TotalRecords,");
 		query.append(
 				" SUCCESSRECORDS = :SucessRecords, FAILEDRECORDS = :FailedRecords, Remarks = :Remarks Where ID = :ID");
 
-		source.addValue("EndTime", DateUtility.getSysDate());
+		source.addValue("EndTime", DateUtil.getSysDate());
 		source.addValue("TotalRecords", recordCount);
 		source.addValue("SucessRecords", sCount);
 		source.addValue("FailedRecords", fCount);
@@ -161,7 +161,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE Auto_ReceiptDetails SET PICKUPFLAG = :PICKUPFLAG, PICKUPBATCHID = :PICKUPBATCHID,");
 		query.append(" RESPONSESTATUS = :RESPONSESTATUS, ERRORMESSAGE = :ERRORMESSAGE, PICKUPDATE = :PICKUPDATE");
 		query.append(" Where Id = :Id");
@@ -185,7 +185,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE Auto_ReceiptDetails SET RECEIPTID = :RECEIPTID ");
 		query.append(" Where Id = :Id");
 
@@ -207,7 +207,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuffer query = new StringBuffer();
+		StringBuilder query = new StringBuilder();
 		query.append(" UPDATE Auto_ReceiptDetails SET PICKUPBATCHID = :PICKUPBATCHID ");
 		query.append(" Where PICKUPBATCHID = -1");
 

@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -207,16 +206,6 @@ public class ExternalDocumentDialogCtrl extends GFCBaseCtrl<ExternalDocument> {
 
 		doSetValidation();
 		doWriteComponentsToBean(aExternalDocument);
-
-		Date fmDate = aExternalDocument.getFromDate();
-		Date tDate = aExternalDocument.getToDate();
-		// fmDate.setDate(1);
-		// tDate.setDate(1);
-		/*
-		 * int noOfMonths = DateUtility.getMonthsBetween(fmDate, tDate, true); if (noOfMonths > 6) {
-		 * MessageUtil.showError(Labels.getLabel("label_ExtDocumentDetailDialog_Perfios_Date_Validation.value"));
-		 * return; }
-		 */
 
 		isNew = aExternalDocument.isNewRecord();
 		String tranType = "";

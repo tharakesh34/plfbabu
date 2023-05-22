@@ -33,10 +33,10 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -46,7 +46,7 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 	private List<ValueLabel> custTargetList = null;
 
 	public CustomerSelectItemRenderer() {
-
+	    super();
 	}
 
 	public CustomerSelectItemRenderer(List<ValueLabel> custTargetListDetails) {
@@ -65,7 +65,7 @@ public class CustomerSelectItemRenderer implements ListitemRenderer<Customer>, S
 		lc.setParent(item);
 		lc = new Listcell(customer.getCustShrtName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(customer.getCustDOB()));
+		lc = new Listcell(DateUtil.formatToLongDate(customer.getCustDOB()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.formatPhoneNumber(customer.getPhoneCountryCode(),
 				customer.getPhoneAreaCode(), customer.getPhoneNumber()));

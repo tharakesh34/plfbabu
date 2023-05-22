@@ -44,7 +44,7 @@ public class DistrictListModelItemRenderer implements ListitemRenderer<District>
 	private static final long serialVersionUID = 4901084385021031196L;
 
 	public DistrictListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

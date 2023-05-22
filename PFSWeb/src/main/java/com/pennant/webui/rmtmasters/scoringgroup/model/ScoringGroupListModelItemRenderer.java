@@ -47,7 +47,7 @@ public class ScoringGroupListModelItemRenderer implements ListitemRenderer<Scori
 	private static final long serialVersionUID = 4089320198269727613L;
 
 	public ScoringGroupListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.lang.Objects;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
@@ -175,9 +174,9 @@ public class CustomerExtLiabilityValidation {
 				|| SysParamUtil.getValueAsDate("APP_DFT_START_DATE").compareTo(liability.getFinDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "FinDate";
-			valueParm[1] = DateUtility.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
+			valueParm[1] = DateUtil.format(SysParamUtil.getValueAsDate("APP_DFT_START_DATE"),
 					PennantConstants.XMLDateFormat);
-			valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
+			valueParm[2] = DateUtil.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
@@ -435,9 +434,8 @@ public class CustomerExtLiabilityValidation {
 					}
 
 				}
-				String date = SysParamUtil.getAppDate(PennantConstants.DBDateFormat);
-				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-						liability.getTenure());
+				Date appDate = SysParamUtil.getAppDate();
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(appDate, liability.getTenure());
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
 					for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
 						int emiCount = 0;
@@ -481,7 +479,7 @@ public class CustomerExtLiabilityValidation {
 
 	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
 		Date dtStartDate = startDate;
-		Date dtEndDate = DateUtility.addMonths(dtStartDate, -noOfMonths);
+		Date dtEndDate = DateUtil.addMonths(dtStartDate, -noOfMonths);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
@@ -495,7 +493,7 @@ public class CustomerExtLiabilityValidation {
 		Date tempStartDate = (Date) startDate.clone();
 		Date tempEndDate = (Date) endDate.clone();
 
-		while (DateUtility.compare(tempStartDate, tempEndDate) > 0) {
+		while (DateUtil.compare(tempStartDate, tempEndDate) > 0) {
 			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);

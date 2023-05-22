@@ -207,6 +207,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				req.setAdditionalField1(str);
 			}
 
+			req.setPartnerBankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
 			req.setPaymentDetail1(DISB_FI_EMAIL);
 			req.setHeaderId(requestData.getHeaderId());
 			req.setRespBatchId(0L);
@@ -601,7 +602,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), String.class, detail.getDownload_Referid());
+			return jdbcOperations.queryForObject(sql, String.class, detail.getDownload_Referid());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return "";

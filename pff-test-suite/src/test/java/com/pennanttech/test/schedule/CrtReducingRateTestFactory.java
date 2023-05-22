@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import org.testng.annotations.Factory;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.util.BeanFactory;
 import com.pennanttech.util.Dataset;
 
@@ -23,7 +23,7 @@ public class CrtReducingRateTestFactory {
 		// Prepare the tests
 		Sheet dataset = Dataset.getSchedule(SHEET_NAME);
 
-		long t1 = DateUtility.getSysDate().getTime();
+		long t1 = DateUtil.getSysDate().getTime();
 
 		// int testCount = dataset.getColumns() - DATA_OFFSET;
 		int testCount = 27;

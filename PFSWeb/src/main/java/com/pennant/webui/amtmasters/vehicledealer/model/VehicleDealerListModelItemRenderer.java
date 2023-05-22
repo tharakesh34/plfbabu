@@ -48,7 +48,7 @@ public class VehicleDealerListModelItemRenderer implements ListitemRenderer<Vehi
 	private static final long serialVersionUID = 8501192412376141440L;
 
 	public VehicleDealerListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

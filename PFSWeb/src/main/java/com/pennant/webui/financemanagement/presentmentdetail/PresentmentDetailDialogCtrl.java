@@ -73,7 +73,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -91,6 +90,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -193,8 +193,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.presentmentHeader.getId()));
-		return referenceBuffer.toString();
+		return String.valueOf(this.presentmentHeader.getId());
 	}
 
 	/**
@@ -538,10 +537,15 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			addCell(item, presentmentDetail.getCustomerName());
 			addCell(item, presentmentDetail.getFinReference());
 			addCell(item, presentmentDetail.getFinType());
-			addCell(item, DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
+			addCell(item, DateUtil.formatToLongDate(presentmentDetail.getSchDate()));
 			addCell(item, PennantApplicationUtil.amountFormate(presentmentDetail.getAdvanceAmt(), format));
 			addCell(item, PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
 			addCell(item, presentmentDetail.getPresentmentRef());
+
+			if (excludeflag) {
+				addCell(item, presentmentDetail.getBankName());
+				addCell(item, "");
+			}
 
 			if (InstrumentType.isIPDC(presentmentDetail.getMandateType())) {
 				addCell(item, Labels.getLabel("label_Mandate_IPDC"));

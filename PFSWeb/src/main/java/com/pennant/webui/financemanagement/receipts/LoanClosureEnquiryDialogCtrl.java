@@ -70,7 +70,6 @@ import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.GSTCalculator;
@@ -141,11 +140,11 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -163,6 +162,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
@@ -173,7 +173,7 @@ import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.AllocationType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private static final long serialVersionUID = 966281186831332116L;
@@ -214,6 +214,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	protected Label receiptTypeLabel;
 	protected Decimalbox remBalAfterAllocation;
 	protected Datebox receiptDate;
+	protected Combobox closureType;
 	protected Datebox interestTillDate;
 
 	protected Datebox LoanClosure_receiptDate;
@@ -354,6 +355,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		if (arguments.containsKey("finReference")) {
 			this.finReference.setValue((String) arguments.get("finReference"));
+		}
+
+		if (arguments.containsKey("closureType")) {
+			this.closureType.setValue((String) arguments.get("closureType"));
 		}
 
 		if (arguments.containsKey("enquiryModule")) {
@@ -550,7 +555,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
-		this.interestTillDate.setValue(DateUtility.addDays(this.receiptDate.getValue(), defaultClearingDays));
+		this.interestTillDate.setValue(DateUtil.addDays(this.receiptDate.getValue(), defaultClearingDays));
 
 		receiptData.setValueDate(this.receiptDate.getValue());
 		receiptData.getReceiptHeader().setReceiptDate(this.receiptDate.getValue());
@@ -727,9 +732,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			return;
 		}
 
-		Cloner cloner = new Cloner();
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 		tempReceiptData.setForeClosureEnq(true);
 		setOrgReceiptData(tempReceiptData);
 
@@ -911,7 +915,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			this.finSchProfitDaysBasis.setValue(PennantApplicationUtil.getLabelDesc(aFinanceMain.getProfitDaysBasis(),
 					PennantStaticListUtil.getProfitDaysBasis()));
 			this.finSchReference.setValue(aFinanceMain.getFinReference());
-			this.finSchGracePeriodEndDate.setValue(DateUtility.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
+			this.finSchGracePeriodEndDate.setValue(DateUtil.formatToLongDate(aFinanceMain.getGrcPeriodEndDate()));
 			this.effectiveRateOfReturn.setValue(aFinanceMain.getEffectiveRateOfReturn().toString() + "%");
 
 			// Fill Effective Schedule Details
@@ -1085,8 +1089,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		// Making Single Set of Repay Schedule Details and sent to Rendering
-		Cloner cloner = new Cloner();
-		List<RepayScheduleDetail> tempRpySchdList = cloner.deepClone(rpySchdList);
+		List<RepayScheduleDetail> tempRpySchdList = ObjectUtil.clone(rpySchdList);
 		Map<Date, RepayScheduleDetail> rpySchdMap = new HashMap<>();
 		for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 
@@ -1242,8 +1245,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			receiptData.setReceiptHeader(rch);
 			receiptData.setForeClosureEnq(true);
 
-			Cloner cloner = new Cloner();
-			orgFinanceDetail = cloner.deepClone(receiptData.getFinanceDetail());
+			orgFinanceDetail = ObjectUtil.clone(receiptData.getFinanceDetail());
 			// FIXME SMT parameter need to be removed
 			if (allocationListData != null
 					&& SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_WAIVER_IN_FORECLOSURE_ENQ)) {
@@ -1994,13 +1996,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY));
 
 				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
@@ -2198,7 +2195,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 				}
 
-				Date curMonthStartDate = DateUtility.getMonthStart(lastSchd.getSchDate());
+				Date curMonthStartDate = DateUtil.getMonthStart(lastSchd.getSchDate());
 
 				// UnAccrual Calculation
 				BigDecimal unaccrue = BigDecimal.ZERO;
@@ -2206,7 +2203,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				if (oldLastSchd == null) {
 					FinanceScheduleDetail lastPrvSchd = receiptData.getFinanceDetail().getFinScheduleData()
 							.getFinanceScheduleDetails().get(schSize - 2);
-					if (DateUtility.compare(curMonthStartDate, lastPrvSchd.getSchDate()) <= 0) {
+					if (DateUtil.compare(curMonthStartDate, lastPrvSchd.getSchDate()) <= 0) {
 
 						// Accrual amounts
 						amountCodes.setAccruedPaid(BigDecimal.ZERO);
@@ -2368,13 +2365,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				pftChgExecuted = true;
 			}
 
-			if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-						eventCode, FinanceConstants.MODULEID_PROMOTION));
-			} else {
-				aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-						FinanceConstants.MODULEID_FINTYPE));
-			}
+			aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, eventCode));
 
 			aeEvent.setAccountingEvent(eventCode);
 
@@ -2396,13 +2387,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					|| amountCodes.getPenaltyWaived().compareTo(BigDecimal.ZERO) > 0) {
 
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.LATEPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.LATEPAY));
 
 				aeEvent.setAccountingEvent(AccountingEvent.LATEPAY);
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -2577,13 +2563,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				amountCodes.setPaymentType(paymentType);
 				amountCodes.setUserBranch(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 				aeEvent.getAcSetIDList().clear();
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
-				} else {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(),
-							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
-				}
+				aeEvent.getAcSetIDList().add(AccountingEngine.getAccountSetID(finMain, AccountingEvent.REPAY));
 
 				addZeroifNotContains(movementMap, "bounceChargePaid");
 				addZeroifNotContains(movementMap, "bounceCharge_CGST_P");
@@ -2698,14 +2678,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		Long accountSetId = Long.MIN_VALUE;
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		String finType = finMain.getFinType();
-		int moduleID = FinanceConstants.MODULEID_FINTYPE;
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			finType = finMain.getPromotionCode();
-			moduleID = FinanceConstants.MODULEID_PROMOTION;
-		}
 
-		accountSetId = AccountingConfigCache.getAccountSetID(finType, AccountingEvent.EARLYSTL, moduleID);
+		accountSetId = AccountingEngine.getAccountSetID(finMain, AccountingEvent.EARLYSTL);
 
 		// Accounting Detail Tab
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -2750,7 +2724,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				RepayScheduleDetail repaySchd = repaySchdList.get(i);
 				item = new Listitem();
 
-				lc = new Listcell(DateUtility.formatToLongDate(repaySchd.getSchDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(repaySchd.getSchDate()));
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getProfitSchdBal(), formatter));
@@ -2939,7 +2913,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			Collections.sort(repayScheduleDetails, new Comparator<RepayScheduleDetail>() {
 				@Override
 				public int compare(RepayScheduleDetail detail1, RepayScheduleDetail detail2) {
-					return DateUtility.compare(detail1.getSchDate(), detail2.getSchDate());
+					return DateUtil.compare(detail1.getSchDate(), detail2.getSchDate());
 				}
 			});
 		}
@@ -3108,17 +3082,17 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				boolean isValidPPDate = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0
 							&& StringUtils.isNotEmpty(curSchd.getBpiOrHoliday())
 							&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 							&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLDEMI)) {
 						isValidPPDate = false;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) >= 0) {
 						closingBal = curSchd.getClosingBalance();
 						continue;
 					}
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0 || closingBal == null) {
 						closingBal = closingBal.subtract(curSchd.getSchdPriPaid().subtract(curSchd.getSchdPftPaid()));
 						break;
 					}
@@ -3164,9 +3138,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				boolean isAlwEarlyStl = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
-					if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) == 0) {
-						if (DateUtility.compare(curSchd.getSchDate(), receiptData.getFinanceDetail()
-								.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
+					if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) == 0) {
+						if (DateUtil.compare(curSchd.getSchDate(), receiptData.getFinanceDetail().getFinScheduleData()
+								.getFinanceMain().getGrcPeriodEndDate()) <= 0) {
 							BigDecimal pftBal = scheduleList.get(i - 1).getProfitBalance().add(curSchd.getProfitCalc())
 									.subtract(curSchd.getSchdPftPaid())
 									.subtract(scheduleList.get(i - 1).getCpzAmount());
@@ -3176,7 +3150,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 								break;
 							}
 						}
-					} else if (DateUtility.compare(receiptValueDate, curSchd.getSchDate()) < 0) {
+					} else if (DateUtil.compare(receiptValueDate, curSchd.getSchDate()) < 0) {
 						break;
 					}
 				}
@@ -3266,7 +3240,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()),
 							"Payment Amount", PennantApplicationUtil.formateAmount(curSchd.getRepayAmount(), format)
 									.setScale(formatter, RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
@@ -3276,9 +3250,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Principal", PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Principal",
+							PennantApplicationUtil.formateAmount(curSchd.getPrincipalSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 				}
 
@@ -3287,9 +3261,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				FinanceScheduleDetail curSchd = listScheduleDetail.get(i);
 				if (curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					chartSetElement = new ChartSetElement(DateUtility.formatToShortDate(curSchd.getSchDate()),
-							"Interest", PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format)
-									.setScale(formatter, RoundingMode.HALF_UP));
+					chartSetElement = new ChartSetElement(DateUtil.formatToShortDate(curSchd.getSchDate()), "Interest",
+							PennantApplicationUtil.formateAmount(curSchd.getProfitSchd(), format).setScale(formatter,
+									RoundingMode.HALF_UP));
 					listChartSetElement.add(chartSetElement);
 
 				}
@@ -3462,7 +3436,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		if (fm != null) {
 			Date applDate = SysParamUtil.getAppDate();
 			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
-			String disDate = DateUtility.formatToLongDate(fm.getFinStartDate());
+			String disDate = DateUtil.formatToLongDate(fm.getFinStartDate());
 
 			Date chrgTillDate;
 
@@ -3474,7 +3448,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			} else {
 				chrgTillDate = receiptDate;
 			}
-			int noOfIntDays = DateUtility.getDaysBetween(chrgTillDate, prvEmiDate);
+			int noOfIntDays = DateUtil.getDaysBetween(chrgTillDate, prvEmiDate);
 
 			closureReport.setReceiptDate(DateFormatUtils.format(receiptDate, "dd-MMM-yyyy"));
 			closureReport.setCalDate(appDate);
@@ -3488,6 +3462,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			closureReport.setFinAssetValue(PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter));
 			closureReport.setDisbursalDate(disDate);
 			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
+			closureReport.setFirstInstDate(DateUtil.formatToLongDate(fm.getNextRepayDate()));
 
 			// Fetch Collateral Details
 			// Collateral setup details and assignment details
@@ -3571,9 +3546,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
 						.getAllocationsSummary();
-				Cloner cloner = new Cloner();
 				receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
-				FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+				FinReceiptData tempReceiptData = ObjectUtil.clone(receiptData);
 				tempReceiptData.setForeClosureEnq(true);
 				setOrgReceiptData(tempReceiptData);
 				receiptAllocationDetails = tempReceiptData.getReceiptHeader().getAllocationsSummary();
@@ -3722,11 +3696,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					closureReport.setTotal("Net Receivable");
 				}
 
-				Cloner clone = new Cloner();
 				Map<Date, BigDecimal> next7DayMap = new LinkedHashMap<Date, BigDecimal>();
 
 				int defaultDays = 7;
-				int noOfdays = DateUtility.getDaysBetween(chrgTillDate, fm.getMaturityDate());
+				int noOfdays = DateUtil.getDaysBetween(chrgTillDate, fm.getMaturityDate());
 				if (defaultDays >= noOfdays) {
 					defaultDays = noOfdays;
 				}
@@ -4109,8 +4082,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				}
 			}
 
-			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-					true);
+			int months = DateUtil.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate());
 
 			int advTerms = 0;
 			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())

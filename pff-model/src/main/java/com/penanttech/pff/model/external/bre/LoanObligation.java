@@ -10,6 +10,7 @@ public class LoanObligation {
 
 	@JsonCreator
 	public LoanObligation() {
+	    super();
 	}
 
 	@XmlElement(name = "element")

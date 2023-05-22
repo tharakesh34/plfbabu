@@ -45,12 +45,12 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
@@ -211,7 +211,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 		}
 
 		rows.appendChild(prepareRow(new Row(), Labels.getLabel("label_FinanceDeDupList_startDate.value"),
-				DateUtility.formatToLongDate(dedup.getStartDate()),
+				DateUtil.formatToLongDate(dedup.getStartDate()),
 				Labels.getLabel("label_FinanceDeDupList_financeAmount.value"),
 				PennantApplicationUtil.amountFormate(dedup.getFinanceAmount(), CurrencyUtil.getFormat(""))));
 
@@ -302,7 +302,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class OnCloseListener implements EventListener<Event> {
 
 		public OnCloseListener() {
-
+		    super();
 		}
 
 		@Override
@@ -319,7 +319,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class OnCancelListener implements EventListener<Event> {
 
 		public OnCancelListener() {
-
+		    super();
 		}
 
 		@Override
@@ -336,7 +336,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class OnProceedListener implements EventListener<Event> {
 
 		public OnProceedListener() {
-
+		    super();
 		}
 
 		@Override
@@ -362,7 +362,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 
 				}
 				if (getUserAction() == -1) {
-					StringBuffer massValues = new StringBuffer();
+					StringBuilder massValues = new StringBuilder();
 					for (Iterator<String> itr = dedup.getOverridenMap().values().iterator(); itr.hasNext();) {
 						massValues.append(",");
 						massValues.append(itr.next());
@@ -389,7 +389,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class CustDedupBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public CustDedupBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -407,7 +407,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 						lc = new Listcell(fieldValue);
 					} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
-						lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+						lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 					} else {
 						fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 						lc = new Listcell(fieldValue);
@@ -435,7 +435,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 						lc = new Listcell(fieldValue);
 					} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 						dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
-						lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+						lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 					} else {
 						fieldValue = data.getClass().getMethod(fieldMethod).invoke(data).toString();
 						lc = new Listcell(fieldValue);
@@ -458,7 +458,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	final class DedupBoxItemRenderer implements ListitemRenderer<Object> {
 
 		public DedupBoxItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -520,7 +520,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 					// For Date Data type
 				} else if (data.getClass().getMethod(fieldMethod).getReturnType().equals(Date.class)) {
 					dateFieldValue = (Date) data.getClass().getMethod(fieldMethod).invoke(data);
-					lc = new Listcell(DateUtility.formatToLongDate(dateFieldValue));
+					lc = new Listcell(DateUtil.formatToLongDate(dateFieldValue));
 					Date curdateFieldValue = (Date) getFinanceDedup().getClass().getMethod(fieldMethod)
 							.invoke(getFinanceDedup());
 
@@ -564,7 +564,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
-
+		    super();
 		}
 
 		@Override
@@ -736,7 +736,7 @@ public class ShowDedupListBox extends Window implements Serializable {
 	class CompareCustomer implements Comparator {
 
 		public CompareCustomer() {
-
+		    super();
 		}
 
 		@Override

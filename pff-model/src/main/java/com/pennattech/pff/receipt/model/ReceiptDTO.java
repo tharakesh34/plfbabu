@@ -49,7 +49,8 @@ public class ReceiptDTO implements Serializable {
 	private String roundAdjMth;
 	private FeeType lppFeeType;
 	private FinReceiptData finReceiptData;
-	private Map<String, String> bounceForPD = new HashMap<String, String>();
+	private Map<String, String> bounceForPD = new HashMap<>();
+	private Date appDate;
 
 	public ReceiptDTO() {
 		super();
@@ -245,6 +246,14 @@ public class ReceiptDTO implements Serializable {
 
 	public void setBounceForPD(Map<String, String> bounceForPD) {
 		this.bounceForPD = bounceForPD;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 
 }

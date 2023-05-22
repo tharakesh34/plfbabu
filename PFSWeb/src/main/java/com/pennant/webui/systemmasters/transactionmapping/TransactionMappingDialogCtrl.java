@@ -1,6 +1,5 @@
 package com.pennant.webui.systemmasters.transactionmapping;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.cd.model.TransactionMapping;
 
@@ -127,18 +127,21 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		this.posId.setModuleName("POSId");
 		this.posId.setValueColumn("POSId");
 		this.posId.setDescColumn("StoreName");
+		this.posId.setValueType(DataType.LONG);
 		this.posId.setMandatoryStyle(true);
 		this.posId.setValidateColumns(new String[] { "POSId" });
 
 		this.dealerCode.setModuleName("DealerCode");
 		this.dealerCode.setValueColumn("DealerCode");
 		this.dealerCode.setDescColumn("MerchantId");
+		this.dealerCode.setValueType(DataType.LONG);
 		this.dealerCode.setMandatoryStyle(true);
 		this.dealerCode.setValidateColumns(new String[] { "DealerCode" });
 
 		this.mid.setModuleName("Stores");
 		this.mid.setValueColumn("StoreId");
 		this.mid.setDescColumn("StoreName");
+		this.mid.setValueType(DataType.LONG);
 		this.mid.setMandatoryStyle(true);
 		this.mid.setValidateColumns(new String[] { "StoreId" });
 
@@ -295,7 +298,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 
 		this.tid.setText(mapping.getTid());
 
-		if (mapping.getMid() == null) {
+		if (mapping.getMid() == Long.MIN_VALUE) {
 			this.mid.setValue("");
 			this.mid.setDescription("");
 		} else {
@@ -350,7 +353,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		}
 
 		try {
-			aTransactionMapping.setMid(new BigDecimal(this.mid.getValue()));
+			aTransactionMapping.setMid(Long.valueOf(this.mid.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

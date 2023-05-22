@@ -46,7 +46,7 @@ public class JVPostingListModelItemRenderer implements ListitemRenderer<JVPostin
 	private static final long serialVersionUID = 1L;
 
 	public JVPostingListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

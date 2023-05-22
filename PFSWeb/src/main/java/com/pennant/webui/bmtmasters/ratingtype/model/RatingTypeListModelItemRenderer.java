@@ -46,7 +46,7 @@ public class RatingTypeListModelItemRenderer implements ListitemRenderer<RatingT
 	private static final long serialVersionUID = 1L;
 
 	public RatingTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

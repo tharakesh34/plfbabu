@@ -17,7 +17,7 @@ public class AccountHoldStatus implements Serializable {
 	private String statusDesc = "";
 
 	public AccountHoldStatus() {
-
+	    super();
 	}
 
 	// ******************************************************//

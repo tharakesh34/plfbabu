@@ -45,7 +45,7 @@ public class SubSegmentListModelItemRenderer implements ListitemRenderer<SubSegm
 	private static final long serialVersionUID = 9032616208152658049L;
 
 	public SubSegmentListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

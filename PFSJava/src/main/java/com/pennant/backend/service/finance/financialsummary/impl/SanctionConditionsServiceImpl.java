@@ -122,8 +122,7 @@ public class SanctionConditionsServiceImpl extends GenericService<SanctionCondit
 			if (sc.isNewRecord()) {
 				getSanctionConditionsDAO().save(sc, tableType);
 				auditDetails.add(getAuditDetails(sc, 1, PennantConstants.TRAN_ADD));
-			} else if (StringUtils.trimToEmpty(sc.getRecordType())
-					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (StringUtils.trimToEmpty(sc.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				getSanctionConditionsDAO().update(sc, tableType);
 				auditDetails.add(getAuditDetails(sc, 1, PennantConstants.TRAN_DEL));
 			} else {

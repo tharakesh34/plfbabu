@@ -22,25 +22,34 @@ import com.pennanttech.pff.presentment.model.PresentmentDetail;
 public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadDetail>
 		implements RePresentmentUploadDAO {
 
+	public RePresentmentUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<RePresentmentUploadDetail> getDetails(long headerID) {
-		String sql = "Select HeaderId, Id, FinID, FinReference, DueDate, Progress, ErrorCode, ErrorDesc From REPRESENT_UPLOADS Where HeaderId = ?";
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, Id, FinID, FinReference");
+		sql.append(", RecordSeq, DueDate, Progress, ErrorCode, ErrorDesc");
+		sql.append(" From REPRESENT_UPLOADS ");
+		sql.append(" Where HeaderId = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			RePresentmentUploadDetail rpud = new RePresentmentUploadDetail();
 
 			rpud.setHeaderId(rs.getLong("HeaderId"));
 			rpud.setId(rs.getLong("Id"));
 			rpud.setReferenceID(JdbcUtil.getLong(rs.getObject("FinID")));
 			rpud.setReference(rs.getString("FinReference"));
+			rpud.setRecordSeq(rs.getLong("RecordSeq"));
 			rpud.setDueDate(rs.getDate("DueDate"));
 			rpud.setProgress(rs.getInt("Progress"));
 			rpud.setErrorCode(rs.getString("ErrorCode"));
 			rpud.setErrorDesc(rs.getString("ErrorDesc"));
 			return rpud;
-		});
+		}, headerID, "S");
 	}
 
 	@Override
@@ -147,7 +156,7 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update REPRESENT_UPLOADS set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -160,8 +169,8 @@ public class RePresentmentUploadDAOImpl extends SequenceDao<RePresentmentUploadD
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

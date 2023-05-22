@@ -44,7 +44,7 @@ public class IdentityDetailsListModelItemRenderer implements ListitemRenderer<Id
 	private static final long serialVersionUID = -3653224021041165546L;
 
 	public IdentityDetailsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

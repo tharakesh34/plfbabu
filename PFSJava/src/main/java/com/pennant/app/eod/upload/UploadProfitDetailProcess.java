@@ -54,7 +54,7 @@ public class UploadProfitDetailProcess extends Thread {
 	private UploadFinPftDetailService uploadFinPftDetailService;
 
 	private UploadProfitDetailProcess() {
-
+	    super();
 	}
 
 	private UploadProfitDetailProcess(UploadFinPftDetailService uploadFinPftDetailService) {

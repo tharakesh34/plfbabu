@@ -35,6 +35,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -59,7 +60,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -68,13 +68,11 @@ import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.ExtendedFieldMaintenance;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
-import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -101,12 +99,13 @@ import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.service.finance.LoanDownSizingService;
+import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
+import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
-import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -114,6 +113,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
@@ -126,10 +126,12 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
@@ -222,6 +224,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient LinkedFinancesService linkedFinancesService;
 	private transient FinOCRHeaderService finOCRHeaderService;
 	private transient OverdrafLoanService overdrafLoanService;
+	private transient ManualAdviseService manualAdviseService;
 
 	private FinanceMain financeMain;
 	private boolean isDashboard = false;
@@ -237,6 +240,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private transient ExtendedFieldMaintenanceService extendedFieldMaintenanceService;
+	private FinanceCancelValidator financeCancelValidator;
 
 	/**
 	 * Default constructor
@@ -495,9 +499,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onClick$btnSearchFinRef(Event event) {
 		logger.debug("Entering " + event.toString());
 
-		if (this.searchObject == null) {
-			doSearch(false);
-		}
+		doSearch(false);
 
 		Filter[] filters = this.searchObject.getFilters().toArray(new Filter[this.searchObject.getFilters().size()]);
 		if (this.oldVar_sortOperator_finReference == Filter.OP_IN
@@ -1034,7 +1036,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			 */}
 
 		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");
-		Date backValueDate = DateUtility.addDays(appDate, backValueDays);
+		Date backValueDate = DateUtil.addDays(appDate, backValueDays);
 
 		if (moduleDefiner.equals(FinServiceEvent.RATECHG)) {
 			whereClause.append(" AND (AllowGrcPftRvw = 1 OR AllowRepayRvw = 1 OR RateChgAnyDay = 1) ");
@@ -1117,12 +1119,18 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
 			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
-			backValueDate = DateUtility.addDays(appDate, backValueDays);
+			backValueDate = DateUtil.addDays(appDate, backValueDays);
+			String backValDate = DateUtil.formatToFullDate(backValueDate);
 
 			// whereClause.append(" AND MigratedFinance = 0 ");
-			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
-			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "')");
+			whereClause.append(" AND (");
+			if (!ImplementationConstants.ALLOW_CANCEL_LOAN_AFTER_PAYMENTS) {
+				whereClause.append(" FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
+			}
+			whereClause.append(" FinStartDate >= '" + backValDate + "')");
+			whereClause.append(" AND AllowCancelFin = 1");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
+			whereClause.append(" AND RcdMaintainSts = 'CancelFinance' AND FinIsActive = 1 ");
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELDISB)) {
 			whereClause.append(" AND ( FinReference IN (select FinReference from FinDisbursementDetails");
 			whereClause.append(" where DisbDate >= '" + appDate + "') ");
@@ -1173,8 +1181,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append("AND FinReference IN (SELECT Reference From CollateralAssignment)");
 			whereClause.append(" AND ClosingStatus in ('W','E','C','M')");
 		} else if (moduleDefiner.equals(FinServiceEvent.PRINH)) {
-			whereClause
-					.append(" AND StepFinance = 0 and Schedulemethod = '" + CalculationConstants.SCHMTHD_EQUAL + "' ");
+			whereClause.append(" AND StepFinance = 0 and ManualSchedule = 0 and Schedulemethod = '"
+					+ CalculationConstants.SCHMTHD_EQUAL + "' ");
 		}
 
 		// Written Off Finance Reference Details Condition
@@ -1596,6 +1604,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			final FinanceDetail financeDetail = getFinanceDetailService().getServicingFinance(aFinanceMain.getFinID(),
 					eventCodeRef, moduleDefiner, userRole);
 
+			financeDetail.getFinScheduleData().getFinanceMain().setFinSourceID(RequestSource.UI.name());
 			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
 			String[] errParm = new String[1];
@@ -2183,74 +2192,16 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		// Schedule Date verification, As Installment date crossed or not
-		List<FinanceScheduleDetail> schdList = schdData.getFinanceScheduleDetails();
-		FinanceScheduleDetail bpiSchedule = null;
+		String maintainSts = StringUtils.trimToEmpty(schdData.getFinanceMain().getRcdMaintainSts());
 
-		Date appDate = SysParamUtil.getAppDate();
+		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		fm.setFinSourceID(RequestSource.UI.name());
+		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
 
-		for (int i = 1; i < schdList.size(); i++) {
-			FinanceScheduleDetail curSchd = schdList.get(i);
-			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-				bpiSchedule = curSchd;
-				continue;
-			}
-
-			if (curSchd.getSchDate().compareTo(appDate) <= 0 && curSchd.isRepayOnSchDate()) {
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-
-				logger.debug("Leaving");
-				return;
-			}
-		}
-
-		String maintainSts = "";
-		if (schdData.getFinanceMain() != null) {
-			maintainSts = StringUtils.trimToEmpty(schdData.getFinanceMain().getRcdMaintainSts());
-		}
-
-		// Check Repayments on Finance when it is not in Maintenance
-		if (StringUtils.isEmpty(maintainSts)) {
-			List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
-			listFinanceRepayments = financeDetailService.getFinRepayList(finID);
-			if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
-				boolean onlyBPIPayment = true;
-				for (FinanceRepayments financeRepayments : listFinanceRepayments) {
-					// check for the BPI payment
-					if (bpiSchedule != null) {
-						if (financeRepayments.getFinSchdDate().compareTo(bpiSchedule.getSchDate()) != 0) {
-							onlyBPIPayment = false;
-						}
-					} else {
-						onlyBPIPayment = false;
-					}
-				}
-				if (!onlyBPIPayment) {
-					MessageUtil.showError("Repayments done on this Finance. Cannot Proceed Further");
-					return;
-				}
-			}
-		}
-
-		// If the disbursements are REALIZED or PAID, we are not allow to cancel the loan until unless those
-		// disbursements are REVERSED.
-		if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
-			List<FinAdvancePayments> advancePayments = financeCancellationService.getFinAdvancePaymentsByFinRef(finID);
-
-			if (CollectionUtils.isNotEmpty(advancePayments)) {
-				for (FinAdvancePayments payments : advancePayments) {
-					if (!(DisbursementConstants.STATUS_REVERSED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_REJECTED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_APPROVED.equals(payments.getStatus())
-							|| DisbursementConstants.STATUS_CANCEL.equals(payments.getStatus()))) {
-						MessageUtil.showError(Labels.getLabel("label_Finance_Cancel_Disbursement_Status_Reversed"));
-						return;
-					}
-				}
-			}
+		if (error != null) {
+			MessageUtil.showError(financeCancelValidator.getOverrideDescription(error, schdData.getFinanceMain()));
+			return;
 		}
 
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
@@ -2601,7 +2552,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * 
 	 * @param FinanceMain (aFinanceMain)
 	 */
-	private void showCancellationDetailView(FinanceDetail financeDetail) {
+	public void showCancellationDetailView(FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		/*
@@ -3017,7 +2968,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
-		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts) ? isValidateCancelManualAdvise(finID) : true)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return;
 		}
@@ -3113,6 +3065,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private boolean isValidateCancelManualAdvise(long finID) {
+		List<ManualAdvise> list = manualAdviseService.getCancelledManualAdvise(finID);
+		return list.stream().anyMatch(m -> m.getStatus() == null) ? true : false;
 	}
 
 	private void openLinkDelinkMaintenanceDialog(Listitem item) {
@@ -3556,6 +3513,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef = AccountingEvent.CANCELFIN;
 					setDialogCtrl("CancelFinanceDialogCtrl");
 					workflowCode = FinServiceEvent.CANCELFIN;
+					this.btnNew.setVisible(true);
 				} else if ("tab_CancelDisbursement".equals(tab.getId())) {
 					moduleDefiner = FinServiceEvent.CANCELDISB;
 					eventCodeRef = "";
@@ -3660,6 +3618,11 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				doSearch(true);
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectRestructureDialog.zul", null,
 						map);
+			}
+			if (FinServiceEvent.CANCELFIN.equals(moduleDefiner)) {
+				doSearch(true);
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectFinanceCancellationDialog.zul",
+						null, map);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -4225,5 +4188,15 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setOverdrafLoanService(OverdrafLoanService overdrafLoanService) {
 		this.overdrafLoanService = overdrafLoanService;
+	}
+
+	@Autowired
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
+
+	@Autowired
+	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
+		this.financeCancelValidator = financeCancelValidator;
 	}
 }

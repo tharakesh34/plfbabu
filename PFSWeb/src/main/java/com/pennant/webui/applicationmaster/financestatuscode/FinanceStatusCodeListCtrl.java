@@ -179,7 +179,7 @@ public class FinanceStatusCodeListCtrl extends GFCBaseListCtrl<FinanceStatusCode
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  StatusID =? ");
 
 		if (doCheckAuthority(financestatuscode, whereCond.toString(),

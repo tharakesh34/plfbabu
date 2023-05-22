@@ -14,6 +14,7 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.pff.model.subvention.SubventionHeader;
@@ -209,4 +210,9 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/updateUTRNum")
 	public WSReturnStatus updateUTRNum(ReceiptTransaction transactionRefUpdateRequest) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/changeRepaymentMethod")
+	WSReturnStatus changeRepaymentMethod(FinanceMain financeMain) throws ServiceException;
+
 }

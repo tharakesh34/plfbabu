@@ -62,6 +62,8 @@ import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;

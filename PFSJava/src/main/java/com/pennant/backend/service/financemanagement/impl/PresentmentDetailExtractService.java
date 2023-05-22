@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
@@ -570,7 +569,7 @@ public class PresentmentDetailExtractService {
 
 			// Mandate Expired
 			if (pd.getMandateExpiryDate() != null
-					&& DateUtility.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
+					&& DateUtil.compare(pd.getDefSchdDate(), pd.getMandateExpiryDate()) > 0) {
 				pd.setExcludeReason(RepayConstants.PEXC_MANDATE_EXPIRY);
 				return;
 			}
@@ -598,7 +597,7 @@ public class PresentmentDetailExtractService {
 
 		String reference = StringUtils.leftPad(String.valueOf(header.getId()), 15, "0");
 		header.setStatus(RepayConstants.PEXC_EXTRACT);
-		header.setPresentmentDate(DateUtility.getSysDate());
+		header.setPresentmentDate(DateUtil.getSysDate());
 		String ref = header.getMandateType().concat(reference);
 		if (PennantConstants.PROCESS_REPRESENTMENT.equalsIgnoreCase(header.getPresentmentType())) {
 			ref = REPRESENTMENT_SUFFIX + ref;

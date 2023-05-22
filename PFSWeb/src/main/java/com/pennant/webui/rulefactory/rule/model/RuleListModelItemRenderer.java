@@ -52,7 +52,7 @@ public class RuleListModelItemRenderer implements ListitemRenderer<Rule>, Serial
 	private static final long serialVersionUID = -5076855951380074437L;
 
 	public RuleListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

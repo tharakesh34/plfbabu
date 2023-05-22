@@ -128,9 +128,11 @@ public class Verification extends AbstractWorkflowEntity {
 	@XmlElement
 	private int verificationCategory;
 	private BigDecimal finalValAsPerPE = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal finalValAmt = BigDecimal.ZERO;
 	private String finalValDecision;
 	private String finalValRemarks;
+	@XmlElement
 	private BigDecimal valuationAmount = BigDecimal.ZERO;
 
 	// Value As Per Cost Of Property
@@ -142,6 +144,7 @@ public class Verification extends AbstractWorkflowEntity {
 	private WSReturnStatus returnStatus;
 	@XmlElement
 	private String collRef;
+	private String collTranType;
 
 	public Verification() {
 		super();
@@ -203,6 +206,7 @@ public class Verification extends AbstractWorkflowEntity {
 		excludeFields.add("vettingDocuments");
 		excludeFields.add("returnStatus");
 		excludeFields.add("collRef");
+		excludeFields.add("collTranType");
 		return excludeFields;
 	}
 
@@ -792,6 +796,14 @@ public class Verification extends AbstractWorkflowEntity {
 
 	public void setCollRef(String collRef) {
 		this.collRef = collRef;
+	}
+
+	public String getCollTranType() {
+		return collTranType;
+	}
+
+	public void setCollTranType(String collTranType) {
+		this.collTranType = collTranType;
 	}
 
 }

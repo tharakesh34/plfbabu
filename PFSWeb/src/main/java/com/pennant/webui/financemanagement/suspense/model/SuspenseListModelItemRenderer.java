@@ -46,7 +46,7 @@ public class SuspenseListModelItemRenderer implements ListitemRenderer<FinanceSu
 	private static final long serialVersionUID = -4554647022945989420L;
 
 	public SuspenseListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import com.pennanttech.pff.core.RequestSource;
 
 @XmlType(propOrder = { "applyODPenalty", "oDIncGrcDays", "oDGraceDays", "oDChargeType", "oDChargeCalOn",
 		"oDChargeAmtOrPerc", "oDAllowWaiver", "oDMaxWaiverPerc", "extensionODGrcDays", "collecChrgCodeId",
-		"collectionAmt" })
+		"collectionAmt", "odMinAmount" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinODPenaltyRate implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -55,6 +55,8 @@ public class FinODPenaltyRate implements Serializable {
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private FinODPenaltyRate validateFinODPenaltyRate = this;
+	@XmlElement
+	private BigDecimal odMinAmount = BigDecimal.ZERO;
 
 	public FinODPenaltyRate() {
 		super();
@@ -86,6 +88,7 @@ public class FinODPenaltyRate implements Serializable {
 		entity.setOverDraftExtGraceDays(this.overDraftExtGraceDays);
 		entity.setOverDraftColChrgFeeType(this.overDraftColChrgFeeType);
 		entity.setOverDraftColAmt(this.overDraftColAmt);
+		entity.setOdMinAmount(this.odMinAmount);
 		return entity;
 	}
 
@@ -247,6 +250,14 @@ public class FinODPenaltyRate implements Serializable {
 
 	public void setRequestSource(RequestSource requestSource) {
 		this.requestSource = requestSource;
+	}
+
+	public BigDecimal getOdMinAmount() {
+		return odMinAmount;
+	}
+
+	public void setOdMinAmount(BigDecimal odMinAmount) {
+		this.odMinAmount = odMinAmount;
 	}
 
 }

@@ -99,4 +99,5 @@ public interface FinanceProfitDetailDAO {
 
 	BigDecimal getOverDueAmount(long finID);
 
+	Date getMaturityDate(long finID, Date appDate);
 }

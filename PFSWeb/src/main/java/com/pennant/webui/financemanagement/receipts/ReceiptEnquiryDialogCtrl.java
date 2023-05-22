@@ -37,9 +37,9 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
@@ -59,13 +59,14 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.AgreementEngine;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/ReceiptRealizationEnqDialog.zul
@@ -165,7 +166,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnPrint;
 	private transient BranchService branchService;
 	private PostingsDAO postingsDAO;
-	Date derivedAppDate = DateUtility.getDerivedAppDate();
+	Date derivedAppDate = SysParamUtil.getDerivedAppDate();
 	// Postings Details
 	protected Tab postingDetailsTab;
 	protected Textbox posting_finType;
@@ -209,8 +210,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				setReceiptHeader((FinReceiptHeader) arguments.get("receiptHeader"));
 				FinReceiptHeader befImage = new FinReceiptHeader();
 
-				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(getReceiptHeader());
+				befImage = ObjectUtil.clone(getReceiptHeader());
 				getReceiptHeader().setBefImage(befImage);
 
 			}
@@ -848,14 +848,14 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					finFormatter));
 			cashierReceipt.setReceiptAmountInWords(
 					NumberToEnglishWords.getAmountInText(this.receiptAmount.getActualValue(), ""));
-			cashierReceipt.setAppDate(DateUtility.formatToLongDate(derivedAppDate));
+			cashierReceipt.setAppDate(DateUtil.formatToLongDate(derivedAppDate));
 
 			Date eventFromDate = this.receivedDate.getValue();
 			if (this.realizationDate.getValue() != null
-					&& DateUtility.compare(this.realizationDate.getValue(), eventFromDate) > 0) {
+					&& DateUtil.compare(this.realizationDate.getValue(), eventFromDate) > 0) {
 				eventFromDate = this.realizationDate.getValue();
 			}
-			cashierReceipt.setReceiptDate(DateUtility.formatToLongDate(eventFromDate));
+			cashierReceipt.setReceiptDate(DateUtil.formatToLongDate(eventFromDate));
 
 			cashierReceipt.setReceiptNo(this.paymentRef.getValue());
 			if (StringUtils.equals(getComboboxValue(receiptMode), ReceiptMode.CASH)) {

@@ -16,10 +16,14 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements MandateUploadDAO {
 
+	public MandateUploadDAOImpl() {
+		super();
+	}
+
 	@Override
 	public List<MandateUpload> loadRecordData(long headerID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, HeaderID, MandateID, CustID, CustCIF, MandateRef, MandateType, BankBranchID, AccNumber");
+		StringBuilder sql = new StringBuilder("Select Id, HeaderID");
+		sql.append(", MandateID, RecordSeq, CustID, CustCIF, MandateRef, MandateType, BankBranchID, AccNumber");
 		sql.append(", AccHolderName, JointAccHolderName, AccType, OpenMandate, StartDate, ExpiryDate, MaxLimit");
 		sql.append(", Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, MandateStatus, ApprovalID, InputDate");
 		sql.append(", Active, Reason, MandateCcy, OrgReference, ExternalRef, DocumentName, DocumentRef, BarCodeNumber");
@@ -27,7 +31,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 		sql.append(", EmandateReferenceNo, SwapEffectiveDate, HoldReason, SecurityMandate, EmployerID, EmployeeNo");
 		sql.append(", Ifsc, Micr, ExternalMandate, Progress, Status, ErrorCode, ErrorDesc");
 		sql.append(" From Mandates_Upload");
-		sql.append(" Where HeaderID = ?");
+		sql.append(" Where HeaderID = ? and Status = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -37,6 +41,7 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			upload.setId(rs.getLong("ID"));
 			upload.setHeaderId(rs.getLong("HeaderID"));
 			upload.setReferenceID(JdbcUtil.getLong(rs.getObject("MandateID")));
+			upload.setRecordSeq(rs.getLong("RecordSeq"));
 			upload.setReference(rs.getString("OrgReference"));
 			upload.setProgress(rs.getInt("Progress"));
 			upload.setStatus(rs.getString("Status"));
@@ -92,11 +97,11 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 			upload.setMandate(mndts);
 
 			return upload;
-		}, headerID);
+		}, headerID, "S");
 	}
 
 	@Override
-	public void update(List<Long> headerIds, String errorCode, String errorDesc, int progress) {
+	public void update(List<Long> headerIds, String errorCode, String errorDesc) {
 		String sql = "Update Mandates_Upload set Progress = ?, Status = ?, ErrorCode = ?, ErrorDesc = ? Where HeaderID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
@@ -109,8 +114,8 @@ public class MandateUploadDAOImpl extends SequenceDao<MandateUpload> implements 
 
 				long headerID = headerIds.get(i);
 
-				ps.setInt(++index, progress);
-				ps.setString(++index, (progress == EodConstants.PROGRESS_SUCCESS) ? "S" : "F");
+				ps.setInt(++index, -1);
+				ps.setString(++index, "R");
 				ps.setString(++index, errorCode);
 				ps.setString(++index, errorDesc);
 

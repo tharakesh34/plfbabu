@@ -1,6 +1,5 @@
 package com.pennanttech.pff.mmfl.cd.webui;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -376,7 +375,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		}
 
 		try {
-			merchantDetails.setStoreId(new BigDecimal(this.storeId.getValue()));
+			merchantDetails.setStoreId(Long.valueOf(this.storeId.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

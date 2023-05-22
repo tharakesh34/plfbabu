@@ -16,7 +16,7 @@ public class CustLimitCategoryBreakdown implements Serializable {
 	private String comments;
 
 	public CustLimitCategoryBreakdown() {
-
+	    super();
 	}
 
 	// ******************************************************//

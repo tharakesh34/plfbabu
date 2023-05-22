@@ -217,9 +217,17 @@ public class RejectDetailDAOImpl extends BasicDao<RejectDetail> implements Rejec
 	public boolean isExistsRejectCode(String rejectCode) {
 		String sql = "Select Count(RejectCode) From BMTRejectCodes Where RejectCode = ? And RejectType = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql.toString(), Boolean.class, rejectCode,
-				PennantConstants.Reject_Payment);
+		return jdbcOperations.queryForObject(sql, Boolean.class, rejectCode, PennantConstants.Reject_Payment);
+	}
+
+	@Override
+	public int getRejectCodeCount(String rejectCode) {
+		String sql = "Select count(RejectCode) From BMTRejectCodes Where RejectCode = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, rejectCode);
 	}
 }

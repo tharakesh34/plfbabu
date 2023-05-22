@@ -21,6 +21,8 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.CustEODEvent;
+import com.pennant.backend.model.finance.FinEODEvent;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -32,6 +34,9 @@ import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.extension.MandateExtension;
+import com.pennant.pff.holdmarking.service.HoldMarkingService;
+import com.pennant.pff.letter.service.LetterService;
 import com.pennant.pff.presentment.ExcludeReasonCode;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.presentment.exception.PresentmentException;
@@ -59,11 +64,13 @@ public class ReceiptPaymentService {
 	private LoanPaymentService loanPaymentService;
 	private OverdrafLoanService overdrafLoanService;
 	private ReceiptCancellationService receiptCancellationService;
+	private HoldMarkingService holdMarkingService;
 
 	private FinanceMainDAO financeMainDAO;
 	private FinanceProfitDetailDAO profitDetailDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private FinODDetailsDAO finODDetailsDAO;
+	private LetterService letterService;
 
 	public ReceiptPaymentService() {
 		super();
@@ -190,9 +197,18 @@ public class ReceiptPaymentService {
 		long finID = pd.getFinID();
 		List<FinanceScheduleDetail> schedules = receiptDTO.getSchedules();
 
+		fm.setOldActiveState(fm.isFinIsActive());
+
 		if (loanPaymentService.isSchdFullyPaid(new LoanPayment(finID, fm.getFinReference(), schedules, appDate))) {
+			fm.setFinIsActive(false);
 			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
 			profitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
+
+			if (MandateExtension.ALLOW_HOLD_MARKING) {
+				holdMarkingService.removeHold(fm);
+			}
+
+			letterService.logForAutoLetter(fm, appDate);
 		}
 	}
 
@@ -444,4 +460,15 @@ public class ReceiptPaymentService {
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
+
+	@Autowired
+	public void setHoldMarkingService(HoldMarkingService holdMarkingService) {
+		this.holdMarkingService = holdMarkingService;
+	}
+
+	@Autowired
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
+	}
+
 }

@@ -44,7 +44,7 @@ public class ScoringMetricsListModelItemRenderer implements ListitemRenderer<Sco
 	private static final long serialVersionUID = -428249648119783107L;
 
 	public ScoringMetricsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

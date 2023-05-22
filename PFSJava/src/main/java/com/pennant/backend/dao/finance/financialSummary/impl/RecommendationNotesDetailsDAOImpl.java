@@ -218,7 +218,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		source.addValue("id", id);
 		source.addValue("recommendationNotesDetails", recommendationNotesDetails);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select Version From RECOMMENDATION_NOTES");
 
 		sql.append(" Where Id = :id and finReference = :finReference");

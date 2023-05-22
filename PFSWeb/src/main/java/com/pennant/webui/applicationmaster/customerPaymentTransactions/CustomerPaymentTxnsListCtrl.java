@@ -46,9 +46,9 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentTransaction;
-import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
+import com.pennant.pff.payment.model.PaymentHeader;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.model.CustomerPaymentTxnsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -207,7 +207,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		if ("PYMT".equals(module)) {
 			PaymentHeader paymentheader = paymentHeaderService.getPaymentHeader(paymentTransaction.getPaymentId());
 
-			StringBuffer whereCond = new StringBuffer();
+			StringBuilder whereCond = new StringBuilder();
 			whereCond.append("  AND  PaymentId = ");
 			whereCond.append(paymentTransaction.getPaymentId());
 			whereCond.append(" AND  version=");

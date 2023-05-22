@@ -25,7 +25,6 @@
 package com.pennant.webui.customermasters.customerdocument;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,11 +72,11 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.MasterDef;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -105,7 +104,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl;
-import com.pennant.webui.delegationdeviation.DeviationExecutionCtrl;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDialogCtrl;
@@ -121,8 +119,7 @@ import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.webui.verification.RCUVerificationDialogCtrl;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/CustomerDocument/customerDocumentDialog.zul file.
@@ -137,6 +134,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 */
 	protected Window window_CustomerDocumentDialog;
 	protected Grid grid_basicDetails;
+
+	protected Groupbox gb_basicDetails;
 
 	protected Longbox custID;
 	protected Textbox documnetName;
@@ -222,14 +221,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	private boolean isIssuedAuth = false;
 	private boolean isDocuploadMand = false;
 	private boolean workflow = false;
-	private DeviationExecutionCtrl deviationExecutionCtrl;
-	private List<DocumentDetails> verificationDocuments;
-	private RCUVerificationDialogCtrl rcuVerificationDialogCtrl;
 	public String dmsApplicationNo;
 	public String leadId;
 
 	private DocumentValidation defaultDocumentValidation;
 	private DocumentValidation customDocumentValidation;
+
+	private boolean isKYCVerified = true;
+	private MasterDef masterDef;
 
 	/**
 	 * default constructor.<br>
@@ -262,8 +261,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			setSecUserPagedListWrapper();
 
 			if (arguments.containsKey("customerDocument")) {
-				Cloner cloner = new Cloner();
-				this.customerDocument = cloner.deepClone((CustomerDocument) arguments.get("customerDocument"));
+				this.customerDocument = ObjectUtil.clone((CustomerDocument) arguments.get("customerDocument"));
 				CustomerDocument befImage = new CustomerDocument();
 				BeanUtils.copyProperties(this.customerDocument, befImage);
 				this.customerDocument.setBefImage(befImage);
@@ -369,10 +367,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.enqiryModule = (Boolean) arguments.get("enqiryModule");
 			}
 
-			if (arguments.containsKey("verificationDocuments")) {
-				this.verificationDocuments = (List<DocumentDetails>) arguments.get("verificationDocuments");
-			}
-
 			if (enqiryModule) {
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
 			}
@@ -420,12 +414,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			this.finDocumentPdfView.setHeight(listboxHeight + "px");
 
 			doShowDialog(getCustomerDocument());
-
-			// Calling SelectCtrl For proper selection of Customer
-			if (isNewRecord() && !isNewCustomer() && !isCheckList) {
-				// onload();
-			}
-			// setDeviationExecutionCtrl();
 
 			if (isCheckList) {// TODO Need to add a condition based visibility
 				// for delete button
@@ -734,6 +722,17 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onAfterSize$gb_basicDetails(Event event) {
+		this.finDocumentDiv.setHeight("100%");
+		int dialogHeight = grid_basicDetails.getRows().getVisibleItemCount() * 20 + 80;
+		int listboxHeight = borderLayoutHeight - dialogHeight;
+		if (this.gb_basicDetails.isOpen()) {
+			this.finDocumentPdfView.setHeight(listboxHeight - 10 + "px");
+		} else {
+			this.finDocumentPdfView.setHeight(borderLayoutHeight - 15 + "px");
+		}
+	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -841,21 +840,15 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 	private void checkDocumentExpired(CustomerDocument aCustomerDocument) {
 		boolean deviationallowed = false;
-		// Date date = aCustomerDocument.getCustDocExpDate();
-		// if (date != null && date.compareTo(DateUtility.getAppDate()) <= 0) {
-		// if (deviationExecutionCtrl!=null) {
-		// deviationallowed=deviationExecutionCtrl.checkDeviationForDocument(aCustomerDocument);
-		// }
-		// }
+
 		if (!deviationallowed) {
 			if (!this.custDocExpDate.isReadonly() && !this.custDocExpDate.isDisabled()) {
 				this.custDocExpDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CustomerDocumentDialog_CustDocExpDate.value"),
-								expDateIsMand, DateUtility.addDays(appStartDate, 1), endDate, true));
+								expDateIsMand, DateUtil.addDays(appStartDate, 1), endDate, true));
 				this.custDocExpDate.getValue();// Call the validation
 			}
 		}
-
 	}
 
 	/**
@@ -915,6 +908,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			}
 
 			doCheckEnquiry();
+			doSetVerificatonField();
 
 			if (isNewCustomer()) {
 				this.groupboxWf.setVisible(false);
@@ -1254,6 +1248,14 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doSetVerificatonField() {
+		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
+			this.btnSendOTP.setVisible(!isReadOnly("CustomerDocumentDialog_custDocTitle"));
+		} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PAN), this.custDocType.getValue())) {
+			this.btnValidate.setVisible(!isReadOnly("CustomerDocumentDialog_custDocTitle"));
+		}
+	}
+
 	private void doCheckEnquiry() {
 		if (PennantConstants.MODULETYPE_ENQ.equals(this.moduleType)) {
 			this.btnDelete.setVisible(false);
@@ -1459,11 +1461,37 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		if (isRetailCustomer && !ImplementationConstants.RETAIL_CUST_PAN_MANDATORY
 				&& (this.custDocType.getValue().equalsIgnoreCase(PennantConstants.FORM60))) {
-			Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
-			if (DateUtility.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
-				MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
+			if (this.custDocIssuedOn.getValue() != null && this.custDocExpDate.getValue() != null) {
+				Date addMonths = DateUtil.addMonths(this.custDocIssuedOn.getValue(), 72);
+				if (DateUtil.compare(addMonths, this.custDocExpDate.getValue()) < 0) {
+					MessageUtil.showError("Difference Between Issued On & Expiry Date Sholud be Less Than 6 Years");
+					return;
+				}
 			}
+		}
+
+		if (this.masterDef != null && this.masterDef.isProceedException() && !this.isKYCVerified) {
+			MessageUtil.showError(this.masterDef.getKeyType() + " Document Must Be Verified.");
 			return;
+		} else if (this.masterDef != null && this.masterDef.isProceedException()) {
+			String oldDocNumber = StringUtils.trimToEmpty((String) this.btnValidate.getAttribute("docId"));
+			String newDocNumber = StringUtils.trimToEmpty(this.custDocTitle.getValue());
+
+			if (!StringUtils.equals(oldDocNumber, newDocNumber)) {
+				MessageUtil.showError("New Document Number Must Be Verified.");
+				return;
+			}
+
+			if (getCustomerDialogCtrl() != null && this.masterDef.getKeyType().equals("PAN")) {
+				getCustomerDialogCtrl().renderCustFullName(this.firstNameAsPerPAN.getValue() + " "
+						+ this.middleNameAsPerPAN.getValue() + " " + this.lastNameAsPerPAN.getValue());
+			}
+
+		} else if (this.masterDef != null && this.masterDef.getKeyType().equals("PAN")) {
+			if (getCustomerDialogCtrl() != null) {
+				getCustomerDialogCtrl().renderCustFullName(this.firstNameAsPerPAN.getValue() + " "
+						+ this.middleNameAsPerPAN.getValue() + " " + this.lastNameAsPerPAN.getValue());
+			}
 		}
 
 		// Write the additional validations as per below example
@@ -2097,6 +2125,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		}
 		// ### 01-05-2018 - End
 
+		this.isKYCVerified = false;
+
 		this.gbDetailsAsPerPAN.setVisible(false);
 		this.firstNameAsPerPAN.setValue("");
 		this.middleNameAsPerPAN.setValue("");
@@ -2104,8 +2134,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.lastModified.setValue("");
 		this.verificationStatus.setValue("");
 		this.btnValidate.setVisible(false);
+		this.btnSendOTP.setVisible(false);
+		this.otp.setVisible(false);
+		this.masterDef = null;
+
 		if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.AADHAAR), this.custDocType.getValue())) {
-			if (getDocumentValidation() != null && MasterDefUtil.isValidationReq(DocType.AADHAAR)) {
+			this.masterDef = MasterDefUtil.getMasterDefByType(DocType.AADHAAR);
+			if (getDocumentValidation() != null && this.masterDef.isValidationReq()) {
 				this.btnSendOTP.setVisible(true);
 				this.custDocTitle.setReadonly(false);
 				this.btnValidate.setVisible(false);
@@ -2113,7 +2148,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.otp.setVisible(false);
 			}
 		} else if (StringUtils.equalsIgnoreCase(MasterDefUtil.getDocCode(DocType.PAN), this.custDocType.getValue())) {
-			if (getDocumentValidation() != null && MasterDefUtil.isValidationReq(DocType.PAN)) {
+			this.masterDef = MasterDefUtil.getMasterDefByType(DocType.PAN);
+			if (getDocumentValidation() != null && this.masterDef.isValidationReq()) {
 				this.btnValidate.setVisible(true);
 				this.custDocTitle.setReadonly(false);
 				this.btnSendOTP.setVisible(false);
@@ -2142,6 +2178,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (getDocumentValidation().isVerified(aadharNumber, DocType.AADHAAR)) {
 				MessageUtil.confirm(msg, evnt -> {
 					if (Messagebox.ON_YES.equals(evnt.getName())) {
+						this.isKYCVerified = false;
 						getDocumentValidation().validate(DocType.AADHAAR, dh);
 						this.custDocTitle.setReadonly(true);
 						this.btnValidate.setVisible(true);
@@ -2152,6 +2189,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				});
 
 			} else {
+				this.isKYCVerified = false;
 				getDocumentValidation().validate(DocType.AADHAAR, dh);
 				this.custDocTitle.setReadonly(true);
 				this.btnValidate.setVisible(true);
@@ -2193,7 +2231,6 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (isExistng) {
 			MessageUtil.confirm(msg, evnt -> {
 				if (Messagebox.ON_YES.equals(evnt.getName())) {
-
 					getPANDetails(header, isExistng);
 				}
 			});
@@ -2208,10 +2245,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		ErrorDetail err = DocVerificationUtil.doValidatePAN(header, true);
 
 		if (err != null) {
+			this.isKYCVerified = false;
 			MessageUtil.showMessage(err.getMessage());
 			return;
 		}
-
+		this.isKYCVerified = true;
 		MessageUtil.showMessage(
 				String.format("%s PAN validation successfull.", header.getDocVerificationDetail().getFullName()));
 
@@ -2219,6 +2257,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.firstNameAsPerPAN.setValue(header.getDocVerificationDetail().getFName());
 		this.middleNameAsPerPAN.setValue(header.getDocVerificationDetail().getMName());
 		this.lastNameAsPerPAN.setValue(header.getDocVerificationDetail().getLName());
+
+		this.btnValidate.setAttribute("docId", header.getDocNumber());
 
 		if (isExistng) {
 			this.verificationStatus.setValue("Existing & Verified");
@@ -2250,9 +2290,13 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.btnSendOTP.setLabel(Labels.getLabel("label_aadhar_sendotp.value"));
 				this.otp.setVisible(false);
 				this.btnValidate.setAttribute("data", null);
+				this.isKYCVerified = true;
+
+				this.btnValidate.setAttribute("docId", dh.getDocNumber());
 			}
 
 		} catch (InterfaceException ie) {
+			this.isKYCVerified = false;
 			MessageUtil.showMessage(ie.getErrorMessage());
 		} catch (Exception ex) {
 			throw ex;
@@ -2624,24 +2668,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	public void setDeviationExecutionCtrl()
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if (getFinanceMainDialogCtrl() != null && isFinanceProcess) {
-			deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass()
-					.getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
-		}
-	}
-
 	public CustomerViewDialogCtrl getCustomerViewDialogCtrl() {
 		return customerViewDialogCtrl;
 	}
 
 	public void setCustomerViewDialogCtrl(CustomerViewDialogCtrl customerViewDialogCtrl) {
 		this.customerViewDialogCtrl = customerViewDialogCtrl;
-	}
-
-	public void setRcuVerificationDialogCtrl(RCUVerificationDialogCtrl rcuVerificationDialogCtrl) {
-		this.rcuVerificationDialogCtrl = rcuVerificationDialogCtrl;
 	}
 
 	public DocumentValidation getDocumentValidation() {

@@ -106,7 +106,7 @@ public class FacilityAgreementDetail {
 	private String adtYear3 = "";
 
 	public FacilityAgreementDetail() {
-
+	    super();
 	}
 
 	public String getAmendment() {
@@ -931,7 +931,7 @@ public class FacilityAgreementDetail {
 		private List<CheckListAnsDetails> listquestionAns;
 
 		public CheckListDetails() {
-
+		    super();
 		}
 
 		public String getQuestion() {
@@ -966,7 +966,7 @@ public class FacilityAgreementDetail {
 		private String questionRem;
 
 		public CheckListAnsDetails() {
-
+		    super();
 		}
 
 		public void setQuestionId(long questionId) {
@@ -1002,7 +1002,7 @@ public class FacilityAgreementDetail {
 		private String outstandingBalance;
 
 		public CustomerFinance() {
-
+		    super();
 		}
 
 		public String getDealDate() {
@@ -1051,7 +1051,7 @@ public class FacilityAgreementDetail {
 		private List<CustomerCreditReviewDetails> customerCreditReviewDetails = new ArrayList<CustomerCreditReviewDetails>();
 
 		public CustomerCreditReview() {
-
+		    super();
 		}
 
 		public String getCategoryName() {
@@ -1078,7 +1078,7 @@ public class FacilityAgreementDetail {
 		private String year3;
 
 		public CustomerCreditReviewDetails() {
-
+		    super();
 		}
 
 		public String getSubCategoryName() {
@@ -1123,7 +1123,7 @@ public class FacilityAgreementDetail {
 		private List<ScoringDetails> scoringDetails = new ArrayList<ScoringDetails>();
 
 		public ScoringHeader() {
-
+		    super();
 		}
 
 		public String getScoringGroup() {
@@ -1151,7 +1151,7 @@ public class FacilityAgreementDetail {
 		private String calcScore;
 
 		public ScoringDetails() {
-
+		    super();
 		}
 
 		public String getScoringMetric() {
@@ -1193,7 +1193,7 @@ public class FacilityAgreementDetail {
 		private List<Recommendation> recommendations;
 
 		public GroupRecommendation() {
-
+		    super();
 		}
 
 		public void setUserRole(String userRole) {
@@ -1221,7 +1221,7 @@ public class FacilityAgreementDetail {
 		private String noteDesc;
 
 		public Recommendation() {
-
+		    super();
 		}
 
 		public String getUserName() {
@@ -1275,7 +1275,7 @@ public class FacilityAgreementDetail {
 		private String exceptionDesc;
 
 		public ExceptionList() {
-
+		    super();
 		}
 
 		public String getExceptionItem() {
@@ -1345,7 +1345,7 @@ public class FacilityAgreementDetail {
 		private String countryOfRisk;
 
 		public ProposedFacility() {
-
+		    super();
 		}
 
 		public String getHtmlFacilityDesc() {
@@ -1705,7 +1705,7 @@ public class FacilityAgreementDetail {
 		private String shareholderPercentage;
 
 		public Shareholder() {
-
+		    super();
 		}
 
 		public String getShareholderName() {
@@ -1734,7 +1734,7 @@ public class FacilityAgreementDetail {
 		private String cover;
 
 		public FacilityCollateral() {
-
+		    super();
 		}
 
 		public String getSecurityType() {

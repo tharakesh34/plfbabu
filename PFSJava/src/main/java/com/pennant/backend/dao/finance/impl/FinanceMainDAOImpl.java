@@ -52,6 +52,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -59,8 +60,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.core.CustEODEvent;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
@@ -68,6 +67,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
+import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -231,7 +231,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.DeductFeeDisb, fm.BpiAmount, fm.FinIsActive");
 		sql.append(", fm.BpiTreatment, fm.QuickDisb, fm.InstBasedSchd, fm.FinAssetValue, fm.FinCurrAssetValue");
 		sql.append(", c.CustCIF, c.CustShrtName, ft.alwMultiPartyDisb, ft.FinTypeDesc");
-		sql.append(", PromotionCode, e.EntityCode");
+		sql.append(", PromotionCode, e.EntityCode, fm.DownPayBank, fm.DownPaySupl");
 		sql.append(" From FinanceMain");
 		sql.append(tableType.getSuffix());
 		sql.append(" fm");
@@ -273,6 +273,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setEntityCode(rs.getString("EntityCode"));
 			fm.setLovDescEntityCode(rs.getString("EntityCode"));
 			fm.setPromotionCode(rs.getString("PromotionCode"));
+			fm.setDownPayBank(rs.getBigDecimal("DownPayBank"));
+			fm.setDownPaySupl(rs.getBigDecimal("DownPaySupl"));
 
 			return fm;
 		}
@@ -430,11 +432,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", LastRepayRvwDate, NextRepayRvwDate, FinAssetValue, FinCurrAssetValue, FinRepayMethod");
 		sql.append(", RepayFrq, ClosingStatus, DueBucket, CalRoundingMode, RoundingTarget, RecordType");
 		sql.append(", Version, ProfitDaysBasis, FinStatus, FinStsReason, PastduePftCalMthd, PastduePftMargin");
-		sql.append(", InitiateUser, MaturityDate");
-		sql.append(", MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
-		sql.append(", SvAmount, CbAmount, EmployeeName, SchdVersion");
-		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
-		sql.append(" From Financemain");
+		sql.append(", InitiateUser, MaturityDate, MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle");
+		sql.append(", PromotionSeqId, SvAmount, CbAmount, EmployeeName, SchdVersion, OverdraftTxnChrgReq");
+		sql.append(", OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn, FinType, LastRepayDate");
+		sql.append(", LastRepayCpzDate From Financemain");
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
@@ -499,6 +500,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setOverdraftCalcChrg(rs.getString("OverdraftCalcChrg"));
 				fm.setOverdraftChrgAmtOrPerc(rs.getBigDecimal("OverdraftChrgAmtOrPerc"));
 				fm.setOverdraftChrCalOn(rs.getString("OverdraftChrCalOn"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setLastRepayDate(rs.getDate("LastRepayDate"));
+				fm.setLastRepayCpzDate(rs.getDate("LastRepayCpzDate"));
 
 				return fm;
 
@@ -562,6 +566,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", AppliedLoanAmt, FinIsRateRvwAtGrcEnd");
 		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn ");
 		if (!wif) {
 			sql.append(", InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
 			sql.append(", CustDSR, LimitValid, OverrideLimit, FinPurpose, FinStatus, FinStsReason");
@@ -584,8 +589,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource , Rsa, Verification");
 			sql.append(", SourcingBranch, SourChannelCategory, AsmName, OfferId");
 			sql.append(", Pmay, parentRef, loanSplitted, AlwLoanSplit, InstBasedSchd, AllowSubvention");
-			sql.append(", TdsType, NoOfGrcSteps, CalcOfSteps, StepsAppliedFor");
-			sql.append(", SecurityMandateID");
+			sql.append(", TdsType, NoOfGrcSteps, CalcOfSteps, StepsAppliedFor, SecurityMandateID");
 		}
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
@@ -596,6 +600,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
 		if (!wif) {
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -606,8 +611,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ? , ?, ?");
 			sql.append(", ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-			sql.append(", ?");
+			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 
 		}
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -617,267 +621,272 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index++, fm.getFinID());
-				ps.setString(index++, fm.getFinReference());
-				ps.setInt(index++, fm.getGraceTerms());
-				ps.setInt(index++, fm.getNumberOfTerms());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getGrcPeriodEndDate()));
-				ps.setBoolean(index++, fm.isAllowGrcPeriod());
-				ps.setString(index++, fm.getGraceBaseRate());
-				ps.setString(index++, fm.getGraceSpecialRate());
-				ps.setBigDecimal(index++, fm.getGrcPftRate());
-				ps.setString(index++, fm.getGrcPftFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcPftDate()));
-				ps.setBoolean(index++, fm.isAllowGrcPftRvw());
-				ps.setString(index++, fm.getGrcPftRvwFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcPftRvwDate()));
-				ps.setBoolean(index++, fm.isAllowGrcCpz());
-				ps.setString(index++, fm.getGrcCpzFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextGrcCpzDate()));
-				ps.setString(index++, fm.getRepayBaseRate());
-				ps.setString(index++, fm.getRepaySpecialRate());
-				ps.setBigDecimal(index++, fm.getRepayProfitRate());
-				ps.setString(index++, fm.getRepayFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayDate()));
-				ps.setString(index++, fm.getRepayPftFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayPftDate()));
-				ps.setBoolean(index++, fm.isAllowRepayRvw());
-				ps.setString(index++, fm.getRepayRvwFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayRvwDate()));
-				ps.setBoolean(index++, fm.isAllowRepayCpz());
-				ps.setString(index++, fm.getRepayCpzFrq());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getNextRepayCpzDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fm.getMaturityDate()));
-				ps.setBoolean(index++, fm.isCpzAtGraceEnd());
-				ps.setBigDecimal(index++, fm.getDownPayment());
-				ps.setBigDecimal(index++, fm.getDownPayBank());
-				ps.setBigDecimal(index++, fm.getDownPaySupl());
-				ps.setBigDecimal(index++, fm.getReqRepayAmount());
-				ps.setBigDecimal(index++, fm.getTotalProfit());
-				ps.setBigDecimal(index++, fm.getTotalCpz());
-				ps.setBigDecimal(index++, fm.getTotalGrossPft());
-				ps.setBigDecimal(index++, fm.getTotalGracePft());
-				ps.setBigDecimal(index++, fm.getTotalGraceCpz());
-				ps.setBigDecimal(index++, fm.getTotalGrossGrcPft());
-				ps.setBigDecimal(index++, fm.getTotalRepayAmt());
-				ps.setString(index++, fm.getGrcRateBasis());
-				ps.setString(index++, fm.getRepayRateBasis());
-				ps.setString(index++, fm.getFinType());
-				ps.setString(index++, fm.getFinRemarks());
-				ps.setString(index++, fm.getFinCcy());
-				ps.setString(index++, fm.getScheduleMethod());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getFinContractDate()));
-				ps.setString(index++, fm.getProfitDaysBasis());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getReqMaturity()));
-				ps.setInt(index++, fm.getCalTerms());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getCalMaturity()));
-				ps.setBigDecimal(index++, fm.getFirstRepay());
-				ps.setBigDecimal(index++, fm.getLastRepay());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getFinStartDate()));
-				ps.setBigDecimal(index++, fm.getFinAmount());
-				ps.setBigDecimal(index++, fm.getFinRepaymentAmount());
-				ps.setLong(index++, fm.getCustID());
-				ps.setInt(index++, fm.getDefferments());
-				ps.setInt(index++, fm.getPlanDeferCount());
-				ps.setString(index++, fm.getFinBranch());
-				ps.setString(index++, fm.getFinSourceID());
-				ps.setInt(index++, fm.getAllowedDefRpyChange());
-				ps.setInt(index++, fm.getAvailedDefRpyChange());
-				ps.setInt(index++, fm.getAllowedDefFrqChange());
-				ps.setInt(index++, fm.getAvailedDefFrqChange());
-				ps.setString(index++, fm.getRecalType());
-				ps.setBoolean(index++, fm.isFinIsActive());
-				ps.setBigDecimal(index++, fm.getFinAssetValue());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayPftDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayRvwDate()));
-				ps.setDate(index++, JdbcUtil.getDate(fm.getLastRepayCpzDate()));
-				ps.setBoolean(index++, fm.isAllowGrcRepay());
-				ps.setString(index++, fm.getGrcSchdMthd());
-				ps.setBigDecimal(index++, fm.getGrcMargin());
-				ps.setBigDecimal(index++, fm.getRepayMargin());
-				ps.setString(index++, fm.getFinCommitmentRef());
-				ps.setString(index++, fm.getFinLimitRef());
-				ps.setBigDecimal(index++, fm.getFinCurrAssetValue());
-				ps.setString(index++, fm.getClosingStatus());
-				ps.setDate(index++, JdbcUtil.getDate(fm.getFinApprovedDate()));
-				ps.setBoolean(index++, fm.isDedupFound());
-				ps.setBoolean(index++, fm.isSkipDedup());
-				ps.setBoolean(index++, fm.isBlacklisted());
-				ps.setString(index++, fm.getGrcProfitDaysBasis());
-				ps.setBoolean(index++, fm.isStepFinance());
-				ps.setString(index++, fm.getStepPolicy());
-				ps.setBoolean(index++, fm.isAlwManualSteps());
-				ps.setInt(index++, fm.getNoOfSteps());
-				ps.setString(index++, fm.getStepType());
-				ps.setBigDecimal(index++, fm.getAnualizedPercRate());
-				ps.setBigDecimal(index++, fm.getEffectiveRateOfReturn());
-				ps.setBoolean(index++, fm.isFinRepayPftOnFrq());
-				ps.setString(index++, fm.getLinkedFinRef());
-				ps.setBigDecimal(index++, fm.getGrcMinRate());
-				ps.setBigDecimal(index++, fm.getGrcMaxRate());
-				ps.setBigDecimal(index++, fm.getGrcMaxAmount());
-				ps.setBigDecimal(index++, fm.getRpyMinRate());
-				ps.setBigDecimal(index++, fm.getRpyMaxRate());
-				ps.setBoolean(index++, fm.isManualSchedule());
-				ps.setBigDecimal(index++, fm.getMinDownPayPerc());
-				ps.setBoolean(index++, fm.isTDSApplicable());
-				ps.setBoolean(index++, fm.isAlwBPI());
-				ps.setString(index++, fm.getBpiTreatment());
-				ps.setBoolean(index++, fm.isPlanEMIHAlw());
-				ps.setString(index++, fm.getPlanEMIHMethod());
-				ps.setInt(index++, fm.getPlanEMIHMaxPerYear());
-				ps.setInt(index++, fm.getPlanEMIHMax());
-				ps.setInt(index++, fm.getPlanEMIHLockPeriod());
-				ps.setBoolean(index++, fm.isPlanEMICpz());
-				ps.setString(index++, fm.getCalRoundingMode());
-				ps.setInt(index++, fm.getRoundingTarget());
-				ps.setBoolean(index++, fm.isAlwMultiDisb());
-				ps.setString(index++, fm.getFinRepayMethod());
-				ps.setBigDecimal(index++, fm.getFeeChargeAmt());
-				ps.setBigDecimal(index++, fm.getBpiAmount());
-				ps.setBigDecimal(index++, fm.getDeductFeeDisb());
-				ps.setString(index++, fm.getRvwRateApplFor());
-				ps.setString(index++, fm.getSchCalOnRvw());
-				ps.setString(index++, fm.getPastduePftCalMthd());
-				ps.setString(index++, fm.getDroppingMethod());
-				ps.setBoolean(index++, fm.isRateChgAnyDay());
-				ps.setBigDecimal(index++, fm.getPastduePftMargin());
-				ps.setString(index++, fm.getFinCategory());
-				ps.setString(index++, fm.getProductCategory());
-				ps.setBigDecimal(index++, fm.getAdvanceEMI());
-				ps.setString(index++, fm.getBpiPftDaysBasis());
-				ps.setBigDecimal(index++, fm.getFixedTenorRate());
-				ps.setInt(index++, fm.getFixedRateTenor());
-				ps.setObject(index++, fm.getBusinessVertical());
-				ps.setString(index++, fm.getGrcAdvType());
-				ps.setInt(index++, fm.getGrcAdvTerms());
-				ps.setString(index++, fm.getAdvType());
-				ps.setInt(index++, fm.getAdvTerms());
-				ps.setString(index++, fm.getAdvStage());
-				ps.setBoolean(index++, fm.isAllowDrawingPower());
-				ps.setBoolean(index++, fm.isAllowRevolving());
-				ps.setBigDecimal(index++, fm.getAppliedLoanAmt());
-				ps.setBoolean(index++, fm.isFinIsRateRvwAtGrcEnd());
-				ps.setBoolean(index++, fm.isOverdraftTxnChrgReq());
-				ps.setString(index++, fm.getOverdraftCalcChrg());
-				ps.setBigDecimal(index++, fm.getOverdraftChrgAmtOrPerc());
-				ps.setString(index++, fm.getOverdraftChrCalOn());
-				if (!wif) {
-					ps.setString(index++, fm.getInvestmentRef());
-					ps.setBoolean(index++, fm.isMigratedFinance());
-					ps.setBoolean(index++, fm.isScheduleMaintained());
-					ps.setBoolean(index++, fm.isScheduleRegenerated());
-					ps.setBigDecimal(index++, fm.getCustDSR());
-					ps.setBoolean(index++, fm.isLimitValid());
-					ps.setBoolean(index++, fm.isOverrideLimit());
-					ps.setString(index++, fm.getFinPurpose());
-					ps.setString(index++, fm.getFinStatus());
-					ps.setString(index++, fm.getFinStsReason());
-					ps.setLong(index++, fm.getInitiateUser());
-					ps.setBoolean(index++, fm.isDeviationApproval());
-					ps.setString(index++, fm.getFinPreApprovedRef());
-					ps.setObject(index++, fm.getMandateID());
-					ps.setBoolean(index++, fm.isJointAccount());
-					ps.setLong(index++, fm.getJointCustId());
-					ps.setString(index++, fm.getRcdMaintainSts());
-					ps.setString(index++, fm.getNextUserId());
-					ps.setInt(index++, fm.getPriority());
-					ps.setDate(index++, JdbcUtil.getDate(fm.getInitiateDate()));
-					ps.setLong(index++, fm.getAccountsOfficer());
-					ps.setString(index++, fm.getApplicationNo());
-					ps.setString(index++, fm.getDsaCode());
-					ps.setString(index++, fm.getDroplineFrq());
-					ps.setDate(index++, JdbcUtil.getDate(fm.getFirstDroplineDate()));
-					ps.setBoolean(index++, fm.isPftServicingODLimit());
-					ps.setString(index++, fm.getReferralId());
-					ps.setString(index++, fm.getEmployeeName());
-					ps.setString(index++, fm.getDmaCode());
-					ps.setString(index++, fm.getSalesDepartment());
-					ps.setBoolean(index++, fm.isQuickDisb());
-					ps.setString(index++, fm.getWifReference());
-					ps.setInt(index++, fm.getUnPlanEMIHLockPeriod());
-					ps.setBoolean(index++, fm.isUnPlanEMICpz());
-					ps.setBoolean(index++, fm.isReAgeCpz());
-					ps.setInt(index++, fm.getMaxUnplannedEmi());
-					ps.setInt(index++, fm.getMaxReAgeHolidays());
-					ps.setInt(index++, fm.getAvailedUnPlanEmi());
-					ps.setInt(index++, fm.getAvailedReAgeH());
-					ps.setInt(index++, fm.getReAgeBucket());
-					ps.setInt(index++, fm.getDueBucket());
-					ps.setLong(index++, fm.getEligibilityMethod());
-					ps.setBoolean(index++, fm.isSamplingRequired());
-					ps.setBoolean(index++, fm.isLegalRequired());
-					ps.setLong(index++, fm.getConnector());
-					ps.setString(index++, fm.getProcessAttributes());
-					ps.setString(index++, fm.getPromotionCode());
-					ps.setBigDecimal(index++, fm.getTdsPercentage());
-					ps.setDate(index++, JdbcUtil.getDate(fm.getTdsStartDate()));
-					ps.setDate(index++, JdbcUtil.getDate(fm.getTdsEndDate()));
-					ps.setBigDecimal(index++, fm.getTdsLimitAmt());
-					ps.setBoolean(index++, fm.isVanReq());
-					ps.setString(index++, fm.getVanCode());
-					ps.setBoolean(index++, fm.isSanBsdSchdle());
-					ps.setObject(index++, fm.getPromotionSeqId());
-					ps.setBigDecimal(index++, fm.getSvAmount());
-					ps.setBigDecimal(index++, fm.getCbAmount());
-					ps.setBoolean(index++, fm.isAlwGrcAdj());
-					ps.setBoolean(index++, fm.isEndGrcPeriodAftrFullDisb());
-					ps.setBoolean(index++, fm.isAutoIncGrcEndDate());
-					ps.setBoolean(index++, fm.isPlanEMIHAlwInGrace());
-					ps.setInt(index++, fm.getSchdVersion());
-					ps.setString(index++, fm.getSubVentionFrom());
-					ps.setObject(index++, fm.getManufacturerDealerId());
-					ps.setBoolean(index++, fm.isEscrow());
-					ps.setObject(index++, fm.getCustBankId());
+				int index = 0;
 
-					ps.setString(index++, fm.getManualSchdType());
-					ps.setBoolean(index++, fm.isIsra());
-					ps.setDate(index++, JdbcUtil.getDate(fm.getSanctionedDate()));
+				ps.setLong(++index, fm.getFinID());
+				ps.setString(++index, fm.getFinReference());
+				ps.setInt(++index, fm.getGraceTerms());
+				ps.setInt(++index, fm.getNumberOfTerms());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getGrcPeriodEndDate()));
+				ps.setBoolean(++index, fm.isAllowGrcPeriod());
+				ps.setString(++index, fm.getGraceBaseRate());
+				ps.setString(++index, fm.getGraceSpecialRate());
+				ps.setBigDecimal(++index, fm.getGrcPftRate());
+				ps.setString(++index, fm.getGrcPftFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextGrcPftDate()));
+				ps.setBoolean(++index, fm.isAllowGrcPftRvw());
+				ps.setString(++index, fm.getGrcPftRvwFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextGrcPftRvwDate()));
+				ps.setBoolean(++index, fm.isAllowGrcCpz());
+				ps.setString(++index, fm.getGrcCpzFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextGrcCpzDate()));
+				ps.setString(++index, fm.getRepayBaseRate());
+				ps.setString(++index, fm.getRepaySpecialRate());
+				ps.setBigDecimal(++index, fm.getRepayProfitRate());
+				ps.setString(++index, fm.getRepayFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayDate()));
+				ps.setString(++index, fm.getRepayPftFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayPftDate()));
+				ps.setBoolean(++index, fm.isAllowRepayRvw());
+				ps.setString(++index, fm.getRepayRvwFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayRvwDate()));
+				ps.setBoolean(++index, fm.isAllowRepayCpz());
+				ps.setString(++index, fm.getRepayCpzFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayCpzDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getMaturityDate()));
+				ps.setBoolean(++index, fm.isCpzAtGraceEnd());
+				ps.setBigDecimal(++index, fm.getDownPayment());
+				ps.setBigDecimal(++index, fm.getDownPayBank());
+				ps.setBigDecimal(++index, fm.getDownPaySupl());
+				ps.setBigDecimal(++index, fm.getReqRepayAmount());
+				ps.setBigDecimal(++index, fm.getTotalProfit());
+				ps.setBigDecimal(++index, fm.getTotalCpz());
+				ps.setBigDecimal(++index, fm.getTotalGrossPft());
+				ps.setBigDecimal(++index, fm.getTotalGracePft());
+				ps.setBigDecimal(++index, fm.getTotalGraceCpz());
+				ps.setBigDecimal(++index, fm.getTotalGrossGrcPft());
+				ps.setBigDecimal(++index, fm.getTotalRepayAmt());
+				ps.setString(++index, fm.getGrcRateBasis());
+				ps.setString(++index, fm.getRepayRateBasis());
+				ps.setString(++index, fm.getFinType());
+				ps.setString(++index, fm.getFinRemarks());
+				ps.setString(++index, fm.getFinCcy());
+				ps.setString(++index, fm.getScheduleMethod());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getFinContractDate()));
+				ps.setString(++index, fm.getProfitDaysBasis());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getReqMaturity()));
+				ps.setInt(++index, fm.getCalTerms());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getCalMaturity()));
+				ps.setBigDecimal(++index, fm.getFirstRepay());
+				ps.setBigDecimal(++index, fm.getLastRepay());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getFinStartDate()));
+				ps.setBigDecimal(++index, fm.getFinAmount());
+				ps.setBigDecimal(++index, fm.getFinRepaymentAmount());
+				ps.setLong(++index, fm.getCustID());
+				ps.setInt(++index, fm.getDefferments());
+				ps.setInt(++index, fm.getPlanDeferCount());
+				ps.setString(++index, fm.getFinBranch());
+				ps.setString(++index, fm.getFinSourceID());
+				ps.setInt(++index, fm.getAllowedDefRpyChange());
+				ps.setInt(++index, fm.getAvailedDefRpyChange());
+				ps.setInt(++index, fm.getAllowedDefFrqChange());
+				ps.setInt(++index, fm.getAvailedDefFrqChange());
+				ps.setString(++index, fm.getRecalType());
+				ps.setBoolean(++index, fm.isFinIsActive());
+				ps.setBigDecimal(++index, fm.getFinAssetValue());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayPftDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayRvwDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayCpzDate()));
+				ps.setBoolean(++index, fm.isAllowGrcRepay());
+				ps.setString(++index, fm.getGrcSchdMthd());
+				ps.setBigDecimal(++index, fm.getGrcMargin());
+				ps.setBigDecimal(++index, fm.getRepayMargin());
+				ps.setString(++index, fm.getFinCommitmentRef());
+				ps.setString(++index, fm.getFinLimitRef());
+				ps.setBigDecimal(++index, fm.getFinCurrAssetValue());
+				ps.setString(++index, fm.getClosingStatus());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getFinApprovedDate()));
+				ps.setBoolean(++index, fm.isDedupFound());
+				ps.setBoolean(++index, fm.isSkipDedup());
+				ps.setBoolean(++index, fm.isBlacklisted());
+				ps.setString(++index, fm.getGrcProfitDaysBasis());
+				ps.setBoolean(++index, fm.isStepFinance());
+				ps.setString(++index, fm.getStepPolicy());
+				ps.setBoolean(++index, fm.isAlwManualSteps());
+				ps.setInt(++index, fm.getNoOfSteps());
+				ps.setString(++index, fm.getStepType());
+				ps.setBigDecimal(++index, fm.getAnualizedPercRate());
+				ps.setBigDecimal(++index, fm.getEffectiveRateOfReturn());
+				ps.setBoolean(++index, fm.isFinRepayPftOnFrq());
+				ps.setString(++index, fm.getLinkedFinRef());
+				ps.setBigDecimal(++index, fm.getGrcMinRate());
+				ps.setBigDecimal(++index, fm.getGrcMaxRate());
+				ps.setBigDecimal(++index, fm.getGrcMaxAmount());
+				ps.setBigDecimal(++index, fm.getRpyMinRate());
+				ps.setBigDecimal(++index, fm.getRpyMaxRate());
+				ps.setBoolean(++index, fm.isManualSchedule());
+				ps.setBigDecimal(++index, fm.getMinDownPayPerc());
+				ps.setBoolean(++index, fm.isTDSApplicable());
+				ps.setBoolean(++index, fm.isAlwBPI());
+				ps.setString(++index, fm.getBpiTreatment());
+				ps.setBoolean(++index, fm.isPlanEMIHAlw());
+				ps.setString(++index, fm.getPlanEMIHMethod());
+				ps.setInt(++index, fm.getPlanEMIHMaxPerYear());
+				ps.setInt(++index, fm.getPlanEMIHMax());
+				ps.setInt(++index, fm.getPlanEMIHLockPeriod());
+				ps.setBoolean(++index, fm.isPlanEMICpz());
+				ps.setString(++index, fm.getCalRoundingMode());
+				ps.setInt(++index, fm.getRoundingTarget());
+				ps.setBoolean(++index, fm.isAlwMultiDisb());
+				ps.setString(++index, fm.getFinRepayMethod());
+				ps.setBigDecimal(++index, fm.getFeeChargeAmt());
+				ps.setBigDecimal(++index, fm.getBpiAmount());
+				ps.setBigDecimal(++index, fm.getDeductFeeDisb());
+				ps.setString(++index, fm.getRvwRateApplFor());
+				ps.setString(++index, fm.getSchCalOnRvw());
+				ps.setString(++index, fm.getPastduePftCalMthd());
+				ps.setString(++index, fm.getDroppingMethod());
+				ps.setBoolean(++index, fm.isRateChgAnyDay());
+				ps.setBigDecimal(++index, fm.getPastduePftMargin());
+				ps.setString(++index, fm.getFinCategory());
+				ps.setString(++index, fm.getProductCategory());
+				ps.setBigDecimal(++index, fm.getAdvanceEMI());
+				ps.setString(++index, fm.getBpiPftDaysBasis());
+				ps.setBigDecimal(++index, fm.getFixedTenorRate());
+				ps.setInt(++index, fm.getFixedRateTenor());
+				ps.setObject(++index, fm.getBusinessVertical());
+				ps.setString(++index, fm.getGrcAdvType());
+				ps.setInt(++index, fm.getGrcAdvTerms());
+				ps.setString(++index, fm.getAdvType());
+				ps.setInt(++index, fm.getAdvTerms());
+				ps.setString(++index, fm.getAdvStage());
+				ps.setBoolean(++index, fm.isAllowDrawingPower());
+				ps.setBoolean(++index, fm.isAllowRevolving());
+				ps.setBigDecimal(++index, fm.getAppliedLoanAmt());
+				ps.setBoolean(++index, fm.isFinIsRateRvwAtGrcEnd());
+				ps.setBoolean(++index, fm.isOverdraftTxnChrgReq());
+				ps.setString(++index, fm.getOverdraftCalcChrg());
+				ps.setBigDecimal(++index, fm.getOverdraftChrgAmtOrPerc());
+				ps.setString(++index, fm.getOverdraftChrCalOn());
+				ps.setObject(++index, fm.getCreatedBy());
+				ps.setTimestamp(++index, fm.getCreatedOn());
+				ps.setObject(++index, fm.getApprovedBy());
+				ps.setTimestamp(++index, fm.getApprovedOn());
+				if (!wif) {
+					ps.setString(++index, fm.getInvestmentRef());
+					ps.setBoolean(++index, fm.isMigratedFinance());
+					ps.setBoolean(++index, fm.isScheduleMaintained());
+					ps.setBoolean(++index, fm.isScheduleRegenerated());
+					ps.setBigDecimal(++index, fm.getCustDSR());
+					ps.setBoolean(++index, fm.isLimitValid());
+					ps.setBoolean(++index, fm.isOverrideLimit());
+					ps.setString(++index, fm.getFinPurpose());
+					ps.setString(++index, fm.getFinStatus());
+					ps.setString(++index, fm.getFinStsReason());
+					ps.setLong(++index, fm.getInitiateUser());
+					ps.setBoolean(++index, fm.isDeviationApproval());
+					ps.setString(++index, fm.getFinPreApprovedRef());
+					ps.setObject(++index, fm.getMandateID());
+					ps.setBoolean(++index, fm.isJointAccount());
+					ps.setLong(++index, fm.getJointCustId());
+					ps.setString(++index, fm.getRcdMaintainSts());
+					ps.setString(++index, fm.getNextUserId());
+					ps.setInt(++index, fm.getPriority());
+					ps.setDate(++index, JdbcUtil.getDate(fm.getInitiateDate()));
+					ps.setLong(++index, fm.getAccountsOfficer());
+					ps.setString(++index, fm.getApplicationNo());
+					ps.setString(++index, fm.getDsaCode());
+					ps.setString(++index, fm.getDroplineFrq());
+					ps.setDate(++index, JdbcUtil.getDate(fm.getFirstDroplineDate()));
+					ps.setBoolean(++index, fm.isPftServicingODLimit());
+					ps.setString(++index, fm.getReferralId());
+					ps.setString(++index, fm.getEmployeeName());
+					ps.setString(++index, fm.getDmaCode());
+					ps.setString(++index, fm.getSalesDepartment());
+					ps.setBoolean(++index, fm.isQuickDisb());
+					ps.setString(++index, fm.getWifReference());
+					ps.setInt(++index, fm.getUnPlanEMIHLockPeriod());
+					ps.setBoolean(++index, fm.isUnPlanEMICpz());
+					ps.setBoolean(++index, fm.isReAgeCpz());
+					ps.setInt(++index, fm.getMaxUnplannedEmi());
+					ps.setInt(++index, fm.getMaxReAgeHolidays());
+					ps.setInt(++index, fm.getAvailedUnPlanEmi());
+					ps.setInt(++index, fm.getAvailedReAgeH());
+					ps.setInt(++index, fm.getReAgeBucket());
+					ps.setInt(++index, fm.getDueBucket());
+					ps.setLong(++index, fm.getEligibilityMethod());
+					ps.setBoolean(++index, fm.isSamplingRequired());
+					ps.setBoolean(++index, fm.isLegalRequired());
+					ps.setLong(++index, fm.getConnector());
+					ps.setString(++index, fm.getProcessAttributes());
+					ps.setString(++index, fm.getPromotionCode());
+					ps.setBigDecimal(++index, fm.getTdsPercentage());
+					ps.setDate(++index, JdbcUtil.getDate(fm.getTdsStartDate()));
+					ps.setDate(++index, JdbcUtil.getDate(fm.getTdsEndDate()));
+					ps.setBigDecimal(++index, fm.getTdsLimitAmt());
+					ps.setBoolean(++index, fm.isVanReq());
+					ps.setString(++index, fm.getVanCode());
+					ps.setBoolean(++index, fm.isSanBsdSchdle());
+					ps.setObject(++index, fm.getPromotionSeqId());
+					ps.setBigDecimal(++index, fm.getSvAmount());
+					ps.setBigDecimal(++index, fm.getCbAmount());
+					ps.setBoolean(++index, fm.isAlwGrcAdj());
+					ps.setBoolean(++index, fm.isEndGrcPeriodAftrFullDisb());
+					ps.setBoolean(++index, fm.isAutoIncGrcEndDate());
+					ps.setBoolean(++index, fm.isPlanEMIHAlwInGrace());
+					ps.setInt(++index, fm.getSchdVersion());
+					ps.setString(++index, fm.getSubVentionFrom());
+					ps.setObject(++index, fm.getManufacturerDealerId());
+					ps.setBoolean(++index, fm.isEscrow());
+					ps.setObject(++index, fm.getCustBankId());
+
+					ps.setString(++index, fm.getManualSchdType());
+					ps.setBoolean(++index, fm.isIsra());
+					ps.setDate(++index, JdbcUtil.getDate(fm.getSanctionedDate()));
 
 					// HL
-					ps.setBoolean(index++, fm.isFinOcrRequired());
-					ps.setBigDecimal(index++, fm.getReqLoanAmt());
-					ps.setInt(index++, fm.getReqLoanTenor());
-					ps.setString(index++, fm.getOfferProduct());
-					ps.setBigDecimal(index++, fm.getOfferAmount());
-					ps.setString(index++, fm.getCustSegmentation());
-					ps.setString(index++, fm.getBaseProduct());
-					ps.setString(index++, fm.getProcessType());
-					ps.setString(index++, fm.getBureauTimeSeries());
-					ps.setString(index++, fm.getCampaignName());
-					ps.setString(index++, fm.getExistingLanRefNo());
-					ps.setString(index++, fm.getLeadSource());
-					ps.setString(index++, fm.getPoSource());
-					ps.setBoolean(index++, fm.isRsa());
-					ps.setString(index++, fm.getVerification());
-					ps.setString(index++, fm.getSourcingBranch());
-					ps.setString(index++, fm.getSourChannelCategory());
-					ps.setObject(index++, fm.getAsmName());
-					ps.setString(index++, fm.getOfferId());
-					ps.setBoolean(index++, fm.isPmay());
-					ps.setString(index++, fm.getParentRef());
-					ps.setBoolean(index++, fm.isLoanSplitted());
-					ps.setBoolean(index++, fm.isAlwLoanSplit());
-					ps.setBoolean(index++, fm.isInstBasedSchd());
-					ps.setBoolean(index++, fm.isAllowSubvention());
-					ps.setString(index++, fm.getTdsType());
-					ps.setInt(index++, fm.getNoOfGrcSteps());
-					ps.setString(index++, fm.getCalcOfSteps());
-					ps.setString(index++, fm.getStepsAppliedFor());
-					ps.setObject(index++, fm.getSecurityMandateID());
+					ps.setBoolean(++index, fm.isFinOcrRequired());
+					ps.setBigDecimal(++index, fm.getReqLoanAmt());
+					ps.setInt(++index, fm.getReqLoanTenor());
+					ps.setString(++index, fm.getOfferProduct());
+					ps.setBigDecimal(++index, fm.getOfferAmount());
+					ps.setString(++index, fm.getCustSegmentation());
+					ps.setString(++index, fm.getBaseProduct());
+					ps.setString(++index, fm.getProcessType());
+					ps.setString(++index, fm.getBureauTimeSeries());
+					ps.setString(++index, fm.getCampaignName());
+					ps.setString(++index, fm.getExistingLanRefNo());
+					ps.setString(++index, fm.getLeadSource());
+					ps.setString(++index, fm.getPoSource());
+					ps.setBoolean(++index, fm.isRsa());
+					ps.setString(++index, fm.getVerification());
+					ps.setString(++index, fm.getSourcingBranch());
+					ps.setString(++index, fm.getSourChannelCategory());
+					ps.setObject(++index, fm.getAsmName());
+					ps.setString(++index, fm.getOfferId());
+					ps.setBoolean(++index, fm.isPmay());
+					ps.setString(++index, fm.getParentRef());
+					ps.setBoolean(++index, fm.isLoanSplitted());
+					ps.setBoolean(++index, fm.isAlwLoanSplit());
+					ps.setBoolean(++index, fm.isInstBasedSchd());
+					ps.setBoolean(++index, fm.isAllowSubvention());
+					ps.setString(++index, fm.getTdsType());
+					ps.setInt(++index, fm.getNoOfGrcSteps());
+					ps.setString(++index, fm.getCalcOfSteps());
+					ps.setString(++index, fm.getStepsAppliedFor());
+					ps.setObject(++index, fm.getSecurityMandateID());
 				}
-				ps.setInt(index++, fm.getVersion());
-				ps.setLong(index++, fm.getLastMntBy());
-				ps.setTimestamp(index++, fm.getLastMntOn());
-				ps.setString(index++, fm.getRecordStatus());
-				ps.setString(index++, fm.getRoleCode());
-				ps.setString(index++, fm.getNextRoleCode());
-				ps.setString(index++, fm.getTaskId());
-				ps.setString(index++, fm.getNextTaskId());
-				ps.setString(index++, fm.getRecordType());
-				ps.setLong(index, fm.getWorkflowId());
+				ps.setInt(++index, fm.getVersion());
+				ps.setLong(++index, fm.getLastMntBy());
+				ps.setTimestamp(++index, fm.getLastMntOn());
+				ps.setString(++index, fm.getRecordStatus());
+				ps.setString(++index, fm.getRoleCode());
+				ps.setString(++index, fm.getNextRoleCode());
+				ps.setString(++index, fm.getTaskId());
+				ps.setString(++index, fm.getNextTaskId());
+				ps.setString(++index, fm.getRecordType());
+				ps.setLong(++index, fm.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -1120,6 +1129,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", LovDescCustShrtName, LovDescFinBranchName, Blacklisted, LovDescFinScheduleOn");
 		sql.append(", FeeChargeAmt, ClosingStatus, CustTypeCtg, GraceTerms, LovDescFinDivision");
 		sql.append(", LovDescProductCodeName, Defferments, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(" From FinanceEnquiry_View");
 		sql.append(" Where CustID = ?");
 		sql.append(" and (ClosingStatus is null or ClosingStatus != 'C')");
@@ -1165,6 +1175,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setPromotionSeqId(rs.getInt("PromotionSeqId"));
 			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
+			fm.setCreatedOn(rs.getTimestamp("CreatedBy"));
+			fm.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedOn")));
+			fm.setApprovedOn(rs.getTimestamp("ApprovedBy"));
+			fm.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedOn")));
 
 			return fm;
 		});
@@ -1184,6 +1198,18 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public void updateNPA(long finID, boolean undernpa) {
+		String sql = "Update FinanceMain Set UnderNpa = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		this.jdbcOperations.update(sql, ps -> {
+			ps.setBoolean(1, undernpa);
+			ps.setLong(2, finID);
+		});
 	}
 
 	@Override
@@ -1225,8 +1251,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", (fpd.ODPrincipal + fpd.ODProfit) TotalOverDue");
 		sql.append(", (fpd.TotalPriPaid + fpd.TotalPriBal - fpd.TdSchdPri + fpd.TotalPftPaid");
 		sql.append(" + fpd.TotalPftBal - fpd.TdSchdPft) TotalOutStanding");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Join FinPftDetails fpd on fm.FinID =  fpd.FinID");
+		sql.append(" Inner Join SecUsers su1 on su1.UsrID = fm.CreatedBy");
+		sql.append(" Left Join SecUsers su2 on su2.UsrID = fm.ApprovedBy");
 		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -1270,6 +1299,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fs.setTotalOverDue(rs.getBigDecimal("TotalOverDue"));
 				fs.setOverDueInstlementPft(rs.getBigDecimal("TotalOverDue"));
 				fs.setTotalOutStanding(rs.getBigDecimal("TotalOutStanding"));
+				fs.setCreatedName(rs.getString("CreatedName"));
+				fs.setApprovedName(rs.getString("ApprovedName"));
 
 				return fs;
 			}, finID);
@@ -1330,7 +1361,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	private void doReject(String sql, long finID) {
 		logger.debug(Literal.SQL + sql);
-		this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, finID);
 		});
 	}
@@ -1339,104 +1370,283 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		copyTableById("FinScheduledetails", "FinScheduleDetails_Log", fm.getFinID());
 	}
 
-	public String saveRejectFinanace(FinanceMain financeMain) {
+	public String saveRejectFinanace(FinanceMain fm) {
 		StringBuilder sql = new StringBuilder("Insert Into ");
 		sql.append(" RejectFinanceMain ");
-		sql.append(" (FinID, FinReference, GraceTerms,  NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod,");
-		sql.append(" GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate, AllowGrcPftRvw,");
-		sql.append(" GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,RepayBaseRate,");
-		sql.append(" RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate,");
-		sql.append(" AllowRepayRvw,RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
-		sql.append(" MaturityDate, CpzAtGraceEnd,DownPayment, DownPayBank, DownPaySupl, ReqRepayAmount, TotalProfit,");
-		sql.append(" TotalCpz,TotalGrossPft,TotalGracePft, TotalGraceCpz,TotalGrossGrcPft, TotalRepayAmt,");
-		sql.append("  GrcRateBasis, RepayRateBasis,FinType,FinRemarks, FinCcy, ScheduleMethod,FinContractDate,");
-		sql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,");
-		sql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments,PlanDeferCount,");
-		sql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
-		sql.append(" AvailedDefFrqChange, RecalType, FinIsActive,FinAssetValue, ");
-		sql.append(" LastRepayDate, LastRepayPftDate, LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd,");
-		sql.append(" GrcMargin, RepayMargin, FinCommitmentRef, FinLimitRef,  FinCurrAssetValue,");
-		sql.append(" ClosingStatus, FinApprovedDate, ");
-		sql.append(" DedupFound,SkipDedup,Blacklisted,");
-		sql.append(
-				" GrcProfitDaysBasis, StepFinance , StepPolicy, StepType, AlwManualSteps, NoOfSteps, ManualSchedule , ");
-		sql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq, ");
-		sql.append(" LinkedFinRef, ");
-		sql.append(" GrcMinRate, GrcMaxRate,GrcMaxAmount, RpyMinRate, RpyMaxRate,  ");
-		sql.append(" InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated,CustDSR,");
-		sql.append(
-				" FeeChargeAmt, BpiAmount, DeductFeeDisb, LimitValid, OverrideLimit,FinPurpose,DeviationApproval,FinPreApprovedRef,MandateID,FinStatus, FinStsReason, initiateUser,");
-		sql.append(" JointAccount,JointCustId, RcdMaintainSts,FinRepayMethod, AlwBPI , BpiTreatment , PlanEMIHAlw , ");
-		sql.append(
-				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb, ");
-		sql.append(" NextUserId, ");
-		sql.append(" Priority, DsaCode, MinDownPayPerc, InitiateDate,TDSApplicable,AccountsOfficer,ApplicationNo,");
-		sql.append(
-				" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, RvwRateApplFor ,SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		sql.append(
-				" NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason, DueBucket, AdvanceEMI , BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
-
-		// HL
-		sql.append(", ReqLoanAmt, ReqLoanTenor, FinOcrRequired, OfferProduct, OfferAmount");
-		sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries, CampaignName");
-		sql.append(", ExistingLanRefNo, LeadSource, PoSource, Rsa, Verification, SourcingBranch");
-		sql.append(", SourChannelCategory, AsmName, OfferId, AlwLoanSplit");
-		sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, TdsType, SchdVersion, ManualSchdType)");
-
-		sql.append(" Values(:FinID, :FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
-		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
-		sql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
-		sql.append(" :RepaySpecialRate,:RepayProfitRate,:RepayFrq,:NextRepayDate,:RepayPftFrq,:NextRepayPftDate,");
-		sql.append(" :AllowRepayRvw,:RepayRvwFrq,:NextRepayRvwDate,:AllowRepayCpz,:RepayCpzFrq,:NextRepayCpzDate,");
-		sql.append(
-				" :MaturityDate,:CpzAtGraceEnd,:DownPayment, :DownPayBank, :DownPaySupl, :ReqRepayAmount,:TotalProfit,");
-		sql.append(" :TotalCpz,:TotalGrossPft,:TotalGracePft,:TotalGraceCpz,:TotalGrossGrcPft, :TotalRepayAmt,");
-		sql.append(" :GrcRateBasis,:RepayRateBasis, :FinType,:FinRemarks,:FinCcy,:ScheduleMethod,:FinContractDate,");
-		sql.append(" :ProfitDaysBasis,:ReqMaturity,:CalTerms,:CalMaturity,:FirstRepay,:LastRepay,");
-		sql.append(" :FinStartDate,:FinAmount,:FinRepaymentAmount,:CustID,:Defferments,:PlanDeferCount,");
-		sql.append(" :FinBranch, :FinSourceID, :AllowedDefRpyChange, :AvailedDefRpyChange, :AllowedDefFrqChange,");
-		sql.append(" :AvailedDefFrqChange, :RecalType, :FinIsActive,:FinAssetValue, ");
-		sql.append(
-				" :LastRepayDate, :LastRepayPftDate, :LastRepayRvwDate, :LastRepayCpzDate,:AllowGrcRepay, :GrcSchdMthd,");
-		sql.append(" :GrcMargin, :RepayMargin, :FinCommitmentRef, :FinLimitRef, :FinCurrAssetValue,");
-		sql.append(" :ClosingStatus , :FinApprovedDate, ");
-		sql.append(" :DedupFound,:SkipDedup,:Blacklisted,");
-		sql.append(
-				" :GrcProfitDaysBasis, :StepFinance , :StepPolicy, :StepType, :AlwManualSteps, :NoOfSteps, :ManualSchedule , ");
-		sql.append(" :AnualizedPercRate , :EffectiveRateOfReturn , :FinRepayPftOnFrq, ");
-		sql.append(" :LinkedFinRef, ");
-		sql.append(" :GrcMinRate, :GrcMaxRate ,:GrcMaxAmount, :RpyMinRate, :RpyMaxRate, ");
-		sql.append("   :InvestmentRef, :MigratedFinance, :ScheduleMaintained, :ScheduleRegenerated, :CustDSR,  ");
-		sql.append(
-				" :FeeChargeAmt, :BpiAmount, :DeductFeeDisb, :LimitValid, :OverrideLimit, :FinPurpose,:DeviationApproval,:FinPreApprovedRef,:MandateID,:FinStatus, :FinStsReason, :InitiateUser,");
-		sql.append(
-				" :JointAccount,:JointCustId , :RcdMaintainSts,:FinRepayMethod, :AlwBPI , :BpiTreatment , :PlanEMIHAlw , ");
-		sql.append(
-				" :PlanEMIHMethod , :PlanEMIHMaxPerYear , :PlanEMIHMax , :PlanEMIHLockPeriod , :PlanEMICpz , :CalRoundingMode ,:RoundingTarget, :AlwMultiDisb, ");
-		sql.append(" :NextUserId, ");
-		sql.append(
-				" :Priority,:DsaCode,:MinDownPayPerc, :InitiateDate,:TDSApplicable,:AccountsOfficer, :ApplicationNo,");
-		sql.append(
-				" :ReferralId, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference, :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH,:RvwRateApplFor, :SchCalOnRvw,:PastduePftCalMthd,:DroppingMethod,:RateChgAnyDay,:PastduePftMargin, :FinCategory, :ProductCategory,");
-		sql.append(" :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		sql.append(
-				" :NextTaskId,:RecordType,:WorkflowId, :RejectStatus, :RejectReason, :DueBucket, :AdvanceEMI , :BpiPftDaysBasis, :FixedTenorRate, :FixedRateTenor, :ProcessAttributes, :SanBsdSchdle, :PromotionSeqId, :SvAmount, :CbAmount");
-
-		// HL
-		sql.append(", :ReqLoanAmt, :ReqLoanTenor, :FinOcrRequired, :OfferProduct, :OfferAmount");
-		sql.append(", :CustSegmentation, :BaseProduct, :ProcessType, :BureauTimeSeries, :CampaignName");
-		sql.append(", :ExistingLanRefNo, :LeadSource, :PoSource, :Rsa, :Verification, :SourcingBranch");
-		sql.append(", :SourChannelCategory, :AsmName, :OfferId, :AlwLoanSplit");
-		sql.append(
-				", :AlwGrcAdj, :EndGrcPeriodAftrFullDisb, :AutoIncGrcEndDate, :TdsType, :SchdVersion, :ManualSchdType)");
+		sql.append(" (FinID, FinReference, GraceTerms, NumberOfTerms, GrcPeriodEndDate, AllowGrcPeriod");
+		sql.append(", GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq, NextGrcPftDate, AllowGrcPftRvw");
+		sql.append(", GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate, RepayBaseRate");
+		sql.append(", RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, NextRepayPftDate");
+		sql.append(", AllowRepayRvw, RepayRvwFrq, NextRepayRvwDate, AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate");
+		sql.append(", MaturityDate, CpzAtGraceEnd, DownPayment, DownPayBank, DownPaySupl, ReqRepayAmount");
+		sql.append(", TotalProfit, TotalCpz, TotalGrossPft, TotalGracePft, TotalGraceCpz, TotalGrossGrcPft");
+		sql.append(", TotalRepayAmt, GrcRateBasis, RepayRateBasis, FinType, FinRemarks, FinCcy, ScheduleMethod");
+		sql.append(", FinContractDate, ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay");
+		sql.append(", LastRepay, FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments, PlanDeferCount");
+		sql.append(", FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange");
+		sql.append(", AvailedDefFrqChange, RecalType, FinIsActive, FinAssetValue, LastRepayDate, LastRepayPftDate");
+		sql.append(", LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, GrcSchdMthd, GrcMargin, RepayMargin");
+		sql.append(", FinCommitmentRef, FinLimitRef, FinCurrAssetValue, ClosingStatus, FinApprovedDate");
+		sql.append(", DedupFound, SkipDedup, Blacklisted, GrcProfitDaysBasis, StepFinance, StepPolicy");
+		sql.append(", StepType, AlwManualSteps, NoOfSteps, ManualSchedule, AnualizedPercRate, EffectiveRateOfReturn");
+		sql.append(", FinRepayPftOnFrq, LinkedFinRef, GrcMinRate, GrcMaxRate, GrcMaxAmount, RpyMinRate");
+		sql.append(", RpyMaxRate, InvestmentRef, MigratedFinance, ScheduleMaintained, ScheduleRegenerated");
+		sql.append(", CustDSR, FeeChargeAmt, BpiAmount, DeductFeeDisb, LimitValid, OverrideLimit, FinPurpose");
+		sql.append(", DeviationApproval, FinPreApprovedRef, MandateID, FinStatus, FinStsReason, initiateUser");
+		sql.append(", JointAccount, JointCustId, RcdMaintainSts, FinRepayMethod, AlwBPI, BpiTreatment");
+		sql.append(", PlanEMIHAlw, PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod");
+		sql.append(", PlanEMICpz, CalRoundingMode, RoundingTarget, AlwMultiDisb, NextUserId, Priority");
+		sql.append(", DsaCode, MinDownPayPerc, InitiateDate, TDSApplicable, AccountsOfficer, ApplicationNo");
+		sql.append(", ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod");
+		sql.append(", UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH");
+		sql.append(", RvwRateApplFor, SchCalOnRvw, PastduePftCalMthd, DroppingMethod, RateChgAnyDay, PastduePftMargin");
+		sql.append(", FinCategory, ProductCategory, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, RejectStatus, RejectReason");
+		sql.append(", DueBucket, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor, ProcessAttributes");
+		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, ReqLoanAmt, ReqLoanTenor, FinOcrRequired");
+		sql.append(", OfferProduct, OfferAmount, CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
+		sql.append(", CampaignName, ExistingLanRefNo, LeadSource, PoSource, Rsa, Verification, SourcingBranch");
+		sql.append(", SourChannelCategory, AsmName, OfferId, AlwLoanSplit, AlwGrcAdj, EndGrcPeriodAftrFullDisb");
+		sql.append(", AutoIncGrcEndDate, TdsType, SchdVersion, ManualSchdType, CreatedBy, CreatedOn, ApprovedBy");
+		sql.append(", ApprovedOn)");
+		sql.append(" Values(");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
-		return financeMain.getFinReference();
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 0;
+
+				ps.setLong(++index, fm.getFinID());
+				ps.setString(++index, fm.getFinReference());
+				ps.setInt(++index, fm.getGraceTerms());
+				ps.setInt(++index, fm.getNumberOfTerms());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getGrcPeriodEndDate()));
+				ps.setBoolean(++index, fm.isAllowGrcPeriod());
+				ps.setString(++index, fm.getGraceBaseRate());
+				ps.setString(++index, fm.getGraceSpecialRate());
+				ps.setBigDecimal(++index, fm.getGrcPftRate());
+				ps.setString(++index, fm.getGrcPftFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextGrcPftDate()));
+				ps.setBoolean(++index, fm.isAllowGrcPftRvw());
+				ps.setString(++index, fm.getGrcPftRvwFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextGrcPftRvwDate()));
+				ps.setBoolean(++index, fm.isAllowGrcCpz());
+				ps.setString(++index, fm.getGrcCpzFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextGrcCpzDate()));
+				ps.setString(++index, fm.getRepayBaseRate());
+				ps.setString(++index, fm.getRepaySpecialRate());
+				ps.setBigDecimal(++index, fm.getRepayProfitRate());
+				ps.setString(++index, fm.getRepayFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayDate()));
+				ps.setString(++index, fm.getRepayPftFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayPftDate()));
+				ps.setBoolean(++index, fm.isAllowRepayRvw());
+				ps.setString(++index, fm.getRepayRvwFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayRvwDate()));
+				ps.setBoolean(++index, fm.isAllowRepayCpz());
+				ps.setString(++index, fm.getRepayCpzFrq());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getNextRepayCpzDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getMaturityDate()));
+				ps.setBoolean(++index, fm.isCpzAtGraceEnd());
+				ps.setBigDecimal(++index, fm.getDownPayment());
+				ps.setBigDecimal(++index, fm.getDownPayBank());
+				ps.setBigDecimal(++index, fm.getDownPaySupl());
+				ps.setBigDecimal(++index, fm.getReqRepayAmount());
+				ps.setBigDecimal(++index, fm.getTotalProfit());
+				ps.setBigDecimal(++index, fm.getTotalCpz());
+				ps.setBigDecimal(++index, fm.getTotalGrossPft());
+				ps.setBigDecimal(++index, fm.getTotalGracePft());
+				ps.setBigDecimal(++index, fm.getTotalGraceCpz());
+				ps.setBigDecimal(++index, fm.getTotalGrossGrcPft());
+				ps.setBigDecimal(++index, fm.getTotalRepayAmt());
+				ps.setString(++index, fm.getGrcRateBasis());
+				ps.setString(++index, fm.getRepayRateBasis());
+				ps.setString(++index, fm.getFinType());
+				ps.setString(++index, fm.getFinRemarks());
+				ps.setString(++index, fm.getFinCcy());
+				ps.setString(++index, fm.getScheduleMethod());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getFinContractDate()));
+				ps.setString(++index, fm.getProfitDaysBasis());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getReqMaturity()));
+				ps.setInt(++index, fm.getCalTerms());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getCalMaturity()));
+				ps.setBigDecimal(++index, fm.getFirstRepay());
+				ps.setBigDecimal(++index, fm.getLastRepay());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getFinStartDate()));
+				ps.setBigDecimal(++index, fm.getFinAmount());
+				ps.setBigDecimal(++index, fm.getFinRepaymentAmount());
+				ps.setLong(++index, fm.getCustID());
+				ps.setInt(++index, fm.getDefferments());
+				ps.setInt(++index, fm.getPlanDeferCount());
+				ps.setString(++index, fm.getFinBranch());
+				ps.setString(++index, fm.getFinSourceID());
+				ps.setInt(++index, fm.getAllowedDefRpyChange());
+				ps.setInt(++index, fm.getAvailedDefRpyChange());
+				ps.setInt(++index, fm.getAllowedDefFrqChange());
+				ps.setInt(++index, fm.getAvailedDefFrqChange());
+				ps.setString(++index, fm.getRecalType());
+				ps.setBoolean(++index, fm.isFinIsActive());
+				ps.setBigDecimal(++index, fm.getFinAssetValue());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayPftDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayRvwDate()));
+				ps.setDate(++index, JdbcUtil.getDate(fm.getLastRepayCpzDate()));
+				ps.setBoolean(++index, fm.isAllowGrcRepay());
+				ps.setString(++index, fm.getGrcSchdMthd());
+				ps.setBigDecimal(++index, fm.getGrcMargin());
+				ps.setBigDecimal(++index, fm.getRepayMargin());
+				ps.setString(++index, fm.getFinCommitmentRef());
+				ps.setString(++index, fm.getFinLimitRef());
+				ps.setBigDecimal(++index, fm.getFinCurrAssetValue());
+				ps.setString(++index, fm.getClosingStatus());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getFinApprovedDate()));
+				ps.setBoolean(++index, fm.isDedupFound());
+				ps.setBoolean(++index, fm.isSkipDedup());
+				ps.setBoolean(++index, fm.isBlacklisted());
+				ps.setString(++index, fm.getGrcProfitDaysBasis());
+				ps.setBoolean(++index, fm.isStepFinance());
+				ps.setString(++index, fm.getStepPolicy());
+				ps.setString(++index, fm.getStepType());
+				ps.setBoolean(++index, fm.isAlwManualSteps());
+				ps.setInt(++index, fm.getNoOfSteps());
+				ps.setBoolean(++index, fm.isManualSchedule());
+				ps.setBigDecimal(++index, fm.getAnualizedPercRate());
+				ps.setBigDecimal(++index, fm.getEffectiveRateOfReturn());
+				ps.setBoolean(++index, fm.isFinRepayPftOnFrq());
+				ps.setString(++index, fm.getLinkedFinRef());
+				ps.setBigDecimal(++index, fm.getGrcMinRate());
+				ps.setBigDecimal(++index, fm.getGrcMaxRate());
+				ps.setBigDecimal(++index, fm.getGrcMaxAmount());
+				ps.setBigDecimal(++index, fm.getRpyMinRate());
+				ps.setBigDecimal(++index, fm.getRpyMaxRate());
+				ps.setString(++index, fm.getInvestmentRef());
+				ps.setBoolean(++index, fm.isMigratedFinance());
+				ps.setBoolean(++index, fm.isScheduleMaintained());
+				ps.setBoolean(++index, fm.isScheduleRegenerated());
+				ps.setBigDecimal(++index, fm.getCustDSR());
+				ps.setBigDecimal(++index, fm.getFeeChargeAmt());
+				ps.setBigDecimal(++index, fm.getBpiAmount());
+				ps.setBigDecimal(++index, fm.getDeductFeeDisb());
+				ps.setBoolean(++index, fm.isLimitValid());
+				ps.setBoolean(++index, fm.isOverrideLimit());
+				ps.setString(++index, fm.getFinPurpose());
+				ps.setBoolean(++index, fm.isDeviationApproval());
+				ps.setString(++index, fm.getFinPreApprovedRef());
+				ps.setObject(++index, fm.getMandateID());
+				ps.setString(++index, fm.getFinStatus());
+				ps.setString(++index, fm.getFinStsReason());
+				ps.setLong(++index, fm.getInitiateUser());
+				ps.setBoolean(++index, fm.isJointAccount());
+				ps.setLong(++index, fm.getJointCustId());
+				ps.setString(++index, fm.getRcdMaintainSts());
+				ps.setString(++index, fm.getFinRepayMethod());
+				ps.setBoolean(++index, fm.isAlwBPI());
+				ps.setString(++index, fm.getBpiTreatment());
+				ps.setBoolean(++index, fm.isPlanEMIHAlw());
+				ps.setString(++index, fm.getPlanEMIHMethod());
+				ps.setInt(++index, fm.getPlanEMIHMaxPerYear());
+				ps.setInt(++index, fm.getPlanEMIHMax());
+				ps.setInt(++index, fm.getPlanEMIHLockPeriod());
+				ps.setBoolean(++index, fm.isPlanEMICpz());
+				ps.setString(++index, fm.getCalRoundingMode());
+				ps.setInt(++index, fm.getRoundingTarget());
+				ps.setBoolean(++index, fm.isAlwMultiDisb());
+				ps.setString(++index, fm.getNextUserId());
+				ps.setInt(++index, fm.getPriority());
+				ps.setString(++index, fm.getDsaCode());
+				ps.setBigDecimal(++index, fm.getMinDownPayPerc());
+				ps.setDate(++index, JdbcUtil.getDate(fm.getInitiateDate()));
+				ps.setBoolean(++index, fm.isTDSApplicable());
+				ps.setLong(++index, fm.getAccountsOfficer());
+				ps.setString(++index, fm.getApplicationNo());
+				ps.setString(++index, fm.getReferralId());
+				ps.setString(++index, fm.getDmaCode());
+				ps.setString(++index, fm.getSalesDepartment());
+				ps.setBoolean(++index, fm.isQuickDisb());
+				ps.setString(++index, fm.getWifReference());
+				ps.setInt(++index, fm.getUnPlanEMIHLockPeriod());
+				ps.setBoolean(++index, fm.isUnPlanEMICpz());
+				ps.setBoolean(++index, fm.isReAgeCpz());
+				ps.setInt(++index, fm.getMaxUnplannedEmi());
+				ps.setInt(++index, fm.getMaxReAgeHolidays());
+				ps.setInt(++index, fm.getAvailedUnPlanEmi());
+				ps.setInt(++index, fm.getAvailedReAgeH());
+				ps.setString(++index, fm.getRvwRateApplFor());
+				ps.setString(++index, fm.getSchCalOnRvw());
+				ps.setString(++index, fm.getPastduePftCalMthd());
+				ps.setString(++index, fm.getDroppingMethod());
+				ps.setBoolean(++index, fm.isRateChgAnyDay());
+				ps.setBigDecimal(++index, fm.getPastduePftMargin());
+				ps.setString(++index, fm.getFinCategory());
+				ps.setString(++index, fm.getProductCategory());
+				ps.setInt(++index, fm.getVersion());
+				ps.setLong(++index, fm.getLastMntBy());
+				ps.setTimestamp(++index, fm.getLastMntOn());
+				ps.setString(++index, fm.getRecordStatus());
+				ps.setString(++index, fm.getRoleCode());
+				ps.setString(++index, fm.getNextRoleCode());
+				ps.setString(++index, fm.getTaskId());
+				ps.setString(++index, fm.getNextTaskId());
+				ps.setString(++index, fm.getRecordType());
+				ps.setLong(++index, fm.getWorkflowId());
+				ps.setString(++index, fm.getRejectStatus());
+				ps.setString(++index, fm.getRejectReason());
+				ps.setInt(++index, fm.getDueBucket());
+				ps.setBigDecimal(++index, fm.getAdvanceEMI());
+				ps.setString(++index, fm.getBpiPftDaysBasis());
+				ps.setBigDecimal(++index, fm.getFixedTenorRate());
+				ps.setInt(++index, fm.getFixedRateTenor());
+				ps.setString(++index, fm.getProcessAttributes());
+				ps.setBoolean(++index, fm.isSanBsdSchdle());
+				ps.setLong(++index, fm.getPromotionSeqId());
+				ps.setBigDecimal(++index, fm.getSvAmount());
+				ps.setBigDecimal(++index, fm.getCbAmount());
+				ps.setBigDecimal(++index, fm.getReqLoanAmt());
+				ps.setInt(++index, fm.getReqLoanTenor());
+				ps.setBoolean(++index, fm.isFinOcrRequired());
+				ps.setString(++index, fm.getOfferProduct());
+				ps.setBigDecimal(++index, fm.getOfferAmount());
+				ps.setString(++index, fm.getCustSegmentation());
+				ps.setString(++index, fm.getBaseProduct());
+				ps.setString(++index, fm.getProcessType());
+				ps.setString(++index, fm.getBureauTimeSeries());
+				ps.setString(++index, fm.getCampaignName());
+				ps.setString(++index, fm.getExistingLanRefNo());
+				ps.setString(++index, fm.getLeadSource());
+				ps.setString(++index, fm.getPoSource());
+				ps.setBoolean(++index, fm.isRsa());
+				ps.setString(++index, fm.getVerification());
+				ps.setString(++index, fm.getSourcingBranch());
+				ps.setString(++index, fm.getSourChannelCategory());
+				ps.setObject(++index, fm.getAsmName());
+				ps.setString(++index, fm.getOfferId());
+				ps.setBoolean(++index, fm.isAlwLoanSplit());
+				ps.setBoolean(++index, fm.isAlwGrcAdj());
+				ps.setBoolean(++index, fm.isEndGrcPeriodAftrFullDisb());
+				ps.setBoolean(++index, fm.isAutoIncGrcEndDate());
+				ps.setString(++index, fm.getTdsType());
+				ps.setInt(++index, fm.getSchdVersion());
+				ps.setString(++index, fm.getManualSchdType());
+				ps.setLong(++index, fm.getCreatedBy());
+				ps.setTimestamp(++index, fm.getCreatedOn());
+				ps.setObject(++index, fm.getApprovedBy());
+				ps.setTimestamp(++index, fm.getApprovedOn());
+			}
+		});
+
+		return fm.getFinReference();
 	}
 
 	@Override
@@ -1646,9 +1856,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		String sql = "Select ModuleName FROM ScheduleEffectModule Where SchdCanModify = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForList(sql.toString(), String.class, schdChangeReq);
+		return this.jdbcOperations.queryForList(sql, String.class, schdChangeReq);
 	}
 
 	@Override
@@ -1798,7 +2008,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceDetailsForService1(String finReference, String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, GrcPeriodEndDate, MaturityDate");
-		sql.append(", AllowGrcPeriod, RepayFrq, FinStartDate, CustID");
+		sql.append(", AllowGrcPeriod, RepayFrq, FinStartDate, CustID, FinType");
 
 		if (isWIF) {
 			sql.append(" From WIFFinanceMain");
@@ -1822,6 +2032,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setRepayFrq(rs.getString("RepayFrq"));
 				fm.setFinStartDate(rs.getDate("FinStartDate"));
 				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinType(rs.getString("FinType"));
 
 				return fm;
 
@@ -2430,7 +2641,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			break;
 		}
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 
@@ -2454,7 +2665,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public boolean isFinTypeExistsInFinanceMain(String finType, String type) {
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(*) FROM FINANCEMAIN");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where FinType = ?");
@@ -2507,7 +2718,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("finpurpose", loanPurposeCode);
 
-		StringBuffer sql = new StringBuffer();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select count(FinID) From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" where Finpurpose = ?");
@@ -2534,7 +2745,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<LoanPendingData> getCustomerODLoanDetails(long userID) {
 		StringBuilder sql = new StringBuilder("SELECT fm.FinID, FinReference, FM.CustID, CM.CustCIF CustCIF");
-		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber");
+		sql.append(", CM.CustShrtName CustShrtName, CD.CustDocTitle PANNumber, CP.PhoneNumber, FM.RoleCode");
 		sql.append(" From FinanceMain_Temp FM");
 		sql.append(" left JOIN Customers CM ON CM.CustID = FM.CUSTID");
 		sql.append(" left join customerdocuments CD ON CD.CustID = CM.CUSTID AND CUSTDOCCATEGORY='PPAN'");
@@ -2555,6 +2766,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			pd.setCustShrtName(rs.getString("CustShrtName"));
 			pd.setpANNumber(rs.getString("PANNumber"));
 			pd.setPhoneNumber(rs.getString("PhoneNumber"));
+			pd.setCurrentRole(rs.getString("RoleCode"));
 
 			return pd;
 		});
@@ -2581,7 +2793,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public List<FinanceMain> getUnApprovedFinances() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" fm.FinType, AutoRejectionDays, FinID, FinReference, FinStartDate");
+		sql.append(" fm.FinType, AutoRejectionDays, FinID, FinReference, FinStartDate, fm.CreatedBy, fm.CreatedOn");
 		sql.append(" From FinanceMain_Temp fm");
 		sql.append(" Inner join RMTFinanceTypes ft on ft.FinType = fm.FinType");
 		sql.append(" where ft.AutoRejectionDays > ? and fm.RecordType = ? and fm.FinIsActive = ?");
@@ -2603,6 +2815,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinStartDate(rs.getDate("FinStartDate"));
+			fm.setCreatedBy(rs.getLong("CreatedBy"));
+			fm.setCreatedOn(rs.getTimestamp("CreatedOn"));
 
 			return fm;
 		});
@@ -2751,19 +2965,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	// FIXME to custom RowMapper
 	@Override
-	public FinanceMain getFinanceDetailsByFinRefence(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select * From ");
-		sql.append("FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = :FinID");
+	public FinanceMain getFinanceDetailsByFinRefence(String finReference) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder("Select ");
+		sql.append(" custId, FinReference, LastMntOn, FinStartDate,");
+		sql.append(" RecordStatus, FinAmount, FinAssetValue, finIsActive");
+		sql.append(" From FinanceMain_view");
+		sql.append(" Where FinReference = :FinReference");
 		logger.debug(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinID", finID);
+		source.addValue("FinReference", finReference);
 
 		RowMapper<FinanceMain> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), typeRowMapper, source);
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -2898,9 +3114,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public void updateAssignmentId(long finID, long assignmentId) {
 		String sql = "Update FinanceMain Set AssignmentId = ? Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			ps.setLong(1, assignmentId);
 			ps.setLong(2, finID);
 		});
@@ -3633,7 +3849,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setDate(1, JdbcUtil.getDate(DateUtility.getMonthStart(monthEndDate)));
+			ps.setDate(1, JdbcUtil.getDate(DateUtil.getMonthStart(monthEndDate)));
 		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
@@ -3835,7 +4051,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
 				FinanceMain fm = new FinanceMain();
 
 				fm.setFinType(rs.getString("FinType"));
@@ -4070,6 +4286,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", LovDescCustShrtName, LovDescFinBranchName, Blacklisted, LovDescFinScheduleOn");
 		sql.append(", FeeChargeAmt, ClosingStatus, CustTypeCtg, GraceTerms, lovDescFinDivision");
 		sql.append(", LovDescProductCodeName, Defferments, FinRepayMethod, MandateID");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(" From FinanceEnquiry_View");
 		sql.append(" Where CustID = ?");
 
@@ -4112,6 +4329,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setDefferments(rs.getInt("Defferments"));
 			fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
 			fm.setMandateID(rs.getLong("MandateID"));
+			fm.setCreatedOn(rs.getTimestamp("CreatedBy"));
+			fm.setCreatedBy(JdbcUtil.getLong(rs.getObject("CreatedOn")));
+			fm.setApprovedOn(rs.getTimestamp("ApprovedBy"));
+			fm.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedOn")));
 
 			return fm;
 		});
@@ -4145,6 +4366,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.WriteoffLoan, fm.SchdVersion, fm.NumberOfTerms, fm.ManualSchdType");
 		sql.append(", fm.OverdraftTxnChrgReq, fm.OverdraftCalcChrg, fm.OverdraftChrgAmtOrPerc, fm.OverdraftChrCalOn");
 		sql.append(", fm.StepFinance, fm.AlwManualSteps, fm.CalcOfSteps, fm.NoOfGrcSteps, sdd.EntityCode");
+		sql.append(", fm.UnderSettlement, fm.UnderNpa");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
@@ -4276,6 +4498,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setCalcOfSteps(rs.getString("CalcOfSteps"));
 			fm.setNoOfGrcSteps(rs.getInt("NoOfGrcSteps"));
 			fm.setEntityCode(rs.getString("EntityCode"));
+			fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+			fm.setUnderNpa(rs.getBoolean("UnderNpa"));
 
 			return fm;
 
@@ -4365,6 +4589,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
 		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, WriteoffLoan, Restructure");
 		sql.append(", OverdraftTxnChrgReq, OverdraftCalcChrg, OverdraftChrgAmtOrPerc, OverdraftChrCalOn");
+		sql.append(", CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -4391,7 +4616,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", AlwLoanSplit, LoanSplitted, Pmay, AllowSubvention, TdsType, NoOfGrcSteps");
 			sql.append(", CalcOfSteps, StepsAppliedFor");
 			sql.append(", ManualSchdType, Isra, SanctionedDate");
-			sql.append(", UnderSettlement");
+			sql.append(", UnderSettlement, UnderNpa");
 		}
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -4594,6 +4819,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setOverdraftCalcChrg(rs.getString("OverdraftCalcChrg"));
 			fm.setOverdraftChrgAmtOrPerc(rs.getBigDecimal("OverdraftChrgAmtOrPerc"));
 			fm.setOverdraftChrCalOn(rs.getString("OverdraftChrCalOn"));
+			fm.setCreatedBy(rs.getLong("CreatedBy"));
+			fm.setCreatedOn(rs.getTimestamp("CreatedOn"));
+			fm.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			fm.setApprovedOn(rs.getTimestamp("ApprovedOn"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
@@ -4702,6 +4931,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setIsra(rs.getBoolean("Isra"));
 				fm.setSanctionedDate(rs.getDate("SanctionedDate"));
 				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setUnderNpa(rs.getBoolean("UnderNpa"));
 			}
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -5094,7 +5324,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" fm.FinID, fm.FinReference, fm.CustID, fm.FinCcy, fm.FinBranch, fm.FinType, fm.ScheduleMethod");
 		sql.append(", fm.ProfitDaysBasis, fm.GrcPeriodEndDate, fm.AllowGrcPeriod, fm.ProductCategory, fm.FinCategory");
 		sql.append(", cu.CustCIF, cu.CustShrtName, ClosingStatus");
-		sql.append(", ft.FinDivision");
+		sql.append(", ft.FinDivision, UnderSettlement, RcdMaintainSts");
 		sql.append(" From FinanceMain").append(type).append(" fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join Customers cu ON cu.CustID = fm.CustID");
@@ -5122,6 +5352,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
 				fm.setClosingStatus(rs.getString("ClosingStatus"));
 				fm.setLovDescFinDivision(rs.getString("FinDivision"));
+				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 
 				return fm;
 			}, finID);
@@ -5551,10 +5783,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(String finReference) {
 		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, true);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finReference, finReference);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5565,7 +5797,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(String finReference, TableType tableType) {
 		String sql = getBasicFieldsQuery(tableType, true);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = null;
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
@@ -5575,7 +5807,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5586,10 +5818,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(long finID) {
 		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, false);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finID, finID);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), finID, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5600,7 +5832,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public FinanceMain getFinanceMain(long finID, TableType tableType) {
 		String sql = getBasicFieldsQuery(tableType, false);
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		Object[] parameters = null;
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
@@ -5610,7 +5842,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+			return this.jdbcOperations.queryForObject(sql, new FinanceMainRM(), parameters);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -5685,6 +5917,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
+	@Override
 	public FinanceMain getBasicDetails(String finReference, TableType tableType) {
 		Object[] object = new Object[] { finReference };
 
@@ -5692,20 +5925,25 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		switch (tableType) {
 		case MAIN_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
 			sql.append(" From FinanceMain fm Where FinReference = ?");
 			break;
 		case TEMP_TAB:
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			break;
 		case BOTH_TAB:
 			object = new Object[] { finReference, finReference };
 
-			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID From (");
+			sql.append("Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate, , FinReference From(");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
 			sql.append("  From FinanceMain_Temp fm Where FinReference = ?");
 			sql.append(" Union All");
 			sql.append(" Select FinID, CustID, MaturityDate, AdvTerms, AdvType, MandateID, SecurityMandateID");
+			sql.append(" , RepayProfitRate, FinStartDate, FinReference");
 			sql.append("  From FinanceMain fm Where FinReference = ?");
 			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 			sql.append(" ) fm");
@@ -5724,6 +5962,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setMaturityDate(rs.getDate("MaturityDate"));
 				fm.setMandateID(rs.getLong("MandateID"));
 				fm.setSecurityMandateID(rs.getLong("SecurityMandateID"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
+				fm.setFinReference(rs.getString("FinReference"));
 
 				return fm;
 			}, object);
@@ -5997,7 +6238,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.RoleCode, fm.DownPaySupl, fm.RateChgAnyDay, fm.AvailedReAgeH, fm.NextRoleCode, fm.LimitValid");
 		sql.append(", fm.AvailedDefRpyChange, fm.DroppingMethod, fm.PftServicingODLimit");
 		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc");
-		sql.append(", fm.UnderSettlement");
+		sql.append(", fm.UnderSettlement, fm.UnderNpa");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
 		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
@@ -6217,6 +6458,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
 				fm.setLovDescFinBranchName(rs.getString("BranchDesc"));
 				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setUnderNpa(rs.getBoolean("UnderNpa"));
 
 				return fm;
 			}, finID);
@@ -6532,7 +6774,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public FinanceMain getFinanceMain(String finReference, String entity) {
 		StringBuilder sql = new StringBuilder("Select fm.FinID, fm.FinReference, fm.FinIsActive, fm.CustId");
-		sql.append(", fm.WriteoffLoan, fm.Fintype");
+		sql.append(", fm.WriteoffLoan, fm.Fintype, fm.RcdMaintainSts, fm.MaturityDate, fm.UnderSettlement");
+		sql.append(", fm.ClosingStatus, fm.FinStartDate");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -6551,6 +6794,11 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setCustID(rs.getLong("CustId"));
 				fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
 				fm.setFinType(rs.getString("Fintype"));
+				fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+				fm.setMaturityDate(JdbcUtil.getDate(rs.getDate("MaturityDate")));
+				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
 
 				return fm;
 			}, finReference, entity);
@@ -6750,7 +6998,97 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public SourcingDetails getSourcingDetailsByFinReference(long finID, TableType tableType) {
+	public List<FinanceMain> getFinDetailsByFinType(String finType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, FinReference, LastMntOn, FinStartDate, RecordStatus");
+		sql.append(", FinAmount, FinAssetValue, FinType, FinIsActive");
+		sql.append(" From FinanceMain_Temp fm Where FinType = ?");
+		sql.append(" Union All");
+		sql.append(" CustID, FinReference, LastMntOn, FinStartDate, RecordStatus");
+		sql.append(", FinAmount, FinAssetValue, FinType, FinIsActive");
+		sql.append(" From FinanceMain fm Where FinType = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			FinanceMain fm = new FinanceMain();
+
+			fm.setCustID(rs.getLong("CustID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			fm.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
+			fm.setRecordStatus(rs.getString("RecordStatus"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+
+			return fm;
+		}, finType);
+	}
+
+	@Override
+	public int updateFinRepayMethod(long finID, String finRepayMethod) {
+		String sql = "Update FinanceMain Set FinRepayMethod = ?, MandateId = ? Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.update(sql, ps -> {
+			ps.setString(1, finRepayMethod);
+			ps.setInt(2, 0);
+			ps.setLong(3, finID);
+		});
+	}
+
+	@Override
+	public Date getMaturityDatebyFinID(long finID) {
+		String sql = "Select MaturityDate From FinanceMain Where FinID = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public FinanceMain getFinanceMainForLien(long finId) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, ClosingStatus, FinRepayMethod");
+		sql.append(", FinSourceID, FinStartDate, MandateID, ClosedDate");
+		sql.append(" From FinanceMain");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setClosingStatus(rs.getString("ClosingStatus"));
+				fm.setFinRepayMethod(rs.getString("FinRepayMethod"));
+				fm.setFinSourceID(rs.getString("FinSourceID"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setMandateID(JdbcUtil.getLong(rs.getObject("MandateID")));
+				fm.setClosedDate(rs.getDate("ClosedDate"));
+
+				return fm;
+
+			}, finId);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public SourcingDetails getSourcingDetails(long finID, TableType tableType) {
 		Object[] object = new Object[] { finID };
 
 		StringBuilder sql = new StringBuilder();
@@ -6814,7 +7152,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
-
 	}
 
 	@Override
@@ -6845,5 +7182,4 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return this.jdbcOperations.queryForList(sql.toString(), Long.class, object);
 	}
-
 }

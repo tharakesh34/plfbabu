@@ -92,7 +92,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/FeeWaiverHeaderDialog.zul file.
@@ -697,8 +697,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		logger.debug("Entering");
 
 		FeeWaiverHeader aFeeWaiverHeader = new FeeWaiverHeader();
-		Cloner cloner = new Cloner();
-		aFeeWaiverHeader = cloner.deepClone(getFeeWaiverHeader());
+		aFeeWaiverHeader = ObjectUtil.clone(getFeeWaiverHeader());
 		doSetValidation();
 		doWriteComponentsToBean(aFeeWaiverHeader);
 

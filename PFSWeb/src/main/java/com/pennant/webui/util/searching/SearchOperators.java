@@ -80,6 +80,7 @@ public class SearchOperators implements Serializable {
 	 * default constructor.<br>
 	 */
 	public SearchOperators() {
+	    super();
 	}
 
 	/**

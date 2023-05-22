@@ -45,7 +45,7 @@ public class DivisionDetailListModelItemRenderer implements ListitemRenderer<Div
 	private static final long serialVersionUID = 1L;
 
 	public DivisionDetailListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

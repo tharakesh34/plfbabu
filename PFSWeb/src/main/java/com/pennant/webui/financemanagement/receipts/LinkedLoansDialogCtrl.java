@@ -40,11 +40,11 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -132,7 +132,7 @@ public class LinkedLoansDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						Listcell lc = null;
 
 						// Loan Date
-						lc = new Listcell(DateUtility.formatToLongDate(finMain.getFinStartDate()));
+						lc = new Listcell(DateUtil.formatToLongDate(finMain.getFinStartDate()));
 						lc.setParent(item);
 
 						// Loan Type

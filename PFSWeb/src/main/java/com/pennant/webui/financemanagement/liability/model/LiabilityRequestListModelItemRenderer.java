@@ -33,9 +33,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,11 +58,11 @@ public class LiabilityRequestListModelItemRenderer implements ListitemRenderer<L
 		lc.setParent(item);
 		lc = new Listcell(liabilityRequest.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(liabilityRequest.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(liabilityRequest.getFinStartDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(liabilityRequest.getNumberOfTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(liabilityRequest.getMaturityDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(liabilityRequest.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(liabilityRequest.getFinCcy());
 		lc.setParent(item);

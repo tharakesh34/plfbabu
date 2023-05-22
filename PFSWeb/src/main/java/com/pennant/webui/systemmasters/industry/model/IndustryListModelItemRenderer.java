@@ -45,7 +45,7 @@ public class IndustryListModelItemRenderer implements ListitemRenderer<Industry>
 	private static final long serialVersionUID = -6686096785663103610L;
 
 	public IndustryListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

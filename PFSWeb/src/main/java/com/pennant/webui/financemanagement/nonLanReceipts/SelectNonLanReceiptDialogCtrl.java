@@ -78,7 +78,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.upload.MultiReceiptThreadProcess;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
@@ -191,19 +191,18 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			recordAction = (String) arguments.get("recordAction");
 		}
 
-		Cloner clone = new Cloner();
 		if (FinanceConstants.DEPOSIT_MAKER.equals(module)) {
 			this.row_DepositSlipNo.setVisible(true);
 			this.label_DepositDate.setValue(Labels.getLabel("label_SelectReceiptDialog_DepositDate.value"));
 			this.row_DepositBank.setVisible(true);
 			this.receiptStatus.setValue(RepayConstants.PAYSTATUS_DEPOSITED);
-			finReceiptHeader = clone.deepClone(maxReceiptDate(recHeaderMap));
+			finReceiptHeader = ObjectUtil.clone(maxReceiptDate(recHeaderMap));
 		} else if (FinanceConstants.REALIZATION_MAKER.equals(module)) {
 			this.row_ReceiptStatus.setVisible(true);
 			this.row_Remarks.setVisible(true);
 			this.label_title.setValue(Labels.getLabel("window_ReceiptDialog.title.Realization"));
 			this.label_DepositDate.setValue(Labels.getLabel("label_SelectReceiptDialog_RealizationDate.value"));
-			finReceiptHeader = clone.deepClone(maxDepositDate(recHeaderMap));
+			finReceiptHeader = ObjectUtil.clone(maxDepositDate(recHeaderMap));
 		} else {
 			this.row_DepositDate.setVisible(false);
 		}
@@ -393,10 +392,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 			@Override
 			public boolean test(FinReceiptHeader t) {
-				if (ReceiptMode.CHEQUE.equals(t.getReceiptMode()) || ReceiptMode.DD.equals(t.getReceiptMode())) {
-					return true;
-				}
-				return false;
+				return ReceiptMode.CHEQUE.equals(t.getReceiptMode()) || ReceiptMode.DD.equals(t.getReceiptMode());
 			}
 		}).collect(Collectors.toList());
 
@@ -558,8 +554,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		Map<String, Object> executeMap = new HashMap<>();
 		List<String> receiptIdList = new ArrayList<>();
 		List<FinReceiptQueueLog> finReceiptQueueList = new ArrayList<>();
-		Cloner clone = new Cloner();
-		Map<Long, FinReceiptHeader> frchMap = clone.deepClone(finReceiptHeaderMap);
+		Map<Long, FinReceiptHeader> frchMap = ObjectUtil.clone(finReceiptHeaderMap);
 		Collection<FinReceiptHeader> recHeaderColl = frchMap.values();
 		long batchId = receiptService.getUploadSeqId(); // generating Sequence Id from Receipt upload
 

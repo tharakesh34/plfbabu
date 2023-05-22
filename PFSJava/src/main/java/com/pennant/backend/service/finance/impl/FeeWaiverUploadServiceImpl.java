@@ -105,6 +105,8 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 			throws Exception {
 		logger.debug(Literal.ENTERING);
 
+		List<FeeWaiverUpload> list = new ArrayList<>();
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FeeWaiverUpload uploadWaiver = (FeeWaiverUpload) auditDetails.get(i).getModelData();
 			boolean saveRecord = false;
@@ -163,13 +165,7 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 			}
 			if (saveRecord) {
 				if (approveRec) {
-					if (!UploadConstants.UPLOAD_STATUS_FAIL.equals(uploadWaiver.getStatus())) {
-						FeeWaiverHeader feeWaiver = prepareDetails(uploadWaiver);
-						AuditHeader auditHeader = getAuditHeader(feeWaiver, PennantConstants.TRAN_WF);
-						this.feeWaiverHeaderService.doApprove(auditHeader);
-						feeWaiver = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
-						feeWaiverUploadDAO.deleteByUploadId(uploadWaiver.getUploadId(), "_TEMP");
-					}
+					list.add(uploadWaiver);
 				}
 				feeWaiverUploadDAO.save(uploadWaiver, type);
 			}
@@ -186,6 +182,37 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 				uploadWaiver.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(uploadWaiver);
+
+			Map<Long, FeeWaiverHeader> map = new HashMap<>();
+
+			List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<>();
+
+			if (CollectionUtils.isNotEmpty(list)) {
+				for (FeeWaiverUpload fwu : list) {
+					if (!UploadConstants.UPLOAD_STATUS_FAIL.equals(fwu.getStatus())) {
+						FeeWaiverHeader feeWaiverHeader = map.get(fwu.getUploadId());
+						if (feeWaiverHeader == null) {
+							feeWaiverHeader = prepareHeader(fwu);
+							map.put(fwu.getUploadId(), feeWaiverHeader);
+						}
+						processWaiverDetails(feeWaiverHeader, fwu);
+
+						for (FeeWaiverDetail fwd : feeWaiverHeader.getFeeWaiverDetails()) {
+							feeWaiverDetails.add(fwd);
+						}
+
+					}
+				}
+
+				for (Long key : map.keySet()) {
+					FeeWaiverHeader feeWaiverHeader = map.get(key);
+					feeWaiverHeader.setFeeWaiverDetails(feeWaiverDetails);
+					AuditHeader auditHeader = getAuditHeader(feeWaiverHeader, PennantConstants.TRAN_WF);
+					this.feeWaiverHeaderService.doApprove(auditHeader);
+					feeWaiverHeader = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
+					feeWaiverUploadDAO.deleteByUploadId(key, "_TEMP");
+				}
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -248,7 +275,7 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 		return auditDetails;
 	}
 
-	public FeeWaiverHeader prepareDetails(FeeWaiverUpload feeWaiverUpload) {
+	public FeeWaiverHeader prepareHeader(FeeWaiverUpload feeWaiverUpload) {
 		logger.debug(Literal.ENTERING);
 
 		long finID = financeMainDAO.getFinID(feeWaiverUpload.getFinReference());
@@ -270,7 +297,6 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 		feeWaiverHeader.setUserDetails(feeWaiverUpload.getUserDetails());
 		feeWaiverHeader.setWaiverId(feeWaiverUpload.getWaiverId());
 		feeWaiverHeader.setFinID(finID);
-		processWaiverDetails(feeWaiverHeader, feeWaiverUpload);
 
 		logger.debug(Literal.LEAVING);
 		return feeWaiverHeader;
@@ -278,7 +304,7 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 
 	public FeeWaiverHeader processWaiverDetails(FeeWaiverHeader feeWaiverHeader, FeeWaiverUpload feeWaiverUpload) {
 		FinanceMain financeMain = this.financeMainDAO.getFinanceMainById(feeWaiverHeader.getFinID(), "", false);
-		List<FeeWaiverDetail> feeWaiverDetailsList = new ArrayList<FeeWaiverDetail>();
+		List<FeeWaiverDetail> feeWaiverDetailsList = new ArrayList<>();
 		BigDecimal amount = feeWaiverUpload.getWaivedAmount();
 
 		if (StringUtils.equals(financeMain.getRcdMaintainSts(), FinServiceEvent.FEEWAIVERS)) {
@@ -291,10 +317,10 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 			feeWaiverHeader = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
 		}
 
-		feeWaiverDetailsList = doFillFeeWaiverDetails(feeWaiverHeader, feeWaiverDetailsList);
+		feeWaiverDetailsList = doFillFeeWaiverDetails(feeWaiverHeader, feeWaiverDetailsList, feeWaiverUpload);
 		for (FeeWaiverDetail detail : feeWaiverDetailsList) {
 			String feetypecode = StringUtils.trimToEmpty(feeWaiverUpload.getFeeTypeCode());
-			if (feetypecode.equals(detail.getFeeTypeCode())) {
+			if (feetypecode.equals(detail.getFeeTypeCode().trim())) {
 				detail.setLastMntOn(feeWaiverHeader.getLastMntOn());
 				if (amount.compareTo(BigDecimal.ZERO) == 0) {
 					detail.setCurrWaiverAmount(amount);
@@ -318,14 +344,18 @@ public class FeeWaiverUploadServiceImpl extends GenericService<FeeWaiverUpload> 
 	}
 
 	private List<FeeWaiverDetail> doFillFeeWaiverDetails(FeeWaiverHeader feeWaiverHeader,
-			List<FeeWaiverDetail> feeWaiverDetailsList) {
+			List<FeeWaiverDetail> feeWaiverDetailsList, FeeWaiverUpload feeWaiverUpload) {
 		logger.debug(Literal.ENTERING);
 
 		if (feeWaiverHeader.isNewRecord()) {
 			for (FeeWaiverDetail feeWaiverDetail : feeWaiverHeader.getFeeWaiverDetails()) {
 				if (feeWaiverDetail.getBalanceAmount() != null
 						&& feeWaiverDetail.getBalanceAmount().compareTo(BigDecimal.ZERO) > 0) {
-					feeWaiverDetailsList.add(feeWaiverDetail);
+					if (feeWaiverDetail.getFeeTypeCode().equals(feeWaiverUpload.getFeeTypeCode().trim())) {
+						feeWaiverDetail.setWaivedAmount(feeWaiverUpload.getWaivedAmount());
+						feeWaiverDetail.setFeeTypeCode(feeWaiverUpload.getFeeTypeCode());
+						feeWaiverDetailsList.add(feeWaiverDetail);
+					}
 				}
 			}
 		} else {

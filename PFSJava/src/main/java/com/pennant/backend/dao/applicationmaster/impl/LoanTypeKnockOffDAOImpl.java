@@ -25,6 +25,7 @@ public class LoanTypeKnockOffDAOImpl extends SequenceDao<FinTypeKnockOff> implem
 	private static final Logger logger = LogManager.getLogger(LoanTypeKnockOffDAOImpl.class);
 
 	public LoanTypeKnockOffDAOImpl() {
+	    super();
 	}
 
 	@Override

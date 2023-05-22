@@ -149,7 +149,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	}
 
 	public CustomerEligibilityCheck() {
-
+	    super();
 	}
 
 	// ******************************************************//

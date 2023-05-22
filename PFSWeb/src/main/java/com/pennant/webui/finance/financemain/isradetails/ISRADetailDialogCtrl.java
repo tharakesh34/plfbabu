@@ -27,7 +27,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -41,10 +40,11 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 public class ISRADetailDialogCtrl extends GFCBaseCtrl<ISRADetail> {
 	private static final long serialVersionUID = -6945930303723518608L;
@@ -298,8 +298,7 @@ public class ISRADetailDialogCtrl extends GFCBaseCtrl<ISRADetail> {
 			throw new WrongValuesException(wvea);
 		}
 
-		Cloner cloner = new Cloner();
-		iSRADetails.setIsraLiquidDetails(cloner.deepClone(this.israLiquidDetailList));
+		iSRADetails.setIsraLiquidDetails(ObjectUtil.clone(this.israLiquidDetailList));
 		aFinanceDetail.setIsraDetail(iSRADetails);
 
 		logger.debug(Literal.LEAVING);
@@ -455,7 +454,7 @@ public class ISRADetailDialogCtrl extends GFCBaseCtrl<ISRADetail> {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(israLiquidDetail.getAmount(), ccyEditField));
 				lc.setParent(item);
 				lc = new Listcell(
-						DateUtility.format(israLiquidDetail.getExpiryDate(), DateFormat.SHORT_DATE.getPattern()));
+						DateUtil.format(israLiquidDetail.getExpiryDate(), DateFormat.SHORT_DATE.getPattern()));
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(israLiquidDetail.getRecordType()));
 				lc.setParent(item);

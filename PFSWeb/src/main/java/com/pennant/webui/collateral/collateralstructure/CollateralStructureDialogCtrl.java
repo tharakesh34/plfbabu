@@ -74,7 +74,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.FrequencyBox;
 import com.pennant.JavaScriptBuilder;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -102,6 +101,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -1028,8 +1028,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 								"DATE_ALLOWED_RANGE_EQUAL",
 								new String[] {
 										Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
-										DateUtility.formatToShortDate(appDate),
-										DateUtility.formatToShortDate(appEndDate) }));
+										DateUtil.formatToShortDate(appDate),
+										DateUtil.formatToShortDate(appEndDate) }));
 					}
 				} else {
 					collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());

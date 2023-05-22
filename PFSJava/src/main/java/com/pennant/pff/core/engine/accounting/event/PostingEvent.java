@@ -5,10 +5,11 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.pff.accounting.model.PostingDTO;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 
 public abstract class PostingEvent {
@@ -29,14 +30,14 @@ public abstract class PostingEvent {
 		return false;
 	}
 
-	protected Long getAccountingSetId(String finType, String accEvent, int module) {
-		Long accountSetId = AccountingConfigCache.getAccountSetID(finType, accEvent, module);
+	protected Long getAccountingSetId(FinanceMain fm, String accEvent, int module) {
+		Long accountSetId = AccountingEngine.getAccountSetID(fm, accEvent);
 
-		if (accountSetId == null || accountSetId == Long.MIN_VALUE) {
-			throw new AppException(String.format(LITERAL2, finType, accEvent, module));
+		if (accountSetId == null || accountSetId <= 0) {
+			throw new AppException(String.format(LITERAL2, fm.getFinType(), accEvent, module));
 		}
 
-		logger.info(LITERAL1, accountSetId, finType, accEvent, module);
+		logger.info(LITERAL1, accountSetId, fm.getFinType(), accEvent, module);
 
 		return accountSetId;
 	}

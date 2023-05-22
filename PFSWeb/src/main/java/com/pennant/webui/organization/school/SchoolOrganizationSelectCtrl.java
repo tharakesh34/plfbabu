@@ -172,7 +172,7 @@ public class SchoolOrganizationSelectCtrl extends GFCBaseCtrl<IncomeExpenseHeade
 					Labels.getLabel("label_SchoolOrganizationSelect_CustomerCIF.value"), null, true, true));
 		}
 		if (!this.financialYear.isDisabled()) {
-			this.financialYear.setConstraint(new PTListValidator(
+			this.financialYear.setConstraint(new PTListValidator<ValueLabel>(
 					Labels.getLabel("label_SchoolOrganizationSelect_financialYear.value"), years, true));
 		}
 

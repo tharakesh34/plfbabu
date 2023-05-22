@@ -284,7 +284,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append("  Where FinReference = ?");
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<LoanReport>() {
+		return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<LoanReport>() {
 			@Override
 			public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
 				LoanReport loanReport = new LoanReport();
@@ -292,7 +292,7 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 				loanReport.setLastDisbDate(rs.getDate("LastDisbDate"));
 				return loanReport;
 			}
-		});
+		}, id);
 	}
 
 	/**
@@ -368,16 +368,15 @@ public class LoanMasterReportDAOImpl extends BasicDao<FinanceScheduleDetail> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-				new RowMapper<LoanReport>() {
-					@Override
-					public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
-						LoanReport loanReport = new LoanReport();
-						loanReport.setLoanDebtors_Interest(rs.getBigDecimal("LoanDebtors_Interest"));
-						loanReport.setLoanDebtors_Principal(rs.getBigDecimal("LoanDebtors_Principal"));
-						return loanReport;
-					}
-				});
+		return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<LoanReport>() {
+			@Override
+			public LoanReport mapRow(ResultSet rs, int rowNum) throws SQLException {
+				LoanReport loanReport = new LoanReport();
+				loanReport.setLoanDebtors_Interest(rs.getBigDecimal("LoanDebtors_Interest"));
+				loanReport.setLoanDebtors_Principal(rs.getBigDecimal("LoanDebtors_Principal"));
+				return loanReport;
+			}
+		}, finReference);
 	}
 
 	@Override

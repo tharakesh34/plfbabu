@@ -197,7 +197,7 @@ public class AccountMappingListCtrl extends GFCBaseListCtrl<AccountMapping> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Account =?");
 
 		if (doCheckAuthority(accountmapping, whereCond.toString(), new Object[] { accountmapping.getAccount() })) {

@@ -194,7 +194,7 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append(" where id =?");
 
 		if (doCheckAuthority(buildergroup, whereCond.toString(), new Object[] { buildergroup.getId() })) {

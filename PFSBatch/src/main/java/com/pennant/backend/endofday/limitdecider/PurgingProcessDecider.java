@@ -47,7 +47,7 @@ public class PurgingProcessDecider implements JobExecutionDecider {
 	private Logger logger = LogManager.getLogger(PurgingProcessDecider.class);
 
 	public PurgingProcessDecider() {
-
+	    super();
 	}
 
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {

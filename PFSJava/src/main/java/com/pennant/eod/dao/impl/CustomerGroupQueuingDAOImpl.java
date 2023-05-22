@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.eod.constants.EodConstants;
@@ -169,7 +168,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 			@Override
 			public void setValues(PreparedStatement ps) throws SQLException {
 				ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
-				ps.setDate(2, JdbcUtil.getDate(DateUtility.getSysDate()));
+				ps.setDate(2, JdbcUtil.getDate(DateUtil.getSysDate()));
 				ps.setLong(3, groupID);
 				ps.setInt(4, EodConstants.PROGRESS_WAIT);
 

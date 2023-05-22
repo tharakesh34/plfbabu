@@ -149,4 +149,6 @@ public class InterfaceConstants {
 	public static final String CustCtgCode_I = "I";
 	public static final String CustCtgCode_C = "C";
 	public static final String DEDUP_CORE = "Core";
+
+	public static final String CIBIL_FILE_FORMAT_JSON = "JSON";
 }

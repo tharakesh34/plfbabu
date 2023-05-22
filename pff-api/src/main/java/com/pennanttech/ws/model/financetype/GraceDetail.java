@@ -18,7 +18,7 @@ public class GraceDetail implements Serializable {
 	private static final long serialVersionUID = 4195934248519928784L;
 
 	public GraceDetail() {
-
+	    super();
 	}
 
 	private String finGrcRateType;

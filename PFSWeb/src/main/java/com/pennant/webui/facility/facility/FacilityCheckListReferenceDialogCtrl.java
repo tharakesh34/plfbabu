@@ -55,7 +55,6 @@ import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
@@ -69,6 +68,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -300,7 +300,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		private static final long serialVersionUID = -5988686000244488795L;
 
 		public FinanceCheckListReferenceListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -390,7 +390,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		Map<String, Object> fieldsAndValues = new HashMap<String, Object>();
 		Customer aCustomer = getCustomerService().getApprovedCustomerById(custId);
 		// Set Customer Data to check the eligibility
-		fieldsAndValues.put("custAge", DateUtility.getYearsBetween(aCustomer.getCustDOB(), DateUtility.getSysDate()));
+		fieldsAndValues.put("custAge", DateUtil.getYearsBetween(aCustomer.getCustDOB(), DateUtil.getSysDate()));
 		fieldsAndValues.put("custCtgCode", aCustomer.getCustCtgCode());
 		fieldsAndValues.put("custTypeCode", aCustomer.getCustTypeCode());
 		fieldsAndValues.put("custDftBranch", aCustomer.getCustDftBranch());
@@ -434,7 +434,7 @@ public class FacilityCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChe
 		private static final long serialVersionUID = 9112640872865877333L;
 
 		public CheckListComparator() {
-
+		    super();
 		}
 
 		@Override

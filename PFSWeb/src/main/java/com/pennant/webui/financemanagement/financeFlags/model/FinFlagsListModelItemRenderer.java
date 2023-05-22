@@ -9,15 +9,15 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.FinanceFlag;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFlag>, Serializable {
 
 	private static final long serialVersionUID = -4562142056572229437L;
 
 	public FinFlagsListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override
@@ -34,11 +34,11 @@ public class FinFlagsListModelItemRenderer implements ListitemRenderer<FinanceFl
 		lc.setParent(item);
 		lc = new Listcell(financeFlag.getFinBranch());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(financeFlag.getFinStartDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(financeFlag.getFinStartDate()));
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(financeFlag.getGraceTerms() + financeFlag.getNumberOfTerms()));
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(financeFlag.getMaturityDate()));
+		lc = new Listcell(DateUtil.formatToLongDate(financeFlag.getMaturityDate()));
 		lc.setParent(item);
 		lc = new Listcell(financeFlag.getFinCcy());
 		lc.setParent(item);

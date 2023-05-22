@@ -32,7 +32,7 @@ public class AvailCustomerDetail {
 	private List<String> accTypeList = new ArrayList<String>();
 
 	public AvailCustomerDetail() {
-
+	    super();
 	}
 
 	// ******************************************************//

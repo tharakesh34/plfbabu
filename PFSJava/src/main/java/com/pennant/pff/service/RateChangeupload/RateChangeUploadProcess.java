@@ -19,7 +19,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
@@ -412,13 +411,13 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
 			for (FinanceScheduleDetail fsd : finSchdDetails) {
-				if (fsd.getPresentmentId() > 0) {
+				if (fsd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+						|| fsd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0 || fsd.getPresentmentId() > 0) {
 					dates.add(fsd.getSchDate());
-
 				}
 
 				for (Date lastPaidDate : dates) {
-					if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) <= 0) {
+					if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) < 0) {
 						if (remarks.length() > 0) {
 							remarks.append(",");
 						}
@@ -439,12 +438,6 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			error = " RateChange To Date should be after ";
 			if (rcu.getToDate() != null) {
-				for (FinanceScheduleDetail fsd : schedules) {
-					if (fsd.getPresentmentId() > 0) {
-						dates.add(fsd.getSchDate());
-					}
-				}
-
 				for (Date lastPaidDate : dates) {
 					if (DateUtil.compare(rcu.getToDate(), lastPaidDate) <= 0) {
 						if (remarks.length() > 0) {
@@ -462,9 +455,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			error = "Recal From Date Should Be Selected Proper Schedule Date";
 			if (CalculationConstants.RPYCHG_TILLDATE.equals(rcu.getRecalType())) {
-				Date befinst = DateUtility.addMonths(fm.getMaturityDate(), -1);
-				if (DateUtility.compare(rcu.getRecalFromDate(), fm.getMaturityDate()) == 0
-						|| DateUtility.compare(rcu.getRecalFromDate(), befinst) == 0) {
+				Date befinst = DateUtil.addMonths(fm.getMaturityDate(), -1);
+				if (DateUtil.compare(rcu.getRecalFromDate(), fm.getMaturityDate()) == 0
+						|| DateUtil.compare(rcu.getRecalFromDate(), befinst) == 0) {
 					if (remarks.length() > 0) {
 						remarks.append(",");
 					}
@@ -479,7 +472,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			error = "Recal To Date Should not be Maturity Date when Recal Type is Till Date ";
 			if (CalculationConstants.RPYCHG_TILLDATE.equals(rcu.getRecalType())) {
-				if (DateUtility.compare(rcu.getRecalToDate(), fm.getMaturityDate()) == 0) {
+				if (DateUtil.compare(rcu.getRecalToDate(), fm.getMaturityDate()) == 0) {
 					if (remarks.length() > 0) {
 						remarks.append(",");
 					}

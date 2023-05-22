@@ -55,8 +55,8 @@ import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class BatchMonitor {
 	private static final Logger logger = LogManager.getLogger(BatchMonitor.class);
@@ -300,7 +300,7 @@ public class BatchMonitor {
 	 */
 	public static String getEstimateTime() {
 		if (getAvgTime() > 0) {
-			return DateUtility.timeBetween(new Date(avgTime), calendar.getTime());
+			return DateUtil.timeBetween(new Date(avgTime), calendar.getTime());
 		}
 		return "00:00:00";
 	}

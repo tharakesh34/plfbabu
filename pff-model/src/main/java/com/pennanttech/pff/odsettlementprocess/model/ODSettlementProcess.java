@@ -10,7 +10,7 @@ public class ODSettlementProcess extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 4524370250934339266L;
 
 	private Long id = Long.MIN_VALUE;
-	private String requestBatchId;
+	private Long requestBatchId;
 	private String terminalId;
 	private String merchantName;
 	private long custId;
@@ -37,11 +37,11 @@ public class ODSettlementProcess extends AbstractWorkflowEntity {
 		this.id = id;
 	}
 
-	public String getRequestBatchId() {
+	public Long getRequestBatchId() {
 		return requestBatchId;
 	}
 
-	public void setRequestBatchId(String requestBatchId) {
+	public void setRequestBatchId(Long requestBatchId) {
 		this.requestBatchId = requestBatchId;
 	}
 

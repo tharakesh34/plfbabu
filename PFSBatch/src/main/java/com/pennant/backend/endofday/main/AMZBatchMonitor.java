@@ -55,9 +55,9 @@ import org.springframework.batch.core.explore.support.SimpleJobExplorer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.AmortizationConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class AMZBatchMonitor {
 
@@ -258,7 +258,7 @@ public class AMZBatchMonitor {
 	 */
 	public static String getEstimateTime() {
 		if (getAvgTime() > 0) {
-			return DateUtility.timeBetween(new Date(avgTime), calendar.getTime());
+			return DateUtil.timeBetween(new Date(avgTime), calendar.getTime());
 		}
 		return "00:00:00";
 	}

@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
 import com.pennant.backend.dao.applicationmaster.impl.BaseRateDAOImpl;
@@ -45,6 +44,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -115,7 +115,7 @@ public class BaseRateServiceImpl extends GenericService<BaseRate> implements Bas
 			getBaseRateDAO().save(baseRate, tableType);
 			auditHeader.getAuditDetail().setModelData(baseRate);
 			auditHeader.setAuditReference(baseRate.getBRType() + PennantConstants.KEY_SEPERATOR
-					+ DateUtility.format(baseRate.getBREffDate(), PennantConstants.DBDateFormat));
+					+ DateUtil.format(baseRate.getBREffDate(), PennantConstants.DBDateFormat));
 		} else {
 			getBaseRateDAO().update(baseRate, tableType);
 		}

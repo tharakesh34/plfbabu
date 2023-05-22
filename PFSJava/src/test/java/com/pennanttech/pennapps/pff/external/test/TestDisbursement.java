@@ -110,7 +110,7 @@ public class TestDisbursement {
 			fa.setPartnerbankCode("HDFC");
 			list.add(fa);
 
-			disbursementRequest.sendReqest("PBD", list, new Long(1000));
+			disbursementRequest.sendReqest("PBD", list, 1000L);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error(Literal.EXCEPTION, e);

@@ -32,9 +32,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -58,7 +58,7 @@ public class EODConfigListModelItemRenderer implements ListitemRenderer<EODConfi
 		cbExtMnthRequired.setChecked(eODConfig.isExtMnthRequired());
 		lc.appendChild(cbExtMnthRequired);
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(eODConfig.getMnthExtTo()));
+		lc = new Listcell(DateUtil.formatToLongDate(eODConfig.getMnthExtTo()));
 		lc.setParent(item);
 		lc = new Listcell(eODConfig.getRecordStatus());
 		lc.setParent(item);

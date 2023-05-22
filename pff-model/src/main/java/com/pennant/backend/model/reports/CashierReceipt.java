@@ -17,7 +17,7 @@ public class CashierReceipt {
 	private byte[] clientLogo = null;
 
 	public CashierReceipt() {
-
+	    super();
 	}
 
 	// ******************************************************//

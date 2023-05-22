@@ -45,7 +45,7 @@ public class DepartmentListModelItemRenderer implements ListitemRenderer<Departm
 	private static final long serialVersionUID = -6009133907143378134L;
 
 	public DepartmentListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

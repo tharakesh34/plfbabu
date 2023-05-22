@@ -53,7 +53,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -80,6 +79,7 @@ import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListRe
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
@@ -471,7 +471,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
-			listcell = new Listcell(DateUtility.formatToLongDate(documentDetail.getDocReceivedDate()));
+			listcell = new Listcell(DateUtil.formatToLongDate(documentDetail.getDocReceivedDate()));
 			listitem.appendChild(listcell);
 
 			listcell = new Listcell();

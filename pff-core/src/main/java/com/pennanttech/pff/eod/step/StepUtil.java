@@ -11,7 +11,7 @@ public class StepUtil {
 		collectionDataDownLoad, collectionNotification, loadCollateralRevaluationData, collateralRevaluation,
 		endOfMonthDecider, retailcibil, corporatecibil, prepareIncomeAMZDetails, autoKnockOffProcess,
 		notifyLoanClosureDetailsToEFS, customerDataPreperation, masterDataPreparation, prepareAmortizationQueue,
-		financeHoldRelease, autoRefundExecution
+		financeHoldRelease, autoWriteOffCalc, excessKnockOff, excessKnockOffLoading, letterGeneration, autoRefund
 	}
 
 	public static final DataEngineStatus COLLATERAL_REVALUATION = new DataEngineStatus("COLLATERAL_REVALUATION");
@@ -52,11 +52,17 @@ public class StepUtil {
 
 	public static final DataEngineStatus NPA_CLASSIFICATION = new DataEngineStatus("NPA_CLASSIFICATION");
 
-	public static final DataEngineStatus OTS = new DataEngineStatus("OTS");
-
 	public static final DataEngineStatus EFF_NPA_CLASSIFICATION = new DataEngineStatus("EFF_NPA_CLASSIFICATION");
 
 	public static final DataEngineStatus PROVISION_CALC = new DataEngineStatus("PROVISION_CALC");
+
+	public static final DataEngineStatus OTS = new DataEngineStatus("OTS");
+
+	public static final DataEngineStatus LETTER_GENERATION = new DataEngineStatus("LETTER_GENERATION");
+
+	public static final DataEngineStatus AUTO_WRITE_OFF = new DataEngineStatus("AUTO_WRITE_OFF");
+
+	public static final DataEngineStatus CROSS_LOAN_KNOCKOFF = new DataEngineStatus("CROSS_LOAN_KNOCKOFF");
 
 	public static final DataEngineStatus FIN_HOLD_RELEASE = new DataEngineStatus("FIN_HOLD_RELEASE");
 

@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pff.core.RequestSource;
 
 /**
  * Model class for the <b>JVPosting table</b>.<br>
@@ -89,6 +90,9 @@ public class JVPosting extends AbstractWorkflowEntity {
 	private String postingDivision;
 	private String divisionCodeDesc;
 	private String finSourceID;
+	private RequestSource requestSource = RequestSource.UI;
+	private long uploadHeaderID;
+	private long uploaddetailID;
 
 	public JVPosting() {
 		super();
@@ -108,6 +112,9 @@ public class JVPosting extends AbstractWorkflowEntity {
 		excludeFields.add("finType");
 		excludeFields.add("divisionCodeDesc");
 		excludeFields.add("finSourceID");
+		excludeFields.add("requestSource");
+		excludeFields.add("uploadHeaderID");
+		excludeFields.add("uploaddetailID");
 		return excludeFields;
 	}
 
@@ -377,6 +384,30 @@ public class JVPosting extends AbstractWorkflowEntity {
 
 	public void setFinSourceID(String finSourceID) {
 		this.finSourceID = finSourceID;
+	}
+
+	public RequestSource getRequestSource() {
+		return requestSource;
+	}
+
+	public void setRequestSource(RequestSource requestSource) {
+		this.requestSource = requestSource;
+	}
+
+	public long getUploadHeaderID() {
+		return uploadHeaderID;
+	}
+
+	public void setUploadHeaderID(long uploadHeaderID) {
+		this.uploadHeaderID = uploadHeaderID;
+	}
+
+	public long getUploaddetailID() {
+		return uploaddetailID;
+	}
+
+	public void setUploaddetailID(long uploaddetailID) {
+		this.uploaddetailID = uploaddetailID;
 	}
 
 }

@@ -46,4 +46,6 @@ public interface RejectDetailDAO extends BasicCrudDao<RejectDetail> {
 	boolean isDuplicateKey(String rejectCode, TableType tableType);
 
 	boolean isExistsRejectCode(String rejectCode);
+
+	int getRejectCodeCount(String rejectCode);
 }

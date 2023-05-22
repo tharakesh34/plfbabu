@@ -42,7 +42,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -50,6 +49,7 @@ import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -188,9 +188,9 @@ public class CovenantEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				cb.setParent(lc);
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtility.format(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtil.format(detail.getReceivableDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.format(detail.getDocReceivedDate(), DateFormat.LONG_DATE.getPattern()));
+				lc = new Listcell(DateUtil.format(detail.getDocReceivedDate(), DateFormat.LONG_DATE.getPattern()));
 				lc.setParent(item);
 				lc = new Listcell(detail.getRecordStatus());
 				lc.setParent(item);

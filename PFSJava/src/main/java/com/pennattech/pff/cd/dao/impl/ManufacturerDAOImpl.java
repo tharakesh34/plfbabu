@@ -268,7 +268,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 		return exists;
 	}
 
-	public Map<String, Object> getGSTDataMapForManufac(String tId) {
+	public Map<String, Object> getGSTDataMapForManufac(long oEMID) {
 		Map<String, Object> map = new HashMap<>();
 		String sql = "Select City, State, Country From CD_Manufacturers Where ManufacturerId = ?";
 
@@ -279,13 +279,13 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 			map.put("CustProvince", rs.getString("State"));
 			map.put("CustCountry", rs.getString("Country"));
 			return map;
-		}, tId);
+		}, oEMID);
 
 		return map;
 	}
 
 	@Override
-	public Manufacturer getDetails(String oEMID) {
+	public Manufacturer getDetails(long oEMID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Name, Description, State, GstInNumber, Country");
 		sql.append(", ManufacPAN, AddressLine1, AddressLine2, AddressLine3");

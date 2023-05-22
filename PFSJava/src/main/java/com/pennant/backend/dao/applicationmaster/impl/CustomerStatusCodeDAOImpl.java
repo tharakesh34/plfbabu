@@ -124,31 +124,30 @@ public class CustomerStatusCodeDAOImpl extends BasicDao<CustomerStatusCode> impl
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] {},
-					new RowMapper<CustomerStatusCode>() {
-						@Override
-						public CustomerStatusCode mapRow(ResultSet rs, int rowNum) throws SQLException {
-							CustomerStatusCode sc = new CustomerStatusCode();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<CustomerStatusCode>() {
+				@Override
+				public CustomerStatusCode mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CustomerStatusCode sc = new CustomerStatusCode();
 
-							sc.setCustStsCode(rs.getString("CustStsCode"));
-							sc.setCustStsDescription(rs.getString("CustStsDescription"));
-							sc.setDueDays(rs.getInt("DueDays"));
-							sc.setSuspendProfit(rs.getBoolean("SuspendProfit"));
-							sc.setCustStsIsActive(rs.getBoolean("CustStsIsActive"));
-							sc.setVersion(rs.getInt("Version"));
-							sc.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							sc.setLastMntBy(rs.getLong("LastMntBy"));
-							sc.setRecordStatus(rs.getString("RecordStatus"));
-							sc.setRoleCode(rs.getString("RoleCode"));
-							sc.setNextRoleCode(rs.getString("NextRoleCode"));
-							sc.setTaskId(rs.getString("TaskId"));
-							sc.setNextTaskId(rs.getString("NextTaskId"));
-							sc.setRecordType(rs.getString("RecordType"));
-							sc.setWorkflowId(rs.getLong("WorkflowId"));
+					sc.setCustStsCode(rs.getString("CustStsCode"));
+					sc.setCustStsDescription(rs.getString("CustStsDescription"));
+					sc.setDueDays(rs.getInt("DueDays"));
+					sc.setSuspendProfit(rs.getBoolean("SuspendProfit"));
+					sc.setCustStsIsActive(rs.getBoolean("CustStsIsActive"));
+					sc.setVersion(rs.getInt("Version"));
+					sc.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					sc.setLastMntBy(rs.getLong("LastMntBy"));
+					sc.setRecordStatus(rs.getString("RecordStatus"));
+					sc.setRoleCode(rs.getString("RoleCode"));
+					sc.setNextRoleCode(rs.getString("NextRoleCode"));
+					sc.setTaskId(rs.getString("TaskId"));
+					sc.setNextTaskId(rs.getString("NextTaskId"));
+					sc.setRecordType(rs.getString("RecordType"));
+					sc.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return sc;
-						}
-					});
+					return sc;
+				}
+			});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -19,6 +19,7 @@ public class ZIPCodeDetailsDAOImpl extends BasicDao<ZIPCodeDetails> implements Z
 	private static Logger logger = LogManager.getLogger(ZIPCodeDetailsDAOImpl.class);
 
 	public ZIPCodeDetailsDAOImpl() {
+	    super();
 	}
 
 	/**

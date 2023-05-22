@@ -28,8 +28,8 @@ package com.pennant.webui.financemanagement.overduechargerecovery.model;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * Comparator class for OverdueChargeRecovery
@@ -39,14 +39,14 @@ public class OverdueChargeRecoveryComparator implements Comparator<Object>, Seri
 	private static final long serialVersionUID = 9112640872865877333L;
 
 	public OverdueChargeRecoveryComparator() {
-
+	    super();
 	}
 
 	@Override
 	public int compare(Object o1, Object o2) {
 		OverdueChargeRecovery data = (OverdueChargeRecovery) o1;
 		OverdueChargeRecovery data2 = (OverdueChargeRecovery) o2;
-		return DateUtility.compare(data.getFinODSchdDate(), data2.getFinODSchdDate());
+		return DateUtil.compare(data.getFinODSchdDate(), data2.getFinODSchdDate());
 	}
 
 }

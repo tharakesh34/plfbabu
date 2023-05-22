@@ -37,7 +37,6 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -52,7 +51,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennant.pff.settlement.dao.SettlementDAO;
 import com.pennant.pff.settlement.dao.SettlementScheduleDAO;
 import com.pennant.pff.settlement.model.FinSettlementHeader;
@@ -485,32 +484,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public FinReceiptData getDues(String finReference, Date valueDate) {
 		Date appDate = SysParamUtil.getAppDate();
 
-		FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference, appDate,
-				AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
-		receiptData.setEnquiry(true);
-
-		FinanceDetail fd = receiptData.getFinanceDetail();
-
-		if (fd == null) {
-			return receiptData;
-		}
-
-		fd.setFinFeeConfigList(null);
-		fd.setFinTypeFeesList(null);
-
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinServiceInstruction(new FinServiceInstruction());
-
-		rch.setFinType(schdData.getFinanceMain().getFinType());
-		rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-		rch.setReceiptDate(appDate);
-		rch.setValueDate(valueDate);
-		rch.setReceivedDate(valueDate);
-
-		receiptData = receiptService.calcuateDues(receiptData);
-
-		return receiptData;
+		return receiptService.getDues(finReference, valueDate, appDate, AccountingEvent.EARLYSTL);
 	}
 
 	@Override
@@ -539,12 +513,9 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			return;
 		}
 
-		FinanceMain financeMain = fsh.getFinanceMain();
-
+		FinanceMain fm = fsh.getFinanceMain();
 		String eventCode = AccountingEvent.REPAY;
-
-		Long accountSetID = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode,
-				FinanceConstants.MODULEID_FINTYPE);
+		Long accountSetID = AccountingEngine.getAccountSetID(fm, eventCode, FinanceConstants.MODULEID_FINTYPE);
 
 		Date appDate = fsh.getAppDate();
 
@@ -583,22 +554,22 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 			long postingId = postingsDAO.getPostingId();
 
-			aeEvent.setCustID(financeMain.getCustID());
-			aeEvent.setFinReference(financeMain.getFinReference());
-			aeEvent.setFinType(financeMain.getFinType());
-			aeEvent.setPromotion(financeMain.getPromotionCode());
-			aeEvent.setBranch(financeMain.getFinBranch());
-			aeEvent.setCcy(financeMain.getFinCcy());
+			aeEvent.setCustID(fm.getCustID());
+			aeEvent.setFinReference(fm.getFinReference());
+			aeEvent.setFinType(fm.getFinType());
+			aeEvent.setPromotion(fm.getPromotionCode());
+			aeEvent.setBranch(fm.getFinBranch());
+			aeEvent.setCcy(fm.getFinCcy());
 			aeEvent.setPostingUserBranch(rch.getCashierBranch());
 			aeEvent.setLinkedTranId(0);
 			aeEvent.setAccountingEvent(eventCode);
 			aeEvent.setValueDate(rch.getValueDate());
 			aeEvent.setPostRefId(newReceiptId);
 			aeEvent.setPostingId(postingId);
-			aeEvent.setEntityCode(financeMain.getEntityCode());
+			aeEvent.setEntityCode(fm.getEntityCode());
 
 			amountCodes.setUserBranch(rch.getCashierBranch());
-			amountCodes.setFinType(financeMain.getFinType());
+			amountCodes.setFinType(fm.getFinType());
 			amountCodes.setPartnerBankAc(partnerbank);
 			amountCodes.setPartnerBankAcType(partnerBankActype);
 			amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -606,9 +577,12 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 			amountCodes.setPaymentType(paymentType);
 
 			aeEvent.getAcSetIDList().clear();
-			aeEvent.getAcSetIDList().add(accountSetID);
 
-			amountCodes.setFinType(financeMain.getFinType());
+			if (accountSetID != null && accountSetID > 0) {
+				aeEvent.getAcSetIDList().add(accountSetID);
+			}
+
+			amountCodes.setFinType(fm.getFinType());
 
 			Map<String, Object> extDataMap = amountCodes.getDeclaredFieldValues();
 			extDataMap.put("PB_ReceiptAmount", rch.getReceiptAmount());
@@ -997,5 +971,10 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	@Override
 	public void updateProgress(long settlementId, int progress) {
 		settlementDAO.updateProgress(settlementId, progress);
+	}
+	
+	@Override
+	public boolean isSettlementInitiated(long finId) {
+		return settlementDAO.isSettlementInitiated(finId);
 	}
 }

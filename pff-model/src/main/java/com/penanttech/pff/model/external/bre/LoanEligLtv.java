@@ -18,6 +18,7 @@ public class LoanEligLtv implements Serializable {
 
 	@JsonCreator
 	public LoanEligLtv() {
+	    super();
 	}
 
 	public List<LoanElgLtvElement> getLoanElgLtvElement() {

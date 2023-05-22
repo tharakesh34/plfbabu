@@ -27,10 +27,7 @@ package com.pennant.backend.service.finance.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -44,7 +41,6 @@ import com.pennanttech.pff.core.TableType;
  */
 public class FinanceMainServiceImpl extends GenericService<FinanceMain> implements FinanceMainService {
 	private FinanceMainDAO financeMainDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	public FinanceMainServiceImpl() {
 		super();
@@ -163,11 +159,6 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 	@Override

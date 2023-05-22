@@ -181,7 +181,7 @@ public class DPDBucketListCtrl extends GFCBaseListCtrl<DPDBucket> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  BucketID =?");
 
 		if (doCheckAuthority(dpdbucket, whereCond.toString(), new Object[] { dpdbucket.getBucketID() })) {

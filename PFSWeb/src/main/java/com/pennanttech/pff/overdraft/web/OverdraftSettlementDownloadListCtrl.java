@@ -22,7 +22,6 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -30,6 +29,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.odsettlementprocess.model.ODSettlementProcess;
 import com.pennanttech.pff.overdraft.upload.OverdraftSettlementResponseUpload;
@@ -176,7 +176,7 @@ public class OverdraftSettlementDownloadListCtrl extends GFCBaseListCtrl<ODSettl
 			lc = new Listcell(fileDownlaod.getFileName());
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtility.format(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
+			lc = new Listcell(DateUtil.format(fileDownlaod.getEndTime(), PennantConstants.dateTimeFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());

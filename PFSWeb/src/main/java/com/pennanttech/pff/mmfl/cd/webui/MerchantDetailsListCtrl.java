@@ -140,7 +140,7 @@ public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 			return;
 		}
 
-		StringBuffer whereCond = new StringBuffer();
+		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  Id =? ");
 
 		if (doCheckAuthority(merchantDetails, whereCond.toString(), new Object[] { merchantDetails.getMerchantId() })) {

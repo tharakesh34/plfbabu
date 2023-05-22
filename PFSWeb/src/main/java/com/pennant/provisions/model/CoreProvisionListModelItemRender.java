@@ -16,7 +16,7 @@ public class CoreProvisionListModelItemRender implements ListitemRenderer<Provis
 	private static final long serialVersionUID = -6954091801433341494L;
 
 	public CoreProvisionListModelItemRender() {
-
+	    super();
 	}
 
 	@Override

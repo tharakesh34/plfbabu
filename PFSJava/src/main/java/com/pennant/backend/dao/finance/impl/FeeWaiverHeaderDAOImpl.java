@@ -226,7 +226,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 	private class FeeWaiverHeaderRowMapper implements RowMapper<FeeWaiverHeader> {
 
 		private FeeWaiverHeaderRowMapper() {
-
+		    super();
 		}
 
 		@Override

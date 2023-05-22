@@ -29,6 +29,7 @@ public class EligibilityApclOutElement implements Serializable {
 
 	@JsonCreator
 	public EligibilityApclOutElement() {
+	    super();
 	}
 
 	public String getCoreIncSalaried() {

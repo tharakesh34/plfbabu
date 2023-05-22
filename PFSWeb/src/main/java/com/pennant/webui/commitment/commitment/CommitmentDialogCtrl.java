@@ -92,7 +92,6 @@ import com.pennant.Interface.model.IAccounts;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -156,13 +155,14 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
-import com.rits.cloning.Cloner;
+import com.pennapps.core.util.ObjectUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Commitment/Commitment/commitmentDialog.zul file.
@@ -1744,8 +1744,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 							throw new WrongValueException(this.cmtStartDate,
 									Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
 											new String[] { Labels.getLabel("label_CommitmentDialog_CmtStartDate.value"),
-													DateUtility.formatToShortDate(appDate),
-													DateUtility.formatToShortDate(appEndDate) }));
+													DateUtil.formatToShortDate(appDate),
+													DateUtil.formatToShortDate(appEndDate) }));
 						}
 					}
 				}
@@ -1792,8 +1792,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 							throw new WrongValueException(this.cmtExpDate,
 									Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
 											new String[] { Labels.getLabel("label_CommitmentDialog_CmtExpDate.value"),
-													DateUtility.formatToShortDate(appDate),
-													DateUtility.formatToShortDate(appEndDate) }));
+													DateUtil.formatToShortDate(appDate),
+													DateUtil.formatToShortDate(appEndDate) }));
 						}
 					}
 				}
@@ -1850,8 +1850,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 							throw new WrongValueException(this.cmtEndDate,
 									Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
 											new String[] { Labels.getLabel("label_CommitmentDialog_CmtEndDate.value"),
-													DateUtility.formatToShortDate(appDate),
-													DateUtility.formatToShortDate(appEndDate) }));
+													DateUtil.formatToShortDate(appDate),
+													DateUtil.formatToShortDate(appEndDate) }));
 						}
 					}
 				}
@@ -2021,8 +2021,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			wve.add(we);
 		}
 		// Commitment Rates
-		Cloner cloner = new Cloner();
-		aCommitment.setCommitmentRateList(cloner.deepClone(this.commitmentRateDetailList));
+		aCommitment.setCommitmentRateList(ObjectUtil.clone(this.commitmentRateDetailList));
 
 		try {
 			if (wve.size() == 0) {
@@ -3417,16 +3416,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				lc.setParent(item);
 				lc = new Listcell(String.valueOf(financeMain.getNumberOfTerms()));
 				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(financeMain.getFinStartDate()));
 				lc.setParent(item);
 				if (financeMain.getGrcPeriodEndDate() != null) {
-					lc = new Listcell(DateUtility.formatToLongDate(financeMain.getGrcPeriodEndDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(financeMain.getGrcPeriodEndDate()));
 				} else {
 					lc = new Listcell();
 				}
 				lc.setParent(item);
 				if (financeMain.getMaturityDate() != null) {
-					lc = new Listcell(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+					lc = new Listcell(DateUtil.formatToLongDate(financeMain.getMaturityDate()));
 				} else {
 					lc = new Listcell();
 				}
@@ -3477,7 +3476,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				listcell.setParent(listItem);
 				listcell = new Listcell(commitmentMovement.getFinReference());
 				listcell.setParent(listItem);
-				listcell = new Listcell(DateUtility.formatToLongDate(commitmentMovement.getMovementDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(commitmentMovement.getMovementDate()));
 				listcell.setParent(listItem);
 				listcell = new Listcell(
 						PennantApplicationUtil.amountFormate(commitmentMovement.getMovementAmount(), defaultCCYDecPos));
@@ -3505,7 +3504,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		private static final long serialVersionUID = -3639465555049007637L;
 
 		public compareLinkedTransId() {
-
+		    super();
 		}
 
 		@Override
@@ -3525,7 +3524,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		private static final long serialVersionUID = 3413747054505038584L;
 
 		public postingGroupListModelItemRenderer() {
-
+		    super();
 		}
 
 		@Override
@@ -3547,7 +3546,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				listcell.setParent(item);
 				listcell = new Listcell(returnDataSet.getTranDesc());
 				listcell.setParent(item);
-				listcell = new Listcell(DateUtility.formatToLongDate(returnDataSet.getPostDate()));
+				listcell = new Listcell(DateUtil.formatToLongDate(returnDataSet.getPostDate()));
 				listcell.setParent(item);
 				listcell = new Listcell(returnDataSet.getFinReference());
 				listcell.setParent(item);

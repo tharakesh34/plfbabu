@@ -21,7 +21,11 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.loanbalance.LoanBalance;
 import com.pennant.backend.model.loandetail.LoanDetail;
+import com.pennant.backend.model.loanenquiryresponse.LoanEnquiryResponse;
+import com.pennant.backend.model.paymentmode.PaymentMode;
+import com.pennant.backend.model.sourcingdetails.SourcingDetails;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.pff.response.AbstractResponse;
 import com.pennant.ws.exception.ServiceException;
@@ -43,16 +47,18 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 	private static final String ERROR_DESC_92021 = "There is no approved/active loan with the requested details";
 
 	@Override
-	public CustomerData getLoanBasicDetails(String finReference) throws ServiceException {
+	public LoanEnquiryResponse getLoanBasicDetails(String finReference) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		CustomerData response = new CustomerData();
 
 		WSReturnStatus wsrs = validateFinReference(finReference);
 
 		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return getCustomerData(wsrs);
+			return enquiryResponse;
 		}
 
 		logReference(finReference);
@@ -62,8 +68,9 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		Long finID = getActiveFinID(finReference);
 
 		if (finID == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return getResponse(ERROR_92021, ERROR_DESC_92021);
+			return enquiryResponse;
 		}
 
 		FinanceDetail fd = financeEnquiryController.getLoanBasicDetails(finID);
@@ -71,22 +78,26 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		response = prepareCustomerData(fd.getCustomerDetails());
 
 		response.setLoanDetail(prepareLoanDetail(fd));
+		enquiryResponse.setCustomerData(response);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
 
 		logger.debug(Literal.LEAVING);
 
-		return response;
+		return enquiryResponse;
 
 	}
 
 	@Override
-	public LoanDetail getRepaymentDetails(String finReference) {
+	public LoanEnquiryResponse getRepaymentDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		WSReturnStatus wsrs = validateFinReference(finReference);
 
 		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return getLoanDetail(wsrs);
+			return enquiryResponse;
 		}
 
 		logReference(finReference);
@@ -96,25 +107,30 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		Long finID = getActiveFinID(finReference);
 
 		if (finID == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			WSReturnStatus failedStatus = getFailedStatus(ERROR_92021, ERROR_DESC_92021);
-			return getLoanDetail(failedStatus);
+			return enquiryResponse;
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return prepareLoanDetail(financeEnquiryController.getLoanDetails(finID));
+		enquiryResponse.setLoanDetail(prepareLoanDetail(financeEnquiryController.getLoanDetails(finID)));
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public CustomerData getCustomerData(String finReference) {
+	public LoanEnquiryResponse getCustomerData(String finReference) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		WSReturnStatus wsrs = validateFinReference(finReference);
 
 		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return getCustomerData(wsrs);
+			return enquiryResponse;
 		}
 
 		logReference(finReference);
@@ -124,27 +140,33 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
 
 		if (fm == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return getResponse(ERROR_92021, ERROR_DESC_92021);
+			return enquiryResponse;
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return prepareCustomerData(financeEnquiryController.getCustomerDetails(fm.getCustID()));
+		CustomerData customerData = prepareCustomerData(financeEnquiryController.getCustomerDetails(fm.getCustID()));
+		enquiryResponse.setCustomerData(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByPhoneNumber(String phoneNumber) {
+	public LoanEnquiryResponse getByPhoneNumber(String phoneNumber) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		WSReturnStatus wsrs = validateMobileNumber(phoneNumber);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logReference(phoneNumber);
@@ -154,32 +176,37 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByPhoneNumber(phoneNumber, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByAccNumber(String accNumber) {
+	public LoanEnquiryResponse getByAccNumber(String accNumber) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		WSReturnStatus wsrs = validateBankAccountNumber(accNumber);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logReference(accNumber);
@@ -191,32 +218,37 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		list = list.stream().distinct().collect(Collectors.toList());
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByShrtName(String shrtName) {
+	public LoanEnquiryResponse getByShrtName(String shrtName) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		WSReturnStatus wsrs = validateCustShrtName(shrtName);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logReference(shrtName);
@@ -226,24 +258,29 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustShrtName(shrtName, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByShrtNameAndMobileNumber(Customer customer) {
+	public LoanEnquiryResponse getByShrtNameAndMobileNumber(Customer customer) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		String phoneNumber = customer.getPhoneNumber();
@@ -252,17 +289,17 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		WSReturnStatus wsrs = validateCustShrtName(custShrtName);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		wsrs = validateMobileNumber(phoneNumber);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logger.debug("Phone Number {} and Customer Short Name {}", phoneNumber, custShrtName);
@@ -272,24 +309,29 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustShrtNameAndPhoneNumber(custShrtName, phoneNumber, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByShrtNameAndDateOfBirth(Customer customer) {
+	public LoanEnquiryResponse getByShrtNameAndDateOfBirth(Customer customer) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		Date dateOfBirth = customer.getCustDOB();
@@ -298,17 +340,17 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		WSReturnStatus wsrs = validateDob(dateOfBirth, SysParamUtil.getAppDate());
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		wsrs = validateCustShrtName(shrtName);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logKeyFields(shrtName, dateOfBirth);
@@ -319,32 +361,37 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustShrtNameAndDOB(shrtName, dateOfBirth, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByPanNumber(String panNumber) {
+	public LoanEnquiryResponse getByPanNumber(String panNumber) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		WSReturnStatus wsrs = validatePANNumner(panNumber);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logReference(panNumber);
@@ -354,24 +401,29 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustCRCPR(panNumber, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByShrtNameAndPanNumber(Customer customer) {
+	public LoanEnquiryResponse getByShrtNameAndPanNumber(Customer customer) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		String panNumber = customer.getCustCRCPR();
@@ -380,17 +432,17 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		WSReturnStatus wsrs = validatePANNumner(panNumber);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		wsrs = validateCustShrtName(shrtName);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logKeyFields(shrtName, panNumber);
@@ -400,24 +452,29 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustShrtNameAndPANNumber(shrtName, panNumber, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		List<CustomerData> customerData = getCustomerData(cdList, list);
 
 		if (CollectionUtils.isEmpty(customerData)) {
-			customerData.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return customerData;
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByNameAndEMIAmount(FinanceMain fm) {
+	public LoanEnquiryResponse getByNameAndEMIAmount(FinanceMain fm) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		String shrtName = fm.getCustShrtName();
@@ -427,9 +484,9 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		WSReturnStatus wsrs = validateCustShrtName(shrtName);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logKeyFields(shrtName, nextRepayAmt);
@@ -439,9 +496,9 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustName(shrtName, TableType.MAIN_TAB);
 
 		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		Date businessDate = appDate;
@@ -491,16 +548,21 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		logger.debug(Literal.LEAVING);
 
 		if (CollectionUtils.isEmpty(cdList)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return cdList;
+		enquiryResponse.setCustomerDataList(cdList);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public List<CustomerData> getByProductShrtNameAndDateOfBirth(Customer customer) {
+	public LoanEnquiryResponse getByProductShrtNameAndDateOfBirth(Customer customer) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		List<CustomerData> cdList = new ArrayList<>();
 
 		Date dateOfBirth = customer.getCustDOB();
@@ -510,25 +572,25 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		WSReturnStatus wsrs = validateDob(dateOfBirth, SysParamUtil.getAppDate());
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		wsrs = validateCustShrtName(shrtName);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		wsrs = validateFinTye(product);
 
 		if (wsrs != null) {
-			cdList.add(getCustomerData(wsrs));
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return cdList;
+			return enquiryResponse;
 		}
 
 		logKeyFields(shrtName, dateOfBirth, product);
@@ -540,24 +602,260 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		List<Long> list = customerDAO.getByCustShrtNameDOBAndFinType(shrtName, dateOfBirth, product,
 				TableType.MAIN_TAB);
 
-		if (CollectionUtils.isEmpty(list)) {
-			cdList.add(getResponse(ERROR_92021, ERROR_DESC_92021));
-			logger.debug(Literal.LEAVING);
-			return cdList;
+		list = list.stream().distinct().collect(Collectors.toList());
+		List<CustomerData> customerData = getCustomerData(cdList, list);
+
+		if (CollectionUtils.isEmpty(customerData)) {
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
-		return getCustomerData(cdList, list.stream().distinct().collect(Collectors.toList()));
+		enquiryResponse.setCustomerDataList(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
 	}
 
 	@Override
-	public CustomerData getCustomerDataByCIF(String cif) {
+	public LoanEnquiryResponse getPDCEnquiry(String finReference) {
 		logger.debug(Literal.ENTERING);
 
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logKeyFields(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+
+			enquiryResponse.setReturnStatus(getFailedStatus("90201", finReference));
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		List<PaymentMode> response = financeEnquiryController.getPDCEnquiry(fm);
+
+		if (response.get(0).getReturnStatus() != null) {
+			enquiryResponse.setReturnStatus(response.get(0).getReturnStatus());
+			return enquiryResponse;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		enquiryResponse.setPaymentModes(response);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
+	}
+
+	@Override
+	public LoanEnquiryResponse getPDCDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logKeyFields(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus("90201", finReference));
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		List<PaymentMode> response = financeEnquiryController.getPDCDetails(fm);
+
+		if (response.get(0).getReturnStatus() != null) {
+			enquiryResponse.setReturnStatus(response.get(0).getReturnStatus());
+			return enquiryResponse;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		enquiryResponse.setPaymentModes(response);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
+	}
+
+	@Override
+	public SourcingDetails getSourcingDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		SourcingDetails response;
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		if (finID == null) {
+			response = new SourcingDetails();
+			response.setReturnStatus(getFailedStatus("90201", finReference));
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		response = financeMainDAO.getSourcingDetails(finID, TableType.MAIN_TAB);
+		response.setFinalSource("");
+		response.setReturnStatus(getSuccessStatus());
+
+		logger.debug(Literal.LEAVING);
+
+		return response;
+	}
+
+	@Override
+	public LoanBalance getLoanBalanceDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		LoanBalance response;
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			response = new LoanBalance();
+			response.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return response;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			response = new LoanBalance();
+			response.setReturnStatus(getFailedStatus("90201", finReference));
+
+			logger.debug(Literal.LEAVING);
+
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		response = financeEnquiryController.getBalanceDetails(fm);
+		response.setReturnStatus(getSuccessStatus());
+
+		return response;
+	}
+
+	@Override
+	public LoanEnquiryResponse getApplicantsDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus("90201", finReference));
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		enquiryResponse.setApplicantDetails(financeEnquiryController.getApplicantDetails(fm));
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
+	}
+
+	@Override
+	public LoanEnquiryResponse getRateChangeDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+		List<LoanDetail> ldList = new ArrayList<>();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		FinanceMain fm = financeMainDAO.getBasicDetails(finReference, TableType.MAIN_TAB);
+
+		if (fm == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus("90201", finReference));
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		enquiryResponse.setLoanDetails(financeEnquiryController.getRateChangeDetails(fm));
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
+	}
+
+	@Override
+	public LoanEnquiryResponse getCustomerDataByCIF(String cif) {
+		logger.debug(Literal.ENTERING);
+
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
 		WSReturnStatus wsrs = validateCustomerIF(cif);
 
 		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
 			logger.debug(Literal.LEAVING);
-			return getCustomerData(wsrs);
+			return enquiryResponse;
 		}
 
 		logReference(cif);
@@ -568,12 +866,16 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		if (custID == 0) {
 			logger.debug(Literal.LEAVING);
-			return getResponse(ERROR_92021, ERROR_DESC_92021);
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			return enquiryResponse;
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return prepareCustomerData(financeEnquiryController.getCustomerDetails(custID));
+		CustomerData customerData = prepareCustomerData(financeEnquiryController.getCustomerDetails(custID));
+		enquiryResponse.setCustomerData(customerData);
+
+		return enquiryResponse;
 	}
 
 	private Long getActiveFinID(String finReference) {

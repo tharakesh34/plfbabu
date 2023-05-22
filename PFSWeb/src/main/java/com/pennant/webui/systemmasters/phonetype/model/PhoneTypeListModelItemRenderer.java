@@ -46,7 +46,7 @@ public class PhoneTypeListModelItemRenderer implements ListitemRenderer<PhoneTyp
 	private static final long serialVersionUID = 478211645293947995L;
 
 	public PhoneTypeListModelItemRenderer() {
-
+	    super();
 	}
 
 	@Override

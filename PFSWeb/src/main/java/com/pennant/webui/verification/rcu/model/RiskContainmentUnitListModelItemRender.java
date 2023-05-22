@@ -7,8 +7,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
 
 public class RiskContainmentUnitListModelItemRender implements ListitemRenderer<RiskContainmentUnit>, Serializable {
@@ -23,7 +23,7 @@ public class RiskContainmentUnitListModelItemRender implements ListitemRenderer<
 		lc.setParent(item);
 		lc = new Listcell(rcu.getAgencyName());
 		lc.setParent(item);
-		lc = new Listcell(DateUtility.formatToLongDate(rcu.getCreatedOn()));
+		lc = new Listcell(DateUtil.formatToLongDate(rcu.getCreatedOn()));
 		lc.setParent(item);
 		lc = new Listcell(rcu.getRecordStatus());
 		lc.setParent(item);

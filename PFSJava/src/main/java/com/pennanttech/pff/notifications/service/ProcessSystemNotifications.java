@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -56,6 +55,7 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.AttachmentType;
@@ -260,12 +260,12 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			Date startDate = null;
 			for (int i = 0; i < map.length; i++) {
 				if (map[i].contains("FINSTARTDATE")) {
-					startDate = DateUtility.getDate(map[i].substring(map[i].indexOf("=") + 1), "dd-MM-yyyy");
+					startDate = DateUtil.getDate(map[i].substring(map[i].indexOf("=") + 1), "dd-MM-yyyy");
 					break;
 				}
 			}
 
-			Date appDate = DateUtility.addDays(SysParamUtil.getAppDate(), -1);
+			Date appDate = DateUtil.addDays(SysParamUtil.getAppDate(), -1);
 			StatementOfAccount account = null;
 			try {
 				account = soaReportGenerationService.getStatmentofAccountDetails(detail.getKeyReference(), startDate,
