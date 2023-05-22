@@ -63,22 +63,22 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<ReportListDetail> getPrintLetters(List<String> roleCodes) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Finreference, CustAcctHolderName, CustCoreBank, FinBranch, Product, LetterType");
-		sql.append(" From (Select fm.Finreference, cu.Custshrtname, cu.CustCoreBank, fm.FinBranch");
-		sql.append(", ft.fintypedesc, LetterType");
+		sql.append(" From (Select fm.Finreference, cu.Custshrtname CustAcctHolderName, cu.CustCoreBank");
+		sql.append(", fm.FinBranch, ft.fintypedesc Product, LetterType");
 		sql.append(" From Letter_Generate_Manual_Temp gl");
-		sql.append(" Left Join FinanceMain fm on fm.Finreference = gl.Finreference");
+		sql.append(" Left Join FinanceMain fm on fm.FinId = gl.FinId");
 		sql.append(" Left Join RMTFinancetypes ft on ft.fintype = fm.finType");
 		sql.append(" Left Join customers cu on cu.custID = fm.CustID");
 		sql.append(" Union All ");
 		sql.append(" Select fm.Finreference, cu.custshrtname, cu.CustCoreBank, fm.FinBranch");
-		sql.append(" lt.fintypedesc, LetterType");
+		sql.append(", ft.fintypedesc, LetterType");
 		sql.append(" From Letter_Generate_Manual gl");
-		sql.append(" Left Join FinanceMain fm on fm.Finreference = gl.Finreference");
+		sql.append(" Left Join FinanceMain fm on fm.FinId = gl.FinId");
 		sql.append(" Left Join RMTFinancetypes ft on ft.fintype = fm.finType");
 		sql.append(" Left Join customers cu on cu.custID = fm.CustID");
-		sql.append(" Where csb.NextRoleCode is null or csb.NextRoleCode = ? or csb.NextRoleCode in (");
+		sql.append(" Where gl.NextRoleCode is null or gl.NextRoleCode = ? or gl.NextRoleCode in (");
 		sql.append(JdbcUtil.getInCondition(roleCodes));
-		sql.append(") Order By Code)");
+		sql.append("))");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

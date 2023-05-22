@@ -19604,4 +19604,16 @@
 		</sql>
 	</changeSet>
 	
+	
+	<changeSet id="15" author="saikrishna.b">
+		<sql>
+		 	<![CDATA[
+				DELETE FROM REPORTLIST WHERE CODE = 'GenerateLetter';
+				
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('GenerateLetter', 'GenerateLetter', 'label_listheader_Finreference,label_listheader_CustomerName,label_listheader_coreBankId, label_listheader_Branch, label_listheader_Product, label_listheader_LetterType', 'finRefHeader,custNamHeader,coreBankIDHeader,branchHeader,productHeader,letterTypeHeader', 'String,String,String,String,String,String', '', 'ReportList04', 'Generate Letter Enquiry', 'Application Masters', 1, 1001, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, 0);
+   			 ]]>
+		</sql>
+	</changeSet>
+			
+	
 </databaseChangeLog> 
