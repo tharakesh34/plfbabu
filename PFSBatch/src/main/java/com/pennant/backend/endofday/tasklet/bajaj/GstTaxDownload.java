@@ -59,7 +59,7 @@ public class GstTaxDownload implements Tasklet {
 
 			DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 			status.setStatus("I");
-			new Thread(new GSTTaxProcessThread(new Long(1000))).start();
+			new Thread(new GSTTaxProcessThread(1000L)).start();
 			Thread.sleep(1000);
 			BatchUtil.setExecutionStatus(context, status);
 

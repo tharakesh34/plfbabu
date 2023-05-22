@@ -585,7 +585,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		} else if (InstrumentType.isManual(finRepayMethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
 			readOnlyComponent(true, this.mandateRef);
 			this.mandateRef.setValue("");
-			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.mandateRef.setAttribute("mandateID", 0L);
 			this.row_Escrow.setVisible(true);
 			if (!this.escrow.isChecked()) {
 				this.customerBankAcct.setReadonly(true);
@@ -598,7 +598,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.customerBankAcct.setValue("");
 			this.customerBankAcct.setAttribute("CustBankId", null);
 			this.mandateRef.setValue("");
-			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.mandateRef.setAttribute("mandateID", 0L);
 		}
 		mandateFilter(finRepayMethod);
 		addMandateFiletrs(finRepayMethod, CustID);
@@ -3537,7 +3537,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (dataObject instanceof String) {
 			this.mandateRef.setValue(dataObject.toString());
-			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.mandateRef.setAttribute("mandateID", 0L);
 		} else {
 			Mandate details = (Mandate) dataObject;
 			if (details != null) {
