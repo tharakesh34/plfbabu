@@ -25,6 +25,11 @@ public class HoldMarkingDetail extends AbstractWorkflowEntity {
 	private Timestamp createdOn;
 	private Long approvedBy;
 	private Timestamp approvedOn;
+	private String accountNumber;
+	private BigDecimal holdAmount = BigDecimal.ZERO;
+	private BigDecimal releaseAmount = BigDecimal.ZERO;
+	private BigDecimal balance = BigDecimal.ZERO;
+	private long holdReference = Long.MIN_VALUE;
 
 	public HoldMarkingDetail() {
 		super();
@@ -156,5 +161,45 @@ public class HoldMarkingDetail extends AbstractWorkflowEntity {
 
 	public void setApprovedOn(Timestamp approvedOn) {
 		this.approvedOn = approvedOn;
+	}
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public BigDecimal getHoldAmount() {
+		return holdAmount;
+	}
+
+	public void setHoldAmount(BigDecimal holdAmount) {
+		this.holdAmount = holdAmount;
+	}
+
+	public BigDecimal getReleaseAmount() {
+		return releaseAmount;
+	}
+
+	public void setReleaseAmount(BigDecimal releaseAmount) {
+		this.releaseAmount = releaseAmount;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+
+	public long getHoldReference() {
+		return holdReference;
+	}
+
+	public void setHoldReference(long holdReference) {
+		this.holdReference = holdReference;
 	}
 }

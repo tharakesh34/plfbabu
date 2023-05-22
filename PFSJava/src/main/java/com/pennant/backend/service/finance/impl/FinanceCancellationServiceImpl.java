@@ -452,6 +452,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			serviceUID = finServInst.getInstructionUID();
 		}
 
+		fm.setOldActiveState(fm.isFinIsActive());
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
 		fm.setFinIsActive(false);
 		fm.setClosedDate(appData);

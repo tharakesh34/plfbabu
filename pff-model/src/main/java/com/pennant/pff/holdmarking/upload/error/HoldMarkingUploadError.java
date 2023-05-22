@@ -6,7 +6,7 @@ public enum HoldMarkingUploadError {
 
 	HM_02("Action Possible values should be (H/R) Only."),
 
-	HM_03("Flag already exists against the Loan."),
+	HM_03("Hold Marking Details not available against the loan."),
 
 	HM_05("Type is mandatory.");
 

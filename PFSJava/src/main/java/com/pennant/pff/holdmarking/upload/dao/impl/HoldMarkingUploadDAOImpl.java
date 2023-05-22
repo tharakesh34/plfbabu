@@ -12,7 +12,6 @@ import com.pennant.pff.holdmarking.upload.model.HoldMarkingUpload;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.file.UploadStatus;
 
 public class HoldMarkingUploadDAOImpl extends SequenceDao<HoldMarkingUpload> implements HoldMarkingUploadDAO {
 
@@ -126,13 +125,12 @@ public class HoldMarkingUploadDAOImpl extends SequenceDao<HoldMarkingUpload> imp
 	}
 
 	@Override
-	public boolean isValidateAction(long finId, String action, long headerId) {
-		String sql = "Select count(ID) From Hold_Marking_Header Where FinId = ? and AccountNumber  = ? and Type = ? and Progress not in (?, ?, ?) and HeaderId not in ?";
+	public boolean isValidateType(long finId, String accountNumber) {
+		String sql = "Select count(ID) From Hold_Marking_Header Where FinId = ? and AccountNumber  = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.queryForObject(sql, Integer.class, finId, action, UploadStatus.APPROVED.status(),
-				UploadStatus.FAILED.status(), UploadStatus.REJECTED.status(), headerId) > 0;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finId, accountNumber) > 0;
 	}
 
 	@Override

@@ -2730,6 +2730,11 @@
 		rightName="menuItem_MenuRoles" />
 
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
-		rightName="menu_Item_JobsMonitoring" />
+	rightName="menu_Item_JobsMonitoring" />
+	
+	<menu id="menu_Category_HoldEnquiry">
+		<menuItem id="menu_Item_HoldEnquiry" zulNavigation="/WEB-INF/pages/HoldEnquiry/SelectHoldEnquiry.zul"
+			rightName="" />
+	</menu>
 
 </ns2:XMLRootMenu>

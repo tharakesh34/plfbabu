@@ -4067,8 +4067,8 @@ public class PennantJavaUtil {
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 
-		ModuleUtil.register("HoldMarkingUpload",
-				new ModuleMapping("HoldMarkingUpload", FileUploadHeader.class,
+		ModuleUtil.register("HoldMarkingUploadHeader",
+				new ModuleMapping("HoldMarkingUploadHeader", FileUploadHeader.class,
 						new String[] { "FILE_UPLOAD_HEADER", "FILE_UPLOAD_HEADER" }, masterWF,
 						new String[] { "Id", "FileName" }, null, 600));
 

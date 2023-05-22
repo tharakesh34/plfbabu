@@ -179,7 +179,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.HOLD_MARKING.name(), this, "HoldMarkingUpload");
+		uploadProcess(UploadTypes.HOLD_MARKING.name(), this, "HoldMarkingUploadHeader");
 	}
 
 	@Override
@@ -189,7 +189,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		HoldMarkingUpload holdMarking = (HoldMarkingUpload) ObjectUtil.valueAsObject(paramSource,
 				HoldMarkingUpload.class);
 
-		holdMarking.setReference(ObjectUtil.valueAsString(paramSource.getValue("Reference")));
+		holdMarking.setReference(ObjectUtil.valueAsString(paramSource.getValue("reference")));
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
@@ -260,6 +260,11 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			List<HoldMarkingHeader> list = holdMarkingHeaderDAO.getHoldByFinId(detail.getReferenceID(),
 					detail.getAccountNumber());
 
+			if (list.isEmpty()) {
+				logger.debug(Literal.LEAVING);
+				return;
+			}
+
 			if (CollectionUtils.isNotEmpty(list)) {
 				list = list.stream().sorted((l1, l2) -> Long.compare(l2.getHoldID(), l1.getHoldID()))
 						.collect(Collectors.toList());
@@ -316,7 +321,8 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			return;
 		}
 
-		if (holdMarkingUploadDAO.isValidateAction(detail.getReferenceID(), type, detail.getHeaderId())) {
+		if (PennantConstants.REMOVE_HOLD_MARKING.equals(type)
+				&& holdMarkingUploadDAO.isValidateType(detail.getReferenceID(), detail.getAccountNumber())) {
 			setError(detail, HoldMarkingUploadError.HM_03);
 			return;
 		}

@@ -1,5 +1,8 @@
 package com.pennant.pff.holdmarking.dao.impl;
 
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
@@ -91,6 +94,53 @@ public class HoldMarkingDetailDAOImpl extends SequenceDao<HoldMarkingDetail> imp
 				return hmd;
 
 			}, finId, accNum);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
+	@Override
+	public List<HoldMarkingDetail> getHoldDtlsByRefAndAcc(String reference, String accNumber) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" hmd.HoldID, hmd.FinID, hmd.FinReference, hmd.HoldType, hmd.Marking");
+		sql.append(",hmh.HoldAmount, hmh.ReleaseAmount, hmh.Balance, hmd.MovementDate");
+		sql.append(",hmh.AccountNumber, hmd.Status,hmd.HoldReleaseReason, hmh.HoldReference");
+		sql.append(" From Hold_Marking_Details hmd  ");
+		sql.append(" Left Join HOLD_MARKING_HEADER hmh on hmd.FinReference = hmh.FinReference");
+		Object[] args = null;
+		if (!StringUtils.isEmpty(reference)) {
+			sql.append(" Where hmd.FinReference =?");
+			args = new Object[] { reference };
+		} else {
+			sql.append(" Where hmh.AccountNumber =?");
+			args = new Object[] { accNumber };
+
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				HoldMarkingDetail hmd = new HoldMarkingDetail();
+				hmd.setHoldID(rs.getLong("HoldID"));
+				hmd.setFinID(rs.getLong("FinID"));
+				hmd.setFinReference(rs.getString("FinReference"));
+				hmd.setHoldType(rs.getString("HoldType"));
+				hmd.setMarking(rs.getString("Marking"));
+				hmd.setHoldAmount(rs.getBigDecimal("HoldAmount"));
+				hmd.setReleaseAmount(rs.getBigDecimal("ReleaseAmount"));
+				hmd.setBalance(rs.getBigDecimal(("Balance")));
+				hmd.setMovementDate(rs.getDate("MovementDate"));
+				hmd.setAccountNumber(rs.getString("AccountNumber"));
+				hmd.setStatus(rs.getString("Status"));
+				hmd.setHoldReleaseReason(rs.getString("HoldReleaseReason"));
+				hmd.setHoldReference(rs.getLong("HoldReference"));
+
+				return hmd;
+			}, args);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

@@ -6287,4 +6287,11 @@
 		
 	<bean id="holdMarkingUploadListCtrl" class="com.pennant.pff.holdmarking.upload.web.list.HoldMarkingUploadListCtrl"
 		parent="uploadList" />
+		
+	<bean id="selectHoldEnquiryListCtrl" class="com.pennant.webui.hold.holdenquiry.SelectHoldEnquiryListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+
+	<bean id="holdEnquiryDialogCtrl" class="com.pennant.webui.hold.holdenquiry.HoldEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>
 </beans>
