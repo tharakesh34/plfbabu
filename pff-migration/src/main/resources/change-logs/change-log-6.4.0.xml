@@ -19533,4 +19533,14 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#227320.1" author="sainaveen.y">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEEPERC' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'ClosureType';
+              	
+              	INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEEPERC', 'EARLYSTL', 'ClosureType', 'ClosureType', 'nvarchar',  12,  '0', '1', 'Closure_Types', 'static,global,dbvalue', 'ClosureType');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog> 
