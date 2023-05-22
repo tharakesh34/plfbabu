@@ -18,9 +18,7 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
@@ -50,7 +48,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.external.service.PartCancellationSchd;
 
@@ -60,8 +57,6 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 
 	private PartCancellationSchd partCancellationSchd;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceMainDAO financeMainDAO;
-	private RepayInstructionDAO repayInstructionDAO;
 	private FinanceDetailService financeDetailService;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 
@@ -118,13 +113,9 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 	public FinanceDetail doPartCancellation(FinServiceInstruction finServiceInst, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		String eventCode = AccountingEvent.PART_CANCELATION;
-		String finReference = "";
-
 		if (financeDetail != null) {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			finReference = financeMain.getFinReference();
 
 			financeMain.setEventFromDate(finServiceInst.getValueDate());
 			financeMain.setEventToDate(financeMain.getMaturityDate());
@@ -233,7 +224,6 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		String lang = "EN";
 
 		// validate Instruction details
-		boolean isWIF = fsi.isWif();
 		long finID = fsi.getFinID();
 		String finReference = fsi.getFinReference();
 
@@ -441,14 +431,6 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		this.partCancellationSchd = partCancellationSchd;
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
-		this.repayInstructionDAO = repayInstructionDAO;
-	}
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -456,5 +438,4 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
-
 }

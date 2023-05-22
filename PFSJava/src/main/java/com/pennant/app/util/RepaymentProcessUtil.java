@@ -287,13 +287,11 @@ public class RepaymentProcessUtil {
 		for (FinReceiptDetail rcd : rcdList) {
 			if (rcd.getRepayHeader() != null) {
 				FinRepayHeader repayHeader = rcd.getRepayHeader();
-				int i = 1;
+
 				if (CollectionUtils.isNotEmpty(repayHeader.getRepayScheduleDetails())) {
 					for (RepayScheduleDetail rpySchd : repayHeader.getRepayScheduleDetails()) {
 						totPriPaid = totPriPaid
 								.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
-
-						i++;
 					}
 				}
 			}

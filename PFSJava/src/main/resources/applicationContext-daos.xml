@@ -11779,8 +11779,6 @@
 
 	<bean name="partCancellationServiceTarget" class="com.pennant.pff.core.schd.service.PartCancellationServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
