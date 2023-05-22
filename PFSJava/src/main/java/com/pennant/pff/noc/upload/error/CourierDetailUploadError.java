@@ -9,7 +9,11 @@ public enum CourierDetailUploadError {
 
 	LCD_004("Invalid data provided for delivery status."),
 
-	LCD_005("Delivery status is mandatory.");
+	LCD_005("Delivery status is mandatory."),
+
+	LCD_006("Invalid data No Record found against Loan Reference, Letter Type, Letter Date."),
+
+	LCD_007("Mode is Configured as Email for the uploaded Loan Reference.");
 
 	private String description;
 

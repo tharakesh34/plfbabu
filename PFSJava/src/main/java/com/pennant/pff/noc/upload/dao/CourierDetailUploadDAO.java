@@ -16,4 +16,8 @@ public interface CourierDetailUploadDAO {
 	String getSqlQuery();
 
 	Long isFileExist(String reference, String letterType, Date date);
+
+	String isValidCourierMode(long finID, String letterType, Date letterDate);
+
+	boolean isValidRecord(long finID, String letterType, Date letterDate);
 }

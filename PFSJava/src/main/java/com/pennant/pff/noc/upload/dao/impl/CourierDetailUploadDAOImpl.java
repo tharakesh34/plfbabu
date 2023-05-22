@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
+import com.pennant.backend.util.NOCConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.noc.upload.dao.CourierDetailUploadDAO;
 import com.pennant.pff.noc.upload.model.CourierDetailUpload;
@@ -139,4 +140,27 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 			return null;
 		}
 	}
+
+	@Override
+	public boolean isValidRecord(long finID, String letterType, Date letterDate) {
+		String sql = "Select count(FinID) From Letter_Generation Where FinID = ? and LetterType = ? and GeneratedOn = ? and ModeOfTransfer = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+		return jdbcOperations.queryForObject(sql, Integer.class, finID, letterType, letterDate,
+				NOCConstants.MODE_COURIER) > 0;
+
+	}
+
+	@Override
+	public String isValidCourierMode(long finID, String letterType, Date letterDate) {
+		String sql = "Select ModeOfTransfer From Letter_Generation Where FinID = ? and LetterType = ? and GeneratedOn = ?";
+		logger.debug(Literal.SQL.concat(sql));
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, finID, letterType, letterDate);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
+
 }
