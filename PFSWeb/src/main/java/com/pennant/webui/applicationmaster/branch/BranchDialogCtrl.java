@@ -48,10 +48,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.SessionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
@@ -74,7 +72,6 @@ import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.framework.security.core.User;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -143,7 +140,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	private transient String sBranchCountry;
 	private transient String sBranchProvince;
 	private transient String sBranchCity;
-	private transient String sPinCode;
 
 	private final List<ValueLabel> branchTypeList = PennantStaticListUtil.getBranchTypeList();
 	private final List<ValueLabel> regionList = PennantStaticListUtil.getRegionList();
@@ -535,7 +531,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		sBranchCountry = this.branchCountry.getValue();
 		sBranchProvince = this.branchProvince.getValue();
 		sBranchCity = this.branchCity.getValue();
-		sPinCode = this.pinCode.getValue();
 
 		if (!aBranch.isNewRecord()) {
 			Filter[] filterProvince = new Filter[1];
@@ -1793,26 +1788,6 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		logger.debug("Entering" + event.toString());
 		doSetNewBranchProp();
 		logger.debug("Leaving" + event.toString());
-	}
-
-	private String getLoggedInUsers() {
-		StringBuilder builder = new StringBuilder();
-		List<User> users = SessionUtil.getLoggedInUsers();
-		SecurityUser secUser = null;
-		if (!users.isEmpty()) {
-			for (User user : users) {
-				if (user.getUserId() != getUserWorkspace().getLoggedInUser().getUserId()) {
-					if (builder.length() > 0) {
-						builder.append("</br>");
-					}
-					secUser = user.getSecurityUser();
-					builder.append("&bull;").append("&nbsp;").append(user.getUserId()).append("&ndash;")
-							.append(secUser.getUsrFName() + " " + StringUtils.trimToEmpty(secUser.getUsrMName()) + " "
-									+ secUser.getUsrLName());
-				}
-			}
-		}
-		return builder.toString();
 	}
 
 	public void onChangeEntity(ForwardEvent event) {
