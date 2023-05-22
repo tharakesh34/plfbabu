@@ -16,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
@@ -204,7 +203,6 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		basicProgress.setValue((i * 100) / 15);
 		basicProgress.setStyle("image-height: 5px;");
 
-		AMedia amedia = null;
 		for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
 			if (customerDocument.getCustDocCategory().equalsIgnoreCase(PennantConstants.DOC_TYPE_CODE_PHOTO)) {
 				if (customerDocument.getCustDocImage() == null) {
@@ -212,7 +210,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 						customerDocument.setCustDocImage(dMSService.getById(customerDocument.getDocRefId()));
 					}
 				}
-				amedia = new AMedia(customerDocument.getCustDocName(), null, null, customerDocument.getCustDocImage());
+
 				BufferedImage img = ImageIO.read(new ByteArrayInputStream(customerDocument.getCustDocImage()));
 				customerPic.setContent(img);
 				isCustPhotoAvail = true;

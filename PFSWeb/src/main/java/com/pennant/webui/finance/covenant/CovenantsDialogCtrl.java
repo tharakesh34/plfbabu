@@ -1141,8 +1141,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				this.extendedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true,
 								receivableDate, maturityDate, false));
-			} else if (DateUtil.compare(this.extendedDate.getValue(), receivableDate) <= 0 || DateUtil
-					.compare(this.extendedDate.getValue(), this.covenantNextFrequencyDate.getValue()) >= 0) {
+			} else if (DateUtil.compare(this.extendedDate.getValue(), receivableDate) <= 0
+					|| DateUtil.compare(this.extendedDate.getValue(), this.covenantNextFrequencyDate.getValue()) >= 0) {
 				this.extendedDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_CovenantDocumentDialog_ExtendedDate.value"), true,
 								receivableDate, this.covenantNextFrequencyDate.getValue(), false));
@@ -1949,10 +1949,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	public void onClick$btnCovenantReceived(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		Boolean flag = false;
 		if (this.pdd.isChecked() || this.otc.isChecked()
 				|| this.mandRole.getValue() != null && !this.mandRole.getValue().equals("")) {
-			flag = true;
+			// Proceed further.
 		} else {
 			MessageUtil.showError("Please select either PDD or OTC or Mandatory Role");
 			return;

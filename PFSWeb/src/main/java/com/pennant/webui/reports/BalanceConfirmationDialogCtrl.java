@@ -207,10 +207,10 @@ public class BalanceConfirmationDialogCtrl extends GFCBaseCtrl<BalanceConfirmati
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		String finReference = "";
-		// FinReference
+		String reference = "";
+
 		try {
-			finReference = this.finReference.getValue();
+			reference = this.finReference.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -218,7 +218,7 @@ public class BalanceConfirmationDialogCtrl extends GFCBaseCtrl<BalanceConfirmati
 		doRemoveValidation();
 
 		if (wve.isEmpty()) {
-			setBalanceConfirmation(balanceConfirmationService.getBalanceConfirmation(finReference));
+			setBalanceConfirmation(balanceConfirmationService.getBalanceConfirmation(reference));
 		} else {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -255,9 +255,6 @@ public class BalanceConfirmationDialogCtrl extends GFCBaseCtrl<BalanceConfirmati
 		// Finance Type
 		this.finReference.setConstraint(new PTStringValidator(
 				Labels.getLabel("label_BalanceConfirmationDialog_FinReference.value"), null, true, true));
-
-		// Date appStartDate = DateUtility.getAppDate();
-		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 
 		logger.debug("Leaving");
 	}
