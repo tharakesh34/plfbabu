@@ -76,6 +76,8 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.StringReplacement;
+import com.pennant.pff.letter.CourierStatus;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -138,7 +140,8 @@ public class JavaScriptBuilder extends Groupbox {
 	private List<RBFieldDetail> objectFieldList = null;// retrieve values
 	private List<JSRuleReturnType> jsRuleReturnTypeList = null;
 
-	private List<ValueLabel> closureTypeList = com.pennant.pff.receipt.ClosureType.getTypes();
+	private List<ValueLabel> closureTypeList = ClosureType.getTypes();
+	private List<ValueLabel> courierStatusList = CourierStatus.getTypes();
 
 	protected Groupbox groupbox;
 	protected Toolbar toolbar;
@@ -1882,17 +1885,28 @@ public class JavaScriptBuilder extends Groupbox {
 
 				if (treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand") instanceof Combobox) {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
-					String closureType = leftOperand.getSelectedItem().getValue();
+					String selectedItem = leftOperand.getSelectedItem().getValue();
 
-					if (StringUtils.equals(closureType, "ClosureType")) {
+					if (StringUtils.equals(selectedItem, "ClosureType")) {
 						for (int i = 0; i < this.closureTypeList.size(); i++) {
 							ValueLabel closureDetails = this.closureTypeList.get(i);
 
 							comboitem = new Comboitem();
 
 							if (leftOperand.getSelectedIndex() != 0) {
+								comboitem.setLabel(closureDetails.getLabel());
+								comboitem.setValue(closureDetails.getValue());
+								operand.appendChild(comboitem);
+							}
+						}
+					} else if (StringUtils.equals(selectedItem, "PrvLetterCourierDeliveryStatus")) {
+						for (int i = 0; i < this.courierStatusList.size(); i++) {
+							ValueLabel closureDetails = this.courierStatusList.get(i);
 
-								comboitem.setLabel(closureDetails.getValue());
+							comboitem = new Comboitem();
+
+							if (leftOperand.getSelectedIndex() != 0) {
+								comboitem.setLabel(closureDetails.getLabel());
 								comboitem.setValue(closureDetails.getValue());
 								operand.appendChild(comboitem);
 							}

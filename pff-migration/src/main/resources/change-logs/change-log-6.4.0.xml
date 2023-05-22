@@ -19542,5 +19542,56 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#1561.88" author="saikrishna.b">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'NOCLTR';
+              	
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'CustTypeCode', 						'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'LoanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'ClosureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'SequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'PrvLetterCourierDeliveryStatus',		'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.89" author="saikrishna.b">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'CANCLLTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'CustTypeCode', 					'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'LoanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'ClosureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'SequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'PrvLetterCourierDeliveryStatus',	'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#1561.90" author="saikrishna.b">
+		<sql>
+            <![CDATA[
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE = 'FEES' and RBEVENT = 'CLOSELTR';
+
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustCtgCode',						'Customer Category Code', 													'nvarchar',  8, 	'0', '1', 'CustomerCategory', 	'dbvalue', 				'CustomerCategory');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'CustTypeCode', 					'Customer Type', 															'nvarchar',  8, 	'0', '1', 'CustomerType', 		'dbvalue', 				'CustomerType');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'custGenderCode', 					'Customer Gender', 															'nvarchar',  8, 	'0', '1', 'Gender', 			'dbvalue', 				'Gender');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanClosureAge',  					'No of Days between Closure date and Application Date', 					'int', 		 10,  	'0', '1', '', 					'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'LoanCancellationAge', 				'No of Days between Cancellation Date and Application Date', 				'int', 		 10, 	'0', '1', '',   				'static,global,dbvalue', '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'ClosureType',						'Closure Type', 															'nvarchar',  8, 	'0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'SequenceNo', 						'No of time same letter type is being issued for the same loan', 			'int', 		 10,    '0', '1', '', 					'static', 				 '');
+				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'PrvLetterCourierDeliveryStatus',	'Status of previous letter’s courier status if shared through courier', 	'nvarchar',  8,     '0', '1', '',           		'static', 				 '');    
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog> 

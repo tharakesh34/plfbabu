@@ -10,15 +10,15 @@ import com.pennant.backend.model.ValueLabel;
 
 public enum ClosureType {
 
-	CLOSURE("CLOSURE"),
+	CLOSURE("Closure"),
 
-	FORE_CLOSURE("FORE-CLOSURE"),
+	FORE_CLOSURE("Fore-Closure"),
 
-	RE_POSSESSION("REPOSSESSION"),
+	RE_POSSESSION("Repossession"),
 
-	TOP_UP("TOPUP"),
+	TOP_UP("Top Up"),
 
-	CANCEL("CANCEL");
+	CANCEL("Cancel");
 
 	private String code;
 
