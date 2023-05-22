@@ -1440,7 +1440,6 @@
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeTypeService" ref="financeTypeService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="customerInterfaceService" ref="customerInterfaceService" />
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
 		<property name="branchService" ref="branchService" />
 		<property name="customerTypeService" ref="customerTypeService" />

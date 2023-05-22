@@ -155,7 +155,6 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	public List<Notes> notesList = new ArrayList<Notes>();
 	protected Label label_CreditApplicationReviewDialog_BankName; // autowired
 
-	@SuppressWarnings("unused")
 	private transient CreditApplicationReviewDialogCtrl creditApplicationReviewDialogCtrl;
 	private transient CreditApplicationReviewListCtrl creditApplicationReviewListCtrl;
 	private transient FinCreditReviewDetails creditReviewDetail;

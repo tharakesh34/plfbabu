@@ -277,19 +277,10 @@ public class InstallmentDueService extends ServiceHelper {
 		List<ReturnDataSet> datasets = new ArrayList<>();
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
-		EventProperties eventProperties = fm.getEventProperties();
 
-		Long accountingID = Long.MIN_VALUE;
-		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
-		/*
-		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { accountingID =
-		 * AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), AccountEventConstants.ACCEVENT_INSTDATE,
-		 * FinanceConstants.MODULEID_PROMOTION); } else { accountingID =
-		 * AccountingConfigCache.getCacheAccountSetID(main.getFinType(), AccountEventConstants.ACCEVENT_INSTDATE,
-		 * FinanceConstants.MODULEID_FINTYPE); }
-		 */
+		// PV: 28AUG19. No Separate Accounting for Promotion
 
-		accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.INSTDATE,
+		Long accountingID = AccountingEngine.getAccountSetID(fm, AccountingEvent.INSTDATE,
 				FinanceConstants.MODULEID_FINTYPE);
 
 		if (accountingID == null || accountingID <= 0) {

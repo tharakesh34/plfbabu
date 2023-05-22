@@ -89,7 +89,6 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 
 	private boolean newRecord = false;
 	private boolean newCustomer = true;
-	private String moduleType = "";
 	private String userRole = "";
 
 	protected long custId;
@@ -135,9 +134,6 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 				setCustomerGst(null);
 			}
 
-			if (arguments.containsKey("moduleType")) {
-				this.moduleType = (String) arguments.get("moduleType");
-			}
 			if (arguments.containsKey("fromDouble")) {
 				this.fromDouble = (boolean) arguments.get("fromDouble");
 			}
