@@ -194,6 +194,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		}
 
 		CalculationUtil.setODTotals(fod);
+		BigDecimal actualCalculated = fod.getTotPenaltyAmt();
 
 		if (fod.getLppDueTillDate() != null && fod.getLppDueAmt().compareTo(fod.getTotPenaltyAmt()) > 0) {
 			if (fm.isEOD()) {
@@ -207,11 +208,12 @@ public class LatePayPenaltyService extends ServiceHelper {
 			}
 		}
 
-		BigDecimal totalPaidWaived = fod.getTotPenaltyPaid().add(fod.getTotWaived());
-		if (fod.getTotPenaltyAmt().compareTo(totalPaidWaived) > 0) {
-			fod.setPayableAmount(BigDecimal.ZERO);
-		} else {
-			fod.setPayableAmount((fod.getTotPenaltyAmt().subtract(totalPaidWaived)).negate());
+		if (!fm.isEOD()) {
+			if (actualCalculated.compareTo(fod.getTotPenaltyAmt()) > 0) {
+				fod.setPayableAmount(BigDecimal.ZERO);
+			} else {
+				fod.setPayableAmount((fod.getTotPenaltyAmt().subtract(actualCalculated)));
+			}
 		}
 	}
 
