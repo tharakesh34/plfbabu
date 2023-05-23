@@ -817,7 +817,6 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		logger.debug(Literal.ENTERING);
 
 		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
-		List<LoanDetail> ldList = new ArrayList<>();
 
 		WSReturnStatus wsrs = validateFinReference(finReference);
 
@@ -874,6 +873,77 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 
 		CustomerData customerData = prepareCustomerData(financeEnquiryController.getCustomerDetails(custID));
 		enquiryResponse.setCustomerData(customerData);
+		enquiryResponse.setReturnStatus(getSuccessStatus());
+
+		return enquiryResponse;
+	}
+
+	// @Override
+	// public LoanEnquiryResponse getChargeDetails(String finReference) {
+	// logger.debug(Literal.ENTERING);
+	//
+	// LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+	// WSReturnStatus wsrs = validateFinReference(finReference);
+	//
+	// if (wsrs != null) {
+	// enquiryResponse.setReturnStatus(wsrs);
+	// logger.debug(Literal.LEAVING);
+	// return enquiryResponse;
+	// }
+	//
+	// logReference(finReference);
+	//
+	// logger.debug("FinReference {}", finReference);
+	//
+	// Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+	//
+	// if (finID == null) {
+	// logger.debug(Literal.LEAVING);
+	// enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+	// return enquiryResponse;
+	// }
+	//
+	// logger.debug(Literal.LEAVING);
+	//
+	// List<ChargeDetails> cd = financeEnquiryController.getChargeDetails(finID);
+	//
+	// if (CollectionUtils.isEmpty(cd)) {
+	// logger.debug(Literal.LEAVING);
+	// enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, "No Charges for the given FinReference"));
+	// return enquiryResponse;
+	// }
+	//
+	// enquiryResponse.setChargeDetails(cd);
+	// enquiryResponse.setReturnStatus(getSuccessStatus());
+	//
+	// return enquiryResponse;
+	// }
+
+	@Override
+	public LoanEnquiryResponse getLoanAccountDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
+
+		WSReturnStatus wsrs = validateFinReference(finReference);
+
+		if (wsrs != null) {
+			enquiryResponse.setReturnStatus(wsrs);
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
+
+		logReference(finReference);
+
+		logger.debug("FinReference {}", finReference);
+
+		Long finID = getActiveFinID(finReference);
+
+		if (finID == null) {
+			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
+			logger.debug(Literal.LEAVING);
+			return enquiryResponse;
+		}
 
 		return enquiryResponse;
 	}
@@ -974,33 +1044,12 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		return null;
 	}
 
-	private LoanDetail getLoanDetail(WSReturnStatus wsrs) {
-		LoanDetail ld = new LoanDetail();
-		ld.setReturnStatus(wsrs);
-
-		return ld;
-	}
-
 	private WSReturnStatus validateFinReference(String finReference) {
 		return StringUtils.isEmpty(finReference) ? getFailedStatus("90502", "FinReference") : null;
 	}
 
 	private WSReturnStatus validateCustomerIF(String cif) {
 		return StringUtils.isEmpty(cif) ? getFailedStatus("90502", "Customer CIF") : null;
-	}
-
-	private CustomerData getCustomerData(WSReturnStatus wsrs) {
-		CustomerData cd = new CustomerData();
-		cd.setReturnStatus(wsrs);
-
-		return cd;
-	}
-
-	private CustomerData getResponse(String errorCode, String... param) {
-		CustomerData cd = new CustomerData();
-		cd.setReturnStatus(getFailedStatus(errorCode, param));
-
-		return cd;
 	}
 
 	@Autowired

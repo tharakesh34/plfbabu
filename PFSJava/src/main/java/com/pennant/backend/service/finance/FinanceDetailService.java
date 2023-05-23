@@ -66,7 +66,6 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pff.core.TableType;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 public interface FinanceDetailService {
 
@@ -308,8 +307,6 @@ public interface FinanceDetailService {
 	void addExtFieldsToAttributes(FinanceMain afinanceMain);
 
 	String getOrgFinCategory(String finReference);
-
-	ReceiptDTO prepareReceiptDTO(FinanceDetail fd);
 
 	BigDecimal getDownPayRuleAmount(FinanceType financeType, FinanceMain aFinanceMain);
 }

@@ -127,7 +127,6 @@ import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
@@ -153,8 +152,6 @@ import com.pennant.backend.model.finance.FinOCRHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
-import com.pennant.backend.model.finance.FinReceiptData;
-import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDedup;
@@ -323,10 +320,8 @@ import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 import com.pennanttech.pff.overdraft.model.OverdraftScheduleDetail;
 import com.pennanttech.pff.overdraft.service.OverdrafLoanService;
 import com.pennanttech.pff.overdraft.service.VariableOverdraftSchdService;
-import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennapps.core.util.ObjectUtil;
-import com.pennattech.pff.receipt.model.ReceiptDTO;
 
 /**
  * Service implementation for methods that depends on <b>FinanceMain</b>.<br>
@@ -9737,12 +9732,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public List<FinTypeFees> getSchemeFeesList(long referenceId, String finEvent, String type, boolean origination,
 			int moduleId) {
-		return getFinTypeFeesDAO().getSchemeFeesList(referenceId, finEvent, type, origination, moduleId);
+		return finTypeFeesDAO.getSchemeFeesList(referenceId, finEvent, type, origination, moduleId);
 	}
 
 	@Override
 	public List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId) {
-		return getFinTypeFeesDAO().getSchemeFeesList(referenceId, eventCode, "_AView", origination, moduleId);
+		return finTypeFeesDAO.getSchemeFeesList(referenceId, eventCode, "_AView", origination, moduleId);
 	}
 
 	@Override
@@ -9753,10 +9748,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public BigDecimal getOutStandingBalFromFees(long finID) {
 		return financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
-	}
-
-	public FinTypeFeesDAO getFinTypeFeesDAO() {
-		return finTypeFeesDAO;
 	}
 
 	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
@@ -11406,64 +11397,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired
 	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
 		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
-	}
-
-	@Override
-	public ReceiptDTO prepareReceiptDTO(FinanceDetail fd) {
-		Date appDate = SysParamUtil.getAppDate();
-
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceType financeType = schdData.getFinanceType();
-		FinanceMain fm = schdData.getFinanceMain();
-
-		ReceiptDTO receiptDTO = new ReceiptDTO();
-
-		FinReceiptData rd = prepareReceiptData(fd);
-		feeCalculator.calculateFees(rd);
-
-		receiptDTO.setFinanceMain(fm);
-		receiptDTO.setSchedules(schdData.getFinanceScheduleDetails());
-		receiptDTO.setOdDetails(schdData.getFinODDetails());
-		receiptDTO.setManualAdvises(manualAdviseDAO.getReceivableAdvises(fm.getFinID(), appDate, "_AView"));
-		receiptDTO.setFees(rd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
-
-		receiptDTO.setRoundAdjMth(SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD));
-		receiptDTO.setLppFeeType(feeTypeDAO.getTaxDetailByCode(Allocation.ODC));
-		receiptDTO.setFinType(financeType);
-		receiptDTO.setValuedate(appDate);
-
-		return receiptDTO;
-	}
-
-	private FinReceiptData prepareReceiptData(FinanceDetail fd) {
-		FinReceiptData frd = new FinReceiptData();
-		FinReceiptHeader frh = new FinReceiptHeader();
-		List<CustomerAddres> ca = null;
-		CustomerDetails cd = fd.getCustomerDetails();
-
-		if (cd == null) {
-			cd = new CustomerDetails();
-		}
-
-		ca = cd.getAddressList();
-
-		if (ca == null) {
-			ca = new ArrayList<>();
-			cd.setAddressList(ca);
-		}
-
-		FinScheduleData fsd = fd.getFinScheduleData();
-
-		String finType = fsd.getFinanceType().getFinType();
-
-		fsd.setFeeEvent(AccountingEvent.EARLYSTL);
-		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesForLMSEvent(finType, AccountingEvent.EARLYSTL));
-
-		frd.setFinanceDetail(fd);
-		frd.setTdPriBal(fsd.getFinPftDeatil().getTdSchdPriBal());
-		frd.setReceiptHeader(frh);
-
-		return frd;
 	}
 
 	public CreditInformation getCreditInformation() {

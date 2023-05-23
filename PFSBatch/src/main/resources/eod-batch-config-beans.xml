@@ -502,13 +502,7 @@
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
 
-	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator">
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="financeDetailService" ref="financeDetailService" />
-	</bean>
+	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator"/>
 
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
