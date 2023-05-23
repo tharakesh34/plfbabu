@@ -71,9 +71,6 @@ public class DPDStringCalculator {
 		int dueBucket = fm.getDueBucket();
 
 		if (monthEnd) {
-			if (dueBucket == 0 && StringUtils.isEmpty(curDPDStr)) {
-				return null;
-			}
 			return getDueBucket(dueBucket);
 		}
 
