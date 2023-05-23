@@ -53,7 +53,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("finReference");
 		excludeFields.add("requestType");
-		excludeFields.add("feeTypeID");
+		excludeFields.add("feeID");
 		excludeFields.add("createdDate");
 		excludeFields.add("createdOn");
 		excludeFields.add("createdBy");
