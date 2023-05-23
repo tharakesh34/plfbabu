@@ -18,7 +18,7 @@ public enum PaymentUploadError {
 
 	REFUP007("Payable Advises are not found."),
 
-	REFUP008(" There is no available amount to proceed for Refund."),
+	REFUP008("Pay Amount should not be greater than the available balance."),
 
 	REFUP009("Dues available for knock off"),
 

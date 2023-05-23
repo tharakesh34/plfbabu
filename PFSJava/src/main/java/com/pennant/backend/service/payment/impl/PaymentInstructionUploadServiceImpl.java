@@ -507,7 +507,7 @@ public class PaymentInstructionUploadServiceImpl extends AUploadServiceImpl<Paym
 
 		Map<String, Object> parameterMap = attributes.getParameterMap();
 
-		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLOAD_HEADER");
+		FileUploadHeader header = (FileUploadHeader) parameterMap.get("FILE_UPLAOD_HEADER");
 
 		pd.setHeaderId(header.getId());
 		pd.setAppDate(header.getAppDate());
