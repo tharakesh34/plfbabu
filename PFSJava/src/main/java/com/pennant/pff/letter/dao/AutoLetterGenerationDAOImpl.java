@@ -81,7 +81,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	public void update(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
 		sql.append(" Set FeeTypeId = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
-		sql.append(", TrackingID = ?, Status = ?, Remarks = ?");
+		sql.append(", EmailNotificationId = ?, Status = ?, Remarks = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));

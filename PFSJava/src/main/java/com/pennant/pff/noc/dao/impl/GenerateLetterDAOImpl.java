@@ -252,7 +252,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
+		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, EmailNotificationId, Status, Remarks");
 		sql.append(" From LOAN_LETTERS gl");
 		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
 		sql.append(" Where FinID = ?");
@@ -266,7 +266,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
 			fm.setRequestType(rs.getString("RequestType"));
 			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setTrackingID(rs.getLong("TrackingID"));
+			fm.setTrackingID(rs.getLong("EmailNotificationId"));
 			fm.setStatus(rs.getString("Status"));
 			fm.setRemarks(rs.getString("Remarks"));
 

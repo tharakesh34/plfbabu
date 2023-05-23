@@ -264,7 +264,7 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
+		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, EmailNotificationId, Status, Remarks");
 		sql.append(" From LOAN_LETTERS gl");
 		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
 
@@ -277,7 +277,7 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
 			fm.setRequestType(rs.getString("RequestType"));
 			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setTrackingID(rs.getLong("TrackingID"));
+			fm.setTrackingID(rs.getLong("EmailNotificationId"));
 			fm.setStatus(rs.getString("Status"));
 			fm.setRemarks(rs.getString("Remarks"));
 
