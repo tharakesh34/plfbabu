@@ -4785,7 +4785,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (!ReceiptMode.EXCESS.equals(recptMode)) {
 			if (FinanceConstants.DEPOSIT_MAKER.equals(module)
 					&& (ReceiptMode.CHEQUE.equals(recptMode) || ReceiptMode.DD.equals(recptMode))) {
-				if (!this.fundingAccount.isReadonly()) {
+				if (!this.fundingAccount.isReadonly() && !(PennantConstants.RCD_STATUS_REJECTED
+						.equals(this.userAction.getSelectedItem().getValue()))) {
 					this.fundingAccount.setConstraint(new PTStringValidator(
 							Labels.getLabel("label_ReceiptDialog_FundingAccount.value"), null, true));
 				}
@@ -4847,7 +4848,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 								PennantRegularExpressions.REGEX_FAVOURING_NAME, true));
 			}
 
-			if (!this.depositDate.isReadonly() && !(PennantConstants.RCD_STATUS_REJECTED.equals(this.userAction.getSelectedItem().getValue()))) {
+			if (!this.depositDate.isReadonly()
+					&& !(PennantConstants.RCD_STATUS_REJECTED.equals(this.userAction.getSelectedItem().getValue()))) {
 				this.depositDate
 						.setConstraint(new PTDateValidator(Labels.getLabel("label_ReceiptDialog_DepositDate.value"),
 								true, this.receivedDate.getValue(), SysParamUtil.getAppDate(), true));
