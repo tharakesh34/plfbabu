@@ -142,7 +142,6 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	private int ccyFormatter = 0;
 
 	private Tab tabOCRDefinition;
-	private Tab tabOCRCapture;
 	private boolean isFinanceProcess = false;
 	private transient OCRMaintenanceListCtrl ocrMaintenanceListCtrl;
 	private FinanceDetailService financeDetailService;
@@ -1134,48 +1133,6 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		finAmount = PennantApplicationUtil.formateAmount(finAmount, ccyFormatter);
 
 		return finAmount;
-	}
-
-	private BigDecimal getCumCustSum(BigDecimal demandAmt) {
-		BigDecimal ocrtotalDemand = this.totalDemand.getActualValue();
-		BigDecimal cumcustsum = BigDecimal.ZERO;
-		BigDecimal cumfincsum = BigDecimal.ZERO;
-		BigDecimal total = BigDecimal.ZERO;
-		BigDecimal rem = BigDecimal.ZERO;
-		boolean custr = false;
-		boolean finc = false;
-		for (FinOCRDetail finOCRDetail : getFinOCRDetailList()) {
-
-			if (finOCRDetail.getCustomerContribution().compareTo(BigDecimal.ZERO) != 0) {
-				BigDecimal cust = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getCustomerContribution());
-				cumcustsum = cumcustsum.add(cust);
-				total = total.add(cust);
-
-				if (total.compareTo(demandAmt) > 0) {
-					custr = true;
-					rem = total.subtract(demandAmt);
-					break;
-				}
-			}
-			if (finOCRDetail.getFinancerContribution().compareTo(BigDecimal.ZERO) != 0) {
-				BigDecimal fin = getCurrentTranchAmount(ocrtotalDemand, finOCRDetail.getFinancerContribution());
-				cumfincsum = cumfincsum.add(fin);
-				total = total.add(fin);
-
-				if (total.compareTo(demandAmt) > 0) {
-					finc = true;
-					rem = total.subtract(demandAmt);
-					break;
-				}
-			}
-		}
-		if (custr) {
-			cumcustsum = cumcustsum.subtract(rem);
-		}
-		if (finc) {
-			cumfincsum = cumfincsum.subtract(rem);
-		}
-		return cumcustsum;
 	}
 
 	private BigDecimal calChildLoanDisbAmount(String finReference, BigDecimal disbAmount) {
