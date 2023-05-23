@@ -4625,10 +4625,7 @@
 
 
 	<bean id="finalValuationDialogCtrl" class="com.pennanttech.webui.verification.FinalValuationDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="collateralSetupService" ref="collateralSetupService" />
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-	</bean>
+		parent="basisCtrl" scope="prototype" />
 
 	<!--============ Authorization Limit ============== -->
 
