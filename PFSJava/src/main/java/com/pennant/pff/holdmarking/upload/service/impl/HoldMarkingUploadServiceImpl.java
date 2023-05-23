@@ -125,6 +125,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						try {
 							process(detail);
 							processHoldMarking(detail);
+							setSuccesStatus(detail);
 						} catch (Exception e) {
 							setFailureStatus(detail, e.getMessage());
 						}
