@@ -69,6 +69,14 @@ public class LoanLetter implements Serializable {
 	private ServiceBranch serviceBranch;
 	private EventProperties eventProperties;
 	private boolean blocked;
+	private String custCtgCode;
+	private String custGenderCode;
+	private String customerType;
+	private int loanClosureAge;
+	private int loanCancellationAge;
+	private String closureType;
+	private int sequenceNo;
+	private String statusOfpreviousletters;
 
 	public LoanLetter() {
 		super();
@@ -490,4 +498,67 @@ public class LoanLetter implements Serializable {
 		this.blocked = blocked;
 	}
 
+	public String getCustCtgCode() {
+		return custCtgCode;
+	}
+
+	public void setCustCtgCode(String custCtgCode) {
+		this.custCtgCode = custCtgCode;
+	}
+
+	public String getCustGenderCode() {
+		return custGenderCode;
+	}
+
+	public void setCustGenderCode(String custGenderCode) {
+		this.custGenderCode = custGenderCode;
+	}
+
+	public String getCustomerType() {
+		return customerType;
+	}
+
+	public void setCustomerType(String customerType) {
+		this.customerType = customerType;
+	}
+
+	public int getLoanClosureAge() {
+		return loanClosureAge;
+	}
+
+	public void setLoanClosureAge(int loanClosureAge) {
+		this.loanClosureAge = loanClosureAge;
+	}
+
+	public int getLoanCancellationAge() {
+		return loanCancellationAge;
+	}
+
+	public void setLoanCancellationAge(int loanCancellationAge) {
+		this.loanCancellationAge = loanCancellationAge;
+	}
+
+	public String getClosureType() {
+		return closureType;
+	}
+
+	public void setClosureType(String closureType) {
+		this.closureType = closureType;
+	}
+
+	public int getSequenceNo() {
+		return sequenceNo;
+	}
+
+	public void setSequenceNo(int sequenceNo) {
+		this.sequenceNo = sequenceNo;
+	}
+
+	public String getStatusOfpreviousletters() {
+		return statusOfpreviousletters;
+	}
+
+	public void setStatusOfpreviousletters(String statusOfpreviousletters) {
+		this.statusOfpreviousletters = statusOfpreviousletters;
+	}
 }

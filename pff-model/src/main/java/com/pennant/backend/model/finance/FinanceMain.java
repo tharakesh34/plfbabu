@@ -45,6 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -869,6 +870,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String loanName;
 	private Date custDOB;
 	private boolean oldActiveState;
+	private LoanLetter loanLetter;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1121,6 +1123,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("loanName");
 		excludeFields.add("custDOB");
 		excludeFields.add("oldActiveState");
+		excludeFields.add("loanLetter");
 
 		return excludeFields;
 	}
@@ -5715,6 +5718,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setOldActiveState(boolean oldActiveState) {
 		this.oldActiveState = oldActiveState;
+	}
+
+	public LoanLetter getLoanLetter() {
+		return loanLetter;
+	}
+
+	public void setLoanLetter(LoanLetter loanLetter) {
+		this.loanLetter = loanLetter;
 	}
 
 }

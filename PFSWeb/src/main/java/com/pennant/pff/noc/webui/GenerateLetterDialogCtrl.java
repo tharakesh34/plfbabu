@@ -190,26 +190,25 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 					gl.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					gl.setNewRecord(true);
 				}
-			} else {
-				gl.setVersion(gl.getVersion() + 1);
-
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
-				}
 			}
+		} else {
+			gl.setVersion(gl.getVersion() + 1);
 
-			try {
-				if (doProcess(gl, tranType)) {
-					refreshList();
-					closeDialog();
-				}
-			} catch (Exception e) {
-				MessageUtil.showError(e);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
 			}
 		}
 
+		try {
+			if (doProcess(gl, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
 
@@ -218,11 +217,11 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	private void doWriteComponentsToBean(GenerateLetter geneLtr) {
 		Date appDate = SysParamUtil.getAppDate();
-
 		geneLtr.setRequestType("M");
 		geneLtr.setCreatedOn(appDate);
 		geneLtr.setCreatedDate(appDate);
 		geneLtr.setGeneratedBy(getUserWorkspace().getUserId());
+		geneLtr.setFinanceDetail(getFinanceDetail());
 	}
 
 	protected boolean doProcess(GenerateLetter gl, String tranType) {
@@ -497,7 +496,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 				Map<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEE));
 				map.put("moduleDefiner", this.moduleCode);
-				map.put("eventCode", "GENERLTR");
+				map.put("eventCode", this.generateLetter.getLetterType());
 				map.put("isReceiptsProcess", false);
 				map.put("numberOfTermsLabel", Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"));
 				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinFeeDetailList.zul",

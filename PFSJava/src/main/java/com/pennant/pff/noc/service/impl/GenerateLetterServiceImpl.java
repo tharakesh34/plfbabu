@@ -1,19 +1,23 @@
 package com.pennant.pff.noc.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.FeeCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
@@ -23,12 +27,15 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
+import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.pff.noc.upload.dao.LoanLetterUploadDAO;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -46,7 +53,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	private GenerateLetterDAO generateLetterDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	protected FinExcessAmountDAO finExcessAmountDAO;
-	private FeeCalculator feeCalculator;
+	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
 	private LoanLetterUploadDAO loanLetterUploadDAO;
 
 	@Override
@@ -75,8 +82,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	}
 
 	@Override
-	public int getFinTypeMap(String finType) {
-		return loanLetterUploadDAO.getFinTypeLtrMap(finType);
+	public List<LoanTypeLetterMapping> getFinTypeMap(String finType) {
+		return loanTypeLetterMappingDAO.getLetterMapping(finType);
 	}
 
 	@Override
@@ -190,10 +197,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			if (gl.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				gl.setRecordType("");
-				processfees(gl);
 				gl.setAgreementTemplate(0);
 				gl.setModeofTransfer(gl.getRequestType());
+				saveFees(gl);
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
+				saveLoanLetterdetails(gl);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				gl.setRecordType("");
@@ -213,15 +221,66 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		return ah;
 	}
 
+	private void saveLoanLetterdetails(GenerateLetter gl) {
+		String finType = gl.getFinanceDetail().getFinScheduleData().getFinanceType().getFinType();
+		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(finType);
+
+		for (LoanTypeLetterMapping ltlp : letterMapping) {
+
+			if (!ltlp.getLetterType().equals(gl.getLetterType())) {
+				continue;
+			}
+
+			gl.setAgreementTemplate(ltlp.getAgreementCodeId());
+			gl.setModeofTransfer(ltlp.getLetterMode());
+		}
+	}
+
+	private void saveFees(GenerateLetter gl) {
+		List<FinFeeDetail> fees = gl.getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
+		if (CollectionUtils.isNotEmpty(fees)) {
+			for (FinFeeDetail fee : fees) {
+				fee.setFeeID(finFeeDetailDAO.save(fee, false, ""));
+				gl.setFeeTypeID(fee.getFeeID());
+			}
+		}
+	}
+
 	private void processfees(GenerateLetter gl) {
 		FinReceiptData rd = new FinReceiptData();
+		FinanceDetail fd = gl.getFinanceDetail();
 		FinReceiptHeader frh = new FinReceiptHeader();
 		frh.setPartPayAmount(BigDecimal.ZERO);
-		rd.setFinanceDetail(gl.getFinanceDetail());
-		rd.setTdPriBal(gl.getFinanceDetail().getFinScheduleData().getFinPftDeatil().getTdSchdPriBal());
+		rd.setFinanceDetail(fd);
+		rd.setTdPriBal(fd.getFinScheduleData().getFinPftDeatil().getTdSchdPriBal());
 		rd.setReceiptHeader(frh);
-		feeCalculator.calculateFees(rd);
+		setMapDetails(gl);
+	}
 
+	private void setMapDetails(GenerateLetter gl) {
+		Date appDate = SysParamUtil.getAppDate();
+		FinanceDetail fd = gl.getFinanceDetail();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		LoanLetter letter = new LoanLetter();
+		Customer customer = fd.getCustomerDetails().getCustomer();
+
+		List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(), gl.getLetterType());
+
+		letter.setClosureType(fm.getClosureType());
+		letter.setCustCtgCode(customer.getCustCtgCode());
+		letter.setCustGenderCode(customer.getCustGenderCode());
+		letter.setCustomerType(customer.getCustTypeCode());
+		letter.setLoanClosureAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
+		letter.setLoanCancellationAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
+		if (CollectionUtils.isNotEmpty(letterInfo)) {
+			letter.setSequenceNo(letterInfo.size());
+			letter.setStatusOfpreviousletters(letterInfo.get(letterInfo.size()).getStatus());
+		}
+
+		letter.setSequenceNo(0);
+		letter.setStatusOfpreviousletters("");
+
+		fm.setLoanLetter(letter);
 	}
 
 	@Override
@@ -246,10 +305,14 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	}
 
 	@Override
-	public FinanceDetail getFinanceDetailById(String finReference, String letterType) {
+	public void getFinanceDetailById(GenerateLetter gl) {
 		FinanceDetail fd = new FinanceDetail();
-
+		String finReference = gl.getFinReference();
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "_View", false);
+
+		if (fm == null) {
+			return;
+		}
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 
@@ -267,9 +330,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
 		}
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
-		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(), letterType, "_AView", false,
+		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(), getLetterType(gl), "_AView", false,
 				FinanceConstants.MODULEID_FINTYPE));
-
+		schdData.setFeeEvent(gl.getLetterType());
 		FinanceSummary summary = new FinanceSummary();
 
 		summary.setFinID(finID);
@@ -279,7 +342,31 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 		schdData.setFinanceSummary(summary);
 
-		return fd;
+		gl.setFinanceDetail(fd);
+		processfees(gl);
+
+	}
+
+	private String getLetterType(GenerateLetter gl) {
+		String letterType = null;
+
+		switch (gl.getLetterType()) {
+		case "NOC": {
+			letterType = "NOCLTR";
+			break;
+		}
+		case "CLOSURE": {
+			letterType = "CLOSELTR";
+			break;
+		}
+		case "CANCELLATION": {
+			letterType = "CANCLLTR";
+			break;
+		}
+		default:
+			break;
+		}
+		return letterType;
 	}
 
 	@Override
@@ -389,13 +476,12 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	}
 
 	@Autowired
-	public void setFeeCalculator(FeeCalculator feeCalculator) {
-		this.feeCalculator = feeCalculator;
+	public void setLoanTypeLetterMappingDAO(LoanTypeLetterMappingDAO loanTypeLetterMappingDAO) {
+		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
 	}
 
 	@Autowired
 	public void setLoanLetterUploadDAO(LoanLetterUploadDAO loanLetterUploadDAO) {
 		this.loanLetterUploadDAO = loanLetterUploadDAO;
 	}
-
 }

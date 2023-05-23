@@ -456,6 +456,7 @@ public class FeeCalculator {
 		if (fd.getFinScheduleData() != null) {
 			objectList.add(schdData.getFinanceMain());
 			objectList.add(fd.getFinScheduleData().getFinanceType());
+			objectList.add(schdData.getFinanceMain().getLoanLetter());
 		}
 
 		for (Rule feeRule : feeRules) {

@@ -2754,6 +2754,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		if (getFinanceDetail().getFinScheduleData() != null) {
 			objectList.add(financeMain);
 			objectList.add(getFinanceDetail().getFinScheduleData().getFinanceType());
+			objectList.add(scheduleData.getFinanceMain().getLoanLetter());
 		}
 
 		for (Rule feeRule : rules) {
