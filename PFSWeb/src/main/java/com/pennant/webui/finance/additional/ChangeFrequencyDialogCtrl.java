@@ -172,7 +172,6 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			// fill the components with the data
 			doWriteBeanToComponents(aFinScheduleData);
-			repayFrq.getFrqDayCombobox().getChildren().get(0).detach();
 			setDialog(DialogType.MODAL);
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
@@ -347,7 +346,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				continue;
 			}
 
-			int frq = Integer.parseInt(this.repayFrq.getFrqDayValue());
+			int frq = Integer.parseInt(setFrq());
 
 			int curDay = DateUtil.getDay(SysParamUtil.getAppDate());
 
@@ -372,6 +371,11 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String setFrq() {
+		return this.repayFrq.getFrqDayValue().equals(PennantConstants.List_Select) ? "00"
+				: this.repayFrq.getFrqDayValue();
 	}
 
 	/**
