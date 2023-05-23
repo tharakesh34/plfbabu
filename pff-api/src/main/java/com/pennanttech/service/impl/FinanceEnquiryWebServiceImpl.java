@@ -878,76 +878,6 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 		return enquiryResponse;
 	}
 
-	// @Override
-	// public LoanEnquiryResponse getChargeDetails(String finReference) {
-	// logger.debug(Literal.ENTERING);
-	//
-	// LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
-	// WSReturnStatus wsrs = validateFinReference(finReference);
-	//
-	// if (wsrs != null) {
-	// enquiryResponse.setReturnStatus(wsrs);
-	// logger.debug(Literal.LEAVING);
-	// return enquiryResponse;
-	// }
-	//
-	// logReference(finReference);
-	//
-	// logger.debug("FinReference {}", finReference);
-	//
-	// Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
-	//
-	// if (finID == null) {
-	// logger.debug(Literal.LEAVING);
-	// enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
-	// return enquiryResponse;
-	// }
-	//
-	// logger.debug(Literal.LEAVING);
-	//
-	// List<ChargeDetails> cd = financeEnquiryController.getChargeDetails(finID);
-	//
-	// if (CollectionUtils.isEmpty(cd)) {
-	// logger.debug(Literal.LEAVING);
-	// enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, "No Charges for the given FinReference"));
-	// return enquiryResponse;
-	// }
-	//
-	// enquiryResponse.setChargeDetails(cd);
-	// enquiryResponse.setReturnStatus(getSuccessStatus());
-	//
-	// return enquiryResponse;
-	// }
-
-	@Override
-	public LoanEnquiryResponse getLoanAccountDetails(String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		LoanEnquiryResponse enquiryResponse = new LoanEnquiryResponse();
-
-		WSReturnStatus wsrs = validateFinReference(finReference);
-
-		if (wsrs != null) {
-			enquiryResponse.setReturnStatus(wsrs);
-			logger.debug(Literal.LEAVING);
-			return enquiryResponse;
-		}
-
-		logReference(finReference);
-
-		logger.debug("FinReference {}", finReference);
-
-		Long finID = getActiveFinID(finReference);
-
-		if (finID == null) {
-			enquiryResponse.setReturnStatus(getFailedStatus(ERROR_92021, ERROR_DESC_92021));
-			logger.debug(Literal.LEAVING);
-			return enquiryResponse;
-		}
-
-		return enquiryResponse;
-	}
-
 	private Long getActiveFinID(String finReference) {
 		return financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 	}
@@ -1071,4 +1001,5 @@ public class FinanceEnquiryWebServiceImpl extends AbstractResponse implements Fi
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
+
 }
