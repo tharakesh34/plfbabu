@@ -2184,7 +2184,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getDesiredProfit() {
-		return desiredProfit;
+		return desiredProfit == null ? BigDecimal.ZERO : desiredProfit;
 	}
 
 	public void setDesiredProfit(BigDecimal desiredProfit) {

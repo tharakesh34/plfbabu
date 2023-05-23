@@ -408,6 +408,13 @@ public class FinanceDataValidation {
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90188", null)));
 		}
 
+		if (fm.getDesiredProfit().compareTo(BigDecimal.ZERO) < 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "DesiredProfit:"
+					.concat(PennantApplicationUtil.amountFormate(fm.getDesiredProfit(), ccyFormat));
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP008", valueParm)));
+		}
+
 		finODPenaltyRateValidation(schdData);
 
 		finOCRValidation(fd);
