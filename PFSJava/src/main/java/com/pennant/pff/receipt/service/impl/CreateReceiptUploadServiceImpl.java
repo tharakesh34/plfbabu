@@ -14,9 +14,11 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
@@ -47,6 +49,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	private ReceiptService receiptService;
 	private CreateReceiptUploadDAO createReceiptUploadDAO;
 	private CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord;
+	private PartnerBankDAO partnerBankDAO;
 
 	public CreateReceiptUploadServiceImpl() {
 		super();
@@ -138,6 +141,12 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setDepositDate(detail.getDepositDate());
 		rud.setBankCode(detail.getBankCode());
 		rud.setEffectSchdMethod(detail.getEffectSchdMethod());
+
+		PartnerBank pb = partnerBankDAO.getPartnerBankByCode(detail.getPartnerBankCode(), "");
+		if (pb != null) {
+			rud.setFundingAc(String.valueOf(pb.getPartnerBankId()));
+		}
+
 		String receiptMode = detail.getReceiptMode();
 		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 			rud.setTransactionRef(detail.getChequeNumber());
@@ -402,4 +411,10 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 	public void setCreateReceiptUploadProcessRecord(CreateReceiptUploadProcessRecord createReceiptUploadProcessRecord) {
 		this.createReceiptUploadProcessRecord = createReceiptUploadProcessRecord;
 	}
+
+	@Autowired
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
+	}
+
 }
