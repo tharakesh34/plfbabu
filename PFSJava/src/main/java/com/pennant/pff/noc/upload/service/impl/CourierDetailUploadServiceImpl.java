@@ -60,8 +60,8 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 			return;
 		}
 
-		setError(detail, CourierDetailUploadError.LCD_002);
 		if (!fm.isFinIsActive()) {
+			setError(detail, CourierDetailUploadError.LCD_002);
 			return;
 		}
 
