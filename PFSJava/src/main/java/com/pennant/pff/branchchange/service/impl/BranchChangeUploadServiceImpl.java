@@ -88,11 +88,10 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 
 		detail.setReferenceID(finID);
 
-		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
-		boolean isundermaintainance = finServiceInstrutionDAO.isFinServiceInstExists(finID, "_temp");
+		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 
-		if (isundermaintainance || fm.getRcdMaintainSts() != null) {
-			setError(detail, BranchChangeUploadError.BC_07);
+		if (StringUtils.isNotEmpty(rcdMntnSts)) {
+			setError(detail, BranchChangeUploadError.BC_07, rcdMntnSts);
 			return;
 		}
 
@@ -114,6 +113,7 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 			setError(detail, BranchChangeUploadError.BC_05);
 			return;
 		}
+		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "");
 
 		if (fm.getFinBranch().equals(branchcode)) {
 			setError(detail, BranchChangeUploadError.BC_04);
@@ -314,6 +314,10 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 
 	private void setError(BranchChangeUpload detail, BranchChangeUploadError error) {
 		setFailureStatus(detail, error.name(), error.description());
+	}
+
+	protected void setError(BranchChangeUpload detail, BranchChangeUploadError error, String arg) {
+		setFailureStatus(detail, error.name(), error.description().concat(arg));
 	}
 
 	@Autowired

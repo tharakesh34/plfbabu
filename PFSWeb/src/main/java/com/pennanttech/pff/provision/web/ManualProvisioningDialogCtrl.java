@@ -791,13 +791,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (this.overrideProvision.isChecked()) {
 			this.manProvisionPercentage.setDisabled(false);
 			this.manProvisionPercentage.setReadonly(false);
-			this.manProvisionAmount.setDisabled(false);
-			this.manProvisionAmount.setReadonly(false);
+			this.manProvisionAmount.setDisabled(true);
+			this.manProvisionAmount.setReadonly(true);
 		} else {
 			this.manProvisionPercentage.setDisabled(true);
 			this.manProvisionPercentage.setReadonly(true);
-			this.manProvisionAmount.setDisabled(true);
-			this.manProvisionAmount.setReadonly(true);
 		}
 	}
 
@@ -823,7 +821,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	}
 
 	private Long getSelectedValue(Combobox combobox) {
-		return Long.parseLong(combobox.getSelectedItem().getValue());
+		if (combobox.getSelectedItem() != null) {
+			return Long.parseLong(combobox.getSelectedItem().getValue());
+		} else {
+			return 0L;
+		}
 	}
 
 	private String getSelectedLabel(Combobox combobox) {
@@ -831,7 +833,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		if (combobox.getSelectedItem() != null) {
 			comboValue = combobox.getSelectedItem().getValue().toString();
 		} else {
-			combobox.setSelectedIndex(0);
+			combobox.setValue(Labels.getLabel("Combo.Select"));
 		}
 		return comboValue;
 	}

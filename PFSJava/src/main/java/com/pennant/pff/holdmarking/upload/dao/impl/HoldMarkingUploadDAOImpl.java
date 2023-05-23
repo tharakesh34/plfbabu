@@ -176,7 +176,7 @@ public class HoldMarkingUploadDAOImpl extends SequenceDao<HoldMarkingUpload> imp
 			ps.setString(++index, hm.getErrorCode());
 			ps.setString(++index, hm.getErrorDesc());
 			ps.setTimestamp(++index, hm.getCreatedOn());
-			ps.setLong(++index, hm.getCreatedBy());
+			ps.setObject(++index, hm.getCreatedBy());
 			ps.setTimestamp(++index, hm.getApprovedOn());
 			ps.setLong(++index, hm.getApprovedBy());
 		});

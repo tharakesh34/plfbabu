@@ -5150,13 +5150,8 @@
 		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
 	</bean>
 
-	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator">
-		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
-	</bean>
+	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator" />
+
 
 	<!--============ Receipt Calculator Util ============== -->
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator">
@@ -13489,14 +13484,16 @@
 			</props>
 		</property>
 	</bean>
-	
-	<bean name="holdMarkingServiceTarget" class="com.pennant.pff.holdmarking.service.impl.HoldMarkingServiceImpl"/>
-	
-	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl" parent="sequenceDao" />
-	
+
+	<bean name="holdMarkingServiceTarget" class="com.pennant.pff.holdmarking.service.impl.HoldMarkingServiceImpl" />
+
+	<bean id="autoLetterGenerationDAO" class="com.pennant.pff.letter.dao.AutoLetterGenerationDAOImpl"
+		parent="sequenceDao" />
+
 	<bean id="batchJobDAO" class="com.pennant.pff.batch.dao.BatchJobDAOImpl" parent="sequenceDao" />
-	
-	<bean id="letterGenerationJobQueueDAO" class="com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl" parent="sequenceDao" />
-	
-	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService"/>
+
+	<bean id="letterGenerationJobQueueDAO" class="com.pennant.pff.letter.dao.impl.LetterGenerationJobQueueDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="letterService" class="com.pennant.pff.letter.service.LetterService" />
 </beans>

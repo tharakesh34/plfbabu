@@ -260,10 +260,24 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 					lienup.setReference(lienup.getReference());
 					lienup.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 
-					lienheader.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
-					lienheader.setDemarkingDate(header.getAppDate());
-					lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-					lienheader.setLienStatus(false);
+					List<LienDetails> lienDetail = lienDetailsDAO.getLienListByLienId(lienheader.getLienID());
+					boolean isAllInActive = true;
+					for (LienDetails lu : lienDetail) {
+						if (lu.getReference().equals(fm.getFinReference())) {
+							LienDetails liendeatils = getLienDetails(header, lienup, lu);
+							lienDetailsDAO.update(liendeatils);
+						}
+						if (lu.isLienStatus()) {
+							isAllInActive = false;
+						}
+					}
+
+					if (isAllInActive) {
+						lienheader.setDemarking(Labels.getLabel("label_Lien_Type_Manual"));
+						lienheader.setDemarkingDate(header.getAppDate());
+						lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+						lienheader.setLienStatus(false);
+					}
 				}
 
 				lienUploadDAO.update(lienup, lienup.getId());
@@ -273,16 +287,22 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 				lienheader.setSource(lienup.getSource());
 				lienheader.setAccountNumber(lienup.getAccNumber());
-				LienDetails lu = getLienDetails(header, lienup, lienheader.getId());
+				lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
+				LienDetails lu = lienDetailsDAO.getLienByHeaderId(lienheader.getId());
+				lu = getLienDetails(header, lienup, lu);
 
 				lienheader.setId(lienup.getId());
 				lu.setHeaderID(lienup.getId());
 				if (isNew) {
 					lienHeaderDAO.save(lienheader);
-					lienDetailsDAO.save(lu);
 				} else {
 					lienHeaderDAO.update(lienheader);
-					lienDetailsDAO.update(lu);
+				}
+
+				if (lienup.getAction().equals("Y")) {
+					if (lienheader.isLienStatus()) {
+						lienDetailsDAO.save(lu);
+					}
 				}
 
 				Map<String, String> map = new HashMap<>();
@@ -369,8 +389,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 		setFailureStatus(detail, error.name(), String.format(error.description(), arg));
 	}
 
-	private LienDetails getLienDetails(FileUploadHeader header, LienUpload lienup, Long id) {
-		LienDetails lu = lienDetailsDAO.getLienByHeaderId(id);
+	private LienDetails getLienDetails(FileUploadHeader header, LienUpload lienup, LienDetails lu) {
 
 		if (lu == null) {
 			lu = new LienDetails();

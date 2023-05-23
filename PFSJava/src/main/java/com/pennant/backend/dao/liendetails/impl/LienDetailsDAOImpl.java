@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 
 import com.cronutils.utils.StringUtils;
 import com.pennant.backend.dao.liendetails.LienDetailsDAO;
@@ -81,31 +82,30 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 		sql.append(" Where LienID = ? and Reference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
+				ps.setString(++index, lu.getMarking());
+				ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
+				ps.setString(++index, lu.getMarkingReason());
+				ps.setString(++index, lu.getDemarking());
+				ps.setString(++index, lu.getDemarkingReason());
+				ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
+				ps.setString(++index, lu.getLienReference());
+				ps.setBoolean(++index, lu.isLienStatus());
+				ps.setString(++index, lu.getSource());
+				ps.setInt(++index, lu.getVersion());
+				ps.setObject(++index, lu.getApprovedBy());
+				ps.setTimestamp(++index, lu.getApprovedOn());
+				ps.setLong(++index, lu.getLastMntBy());
+				ps.setTimestamp(++index, lu.getLastMntOn());
 
-			ps.setString(++index, lu.getMarking());
-			ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
-			ps.setString(++index, lu.getMarkingReason());
-			ps.setString(++index, lu.getDemarking());
-			ps.setString(++index, lu.getDemarkingReason());
-			ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
-			ps.setString(++index, lu.getLienReference());
-			ps.setBoolean(++index, lu.isLienStatus());
-			ps.setString(++index, lu.getSource());
-			ps.setInt(++index, lu.getVersion());
-			ps.setObject(++index, lu.getApprovedBy());
-			ps.setTimestamp(++index, lu.getApprovedOn());
-			ps.setLong(++index, lu.getLastMntBy());
-			ps.setTimestamp(++index, lu.getLastMntOn());
-
-			ps.setLong(++index, lu.getLienID());
-			ps.setString(++index, lu.getReference());
-		});
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+				ps.setLong(++index, lu.getLienID());
+				ps.setString(++index, lu.getReference());
+			});
+		} catch (BadSqlGrammarException e) {
+			logger.warn(e);
 		}
 	}
 

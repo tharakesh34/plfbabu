@@ -150,6 +150,8 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			}
 
 			if (lpp.getProgress() == EodConstants.PROGRESS_FAILED) {
+				lpp.setStatus("F");
+				record.addValue("STATUS", lpp.getStatus());
 				record.addValue("ERRORCODE", lpp.getErrorCode());
 				record.addValue("ERRORDESC", lpp.getErrorDesc());
 

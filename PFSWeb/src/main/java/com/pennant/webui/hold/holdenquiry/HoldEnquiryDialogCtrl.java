@@ -1,5 +1,6 @@
 package com.pennant.webui.hold.holdenquiry;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
@@ -96,9 +98,19 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
 			li.appendChild(new Listcell(String.valueOf(hd.getAccountNumber())));
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldReference())));
-			li.appendChild(new Listcell(String.valueOf(hd.getHoldAmount())));
-			li.appendChild(new Listcell(String.valueOf(hd.getReleaseAmount())));
-			li.appendChild(new Listcell(String.valueOf(hd.getBalance())));
+			if (PennantConstants.HOLD_MARKING.equals(String.valueOf(hd.getHoldType()))) {
+				li.appendChild(new Listcell(String.valueOf(hd.getHoldAmount())));
+				li.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
+				li.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
+			} else {
+
+				BigDecimal releaseAmount = hd.getReleaseAmount();
+				releaseAmount = releaseAmount.add(hd.getReleaseAmount());
+				li.appendChild(new Listcell(String.valueOf(hd.getAmount())));
+				li.appendChild(new Listcell(String.valueOf(releaseAmount)));
+				li.appendChild(new Listcell(String.valueOf(hd.getBalance())));
+			}
+
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldType())));
 			li.appendChild(new Listcell(DateUtil.formatToLongDate(hd.getMovementDate())));
 			li.appendChild(new Listcell(hd.getMarking()));

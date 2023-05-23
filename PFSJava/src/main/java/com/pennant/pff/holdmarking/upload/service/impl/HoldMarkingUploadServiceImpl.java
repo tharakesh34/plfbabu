@@ -1,6 +1,7 @@
 package com.pennant.pff.holdmarking.upload.service.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,10 +88,6 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		}
 
 		validateType(detail, type);
-
-		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
-			return;
-		}
 
 		setSuccesStatus(detail);
 	}
@@ -201,6 +198,8 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 		doValidate(header, holdMarking);
 
+		header.getUploadDetails().add(holdMarking);
+
 		updateProcess(header, holdMarking, paramSource);
 
 		logger.debug(Literal.LEAVING);
@@ -233,6 +232,10 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 	private void processHoldMarking(HoldMarkingUpload detail) {
 		int count = 0;
 
+		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+		Date appDate = SysParamUtil.getAppDate();
+		long userId = 1000;
+
 		if (PennantConstants.HOLD_MARKING.equals(detail.getType())) {
 			HoldMarkingHeader hmh = new HoldMarkingHeader();
 			hmh.setFinReference(detail.getReference());
@@ -250,11 +253,17 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			hmd.setFinID(detail.getReferenceID());
 			hmd.setHoldType(detail.getType());
 			hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
-			hmd.setMovementDate(detail.getAppDate());
+			hmd.setMovementDate(appDate);
 			hmd.setStatus(InsuranceConstants.PENDING);
 			hmd.setAmount(detail.getAmount());
 			hmd.setLogID(++count);
 			hmd.setHoldReleaseReason(detail.getRemarks());
+			hmd.setCreatedBy(userId);
+			hmd.setCreatedOn(currentTime);
+			hmd.setLastMntBy(userId);
+			hmd.setLastMntOn(currentTime);
+			hmd.setApprovedOn(currentTime);
+			hmd.setApprovedBy(userId);
 
 			holdMarkingDetailDAO.saveDetail(hmd);
 		} else {
@@ -277,7 +286,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 
 					if (detail.getAmount().compareTo(headerList.getBalance()) > 0) {
 						headerList.setBalance(BigDecimal.ZERO);
-						headerList.setReleaseAmount(headerList.getBalance());
+						headerList.setReleaseAmount(headerList.getHoldAmount());
 					} else {
 						headerList.setBalance(headerList.getBalance().subtract(detail.getAmount()));
 						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detail.getAmount()));
@@ -306,11 +315,17 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			hmd.setFinID(detail.getReferenceID());
 			hmd.setHoldType(detail.getType());
 			hmd.setMarking(PennantConstants.MANUAL_ASSIGNMENT);
-			hmd.setMovementDate(detail.getAppDate());
+			hmd.setMovementDate(appDate);
 			hmd.setStatus(InsuranceConstants.PENDING);
 			hmd.setAmount(detail.getAmount());
 			hmd.setLogID(++count);
 			hmd.setHoldReleaseReason(detail.getRemarks());
+			hmd.setCreatedBy(userId);
+			hmd.setCreatedOn(currentTime);
+			hmd.setLastMntBy(userId);
+			hmd.setLastMntOn(currentTime);
+			hmd.setApprovedOn(currentTime);
+			hmd.setApprovedBy(userId);
 
 			holdMarkingDetailDAO.saveDetail(hmd);
 		}

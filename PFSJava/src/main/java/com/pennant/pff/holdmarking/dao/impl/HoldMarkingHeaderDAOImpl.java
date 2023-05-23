@@ -60,7 +60,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 	@Override
 	public List<HoldMarkingHeader> getHoldByFinId(long finId, String accNum) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" hmh.Id, hmh.HoldID, hmd.FinID, hmd.FinReference, hmh.HoldReference");
+		sql.append(" hmh.Id, hmh.HoldID, hmh.FinID, hmh.FinReference, hmh.HoldReference");
 		sql.append(", hmh.AccountNumber, hmh.HoldAmount, hmh.ReleaseAmount, hmh.Balance");
 		sql.append(" From HOLD_MARKING_HEADER hmh");
 		sql.append(" Where  hmh.FinId = ? and hmh.AccountNumber = ? ");
@@ -82,7 +82,7 @@ public class HoldMarkingHeaderDAOImpl extends SequenceDao<HoldMarkingHeader> imp
 			hmh.setBalance(rs.getBigDecimal(("Balance")));
 
 			return hmh;
-		}, accNum, finId, 0);
+		}, finId, accNum, 0);
 	}
 
 	@Override

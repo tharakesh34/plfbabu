@@ -59,7 +59,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 
 		HoldMarkingHeader hmh = new HoldMarkingHeader();
 		Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-		Date appData = SysParamUtil.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		long userId = 1000;
 		int count = 0;
 
@@ -84,7 +84,7 @@ public class HoldMarkingServiceImpl implements HoldMarkingService {
 		hmd.setFinID(finID);
 		hmd.setHoldType(PennantConstants.REMOVE_HOLD_MARKING);
 		hmd.setMarking(PennantConstants.AUTO_ASSIGNMENT);
-		hmd.setMovementDate(appData);
+		hmd.setMovementDate(appDate);
 		hmd.setStatus(InsuranceConstants.SUCCESS);
 		hmd.setAmount(BigDecimal.ZERO);
 		hmd.setLogID(++count);
