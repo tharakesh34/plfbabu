@@ -45,8 +45,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
-		sql.append(" Where not exists (Select 1 From Loan_Letter_Manual_Temp Where Id = gl.Id)) gl");
 		sql.append(QueryUtil.buildWhereClause(search, value));
+		sql.append(" And not exists (Select 1 From Loan_Letter_Manual_Temp Where Id = gl.Id)) gl");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
