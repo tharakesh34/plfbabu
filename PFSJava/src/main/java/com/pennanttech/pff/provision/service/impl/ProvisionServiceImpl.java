@@ -133,24 +133,31 @@ public class ProvisionServiceImpl implements ProvisionService {
 			if (mp.getManualAssetClassID() != null) {
 				p.setManualAssetClassID(mp.getManualAssetClassID());
 				p.setManualAssetClassCode(mp.getManualAssetClassCode());
+			} else {
+				p.setManualAssetClassID(prd.getEffNpaClassID());
+				p.setManualAssetClassCode(prd.getEffNpaClassCode());
 			}
 
 			if (mp.getManualAssetSubClassID() != null) {
 				p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
 				p.setManualAssetSubClassCode(mp.getManualAssetSubClassCode());
+			} else {
+				p.setManualAssetSubClassID(prd.getEffNpaSubbClassID());
+				p.setManualAssetSubClassCode(prd.getEffNpaSubClassCode());
 			}
 
 			p.setOverrideProvision(mp.isOverrideProvision());
 
 			manProvsnPer = mp.getManProvsnPer();
 			p.setManProvsnPer(manProvsnPer);
+			p.setManualProvision(mp.isManualProvision());
 		}
 
 		p.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
 		if (p.isManualProvision() || mp.isOverrideProvision()) {
-			prd.setEffNpaClassCode(mp.getManualAssetClassCode());
-			prd.setEffNpaSubClassCode(mp.getManualAssetSubClassCode());
+			prd.setEffNpaClassCode(p.getManualAssetClassCode());
+			prd.setEffNpaSubClassCode(p.getManualAssetSubClassCode());
 
 			executeProvisionRule(prd, p);
 			BigDecimal osPrincipal = prd.getOutstandingprincipal();
@@ -169,9 +176,6 @@ public class ProvisionServiceImpl implements ProvisionService {
 		p.setNpaClassID(prd.getNpaClassID());
 		p.setEffNpaClassCode(prd.getEffNpaClassCode());
 		p.setEffNpaSubClassCode(prd.getEffNpaSubClassCode());
-
-		p.setManualAssetClassID(mp.getManualAssetClassID());
-		p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
 
 		if (newRecord || p.getNpaClassID() != prd.getNpaClassID()) {
 			p.setNpaClassChng(true);
