@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
 
 public interface GenerateLetterService {
@@ -31,7 +31,7 @@ public interface GenerateLetterService {
 
 	AuditHeader doReject(AuditHeader ah);
 
-	FinanceDetail getFinanceDetailById(String finReference, String letterType);
+	void getFinanceDetailById(GenerateLetter gl);
 
 	List<ReceiptAllocationDetail> getPrinAndPftWaiver(String finReference);
 
@@ -39,7 +39,7 @@ public interface GenerateLetterService {
 
 	List<GenerateLetter> getLetterInfo(GenerateLetter gl);
 
-	int getFinTypeMap(String finType);
+	List<LoanTypeLetterMapping> getFinTypeMap(String finType);
 
 	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
 

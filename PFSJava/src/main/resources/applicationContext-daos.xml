@@ -13429,7 +13429,9 @@
 		</property>
 	</bean>
 
-	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl" />
+	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl" >
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+	</bean>
 
 	<bean id="loanClosureUploadService" class="com.pennant.pff.receipt.service.impl.LoanClosureUploadServiceImpl"
 		parent="aUploadService" />

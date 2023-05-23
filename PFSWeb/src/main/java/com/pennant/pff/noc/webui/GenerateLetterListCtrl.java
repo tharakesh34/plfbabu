@@ -183,8 +183,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		long id = (Long) this.lbGenerateLetter.getSelectedItem().getAttribute("Id");
 
 		GenerateLetter letters = this.generateLetterService.getLetter(id);
-		letters.setFinanceDetail(
-				generateLetterService.getFinanceDetailById(letters.getFinReference(), letters.getLetterType()));
+
+		generateLetterService.getFinanceDetailById(letters);
 
 		if (letters == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));

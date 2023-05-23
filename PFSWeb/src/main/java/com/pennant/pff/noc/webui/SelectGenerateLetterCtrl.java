@@ -26,6 +26,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
+import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -91,13 +92,22 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	private boolean validateReference() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = generateLetterService.getFinanceMainByRef(this.finReference.getValue(), "", false);
+		this.generateLetter.setFinReference(this.finReference.getValue());
+		this.generateLetter.setLetterType(getComboboxValue(letterType));
+		this.generateLetter.setWorkflowId(this.generateLetter.getWorkflowId());
+		this.generateLetter.setNewRecord(this.generateLetter.isNewRecord());
+		generateLetterService.getFinanceDetailById(this.generateLetter);
+
+		FinanceMain fm = this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 		if (fm == null) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_Finreference")
 					+ " :".concat(this.finReference.getValue()));
 			return false;
 		}
+
+		this.generateLetter.setFinID(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinID());
+		List<LoanTypeLetterMapping> letterMapping = generateLetterService.getFinTypeMap(fm.getFinType());
 
 		String ltrType = this.letterType.getValue();
 
@@ -122,10 +132,13 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
-		if (generateLetterService.getFinTypeMap(fm.getFinType()) == 0) {
-			MessageUtil.showError("Loan Type Letter mapping not available");
-			return false;
-		}
+		/*
+		 * if (CollectionUtils.isEmpty(letterMapping)) {
+		 * MessageUtil.showError("Loan Type Letter mapping not available"); return false; }
+		 * 
+		 * if (!letterMapping.stream().anyMatch(l -> l.getLetterType().equals(getComboboxValue(letterType)))) {
+		 * MessageUtil.showError("Loan Type Letter mapping not available the selected Letter Type"); return false; }
+		 */
 
 		logger.debug(Literal.LEAVING);
 
@@ -180,17 +193,8 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		logger.debug(Literal.ENTERING);
 
 		final Map<String, Object> map = new HashMap<String, Object>();
-		GenerateLetter geneLtr = new GenerateLetter();
 
-		geneLtr.setFinReference(this.finReference.getValue());
-		geneLtr.setLetterType(getComboboxValue(letterType));
-		geneLtr.setWorkflowId(this.generateLetter.getWorkflowId());
-		geneLtr.setNewRecord(this.generateLetter.isNewRecord());
-		geneLtr.setFinanceDetail(
-				generateLetterService.getFinanceDetailById(geneLtr.getFinReference(), geneLtr.getLetterType()));
-		geneLtr.setFinID(geneLtr.getFinanceDetail().getFinScheduleData().getFinID());
-
-		map.put("generateLetter", geneLtr);
+		map.put("generateLetter", this.generateLetter);
 		map.put("moduleCode", this.moduleCode);
 		map.put("generateLetterListCtrl", generateLetterListCtrl);
 

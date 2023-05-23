@@ -199,6 +199,9 @@ public class RuleExecutionUtil implements Serializable {
 			case RuleConstants.custEmp:
 				objectsMap.put(RuleConstants.custEmployeeDetail, object);
 				break;
+			case RuleConstants.lt:
+				objectsMap.put(RuleConstants.letter, object);
+				break;
 			}
 		}
 		return objectsMap;
