@@ -26,6 +26,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -119,11 +120,37 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 		this.custCifSort.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
 		this.custCifSort.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
+		doSetFieldProperties();
+
 		fillListData();
 
 		doRenderPage();
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
+	}
+
+	private void doSetFieldProperties() {
+		this.branch.setModuleName("BankBranch");
+		this.branch.setDisplayStyle(2);
+		this.branch.setValueColumn("BranchCode");
+		this.branch.setDescColumn("BranchDesc");
+		this.branch.setValidateColumns(new String[] { "BranchCode" });
+	}
+
+	public void onFulfill$branch(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = branch.getObject();
+		if (dataObject instanceof String) {
+			this.branch.setValue("");
+			this.branch.setDescription("");
+		} else {
+			BankBranch details = (BankBranch) dataObject;
+			if (details != null) {
+				this.branch.setValue(String.valueOf(details.getBranchCode()));
+				this.branch.setDescription(details.getBranchDesc());
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSearch(Event event) {
@@ -241,7 +268,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		String branch = this.branch.getValue();
 		if (StringUtils.isNotEmpty(branch)) {
-			search.getFilters().add(new Filter("gl.Branch", branch, this.branchSort.getSelectedIndex()));
+			search.getFilters().add(new Filter("gl.FinBranch", branch, this.branchSort.getSelectedIndex()));
 		}
 
 		String coreBankId = this.coreBankID.getValue();

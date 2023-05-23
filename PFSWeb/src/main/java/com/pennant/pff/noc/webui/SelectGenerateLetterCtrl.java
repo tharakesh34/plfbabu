@@ -23,7 +23,6 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.NOCConstants;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
@@ -31,7 +30,6 @@ import com.pennant.pff.noc.service.GenerateLetterService;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.core.util.LoanCancelationUtil;
 
 public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
@@ -107,18 +105,22 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		this.generateLetter.setFinID(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinID());
-		List<LoanTypeLetterMapping> letterMapping = generateLetterService.getFinTypeMap(fm.getFinType());
 
 		String ltrType = this.letterType.getValue();
 
-		if (NOCConstants.TYPE_CANCLTR.equals(ltrType)) {
-			if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())
-					|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
-					|| FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
-				MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
-						+ " for ".concat(this.finReference.getValue()));
-				return false;
-			}
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
+				&& !this.generateLetter.getLetterType().equals("CANCELLATION")) {
+			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
+					+ " for ".concat(this.finReference.getValue()));
+			return false;
+		}
+
+		if ((FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
+				&& (this.generateLetter.getLetterType().equals("NOC")
+						|| this.generateLetter.getLetterType().equals("CLOSURE")))) {
+			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
+					+ " for ".concat(this.finReference.getValue()));
+			return false;
 		}
 
 		if (fm.isFinIsActive() && fm.getClosingStatus() == null) {
@@ -126,11 +128,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
-		if (LoanCancelationUtil.LOAN_CANCEL_REBOOK
-				.equals(generateLetterService.getCanceltype(this.finReference.getValue()))) {
-			MessageUtil.showError("Cancelled and Rebooked Loan's are not allowed to Generate Letter");
-			return false;
-		}
+		List<LoanTypeLetterMapping> letterMapping = generateLetterService.getFinTypeMap(fm.getFinType());
 
 		/*
 		 * if (CollectionUtils.isEmpty(letterMapping)) {
