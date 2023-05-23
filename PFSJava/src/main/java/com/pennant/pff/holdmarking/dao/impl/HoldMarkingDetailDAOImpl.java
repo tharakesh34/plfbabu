@@ -107,9 +107,9 @@ public class HoldMarkingDetailDAOImpl extends SequenceDao<HoldMarkingDetail> imp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" hmd.HoldID, hmd.FinID, hmd.FinReference, hmd.HoldType, hmd.Marking");
 		sql.append(",hmh.HoldAmount, hmh.ReleaseAmount, hmh.Balance, hmd.MovementDate");
-		sql.append(",hmh.AccountNumber, hmd.Status,hmd.HoldReleaseReason, hmh.HoldReference");
+		sql.append(",hmh.AccountNumber, hmd.Status,hmd.HoldReleaseReason, hmh.HoldReference, hmd.Amount");
 		sql.append(" From Hold_Marking_Details hmd  ");
-		sql.append(" Left Join HOLD_MARKING_HEADER hmh on hmd.FinReference = hmh.FinReference");
+		sql.append(" Left Join HOLD_MARKING_HEADER hmh on hmd.HoldID = hmh.HoldID");
 		Object[] args = null;
 		if (!StringUtils.isEmpty(reference)) {
 			sql.append(" Where hmd.FinReference =?");
@@ -138,6 +138,7 @@ public class HoldMarkingDetailDAOImpl extends SequenceDao<HoldMarkingDetail> imp
 				hmd.setStatus(rs.getString("Status"));
 				hmd.setHoldReleaseReason(rs.getString("HoldReleaseReason"));
 				hmd.setHoldReference(rs.getLong("HoldReference"));
+				hmd.setAmount(rs.getBigDecimal("Amount"));
 
 				return hmd;
 			}, args);
