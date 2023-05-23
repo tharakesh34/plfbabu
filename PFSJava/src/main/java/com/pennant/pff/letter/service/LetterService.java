@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
+import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -67,6 +70,7 @@ public class LetterService {
 	private FinanceEnquiryService financeEnquiryService;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private BranchDAO branchDAO;
 
 	public void logForAutoLetter(FinanceMain fm, Date appDate) {
 		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
@@ -138,9 +142,7 @@ public class LetterService {
 
 		setData(loanLetter);
 
-		String finBranch = loanLetter.getFinBranch();
-		String finType = loanLetter.getFinType();
-		loanLetter.setServiceBranch(autoLetterGenerationDAO.getServiceBranch(finType, finBranch));
+		setServiceBranchData(loanLetter);
 		loanLetter.setEventProperties(autoLetterGenerationDAO.getEventProperties("CSD_STORAGE"));
 
 		setLetterName(loanLetter);
@@ -175,6 +177,27 @@ public class LetterService {
 		} catch (Exception e) {
 			throw new AppException("LetterService", e);
 		}
+	}
+
+	private void setServiceBranchData(LoanLetter loanLetter) {
+		String finBranch = loanLetter.getFinBranch();
+		String finType = loanLetter.getFinType();
+
+		ServiceBranch serviceBranch = autoLetterGenerationDAO.getServiceBranch(finType, finBranch);
+
+		loanLetter.setServiceBranch(serviceBranch);
+		loanLetter.setCsbCode(serviceBranch.getCode());
+		loanLetter.setCsbDescription(serviceBranch.getDescription());
+		loanLetter.setCsbHouseNo(serviceBranch.getOfcOrHouseNum());
+		loanLetter.setCsbFlatNo(serviceBranch.getFlatNum());
+		loanLetter.setCsbStreet(serviceBranch.getStreet());
+		loanLetter.setCsbAddrL1(serviceBranch.getAddrLine1());
+		loanLetter.setCsbAddrL2(serviceBranch.getAddrLine2());
+		loanLetter.setCsbPoBox(serviceBranch.getPoBox());
+		loanLetter.setCsbCounty(serviceBranch.getCountry());
+		loanLetter.setCsbCity(serviceBranch.getCity());
+		loanLetter.setCsbPinCode(serviceBranch.getPinCode());
+		loanLetter.setCsbFolderPath(serviceBranch.getFolderPath());
 	}
 
 	public void sendEmail(LoanLetter letter) {
@@ -345,6 +368,41 @@ public class LetterService {
 			letter.setEmail(customerEMail.getCustEMail());
 		}
 
+		List<CustomerAddres> customerAddresList = fd.getCustomerDetails().getAddressList();
+
+		if (!customerAddresList.isEmpty()) {
+			CustomerAddres customerAddres = customerAddresList.get(0);
+
+			letter.setCustCountry(customerAddres.getCustAddrCountry());
+			letter.setCustFlatNo(customerAddres.getCustFlatNbr());
+			letter.setCustLandMark(customerAddres.getCustAddrLine1());
+			letter.setCustCareOf(customerAddres.getCustAddrLine3());
+			letter.setCustDistrict(customerAddres.getCustDistrict());
+			letter.setCustSubDistrict(customerAddres.getCustAddrLine4());
+			letter.setCustHouseBullingNo(customerAddres.getCustAddrHNbr());
+			letter.setCustLocalty(customerAddres.getCustAddrLine2());
+			letter.setCustPoBox(customerAddres.getCustPOBox());
+			letter.setCustState(customerAddres.getCustAddrProvince());
+			letter.setCustPinCode(customerAddres.getCustAddrZIP());
+			letter.setCustStreet(customerAddres.getCustAddrStreet());
+		}
+
+		Branch branch = branchDAO.getBranchById(letter.getFinBranch(), "_AView");
+		if (branch != null) {
+			letter.setFbCode(branch.getBranchCode());
+			letter.setFbDescription(branch.getBranchDesc());
+			letter.setFbCounty(branch.getBranchCountry());
+			letter.setFbCity(branch.getBranchCity());
+			letter.setFbFax(branch.getBranchFax());
+			letter.setFbHouseNo(branch.getBranchAddrHNbr());
+			letter.setFbPoBox(branch.getBranchPOBox());
+			letter.setFbStreet(branch.getBranchAddrStreet());
+			letter.setFbTelePhone(branch.getBranchTel());
+			letter.setFbFlatNo(branch.getBranchFlatNbr());
+			letter.setFbState(branch.getLovDescBranchProvinceName());
+
+		}
+
 	}
 
 	public void createAdvise(LoanLetter letter) {
@@ -424,6 +482,11 @@ public class LetterService {
 	@Autowired
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	@Autowired
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
 	}
 
 }

@@ -76,6 +76,7 @@ public class LoanLetter implements Serializable {
 	private String custPinCode;
 	private String custPoBox;
 	private String custCountry;
+	private String custSubDistrict;
 
 	private String csbCode;
 	private String csbDescription;
@@ -91,6 +92,7 @@ public class LoanLetter implements Serializable {
 	private String csbPinCode;
 	private String csbTelePhone;
 	private String csbFax;
+	private String csbFolderPath;
 
 	private String fbCode;
 	private String fbDescription;
@@ -951,6 +953,22 @@ public class LoanLetter implements Serializable {
 
 	public void setLeterSeqNo(String leterSeqNo) {
 		this.leterSeqNo = leterSeqNo;
+	}
+
+	public String getCsbFolderPath() {
+		return csbFolderPath;
+	}
+
+	public void setCsbFolderPath(String csbFolderPath) {
+		this.csbFolderPath = csbFolderPath;
+	}
+
+	public String getCustSubDistrict() {
+		return custSubDistrict;
+	}
+
+	public void setCustSubDistrict(String custSubDistrict) {
+		this.custSubDistrict = custSubDistrict;
 	}
 
 }
