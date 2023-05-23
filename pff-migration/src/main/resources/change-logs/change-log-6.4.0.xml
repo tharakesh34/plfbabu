@@ -19727,6 +19727,24 @@
 	<changeSet id="ST#15956.5.0" author="NagaVamsi.P">
 		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="FeeTypeId"
 			newColumnName="FeeID" />
-	</changeSet>		
+	</changeSet>
+		
+	<changeSet id="ST#1561.37" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual_Temp">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="CoreBankId" type="varchar(50)" />
+			<column name="CustCIF" type="varchar(13)" />
+			<column name="FinBranch" type="varchar(13)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.39" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual">
+			<column name="FinReference" type="varchar(20)" />
+			<column name="CoreBankId" type="varchar(50)" />
+			<column name="CustCIF" type="varchar(13)" />
+			<column name="FinBranch" type="varchar(13)"/>
+		</addColumn>
+	</changeSet>	
 	
 </databaseChangeLog> 
