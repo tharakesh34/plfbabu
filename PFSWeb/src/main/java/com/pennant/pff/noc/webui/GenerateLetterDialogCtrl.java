@@ -460,7 +460,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.branch.setValue(fm.getFinBranch());
 		this.finAmount.setValue(fm.getFinAmount());
 		this.finClosureDate.setValue(fm.getClosedDate());
-		this.sourcingOfcr.setValue(fm.getSourcingBranch());
+		this.sourcingOfcr.setValue(String.valueOf(fm.getAccountsOfficer()));
 		this.letterType.setValue(gl.getLetterType());
 		fillComboBox(this.letterType, gl.getLetterType(), LetterUtil.getLetterTypes(), "");
 		this.closureType.setValue(fm.getClosingStatus());
