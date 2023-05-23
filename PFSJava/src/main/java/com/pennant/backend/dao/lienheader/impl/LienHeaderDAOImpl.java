@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennanttech.model.lien.LienHeader;
@@ -71,24 +72,23 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 		sql.append(" Where LienID = ? and Reference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
+		try {
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 0;
+				ps.setString(++index, lu.getAccountNumber());
+				ps.setString(++index, lu.getMarking());
+				ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
+				ps.setString(++index, lu.getDemarking());
+				ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
+				ps.setString(++index, lu.getLienReference());
+				ps.setBoolean(++index, lu.isLienStatus());
+				ps.setString(++index, lu.getInterfaceStatus());
+				ps.setLong(++index, lu.getLienID());
+				ps.setString(++index, lu.getReference());
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
-			ps.setString(++index, lu.getAccountNumber());
-			ps.setString(++index, lu.getMarking());
-			ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
-			ps.setString(++index, lu.getDemarking());
-			ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
-			ps.setString(++index, lu.getLienReference());
-			ps.setBoolean(++index, lu.isLienStatus());
-			ps.setString(++index, lu.getInterfaceStatus());
-			ps.setLong(++index, lu.getLienID());
-			ps.setString(++index, lu.getReference());
-
-		});
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
+			});
+		} catch (BadSqlGrammarException e) {
+			logger.warn(e);
 		}
 	}
 

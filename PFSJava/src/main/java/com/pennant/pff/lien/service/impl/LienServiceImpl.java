@@ -85,10 +85,9 @@ public class LienServiceImpl implements LienService {
 			headerID = lienHeaderDAO.save(lh);
 		} else {
 			headerID = lh.getId();
-			if (isMandate) {
-				fmBef = fm.getBefImage();
-
-				if (fmBef != null && InstrumentType.isSI(fmBef.getFinRepayMethod())) {
+			fmBef = fm.getBefImage();
+			if (isMandate && fmBef != null) {
+				if (InstrumentType.isSI(fmBef.getFinRepayMethod())) {
 					lh.setLienStatus(false);
 					lh.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
 					lh.setDemarking(Labels.getLabel("label_Lien_Type_Auto"));
@@ -151,6 +150,7 @@ public class LienServiceImpl implements LienService {
 					}
 					setLienMarkStatus(lu, fm.getModuleDefiner());
 					lienDetailsDAO.update(lu);
+
 				}
 				return;
 			} else if (RequestSource.UPLOAD.name().equals(fm.getFinSourceID())) {
@@ -214,7 +214,8 @@ public class LienServiceImpl implements LienService {
 				continue;
 			}
 
-			if ((Labels.getLabel("label_Lien_Type_Manual")).equals(lh.getMarking())) {
+			if ((Labels.getLabel("label_Lien_Type_Manual")).equals(lh.getMarking())
+					&& !FinServiceEvent.CANCELFIN.equals(fm.getModuleDefiner())) {
 				continue;
 			}
 
