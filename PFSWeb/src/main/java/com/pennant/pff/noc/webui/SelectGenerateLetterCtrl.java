@@ -149,7 +149,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (StringUtils.isEmpty(this.letterType.getValue())) {
+			if ("#".equals(getComboboxValue(this.letterType))) {
 				throw new WrongValueException(this.letterType, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_GenerateLetterDialog_LetterType") }));
 
