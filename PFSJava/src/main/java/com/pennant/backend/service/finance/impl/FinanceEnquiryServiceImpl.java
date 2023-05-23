@@ -187,7 +187,7 @@ public class FinanceEnquiryServiceImpl implements FinanceEnquiryService {
 		return LoanClosureCalculator.computeClosureAmount(receiptDTO, true);
 	}
 
-	public ReceiptDTO prepareReceiptDTO(FinanceDetail fd) {
+	private ReceiptDTO prepareReceiptDTO(FinanceDetail fd) {
 		Date appDate = SysParamUtil.getAppDate();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
