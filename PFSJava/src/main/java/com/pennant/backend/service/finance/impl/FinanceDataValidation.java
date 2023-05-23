@@ -1450,6 +1450,23 @@ public class FinanceDataValidation {
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
 				}
 			}
+
+			if (!FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+				BigDecimal oDminamount = odPenalRate.getOdMinAmount();
+				if (oDminamount.compareTo(BigDecimal.ZERO) < 0 || oDminamount.compareTo(BigDecimal.ZERO) > 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "ODMinAmount is allowed only when odChargeType is P or M";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
+				}
+			}
+
+			if (FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
+				if (odPenalRate.getOdMinAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = " Negative Values are not allowed for ODMinAmount ";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90505", valueParm)));
+				}
+			}
 		}
 	}
 
