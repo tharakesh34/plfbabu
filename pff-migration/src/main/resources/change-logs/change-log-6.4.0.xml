@@ -19719,6 +19719,14 @@
 			<column name="GeneratedDate" type="datetime" />
 		</createIndex>
 	</changeSet>
-			
+	
+	<changeSet id="ST#15956.4.9" author="NagaVamsi.P">
+		<renameColumn tableName="LOAN_LETTERS" oldColumnName="FeeTypeId" newColumnName="FeeID" />
+	</changeSet>
+	
+	<changeSet id="ST#15956.5.0" author="NagaVamsi.P">
+		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="FeeTypeId"
+			newColumnName="FeeID" />
+	</changeSet>		
 	
 </databaseChangeLog> 

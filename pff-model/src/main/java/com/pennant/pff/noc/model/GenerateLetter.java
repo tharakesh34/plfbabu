@@ -17,7 +17,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String finReference;
 	private String letterType;
 	private String requestType;
-	private Long feeTypeID;
+	private Long feeID;
 	private Date createdDate;
 	private Date createdOn;
 	private long createdBy;
@@ -122,12 +122,12 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.requestType = requestType;
 	}
 
-	public Long getFeeTypeID() {
-		return feeTypeID;
+	public Long getFeeID() {
+		return feeID;
 	}
 
-	public void setFeeTypeID(Long feeTypeID) {
-		this.feeTypeID = feeTypeID;
+	public void setFeeID(Long feeID) {
+		this.feeID = feeID;
 	}
 
 	public Date getCreatedDate() {

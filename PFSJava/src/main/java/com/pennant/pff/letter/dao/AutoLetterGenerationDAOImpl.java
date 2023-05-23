@@ -21,7 +21,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	public void save(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTERS_STAGE");
 		sql.append("(FinID, RequestType, LetterType");
-		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer, FeeTypeId)");
+		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer, FeeID)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -37,7 +37,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
 				ps.setLong(++index, gl.getAgreementTemplate());
 				ps.setString(++index, gl.getModeofTransfer());
-				ps.setLong(++index, gl.getFeeTypeID());
+				ps.setLong(++index, gl.getFeeID());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -48,7 +48,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	public GenerateLetter getLetter(long id) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, RequestType, LetterType");
-		sql.append(", AgreementTemplate, FeeTypeID");
+		sql.append(", AgreementTemplate, FeeID");
 		sql.append(", ModeofTransfer, EmailTemplate");
 		sql.append(", CreatedDate");
 		sql.append(" From LOAN_LETTERS_STAGE ");
@@ -65,7 +65,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				generateLetter.setRequestType(rs.getString("RequestType"));
 				generateLetter.setLetterType(rs.getString("LetterType"));
 				generateLetter.setAgreementTemplate(rs.getLong("AgreementTemplate"));
-				generateLetter.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
+				generateLetter.setFeeID(JdbcUtil.getLong(rs.getObject("FeeID")));
 				generateLetter.setModeofTransfer(rs.getString("ModeofTransfer"));
 				generateLetter.setEmailTemplate(rs.getLong("EmailTemplate"));
 				generateLetter.setCreatedDate(rs.getDate("CreatedDate"));
@@ -81,7 +81,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	@Override
 	public void update(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
-		sql.append(" Set FeeTypeId = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
+		sql.append(" Set FeeID = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
 		sql.append(", EmailNotificationId = ?, Status = ?, Remarks = ?");
 		sql.append(" Where Id = ?");
 
@@ -91,7 +91,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setObject(++index, JdbcUtil.getLong(gl.getFeeTypeID()));
+				ps.setObject(++index, JdbcUtil.getLong(gl.getFeeID()));
 				ps.setInt(++index, gl.getGenerated());
 				ps.setDate(++index, JdbcUtil.getDate(gl.getGeneratedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));

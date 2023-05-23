@@ -875,4 +875,21 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			return fee;
 		});
 	}
+
+	@Override
+	public FinFeeDetail getFinFeeDetail(long feeID) {
+		StringBuilder sql = getSelectQuery(false, "");
+		sql.append(" Where FeeID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper("", false);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, feeID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }

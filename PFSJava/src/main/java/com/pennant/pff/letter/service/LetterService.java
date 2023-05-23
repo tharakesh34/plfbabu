@@ -2,6 +2,7 @@ package com.pennant.pff.letter.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,17 +15,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.aspose.words.SaveFormat;
 import com.pennant.app.util.PathUtil;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.customermasters.CustomerEMail;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.finance.FinanceEnquiryService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.document.generator.TemplateEngine;
+import com.pennant.pff.fee.AdviseType;
 import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
@@ -44,6 +51,7 @@ import com.pennanttech.pennapps.notification.email.EmailEngine;
 import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
@@ -57,6 +65,8 @@ public class LetterService {
 	private MailTemplateDAO mailTemplateDAO;
 	private NotificationService notificationService;
 	private FinanceEnquiryService financeEnquiryService;
+	private FinFeeDetailDAO finFeeDetailDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	public void logForAutoLetter(FinanceMain fm, Date appDate) {
 		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
@@ -256,7 +266,7 @@ public class LetterService {
 
 		long letterID = letter.getId();
 		gl.setId(letterID);
-		gl.setFeeTypeID(letter.getFeeTypeID());
+		gl.setFeeID(letter.getFeeID());
 		gl.setGeneratedDate(letter.getAppDate());
 		gl.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
 		gl.setAdviseID(letter.getAdviseID());
@@ -336,6 +346,40 @@ public class LetterService {
 
 	}
 
+	public void createAdvise(LoanLetter letter) {
+		logger.debug(Literal.ENTERING);
+
+		Long feetID = letter.getFeeID();
+
+		if (feetID == null) {
+			return;
+		}
+
+		FinFeeDetail finFeeDetail = finFeeDetailDAO.getFinFeeDetail(feetID);
+
+		BigDecimal remainingFee = finFeeDetail.getRemainingFee();
+
+		ManualAdvise manualAdvise = new ManualAdvise();
+		manualAdvise.setAdviseID(Long.MIN_VALUE);
+		manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
+		manualAdvise.setFinReference(letter.getFinReference());
+		manualAdvise.setFeeTypeID(finFeeDetail.getFeeTypeID());
+		manualAdvise.setAdviseAmount(remainingFee);
+		manualAdvise.setRemarks("Advise For " + letter.getLetterType() + " Letter Generation Charges");
+		manualAdvise.setValueDate(letter.getAppDate());
+		manualAdvise.setPostDate(letter.getAppDate());
+		manualAdvise.setBalanceAmt(remainingFee);
+
+		manualAdvise.setVersion(0);
+		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		manualAdvise.setWorkflowId(0);
+
+		manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	@Autowired
 	public void setLoanTypeLetterMappingDAO(LoanTypeLetterMappingDAO loanTypeLetterMappingDAO) {
 		this.loanTypeLetterMappingDAO = loanTypeLetterMappingDAO;
@@ -369,6 +413,16 @@ public class LetterService {
 	@Autowired
 	public void setFinanceEnquiryService(FinanceEnquiryService financeEnquiryService) {
 		this.financeEnquiryService = financeEnquiryService;
+	}
+
+	@Autowired
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 }

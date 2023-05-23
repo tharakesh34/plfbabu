@@ -241,7 +241,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		if (CollectionUtils.isNotEmpty(fees)) {
 			for (FinFeeDetail fee : fees) {
 				fee.setFeeID(finFeeDetailDAO.save(fee, false, ""));
-				gl.setFeeTypeID(fee.getFeeID());
+				gl.setFeeID(fee.getFeeID());
 			}
 		}
 	}
