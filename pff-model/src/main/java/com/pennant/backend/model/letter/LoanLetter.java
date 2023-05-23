@@ -125,7 +125,7 @@ public class LoanLetter implements Serializable {
 	private String statusOfpreviousletters;
 	private String closureDate;
 	private String cancelDate;
-	private String leterSeqNo;
+	private String letterSeqNo;
 
 	public LoanLetter() {
 		super();
@@ -947,12 +947,12 @@ public class LoanLetter implements Serializable {
 		this.cancelDate = cancelDate;
 	}
 
-	public String getLeterSeqNo() {
-		return leterSeqNo;
+	public String getLetterSeqNo() {
+		return letterSeqNo;
 	}
 
-	public void setLeterSeqNo(String leterSeqNo) {
-		this.leterSeqNo = leterSeqNo;
+	public void setLetterSeqNo(String letterSeqNo) {
+		this.letterSeqNo = letterSeqNo;
 	}
 
 	public String getCsbFolderPath() {

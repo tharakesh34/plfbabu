@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,9 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -137,7 +140,7 @@ public class LetterService {
 		LetterMode letterMode = LetterMode.getMode(loanLetter.getLetterMode());
 
 		if (letterMode == LetterMode.EMAIL) {
-			loanLetter.setMailTemplate(mailTemplateDAO.getMailTemplateById(loanLetter.getEmailTemplate(), "_AView"));
+			loanLetter.setMailTemplate(mailTemplateDAO.getMailTemplateById(emailtemplateId, "_AView"));
 		}
 
 		setData(loanLetter);
@@ -328,10 +331,14 @@ public class LetterService {
 			break;
 		}
 
-		letter.setSequence(autoLetterGenerationDAO.getNextSequence(letter.getFinID(), letterType));
+		int seqNo = autoLetterGenerationDAO.getNextSequence(letter.getFinID(), letterType);
+		String letterSeqNo = StringUtils.leftPad(String.valueOf(seqNo), 3, "0");
+
+		letter.setSequence(seqNo);
+		letter.setLetterSeqNo(letterSeqNo);
 
 		builder.append(DateUtil.format(appDate, "ddMMyyyy"));
-		builder.append(letter.getSequence());
+		builder.append(letterSeqNo);
 		builder.append(".");
 
 		int saveFormat = letter.getSaveFormat();
@@ -356,50 +363,57 @@ public class LetterService {
 		letter.setCustFullName(fm.getLoanName());
 		letter.setFinStartDate(DateUtil.format(fm.getFinStartDate(), DateFormat.LONG_DATE));
 		letter.setAppDate(DateUtil.format(letter.getBusinessDate(), DateFormat.LONG_DATE));
+		letter.setClosureDate(DateUtil.format(fm.getClosedDate(), DateFormat.LONG_DATE));
 
 		letter.setFinBranch(fm.getFinBranch());
 		letter.setFinType(fm.getFinType());
 		letter.setFinTypeDesc(fm.getLovDescFinTypeName());
 
-		List<CustomerEMail> customerEMailList = fd.getCustomerDetails().getCustomerEMailList();
+		CustomerDetails customerDetails = fd.getCustomerDetails();
+		Customer customer = customerDetails.getCustomer();
+
+		letter.setSalutation(StringUtils.trimToEmpty(customer.getCustGenderCode()));
+		letter.setCustShrtName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+
+		List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
 
 		if (!customerEMailList.isEmpty()) {
 			CustomerEMail customerEMail = customerEMailList.get(0);
 			letter.setEmail(customerEMail.getCustEMail());
 		}
 
-		List<CustomerAddres> customerAddresList = fd.getCustomerDetails().getAddressList();
+		List<CustomerAddres> customerAddresList = customerDetails.getAddressList();
 
 		if (!customerAddresList.isEmpty()) {
 			CustomerAddres customerAddres = customerAddresList.get(0);
 
-			letter.setCustCountry(customerAddres.getCustAddrCountry());
-			letter.setCustFlatNo(customerAddres.getCustFlatNbr());
-			letter.setCustLandMark(customerAddres.getCustAddrLine1());
-			letter.setCustCareOf(customerAddres.getCustAddrLine3());
-			letter.setCustDistrict(customerAddres.getCustDistrict());
-			letter.setCustSubDistrict(customerAddres.getCustAddrLine4());
-			letter.setCustHouseBullingNo(customerAddres.getCustAddrHNbr());
-			letter.setCustLocalty(customerAddres.getCustAddrLine2());
-			letter.setCustPoBox(customerAddres.getCustPOBox());
-			letter.setCustState(customerAddres.getCustAddrProvince());
-			letter.setCustPinCode(customerAddres.getCustAddrZIP());
-			letter.setCustStreet(customerAddres.getCustAddrStreet());
+			letter.setCustCountry(StringUtils.trimToEmpty(customerAddres.getCustAddrCountry()));
+			letter.setCustFlatNo(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
+			letter.setCustLandMark(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
+			letter.setCustCareOf(StringUtils.trimToEmpty(customerAddres.getCustAddrLine3()));
+			letter.setCustDistrict(StringUtils.trimToEmpty(customerAddres.getCustDistrict()));
+			letter.setCustSubDistrict(StringUtils.trimToEmpty(customerAddres.getCustAddrLine4()));
+			letter.setCustHouseBullingNo(StringUtils.trimToEmpty(customerAddres.getCustAddrHNbr()));
+			letter.setCustLocalty(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
+			letter.setCustPoBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
+			letter.setCustState(StringUtils.trimToEmpty(customerAddres.getCustAddrProvince()));
+			letter.setCustPinCode(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
+			letter.setCustStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
 		}
 
 		Branch branch = branchDAO.getBranchById(letter.getFinBranch(), "_AView");
 		if (branch != null) {
-			letter.setFbCode(branch.getBranchCode());
-			letter.setFbDescription(branch.getBranchDesc());
-			letter.setFbCounty(branch.getBranchCountry());
-			letter.setFbCity(branch.getBranchCity());
-			letter.setFbFax(branch.getBranchFax());
-			letter.setFbHouseNo(branch.getBranchAddrHNbr());
-			letter.setFbPoBox(branch.getBranchPOBox());
-			letter.setFbStreet(branch.getBranchAddrStreet());
-			letter.setFbTelePhone(branch.getBranchTel());
-			letter.setFbFlatNo(branch.getBranchFlatNbr());
-			letter.setFbState(branch.getLovDescBranchProvinceName());
+			letter.setFbCode(StringUtils.trimToEmpty(branch.getBranchCode()));
+			letter.setFbDescription(StringUtils.trimToEmpty(branch.getBranchDesc()));
+			letter.setFbCounty(StringUtils.trimToEmpty(branch.getBranchCountry()));
+			letter.setFbCity(StringUtils.trimToEmpty(branch.getBranchCity()));
+			letter.setFbFax(StringUtils.trimToEmpty(branch.getBranchFax()));
+			letter.setFbHouseNo(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+			letter.setFbPoBox(StringUtils.trimToEmpty(branch.getBranchPOBox()));
+			letter.setFbStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+			letter.setFbTelePhone(StringUtils.trimToEmpty(branch.getBranchTel()));
+			letter.setFbFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+			letter.setFbState(StringUtils.trimToEmpty(branch.getLovDescBranchProvinceName()));
 
 		}
 
