@@ -291,7 +291,7 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generate_Manual");
+		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTER_MANUAL ");
 		sql.append(type.getSuffix());
 		sql.append("(LetterType, FinID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");

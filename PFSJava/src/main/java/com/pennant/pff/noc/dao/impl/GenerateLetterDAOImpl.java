@@ -126,7 +126,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
-		sql.append(" Where not exists (Select 1 From Letter_Generate_Manual_Temp Where ID = gl.ID)) p");
+		sql.append(" Where not exists (Select 1 From Loan_Letter_Manual_Temp Where ID = gl.ID)) p");
 		sql.append(" Where NextRoleCode is null or NextRoleCode = ? or NextRoleCode in (");
 		sql.append(JdbcUtil.getInCondition(roleCodes));
 		sql.append(") order by Id");
@@ -277,7 +277,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
-			gl.setId(getNextValue("SEQ_LOAN_LETTER_MANUAL"));
+			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");

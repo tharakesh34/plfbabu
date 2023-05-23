@@ -200,9 +200,15 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public long getID(Long finID, String letterType, Date generatedDate) {
+	public Long getLetterId(Long finID, String letterType, Date generatedDate) {
 		String sql = "Select ID From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedDate = ? ";
-		return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, generatedDate);
+		logger.debug(Literal.SQL.concat(sql));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, generatedDate);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 
 	}
 }

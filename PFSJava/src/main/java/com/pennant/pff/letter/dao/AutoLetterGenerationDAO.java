@@ -27,6 +27,6 @@ public interface AutoLetterGenerationDAO {
 
 	int getCountBlockedItems(Long finID);
 
-	long getID(Long finID, String letterType, Date generatedDate);
+	Long getLetterId(Long finID, String letterType, Date generatedDate);
 
 }

@@ -119,10 +119,13 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 				header.getUploadDetails().addAll(details);
 
 				for (CourierDetailUpload detail : details) {
-					long id = autoLetterGenerationDAO.getID(detail.getReferenceID(), detail.getLetterType(),
-							detail.getLetterDate());
-					courierDetailUploadDAO.update(detail, id);
 					doValidate(header, detail);
+					Long letterId = validateLetterDetails(detail);
+
+					if (letterId != null) {
+						courierDetailUploadDAO.update(detail, letterId);
+					}
+
 				}
 
 				try {
@@ -137,6 +140,16 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 				}
 			}
 		}).start();
+	}
+
+	private Long validateLetterDetails(CourierDetailUpload detail) {
+		Long letterId = autoLetterGenerationDAO.getLetterId(detail.getReferenceID(), detail.getLetterType(),
+				detail.getLetterDate());
+		if (letterId == null) {
+			setError(detail, CourierDetailUploadError.LCD_008);
+		}
+
+		return letterId;
 	}
 
 	@Override

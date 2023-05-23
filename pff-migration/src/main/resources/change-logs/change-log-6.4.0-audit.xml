@@ -630,4 +630,9 @@
 		</createTable>
 	</changeSet>
 	
+	
+	<changeSet id="ST#1561.34" author="NagaVamsi.P">
+		<renameTable newTableName="ADTLOAN_LETTER_MANUAL" oldTableName="AdtLetter_Generate_Manual" />
+	</changeSet>
+	
 </databaseChangeLog>

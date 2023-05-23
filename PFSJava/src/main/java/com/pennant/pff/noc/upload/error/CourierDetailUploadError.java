@@ -13,7 +13,9 @@ public enum CourierDetailUploadError {
 
 	LCD_006("Invalid data No Record found against Loan Reference, Letter Type, Letter Date."),
 
-	LCD_007("Mode is Configured as Email for the uploaded Loan Reference.");
+	LCD_007("Mode is Configured as Email for the uploaded Loan Reference."),
+
+	LCD_008("Letter Details are not Available");
 
 	private String description;
 
