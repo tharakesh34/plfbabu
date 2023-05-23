@@ -147,6 +147,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 					}
 
 					extReceiptHeader.setStatus(COMPLETED);
+					extReceiptHeader.setWriteResponse(ENABLED);
 					extCollectionReceiptDao.updateExtCollectionReceiptProcessStatus(extReceiptHeader);
 
 				} catch (Exception e) {

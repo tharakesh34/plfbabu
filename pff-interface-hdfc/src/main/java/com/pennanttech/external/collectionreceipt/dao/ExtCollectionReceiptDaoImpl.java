@@ -179,13 +179,14 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public void updateExtCollectionReceiptProcessStatus(CollReceiptHeader collectionReceiptFile) {
 		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_HEADER");
-		sql.append(" SET STATUS = ?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
+		sql.append(" SET STATUS = ?, WRITE_RESPONSE=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, collectionReceiptFile.getStatus());
+			ps.setLong(index++, collectionReceiptFile.getWriteResponse());
 			ps.setString(index++, collectionReceiptFile.getErrorCode());
 			ps.setString(index++, collectionReceiptFile.getErrorMessage());
 			ps.setLong(index, collectionReceiptFile.getId());
