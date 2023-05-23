@@ -96,7 +96,9 @@ public class ExcessKnockOffTasklet implements Tasklet {
 
 		while ((customerCoreBank = itemReader.read()) != null) {
 			excessKnockOffService.updateProgress(customerCoreBank, EodConstants.PROGRESS_IN_PROCESS);
+
 			List<ExcessKnockOff> ekflist = excessKnockOffService.loadData(customerCoreBank);
+
 			ekflist.forEach(l1 -> l1.setExcessKnockOffDetails(excessKnockOffService.getStageDataByID(l1.getId())));
 
 			if (CollectionUtils.isEmpty(ekflist)) {
@@ -116,6 +118,7 @@ public class ExcessKnockOffTasklet implements Tasklet {
 					List<FinanceMain> fmList = excessKnockOffService.getLoansbyCustId(custID, coreBankId, finID);
 
 					for (FinanceMain fm : fmList) {
+
 						if (ekf.getBalanceAmt().compareTo(BigDecimal.ZERO) <= 0) {
 							break;
 						}

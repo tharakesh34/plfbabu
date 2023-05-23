@@ -264,6 +264,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		} else {
 			sql.append("Where clk.CustId = ?");
 		}
+		sql.append(" Order By ReferenceID");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -441,7 +442,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 			sql.append("Where c.CustId = ?");
 		}
 		sql.append(" and fm.FinID != ? and fm.FinIsActive = ? and FinID in (Select FinID from ManualAdvise");
-		sql.append(" Where AdviseType = ? and (AdviseAmount-PaidAmount-WaivedAmount) > 0)");
+		sql.append(" Where AdviseType = ? and (AdviseAmount-PaidAmount-WaivedAmount) > 0) Order By FinID ");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 

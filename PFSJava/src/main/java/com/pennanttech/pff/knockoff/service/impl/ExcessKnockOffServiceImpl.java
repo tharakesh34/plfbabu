@@ -83,6 +83,7 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 	@Override
 	public void process(ExcessKnockOff ekf, FinanceMain fm) {
 		AutoKnockOffExcess ake = ExcessKnockOffUtil.getExcessKnockOff(ekf, fm);
+
 		ake.setCrossLoanAutoKnockOff(true);
 
 		ekf.getExcessKnockOffDetails()
@@ -104,18 +105,24 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 				clko.setValueDate(clko.getCrossLoanTransfer().getValueDate());
 				clko.setUserDetails(userDetails);
 				clko.getCrossLoanTransfer().setUserDetails(userDetails);
+
 				crossLoanKnockOffService.executeAccounting(clko.getCrossLoanTransfer());
+
 				clko.setTransferID(this.crossLoanTransferDAO.save(clko.getCrossLoanTransfer(), ""));
+
+				ekf.setBalanceAmt(ekf.getBalanceAmt().subtract(clko.getReceiptAmount()));
+				ekf.setTotalUtilizedAmnt(ekf.getTotalUtilizedAmnt().add(clko.getReceiptAmount()));
+
 				clkoList.add(clko);
 			}
 		}
 
 		if (CollectionUtils.isNotEmpty(clkoList)) {
+
 			this.crossLoanKnockOffDAO.saveCrossLoanHeader(clkoList, "");
+
 		}
 
-		ekf.setBalanceAmt(ekf.getBalanceAmt().subtract(ake.getTotalUtilizedAmnt()));
-		ekf.setTotalUtilizedAmnt(ekf.getTotalUtilizedAmnt().add(ake.getTotalUtilizedAmnt()));
 	}
 
 	@Autowired
