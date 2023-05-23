@@ -39,6 +39,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -440,6 +441,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 				.getFormat(gl.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		FinanceMain fm = gl.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		Customer customer = gl.getFinanceDetail().getCustomerDetails().getCustomer();
 
 		dofillDetails(gl.getFinanceDetail());
 
@@ -448,13 +450,12 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		appendGenerateLetterEnquiryTab(true);
 
 		this.finReference.setValue(fm.getFinReference());
-		this.custCIF.setValue(gl.getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
-		this.custName.setValue(gl.getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
+		this.custCIF.setValue(customer.getCustCIF());
+		this.custName.setValue(customer.getCustShrtName());
 		this.finType.setValue(fm.getFinType());
 		this.finStatus.setValue(fm.getFinStatus());
 		this.finStatusReason.setValue(fm.getFinStsReason());
-
-		this.coreBankID.setValue(fm.getCoreBankId());
+		this.coreBankID.setValue(customer.getCustCoreBank());
 		this.finStartDate.setValue(fm.getFinStartDate());
 		this.branch.setValue(fm.getFinBranch());
 		this.finAmount.setValue(fm.getFinAmount());
