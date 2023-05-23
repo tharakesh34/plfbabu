@@ -20,4 +20,6 @@ public interface CourierDetailUploadDAO {
 	String isValidCourierMode(long finID, String letterType, Date letterDate);
 
 	boolean isValidRecord(long finID, String letterType, Date letterDate);
+
+	void update(CourierDetailUpload cdu, long id);
 }

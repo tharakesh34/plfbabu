@@ -11,7 +11,7 @@ import com.pennant.pff.noc.model.ServiceBranch;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class Letter implements Serializable {
+public class LoanLetter implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long id;
@@ -68,8 +68,9 @@ public class Letter implements Serializable {
 	private MailTemplate mailTemplate;
 	private ServiceBranch serviceBranch;
 	private EventProperties eventProperties;
+	private boolean blocked;
 
-	public Letter() {
+	public LoanLetter() {
 		super();
 	}
 
@@ -479,6 +480,14 @@ public class Letter implements Serializable {
 
 	public void setEventProperties(EventProperties eventProperties) {
 		this.eventProperties = eventProperties;
+	}
+
+	public boolean isBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(boolean blocked) {
+		this.blocked = blocked;
 	}
 
 }

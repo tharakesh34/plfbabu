@@ -1,5 +1,7 @@
 package com.pennant.pff.letter.dao;
 
+import java.util.Date;
+
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.ServiceBranch;
@@ -22,5 +24,9 @@ public interface AutoLetterGenerationDAO {
 	void deleteFromStage(long letterID);
 
 	void moveFormStage(long letterID);
+
+	int getCountBlockedItems(Long finID);
+
+	long getID(Long finID, String letterType, Date generatedDate);
 
 }

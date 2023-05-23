@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionStatus;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.NOCConstants;
+import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.noc.upload.dao.CourierDetailUploadDAO;
 import com.pennant.pff.noc.upload.error.CourierDetailUploadError;
 import com.pennant.pff.noc.upload.model.CourierDetailUpload;
@@ -31,6 +32,7 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 
 	private FinanceMainDAO financeMainDAO;
 	private CourierDetailUploadDAO courierDetailUploadDAO;
+	private AutoLetterGenerationDAO autoLetterGenerationDAO;
 
 	public CourierDetailUploadServiceImpl() {
 		super();
@@ -58,8 +60,8 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 			return;
 		}
 
+		setError(detail, CourierDetailUploadError.LCD_002);
 		if (!fm.isFinIsActive()) {
-			setError(detail, CourierDetailUploadError.LCD_002);
 			return;
 		}
 
@@ -112,10 +114,14 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
+
 				List<CourierDetailUpload> details = courierDetailUploadDAO.getDetails(header.getId());
 				header.getUploadDetails().addAll(details);
 
 				for (CourierDetailUpload detail : details) {
+					autoLetterGenerationDAO.getID(detail.getReferenceID(), detail.getLetterType(),
+							detail.getLetterDate());
+					courierDetailUploadDAO.update(detail, 0);
 					doValidate(header, detail);
 				}
 
@@ -215,6 +221,11 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		default:
 			return false;
 		}
+	}
+
+	@Autowired
+	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
+		this.autoLetterGenerationDAO = autoLetterGenerationDAO;
 	}
 
 	@Override

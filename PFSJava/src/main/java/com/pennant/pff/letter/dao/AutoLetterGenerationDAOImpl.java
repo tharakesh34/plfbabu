@@ -1,5 +1,7 @@
 package com.pennant.pff.letter.dao;
 
+import java.util.Date;
+
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
@@ -17,7 +19,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public void save(GenerateLetter gl) {
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generation_Stage");
+		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTERS_STAGE");
 		sql.append("(FinID, RequestType, LetterType");
 		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
@@ -48,7 +50,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 		sql.append(", AgreementTemplate, FeeTypeID");
 		sql.append(", ModeofTransfer, EmailTemplate");
 		sql.append(", CreatedDate");
-		sql.append(" From Letter_Generation_Stage");
+		sql.append(" From LOAN_LETTERS_STAGE ");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -77,7 +79,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public void update(GenerateLetter gl) {
-		StringBuilder sql = new StringBuilder("Update Letter_Generation_Stage");
+		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
 		sql.append(" Set FeeTypeId = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
 		sql.append(", TrackingID = ?, Status = ?, Remarks = ?");
 		sql.append(" Where Id = ?");
@@ -106,7 +108,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public void moveFormStage(long letterID) {
-		String sql = "Insert Into Letter_Generation Select * from Letter_Generation_Stage Where Id = ?";
+		String sql = "Insert Into LOAN_LETTERS Select * from LOAN_LETTERS_STAGE Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -115,7 +117,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public void deleteFromStage(long letterID) {
-		String sql = "Delete From Letter_Generation_Stage Where Id = ?";
+		String sql = "Delete From LOAN_LETTERS_STAGE Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -150,7 +152,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public int getNextSequence(long finID, LetterType letterType) {
-		String sql = "Select count(FinID)+1 from Letter_Generation Where FinID = ? and LetterType = ?";
+		String sql = "Select count(FinID)+1 from LOAN_LETTERS Where FinID = ? and LetterType = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -188,4 +190,19 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 		}
 	}
 
+	@Override
+	public int getCountBlockedItems(Long finID) {
+		String sql = "Select count(FinID) From Loan_Letter_Blocking Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID);
+	}
+
+	@Override
+	public long getID(Long finID, String letterType, Date generatedDate) {
+		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and GeneratedDate =? ";
+		return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, generatedDate);
+
+	}
 }

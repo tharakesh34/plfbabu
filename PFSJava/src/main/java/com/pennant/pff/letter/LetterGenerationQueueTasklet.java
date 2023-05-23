@@ -10,7 +10,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.eod.step.StepUtil;
 
 public class LetterGenerationQueueTasklet implements Tasklet {
 	private BatchJobQueueDAO ebjqDAO;
@@ -27,13 +26,13 @@ public class LetterGenerationQueueTasklet implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
-
-		long totalRecords = ebjqDAO.prepareQueue(jobQueue);
-
-		StepUtil.LETTER_GENERATION.setTotalRecords(totalRecords);
-
-		logger.info("Queueing preparation for Letter Generation completed with total loans {}", totalRecords);
-
+		/*
+		 * long totalRecords = ebjqDAO.prepareQueue(jobQueue);
+		 * 
+		 * StepUtil.LETTER_GENERATION.setTotalRecords(totalRecords);
+		 * 
+		 * logger.info("Queueing preparation for Letter Generation completed with total loans {}", totalRecords);
+		 */
 		LetterGenerationTasklet.processedCount.set(0);
 		LetterGenerationTasklet.failedCount.set(0);
 

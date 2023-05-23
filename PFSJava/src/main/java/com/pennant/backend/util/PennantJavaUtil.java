@@ -4074,7 +4074,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("GenerateLetter",
 				new ModuleMapping("GenerateLetter", GenerateLetter.class,
-						new String[] { "LETTER_GENERATE_MANUAL", "LETTER_GENERATE_MANUAL" }, masterWF,
+						new String[] { "LOAN_LETTER_MANUAL", "LOAN_LETTER_MANUAL" }, masterWF,
 						new String[] { "Id", "FinID" }, null, 600));
 
 		registerCustomModules();

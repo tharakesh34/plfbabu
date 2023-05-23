@@ -85,8 +85,8 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	protected void doSetProperties() {
 		super.moduleCode = "GenerateLetter";
 		super.pageRightName = "GenerateLetterList";
-		super.tableName = "Letter_Generate_Manual";
-		super.queueTableName = "Letter_Generate_Manual";
+		super.tableName = "Loan_Letter_Manual";
+		super.queueTableName = "Loan_Letter_Manual";
 	}
 
 	public void onCreate$windowGenerateLetterList(Event event) {

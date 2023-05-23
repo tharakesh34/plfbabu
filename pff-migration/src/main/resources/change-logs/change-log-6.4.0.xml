@@ -19614,6 +19614,109 @@
    			 ]]>
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet id="ST#15956.104" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTERS" oldTableName="LETTER_GENERATION" />
+	</changeSet>
+
+	<changeSet id="ST#15956.105" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTERS_STAGE" oldTableName="LETTER_GENERATION_STAGE" />
+	</changeSet>
+
+	<changeSet id="ST#15956.106" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_MANUAL_TEMP" oldTableName="LETTER_GENERATE_MANUAL_TEMP" />
+	</changeSet>
+
+	<changeSet id="ST#15956.107" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_MANUAL" oldTableName="LETTER_GENERATE_MANUAL" />
+	</changeSet>
+
+	<changeSet id="ST#15956.108" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_BLOCKING" oldTableName="LETTER_BLOCKING" />
+	</changeSet>
+
+	<changeSet id="ST#15956.109" author="NagaVamsi.P">
+		<renameTable newTableName="LOAN_LETTER_BLOCKING_LOG" oldTableName="LETTER_BLOCKING_LOG" />
+	</changeSet>
+
+
+	<changeSet id="ST#15956.1" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS">
+			<column name="LetterName" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.2" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS">
+			<column name="LetterLocation" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.3" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS">
+			<column name="CourierAgency" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.4" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS">
+			<column name="DeliveryStatus" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.5" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS">
+			<column name="DeliveryDate" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.6" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS_STAGE">
+			<column name="LetterName" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.7" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS_STAGE">
+			<column name="LetterLocation" type="varchar(500)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.2.8" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS_STAGE">
+			<column name="CourierAgency" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.2.3" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS_STAGE">
+			<column name="DeliveryStatus" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.2.4" author="NagaVamsi.P">
+		<addColumn tableName="LOAN_LETTERS_STAGE">
+			<column name="DeliveryDate" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#15956.4.3" author="NagaVamsi.P">
+		<renameColumn tableName="LOAN_LETTERS" oldColumnName="TRACKINGID" newColumnName="EMAILNOTIFICATIONID" />
+	</changeSet>
+
+	<changeSet id="ST#15956.4.4" author="NagaVamsi.P">
+		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="TRACKINGID"
+			newColumnName="EMAILNOTIFICATIONID" />
+	</changeSet>
+
+	<changeSet id="ST#15956.4.8" author="nagavamsi.p">
+		<createIndex tableName="LOAN_LETTERS_STAGE" indexName="idx_lls_fid_lt_gd" unique="true">
+			<column name="FinID" type="bigint" />
+			<column name="LetterType" type="varchar(20)" />
+			<column name="GeneratedDate" type="datetime" />
+		</createIndex>
+	</changeSet>
 			
 	
 </databaseChangeLog> 

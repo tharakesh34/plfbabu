@@ -20,7 +20,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.letter.Letter;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
@@ -36,6 +36,7 @@ public class LetterGenerationTasklet implements Tasklet {
 	private static final String START_MSG = "Letter Generation Process started at {} for the APP_DATE {} with THREAD_ID {}";
 	private static final String FAILED_MSG = "Letter Generation Process failed on {} for the Presentment-ID {}";
 	private static final String SUCCESS_MSG = "Letter Generation Process completed at {} for the APP_DATE {} with THREAD_ID {}";
+	private static final String BLOCKED_MSG = "Letter Generation Blocked";
 
 	private BatchJobQueueDAO ebjqDAO;
 
@@ -134,20 +135,25 @@ public class LetterGenerationTasklet implements Tasklet {
 	}
 
 	private boolean generateLetter(long letterID, Date appDate) {
-		Letter letter = letterService.generate(letterID, appDate);
+		LoanLetter letter = letterService.generate(letterID, appDate);
 
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		TransactionStatus transactionStatus = this.transactionManager.getTransaction(txDef);
 
 		try {
+			if (letter.isBlocked()) {
+				letter.setGenerated(-1);
+				letter.setStatus("B");
+				letter.setRemarks(BLOCKED_MSG);
+			} else {
+				letterService.sendEmail(letter);
 
-			letterService.sendEmail(letter);
+				letterService.storeLetter(letter);
 
-			letterService.storeLetter(letter);
-
-			letter.setGenerated(1);
-			letter.setStatus("S");
+				letter.setGenerated(1);
+				letter.setStatus("S");
+			}
 
 			letterService.update(letter);
 

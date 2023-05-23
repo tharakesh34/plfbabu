@@ -19,7 +19,7 @@ import com.pennant.backend.model.applicationmaster.AgreementDefinition;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.letter.Letter;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.finance.FinanceEnquiryService;
 import com.pennant.backend.util.FinanceConstants;
@@ -89,13 +89,18 @@ public class LetterService {
 		}
 	}
 
-	public Letter generate(long letterID, Date appDate) {
+	public LoanLetter generate(long letterID, Date appDate) {
+		LoanLetter loanLetter = new LoanLetter();
+
 		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID);
+		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0) {
+			loanLetter.setBlocked(true);
+		}
 
 		LetterType letterType = LetterType.getType(gl.getLetterType());
 
-		if (letterType == null) {
-			return null;
+		if (letterType == null || loanLetter.isBlocked()) {
+			return loanLetter;
 		}
 
 		long templateId = gl.getAgreementTemplate();
@@ -104,31 +109,30 @@ public class LetterService {
 
 		AgreementDefinition ad = agreementDefinitionDAO.getTemplate(templateId);
 
-		Letter letter = new Letter();
-		letter.setId(letterID);
-		letter.setFinID(gl.getFinID());
-		letter.setSaveFormat(SaveFormat.PDF);
-		letter.setLetterDesc(ad.getAggDesc());
-		letter.setLetterType(gl.getLetterType());
-		letter.setLetterMode(gl.getModeofTransfer());
-		letter.setCreatedDate(gl.getCreatedDate());
-		letter.setAppDate(appDate);
-		letter.setEmailTemplate(emailtemplateId);
+		loanLetter.setId(letterID);
+		loanLetter.setFinID(gl.getFinID());
+		loanLetter.setSaveFormat(SaveFormat.PDF);
+		loanLetter.setLetterDesc(ad.getAggDesc());
+		loanLetter.setLetterType(gl.getLetterType());
+		loanLetter.setLetterMode(gl.getModeofTransfer());
+		loanLetter.setCreatedDate(gl.getCreatedDate());
+		loanLetter.setAppDate(appDate);
+		loanLetter.setEmailTemplate(emailtemplateId);
 
-		LetterMode letterMode = LetterMode.getMode(letter.getLetterMode());
+		LetterMode letterMode = LetterMode.getMode(loanLetter.getLetterMode());
 
 		if (letterMode == LetterMode.EMAIL) {
-			letter.setMailTemplate(mailTemplateDAO.getMailTemplateById(letter.getEmailTemplate(), "_AView"));
+			loanLetter.setMailTemplate(mailTemplateDAO.getMailTemplateById(loanLetter.getEmailTemplate(), "_AView"));
 		}
 
-		setData(letter);
+		setData(loanLetter);
 
-		String finBranch = letter.getFinBranch();
-		String finType = letter.getFinType();
-		letter.setServiceBranch(autoLetterGenerationDAO.getServiceBranch(finType, finBranch));
-		letter.setEventProperties(autoLetterGenerationDAO.getEventProperties("CSD_STORAGE"));
+		String finBranch = loanLetter.getFinBranch();
+		String finType = loanLetter.getFinType();
+		loanLetter.setServiceBranch(autoLetterGenerationDAO.getServiceBranch(finType, finBranch));
+		loanLetter.setEventProperties(autoLetterGenerationDAO.getEventProperties("CSD_STORAGE"));
 
-		setLetterName(letter);
+		setLetterName(loanLetter);
 
 		String templatePath = null;
 		switch (LetterType.valueOf(gl.getLetterType())) {
@@ -151,18 +155,18 @@ public class LetterService {
 			TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
 			engine.setTemplate(ad.getAggName().concat(".docx"));
 			engine.loadTemplate();
-			engine.mergeFields(letter);
+			engine.mergeFields(loanLetter);
 
-			engine.getDocument().save(os, letter.getSaveFormat());
-			letter.setContent(os.toByteArray());
+			engine.getDocument().save(os, loanLetter.getSaveFormat());
+			loanLetter.setContent(os.toByteArray());
 
-			return letter;
+			return loanLetter;
 		} catch (Exception e) {
 			throw new AppException("LetterService", e);
 		}
 	}
 
-	public void sendEmail(Letter letter) {
+	public void sendEmail(LoanLetter letter) {
 		MailTemplate mailTemplate = letter.getMailTemplate();
 		if (mailTemplate == null) {
 			return;
@@ -202,7 +206,7 @@ public class LetterService {
 		}
 	}
 
-	public void storeLetter(Letter letter) {
+	public void storeLetter(LoanLetter letter) {
 		LetterMode letterMode = LetterMode.getMode(letter.getLetterMode());
 
 		if (letterMode == null) {
@@ -247,7 +251,7 @@ public class LetterService {
 		}
 	}
 
-	public void update(Letter letter) {
+	public void update(LoanLetter letter) {
 		GenerateLetter gl = new GenerateLetter();
 
 		long letterID = letter.getId();
@@ -268,7 +272,7 @@ public class LetterService {
 
 	}
 
-	private void setLetterName(Letter letter) {
+	private void setLetterName(LoanLetter letter) {
 		Date appDate = letter.getAppDate();
 
 		StringBuilder builder = new StringBuilder();
@@ -309,7 +313,7 @@ public class LetterService {
 
 	}
 
-	private void setData(Letter letter) {
+	private void setData(LoanLetter letter) {
 		FinanceDetail fd = financeEnquiryService.getLoanBasicDetails(letter.getFinID());
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();

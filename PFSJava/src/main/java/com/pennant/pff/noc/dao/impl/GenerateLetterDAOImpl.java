@@ -45,7 +45,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
-		sql.append(" Where not exists (Select 1 From Letter_Generate_Manual_Temp Where Id = gl.Id)) gl");
+		sql.append(" Where not exists (Select 1 From LOAN_LETTER_MANUAL_Temp Where Id = gl.Id)) gl");
 		sql.append(QueryUtil.buildWhereClause(search, value));
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -65,14 +65,14 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(" Finreference, CustAcctHolderName, CustCoreBank, FinBranch, Product, LetterType");
 		sql.append(" From (Select fm.Finreference, cu.Custshrtname CustAcctHolderName, cu.CustCoreBank");
 		sql.append(", fm.FinBranch, ft.fintypedesc Product, LetterType");
-		sql.append(" From Letter_Generate_Manual_Temp gl");
+		sql.append(" From LOAN_LETTER_MANUAL_Temp gl");
 		sql.append(" Left Join FinanceMain fm on fm.FinId = gl.FinId");
 		sql.append(" Left Join RMTFinancetypes ft on ft.fintype = fm.finType");
 		sql.append(" Left Join customers cu on cu.custID = fm.CustID");
 		sql.append(" Union All ");
 		sql.append(" Select fm.Finreference, cu.custshrtname, cu.CustCoreBank, fm.FinBranch");
 		sql.append(", ft.fintypedesc, LetterType");
-		sql.append(" From Letter_Generate_Manual gl");
+		sql.append(" From LOAN_LETTER_MANUAL gl");
 		sql.append(" Left Join FinanceMain fm on fm.FinId = gl.FinId");
 		sql.append(" Left Join RMTFinancetypes ft on ft.fintype = fm.finType");
 		sql.append(" Left Join customers cu on cu.custID = fm.CustID");
@@ -100,7 +100,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(" Union all ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
 		sql.append(" Where gl.Id = ?");
-		sql.append(" and not exists (Select 1 From Letter_Generate_Manual_Temp Where Id = gl.Id)");
+		sql.append(" and not exists (Select 1 From LOAN_LETTER_MANUAL_Temp Where Id = gl.Id)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -199,7 +199,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(", gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy, gl.ApprovedOn");
 		sql.append(", gl.LastMntBy, gl.LastMntOn, gl.RecordStatus, gl.RoleCode");
 		sql.append(", gl.NextRoleCode, gl.TaskId, gl.NextTaskId, gl.RecordType, gl.WorkflowId");
-		sql.append(" From Letter_Generate_Manual").append(tableType.getSuffix()).append(" gl");
+		sql.append(" From Loan_Letter_Manual").append(tableType.getSuffix()).append(" gl");
 		sql.append(" Left Join FinanceMain fm on fm.FinID = gl.FinID");
 		sql.append(" Left Join RMTFinancetypes ft on ft.fintype = fm.finType");
 		sql.append(" Left Join customers cu on cu.custID = fm.CustID");
@@ -253,7 +253,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
-		sql.append(" From Letter_Generation gl");
+		sql.append(" From LOAN_LETTERS gl");
 		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
 		sql.append(" Where FinID = ?");
 
@@ -277,10 +277,10 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public long save(GenerateLetter gl, TableType type) {
 		if (gl.getId() == 0 || gl.getId() == Long.MIN_VALUE) {
-			gl.setId(getNextValue("SEQ_Letter_Generate_Manual"));
+			gl.setId(getNextValue("SEQ_LOAN_LETTER_MANUAL"));
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into Letter_Generate_Manual");
+		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");
 		sql.append(type.getSuffix());
 		sql.append("(LetterType, FinID");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
@@ -321,7 +321,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public void update(GenerateLetter gl, TableType type) {
-		StringBuilder sql = new StringBuilder("Update Letter_Generate_Manual");
+		StringBuilder sql = new StringBuilder("Update Loan_Letter_Manual");
 		sql.append(type.getSuffix());
 		sql.append(" Set LetterType = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
@@ -356,7 +356,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public void delete(GenerateLetter gl, TableType type) {
-		StringBuilder sql = new StringBuilder("Delete From Letter_Generate_Manual");
+		StringBuilder sql = new StringBuilder("Delete From Loan_Letter_Manual");
 		sql.append(type.getSuffix());
 		sql.append(" Where Id = ?");
 

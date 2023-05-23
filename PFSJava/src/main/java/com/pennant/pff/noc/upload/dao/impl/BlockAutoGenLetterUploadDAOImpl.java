@@ -130,7 +130,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 	@Override
 	public boolean isValidateAction(long finid) {
-		String sql = "Select count(FinID) From Letter_Blocking Where FinID = ?";
+		String sql = "Select count(FinID) From Loan_Letter_Blocking Where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -139,7 +139,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 	@Override
 	public void delete(long finid) {
-		String sql = "Delete from Letter_Blocking where FinID = ?";
+		String sql = "Delete from Loan_Letter_Blocking where FinID = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
@@ -148,7 +148,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 	@Override
 	public void save(BlockAutoGenLetterUpload bu) {
-		StringBuilder sql = new StringBuilder("Insert into Letter_Blocking");
+		StringBuilder sql = new StringBuilder("Insert into Loan_Letter_Blocking");
 		sql.append(" (FinID, CreatedOn, Remarks)");
 		sql.append(" Values(?, ?, ?)");
 
@@ -169,7 +169,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 	@Override
 	public void savebyLog(BlockAutoGenLetterUpload bu) {
-		StringBuilder sql = new StringBuilder("Insert into Letter_Blocking_Log");
+		StringBuilder sql = new StringBuilder("Insert into LOAN_LETTER_BLOCKING_LOG");
 		sql.append(" (FinID, BlockType, UpdatedOn)");
 		sql.append(" Values(?, ?, ?)");
 
@@ -191,7 +191,7 @@ public class BlockAutoGenLetterUploadDAOImpl extends SequenceDao<BlockAutoGenLet
 
 	@Override
 	public String getRemarks(Long finID) {
-		String sql = "Select Remarks From Letter_Blocking Where FinID = ?";
+		String sql = "Select Remarks From Loan_Letter_Blocking Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
