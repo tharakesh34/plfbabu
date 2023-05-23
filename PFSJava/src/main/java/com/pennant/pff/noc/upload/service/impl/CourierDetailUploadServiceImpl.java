@@ -119,9 +119,9 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 				header.getUploadDetails().addAll(details);
 
 				for (CourierDetailUpload detail : details) {
-					autoLetterGenerationDAO.getID(detail.getReferenceID(), detail.getLetterType(),
+					long id = autoLetterGenerationDAO.getID(detail.getReferenceID(), detail.getLetterType(),
 							detail.getLetterDate());
-					courierDetailUploadDAO.update(detail, 0);
+					courierDetailUploadDAO.update(detail, id);
 					doValidate(header, detail);
 				}
 

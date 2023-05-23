@@ -180,6 +180,7 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 				ps.setString(++index, cdu.getCourierAgency());
 				ps.setString(++index, cdu.getDeliveryStatus());
 				ps.setDate(++index, JdbcUtil.getDate(cdu.getDeliveryDate()));
+
 				ps.setLong(++index, id);
 
 			});

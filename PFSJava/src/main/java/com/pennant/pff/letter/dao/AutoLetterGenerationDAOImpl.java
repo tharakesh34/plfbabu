@@ -201,7 +201,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public long getID(Long finID, String letterType, Date generatedDate) {
-		String sql = "Select ID From LOAN_LETTERS_STAGE Where FinID = ? and LetterType = ? and GeneratedDate =? ";
+		String sql = "Select ID From LOAN_LETTERS Where FinID = ? and LetterType = ? and GeneratedDate = ? ";
 		return this.jdbcOperations.queryForObject(sql, Long.class, finID, letterType, generatedDate);
 
 	}
