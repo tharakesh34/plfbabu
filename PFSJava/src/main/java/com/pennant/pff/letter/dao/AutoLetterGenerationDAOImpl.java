@@ -37,7 +37,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
 				ps.setLong(++index, gl.getAgreementTemplate());
 				ps.setString(++index, gl.getModeofTransfer());
-				ps.setLong(++index, gl.getFeeID());
+				ps.setObject(++index, gl.getFeeID());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
