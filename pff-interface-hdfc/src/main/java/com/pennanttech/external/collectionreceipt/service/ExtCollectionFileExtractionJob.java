@@ -196,7 +196,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 
 							if (!qualifiedChk.equals(collectionData.getChecksum())) {
 								dataValid = false;
-								errorCode = F401;
+								errorCode = F400;
 								break;
 							}
 						}
@@ -213,7 +213,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 							extReceiptHeader.setExtraction(COMPLETED);
 						} else {
 							// set header status as error
-							extReceiptHeader.setErrorCode(F401);
+							extReceiptHeader.setErrorCode(F400);
 							extReceiptHeader.setExtraction(COMPLETED);
 							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F401));
 						}
