@@ -77,7 +77,6 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.model.ValueLabel;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FeePaymentDetail;
@@ -94,7 +93,6 @@ import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -3128,26 +3126,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		feeDetails.setPaidAmount(feeDetails.getPaidAmountOriginal().add(feeDetails.getPaidAmountGST())
 				.subtract(feeDetails.getPaidTDS()));
 
-	}
-
-	/**
-	 * @param financeMain
-	 * @param customer
-	 * @param financeType
-	 * @return
-	 */
-	private Map<String, Object> getDataMap(FinanceMain financeMain, Customer customer, FinanceType financeType) {
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		if (financeMain != null) {
-			dataMap.putAll(financeMain.getDeclaredFieldValues());
-		}
-		if (customer != null) {
-			dataMap.putAll(customer.getDeclaredFieldValues());
-		}
-		if (financeType != null) {
-			dataMap.putAll(financeType.getDeclaredFieldValues());
-		}
-		return dataMap;
 	}
 
 	public void doReSetDataChanged() {

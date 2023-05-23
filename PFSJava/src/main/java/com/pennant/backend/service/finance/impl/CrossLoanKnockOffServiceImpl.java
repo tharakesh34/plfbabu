@@ -44,7 +44,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.constants.ReceiptMode;
-import com.pennanttech.pff.receipt.upload.ReceiptDataValidator;
 
 public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockOff>
 		implements CrossLoanKnockOffService {
@@ -57,7 +56,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private FinanceMainService financeMainService;
 	private ReceiptService receiptService;
-	private ReceiptDataValidator receiptDataValidator;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private PaymentDetailDAO paymentDetailDAO;
 
@@ -528,11 +526,6 @@ public class CrossLoanKnockOffServiceImpl extends GenericService<CrossLoanKnockO
 	@Autowired
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	@Autowired
-	public void setReceiptDataValidator(ReceiptDataValidator receiptDataValidator) {
-		this.receiptDataValidator = receiptDataValidator;
 	}
 
 	@Autowired

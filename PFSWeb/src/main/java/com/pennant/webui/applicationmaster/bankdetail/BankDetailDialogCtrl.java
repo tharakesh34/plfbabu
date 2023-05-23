@@ -271,8 +271,6 @@ public class BankDetailDialogCtrl extends GFCBaseCtrl<BankDetail> {
 	public void doWriteComponentsToBean(BankDetail aBankDetail) {
 		logger.debug(Literal.ENTERING);
 
-		BankDetail bankDetail = bankDetailService.getAccNoLengths(this.bankDetail.getBankCode());
-
 		doSetLOVValidation();
 
 		List<WrongValueException> wve = new ArrayList<>();
