@@ -158,7 +158,13 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 				index++;
 
 				if (index == 23) {
-					throw new AppException("Fee Types are exceeded the limit");
+					record.addValue("ERRORCODE", "9999");
+					record.addValue("ERRORDESC", "Fee Types are exceeded the limit");
+
+					record.addValue("STATUS", "F");
+					record.addValue("PROGRESS", EodConstants.PROGRESS_FAILED);
+
+					continue;
 				}
 			}
 
