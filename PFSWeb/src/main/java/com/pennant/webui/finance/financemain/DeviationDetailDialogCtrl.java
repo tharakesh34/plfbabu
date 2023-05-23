@@ -187,7 +187,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	private void doCheckRight() {
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		boolean alloowd = deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
+		deviationHelper.checkInputAllowed(financeMain.getFinType(), roleCode);
 
 		this.btnNew_ManualDeviation.setVisible(true);
 		this.btnApprove.setVisible(getUserWorkspace().isAllowed("btn_DeviationDetailDialog_btnApprove"));

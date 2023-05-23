@@ -3891,8 +3891,8 @@ public class PennantStaticListUtil {
 		return queryModuleStatusList;
 	}
 
-	public void OverideBranchTypeList(List<ValueLabel> branchType) {
-		this.branchType = branchType;
+	public void OverideBranchTypeList(List<ValueLabel> valueLabels) {
+		branchType = valueLabels;
 	}
 
 	private static List<ValueLabel> documentTypesList;

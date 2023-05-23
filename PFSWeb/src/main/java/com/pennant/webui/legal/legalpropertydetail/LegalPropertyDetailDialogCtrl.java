@@ -896,7 +896,6 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 		final LegalPropertyDetail aLegalPropertyDetail = new LegalPropertyDetail();
 		BeanUtils.copyProperties(this.legalPropertyDetail, aLegalPropertyDetail);
-		String tranType = PennantConstants.TRAN_WF;
 
 		doDelete(aLegalPropertyDetail.getPropertyType(), aLegalPropertyDetail);
 

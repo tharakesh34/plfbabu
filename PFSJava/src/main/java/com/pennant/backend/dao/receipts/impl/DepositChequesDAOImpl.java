@@ -211,8 +211,6 @@ public class DepositChequesDAOImpl extends SequenceDao<DepositCheques> implement
 
 	@Override
 	public List<DepositCheques> getDepositChequesList(String branchCode) {
-		List<DepositCheques> list;
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptId, Receiptpurpose, ReceiptMode, Remarks, TransactionRef FavourNumber");
 		sql.append(", ReceivedDate, FundingAc, Amount, FinReference, CustShrtName");
