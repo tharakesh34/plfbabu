@@ -49,8 +49,8 @@ public enum CourierStatus {
 
 			courierStatus.add(new ValueLabel(D.getCode(), Labels.getLabel("label_CourierStatus_Delivered")));
 			courierStatus.add(new ValueLabel(T.getCode(), Labels.getLabel("label_CourierStatus_InTransit")));
-			courierStatus.add(new ValueLabel(L.getCode(), Labels.getLabel("label_CourierStatus_Returned")));
-			courierStatus.add(new ValueLabel(R.getCode(), Labels.getLabel("label_CourierStatus_Lost")));
+			courierStatus.add(new ValueLabel(R.getCode(), Labels.getLabel("label_CourierStatus_Returned")));
+			courierStatus.add(new ValueLabel(L.getCode(), Labels.getLabel("label_CourierStatus_Lost")));
 		}
 
 		return courierStatus;
