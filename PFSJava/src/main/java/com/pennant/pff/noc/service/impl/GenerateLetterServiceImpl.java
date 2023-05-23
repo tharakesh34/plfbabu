@@ -484,4 +484,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	public void setLoanLetterUploadDAO(LoanLetterUploadDAO loanLetterUploadDAO) {
 		this.loanLetterUploadDAO = loanLetterUploadDAO;
 	}
+
+	@Override
+	public boolean isLetterInitiated(long finID, String letterType) {
+		return generateLetterDAO.isLetterInitiated(finID, letterType);
+	}
 }

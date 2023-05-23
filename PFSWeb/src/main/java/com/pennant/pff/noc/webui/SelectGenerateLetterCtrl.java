@@ -108,6 +108,12 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
 		String ltrType = this.letterType.getValue();
 
+		if (generateLetterService.isLetterInitiated(fm.getFinID(), this.generateLetter.getLetterType())) {
+			MessageUtil.showError(Labels.getLabel("label_listheader_LetterType")
+					+ " is Already Initiated For".concat(this.finReference.getValue()));
+			return false;
+		}
+
 		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
 				&& !this.generateLetter.getLetterType().equals("CANCELLATION")) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")

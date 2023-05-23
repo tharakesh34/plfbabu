@@ -44,4 +44,6 @@ public interface GenerateLetterService {
 	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
 
 	String getCanceltype(String finReference);
+
+	boolean isLetterInitiated(long finID, String letterType);
 }

@@ -407,4 +407,19 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			return fm;
 		}, finID, letterType);
 	}
+
+	@Override
+	public boolean isLetterInitiated(long finID, String letterType) {
+		String sql = "Select count(FinID) From Loan_Letter_Manual_Temp Where FinID = ? and LetterType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID, letterType);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return false;
+	}
 }
