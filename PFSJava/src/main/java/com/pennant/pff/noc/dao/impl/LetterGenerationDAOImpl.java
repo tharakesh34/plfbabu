@@ -406,4 +406,9 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 			return fm;
 		}, finID, letterType);
 	}
+
+	@Override
+	public boolean isLetterInitiated(long finID, String letterType) {
+		return false;
+	}
 }

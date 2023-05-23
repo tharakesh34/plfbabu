@@ -31,4 +31,6 @@ public interface GenerateLetterDAO {
 	List<GenerateLetter> getLetterInfo(long finID);
 
 	List<GenerateLetter> getLoanLetterInfo(long finID, String letterType);
+
+	boolean isLetterInitiated(long finID, String letterType);
 }

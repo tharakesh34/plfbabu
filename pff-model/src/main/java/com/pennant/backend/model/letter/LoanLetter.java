@@ -46,7 +46,7 @@ public class LoanLetter implements Serializable {
 	private Long emailTemplate;
 
 	private int sequence;
-	private Date appDate;
+	private Date businessDate;
 	private String letterName;
 	private String letterDesc;
 	private String letterType;
@@ -54,20 +54,64 @@ public class LoanLetter implements Serializable {
 	private int saveFormat;
 	private byte[] content;
 
-	private long custID;
-	private String custCif;
-	private String custCoreBank;
-	private String custSalutationCode;
-	private String custShrtName;
-	private String custFullName;
-	private String finType;
-	private String finTypeDesc;
-	private String finStartDate;
-	private String strAppDate;
-
 	private MailTemplate mailTemplate;
 	private ServiceBranch serviceBranch;
 	private EventProperties eventProperties;
+
+	private long custID;
+	private String custCif;
+	private String custCoreBank;
+	private String salutation;
+	private String custShrtName;
+	private String custFullName;
+	private String custCareOf;
+	private String custHouseBullingNo;
+	private String custFlatNo;
+	private String custStreet;
+	private String custLandMark;
+	private String custLocalty;
+	private String custCity;
+	private String custDistrict;
+	private String custState;
+	private String custPinCode;
+	private String custPoBox;
+	private String custCountry;
+
+	private String csbCode;
+	private String csbDescription;
+	private String csbHouseNo;
+	private String csbFlatNo;
+	private String csbStreet;
+	private String csbAddrL1;
+	private String csbAddrL2;
+	private String csbCity;
+	private String csbState;
+	private String csbCounty;
+	private String csbPoBox;
+	private String csbPinCode;
+	private String csbTelePhone;
+	private String csbFax;
+
+	private String fbCode;
+	private String fbDescription;
+	private String fbHouseNo;
+	private String fbFlatNo;
+	private String fbStreet;
+	private String fbAddrL1;
+	private String fbAddrL2;
+	private String fbCity;
+	private String fbState;
+	private String fbCounty;
+	private String fbPoBox;
+	private String fbPinCode;
+	private String fbTelePhone;
+	private String fbFax;
+
+	private String finType;
+	private String finTypeDesc;
+	private String finStartDate;
+	private String appDate;
+
 	private boolean blocked;
 	private String custCtgCode;
 	private String custGenderCode;
@@ -77,6 +121,9 @@ public class LoanLetter implements Serializable {
 	private String closureType;
 	private int sequenceNo;
 	private String statusOfpreviousletters;
+	private String closureDate;
+	private String cancelDate;
+	private String leterSeqNo;
 
 	public LoanLetter() {
 		super();
@@ -330,12 +377,12 @@ public class LoanLetter implements Serializable {
 		this.sequence = sequence;
 	}
 
-	public Date getAppDate() {
-		return appDate;
+	public Date getBusinessDate() {
+		return businessDate;
 	}
 
-	public void setAppDate(Date appDate) {
-		this.appDate = appDate;
+	public void setBusinessDate(Date businessDate) {
+		this.businessDate = businessDate;
 	}
 
 	public String getLetterName() {
@@ -386,6 +433,30 @@ public class LoanLetter implements Serializable {
 		this.content = content;
 	}
 
+	public MailTemplate getMailTemplate() {
+		return mailTemplate;
+	}
+
+	public void setMailTemplate(MailTemplate mailTemplate) {
+		this.mailTemplate = mailTemplate;
+	}
+
+	public ServiceBranch getServiceBranch() {
+		return serviceBranch;
+	}
+
+	public void setServiceBranch(ServiceBranch serviceBranch) {
+		this.serviceBranch = serviceBranch;
+	}
+
+	public EventProperties getEventProperties() {
+		return eventProperties;
+	}
+
+	public void setEventProperties(EventProperties eventProperties) {
+		this.eventProperties = eventProperties;
+	}
+
 	public long getCustID() {
 		return custID;
 	}
@@ -410,12 +481,12 @@ public class LoanLetter implements Serializable {
 		this.custCoreBank = custCoreBank;
 	}
 
-	public String getCustSalutationCode() {
-		return custSalutationCode;
+	public String getSalutation() {
+		return salutation;
 	}
 
-	public void setCustSalutationCode(String custSalutationCode) {
-		this.custSalutationCode = custSalutationCode;
+	public void setSalutation(String salutation) {
+		this.salutation = salutation;
 	}
 
 	public String getCustShrtName() {
@@ -432,6 +503,326 @@ public class LoanLetter implements Serializable {
 
 	public void setCustFullName(String custFullName) {
 		this.custFullName = custFullName;
+	}
+
+	public String getCustCareOf() {
+		return custCareOf;
+	}
+
+	public void setCustCareOf(String custCareOf) {
+		this.custCareOf = custCareOf;
+	}
+
+	public String getCustHouseBullingNo() {
+		return custHouseBullingNo;
+	}
+
+	public void setCustHouseBullingNo(String custHouseBullingNo) {
+		this.custHouseBullingNo = custHouseBullingNo;
+	}
+
+	public String getCustFlatNo() {
+		return custFlatNo;
+	}
+
+	public void setCustFlatNo(String custFlatNo) {
+		this.custFlatNo = custFlatNo;
+	}
+
+	public String getCustStreet() {
+		return custStreet;
+	}
+
+	public void setCustStreet(String custStreet) {
+		this.custStreet = custStreet;
+	}
+
+	public String getCustLandMark() {
+		return custLandMark;
+	}
+
+	public void setCustLandMark(String custLandMark) {
+		this.custLandMark = custLandMark;
+	}
+
+	public String getCustLocalty() {
+		return custLocalty;
+	}
+
+	public void setCustLocalty(String custLocalty) {
+		this.custLocalty = custLocalty;
+	}
+
+	public String getCustCity() {
+		return custCity;
+	}
+
+	public void setCustCity(String custCity) {
+		this.custCity = custCity;
+	}
+
+	public String getCustDistrict() {
+		return custDistrict;
+	}
+
+	public void setCustDistrict(String custDistrict) {
+		this.custDistrict = custDistrict;
+	}
+
+	public String getCustState() {
+		return custState;
+	}
+
+	public void setCustState(String custState) {
+		this.custState = custState;
+	}
+
+	public String getCustPinCode() {
+		return custPinCode;
+	}
+
+	public void setCustPinCode(String custPinCode) {
+		this.custPinCode = custPinCode;
+	}
+
+	public String getCustPoBox() {
+		return custPoBox;
+	}
+
+	public void setCustPoBox(String custPoBox) {
+		this.custPoBox = custPoBox;
+	}
+
+	public String getCustCountry() {
+		return custCountry;
+	}
+
+	public void setCustCountry(String custCountry) {
+		this.custCountry = custCountry;
+	}
+
+	public String getCsbCode() {
+		return csbCode;
+	}
+
+	public void setCsbCode(String csbCode) {
+		this.csbCode = csbCode;
+	}
+
+	public String getCsbDescription() {
+		return csbDescription;
+	}
+
+	public void setCsbDescription(String csbDescription) {
+		this.csbDescription = csbDescription;
+	}
+
+	public String getCsbHouseNo() {
+		return csbHouseNo;
+	}
+
+	public void setCsbHouseNo(String csbHouseNo) {
+		this.csbHouseNo = csbHouseNo;
+	}
+
+	public String getCsbFlatNo() {
+		return csbFlatNo;
+	}
+
+	public void setCsbFlatNo(String csbFlatNo) {
+		this.csbFlatNo = csbFlatNo;
+	}
+
+	public String getCsbStreet() {
+		return csbStreet;
+	}
+
+	public void setCsbStreet(String csbStreet) {
+		this.csbStreet = csbStreet;
+	}
+
+	public String getCsbAddrL1() {
+		return csbAddrL1;
+	}
+
+	public void setCsbAddrL1(String csbAddrL1) {
+		this.csbAddrL1 = csbAddrL1;
+	}
+
+	public String getCsbAddrL2() {
+		return csbAddrL2;
+	}
+
+	public void setCsbAddrL2(String csbAddrL2) {
+		this.csbAddrL2 = csbAddrL2;
+	}
+
+	public String getCsbCity() {
+		return csbCity;
+	}
+
+	public void setCsbCity(String csbCity) {
+		this.csbCity = csbCity;
+	}
+
+	public String getCsbState() {
+		return csbState;
+	}
+
+	public void setCsbState(String csbState) {
+		this.csbState = csbState;
+	}
+
+	public String getCsbCounty() {
+		return csbCounty;
+	}
+
+	public void setCsbCounty(String csbCounty) {
+		this.csbCounty = csbCounty;
+	}
+
+	public String getCsbPoBox() {
+		return csbPoBox;
+	}
+
+	public void setCsbPoBox(String csbPoBox) {
+		this.csbPoBox = csbPoBox;
+	}
+
+	public String getCsbPinCode() {
+		return csbPinCode;
+	}
+
+	public void setCsbPinCode(String csbPinCode) {
+		this.csbPinCode = csbPinCode;
+	}
+
+	public String getCsbTelePhone() {
+		return csbTelePhone;
+	}
+
+	public void setCsbTelePhone(String csbTelePhone) {
+		this.csbTelePhone = csbTelePhone;
+	}
+
+	public String getCsbFax() {
+		return csbFax;
+	}
+
+	public void setCsbFax(String csbFax) {
+		this.csbFax = csbFax;
+	}
+
+	public String getFbCode() {
+		return fbCode;
+	}
+
+	public void setFbCode(String fbCode) {
+		this.fbCode = fbCode;
+	}
+
+	public String getFbDescription() {
+		return fbDescription;
+	}
+
+	public void setFbDescription(String fbDescription) {
+		this.fbDescription = fbDescription;
+	}
+
+	public String getFbHouseNo() {
+		return fbHouseNo;
+	}
+
+	public void setFbHouseNo(String fbHouseNo) {
+		this.fbHouseNo = fbHouseNo;
+	}
+
+	public String getFbFlatNo() {
+		return fbFlatNo;
+	}
+
+	public void setFbFlatNo(String fbFlatNo) {
+		this.fbFlatNo = fbFlatNo;
+	}
+
+	public String getFbStreet() {
+		return fbStreet;
+	}
+
+	public void setFbStreet(String fbStreet) {
+		this.fbStreet = fbStreet;
+	}
+
+	public String getFbAddrL1() {
+		return fbAddrL1;
+	}
+
+	public void setFbAddrL1(String fbAddrL1) {
+		this.fbAddrL1 = fbAddrL1;
+	}
+
+	public String getFbAddrL2() {
+		return fbAddrL2;
+	}
+
+	public void setFbAddrL2(String fbAddrL2) {
+		this.fbAddrL2 = fbAddrL2;
+	}
+
+	public String getFbCity() {
+		return fbCity;
+	}
+
+	public void setFbCity(String fbCity) {
+		this.fbCity = fbCity;
+	}
+
+	public String getFbState() {
+		return fbState;
+	}
+
+	public void setFbState(String fbState) {
+		this.fbState = fbState;
+	}
+
+	public String getFbCounty() {
+		return fbCounty;
+	}
+
+	public void setFbCounty(String fbCounty) {
+		this.fbCounty = fbCounty;
+	}
+
+	public String getFbPoBox() {
+		return fbPoBox;
+	}
+
+	public void setFbPoBox(String fbPoBox) {
+		this.fbPoBox = fbPoBox;
+	}
+
+	public String getFbPinCode() {
+		return fbPinCode;
+	}
+
+	public void setFbPinCode(String fbPinCode) {
+		this.fbPinCode = fbPinCode;
+	}
+
+	public String getFbTelePhone() {
+		return fbTelePhone;
+	}
+
+	public void setFbTelePhone(String fbTelePhone) {
+		this.fbTelePhone = fbTelePhone;
+	}
+
+	public String getFbFax() {
+		return fbFax;
+	}
+
+	public void setFbFax(String fbFax) {
+		this.fbFax = fbFax;
 	}
 
 	public String getFinType() {
@@ -458,36 +849,12 @@ public class LoanLetter implements Serializable {
 		this.finStartDate = finStartDate;
 	}
 
-	public String getStrAppDate() {
-		return strAppDate;
+	public String getAppDate() {
+		return appDate;
 	}
 
-	public void setStrAppDate(String strAppDate) {
-		this.strAppDate = strAppDate;
-	}
-
-	public MailTemplate getMailTemplate() {
-		return mailTemplate;
-	}
-
-	public void setMailTemplate(MailTemplate mailTemplate) {
-		this.mailTemplate = mailTemplate;
-	}
-
-	public ServiceBranch getServiceBranch() {
-		return serviceBranch;
-	}
-
-	public void setServiceBranch(ServiceBranch serviceBranch) {
-		this.serviceBranch = serviceBranch;
-	}
-
-	public EventProperties getEventProperties() {
-		return eventProperties;
-	}
-
-	public void setEventProperties(EventProperties eventProperties) {
-		this.eventProperties = eventProperties;
+	public void setAppDate(String appDate) {
+		this.appDate = appDate;
 	}
 
 	public boolean isBlocked() {
@@ -561,4 +928,29 @@ public class LoanLetter implements Serializable {
 	public void setStatusOfpreviousletters(String statusOfpreviousletters) {
 		this.statusOfpreviousletters = statusOfpreviousletters;
 	}
+
+	public String getClosureDate() {
+		return closureDate;
+	}
+
+	public void setClosureDate(String closureDate) {
+		this.closureDate = closureDate;
+	}
+
+	public String getCancelDate() {
+		return cancelDate;
+	}
+
+	public void setCancelDate(String cancelDate) {
+		this.cancelDate = cancelDate;
+	}
+
+	public String getLeterSeqNo() {
+		return leterSeqNo;
+	}
+
+	public void setLeterSeqNo(String leterSeqNo) {
+		this.leterSeqNo = leterSeqNo;
+	}
+
 }
