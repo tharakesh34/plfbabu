@@ -1233,4 +1233,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="002.6" author="goutham.ch">
+		<sql>
+			<![CDATA[
+				UPDATE JOB_DETAILS SET ENABLED = 1 WHERE JOBKEY IN ('SI_LIEN_RESPONSE_JOB', 'SI_LIEN_FILE_WRITING_JOB', 'SI_LIEN_FILE_PROCESSING_JOB');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
