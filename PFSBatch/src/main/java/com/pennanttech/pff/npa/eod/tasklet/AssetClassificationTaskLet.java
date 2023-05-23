@@ -103,9 +103,6 @@ public class AssetClassificationTaskLet implements Tasklet {
 				if (ac == null) {
 					throw new AppException("Data is not found in NPA Loan Info Stage for the FinID :" + finID);
 				}
-				if (finID == 102599) {
-					System.out.println("hiiiii");
-				}
 
 				ac.setAssetClassSetup(header);
 				assetClassificationService.setNpaClassification(ac);
