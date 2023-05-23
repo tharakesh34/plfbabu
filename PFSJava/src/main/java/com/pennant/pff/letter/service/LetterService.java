@@ -103,6 +103,7 @@ public class LetterService {
 		LoanLetter loanLetter = new LoanLetter();
 
 		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID);
+
 		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0) {
 			loanLetter.setBlocked(true);
 		}
@@ -126,7 +127,7 @@ public class LetterService {
 		loanLetter.setLetterType(gl.getLetterType());
 		loanLetter.setLetterMode(gl.getModeofTransfer());
 		loanLetter.setCreatedDate(gl.getCreatedDate());
-		loanLetter.setAppDate(appDate);
+		loanLetter.setBusinessDate(appDate);
 		loanLetter.setEmailTemplate(emailtemplateId);
 
 		LetterMode letterMode = LetterMode.getMode(loanLetter.getLetterMode());
@@ -240,7 +241,7 @@ public class LetterService {
 		String csdCode = serviceBranch.getCode();
 		String parentFolder = serviceBranch.getFolderPath();
 
-		Date appDate = letter.getAppDate();
+		Date appDate = letter.getBusinessDate();
 
 		String fileName = letter.getLetterName();
 		String remotePath = parentFolder.concat(File.separator).concat(csdCode).concat(File.separator)
@@ -267,7 +268,7 @@ public class LetterService {
 		long letterID = letter.getId();
 		gl.setId(letterID);
 		gl.setFeeID(letter.getFeeID());
-		gl.setGeneratedDate(letter.getAppDate());
+		gl.setGeneratedDate(letter.getBusinessDate());
 		gl.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
 		gl.setAdviseID(letter.getAdviseID());
 		gl.setTrackingID(letter.getTrackingID());
@@ -283,7 +284,7 @@ public class LetterService {
 	}
 
 	private void setLetterName(LoanLetter letter) {
-		Date appDate = letter.getAppDate();
+		Date appDate = letter.getBusinessDate();
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(letter.getFinReference());
@@ -331,7 +332,7 @@ public class LetterService {
 		letter.setFinReference(fm.getFinReference());
 		letter.setCustFullName(fm.getLoanName());
 		letter.setFinStartDate(DateUtil.format(fm.getFinStartDate(), DateFormat.LONG_DATE));
-		letter.setStrAppDate(DateUtil.format(letter.getAppDate(), DateFormat.LONG_DATE));
+		letter.setAppDate(DateUtil.format(letter.getBusinessDate(), DateFormat.LONG_DATE));
 
 		letter.setFinBranch(fm.getFinBranch());
 		letter.setFinType(fm.getFinType());
@@ -366,8 +367,8 @@ public class LetterService {
 		manualAdvise.setFeeTypeID(finFeeDetail.getFeeTypeID());
 		manualAdvise.setAdviseAmount(remainingFee);
 		manualAdvise.setRemarks("Advise For " + letter.getLetterType() + " Letter Generation Charges");
-		manualAdvise.setValueDate(letter.getAppDate());
-		manualAdvise.setPostDate(letter.getAppDate());
+		manualAdvise.setValueDate(letter.getBusinessDate());
+		manualAdvise.setPostDate(letter.getBusinessDate());
 		manualAdvise.setBalanceAmt(remainingFee);
 
 		manualAdvise.setVersion(0);

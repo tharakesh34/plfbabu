@@ -66,7 +66,7 @@ public class RuleExecutionUtil implements Serializable {
 	public static Object executeRule(String rule, Map<String, Object> dataMap, String reference) {
 		Object result = null;
 		if (dataMap == null) {
-			dataMap = new HashMap<String, Object>();
+			dataMap = new HashMap<>();
 		}
 
 		try (ScriptEngine scriptEngine = getScriptEngine()) {
@@ -80,7 +80,7 @@ public class RuleExecutionUtil implements Serializable {
 
 	public static Object executeRule(String rule, Map<String, Object> dataMap, RuleReturnType returnType) {
 		if (dataMap == null) {
-			dataMap = new HashMap<String, Object>();
+			dataMap = new HashMap<>();
 		}
 
 		rule = StringUtils.replace(rule, "{BLANK}", "");
@@ -100,8 +100,7 @@ public class RuleExecutionUtil implements Serializable {
 				scriptEngine.getResultAsObject(rule, dataMap);
 				result = ruleResult;
 				break;
-			case STRING:
-			case CALCSTRING:
+			case STRING, CALCSTRING:
 				result = scriptEngine.getResultAsString(rule, dataMap);
 				break;
 			case INTEGER:
@@ -141,7 +140,7 @@ public class RuleExecutionUtil implements Serializable {
 			group = matcher.group(0);
 			String fromCcy = group.replace(rulefieldCcy, "").substring(0, 3);
 			long amount = Long.parseLong(group.replace(rulefieldCcy, "").replace(fromCcy, ""));
-			BigDecimal ruleValue = new BigDecimal(amount * Math.pow(10, CurrencyUtil.getFormat(fromCcy)));
+			BigDecimal ruleValue = BigDecimal.valueOf(amount * Math.pow(10, CurrencyUtil.getFormat(fromCcy)));
 			String convRuleValue = CalculationUtil.convertedUnFormatAmount(fromCcy, finccy, ruleValue);
 
 			rule = rule.replace(group, convRuleValue);
@@ -165,10 +164,9 @@ public class RuleExecutionUtil implements Serializable {
 
 		try {
 			Object exereslut = executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
-			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
-				result = BigDecimal.ZERO;
-			} else {
+			if (exereslut != null) {
 				result = new BigDecimal(exereslut.toString());
+
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -179,7 +177,7 @@ public class RuleExecutionUtil implements Serializable {
 	}
 
 	private static Map<String, Object> getBeanMap(List<Object> objects) {
-		Map<String, Object> objectsMap = new HashMap<String, Object>();
+		Map<String, Object> objectsMap = new HashMap<>();
 
 		if (objects == null) {
 			return objectsMap;
@@ -202,6 +200,7 @@ public class RuleExecutionUtil implements Serializable {
 			case RuleConstants.lt:
 				objectsMap.put(RuleConstants.letter, object);
 				break;
+			default:
 			}
 		}
 		return objectsMap;
