@@ -7332,12 +7332,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			BigDecimal netfinamnt = BigDecimal.ZERO;
 			BigDecimal disbAmount = BigDecimal.ZERO;
 
-			if (!"#".equals(fm.getAdvType()) || !"#".equals(fm.getGrcAdvType())) {
+			if ((schdData.getFinanceType().isAdvIntersetReq()) || schdData.getFinanceType().isGrcAdvIntersetReq()) {
 				for (FinFeeDetail fee : fd.getFinScheduleData().getFinFeeDetailList()) {
-					actualAmbnt = actualAmbnt.add(fee.getActualAmount());
-					netfinamnt = fm.getFinAmount().subtract(actualAmbnt);
-					netfinamnt = netfinamnt.subtract(fm.getDownPaySupl());
+					if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(fee.getFeeScheduleMethod())) {
+						actualAmbnt = actualAmbnt.add(fee.getActualAmount());
+						netfinamnt = fm.getFinAmount().subtract(actualAmbnt);
+					}
 				}
+
+				netfinamnt = netfinamnt.subtract(fm.getDownPaySupl());
 
 				fm.setDeductFeeDisb(actualAmbnt);
 
