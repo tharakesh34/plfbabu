@@ -127,7 +127,9 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 
 	@Override
 	public ServiceBranch getServiceBranch(String finType, String finBranch) {
-		StringBuilder sql = new StringBuilder("Select sb.Code, sb.FolderPath");
+		StringBuilder sql = new StringBuilder("Select sb.Code, sb.Description");
+		sql.append(", sb.OfCorhouseNum, sb.Flatnum, sb.Street, sb.AddrLine1, sb.AddrLine2, sb.Pobox ");
+		sql.append(", sb.Country, sb.City, CPProvince, sb.PinCodeID, sb.PinCode, sb.FolderPath");
 		sql.append(" From Service_Branches sb");
 		sql.append(" Inner Join Service_Branches_LoanType sbl on sbl.HeaderID = sb.ID");
 		sql.append(" Where sbl.FinType = ? and sbl.Branch = ?");
@@ -139,6 +141,19 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				ServiceBranch sb = new ServiceBranch();
 
 				sb.setCode(rs.getString("Code"));
+				sb.setDescription(rs.getString("Description"));
+				sb.setFolderPath(rs.getString("FolderPath"));
+				sb.setOfcOrHouseNum(rs.getString("OfCorhouseNum"));
+				sb.setFlatNum(rs.getString("Flatnum"));
+				sb.setStreet(rs.getString("Street"));
+				sb.setAddrLine1(rs.getString("AddrLine1"));
+				sb.setAddrLine2(rs.getString("AddrLine2"));
+				sb.setPoBox(rs.getString("Pobox"));
+				sb.setCountry(rs.getString("Country"));
+				sb.setCity(rs.getString("City"));
+				sb.setCpProvince(rs.getString("CPProvince"));
+				sb.setPinCodeId(rs.getLong("PinCodeID"));
+				sb.setPinCode(rs.getString("PinCode"));
 				sb.setFolderPath(rs.getString("FolderPath"));
 
 				return sb;

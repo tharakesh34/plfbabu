@@ -16735,95 +16735,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#1561.27.1.1" author="vasudevarao.S">
-		<sql>
-            <![CDATA[
-              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'NOCLTR';
-
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_custCtgCode',     				'Customer Category',                					'nvarchar',  	12,  '0', '1', 'CustomerCategory',    		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_custTypeCode',    				'Customer Type',                    					'nvarchar',  	12,  '0', '1', 'CustomerType',        		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_customerGenderCode',     		    'Customer Gender Code',                  				'nvarchar',  	12,  '0', '1', 'CustomerGenderCode',  		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_loanClosureAge',         		    'Days between Closure date and Application Date',       'bigint',       8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_loanCancellationAge',    		    'Days between Cancellation Date and Application Date',  'bigint',       8,   '0', '1', 'LoanCancellationAge',       'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_closureType',     				'ClosureType',                							'nvarchar',  	12,  '0', '1', 'Closure_Types',    			'static,global,dbvalue', 'ClosureType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_sequenceNo',    				    'same letter type is being issued for the same loan ',  'bigint',		8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''   		  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'NOCLTR', 'lt_statusOfpreviousletters',         'Status of previous letters',                 			'nvarchar',  	12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
-            ]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1561.28.1.1" author="vasudevarao.S">
-		<sql>
-            <![CDATA[
-              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'CANCLLTR';
-
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_custCtgCode',     			      'Customer Category',                		 				 'nvarchar',    	12, '0', '1', 'CustomerCategory',      'static,global,dbvalue', ''			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_custTypeCode',    			      'Customer Type',                    				         'nvarchar',    	12, '0', '1', 'CustomerType',          'static,global,dbvalue', '' 			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_customerGenderCode',              'Customer Gender Code',                				     'nvarchar',    	12, '0', '1', 'CustomerGenderCode',    'static,global,dbvalue', ''			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_loanClosureAge',         	      'Days between Closure date and Application Date',          'bigint',         	8,  '0', '1', 'LoanClosureAge',        'static,global,dbvalue', ''			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_loanCancellationAge',   		  'Days between Cancellation Date and Application Date',     'bigint',        	8,  '0', '1', 'LoanCancellationAge',   'static,global,dbvalue', ''			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_closureType',     				  'ClosureType',                							 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_sequenceNo',    				  'same letter type is being issued for the same loan ',     'bigint', 			8,  '0', '1', 'Sequence No',           'static,global,dbvalue', ''			 );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CANCLLTR', 'lt_statusOfpreviousletters',         'Status of previous letter’s',               				 'nvarchar',    	12, '0', '1', 'Closure_Types',         'static,global,dbvalue', 'ClosureType');
-            ]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#1561.29.1.1" author="vasudevarao.S">
-		<sql>
-            <![CDATA[
-              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE = 'FEES' and RBEVENT = 'CLOSELTR';
-
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_custCtgCode',     			      'Customer Category',                						'nvarchar',  12,  '0', '1', 'CustomerCategory',    		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_custTypeCode',    				  'Customer Type',                    						'nvarchar',  12,  '0', '1', 'CustomerType',        		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_customerGenderCode',       	      'Customer Gender Code',                 					'nvarchar',  12,  '0', '1', 'CustomerGenderCode',  		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_loanClosureAge',          		  'Days between Closure date and Application Date',         'bigint',    8,   '0', '1', 'LoanClosureAge',      		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_loanCancellationAge',      	      'Days between Cancellation Date and Application Date',    'bigint',    8,   '0', '1', 'LoanCancellationAge',      'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_closureType',     				  'ClosureType',                							'nvarchar',  12,  '0', '1', 'Closure_Types',    		'static,global,dbvalue', 'ClosureType');
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_sequenceNo',    				  'same letter type is being issued for the same loan ',    'bigint', 	 8,   '0', '1', 'Sequence No',        		'static,global,dbvalue', ''			  );
-				INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'CLOSELTR', 'lt_statusOfpreviousletters',         'Status of previous letter’s',                 			'nvarchar',  12,  '0', '1', 'Closure_Types',  			'static,global,dbvalue', 'ClosureType');
-            ]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#1561.30" author="vasudevarao.S">
-		<sql>
-			<![CDATA[
-				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'NOCLTR');
-				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'NOCLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'NOCLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'NOCLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'NOCLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'NOCLTR');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#1561.31" author="vasudevarao.S">
-		<sql>
-			<![CDATA[
-				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'CANCLLTR');
-				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'CANCLLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'CANCLLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'CANCLLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'CANCLLTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'CANCLLTR');
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="ST#1561.32" author="vasudevarao.S">
-		<sql>
-			<![CDATA[
-				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Date', 			'Closure Date of Loan', 													'A', 'CLOSELTR');
-				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Loan Cancellation Date',  'Cancellation Date of Loan', 												'A', 'CLOSELTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Closure Type', 			'Closure Type selected while Closing the Loan', 							'A', 'CLOSELTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'Sequence No', 			'No of time the letter of same letter type is being issued for the Loan', 	'A', 'CLOSELTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CSD Branch Description', 	'CSD Branch of the loan mapped basis CSD Loan Type Branch Mapping', 		'A', 'CLOSELTR');
-                INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'File Name', 				'File name of Letter Generated', 											'A', 'CLOSELTR');
-			]]>
-		</sql>
-	</changeSet>
 	
 	<changeSet id="ST#1561.33" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_LOANTYPE_LETTER_MAPPING" incrementBy="1" startValue="1" minValue="1"
@@ -19746,5 +19657,50 @@
 			<column name="FinBranch" type="varchar(13)"/>
 		</addColumn>
 	</changeSet>	
+	
+		<changeSet id="ST#1561.30_01" author="vasudevarao.S">
+		<sql>
+			<![CDATA[
+				Delete From TEMPLATEFIELDS Where EVENT = 'NOCLTR';
+				Delete From TEMPLATEFIELDS Where EVENT = 'CANCLLTR';
+				Delete From TEMPLATEFIELDS Where EVENT = 'CLOSELTR';
+				
+				
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustCif', 'Customer CIF', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustCoreBank', 'Customer Core Bank/UCIC', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustShrtName', 'Customer Name', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinType', 'Loan Type', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinTypeDesc', 'Loan Type Description', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinBranch', 'Loan Branch', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinReference', 'Loan Reference', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinStartDate', 'Loan Start Date', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'ClosureDate', 'Loan Clouser Date', 'A', 'NOCLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CancelationDate', 'Loan Cancelation Date', 'A', 'NOCLTR');
+				
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustCif', 'Customer CIF', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustCoreBank', 'Customer Core Bank/UCIC', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustShrtName', 'Customer Name', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinType', 'Loan Type', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinTypeDesc', 'Loan Type Description', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinBranch', 'Loan Branch', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinReference', 'Loan Reference', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinStartDate', 'Loan Start Date', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'ClosureDate', 'Loan Clouser Date', 'A', 'CANCLLTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CancelationDate', 'Loan Cancelation Date', 'A', 'CANCLLTR');
+				
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustCif', 'Customer CIF', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustCoreBank', 'Customer Core Bank/UCIC', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CustShrtName', 'Customer Name', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinType', 'Loan Type', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinTypeDesc', 'Loan Type Description', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinBranch', 'Loan Branch', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinReference', 'Loan Reference', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'FinStartDate', 'Loan Start Date', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'ClosureDate', 'Loan Clouser Date', 'A', 'CLOSELTR');
+				INSERT INTO TEMPLATEFIELDS (MODULE, FIELD, FIELDDESC, FIELDFORMAT, EVENT) VALUES ('FIN', 'CancelationDate', 'Loan Cancelation Date', 'A', 'CLOSELTR');
+			
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog> 

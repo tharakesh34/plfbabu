@@ -184,6 +184,11 @@ public class RuleExecutionUtil implements Serializable {
 		}
 
 		for (Object object : objects) {
+
+			if (object == null) {
+				continue;
+			}
+
 			switch (object.getClass().getSimpleName()) {
 			case RuleConstants.fm:
 				objectsMap.put(RuleConstants.financeMain, object);
