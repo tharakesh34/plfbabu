@@ -46,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.core.DateService;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.external.BeforeEodExternalProcessHook;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
@@ -75,7 +76,13 @@ public class BeforeEOD implements Tasklet {
 		StepUtil.BEFORE_EOD.setProcessedRecords(1);
 		BatchUtil.setExecutionStatus(context, StepUtil.BEFORE_EOD);
 
-		if (beforeEodExternalProcessHook != null) {
+		boolean isEOM = false;
+
+		if (valueDate.compareTo(DateUtil.getMonthEnd(valueDate)) == 0) {
+			isEOM = true;
+		}
+
+		if (isEOM && beforeEodExternalProcessHook != null) {
 			beforeEodExternalProcessHook.truncateExtractionTables();
 		}
 
