@@ -6089,7 +6089,6 @@
 	<bean id="selectFeeRefundHeaderDialogCtrl"
 		class="com.pennant.webui.payment.feerefundheader.SelectFeeRefundHeaderDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
-		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="feeRefundHeaderService" ref="feeRefundHeaderService" />
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="holdRefundUploadDAO" ref="holdRefundUploadDAO" />
