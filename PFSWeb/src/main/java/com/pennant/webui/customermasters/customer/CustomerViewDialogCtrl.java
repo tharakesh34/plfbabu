@@ -300,34 +300,24 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label exp;
 
 	protected Listbox listBoxCustomerDocuments;
-	private List<CustomerDocument> customerDocumentDetailList = new ArrayList<CustomerDocument>();
 
 	protected Button btnNew_CustomerAddress;
 	protected Listbox listBoxCustomerAddress;
-	private List<CustomerAddres> customerAddressDetailList = new ArrayList<CustomerAddres>();
 
 	protected Button btnNew_CustomerPhoneNumber;
 	protected Listbox listBoxCustomerPhoneNumbers;
-	private List<CustomerPhoneNumber> customerPhoneNumberDetailList = new ArrayList<CustomerPhoneNumber>();
 	protected Listheader listheader_CustPhone_RecordStatus;
 	protected Listheader listheader_CustPhone_RecordType;
 
 	protected Listbox listBoxCustomerEmails;
-	private List<CustomerEMail> customerEmailDetailList = new ArrayList<CustomerEMail>();
-
 	protected Listbox listBoxCustomerBankInformation;
-	private List<CustomerBankInfo> customerBankInfoDetailList = new ArrayList<CustomerBankInfo>();
-
 	protected Listbox listBoxCustomerChequeInformation;
-	private List<CustomerChequeInfo> customerChequeInfoDetailList = new ArrayList<CustomerChequeInfo>();
-
 	protected Listbox listBoxCustomerFinExposure;
 
 	private List<ValueLabel> countryList;
 	private List<ValueLabel> docTypeList;
 
 	protected Listbox listBoxCustomerExternalLiability;
-	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<CustomerExtLiability>();
 
 	protected Listbox listBoxCustomerLoanDetails;
 	protected Listbox listBoxCustomerVasDetails;
@@ -873,7 +863,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			cKYCRef.setVisible(true);
 			labelCKYCRef.setVisible(true);
 
-			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
 
 			AMedia amedia = null;
@@ -1081,7 +1070,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				entityType.setStyle("color:orange; font:12px");
 				entityType.setValue("- - - - - - - - -");
 			}
-			getAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerPhoneNumberDetails(aCustomerDetails.getCustomerPhoneNumList());
 
 			String s = StringUtils.isNotBlank(aCustomer.getRecordType()) ? " for " + aCustomer.getRecordType() : "";
@@ -1808,21 +1796,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					listBoxCustomerDocuments.appendChild(item);
 				}
 			}
-			customerDocumentDetailList = custDocumentDetails;
 		}
 		logger.debug("Leaving");
-	}
-
-	public void getAddressDetails(List<CustomerAddres> customerAddresDetails) {
-		logger.debug("Entering");
-		if (customerAddresDetails != null && !customerAddresDetails.isEmpty()) {
-			for (CustomerAddres customerAddress : customerAddresDetails) {
-				if (customerAddress.getCustAddrPriority() == 5) {
-					// this.address1.setValue(customerAddress.getLovDescCustAddrCityName());
-				}
-			}
-		}
-		customerAddressDetailList = customerAddresDetails;
 	}
 
 	public void doFillCustomerAddressDetails(List<CustomerAddres> customerAddresDetails) {
@@ -1849,7 +1824,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerAddress.appendChild(item);
 
 			}
-			customerAddressDetailList = customerAddresDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1872,7 +1846,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerEmailAddressItemDoubleClicked");
 				this.listBoxCustomerEmails.appendChild(item);
 			}
-			customerEmailDetailList = customerEmailDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1895,7 +1868,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPhoneNumberItemDoubleClicked");
 				this.listBoxCustomerPhoneNumbers.appendChild(item);
 			}
-			customerPhoneNumberDetailList = customerPhoneNumDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1922,7 +1894,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerBankInfoItemDoubleClicked");
 				this.listBoxCustomerBankInformation.appendChild(item);
 			}
-			customerBankInfoDetailList = customerBankInfoDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -1957,7 +1928,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerChequeInformation.appendChild(item);
 
 			}
-			customerChequeInfoDetailList = customerChequeInfoDetails;
 		}
 		logger.debug("Leaving");
 	}
@@ -2015,8 +1985,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.listBoxCustomerExternalLiability.appendChild(item);
 
 			}
-			// add summary list item
-			customerExtLiabilityDetailList = customerExtLiabilityDetails;
 		}
 		logger.debug("Leaving");
 	}
