@@ -18,12 +18,6 @@
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start" />
 
-							<!-- SEARCH AREA -->
-							<toolbar align="center" sclass="toolbar-center">
-								<label id="windowTitle" value="${c:l('window_SelectHoldEnquiryList.title')}"
-									sclass="label-heading" />
-							</toolbar>
-
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
 								<button id="btnClose" label="${c:l('label_Close')}"

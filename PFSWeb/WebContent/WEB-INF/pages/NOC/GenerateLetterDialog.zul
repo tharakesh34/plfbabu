@@ -81,7 +81,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_Finreference')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="finReference" maxlength="8" width="120px" readonly="true" />
+												<textbox id="finReference" width="120px" readonly="true" />
 											</hbox>
 											<label value="${c:l('label_GenerateLetterDialog_CustomerCif')}" />
 											<hbox>
@@ -105,7 +105,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ActiveStatus')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="finStatus" width="170px" visible="true" readonly="true" />
+												<textbox id="finStatus" width="170px" visible="true" />
 												<textbox id="finStatusReason" readonly="true" width="170px" visible="true"
 													style="border:none; background-color:white;" />
 											</hbox>

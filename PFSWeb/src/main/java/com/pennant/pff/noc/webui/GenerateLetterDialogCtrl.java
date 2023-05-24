@@ -761,7 +761,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		int finCcy = CurrencyUtil
 				.getFormat(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		this.finReference.setMaxlength(15);
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finClosureDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
