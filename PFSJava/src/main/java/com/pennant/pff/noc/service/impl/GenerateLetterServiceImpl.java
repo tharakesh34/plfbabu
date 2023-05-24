@@ -339,8 +339,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		}
 
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
-		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(), getLetterType(gl), "_AView", false,
-				FinanceConstants.MODULEID_FINTYPE));
+
 		schdData.setFeeEvent(gl.getLetterType());
 		FinanceSummary summary = new FinanceSummary();
 
