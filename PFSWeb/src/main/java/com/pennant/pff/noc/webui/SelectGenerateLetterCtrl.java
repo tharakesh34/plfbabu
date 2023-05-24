@@ -106,8 +106,6 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
 		this.generateLetter.setFinID(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinID());
 
-		String ltrType = this.letterType.getValue();
-
 		if (generateLetterService.isLetterInitiated(fm.getFinID(), this.generateLetter.getLetterType())) {
 			MessageUtil.showError(Labels.getLabel("label_listheader_LetterType")
 					+ " is Already Initiated For".concat(this.finReference.getValue()));
@@ -122,7 +120,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if ((FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
-				&& (this.generateLetter.getLetterType().equals("NOC")
+				&& !(this.generateLetter.getLetterType().equals("NOC")
 						|| this.generateLetter.getLetterType().equals("CLOSURE")))) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
 					+ " for ".concat(this.finReference.getValue()));

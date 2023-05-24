@@ -25,6 +25,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.letter.LoanLetter;
@@ -42,6 +43,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.SchdUtil;
 
 public class GenerateLetterServiceImpl extends GenericFinanceDetailService implements GenerateLetterService {
 	private static Logger logger = LogManager.getLogger(GenerateLetterServiceImpl.class);
@@ -329,6 +331,13 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		if (custID != 0 && custID != Long.MIN_VALUE) {
 			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
 		}
+		List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(), gl.getLetterType());
+
+		if (CollectionUtils.isNotEmpty(letterInfo)) {
+			fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(), getLetterType(gl), "_AView", false,
+					FinanceConstants.MODULEID_FINTYPE));
+		}
+
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 		fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(), getLetterType(gl), "_AView", false,
 				FinanceConstants.MODULEID_FINTYPE));
@@ -422,6 +431,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	private void prepareODSummary(FinanceDetail fd, FinanceSummary summary) {
 		FinScheduleData schdData = fd.getFinScheduleData();
+		List<FinanceScheduleDetail> schedules = fd.getFinScheduleData().getFinanceScheduleDetails();
 
 		List<FinODDetails> odDetails = schdData.getFinODDetails();
 
@@ -456,6 +466,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		summary.setFinODDetail(odDetails);
 		summary.setOverDueInstlments(odInst);
 		summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
+		summary.setTotalPriSchd(SchdUtil.getTotalPrincipalSchd(schedules));
 
 		schdData.setFinODDetails(odDetails);
 	}

@@ -583,7 +583,9 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 				}
 			}
 
-			this.totalPriSchd.setValue(CurrencyUtil.format(financeSummary.getOutStandPrincipal(), ccyFormatter));
+			this.totalPriSchd.setValue(
+					CurrencyUtil.format(financeSummary.getTotalPriSchd().subtract(financeSummary.getTotalCpz()),
+							CurrencyUtil.getFormat(financeSummary.getFinCcy())));
 			this.priPaid.setValue(CurrencyUtil.format(financeSummary.getSchdPriPaid(), ccyFormatter));
 			this.priWaived.setValue(CurrencyUtil.format(priWaived, ccyFormatter));
 
@@ -757,15 +759,15 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	public void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-
 		int finCcy = CurrencyUtil
 				.getFormat(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finClosureDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-
 		this.finAmount.setProperties(false, finCcy);
-
+		readOnlyComponent(true, this.finStartDate);
+		readOnlyComponent(true, this.finClosureDate);
+		readOnlyComponent(true, this.letterType);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
