@@ -1241,4 +1241,12 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#227187" author="nagavamsi.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_Provision_Report') and FIELDID=3;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
