@@ -815,14 +815,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.9" author="sreeram.r">
-	<sql>
+		<sql>
 			<![CDATA[
 	 				UPDATE FILE_INTERFACE_CONFIG 
 					SET INTERFACE_TYPE='SILIEN_REQ', FILE_PREPEND='PNSILIEN_' WHERE INTERFACE_TYPE='SILIEN';
 			]]>
-	</sql>
+		</sql>
 	</changeSet>
 
+	<changeSet id="002.10" author="sreeram.r">
+		<sql>
+			<![CDATA[
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_LOCATION = 'SILIEN/REQUEST' WHERE INTERFACE_TYPE='SILIEN_REQ';
+					UPDATE FILE_INTERFACE_CONFIG SET FILE_LOCATION = 'SILIEN/RESPONSE' WHERE INTERFACE_TYPE='SILIEN_RESP';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
