@@ -19518,7 +19518,7 @@
 	</changeSet>
 	
 	
-	<changeSet id="15" author="saikrishna.b">
+	<changeSet id="16" author="saikrishna.b">
 		<sql>
 		 	<![CDATA[
 				DELETE FROM REPORTLIST WHERE CODE = 'GenerateLetter';
