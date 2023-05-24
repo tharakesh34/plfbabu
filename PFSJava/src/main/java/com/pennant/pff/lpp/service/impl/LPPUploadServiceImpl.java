@@ -27,6 +27,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceMaintenanceService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.lpp.dao.LPPUploadDAO;
 import com.pennant.pff.lpp.upload.validate.LPPUploadProcessRecord;
 import com.pennant.pff.upload.model.FileUploadHeader;
@@ -291,6 +292,9 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	public void doValidate(FileUploadHeader header, Object object) {
 		LPPUpload detail = getDetail(object);
 		lPPUploadProcessRecord.validate(header, detail);
+		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+			setFailureStatus(detail);
+		}
 	}
 
 	private void setError(LPPUpload detail, LPPUploadError error) {

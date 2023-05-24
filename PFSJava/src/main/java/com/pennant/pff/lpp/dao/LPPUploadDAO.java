@@ -18,4 +18,6 @@ public interface LPPUploadDAO {
 	boolean isValidFinType(String fintype);
 
 	int saveByFinType(LPPUpload lpp);
+
+	void updateTotals(long headerId, int totalRecords);
 }

@@ -18,7 +18,7 @@ public enum LPPUploadError {
 
 	LPP_07("[Amount/percentage] should be greater than ZERO, when PenaltyType either of following {F/A}."),
 
-	LPP_08("[Amount/percentage] shold be between {1 to 100}, when PenaltyType either of following {P/D/M/E}."),
+	LPP_08("[Amount/percentage] should be between {1 to 100}, when PenaltyType either of following {P/D/M/E}."),
 
 	LPP_09("When [Apply Overdue Penalty] is N then the following fields [Amount/Percent, GraceDays, MaxWaiver, AllowWaivers, Calculated On, Include Grace Days, Penalty Type] should  blank."),
 

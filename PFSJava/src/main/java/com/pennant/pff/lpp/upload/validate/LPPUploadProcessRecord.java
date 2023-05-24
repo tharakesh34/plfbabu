@@ -145,8 +145,9 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			lppUploadDAO.save(lpp);
 
 			if (PennantConstants.YES.equals(lpp.getApplyToExistingLoans())) {
-				int processrecordcount = lppUploadDAO.saveByFinType(lpp);
-				header.setTotalRecords(header.getTotalRecords() + processrecordcount);
+				int totalRecords = lppUploadDAO.saveByFinType(lpp);
+				header.setTotalRecords(header.getTotalRecords() + totalRecords);
+				lppUploadDAO.updateTotals(header.getId(), header.getTotalRecords());
 			}
 
 			if (lpp.getProgress() == EodConstants.PROGRESS_FAILED) {
@@ -250,6 +251,13 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 				return;
 			}
 		}
+
+		boolean applyToExistingLoans = PennantConstants.YES.equals(detail.getApplyToExistingLoans());
+		if (StringUtils.isNotBlank(detail.getLoanType())
+				&& !(PennantConstants.NO.equals(detail.getApplyToExistingLoans()) || applyToExistingLoans)) {
+			setError(detail, LPPUploadError.LPP_14);
+			return;
+		}
 	}
 
 	private void validateApplyOverDue(LPPUpload detail) {
@@ -297,7 +305,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			return;
 		}
 
-		if (includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
+		if (includeGraceDays || !includeGraceDays && (detail.getGraceDays() < 0 || detail.getGraceDays() > 999)) {
 			setError(detail, LPPUploadError.LPP_15);
 			return;
 		}
