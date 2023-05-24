@@ -23,7 +23,7 @@ public class ExtLienMarkingDAOImpl extends SequenceDao implements ExtLienMarking
 
 	@Override
 	public long getSeqNumber(String tableName) {
-		setDataSource(mainNamedJdbcTemplate.getJdbcTemplate().getDataSource());
+		setDataSource(extNamedJdbcTemplate.getJdbcTemplate().getDataSource());
 		return getNextValue(tableName);
 	}
 
