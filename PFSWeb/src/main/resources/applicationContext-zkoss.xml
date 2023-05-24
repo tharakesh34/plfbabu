@@ -4292,8 +4292,6 @@
 
 	<bean id="customerViewDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerViewDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="directorDetailService" ref="directorDetailService" />
 		<property name="approvalStatusEnquiryDAO" ref="approvalStatusEnquiryDAO" />
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="dMSService" ref="dMSService" />
