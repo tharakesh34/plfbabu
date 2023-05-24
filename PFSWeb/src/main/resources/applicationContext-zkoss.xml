@@ -2492,7 +2492,6 @@
 		class="com.pennant.webui.financemanagement.receipts.ReceiptCancellationListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
-		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean id="receiptCancellationDialogCtrl"
