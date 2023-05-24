@@ -411,4 +411,9 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public boolean isLetterInitiated(long finID, String letterType) {
 		return false;
 	}
+
+	@Override
+	public boolean letterIsInQueu(long finID, String letterType) {
+		return false;
+	}
 }

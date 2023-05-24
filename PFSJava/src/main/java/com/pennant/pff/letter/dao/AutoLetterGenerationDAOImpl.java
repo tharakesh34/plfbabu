@@ -1,9 +1,15 @@
 package com.pennant.pff.letter.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -18,7 +24,7 @@ import com.pennanttech.pennapps.core.resource.Message;
 public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> implements AutoLetterGenerationDAO {
 
 	@Override
-	public void save(GenerateLetter gl) {
+	public long save(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTERS_STAGE");
 		sql.append("(FinID, RequestType, LetterType");
 		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer, FeeID)");
@@ -27,18 +33,29 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 0;
+			KeyHolder keyHolder = new GeneratedKeyHolder();
 
-				ps.setLong(++index, gl.getFinID());
-				ps.setString(++index, gl.getRequestType());
-				ps.setString(++index, gl.getLetterType());
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
-				ps.setLong(++index, gl.getAgreementTemplate());
-				ps.setString(++index, gl.getModeofTransfer());
-				ps.setObject(++index, gl.getFeeID());
-			});
+			this.jdbcOperations.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+					PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+					int index = 0;
+
+					ps.setLong(++index, gl.getFinID());
+					ps.setString(++index, gl.getRequestType());
+					ps.setString(++index, gl.getLetterType());
+					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
+					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
+					ps.setLong(++index, gl.getAgreementTemplate());
+					ps.setString(++index, gl.getModeofTransfer());
+					ps.setObject(++index, gl.getFeeID());
+
+					return ps;
+				}
+			}, keyHolder);
+
+			return keyHolder.getKey().longValue();
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}

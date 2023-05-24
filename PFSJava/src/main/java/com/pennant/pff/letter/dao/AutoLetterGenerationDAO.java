@@ -9,7 +9,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 
 public interface AutoLetterGenerationDAO {
 
-	void save(GenerateLetter gl);
+	long save(GenerateLetter gl);
 
 	void update(GenerateLetter gl);
 

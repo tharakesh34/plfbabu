@@ -112,6 +112,13 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
+		if (generateLetterService.letterIsInQueu(fm.getFinID(), this.generateLetter.getLetterType())) {
+			MessageUtil.showError(Labels.getLabel("label_listheader_LetterType").concat(this.letterType.getValue())
+					+ " is Already Initiated For ".concat(this.finReference.getValue())
+					+ " and is in queue for letter generation.");
+			return false;
+		}
+
 		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
 				&& !this.generateLetter.getLetterType().equals("CANCELLATION")) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")

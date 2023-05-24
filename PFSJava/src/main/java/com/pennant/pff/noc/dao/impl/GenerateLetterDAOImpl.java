@@ -422,4 +422,19 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 		return false;
 	}
+
+	@Override
+	public boolean letterIsInQueu(long finID, String letterType) {
+		String sql = "Select count(FinID) From Loan_Letters_Stage Where FinID = ? and LetterType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Boolean.class, finID, letterType);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return false;
+	}
 }

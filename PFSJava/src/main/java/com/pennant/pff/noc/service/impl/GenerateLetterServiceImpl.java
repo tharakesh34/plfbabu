@@ -33,6 +33,8 @@ import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
+import com.pennant.pff.letter.service.LetterService;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
 import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
@@ -52,11 +54,15 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		super();
 	}
 
+	private static final String BLOCKED_MSG = "Letter Generation Blocked";
+
 	private GenerateLetterDAO generateLetterDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	private LoanTypeLetterMappingDAO loanTypeLetterMappingDAO;
 	private LoanLetterUploadDAO loanLetterUploadDAO;
+	private AutoLetterGenerationDAO autoLetterGenerationDAO;
+	private LetterService letterService;
 
 	@Override
 	public List<GenerateLetter> getResult(ISearch searchFilters) {
@@ -141,9 +147,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		return ah;
 	}
 
-	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-		// TODO Auto-generated method stub
-		return auditDetail;
+	private AuditDetail validation(AuditDetail ah, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		return ah;
 	}
 
 	@Override
@@ -201,9 +208,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 				gl.setRecordType("");
 				gl.setAgreementTemplate(0);
 				gl.setModeofTransfer(gl.getRequestType());
-				saveFees(gl);
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
-				saveLoanLetterdetails(gl);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				gl.setRecordType("");
@@ -223,7 +228,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		return ah;
 	}
 
-	private void saveLoanLetterdetails(GenerateLetter gl) {
+	private long saveLoanLetterdetails(GenerateLetter gl) {
 		String finType = gl.getFinanceDetail().getFinScheduleData().getFinanceType().getFinType();
 		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(finType);
 
@@ -235,7 +240,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 			gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 			gl.setModeofTransfer(ltlp.getLetterMode());
+			return autoLetterGenerationDAO.save(gl);
 		}
+		return 0;
 	}
 
 	private void saveFees(GenerateLetter gl) {
@@ -392,6 +399,33 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		return generateLetterDAO.getLetterInfo(gl.getFinID());
 	}
 
+	@Override
+	public LoanLetter generateLetter(GenerateLetter gl) {
+		LoanLetter letter = new LoanLetter();
+		saveFees(gl);
+		long letterID = saveLoanLetterdetails(gl);
+		if (letterID != 0) {
+			letter = letterService.generate(letterID, SysParamUtil.getAppDate());
+
+			if (letter.isBlocked()) {
+				letter.setGenerated(-1);
+				letter.setStatus("B");
+				letter.setRemarks(BLOCKED_MSG);
+			} else {
+				letterService.sendEmail(letter);
+
+				letterService.storeLetter(letter);
+
+				letter.setGenerated(1);
+				letter.setStatus("S");
+			}
+
+			letterService.update(letter);
+			return letter;
+		}
+		return letter;
+	}
+
 	private void prepareProfitDetailSummary(FinanceSummary summary, FinScheduleData schdData) {
 		FinanceMain fm = schdData.getFinanceMain();
 
@@ -498,5 +532,20 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Override
 	public boolean isLetterInitiated(long finID, String letterType) {
 		return generateLetterDAO.isLetterInitiated(finID, letterType);
+	}
+
+	@Override
+	public boolean letterIsInQueu(long finID, String letterType) {
+		return generateLetterDAO.letterIsInQueu(finID, letterType);
+	}
+
+	@Autowired
+	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
+		this.autoLetterGenerationDAO = autoLetterGenerationDAO;
+	}
+
+	@Autowired
+	public void setLetterService(LetterService letterService) {
+		this.letterService = letterService;
 	}
 }

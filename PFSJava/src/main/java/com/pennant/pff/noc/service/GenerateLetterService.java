@@ -6,6 +6,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
@@ -46,4 +47,8 @@ public interface GenerateLetterService {
 	String getCanceltype(String finReference);
 
 	boolean isLetterInitiated(long finID, String letterType);
+
+	LoanLetter generateLetter(GenerateLetter generateLetter);
+
+	boolean letterIsInQueu(long finID, String letterType);
 }

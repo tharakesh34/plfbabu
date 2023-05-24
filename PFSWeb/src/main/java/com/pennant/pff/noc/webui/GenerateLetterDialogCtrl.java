@@ -45,8 +45,10 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.letter.LetterUtil;
@@ -411,6 +413,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 		if (PennantConstants.RCD_STATUS_APPROVED.equals(csb.getRecordStatus())) {
 			this.btnDownload.setVisible(true);
+			this.btnSave.setVisible(false);
 		}
 
 		if (csb.isNewRecord()) {
@@ -453,7 +456,11 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.custCIF.setValue(customer.getCustCIF());
 		this.custName.setValue(customer.getCustShrtName());
 		this.finType.setValue(fm.getFinType());
-		this.finStatus.setValue(fm.getFinStatus());
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
+		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
+			this.finStatus.setValue(Labels.getLabel("label_Closed"));
+		}
 		this.finStatusReason.setValue(fm.getFinStsReason());
 		this.coreBankID.setValue(customer.getCustCoreBank());
 		this.finStartDate.setValue(fm.getFinStartDate());
@@ -556,6 +563,13 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
+
+		if ("Submit".equals(userAction.getSelectedItem().getLabel())) {
+			LoanLetter letter = generateLetterService.generateLetter(this.generateLetter);
+			if (letter.getStatus().equals("S")) {
+				MessageUtil.showMessage("Letter Downloaded successfully.");
+			}
+		}
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}

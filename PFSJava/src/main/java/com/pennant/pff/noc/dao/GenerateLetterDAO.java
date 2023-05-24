@@ -33,4 +33,6 @@ public interface GenerateLetterDAO {
 	List<GenerateLetter> getLoanLetterInfo(long finID, String letterType);
 
 	boolean isLetterInitiated(long finID, String letterType);
+
+	boolean letterIsInQueu(long finID, String letterType);
 }
