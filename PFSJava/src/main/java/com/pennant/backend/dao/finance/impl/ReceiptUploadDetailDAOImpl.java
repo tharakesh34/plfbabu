@@ -487,7 +487,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		logger.debug(Literal.SQL + sql);
 
 		Object[] object = new Object[] { finReference, ReceiptDetailStatus.SUCCESS.getValue(), 0 };
-		return this.jdbcOperations.queryForObject(sql, Integer.class, object) > 0 ? true : false;
+		return this.jdbcOperations.queryForObject(sql, Integer.class, object) > 0;
 	}
 
 	private StringBuilder sqlSelectQuery() {
