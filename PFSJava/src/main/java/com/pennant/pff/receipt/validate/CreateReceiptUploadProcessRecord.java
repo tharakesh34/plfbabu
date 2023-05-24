@@ -775,7 +775,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		if (StringUtils.isBlank(rud.getPartnerBankCode())) {
-			List<FinTypePartnerBank> ftb = partnerBankDAO.getpartnerbankCode(fm.getFinType(), receiptMode);
+			List<FinTypePartnerBank> ftb = partnerBankDAO.getpartnerbankCode(fm.getFinType(), subReceiptMode);
 
 			if (ftb.size() > 1) {
 				setError(rud, "[PARTNERBANKCODE] is mandatory ");
@@ -792,7 +792,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
 			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
-			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), receiptMode, pb.getPartnerBankId());
+			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), subReceiptMode,
+					pb.getPartnerBankId());
 			if (pb == null || partnerbankid == 0) {
 				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;
