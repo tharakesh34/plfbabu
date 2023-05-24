@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.liendetails.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +19,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements LienDetailsDAO {
 	private static Logger logger = LogManager.getLogger(LienDetailsDAOImpl.class);
@@ -200,7 +202,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			List<LienDetails> ld = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 				LienDetails lu = new LienDetails();
 				lu.setLienID(rs.getLong("LienID"));
 				lu.setHeaderID(rs.getLong("HeaderID"));
@@ -218,6 +220,8 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
 				return lu;
 			}, args);
+			return ld.stream().sorted((ld1, ld2) -> DateUtil.compare(ld1.getMarkingDate(), ld2.getMarkingDate()))
+					.collect(Collectors.toList());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -271,14 +275,14 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 	}
 
 	@Override
-	public LienDetails getLienByHeaderId(Long id) {
+	public LienDetails getLienByHeaderId(Long id, String reference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" LienID, HeaderID, Reference, Marking, MarkingDate, MarkingReason");
 		sql.append(", DeMarking, DemarkingReason, DemarkingDate, LienReference, LienStatus, Source");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn ");
 		sql.append("  From  Lien_Details");
-		sql.append(" Where HeaderId = ?");
+		sql.append(" Where HeaderId = ? and Reference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -306,7 +310,7 @@ public class LienDetailsDAOImpl extends SequenceDao<LienDetails> implements Lien
 				lu.setLastMntBy(rs.getLong("LastMntBy"));
 				lu.setLastMntOn(rs.getTimestamp("LastMntOn"));
 				return lu;
-			}, id);
+			}, id, reference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

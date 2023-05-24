@@ -206,6 +206,7 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 		for (LienUpload lienup : lienUploads) {
 			lienup.setAppDate(header.getAppDate());
 
+			LienDetails lu = null;
 			doValidate(header, lienup);
 
 			if (EodConstants.PROGRESS_FAILED == lienup.getProgress()) {
@@ -262,12 +263,13 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 					List<LienDetails> lienDetail = lienDetailsDAO.getLienListByLienId(lienheader.getLienID());
 					boolean isAllInActive = true;
-					for (LienDetails lu : lienDetail) {
-						if (lu.getReference().equals(fm.getFinReference())) {
-							LienDetails liendeatils = getLienDetails(header, lienup, lu);
+					for (LienDetails ld : lienDetail) {
+						if (ld.getReference().equals(fm.getFinReference())) {
+							LienDetails liendeatils = getLienDetails(header, lienup, ld);
 							lienDetailsDAO.update(liendeatils);
+							lu = liendeatils;
 						}
-						if (lu.isLienStatus()) {
+						if (ld.isLienStatus()) {
 							isAllInActive = false;
 						}
 					}
@@ -288,11 +290,9 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 				lienheader.setSource(lienup.getSource());
 				lienheader.setAccountNumber(lienup.getAccNumber());
 				lienheader.setInterfaceStatus(Labels.getLabel("label_Lien_Type_Pending"));
-				LienDetails lu = lienDetailsDAO.getLienByHeaderId(lienheader.getId());
-				lu = getLienDetails(header, lienup, lu);
 
 				lienheader.setId(lienup.getId());
-				lu.setHeaderID(lienup.getId());
+
 				if (isNew) {
 					lienHeaderDAO.save(lienheader);
 				} else {
@@ -301,13 +301,18 @@ public class LienUploadServiceImpl extends AUploadServiceImpl<LienUpload> {
 
 				if (lienup.getAction().equals("Y")) {
 					if (lienheader.isLienStatus()) {
+						lu = lienDetailsDAO.getLienByHeaderId(lienheader.getId(), lienup.getReference());
+						lu = getLienDetails(header, lienup, lu);
+						lu.setHeaderID(lienup.getId());
 						lienDetailsDAO.save(lu);
 					}
 				}
 
 				Map<String, String> map = new HashMap<>();
-				map.put("Lien ID", String.valueOf(lu.getLienID()));
-				lienup.setExtendedFields(map);
+				if (lu != null) {
+					map.put("Lien ID", String.valueOf(lu.getLienID()));
+					lienup.setExtendedFields(map);
+				}
 
 				transactionManager.commit(txStatus);
 			} catch (Exception e) {
