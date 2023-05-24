@@ -406,22 +406,25 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		long letterID = saveLoanLetterdetails(gl);
 		if (letterID != 0) {
 			letter = letterService.generate(letterID, SysParamUtil.getAppDate());
+			try {
+				if (letter.isBlocked()) {
+					letter.setGenerated(-1);
+					letter.setStatus("B");
+					letter.setRemarks(BLOCKED_MSG);
+				} else {
+					letterService.sendEmail(letter);
 
-			if (letter.isBlocked()) {
-				letter.setGenerated(-1);
-				letter.setStatus("B");
-				letter.setRemarks(BLOCKED_MSG);
-			} else {
-				letterService.sendEmail(letter);
+					letterService.storeLetter(letter);
 
-				letterService.storeLetter(letter);
+					letter.setGenerated(1);
+					letter.setStatus("S");
+				}
 
-				letter.setGenerated(1);
-				letter.setStatus("S");
+				letterService.update(letter);
+
+			} catch (Exception e) {
+				throw e;
 			}
-
-			letterService.update(letter);
-			return letter;
 		}
 		return letter;
 	}

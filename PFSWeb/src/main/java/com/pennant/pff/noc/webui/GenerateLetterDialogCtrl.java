@@ -565,11 +565,14 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
 		if ("Submit".equals(userAction.getSelectedItem().getLabel())) {
+			doWriteComponentsToBean(this.generateLetter);
 			LoanLetter letter = generateLetterService.generateLetter(this.generateLetter);
 			if (letter.getStatus().equals("S")) {
 				MessageUtil.showMessage("Letter Downloaded successfully.");
 			}
 		}
+		refreshList();
+		closeDialog();
 
 		logger.debug(Literal.LEAVING.concat(event.toString()));
 	}
