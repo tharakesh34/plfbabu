@@ -405,8 +405,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		saveFees(gl);
 		long letterID = saveLoanLetterdetails(gl);
 		if (letterID != 0) {
-			letter = letterService.generate(letterID, SysParamUtil.getAppDate());
 			try {
+				letter = letterService.generate(letterID, SysParamUtil.getAppDate());
+
 				if (letter.isBlocked()) {
 					letter.setGenerated(-1);
 					letter.setStatus("B");
