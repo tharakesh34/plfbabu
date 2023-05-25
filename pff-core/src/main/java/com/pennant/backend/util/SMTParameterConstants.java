@@ -452,4 +452,5 @@ public class SMTParameterConstants {
 	public static final String PSL_DATA_REQUIRED = "PSL_DATA_REQUIRED";
 	public static final String AUTO_REFUND_PROCESS_THREAD_COUNT = "AUTO_REFUND_PROCESS_THREAD_COUNT";
 	public static final String LETTER_GENERATION_THREAD_COUNT = "LETTER_GENERATION_THREAD_COUNT";
+	public static final String EXCESS_KNOCKOFF_THREAD_COUNT = "EXCESS_KNOCKOFF_THREAD_COUNT";
 }
