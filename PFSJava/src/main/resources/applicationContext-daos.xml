@@ -13431,6 +13431,8 @@
 
 	<bean name="generateLetterServiceTarget" class="com.pennant.pff.noc.service.impl.GenerateLetterServiceImpl" >
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 	</bean>
 
 	<bean id="loanClosureUploadService" class="com.pennant.pff.receipt.service.impl.LoanClosureUploadServiceImpl"

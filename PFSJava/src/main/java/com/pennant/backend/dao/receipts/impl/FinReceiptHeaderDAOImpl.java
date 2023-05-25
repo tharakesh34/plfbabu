@@ -1814,8 +1814,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, String.class, finID, FinServiceEvent.EARLYSETTLE,
-					RepayConstants.PAYSTATUS_REALIZED);
+			return this.jdbcOperations.queryForObject(sql, String.class, finID, "EarlySettlement", "R");
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

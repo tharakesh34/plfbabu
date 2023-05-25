@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.reports.ReportListDetail;
@@ -42,8 +42,6 @@ public interface GenerateLetterService {
 
 	List<LoanTypeLetterMapping> getFinTypeMap(String finType);
 
-	FinanceMain getFinanceMainByRef(String finReferece, String type, boolean isWIF);
-
 	String getCanceltype(String finReference);
 
 	boolean isLetterInitiated(long finID, String letterType);
@@ -51,4 +49,6 @@ public interface GenerateLetterService {
 	LoanLetter generateLetter(GenerateLetter generateLetter);
 
 	boolean letterIsInQueu(long finID, String letterType);
+
+	List<ManualAdvise> getManualAdvises(long finID);
 }

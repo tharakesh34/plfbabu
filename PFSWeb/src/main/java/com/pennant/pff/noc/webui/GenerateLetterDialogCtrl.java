@@ -37,6 +37,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -44,6 +45,7 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -118,6 +120,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	private transient FinFeeDetailListCtrl finFeeDetailListCtrl;
 	private FinanceDetail financeDetail;
 	private int ccyFormatter = 0;
+	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	public GenerateLetterDialogCtrl() {
 		super();
@@ -456,12 +459,22 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.custCIF.setValue(customer.getCustCIF());
 		this.custName.setValue(customer.getCustShrtName());
 		this.finType.setValue(fm.getFinType());
+
 		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.closureType.setValue(Labels.getLabel("label_Status_Cancelled"));
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
+			String closureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
+
+			if (closureType != null) {
+				this.finStatusReason.setValue(closureType);
+				this.closureType.setValue(closureType);
+				this.closureReason.setValue(closureType);
+			}
 		}
-		this.finStatusReason.setValue(fm.getFinStsReason());
+
 		this.coreBankID.setValue(customer.getCustCoreBank());
 		this.finStartDate.setValue(fm.getFinStartDate());
 		this.branch.setValue(fm.getFinBranch());
@@ -470,9 +483,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.sourcingOfcr.setValue(String.valueOf(fm.getAccountsOfficer()));
 		this.letterType.setValue(gl.getLetterType());
 		fillComboBox(this.letterType, gl.getLetterType(), LetterUtil.getLetterTypes(), "");
-		this.closureType.setValue(fm.getClosingStatus());
-		this.closureReason.setValue(fm.getClosingStatus());
-
 		this.recordStatus.setValue(gl.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -620,21 +630,57 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			this.lPPWaived.setValue(CurrencyUtil.format(financeSummary.getFinODTotWaived(), ccyFormatter));
 			this.lPPPaid.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
 
-			this.totalLPI.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyAmt(), ccyFormatter));
-			this.lPIPaid.setValue(CurrencyUtil.format(financeSummary.getFinODTotWaived(), ccyFormatter));
-			this.lPIWaived.setValue(CurrencyUtil.format(financeSummary.getFinODTotPenaltyPaid(), ccyFormatter));
+			this.totalLPI.setValue(CurrencyUtil.format(financeSummary.getTotalLPI(), ccyFormatter));
+			this.lPIPaid.setValue(CurrencyUtil.format(financeSummary.getLpiPaid(), ccyFormatter));
+			this.lPIWaived.setValue(CurrencyUtil.format(financeSummary.getLpiWaived(), ccyFormatter));
 
 			this.totalOtherFee.setValue(CurrencyUtil.format(financeSummary.getTotalFees(), ccyFormatter));
 			this.feePaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
 			this.feeWaived.setValue(CurrencyUtil.format(financeSummary.getTotalWaiverFee(), ccyFormatter));
 
-			this.totalBounces.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-			this.bouncesPaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-			this.bouncesWaived.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-
 			dofillPaybleDetails(financeSummary.getFinID());
+			fillManualAdvises(financeSummary.getFinID());
 
 		}
+	}
+
+	private void fillManualAdvises(long finID) {
+		List<ManualAdvise> maList = generateLetterService.getManualAdvises(finID);
+		BigDecimal receivedAmt = BigDecimal.ZERO;
+		BigDecimal adviseAmt = BigDecimal.ZERO;
+		BigDecimal waivedAmt = BigDecimal.ZERO;
+
+		BigDecimal bouncPaid = BigDecimal.ZERO;
+		BigDecimal bounces = BigDecimal.ZERO;
+		BigDecimal bouncWaived = BigDecimal.ZERO;
+
+		BigDecimal fee = new BigDecimal(this.totalOtherFee.getValue());
+		BigDecimal feePaid = new BigDecimal(this.feePaid.getValue());
+		BigDecimal feeWaived = new BigDecimal(this.feeWaived.getValue());
+
+		for (ManualAdvise ma : maList) {
+			if (Allocation.BOUNCE.equals(ma.getFeeTypeCode())) {
+				bouncPaid = bouncPaid.add(ma.getPaidAmount());
+				bounces = bounces.add(ma.getAdviseAmount());
+				bouncWaived = bouncWaived.add(ma.getWaivedAmount());
+			} else {
+				receivedAmt = receivedAmt.add(ma.getPaidAmount());
+				adviseAmt = adviseAmt.add(ma.getAdviseAmount());
+				waivedAmt = waivedAmt.add(ma.getWaivedAmount());
+			}
+		}
+
+		adviseAmt = adviseAmt.add(fee);
+		receivedAmt = receivedAmt.add(feePaid);
+		waivedAmt = waivedAmt.add(feeWaived);
+
+		this.totalBounces.setValue(CurrencyUtil.format(bounces, ccyFormatter));
+		this.bouncesPaid.setValue(CurrencyUtil.format(bouncPaid, ccyFormatter));
+		this.bouncesWaived.setValue(CurrencyUtil.format(bouncWaived, ccyFormatter));
+
+		this.totalOtherFee.setValue(String.valueOf(adviseAmt));
+		this.feePaid.setValue(String.valueOf(receivedAmt));
+		this.feeWaived.setValue(String.valueOf(waivedAmt));
 	}
 
 	private void dofillPaybleDetails(long finID) {
@@ -899,5 +945,10 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
 }

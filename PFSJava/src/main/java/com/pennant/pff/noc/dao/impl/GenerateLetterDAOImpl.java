@@ -253,9 +253,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, EmailNotificationId, Status, Remarks");
-		sql.append(" From LOAN_LETTERS gl");
-		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
-		sql.append(" Where FinID = ?");
+		sql.append(" From Loan_Letters Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -388,8 +386,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, Status, Remarks");
-		sql.append(" From Loan_Letters gl");
-		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
+		sql.append(" From Loan_Letters");
 		sql.append(" Where FinID = ? and LetterType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());

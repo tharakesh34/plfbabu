@@ -151,6 +151,8 @@ public class LetterGenerationTasklet implements Tasklet {
 
 				letterService.storeLetter(letter);
 
+				letterService.createAdvise(letter);
+
 				letter.setGenerated(1);
 				letter.setStatus("S");
 			}

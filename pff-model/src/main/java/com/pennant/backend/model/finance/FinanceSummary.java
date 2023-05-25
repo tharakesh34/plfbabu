@@ -226,6 +226,9 @@ public class FinanceSummary implements Serializable {
 
 	private String createdName;
 	private String approvedName;
+	private BigDecimal totalLPI = BigDecimal.ZERO;
+	private BigDecimal lpiPaid = BigDecimal.ZERO;
+	private BigDecimal lpiWaived = BigDecimal.ZERO;
 
 	public FinanceSummary() {
 		super();
@@ -1270,5 +1273,29 @@ public class FinanceSummary implements Serializable {
 
 	public void setLastInstDate(Date lastInstDate) {
 		this.lastInstDate = lastInstDate;
+	}
+
+	public BigDecimal getTotalLPI() {
+		return totalLPI;
+	}
+
+	public void setTotalLPI(BigDecimal totalLPI) {
+		this.totalLPI = totalLPI;
+	}
+
+	public BigDecimal getLpiPaid() {
+		return lpiPaid;
+	}
+
+	public void setLpiPaid(BigDecimal lpiPaid) {
+		this.lpiPaid = lpiPaid;
+	}
+
+	public BigDecimal getLpiWaived() {
+		return lpiWaived;
+	}
+
+	public void setLpiWaived(BigDecimal lpiWaived) {
+		this.lpiWaived = lpiWaived;
 	}
 }

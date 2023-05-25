@@ -168,7 +168,15 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	public void onClick$btnRefresh(Event event) {
 		logger.debug(Literal.ENTERING.concat(event.toString()));
 
-		doReset();
+		this.finRefSort.setSelectedIndex(0);
+		this.branchSort.setSelectedIndex(0);
+		this.corebankidSort.setSelectedIndex(0);
+		this.custCifSort.setSelectedIndex(0);
+
+		this.finReference.setValue("");
+		this.branch.setValue("");
+		this.coreBankID.setValue("");
+		this.custCIF.setValue("");
 
 		fillListData();
 
