@@ -1890,6 +1890,7 @@ public class JavaScriptBuilder extends Groupbox {
 					if (StringUtils.equals(selectedItem, "ClosureType")) {
 						for (int i = 0; i < this.closureTypeList.size(); i++) {
 							ValueLabel closureDetails = this.closureTypeList.get(i);
+							String closureDetailsValue = closureDetails.getValue();
 
 							comboitem = new Comboitem();
 
@@ -1897,18 +1898,27 @@ public class JavaScriptBuilder extends Groupbox {
 								comboitem.setLabel(closureDetails.getLabel());
 								comboitem.setValue(closureDetails.getValue());
 								operand.appendChild(comboitem);
+
+								if (StringUtils.trimToEmpty(value).equals(closureDetailsValue)) {
+									operand.setSelectedItem(comboitem);
+								}
 							}
 						}
 					} else if (StringUtils.equals(selectedItem, "PrvLetterCourierDeliveryStatus")) {
 						for (int i = 0; i < this.courierStatusList.size(); i++) {
-							ValueLabel closureDetails = this.courierStatusList.get(i);
+							ValueLabel courierStatus = this.courierStatusList.get(i);
+							String courierStatusVaue = courierStatus.getValue();
 
 							comboitem = new Comboitem();
 
 							if (leftOperand.getSelectedIndex() != 0) {
-								comboitem.setLabel(closureDetails.getLabel());
-								comboitem.setValue(closureDetails.getValue());
+								comboitem.setLabel(courierStatus.getLabel());
+								comboitem.setValue(courierStatus.getValue());
 								operand.appendChild(comboitem);
+
+								if (StringUtils.trimToEmpty(value).equals(courierStatusVaue)) {
+									operand.setSelectedItem(comboitem);
+								}
 							}
 						}
 					} else {
@@ -2249,7 +2259,9 @@ public class JavaScriptBuilder extends Groupbox {
 						this.query += " ) ";
 					} else {
 						if (StringUtils.equals(rightOperandTypeValue, RuleConstants.STATICTEXT)
-								|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)) {
+								|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)
+								|| StringUtils.equals("ClosureType", leftOperandValue)
+								|| StringUtils.equals("PrvLetterCourierDeliveryStatus", leftOperandValue)) {
 							rightOperandValue = "'" + rightOperandValue + "'";
 						}
 
