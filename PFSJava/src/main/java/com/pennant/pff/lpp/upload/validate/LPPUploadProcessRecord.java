@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lpp.upload.LPPUpload;
 import com.pennant.backend.util.FinanceConstants;
@@ -38,6 +39,7 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 
 	private LPPUploadDAO lppUploadDAO;
 	private FinanceMainDAO financeMainDAO;
+	private FinanceTypeDAO financeTypeDAO;
 
 	@Autowired
 	private UploadService lPPUploadService;
@@ -258,6 +260,11 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 			setError(detail, LPPUploadError.LPP_14);
 			return;
 		}
+
+		if (financeTypeDAO.getFinTypeCount(detail.getLoanType(), "_Temp") > 0) {
+			setError(detail, LPPUploadError.LPP_28);
+			return;
+		}
 	}
 
 	private void validateApplyOverDue(LPPUpload detail) {
@@ -438,4 +445,10 @@ public class LPPUploadProcessRecord implements ProcessRecord {
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
+	@Autowired
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
 }
