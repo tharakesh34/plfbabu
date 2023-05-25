@@ -152,6 +152,9 @@ public class GSTFileProcessorJob extends AbstractJob
 						// FIXME process in PLF
 
 						// Fetch GST VOUCHER from GST_VOUCHER_DETAILS based on ID, If not found error.
+
+						// Update GST VOUCHER ID in Response detail record for successful transaction
+						detail.setGstVoucherId(responseBean.getTransactionUID());
 					}
 
 					detail.setStatus(COMPLETED);
@@ -204,7 +207,7 @@ public class GSTFileProcessorJob extends AbstractJob
 		responseBean.setChargeInclusiveOfTax(ParseUtil.getItem(lineDataStrings, 11));
 		responseBean.setTaxAmount(ParseUtil.getBigDecimalItem(lineDataStrings, 12));
 		responseBean.setTransactionDate(ParseUtil.getItem(lineDataStrings, 13));
-		responseBean.setTransactionUID(ParseUtil.getItem(lineDataStrings, 14));
+		responseBean.setTransactionUID(ParseUtil.getLongItem(lineDataStrings, 14));
 		responseBean.setSourceBranch(ParseUtil.getItem(lineDataStrings, 15));
 		responseBean.setSourceState(ParseUtil.getItem(lineDataStrings, 16));
 		responseBean.setDestinationBranch(ParseUtil.getItem(lineDataStrings, 17));

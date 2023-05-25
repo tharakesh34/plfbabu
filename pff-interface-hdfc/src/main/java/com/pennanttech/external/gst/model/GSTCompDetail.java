@@ -5,6 +5,7 @@ public class GSTCompDetail {
 	private long headerId;
 	private String record;
 	private int status;
+	private long gstVoucherId;
 	private String errorCode;
 	private String errorMessage;
 
@@ -38,6 +39,14 @@ public class GSTCompDetail {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public long getGstVoucherId() {
+		return gstVoucherId;
+	}
+
+	public void setGstVoucherId(long gstVoucherId) {
+		this.gstVoucherId = gstVoucherId;
 	}
 
 	public String getErrorCode() {

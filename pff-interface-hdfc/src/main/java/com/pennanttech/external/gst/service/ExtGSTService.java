@@ -33,7 +33,7 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 		extGSTDao.extractGSTVouchers();
 
 		// Dump data as per the request file format
-		extGSTDao.saveGSTVouchersToRequestTable();
+		extGSTDao.saveGSTVouchersToRequestTable(UNPROCESSED, UNPROCESSED);
 
 		// Write the file
 		List<GSTRequestDetail> gstComputationRecords = extGSTDao.fetchRecords(UNPROCESSED);
@@ -276,18 +276,27 @@ public class ExtGSTService extends TextFileUtil implements InterfaceConstants {
 						+ new SimpleDateFormat(reqConfig.getDateFormat()).format(appDate) + fileSeqName
 						+ reqConfig.getFileExtension();
 				super.writeDataToFile(fileName, itemList);
+
 				String doneFile = writeDoneFile(doneConfig, fileName);
+
+				// Save Request file details and get headerId
+				long req_header_id = extGSTDao.saveGSTRequestFileData(fileName, reqConfig.getFileLocation());
+				// Get all gst voucher id's as a list
+				List<Long> txnUidList = new ArrayList<Long>();
+				for (GSTRequestDetail data : gstRequestDetailList) {
+					txnUidList.add(data.getTransactionUid());
+				}
+				// Update gst vouchers with request header id
+				extGSTDao.updateGSTVoucherWithReqHeaderId(txnUidList, req_header_id);
 
 				// Uploading to HDFC SFTP
 				if ("Y".equals(reqConfig.getIsSftp())) {
 					uploadToClientLocation(reqConfig, new File(fileName).getName(), baseFilePath, doneFile);
 				}
-
 			} catch (Exception e) {
 				logger.debug(Literal.EXCEPTION, e);
 			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 

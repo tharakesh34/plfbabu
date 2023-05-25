@@ -18,7 +18,7 @@ public class GSTRequestDetail {
 	private String chargeInclusiveOfTax = "Y";
 	private BigDecimal taxAmount = null;
 	private Date transactionDate;
-	private String transactionUid;
+	private Long transactionUid;
 	private String sourceBranch = null;
 	private String sourceState;
 	private String destinationBranch = null;
@@ -229,11 +229,11 @@ public class GSTRequestDetail {
 		this.transactionDate = transactionDate;
 	}
 
-	public String getTransactionUid() {
+	public Long getTransactionUid() {
 		return transactionUid;
 	}
 
-	public void setTransactionUid(String transactionUid) {
+	public void setTransactionUid(Long transactionUid) {
 		this.transactionUid = transactionUid;
 	}
 

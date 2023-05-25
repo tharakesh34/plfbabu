@@ -1,5 +1,6 @@
 package com.pennanttech.external.gst.dao.daoimpl;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -12,7 +13,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennanttech.external.gst.dao.ExtGSTDao;
 import com.pennanttech.external.gst.model.GSTCompDetail;
@@ -45,7 +49,9 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 				+ "REFERENCE_FIELD2,REFERENCE_AMOUNT,ACTUAL_AMOUNT,CREATED_DATE) "
 				+ "  (select  frh.reference FINREFERENCE,'FEE' ,ffr.feeid ,"
 				+ "  ffr.receiptid,ffr.paidamount,frh.receiptamount,to_date(substr(sysdate,1,10),'YYYY-MM-DD')  from finfeereceipts ffr "
-				+ "  inner join finreceiptheader frh on ffr.receiptid=frh.receiptid" + "  where ffr.paidamount >0 )");
+				+ " inner join finfeedetail ffd on ffr.FEEID=ffd.FEEID "
+				+ "  inner join finreceiptheader frh on ffr.receiptid=frh.receiptid"
+				+ "  where ffr.paidamount >0 and ffd.TAXAPPLICABLE=1)");
 
 		// not exist with feeid and receipt id
 
@@ -63,7 +69,7 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 	}
 
 	@Override
-	public void saveGSTVouchersToRequestTable() {
+	public void saveGSTVouchersToRequestTable(int processStatus, int req_file_id) {
 		String sql = "";
 		sql = "INSERT INTO GST_REQUEST_DETAIL (REQUESTTYPE,CUSTOMERID,ACCOUNTID,GSTIN,HSN,"
 				+ " TRANSACTIONPRICEDCHARGE,CHARGEINCLUSIVEOFTAX,TRANSACTIONDATE,TRANSACTIONUID,"
@@ -75,11 +81,14 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 				+ " 'N','N','LEA',(SELECT TO_CHAR(TO_DATE(SYSPARMVALUE,'YYYY-MM-DD'),'YYYY-MM-DD')FROM SMTPARAMETERS where "
 				+ " SYSPARMCODE='APP_DATE') AS REQUESTDATE,CU.CUSTSHRTNAME,'N' FROM GST_VOUCHER_DETAILS GVD "
 				+ " INNER JOIN FINANCEMAIN FM ON GVD.FINREFERENCE = FM.FINREFERENCE "
-				+ " INNER JOIN CUSTOMERS CU ON FM.CUSTID = CU.CUSTID )";
+				+ " INNER JOIN CUSTOMERS CU ON FM.CUSTID = CU.CUSTID  WHERE GVD.PROCESSED =? AND GVD.REQ_FILE_ID = ?)";
 
 		logger.debug(Literal.SQL + sql);
 
-		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString());
+		mainNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			ps.setInt(1, processStatus);
+			ps.setInt(2, req_file_id);
+		});
 	}
 
 	@Override
@@ -105,7 +114,7 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 			detail.setTransactionPricedCharge(rs.getBigDecimal("TRANSACTIONPRICEDCHARGE"));
 			detail.setChargeInclusiveOfTax(rs.getString("CHARGEINCLUSIVEOFTAX"));
 			detail.setTransactionDate(rs.getDate("TRANSACTIONDATE"));
-			detail.setTransactionUid(rs.getString("TRANSACTIONUID"));
+			detail.setTransactionUid(rs.getLong("TRANSACTIONUID"));
 			detail.setSourceSystem(rs.getString("SOURCESYSTEM"));
 			detail.setAccountExempt(rs.getString("ACCOUNTEXEMPT"));
 			detail.setBranchExempt(rs.getString("BRANCHEXEMPT"));
@@ -208,17 +217,77 @@ public class ExtGSTDaoImpl extends SequenceDao implements ExtGSTDao {
 	@Override
 	public void updateGSTRecordDetailStatus(GSTCompDetail detail) {
 		StringBuilder sql = new StringBuilder("UPDATE GSTCOMPDETAILS");
-		sql.append(" SET STATUS = ?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
+		sql.append(" SET STATUS = ?,GST_VOUCHER_ID=?, ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		extNamedJdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, detail.getStatus());
+			ps.setLong(index++, detail.getGstVoucherId());
 			ps.setString(index++, detail.getErrorCode());
 			ps.setString(index++, detail.getErrorMessage());
 			ps.setLong(index, detail.getId());
 		});
+
+	}
+
+	@Override
+	public long saveGSTRequestFileData(String fileName, String fileLocation) {
+		Timestamp curTimeStamp = new Timestamp(System.currentTimeMillis());
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO GSTCOMPREQUESTFILE (");
+		sql.append("FILE_NAME, FILE_LOCATION, CREATED_DATE)");
+		sql.append("values(?,?,?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+
+		jdbcOperations.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
+				int index = 1;
+				ps.setString(index++, fileName);
+				ps.setString(index++, fileLocation);
+				ps.setTimestamp(index, curTimeStamp);
+
+				return ps;
+			}
+		}, keyHolder);
+
+		Number key = keyHolder.getKey();
+
+		if (key == null) {
+			return 0;
+		}
+
+		return key.longValue();
+	}
+
+	@Override
+	public int updateGSTVoucherWithReqHeaderId(List<Long> txnUidList, long headerId) {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE GST_VOUCHER_DETAILS  SET REQ_FILE_ID=? WHERE GST_VOUCHER_ID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return extNamedJdbcTemplate.getJdbcOperations().batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int index) throws SQLException {
+				long txnUid = txnUidList.get(index);
+				ps.setLong(1, headerId);
+				ps.setLong(2, txnUid);
+			}
+
+			@Override
+			public int getBatchSize() {
+				return txnUidList.size();
+			}
+		}).length;
 
 	}
 
