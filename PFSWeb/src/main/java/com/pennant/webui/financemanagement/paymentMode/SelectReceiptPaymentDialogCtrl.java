@@ -545,9 +545,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (maturitydate != null) {
 			this.rowClosureType.setVisible(true);
 
-			String excludeFields = ",CLOSURE,SETTLEMENT,";
+			String excludeFields = ",Closure,";
 			if (maturitydate.compareTo(appDate) <= 0) {
-				excludeFields = ",FORE-CLOSURE,CANCEL,SETTLEMENT,";
+				excludeFields = ",Fore-Closure,Cancel,";
 			}
 
 			fillComboBox(this.closureType, "", ClosureType.getTypes(), excludeFields);
