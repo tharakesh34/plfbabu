@@ -1,5 +1,6 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,8 +10,9 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlType(propOrder = { "planEMIHMonth", "planEMIHDate" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinPlanEmiHoliday {
+public class FinPlanEmiHoliday implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private long finID;
 	private String finReference;
 	@XmlElement(name = "holidayMonth")
