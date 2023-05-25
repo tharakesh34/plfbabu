@@ -1814,7 +1814,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, String.class, finID, "EarlySettlement", "R");
+			return this.jdbcOperations.queryForObject(sql, String.class, finID, FinServiceEvent.EARLYSETTLE,
+					RepayConstants.PAYSTATUS_REALIZED);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -1906,5 +1907,15 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL.concat(sql));
 
 		this.jdbcOperations.update(sql, closureType, receiptID);
+	}
+
+	@Override
+	public boolean isLoanEarlySetteled(String finReference) {
+		String sql = "Select count(ReceiptId) From FinReceiptHeader Where Reference = ? and ReceiptPurpose in (?,?) and ReceiptModeStatus = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finReference, FinServiceEvent.EARLYRPY,
+				FinServiceEvent.EARLYSETTLE, RepayConstants.PAYSTATUS_REALIZED) >0;
 	}
 }

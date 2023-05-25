@@ -172,4 +172,6 @@ public interface FinReceiptHeaderDAO {
 	FinanceType getRepayHierarchy(FinanceMain fm);
 
 	void updateClosureType(long receiptID, String closureType);
+
+	boolean isLoanEarlySetteled(String finReference);
 }

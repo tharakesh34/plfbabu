@@ -76,6 +76,10 @@ public class FinanceCancelValidator {
 			return FinCancelUploadError.LANCLUP008;
 		}
 
+		if (finReceiptHeaderDAO.isLoanEarlySetteled(finReference)) {
+			return FinCancelUploadError.LANCLUP008;
+		}
+
 		if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
 			List<String> advList = finAdvancePaymentsDAO.getFinAdvancePaymentsStatus(finID);
 
