@@ -454,7 +454,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		long receiptid = rud.getReceiptID();
 		if (!(receiptid == 0) && !(receiptid == Long.MIN_VALUE)) {
-			if (rud.getRemarks().length() > 50) {
+			if (Long.toString(receiptid).length() > 50) {
 				setError(rud, "[RECEIPTNUMBER] with length more than 50 characters");
 				return;
 			}
