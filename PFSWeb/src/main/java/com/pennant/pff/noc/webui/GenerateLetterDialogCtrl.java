@@ -464,6 +464,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.closureType.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.closureReason.setValue(Labels.getLabel("label_Status_Cancelled"));
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
 			String closureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
