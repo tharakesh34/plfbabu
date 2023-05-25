@@ -164,6 +164,10 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 							List<ManualAdvise> mbList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(
 									fromFm.getFinID(), AdviseType.PAYABLE.id(), clk.getFeeTypeCode());
 
+							mbList = mbList.stream()
+									.filter(ma -> !PennantConstants.MANUALADVISE_CANCEL.equals(ma.getStatus()))
+									.collect(Collectors.toList());
+
 							if (CollectionUtils.isEmpty(mbList)) {
 								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
 								return;

@@ -186,6 +186,9 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl<ManualKn
 			List<ManualAdvise> maList = manualAdviseDAO.getManualAdviseByRefAndFeeCode(fm.getFinID(),
 					AdviseType.PAYABLE.id(), detail.getFeeTypeCode());
 
+			maList = maList.stream().filter(ma -> !PennantConstants.MANUALADVISE_CANCEL.equals(ma.getStatus()))
+					.collect(Collectors.toList());
+
 			if (CollectionUtils.isEmpty(maList)) {
 				setError(detail, ManualKnockOffUploadError.MKOU_109);
 				return;

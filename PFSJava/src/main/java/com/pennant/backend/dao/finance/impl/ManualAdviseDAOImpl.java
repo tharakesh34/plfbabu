@@ -1075,7 +1075,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" AdviseID, AdviseType, FinID, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID");
 		sql.append(", ReceiptID, PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt");
 		sql.append(", BalanceAmt, FeeTypeCode, FeeTypeDesc, DueCreation, Version, LastMntOn, LastMntBy, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentId");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, PresentmentId, Status");
 		sql.append(" From ManualAdvise_Aview");
 		sql.append(" Where FinID = ? and AdviseType = ? and FeeTypeCode = ?");
 
@@ -1114,6 +1114,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setRecordType(rs.getString("RecordType"));
 			ma.setWorkflowId(rs.getLong("WorkflowId"));
 			ma.setPresentmentID(JdbcUtil.getLong(rs.getObject("PresentmentId")));
+			ma.setStatus(rs.getString("Status"));
 
 			return ma;
 		}, finID, adviseType, feeTypeCode);
