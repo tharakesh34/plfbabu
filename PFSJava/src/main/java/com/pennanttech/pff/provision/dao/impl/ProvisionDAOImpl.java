@@ -552,7 +552,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.ClassId");
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = lp.EffNpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassId");
-		sql.append(" Left Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacsd.SubClassId");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassId");
 		sql.append(" Where lp.FinID = ?");
 		sql.append(" Union All");
 		sql.append("  Select lp.Id,c.CustID, c.CustCIF, c.CustShrtName");
@@ -582,7 +582,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(" Inner Join Asset_Class_Codes acc on acc.ID = acsd.Classid");
 		sql.append(" Inner Join Asset_Class_Setup_Details eacsd on eacsd.ID = lp.EffNpaClassId");
 		sql.append(" Inner Join Asset_Class_Codes eacc on eacc.ID = eacsd.ClassId");
-		sql.append(" Left Join Asset_Sub_Class_Codes eascc on eascc.AssetClassId = eacsd.SubClassId");
+		sql.append(" Inner Join Asset_Sub_Class_Codes eascc on eascc.ID = eacsd.SubClassId");
 		sql.append(" Where lp.FinID = ? and Not Exists (Select 1 From Loan_Provisions_Temp Where ID = lp.ID)");
 		sql.append(") T ");
 
