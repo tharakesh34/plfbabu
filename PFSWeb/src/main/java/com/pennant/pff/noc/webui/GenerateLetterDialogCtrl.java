@@ -635,17 +635,13 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			this.lPIPaid.setValue(CurrencyUtil.format(financeSummary.getLpiPaid(), ccyFormatter));
 			this.lPIWaived.setValue(CurrencyUtil.format(financeSummary.getLpiWaived(), ccyFormatter));
 
-			this.totalOtherFee.setValue(CurrencyUtil.format(financeSummary.getTotalFees(), ccyFormatter));
-			this.feePaid.setValue(CurrencyUtil.format(financeSummary.getTotalPaidFee(), ccyFormatter));
-			this.feeWaived.setValue(CurrencyUtil.format(financeSummary.getTotalWaiverFee(), ccyFormatter));
-
 			dofillPaybleDetails(financeSummary.getFinID());
-			fillManualAdvises(financeSummary.getFinID());
+			fillManualAdvises(financeSummary.getFinID(), financeSummary);
 
 		}
 	}
 
-	private void fillManualAdvises(long finID) {
+	private void fillManualAdvises(long finID, FinanceSummary financeSummary) {
 		List<ManualAdvise> maList = generateLetterService.getManualAdvises(finID);
 		BigDecimal receivedAmt = BigDecimal.ZERO;
 		BigDecimal adviseAmt = BigDecimal.ZERO;
@@ -654,10 +650,6 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		BigDecimal bouncPaid = BigDecimal.ZERO;
 		BigDecimal bounces = BigDecimal.ZERO;
 		BigDecimal bouncWaived = BigDecimal.ZERO;
-
-		BigDecimal fee = new BigDecimal(this.totalOtherFee.getValue());
-		BigDecimal feePaid = new BigDecimal(this.feePaid.getValue());
-		BigDecimal feeWaived = new BigDecimal(this.feeWaived.getValue());
 
 		for (ManualAdvise ma : maList) {
 			if (Allocation.BOUNCE.equals(ma.getFeeTypeCode())) {
@@ -671,9 +663,9 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			}
 		}
 
-		adviseAmt = adviseAmt.add(fee);
-		receivedAmt = receivedAmt.add(feePaid);
-		waivedAmt = waivedAmt.add(feeWaived);
+		adviseAmt = adviseAmt.add(financeSummary.getTotalFees());
+		receivedAmt = receivedAmt.add(financeSummary.getTotalPaidFee());
+		waivedAmt = waivedAmt.add(financeSummary.getTotalWaiverFee());
 
 		this.totalBounces.setValue(CurrencyUtil.format(bounces, ccyFormatter));
 		this.bouncesPaid.setValue(CurrencyUtil.format(bouncPaid, ccyFormatter));
