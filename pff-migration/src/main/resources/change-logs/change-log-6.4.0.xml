@@ -18771,7 +18771,35 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="01.1.PRE1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD','transaction','clientspecfication-HDFC',1,'Table is used to store Data of amount hold on a CASA Account through upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
+ 			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="01.1.PRE2" author="saikrishna.b" >
+		<sql>
+			<![CDATA[
+				 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Id',				'NUMBER',	'(19,0)',			'Increment id',			'Auto incremental value for unique identification',						'Mandatory',	1,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'HeaderId',		'NUMBER',	'(19,0)',			'Header id',			'used to store the header table id',									'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'RecordSeq',		'NUMBER',	'(19,0)',			'Record sequence',		'store the sequence value',												'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'FinID',			'NUMBER',	'(19,0)',			'Finance id',			'unique id for the loan reference for which hold marking upload done',	'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Type',			'STRING',	'10',				'Hold Type',			'Type of Hold: Hold(H) or Removal(R)',									'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'AccountNumber',	'STRING',	'20',				'Account Number',		'Account number agaunst which hold or removal is done',					'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Amount',			'NUMBER',	'(18,0)',			'Hold Amount',			'Amount of hold or removal is uploaded',								'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+				 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Reference',		'STRING',	'20',				'Loan Reference',		'Loan Reference agaunst which hold or removal is done',					'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Remarks',		'STRING',	'500',				'Hold Remarks',			'Remarks of hold or removal is uploaded',								'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Progress',		'NUMBER',	'(10,0)',			'upload Progress',		'Progress of the upload file',											'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Status',			'STRING',	'1',				'Hold Status',			'Status of hold or removal upload file',								'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'ErrorCode',		'STRING',	'20',				'Error Code',			'Error Code of failed  upload file',									'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+		 		 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'ErrorDesc',		'STRING',	'2000',				'Error Description',	'Error Description of failed  upload file',								'optional',		0,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
+ 			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="01.1" author="saikrishna.b">
 		<createTable tableName="HOLD_MARKING_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -18796,7 +18824,37 @@
 		<addPrimaryKey tableName="HOLD_MARKING_UPLOAD" columnNames="Id"
 			constraintName="PK_HOLD_MARKING_UPLOAD_ID" />
 	</changeSet>
+	
+	<changeSet id="03.PRE1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+ 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG','transaction','clientspecfication-HDFC',1,'Table is used to store Log Data of amount hold on a CASA Account through upload','saikrishna.b',current_timestamp,0,null,null,null,0);
+  			]]>
+		</sql>
+	</changeSet>
 
+ 	<changeSet id="03.PRE2" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Id',      			'NUMBER',	'19,0',		'Increment id',			'Auto incremental value for unique identification',							'Mandatory',  1, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'HeaderId',			'NUMBER',	'19,0',		'Header id',			'used to store the header table id',										'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'FinID',				'NUMBER',	'19,0',		'Finance id',			'unique id for the loan reference for which hold marking upload done',		'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Type',				'STRING',	'10',		'Hold Type',			'Type of Hold: Hold(H) or Removal(R)',										'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'AccountNumber',		'STRING',	'20',		'Account Number',		'Account number agaunst which hold or removal is done',						'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Amount',				'NUMBER',	'18,0',		'Hold Amount',			'Amount of hold or removal is uploaded',									'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Reference',			'STRING',	'20',		'Loan Reference',		'Loan Reference agaunst which hold or removal is done',						'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Remarks',				'STRING',	'500',		'Hold Remarks',			'Remarks of hold or removal is uploaded',									'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Progress',			'NUMBER',	'10,0',		'upload Progress',		'Progress of the upload file',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Status',				'STRING',	'1',		'Hold Status',			'Status of hold or removal upload file',									'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'ErrorCode',			'STRING',	'20',		'Error Code',			'Error Code of failed  upload file',										'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'ErrorDesc',			'STRING',	'2000',		'Error Description',	'Error Description of failed  upload file',									'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'CreatedOn',			'datetime',	'',			'Error Description',	'Currenttiemstamp on which record created',									'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'CreatedBy',			'NUMBER',	'19,0',		'Created By',			'User who created the recoed',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'ApprovedOn',			'datetime',	'',			'Approved On',			'Currenttiemstamp on which record approved',								'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'ApprovedBy',			'NUMBER',	'19,0',		'Approved By',			'User who approved the record',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 			]]>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+		</sql>
+	</changeSet>
 
 	<changeSet id="03" author="saikrishna.b">
 		<createTable tableName="HOLD_MARKING_UPLOAD_LOG">
@@ -18918,15 +18976,55 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="08.1.PRE1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf','HOLD_MARKING_HEADER','HoldID','SEQ_HOLD_MARKING_HEADER_HOLDID','sequence',null);
+  			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="08.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_HOLDID" startValue="1001"
 			maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
+	
+	<changeSet id="09.1.PRE1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				 Insert into PLF_SEQUENCES (SCHEMA_CODE,TABLE_NAME,COLUMN_NAME,SEQUENCE_NAME,SEQUENCE_TYPE,REMARKS) values ('plf','HOLD_MARKING_HEADER','ID','SEQ_HOLD_MARKING_HEADER_ID','sequence',null);
+   			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="09.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_ID" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" />
+	</changeSet>
+	
+	<changeSet id="10.1.PRE1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER','transaction','clientspecfication-HDFC',1,'Table is used to store the header details of the Data of amount hold on a CASA Account throught frontend and upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
+  		]]>
+		</sql>
+	</changeSet>
+
+ 	<changeSet id="10.1.PRE2" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'Id',				'NUMBER',	'(19,0)',			'Increment id',			'Auto incremental value for unique identification',							'Mandatory',	1, null, null, null, 'SEQ_HOLD_MARKING_HEADER_ID',		current_timestamp, 'saikrishna.b', null,    																			null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'HoldID',			'NUMBER',	'(19,0)',			'Hold ID',				'Auto incremental value for unique identification of hold data',			'optional',		0, null, null, null, 'SEQ_HOLD_MARKING_HEADER_HOLDID',	current_timestamp, 'saikrishna.b', 'Unique key is there against the column with name - uk_Hold_Marking_Header_HoldId',	null, 0);
+   				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'FinID',			'NUMBER',	'(19,0)',			'Finance id',			'unique id for the loan reference for which hold marking upload done',		'optional',		0, null, null, null, null,            					current_timestamp, 'saikrishna.b', null,																				null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'FinReference',	'STRING',	'20',				'Loan Reference',		'Loan Reference agaunst which hold or removal is done',						'Mandatory',	0, null, null, null, null,								current_timestamp, 'saikrishna.b', null,																				null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'HoldReference',	'NUMBER',	'(19,0)',			'Hold Reference',		'Auto incremental value for unique identification of hold data',			'optional',		0, null, null, null, null,								current_timestamp, 'saikrishna.b', null,																				null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'AccountNumber',	'STRING',	'20',				'Account Number',		'Account number agaunst which hold or removal is done',						'optional',		0, null, null, null, null,								current_timestamp, 'saikrishna.b', null,																				null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'HoldAmount',		'NUMBER',	'(18,0)',			'Hold Amount',			'Amount done hold against loan reference and account number',				'optional',		0, null, null, null, null,								current_timestamp, 'saikrishna.b', null,																				null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'ReleaseAmount',	'NUMBER',	'(18,0)',			'Release Amount',		'Amount Released from hold against loan reference and account number',		'optional',		0, null, null, null, null,								current_timestamp, 'saikrishna.b', null,																				null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'Balance',			'NUMBER',	'(18,0)',			'Balance Amount',		'Balance hold against loan reference and account number',					'optional',		0, null, null, null, null,								current_timestamp, 'saikrishna.b', null,																				null, 0);
+  			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="10.1" author="saikrishna.b">
@@ -18954,6 +19052,40 @@
 	<changeSet id="12.1" author="saikrishna.b">
 		<addUniqueConstraint tableName="HOLD_MARKING_HEADER" columnNames="HoldID"
 			constraintName="uk_Hold_Marking_Header_HoldId" />
+	</changeSet>
+	
+	<changeSet id="13.PRE1" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS','transaction','clientspecfication-HDFC',1,'Table is used to store the all details of the Data of amount hold and removal on a CASA Account throught frontend and upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
+  			]]>
+		</sql>
+	</changeSet>
+
+ 	<changeSet id="13.PRE2" author="saikrishna.b">
+		<sql>
+			<![CDATA[
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'Id',					'NUMBER',		'(19,0)',		'Increment id',		    'Auto incremental value for unique identification',							'Mandatory',  1, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'HeaderID',			'NUMBER',		'(19,0)',		'Header ID',		    'same as Id value of header table',											'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'HoldID',				'NUMBER',		'(19,0)',		'Hold ID',			    'same as Hold Id present in header table',									'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+   				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'FinID',				'NUMBER',		'(19,0)',		'Finance id',		    'unique id for the loan reference for which hold and removal is done',		'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'FinReference',		'STRING',		'20',	    	'Loan Reference',	    'Loan Reference agaunst which hold or removal is done',						'Mandatory',  0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'HoldType',			'STRING',		'10',	    	'Hold Type',		    'Type of Hold: Hold(H) or Removal(R)',										'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'Marking',			'STRING',		'8',	    	'Hold Marking',		    'whether hold is done manually or automaticaly',							'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'MovementDate',		'datetime',		'',		    	'Movement Date',		'date on which hold is done',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'Status',				'STRING',		'30',			'Status',				'Present status of Hold Record either success or pending',					'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'Amount',				'NUMBER',		'(18,0)',		'Hold Amount',			'Amount of hold or removal',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'LOGID',				'NUMBER',		'(19,0)',		'LOG ID',				'Used to store the log details',											'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'HoldReleaseReason',	'STRING',		'500',			'Hold Release Reason',	'Reason of hold or removal',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD',  'version',			'NUMBER',		'(10,0)',		'version',				'Progress of the upload file',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'CreatedOn',			'datetime',		'',				'Error Description',	'Currenttiemstamp on which record created',									'Mandatory',  0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'CreatedBy',			'NUMBER',		'(19,0)',		'Created By',			'User who created the recoed',												'Mandatory',  0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'ApprovedOn',			'datetime',		'',				'Approved On',			'Currenttiemstamp on which record approved',								'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'ApprovedBy',			'NUMBER',		'(19,0)',		'Approved By',			'User who approved the record',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'LastMnton',			'datetime',		'',				'Approved On',			'Currenttiemstamp on which record was updated last',						'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'LastMntBy',			'datetime',		'',				'Approved By',			'User who updated the record last',											'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
+ 			]]>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+		</sql>
 	</changeSet>
 
 	<changeSet id="13" author="saikrishna.b">
