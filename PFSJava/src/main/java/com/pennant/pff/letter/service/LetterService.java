@@ -99,6 +99,7 @@ public class LetterService {
 				gl.setCreatedBy(ltlp.getCreatedBy());
 				gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 				gl.setAgreementTemplate(ltlp.getAgreementCodeId());
+				gl.setEmailTemplate(ltlp.getEmailTemplateId());
 				gl.setModeofTransfer(ltlp.getLetterMode());
 
 				autoLetterGenerationDAO.save(gl);
@@ -169,7 +170,7 @@ public class LetterService {
 
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
 			TemplateEngine engine = new TemplateEngine(templatePath, templatePath);
-			engine.setTemplate(ad.getAggName().concat(".docx"));
+			engine.setTemplate(ad.getAggReportName().concat(".docx"));
 			engine.loadTemplate();
 			engine.mergeFields(loanLetter);
 

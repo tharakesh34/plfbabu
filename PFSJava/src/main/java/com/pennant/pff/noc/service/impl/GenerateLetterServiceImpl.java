@@ -235,6 +235,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			}
 
 			gl.setAgreementTemplate(ltlp.getAgreementCodeId());
+			gl.setEmailTemplate(ltlp.getEmailTemplateId());
 			gl.setModeofTransfer(ltlp.getLetterMode());
 			return autoLetterGenerationDAO.save(gl);
 		}
