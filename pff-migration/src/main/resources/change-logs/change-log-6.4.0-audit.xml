@@ -635,11 +635,26 @@
 		<renameTable newTableName="ADTLOAN_LETTER_MANUAL" oldTableName="AdtLetter_Generate_Manual" />
 	</changeSet>
 	
-	<changeSet id="ST#1561.39" author="Mounika.M">
+	<changeSet id="ST#1561.39.1" author="Mounika.M">
 		<addColumn tableName="ADTLOAN_LETTER_MANUAL">
 			<column name="FinReference" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.39.2" author="Mounika.M">
+		<addColumn tableName="ADTLOAN_LETTER_MANUAL">
 			<column name="CoreBankId" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.39.3" author="Mounika.M">
+		<addColumn tableName="ADTLOAN_LETTER_MANUAL">
 			<column name="CustCIF" type="varchar(13)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.39.4" author="Mounika.M">
+		<addColumn tableName="ADTLOAN_LETTER_MANUAL">
 			<column name="FinBranch" type="varchar(13)"/>
 		</addColumn>
 	</changeSet>

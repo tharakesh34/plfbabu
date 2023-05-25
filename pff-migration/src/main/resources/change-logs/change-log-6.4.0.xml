@@ -16297,7 +16297,7 @@
 			</column>
 			<column name="FlatNum" type="varchar(50)" />
 			<column name="Street" type="varchar(50)" />
-			<column name="AddrLine1" type="varchar(50)" />
+			<column name="AddrLine1" type="varchar(50)"/>
 			<column name="AddrLine2" type="varchar(50)" />
 			<column name="PoBox" type="varchar(50)" />
 			<column name="Country" type="varchar(2)">
@@ -16351,8 +16351,9 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.6" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="fk_SB_City" referencedTableName="RMTProvinceVSCity"
-			baseColumnNames="City" baseTableName="Service_Branches" referencedColumnNames="PCCITY" />
+		<addForeignKeyConstraint constraintName="fk_SB_City"
+			referencedTableName="RMTProvinceVSCity" baseColumnNames="City" baseTableName="Service_Branches"
+			referencedColumnNames="PCCITY" />
 	</changeSet>
 
 	<changeSet id="ST#1561.7" author="Mounika.M">
@@ -16425,8 +16426,9 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.11" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="fk_SBT_City" referencedTableName="RMTProvinceVSCity"
-			baseColumnNames="City" baseTableName="Service_Branches_Temp" referencedColumnNames="PCCITY" />
+		<addForeignKeyConstraint constraintName="fk_SBT_City"
+			referencedTableName="RMTProvinceVSCity" baseColumnNames="City" baseTableName="Service_Branches_Temp"
+			referencedColumnNames="PCCITY" />
 	</changeSet>
 
 	<changeSet id="ST#1561.12" author="Mounika.M">
@@ -16741,7 +16743,7 @@
 
 	<changeSet id="ST#1561.34" author="saikrishna.b">
 		<createTable tableName="LOANTYPE_LETTER_MAPPING">
-			<column name="Id" type="bigint">
+			<column name="Id" type="bigint" >
 				<constraints nullable="false" />
 			</column>
 			<column name="FinType" type="varchar(20)" />
@@ -16765,13 +16767,12 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
-	</changeSet>
-
+	 </changeSet>
+	
 	<changeSet id="ST#1561.35" author="saikrishna.b">
-		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_ID" tableName="LOANTYPE_LETTER_MAPPING"
-			columnNames="Id" />
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_ID" tableName="LOANTYPE_LETTER_MAPPING" columnNames="Id" />
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.36" author="saikrishna.b">
 		<createTable tableName="LOANTYPE_LETTER_MAPPING_TEMP">
 			<column name="Id" type="bigint">
@@ -16799,10 +16800,9 @@
 			<column name="WorkFlowId" type="bigint" />
 		</createTable>
 	</changeSet>
-
-	<changeSet id="ST#1561.37" author="saikrishna.b">
-		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_TID" tableName="LOANTYPE_LETTER_MAPPING_TEMP"
-			columnNames="Id" />
+	
+    <changeSet id="ST#1561.37" author="saikrishna.b">
+		<addPrimaryKey constraintName="PK_LOANTYPE_LETTER_MAPPING_TID" tableName="LOANTYPE_LETTER_MAPPING_TEMP" columnNames="Id" />
 	</changeSet>
 
 	<changeSet id="ST#1561.38" author="saikrishna.b">
@@ -16965,8 +16965,7 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.45" author="VinayKumar.K">
-		<addPrimaryKey constraintName="PK_COURIER_DETAILS_UPLOAD_ID" tableName="COURIER_DETAILS_UPLOAD"
-			columnNames="ID" />
+		<addPrimaryKey constraintName="PK_COURIER_DETAILS_UPLOAD_ID" tableName="COURIER_DETAILS_UPLOAD" columnNames="ID" />
 	</changeSet>
 
 	<changeSet id="ST#1561.46" author="VinayKumar.K">
@@ -17087,8 +17086,7 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.50" author="sainaveen.y">
-		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_UPLOAD" columnNames="Id"
-			constraintName="PK_BCK_AUTO_GEN_LTR_UPLOAD_ID" />
+		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_UPLOAD" columnNames="Id" constraintName="PK_BCK_AUTO_GEN_LTR_UPLOAD_ID" />
 	</changeSet>
 
 	<changeSet id="ST#1561.51" author="sainaveen.y">
@@ -17203,8 +17201,7 @@
 	</changeSet>
 
 	<changeSet id="ST#1561.55" author="sainaveen.y">
-		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_LOG" columnNames="Id"
-			constraintName="PK_BLOCK_AUTO_GEN_LTR_LOG_ID" />
+		<addPrimaryKey tableName="BLOCK_AUTO_GEN_LTR_LOG" columnNames="Id" constraintName="PK_BLOCK_AUTO_GEN_LTR_LOG_ID" />
 	</changeSet>
 
 	<changeSet id="ST#1561.56" author="sainaveen.y">
@@ -17220,8 +17217,8 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="ST#1561.57" author="saikrishna.b">
+	
+	<changeSet id="ST#1561.57" author="saikrishna.b" >
 		<sql>
 			<![CDATA[
 				DELETE FROM REPORTLIST WHERE CODE = 'ServiceBranch';
@@ -17262,7 +17259,8 @@
 	</changeSet>
 
 	<changeSet id="ST#1684.2" author="saikiran.n">
-		<addPrimaryKey constraintName="PK_LOAN_CLOSURE_UPLD_ID" tableName="Loan_Closure_Upload" columnNames="Id" />
+		<addPrimaryKey constraintName="PK_LOAN_CLOSURE_UPLD_ID" tableName="Loan_Closure_Upload"
+			columnNames="Id" />
 	</changeSet>
 
 	<changeSet id="ST#1684.3" author="saikiran.n">
@@ -17312,7 +17310,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1684.5" author="saikiran.n">
+ 	<changeSet id="ST#1684.5" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				DELETE FROM SECROLEGROUPS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'LOAN_CLOSURE_UPLOAD_MAKER');
@@ -17798,7 +17796,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#1526.2" author="sandeepkumar.m">
+	<changeSet id="ST#1526.2" author="sandeepkumar.m" >
 		<sql>
 			<![CDATA[			
 	              DELETE FROM DATA_ENGINE_LOG WHERE STATUSID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='LIEN_UPLOAD');
@@ -17831,7 +17829,7 @@
 	</changeSet>
 
 	<changeSet id="ST#1526.3" author="sandeepkumar.m">
-		<modifyDataType tableName="LIEN_UPLOAD" columnName="REMARKS" newDataType="varchar(1000)" />
+		<modifyDataType tableName="LIEN_UPLOAD" columnName="REMARKS" newDataType="varchar(1000)"/>
 	</changeSet>
 
 	<changeSet id="ST#1526.3_post" author="sandeepkumar.m" dbms="postgresql">
@@ -17884,7 +17882,7 @@
 	</changeSet>
 
 	<changeSet id="ST#1528.48" author="Sravani.S">
-		<renameTable newTableName="PAYMINS_UPLOAD" oldTableName="PAYMINS_UPLOADS" />
+		<renameTable newTableName="PAYMINS_UPLOAD" oldTableName="PAYMINS_UPLOADS"/>
 	</changeSet>
 
 	<changeSet id="ST#1528.100_1" author="Sravani.S">
@@ -18314,7 +18312,7 @@
 	</changeSet>
 
 	<changeSet id="PSD#226779.1" author="Gopal.p">
-		<modifyDataType tableName="FinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)" />
+		<modifyDataType tableName="FinReceiptHeader" columnName="KnockOffType" newDataType="varchar(2)"/>
 	</changeSet>
 
 	<changeSet id="PSD#226779.1_post" author="Gopal.p" dbms="postgresql">
@@ -18334,7 +18332,7 @@
 	</changeSet>
 
 	<changeSet id="PSD#226779.2" author="Gopal.p">
-		<modifyDataType tableName="FinReceiptHeader_Temp" columnName="KnockOffType" newDataType="varchar(2)" />
+		<modifyDataType tableName="FinReceiptHeader_Temp" columnName="KnockOffType" newDataType="varchar(2)"/>
 	</changeSet>
 
 
@@ -18414,7 +18412,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#713.003" author="sainaveen.y">
 		<sql> 
 			<![CDATA[ 
@@ -18444,7 +18442,7 @@
 		 	]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#713.004" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -18477,7 +18475,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#713.005" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -18522,7 +18520,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#713.006" author="sainaveen.y">
 		<sql>
 			<![CDATA[
@@ -18567,7 +18565,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#713.007" author="sainaveen.y">
 		<sql>
 		 	<![CDATA[ 
@@ -18577,9 +18575,9 @@
 		 	     INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'LPP_LOAN_JOB', 	  'LPP Loan Job', 	    'LPP_LOAN_JOB_TRIGGER', 	   '0 0/10 * 1/1 * ? *', 1, 0, 1, 0, NULL, NULL, 0, NULL, NULL, 1, 1, 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
 		 	     INSERT INTO JOB_DETAILS (ID, JOBKEY, DESCRIPTION, JOBTRIGGER, CRON_EXPRESSION, JOBMODE, STATUS, ENABLED, FAILURE_NOTIFICATION_REQ, HOST_NAME, PORT, JMX_PORT, SMTP_SERVER, NOTIFY_EMAILS, EXECUTION_LOG_REQ, EXECUTION_RETENTION_DAYS, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, MONITORING_REQ) VALUES ((SELECT MAX(ID)+1 FROM JOB_DETAILS), 'LPP_LOAN_TYPE_JOB', 'LPP Loan Type Job',  'LPP_LOAN_TYPE_JOB_TRIGGER',   '0 0/10 * 1/1 * ? *', 1, 0, 1, 0, NULL, NULL, 0, NULL, NULL, 1, 1, 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
 	           ]]>
-		</sql>
+		 </sql>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227143.1" author="Poojitha.M">
 		<sql>
 			<![CDATA[ 
@@ -18588,7 +18586,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.42.1_02" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -18611,7 +18609,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.43_02" author="ramya.v">
 		<sql>
 			<![CDATA[
@@ -18634,13 +18632,13 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.64" author="sainaveen.y">
 		<addColumn tableName="Letter_Blocking">
 			<column name="Remarks" type="varchar(100)" />
 		</addColumn>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227320" author="sainaveen.y">
 		<sql>
             <![CDATA[
@@ -18650,7 +18648,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227176_pre" author="Poojitha.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18658,11 +18656,11 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227176" author="Poojitha.M">
-		<modifyDataType tableName="LOAN_CANCEL_UPLOADS" columnName="CancelType" newDataType="varchar(2)" />
+		<modifyDataType tableName="LOAN_CANCEL_UPLOADS" columnName="CancelType" newDataType="varchar(2)"/>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227176_post" author="Poojitha.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18670,7 +18668,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1468.11" author="saikrishna.b">
 		<sql>
 		 	<![CDATA[
@@ -18678,7 +18676,7 @@
 		 	]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227404_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18698,7 +18696,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#110.1" author="saikiran.n">
 		<createTable tableName="AUTO_REFUND_QUEUE">
 			<column name="ID" type="bigint">
@@ -18763,7 +18761,7 @@
 		     ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#110.7" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -18772,7 +18770,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="01.1" author="saikrishna.b">
 		<createTable tableName="HOLD_MARKING_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -18792,7 +18790,7 @@
 			<column name="ErrorDesc" type="varchar(2000)" />
 		</createTable>
 	</changeSet>
-
+	
 	<changeSet id="02.1" author="saikrishna.b">
 		<addPrimaryKey tableName="HOLD_MARKING_UPLOAD" columnNames="Id"
 			constraintName="PK_HOLD_MARKING_UPLOAD_ID" />
@@ -18823,10 +18821,9 @@
 	</changeSet>
 
 	<changeSet id="04" author="saikrishna.b">
-		<addPrimaryKey tableName="HOLD_MARKING_UPLOAD_LOG" columnNames="Id"
-			constraintName="PK_HOLD_MARKING_UPLOAD_LOG_ID" />
+		<addPrimaryKey tableName="HOLD_MARKING_UPLOAD_LOG" columnNames="Id" constraintName="PK_HOLD_MARKING_UPLOAD_LOG_ID" />
 	</changeSet>
-
+	
 	<changeSet id="05" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -18850,7 +18847,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="06.1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -18874,7 +18871,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="07" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -18919,17 +18916,17 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="08.1" author="saikrishna.b">
-		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_HOLDID" startValue="1001"
-			maxValue="9223372036854775807" incrementBy="1" />
+		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_HOLDID" startValue="1001" maxValue="9223372036854775807"
+			incrementBy="1" />
 	</changeSet>
 
 	<changeSet id="09.1" author="saikrishna.b">
 		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_ID" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" />
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="10.1" author="saikrishna.b">
 		<createTable tableName="HOLD_MARKING_HEADER">
 			<column name="ID" type="bigint">
@@ -18947,19 +18944,19 @@
 			<column name="Balance" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
-
+	
 	<changeSet id="11.1" author="saikrishna.b">
 		<addPrimaryKey constraintName="PK_HMH_ID" tableName="HOLD_MARKING_HEADER" columnNames="ID" />
 	</changeSet>
-
+	
 	<changeSet id="12.1" author="saikrishna.b">
 		<addUniqueConstraint tableName="HOLD_MARKING_HEADER" columnNames="HoldID"
 			constraintName="uk_Hold_Marking_Header_HoldId" />
 	</changeSet>
-
-	<changeSet id="13" author="saikrishna.b">
+	
+	 <changeSet id="13" author="saikrishna.b">
 		<createTable tableName="HOLD_MARKING_DETAILS">
-			<column name="ID" type="bigint" autoIncrement="true">
+			<column name="ID" type="bigint"  autoIncrement="true">
 				<constraints nullable="false" />
 			</column>
 			<column name="HeaderID" type="bigint">
@@ -18994,15 +18991,15 @@
 			</column>
 		</createTable>
 	</changeSet>
-
+	
 	<changeSet id="14" author="saikrishna.b">
 		<addPrimaryKey constraintName="PK_HMD_ID" tableName="HOLD_MARKING_DETAILS" columnNames="ID" />
 	</changeSet>
-
+	
 	<changeSet id="PSD#227428" author="Gopal.p">
-		<renameColumn tableName="PRESENTMENT_RESP_UPLOAD" oldColumnName="HEADER_ID" newColumnName="HeaderID" />
+		<renameColumn tableName="PRESENTMENT_RESP_UPLOAD" oldColumnName="HEADER_ID" newColumnName="HeaderID"/>
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.71" author="Mounika.M">
 		<createTable tableName="LETTER_GENERATION">
 			<column name="ID" type="bigint">
@@ -19460,7 +19457,7 @@
 			<column name="LetterID" type="bigint" />
 		</createIndex>
 	</changeSet>
-
+	
 	<changeSet id="ST#15956.102" author="nagavamsi.p">
 		<sql>
 			<![CDATA[	
@@ -19469,7 +19466,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#15956.103" author="nagavamsi.p">
 		<sql>
 			<![CDATA[	
@@ -19480,7 +19477,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="PSD#227320.1" author="sainaveen.y">
 		<sql>
             <![CDATA[
@@ -19524,7 +19521,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#1561.90" author="saikrishna.b">
 		<sql>
             <![CDATA[
@@ -19541,7 +19538,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="15" author="saikrishna.b">
 		<sql>
 		 	<![CDATA[ 
@@ -19551,8 +19548,8 @@
 	           ]]>
 		</sql>
 	</changeSet>
-
-
+	
+	
 	<changeSet id="16" author="saikrishna.b">
 		<sql>
 		 	<![CDATA[
@@ -19562,8 +19559,7 @@
    			 ]]>
 		</sql>
 	</changeSet>
-
-
+	
 	<changeSet id="ST#15956.104" author="NagaVamsi.P">
 		<renameTable newTableName="LOAN_LETTERS" oldTableName="LETTER_GENERATION" />
 	</changeSet>
@@ -19587,7 +19583,6 @@
 	<changeSet id="ST#15956.109" author="NagaVamsi.P">
 		<renameTable newTableName="LOAN_LETTER_BLOCKING_LOG" oldTableName="LETTER_BLOCKING_LOG" />
 	</changeSet>
-
 
 	<changeSet id="ST#15956.1" author="NagaVamsi.P">
 		<addColumn tableName="LOAN_LETTERS">
@@ -19665,33 +19660,64 @@
 			<column name="GeneratedDate" type="datetime" />
 		</createIndex>
 	</changeSet>
-
+	
 	<changeSet id="ST#15956.4.9" author="NagaVamsi.P">
 		<renameColumn tableName="LOAN_LETTERS" oldColumnName="FeeTypeId" newColumnName="FeeID" />
 	</changeSet>
-
+	
 	<changeSet id="ST#15956.5.0" author="NagaVamsi.P">
-		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="FeeTypeId" newColumnName="FeeID" />
+		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="FeeTypeId"
+			newColumnName="FeeID" />
 	</changeSet>
-
-	<changeSet id="ST#1561.37" author="Mounika.M">
+		
+	<changeSet id="ST#1561.37.1" author="Mounika.M">
 		<addColumn tableName="Loan_Letter_Manual_Temp">
 			<column name="FinReference" type="varchar(20)" />
-			<column name="CoreBankId" type="varchar(50)" />
-			<column name="CustCIF" type="varchar(13)" />
-			<column name="FinBranch" type="varchar(13)" />
 		</addColumn>
 	</changeSet>
-
-	<changeSet id="ST#1561.39" author="Mounika.M">
+	
+	<changeSet id="ST#1561.37.2" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual_Temp">
+			<column name="CoreBankId" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.37.3" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual_Temp">
+			<column name="CustCIF" type="varchar(13)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.37.4" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual_Temp">
+			<column name="FinBranch" type="varchar(13)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#1561.39.1" author="Mounika.M">
 		<addColumn tableName="Loan_Letter_Manual">
 			<column name="FinReference" type="varchar(20)" />
-			<column name="CoreBankId" type="varchar(50)" />
-			<column name="CustCIF" type="varchar(13)" />
-			<column name="FinBranch" type="varchar(13)" />
 		</addColumn>
-	</changeSet>
-
+	</changeSet>	
+	
+	<changeSet id="ST#1561.39.2" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual">
+			<column name="CoreBankId" type="varchar(50)" />
+		</addColumn>
+	</changeSet>	
+	
+	<changeSet id="ST#1561.39.3" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual">
+			<column name="CustCIF" type="varchar(13)" />
+		</addColumn>
+	</changeSet>	
+	
+	<changeSet id="ST#1561.39.4" author="Mounika.M">
+		<addColumn tableName="Loan_Letter_Manual">
+			<column name="FinBranch" type="varchar(13)"/>
+		</addColumn>
+	</changeSet>	
+	
 	<changeSet id="ST#1561.30_01" author="vasudevarao.S">
 		<sql>
 			<![CDATA[
