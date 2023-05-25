@@ -368,7 +368,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 		case MODE:
 			Combobox mode = (Combobox) hbox.getLastChild();
 			mode.clearErrorMessage();
-			String modeVal = mode.getSelectedItem().getValue();
+			String modeVal = mode.getValue();
 			if (PennantConstants.SELECT_LABEL.equals(modeVal)) {
 				throw new WrongValueException(mode, Labels.getLabel("FIELD_IS_MAND", new String[] { "Mode " }));
 			}
@@ -953,7 +953,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 	private Combobox appendLetterType(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Combobox comboBox = new Combobox();
 
-		fillList(comboBox, mapping.getLetterType(), letterTypeList);
+		fillComboBox(comboBox, mapping.getLetterType(), letterTypeList);
 
 		comboBox.addForward(Events.ON_CHANGE, windowLoanTypeLetterMappingDialog, "onChangeLetterType", listItem);
 
@@ -990,7 +990,7 @@ public class LoanTypeLetterMappingDialogCtrl extends GFCBaseCtrl<LoanTypeLetterM
 
 	private void appendMode(Listitem listItem, LoanTypeLetterMapping mapping, boolean isReadOnly) {
 		Combobox comboBox = new Combobox();
-		fillList(comboBox, mapping.getLetterMode(), letterModeList);
+		fillComboBox(comboBox, mapping.getLetterMode(), letterModeList);
 		comboBox.setId(ListField.MODE.name().concat("-").concat(String.valueOf(mapping.getKeyValue())));
 		readOnlyComponent(isReadOnly, comboBox);
 
