@@ -1809,7 +1809,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	@Override
 	public String getClosureTypeValue(Long finID) {
-		String sql = "Select ClosureType From FinReceiptHeader Where FiniD = ? and ReceiptPurpose = ? and ReceiptModeSRtatus = ?";
+		String sql = "Select ClosureType From FinReceiptHeader Where FiniD = ? and ReceiptPurpose = ? and ReceiptModeStatus = ?";
 
 		logger.debug(Literal.SQL + sql);
 
