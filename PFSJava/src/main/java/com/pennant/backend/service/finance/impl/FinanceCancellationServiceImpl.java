@@ -502,34 +502,45 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			List<FinReceiptDetail> receiptDetailList = new ArrayList<>();
 			for (Long receiptId : receiptIdList) {
 				receiptDetailList.addAll(finReceiptDetailDAO.getReceiptDetailForCancelReversalByID(receiptId, "_view"));
+			}
 
-				FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptId);
+			if (CollectionUtils.isNotEmpty(receiptIdList)) {
+				finReceiptHeaderDAO.cancelReceipts(finReference);
+				finReceiptDetailDAO.cancelReceiptDetails(receiptIdList);
 
-				if (fea != null) {
-					for (FinReceiptDetail rd : receiptDetailList) {
-						rd.setPayAgainstID(fea.getExcessID());
+				for (Long receiptId : receiptIdList) {
+					FinExcessAmount fea = finExcessAmountDAO.getExcessAmountsByReceiptId(receiptId);
+					if (fea != null) {
+						fea.setAmount(BigDecimal.ZERO);
+						fea.setReservedAmt(BigDecimal.ZERO);
+						fea.setUtilisedAmt(BigDecimal.ZERO);
+						fea.setBalanceAmt(BigDecimal.ZERO);
+						finExcessAmountDAO.updateExcess(fea);
 					}
 				}
 			}
-			if (receiptIdList != null && receiptIdList.size() > 0) {
-				finReceiptHeaderDAO.cancelReceipts(finReference);
-				finReceiptDetailDAO.cancelReceiptDetails(receiptIdList);
-			}
-			if (!LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(fm.getCancelType())) {
-				for (FinReceiptDetail rd : receiptDetailList) {
-					FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
 
-					FinReceiptData frd = feeCalculator
-							.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
-					serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
-					serviceInstr.setLoanCancellation(true);
+			for (FinReceiptDetail rd : receiptDetailList) {
+				String paymentType = rd.getPaymentType();
+				if (ReceiptMode.EMIINADV.equals(paymentType) || ReceiptMode.EXCESS.equals(paymentType)
+						|| ReceiptMode.TEXCESS.equals(paymentType) || ReceiptMode.PAYABLE.equals(paymentType)
+						|| ReceiptMode.ADVINT.equals(paymentType) || ReceiptMode.ADVEMI.equals(paymentType)
+						|| ReceiptMode.CASHCLT.equals(paymentType) || ReceiptMode.DSF.equals(paymentType)) {
+					continue;
+				}
 
-					FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
-					FinScheduleData schd = detail.getFinScheduleData();
-					if (CollectionUtils.isNotEmpty(schd.getErrorDetails())) {
-						ErrorDetail error = schd.getErrorDetails().get(0);
-						throw new AppException(error.getError());
-					}
+				FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
+
+				FinReceiptData frd = feeCalculator
+						.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
+				serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
+				serviceInstr.setLoanCancellation(true);
+
+				FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
+				FinScheduleData schd = detail.getFinScheduleData();
+
+				if (CollectionUtils.isNotEmpty(schd.getErrorDetails())) {
+					throw new AppException(schd.getErrorDetails().get(0).getError());
 				}
 			}
 		}
