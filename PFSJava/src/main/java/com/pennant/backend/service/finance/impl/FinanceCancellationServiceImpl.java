@@ -515,20 +515,21 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 				finReceiptHeaderDAO.cancelReceipts(finReference);
 				finReceiptDetailDAO.cancelReceiptDetails(receiptIdList);
 			}
+			if (!LoanCancelationUtil.LOAN_CANCEL_REBOOK.equals(fm.getCancelType())) {
+				for (FinReceiptDetail rd : receiptDetailList) {
+					FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
 
-			for (FinReceiptDetail rd : receiptDetailList) {
-				FinServiceInstruction serviceInstr = createFinServInstr(finReference, rd, finID);
+					FinReceiptData frd = feeCalculator
+							.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
+					serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
+					serviceInstr.setLoanCancellation(true);
 
-				FinReceiptData frd = feeCalculator
-						.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
-				serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
-				serviceInstr.setLoanCancellation(true);
-
-				FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
-				FinScheduleData schd = detail.getFinScheduleData();
-				if (CollectionUtils.isNotEmpty(schd.getErrorDetails())) {
-					ErrorDetail error = schd.getErrorDetails().get(0);
-					throw new AppException(error.getError());
+					FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
+					FinScheduleData schd = detail.getFinScheduleData();
+					if (CollectionUtils.isNotEmpty(schd.getErrorDetails())) {
+						ErrorDetail error = schd.getErrorDetails().get(0);
+						throw new AppException(error.getError());
+					}
 				}
 			}
 		}
