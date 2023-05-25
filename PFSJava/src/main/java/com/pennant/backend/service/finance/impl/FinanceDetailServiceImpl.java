@@ -7344,6 +7344,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				fm.setDeductFeeDisb(actualAmbnt);
 
+				if (FinanceConstants.BPI_DISBURSMENT.equals(StringUtils.trimToEmpty(fm.getBpiTreatment()))) {
+					netfinamnt = netfinamnt.subtract(fm.getBpiAmount());
+				}
+
 				for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
 					disbAmount = disbAmount.add(fap.getAmtToBeReleased());
 				}
