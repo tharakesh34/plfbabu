@@ -99,7 +99,7 @@
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
 				<artifactId>data-engine</artifactId>
-				<version>5.0.0.17</version>
+				<version>5.0.0.18</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
