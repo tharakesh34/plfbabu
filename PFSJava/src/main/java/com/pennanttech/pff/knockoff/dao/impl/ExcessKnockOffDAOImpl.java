@@ -152,9 +152,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-
-		}, (rs, Num) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, Num) -> {
 			Queing queing = new Queing();
 			queing.setId(rs.getLong("ID"));
 			queing.setResetId(rs.getLong("resteID"));
