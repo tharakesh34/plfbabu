@@ -90,22 +90,23 @@ public class BranchChangeUploadServiceImpl extends AUploadServiceImpl<BranchChan
 
 		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 
-		if (StringUtils.isNotEmpty(rcdMntnSts)) {
+		if (StringUtils.isNotEmpty(financeMainDAO.getFinanceMainByRcdMaintenance(finID))) {
 			setError(detail, BranchChangeUploadError.BC_07, rcdMntnSts);
 			return;
 		}
 
-		boolean isInSettlement = branchChangeUploadDAO.isInSettlement(finID, "_temp");
-
-		if (isInSettlement) {
+		if (branchChangeUploadDAO.isInSettlement(finID, "_temp")) {
 			setError(detail, BranchChangeUploadError.BC_08);
 			return;
 		}
 
-		boolean isInlinkingDelinking = branchChangeUploadDAO.isInlinkingDelinking(finID, "_temp");
-
-		if (isInlinkingDelinking) {
+		if (branchChangeUploadDAO.isInlinkingDelinking(finID, "_temp")) {
 			setError(detail, BranchChangeUploadError.BC_09);
+			return;
+		}
+
+		if (branchChangeUploadDAO.getReceiptQueueList(finID)) {
+			setError(detail, BranchChangeUploadError.BC_10);
 			return;
 		}
 

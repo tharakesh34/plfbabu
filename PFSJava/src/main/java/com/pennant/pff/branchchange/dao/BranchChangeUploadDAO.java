@@ -16,4 +16,6 @@ public interface BranchChangeUploadDAO {
 	boolean isInSettlement(long finID, String type);
 
 	boolean isInlinkingDelinking(long finID, String type);
+
+	boolean getReceiptQueueList(long finID);
 }

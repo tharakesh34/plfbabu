@@ -20,7 +20,9 @@ public enum BranchChangeUploadError {
 
 	BC_08("Selected FinReference is under Maintainance in Settlement"),
 
-	BC_09("Selected FinReference is under Maintainance in Linking/Delinking");
+	BC_09("Selected FinReference is under Maintainance in Linking/Delinking"),
+
+	BC_10("Selected FinReference is under Maintainance in Receipt Process");
 
 	private String description;
 

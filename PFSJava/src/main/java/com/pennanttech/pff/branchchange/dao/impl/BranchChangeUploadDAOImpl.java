@@ -142,7 +142,17 @@ public class BranchChangeUploadDAOImpl extends SequenceDao<BranchChangeUpload> i
 		logger.debug(sql.toString());
 
 		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
-
 	}
 
+	@Override
+	public boolean getReceiptQueueList(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Reference From FinReceiptHeader_Temp fr");
+		sql.append(" Inner Join FinanceMain fm on fm.Finreference = fr.Reference");
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+	}
 }
