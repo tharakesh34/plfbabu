@@ -379,7 +379,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 			this.finStatus_Reason.setValue("Cancelled");
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-			String closureType = finReceiptHeaderDAO.getClosureTypeValue(this.finID, FinServiceEvent.EARLYSETTLE);
+			String closureType = finReceiptHeaderDAO.getClosureTypeValue(this.finID);
 			if (closureType != null) {
 				this.finStatus_Reason.setValue(closureType);
 			}

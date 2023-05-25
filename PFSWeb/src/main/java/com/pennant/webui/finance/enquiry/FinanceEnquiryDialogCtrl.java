@@ -135,7 +135,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
 
@@ -1195,8 +1194,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(closingStatus)) {
 				this.finStatus_Reason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
-				String closureType = finReceiptHeaderDAO.getClosureTypeValue(aFinanceMain.getFinID(),
-						FinServiceEvent.EARLYSETTLE);
+				String closureType = finReceiptHeaderDAO.getClosureTypeValue(aFinanceMain.getFinID());
 				if (closureType != null) {
 					this.finStatus_Reason.setValue(closureType);
 				}

@@ -1808,13 +1808,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public String getClosureTypeValue(Long finID, String receiptPurpose) {
-		String sql = "Select ClosureType From FinReceiptHeader Where FiniD = ? and ReceiptPurpose = ?";
+	public String getClosureTypeValue(Long finID) {
+		String sql = "Select ClosureType From FinReceiptHeader Where FiniD = ? and ReceiptPurpose = ? and ReceiptModeSRtatus = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, String.class, finID, receiptPurpose);
+			return this.jdbcOperations.queryForObject(sql, String.class, finID, FinServiceEvent.EARLYSETTLE,
+					RepayConstants.PAYSTATUS_REALIZED);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;

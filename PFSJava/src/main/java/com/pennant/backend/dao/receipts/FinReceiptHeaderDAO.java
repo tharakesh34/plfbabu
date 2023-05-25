@@ -163,7 +163,7 @@ public interface FinReceiptHeaderDAO {
 
 	boolean isChequeExists(CreateReceiptUpload rud);
 
-	String getClosureTypeValue(Long finID, String receiptPurpose);
+	String getClosureTypeValue(Long finID);
 
 	FinReceiptHeader getReceiptById(long receiptId, String type);
 
