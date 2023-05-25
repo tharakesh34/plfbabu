@@ -11,7 +11,7 @@ public interface ExtGSTDao {
 
 	void extractGSTVouchers();
 
-	void saveGSTVouchersToRequestTable();
+	void saveGSTVouchersToRequestTable(int processStatus, int req_file_id);
 
 	List<GSTRequestDetail> fetchRecords(int status);
 
@@ -25,5 +25,9 @@ public interface ExtGSTDao {
 	int saveExtGSTCompRecordsData(List<GSTCompDetail> compDetails);
 
 	void updateGSTRecordDetailStatus(GSTCompDetail detail);
+
+	long saveGSTRequestFileData(String fileName, String fileLocation);
+
+	int updateGSTVoucherWithReqHeaderId(List<Long> txnUidList, long headerId);
 
 }
