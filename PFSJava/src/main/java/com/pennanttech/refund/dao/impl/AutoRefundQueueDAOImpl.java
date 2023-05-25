@@ -218,7 +218,7 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 	}
 
 	private void updateQueingRecords(List<BatchJobQueue> jobQueue) {
-		String sql = "Update Auto_Refund_Queue Set Id = ? Where ID = ? and BatchID = ?";
+		String sql = "Update Auto_Refund_Queue Set Id = ? Where ID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -228,11 +228,9 @@ public class AutoRefundQueueDAOImpl extends SequenceDao<CustEODEvent> implements
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					BatchJobQueue jobQueuedetails = jobQueue.get(i);
-					int index = 1;
 
-					ps.setLong(index++, jobQueuedetails.getResetCounterId());
-					ps.setLong(index, jobQueuedetails.getId());
-					ps.setLong(index, jobQueuedetails.getBatchId());
+					ps.setLong(1, jobQueuedetails.getResetCounterId());
+					ps.setLong(2, jobQueuedetails.getId());
 				}
 
 				@Override

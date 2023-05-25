@@ -98,7 +98,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	@Override
 	public void update(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
-		sql.append(" Set FeeID = ?, Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
+		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
 		sql.append(", EmailNotificationId = ?, Status = ?, Remarks = ?");
 		sql.append(" Where Id = ?");
 
@@ -108,7 +108,6 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setObject(++index, JdbcUtil.getLong(gl.getFeeID()));
 				ps.setInt(++index, gl.getGenerated());
 				ps.setDate(++index, JdbcUtil.getDate(gl.getGeneratedDate()));
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
