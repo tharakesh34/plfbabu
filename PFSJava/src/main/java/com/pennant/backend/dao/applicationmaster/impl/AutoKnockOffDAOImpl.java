@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -29,8 +27,6 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements AutoKnockOffDAO {
-	private static Logger logger = LogManager.getLogger(AutoKnockOffDAOImpl.class);
-
 	public AutoKnockOffDAOImpl() {
 		super();
 	}

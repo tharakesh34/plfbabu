@@ -21,6 +21,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.letter.LoanLetter;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
 import com.pennant.pff.batch.job.model.BatchJobQueue;
@@ -55,6 +56,8 @@ public class LetterGenerationTasklet implements Tasklet {
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		Map<String, Object> stepExecutionContext = chunkContext.getStepContext().getStepExecutionContext();
+
+		BatchUtil.setExecutionStatus(chunkContext, StepUtil.LETTER_GENERATION);
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
 

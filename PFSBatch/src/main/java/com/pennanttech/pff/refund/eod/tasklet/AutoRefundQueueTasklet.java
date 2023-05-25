@@ -28,6 +28,8 @@ public class AutoRefundQueueTasklet implements Tasklet {
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
 
+		ebjqDAO.clearQueue();
+
 		long totalRecords = ebjqDAO.prepareQueue(jobQueue);
 
 		StepUtil.AUTO_REFUND_PROCESS.setTotalRecords(totalRecords);

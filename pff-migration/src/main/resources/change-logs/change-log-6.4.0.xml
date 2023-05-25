@@ -18771,7 +18771,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="01.1.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -18780,7 +18780,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="01.1.PRE2" author="saikrishna.b" >
+	<changeSet id="01.1.PRE2" author="saikrishna.b">
 		<sql>
 			<![CDATA[
 				 Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD', 'Id',				'NUMBER',	'(19,0)',			'Increment id',			'Auto incremental value for unique identification',						'Mandatory',	1,	null,	null,	null,	null,	current_timestamp,	'saikrishna.b', null, null, 0);
@@ -18799,7 +18799,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="01.1" author="saikrishna.b">
 		<createTable tableName="HOLD_MARKING_UPLOAD">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -18824,7 +18824,7 @@
 		<addPrimaryKey tableName="HOLD_MARKING_UPLOAD" columnNames="Id"
 			constraintName="PK_HOLD_MARKING_UPLOAD_ID" />
 	</changeSet>
-	
+
 	<changeSet id="03.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -18833,7 +18833,7 @@
 		</sql>
 	</changeSet>
 
- 	<changeSet id="03.PRE2" author="saikrishna.b">
+	<changeSet id="03.PRE2" author="saikrishna.b">
 		<sql>
 			<![CDATA[
  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'Id',      			'NUMBER',	'19,0',		'Increment id',			'Auto incremental value for unique identification',							'Mandatory',  1, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
@@ -18852,7 +18852,7 @@
   				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'CreatedBy',			'NUMBER',	'19,0',		'Created By',			'User who created the recoed',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
   				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'ApprovedOn',			'datetime',	'',			'Approved On',			'Currenttiemstamp on which record approved',								'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
   				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG', 'ApprovedBy',			'NUMBER',	'19,0',		'Approved By',			'User who approved the record',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
- 			]]>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+ 			]]>
 		</sql>
 	</changeSet>
 
@@ -18976,7 +18976,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="08.1.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -18989,7 +18989,7 @@
 		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_HOLDID" startValue="1001"
 			maxValue="9223372036854775807" incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="09.1.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -19002,7 +19002,7 @@
 		<createSequence sequenceName="SEQ_HOLD_MARKING_HEADER_ID" startValue="1" maxValue="9223372036854775807"
 			incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="10.1.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -19011,7 +19011,7 @@
 		</sql>
 	</changeSet>
 
- 	<changeSet id="10.1.PRE2" author="saikrishna.b">
+	<changeSet id="10.1.PRE2" author="saikrishna.b">
 		<sql>
 			<![CDATA[
  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER', 'Id',				'NUMBER',	'(19,0)',			'Increment id',			'Auto incremental value for unique identification',							'Mandatory',	1, null, null, null, 'SEQ_HOLD_MARKING_HEADER_ID',		current_timestamp, 'saikrishna.b', null,    																			null, 0);
@@ -19053,7 +19053,7 @@
 		<addUniqueConstraint tableName="HOLD_MARKING_HEADER" columnNames="HoldID"
 			constraintName="uk_Hold_Marking_Header_HoldId" />
 	</changeSet>
-	
+
 	<changeSet id="13.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -19062,7 +19062,7 @@
 		</sql>
 	</changeSet>
 
- 	<changeSet id="13.PRE2" author="saikrishna.b">
+	<changeSet id="13.PRE2" author="saikrishna.b">
 		<sql>
 			<![CDATA[
  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'Id',					'NUMBER',		'(19,0)',		'Increment id',		    'Auto incremental value for unique identification',							'Mandatory',  1, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
@@ -19084,7 +19084,7 @@
   				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'ApprovedBy',			'NUMBER',		'(19,0)',		'Approved By',			'User who approved the record',												'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'LastMnton',			'datetime',		'',				'Approved On',			'Currenttiemstamp on which record was updated last',						'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
  				Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS', 'LastMntBy',			'datetime',		'',				'Approved By',			'User who updated the record last',											'optional',   0, null, null, null, null, current_timestamp, 'saikrishna.b', null, null, 0);
- 			]]>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+ 			]]>
 		</sql>
 	</changeSet>
 
@@ -19523,27 +19523,38 @@
 	</changeSet>
 
 	<!-- <changeSet id="ST#15956.97_pre1" author="nagavamsi.p"> -->
-		<!-- <sql> -->
-			<!-- <![CDATA[		 -->
-	             <!-- Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) Values ('LETTER_GENERATION_QUEUE','transaction','Loan', 1, 'This table is used to strore queue data for letter generation','Nagavamsi.p',current_timestamp,0,null,null,null); -->
-            <!-- ]]> -->
-		<!-- </sql> -->
+	<!-- <sql> -->
+	<!-- <![CDATA[ -->
+	<!-- Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS) 
+		Values ('LETTER_GENERATION_QUEUE','transaction','Loan', 1, 'This table is used to strore queue data for letter generation','Nagavamsi.p',current_timestamp,0,null,null,null); -->
+	<!-- ]]> -->
+	<!-- </sql> -->
 	<!-- </changeSet> -->
 
 	<!-- <changeSet id="ST#15956.97_pre2" author="nagavamsi.p"> -->
-		<!-- <sql> -->
-			<!-- <![CDATA[		 -->
-			  <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','ID','number','19,0','It makes use to Strore queing records ',null,'MANDATORY',1,null,null,null,'SEQ_LETTER_GENERATION_QUEUE',current_timestamp,'nagavamsi.p',null,null,0); -->
- 		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','LetterID','number','19,0','It makes use to Letter queing records ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
- 		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE ,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN)Values ('LETTER_GENERATION_QUEUE','ThreadId','number','10,0','It makes use to Letter Threads during EOD Exection ',null,'null',0,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
- 		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','StartTime','datetime','','It makes use to at what time exection started ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
-  		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','EndTime','datetime','','It makes use to at what time exection ended ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
- 		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','Progress','number','10,0','It makes use to inform the status of thread ',null,'null',0,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
- 		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','ErrorLog','varchar(2000)','','It makes use to get the issue through this field ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
-			  <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) Values ('LETTER_GENERATION_QUEUE','RESETCOUNTERID','number','19,0','It counts the threads during eod execution ',null,'null',0,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
-		      <!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN)Values ('LETTER_GENERATION_QUEUE','PickUpFlag','boolean','1,0','It makes use to flag',null,'MANDATORY',1,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
- 			<!-- ]]> -->
-		<!-- </sql> -->
+	<!-- <sql> -->
+	<!-- <![CDATA[ -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','ID','number','19,0','It makes use to Strore queing records ',null,'MANDATORY',1,null,null,null,'SEQ_LETTER_GENERATION_QUEUE',current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','LetterID','number','19,0','It makes use to Letter queing records ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE 
+		,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN)Values ('LETTER_GENERATION_QUEUE','ThreadId','number','10,0','It 
+		makes use to Letter Threads during EOD Exection ',null,'null',0,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','StartTime','datetime','','It makes use to at what time exection started ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','EndTime','datetime','','It makes use to at what time exection ended ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','Progress','number','10,0','It makes use to inform the status of thread ',null,'null',0,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','ErrorLog','varchar(2000)','','It makes use to get the issue through this field ',null,'null',0,null,null,null,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN) 
+		Values ('LETTER_GENERATION_QUEUE','RESETCOUNTERID','number','19,0','It counts the threads during eod execution ',null,'null',0,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- Insert into PLF_TAB_COLUMNS (TABLE_NAME,FIELD_NAME,DATATYPE,COLUMNLENGTH,FIELD_DESCRIPTION,FIELD_REMARKS,MANDATORY,PRIMARYKEYCOLUMN,FOREIGNKEYTABLE,FOREIGNKEYCOLUMN,DEFAULTVALUE,SEQUENCENAME,CREATEDDATE,CREATEDBY,REMARKS,COMANDATORY,IS_CONDITION_COLUMN)Values 
+		('LETTER_GENERATION_QUEUE','PickUpFlag','boolean','1,0','It makes use to flag',null,'MANDATORY',1,null,null,0,null,current_timestamp,'nagavamsi.p',null,null,0); -->
+	<!-- ]]> -->
+	<!-- </sql> -->
 	<!-- </changeSet> -->
 
 	<changeSet id="ST#15956.97" author="nagavamsi.p">
@@ -19914,7 +19925,7 @@
 		</sql>
 	</changeSet>
 
-	
+
 	<changeSet id="ST#15956.2.4_1_pre" author="nagavamsi.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19935,7 +19946,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#15956.2.4_2_pre" author="nagavamsi.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -19943,7 +19954,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#15956.2.4_2" author="nagavamsi.p">
 		<modifyDataType tableName="LOAN_LETTERS_STAGE" columnName="DeliveryDate" newDataType="datetime" />
 	</changeSet>
@@ -19956,7 +19967,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#226779" author="saikiran.n">
 		<sql>
 		    <![CDATA[
@@ -19965,7 +19976,7 @@
 		     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#227968_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -20121,6 +20132,82 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+	<changeSet id="PSD#226779" author="saikiran.n">
+		<sql>
+		    <![CDATA[
+		        DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'EXCESS_KNOCKOFF_THREAD_COUNT';
+                INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('EXCESS_KNOCKOFF_THREAD_COUNT', 'CROSS LOAN KNOCKOFF PROCESS THREAD COUNT', 'string', 0, '10', 3, 0, NULL, NULL, 'Cross Loan Knockoff Process Thread Count', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+		     ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#226779.1" author="saikiran.n">
+		<sql>
+		    <![CDATA[
+		    
+		    	DROP TABLE Cross_Loan_KnockOff_Queue;
+		     ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#226779.2" author="saikiran.n" dbms="oracle">
+		<createSequence sequenceName="SEQ_CROSS_LOAN_KNOCKOFF_QUEUE" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1" ordered="true" />
+	</changeSet>
+
+	<changeSet id="PSD#226779.2" author="saikiran.n" dbms="postgresql,mssql">
+		<createSequence sequenceName="SEQ_CROSS_LOAN_KNOCKOFF_QUEUE" minValue="1"
+			maxValue="9223372036854775807" incrementBy="1" startValue="1" />
+	</changeSet>
+
+	<changeSet id="PSD#226779.3" author="saikiran.n">
+		<createTable tableName="CROSS_LOAN_KNOCKOFF_QUEUE">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint" />
+			<column name="CoreBankId" type="bigint" />
+			<column name="ThreadId" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="Progress" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="ErrorLog" type="varchar(2000)" />
+			<column name="ResetCounterId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PickUpFlag" type="boolean">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="PSD#226779.4" author="saikiran.n">
+		<addPrimaryKey tableName="CROSS_LOAN_KNOCKOFF_QUEUE" columnNames="ID"
+			constraintName="pk_cross_loan_knockoff_queue" />
+	</changeSet>
+
+	<changeSet id="PSD#226779.5" author="saikiran.n" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ThreadId" tableName="CROSS_LOAN_KNOCKOFF_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="Progress" tableName="CROSS_LOAN_KNOCKOFF_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="ResetCounterId" tableName="CROSS_LOAN_KNOCKOFF_QUEUE" defaultValue="0" />
+		<addDefaultValue columnName="PickUpFlag" tableName="CROSS_LOAN_KNOCKOFF_QUEUE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="PSD#226779.5" author="saikiran.n" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_QUEUE ADD CONSTRAINT DF_CLNK_QUEUE_THREADID DEFAULT 0 FOR THREADID;
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_QUEUE ADD CONSTRAINT DF_CLNK_QUEUE_PROGRESS DEFAULT 0 FOR PROGRESS;
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_QUEUE ADD CONSTRAINT DF_CLNK_QUEUE_RCID DEFAULT 0 FOR RESETCOUNTERID;
+				ALTER TABLE CROSS_LOAN_KNOCKOFF_QUEUE ADD CONSTRAINT DF_CLNK_QUEUE_PCPF DEFAULT 0 FOR PICKUPFLAG;
+			]]>
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog> 

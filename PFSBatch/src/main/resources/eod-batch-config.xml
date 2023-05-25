@@ -123,12 +123,6 @@
 			<partition step="letterGeneration" partitioner="letterGeneratePartitioner">
 				<handler task-executor="taskExecutor" />
 			</partition>
-			<next on="*" to="letterGenerationClear" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="letterGenerationClear">
-			<tasklet ref="letterGenerationClearTasklet" />
 			<next on="*" to="autoRefundQueuing" />
 			<fail on="FAILED" />
 		</step>
@@ -143,15 +137,10 @@
 			<partition step="autoRefund" partitioner="autoRefundPartition">
 				<handler task-executor="taskExecutor" />
 			</partition>
-			<next on="*" to="clearAutoRefundQueue" />
-			<fail on="FAILED" />
-		</step>
-
-		<step id="clearAutoRefundQueue">
-			<tasklet ref="autoRefundClearTasklet" />
 			<next on="*" to="beforeAssetClassification" />
 			<fail on="FAILED" />
 		</step>
+		
 		<step id="beforeAssetClassification">
 			<tasklet ref="beforeAssetClassificationTasklet" />
 			<next on="*" to="assetClassificationQueue" />
@@ -440,7 +429,9 @@
 
 	<bean id="otsPartition" class="com.pennant.backend.endofday.tasklet.OTSPartition" />
 
-	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition" />
+	<bean id="excessKnockOffPartition" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffPartition">
+		<constructor-arg ref="excessKnockOffQueueDAO"/>
+	</bean>
 
 	<bean id="baselOneDumpService" class="com.pennanttech.external.extractions.service.BaselOneDumpService">
 		<property name="extStageDao" ref="extStageDao" />

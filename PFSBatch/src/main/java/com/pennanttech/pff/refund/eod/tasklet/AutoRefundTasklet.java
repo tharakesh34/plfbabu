@@ -22,6 +22,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.AutoRefundLoan;
+import com.pennant.backend.util.BatchUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.autorefund.service.AutoRefundService;
 import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
@@ -55,6 +56,8 @@ public class AutoRefundTasklet implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> stepExecutionContext = context.getStepContext().getStepExecutionContext();
+
+		BatchUtil.setExecutionStatus(context, StepUtil.AUTO_REFUND_PROCESS);
 
 		int threadID = Integer.parseInt(stepExecutionContext.get("THREAD_ID").toString());
 

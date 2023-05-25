@@ -9,18 +9,6 @@ import com.pennanttech.pff.knockoff.model.ExcessKnockOffDetails;
 
 public interface ExcessKnockOffService {
 
-	void deleteQueue();
-
-	long prepareQueue();
-
-	void handleFailures();
-
-	long getQueueCount();
-
-	int updateThreadID(long from, long to, int i);
-
-	void updateProgress(CustomerCoreBank ccb, int progressInProcess);
-
 	List<ExcessKnockOff> loadData(CustomerCoreBank customerCoreBank);
 
 	List<ExcessKnockOffDetails> getStageDataByID(long id);

@@ -28,6 +28,8 @@ public class LetterGenerationQueueTasklet implements Tasklet {
 
 		BatchJobQueue jobQueue = new BatchJobQueue();
 
+		ebjqDAO.clearQueue();
+
 		long totalRecords = ebjqDAO.prepareQueue(jobQueue);
 
 		StepUtil.LETTER_GENERATION.setTotalRecords(totalRecords);

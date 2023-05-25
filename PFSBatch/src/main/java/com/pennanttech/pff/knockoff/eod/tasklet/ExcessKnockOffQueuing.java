@@ -6,20 +6,21 @@ import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.pff.batch.job.dao.BatchJobQueueDAO;
+import com.pennant.pff.batch.job.model.BatchJobQueue;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.eod.step.StepUtil;
-import com.pennanttech.pff.knockoff.service.ExcessKnockOffService;
 
 public class ExcessKnockOffQueuing implements Tasklet {
 	private Logger logger = LogManager.getLogger(ExcessKnockOffQueuing.class);
 
-	private ExcessKnockOffService excessKnockOffService;
+	private BatchJobQueueDAO ebjqDAO;
 
-	public ExcessKnockOffQueuing() {
+	public ExcessKnockOffQueuing(BatchJobQueueDAO ebjqDAO) {
 		super();
+		this.ebjqDAO = ebjqDAO;
 	}
 
 	@Override
@@ -31,23 +32,22 @@ public class ExcessKnockOffQueuing implements Tasklet {
 			return RepeatStatus.FINISHED;
 		}
 
-		long count = excessKnockOffService.prepareQueue();
+		BatchJobQueue jobQueue = new BatchJobQueue();
 
-		StepUtil.CROSS_LOAN_KNOCKOFF.setTotalRecords(count);
+		ebjqDAO.clearQueue();
 
-		logger.info("Queueing preparation for CrossLoan Knock Off completed with total loans {}", count);
+		long totalRecords = ebjqDAO.prepareQueue(jobQueue);
+
+		StepUtil.CROSS_LOAN_KNOCKOFF.setTotalRecords(totalRecords);
+
+		logger.info("Queueing preparation for CrossLoan Knock Off completed with total loans {}", totalRecords);
 
 		ExcessKnockOffTasklet.processedCount.set(0);
+
 		ExcessKnockOffTasklet.failedCount.set(0);
 
 		logger.debug(Literal.LEAVING);
 
 		return RepeatStatus.FINISHED;
 	}
-
-	@Autowired
-	public void setExcessKnockOffService(ExcessKnockOffService excessKnockOffService) {
-		this.excessKnockOffService = excessKnockOffService;
-	}
-
 }

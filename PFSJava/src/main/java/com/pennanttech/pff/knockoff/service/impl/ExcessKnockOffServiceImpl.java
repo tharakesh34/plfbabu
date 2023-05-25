@@ -36,36 +36,6 @@ public class ExcessKnockOffServiceImpl implements ExcessKnockOffService {
 	}
 
 	@Override
-	public void deleteQueue() {
-		this.excessKnockOffDAO.deleteQueue();
-	}
-
-	@Override
-	public long prepareQueue() {
-		return this.excessKnockOffDAO.prepareQueue();
-	}
-
-	@Override
-	public void handleFailures() {
-		this.excessKnockOffDAO.handleFailures();
-	}
-
-	@Override
-	public long getQueueCount() {
-		return this.excessKnockOffDAO.getQueueCount();
-	}
-
-	@Override
-	public int updateThreadID(long from, long to, int i) {
-		return this.excessKnockOffDAO.updateThreadID(from, to, i);
-	}
-
-	@Override
-	public void updateProgress(CustomerCoreBank ccb, int progressInProcess) {
-		this.excessKnockOffDAO.updateProgress(ccb, progressInProcess);
-	}
-
-	@Override
 	public List<ExcessKnockOff> loadData(CustomerCoreBank customerCoreBank) {
 		return this.excessKnockOffDAO.loadData(customerCoreBank);
 	}

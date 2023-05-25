@@ -236,9 +236,13 @@
 
 	<bean id="excessKnockOffLoadingTaskLet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffLoading" />
 
-	<bean id="excessKnockOffQueuingTaskLet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffQueuing" />
+	<bean id="excessKnockOffQueuingTaskLet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffQueuing">
+		<constructor-arg ref="excessKnockOffQueueDAO"/>
+	</bean>
 
-	<bean id="excessKnockOffTasklet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffTasklet" />
+	<bean id="excessKnockOffTasklet" class="com.pennanttech.pff.knockoff.eod.tasklet.ExcessKnockOffTasklet">
+		<constructor-arg ref="excessKnockOffQueueDAO"/>
+	</bean>
 
 	<bean id="autoWriteOffCalcQueueTasklet" class="com.pennanttech.pff.autowriteoff.eod.tasklet.AutoWriteOffCalcQueue" />
 
@@ -256,19 +260,11 @@
 		<constructor-arg ref="autoRefundQueueDAO"/>
 	</bean>
 	
-	<bean id="autoRefundClearTasklet" class="com.pennanttech.pff.refund.eod.tasklet.AutoRefundClearTasklet">
-		<constructor-arg ref="autoRefundQueueDAO"/>
-	</bean>
-
 	<bean id="letterGeneratePartitioner" class="com.pennant.pff.letter.partitioner.LetterGeneratePartitioner">
 		<constructor-arg ref="letterGenerationJobQueueDAO"/>
 	</bean>
 	
 	<bean id="letterGenerationTasklet" class="com.pennant.pff.letter.LetterGenerationTasklet">
-		<constructor-arg ref="letterGenerationJobQueueDAO"/>
-	</bean>
-	
-	<bean id="letterGenerationClearTasklet" class="com.pennant.pff.letter.LetterGenerationClearTasklet">
 		<constructor-arg ref="letterGenerationJobQueueDAO"/>
 	</bean>
 	
