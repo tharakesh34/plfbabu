@@ -82,6 +82,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
@@ -93,6 +94,7 @@ import com.pennant.backend.service.finance.FinChequeHeaderService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -104,6 +106,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.pff.accounting.model.PostingDTO;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
+import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.holdmarking.service.HoldMarkingService;
 import com.pennant.pff.letter.service.LetterService;
 import com.pennant.pff.lien.service.LienService;
@@ -113,6 +116,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -147,6 +151,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private LetterService letterService;
 
 	private HoldMarkingService holdMarkingService;
+	private FinanceCancelValidator financeCancelValidator;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -785,6 +790,12 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = auditHeader.getUsrLanguage();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "",
+				false);
 
 		// Extended field details Validation
 		if (financeDetail.getExtendedFieldRender() != null) {
@@ -792,6 +803,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
 			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
 			auditDetails.addAll(details);
+		}
+
+		FinCancelUploadError errorDetail = financeCancelValidator.validLoan(fm, schedules);
+
+		if (errorDetail != null) {
+			MessageUtil.showError(FinCancelUploadError.getOverrideDescription(errorDetail, fm));
+			return auditHeader;
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
@@ -1212,5 +1230,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	@Autowired
 	public void setLetterService(LetterService letterService) {
 		this.letterService = letterService;
+	}
+
+	@Autowired
+	public void setFinanceCancelValidator(FinanceCancelValidator financeCancelValidator) {
+		this.financeCancelValidator = financeCancelValidator;
 	}
 }
