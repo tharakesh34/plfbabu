@@ -241,7 +241,7 @@ public class EodService {
 
 		// ExtractionDumpHook
 		if (microEodExternalProcessHook != null) {// microEodExtranalProcessHook
-			microEodExternalProcessHook.saveExtractionData(custEODEvent, eventProperties.getBusinessDate());
+			microEodExternalProcessHook.saveExtractionData(custEODEvent, eventProperties.getAppDate());
 		}
 
 		/**************** SOD ***********/
