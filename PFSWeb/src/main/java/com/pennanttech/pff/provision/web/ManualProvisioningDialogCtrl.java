@@ -546,6 +546,11 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		doSetValidation();
 
 		doWriteComponentsToBean(aProvision);
+		if (provisionService.isAssetClassCodeValid(aProvision.getFinID(),
+				this.effManualAssetClassification.getValue())) {
+			MessageUtil.showError("ManualAsset Classification can't be upgarded");
+			return;
+		}
 
 		boolean isNew = aProvision.isNew();
 		String tranType = null;
@@ -796,6 +801,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		} else {
 			this.manProvisionPercentage.setDisabled(true);
 			this.manProvisionPercentage.setReadonly(true);
+			this.manProvisionAmount.setValue(BigDecimal.ZERO);
+			this.manProvisionPercentage.setValue(BigDecimal.ZERO);
 		}
 	}
 

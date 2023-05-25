@@ -267,6 +267,12 @@ public class ProvisionUploadServiceImpl extends AUploadServiceImpl<ProvisionUplo
 		String assetClassCode = detail.getAssetClassCode();
 		String subClassCode = detail.getAssetSubClassCode();
 
+		boolean isAssetClassCodeExists = provisionService.isAssetClassCodeValid(detail.getReferenceID(),
+				assetClassCode);
+		if (isAssetClassCodeExists) {
+			setError(detail, ProvisionUploadError.PROVSN_08);
+			return;
+		}
 		if (StringUtils.isNotBlank(assetClassCode)) {
 			Long assetClassId = provisionUploadDAO.getAssetClassId(assetClassCode);
 

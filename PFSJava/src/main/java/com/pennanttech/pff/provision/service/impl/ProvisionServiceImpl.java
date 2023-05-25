@@ -36,6 +36,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.npa.dao.AssetClassSetupDAO;
 import com.pennanttech.pff.provision.ProvisionBook;
 import com.pennanttech.pff.provision.dao.ProvisionDAO;
 import com.pennanttech.pff.provision.model.Provision;
@@ -51,7 +52,8 @@ public class ProvisionServiceImpl implements ProvisionService {
 	private AccountEngineExecution engineExecution;
 	private PostingsDAO postingsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
-
+	private AssetClassSetupDAO assetClassSetupDAO;
+	
 	@Override
 	public long prepareQueueForSOM() {
 		provisionDao.deleteQueue();
@@ -272,6 +274,18 @@ public class ProvisionServiceImpl implements ProvisionService {
 		}
 
 		postingsDAO.saveBatch(aeEvent.getReturnDataSet());
+	}
+
+	@Override
+	public boolean isAssetClassCodeValid(long finID, String assetClassCode) {
+		List<String> assetClassCodes = assetClassSetupDAO.getAssetClassSetCodes(finID);
+		boolean isclassCodeExists = false;
+		for (String code : assetClassCodes) {
+			if (!code.equals(assetClassCode)) {
+				isclassCodeExists = true;
+			}
+		}
+		return isclassCodeExists;
 	}
 
 	@Override
@@ -696,4 +710,10 @@ public class ProvisionServiceImpl implements ProvisionService {
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
+	@Autowired
+	public void setAssetClassSetupDAO(AssetClassSetupDAO assetClassSetupDAO) {
+		this.assetClassSetupDAO = assetClassSetupDAO;
+	}
+
 }
