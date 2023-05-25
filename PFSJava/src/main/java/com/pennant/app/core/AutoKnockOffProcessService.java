@@ -168,10 +168,6 @@ public class AutoKnockOffProcessService {
 			return;
 		}
 
-		if (knockOffData.isCrossLoanAutoKnockOff() && availableAmount.compareTo(totalDues) < 0) {
-			return;
-		}
-
 		List<ReceiptAllocationDetail> allocationDtls = rch.getAllocations();
 
 		for (AutoKnockOffFeeMapping feeMapping : feeMappingList) {

@@ -24,7 +24,7 @@ public class ExcessKnockOffPartition implements Partitioner {
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		logger.debug(Literal.ENTERING);
-		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EOD_THREAD_COUNT);
+		int threadCount = SysParamUtil.getValueAsInt(SMTParameterConstants.EXCESS_KNOCKOFF_THREAD_COUNT);
 
 		Map<String, ExecutionContext> partitionData = new HashMap<>();
 
