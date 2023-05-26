@@ -416,4 +416,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public boolean letterIsInQueu(long finID, String letterType) {
 		return false;
 	}
+
+	@Override
+	public void deleteAutoLetterGeneration(long finID, String letterType) {
+		// TODO Auto-generated method stub
+
+	}
 }

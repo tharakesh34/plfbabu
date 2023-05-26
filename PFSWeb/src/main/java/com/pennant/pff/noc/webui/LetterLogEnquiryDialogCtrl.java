@@ -175,31 +175,49 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				item.setStyle("text-align:left;");
 			} else if (item instanceof Listgroupfoot) {
 				Listcell cell = new Listcell("");
-				cell.setSpan(9);
+				cell.setSpan(1);
 				item.appendChild(cell);
 			} else {
 
 				Listcell lc;
 				lc = new Listcell(DateUtil.formatToLongDate(data.getGeneratedDate()));
+				lc.setSpan(1);
 				lc.setParent(item);
 
 				lc = new Listcell(data.getModeofTransfer());
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(data.getRequestType());
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(String.valueOf(data.getApprovedBy()));
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(data.getCourierAgencyName());
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(DateUtil.formatToLongDate(data.getGeneratedDate()));
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(data.getStatus());
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(DateUtil.formatToLongDate(data.getGeneratedDate()));
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(data.getEmail());
+				lc.setSpan(1);
 				lc.setParent(item);
+
 				lc = new Listcell(data.getFileName());
+				lc.setSpan(1);
 				lc.setParent(item);
 			}
 		}

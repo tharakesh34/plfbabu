@@ -562,6 +562,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		return generateLetterDAO.letterIsInQueu(finID, letterType);
 	}
 
+	@Override
+	public void deleteAutoLetterGeneration(long finID, String letterType) {
+		this.generateLetterDAO.deleteAutoLetterGeneration(finID, letterType);
+	}
+	
 	@Autowired
 	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
 		this.autoLetterGenerationDAO = autoLetterGenerationDAO;

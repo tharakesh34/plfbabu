@@ -129,9 +129,15 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (generateLetterService.letterIsInQueu(fm.getFinID(), this.generateLetter.getLetterType())) {
-			MessageUtil.showError(Labels.getLabel("label_listheader_LetterType").concat(this.letterType.getValue())
+			String msg = Labels.getLabel("label_listheader_LetterType").concat(this.letterType.getValue())
 					+ " is Already Initiated For ".concat(this.finReference.getValue())
-					+ " and is in queue for letter generation.");
+					+ " and is in queue for letter generation, Do You Want proceed with Manual?";
+
+			if (MessageUtil.YES == MessageUtil.confirm(msg)) {
+				generateLetterService.deleteAutoLetterGeneration(fm.getFinID(), this.generateLetter.getLetterType());
+				return true;
+			}
+			
 			return false;
 		}
 

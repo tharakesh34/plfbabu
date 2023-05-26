@@ -51,4 +51,6 @@ public interface GenerateLetterService {
 	boolean letterIsInQueu(long finID, String letterType);
 
 	List<ManualAdvise> getManualAdvises(long finID);
+
+	void deleteAutoLetterGeneration(long finID, String letterType);
 }

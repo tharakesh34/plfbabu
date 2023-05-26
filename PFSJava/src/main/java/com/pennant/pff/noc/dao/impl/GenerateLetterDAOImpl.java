@@ -280,11 +280,11 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 		StringBuilder sql = new StringBuilder("Insert Into Loan_Letter_Manual");
 		sql.append(type.getSuffix());
-		sql.append("(LetterType, FinID");
+		sql.append("(LetterType, FinReference, FinID, CustCIF, CoreBankId, FinBranch");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -293,7 +293,11 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 				int index = 0;
 
 				ps.setString(++index, gl.getLetterType());
+				ps.setString(++index, gl.getFinReference());
 				ps.setLong(++index, gl.getFinID());
+				ps.setString(++index, gl.getCustCIF());
+				ps.setString(++index, gl.getCoreBankId());
+				ps.setString(++index, gl.getFinBranch());
 				ps.setInt(++index, gl.getVersion());
 				ps.setLong(++index, gl.getCreatedBy());
 				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
@@ -433,5 +437,14 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		}
 
 		return false;
+	}
+
+	@Override
+	public void deleteAutoLetterGeneration(long finID, String letterType) {
+		String sql = "Delete From Loan_Letters_Stage Where FinID = ? and LetterType = ? and RequestType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql, finID, letterType, "A");
 	}
 }

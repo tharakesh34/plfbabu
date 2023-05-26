@@ -35,4 +35,6 @@ public interface GenerateLetterDAO {
 	boolean isLetterInitiated(long finID, String letterType);
 
 	boolean letterIsInQueu(long finID, String letterType);
+
+	void deleteAutoLetterGeneration(long finID, String letterType);
 }
