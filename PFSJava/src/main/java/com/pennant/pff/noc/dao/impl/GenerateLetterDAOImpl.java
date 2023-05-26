@@ -37,7 +37,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" Id, FinID, LetterType, Finreference, CustAcctHolderName");
-		sql.append(", CustCoreBank, FinBranch, Product");
+		sql.append(", CustCoreBank, CustCIF, FinBranch, Product");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -45,8 +45,8 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		sql.append(getSqlQuery(TableType.TEMP_TAB));
 		sql.append(" Union All ");
 		sql.append(getSqlQuery(TableType.MAIN_TAB));
+		sql.append(" Where not exists (Select 1 From Loan_Letter_Manual_Temp Where Id = gl.Id)) gl");
 		sql.append(QueryUtil.buildWhereClause(search, value));
-		sql.append(" And not exists (Select 1 From Loan_Letter_Manual_Temp Where Id = gl.Id)) gl");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -118,7 +118,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<GenerateLetter> getGenerateLetters(List<String> roleCodes) {
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" ID, FinID, LetterType, Finreference, CustAcctHolderName");
-		sql.append(", CustCoreBank, FinBranch, Product, LetterType");
+		sql.append(", CustCoreBank, CustCIF, FinBranch, Product, LetterType");
 		sql.append(", Version, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn");
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -195,14 +195,14 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	private StringBuilder getSqlQuery(TableType tableType) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" gl.Id, gl.FinID, gl.lettertype, fm.Finreference, cu.Custshrtname CustAcctHolderName");
-		sql.append(", cu.CustCoreBank, fm.FinBranch, ft.fintypedesc Product");
+		sql.append(", cu.CustCoreBank, cu.CustCIF, fm.FinBranch, ft.fintypedesc Product");
 		sql.append(", gl.Version, gl.CreatedBy, gl.CreatedOn, gl.ApprovedBy, gl.ApprovedOn");
 		sql.append(", gl.LastMntBy, gl.LastMntOn, gl.RecordStatus, gl.RoleCode");
 		sql.append(", gl.NextRoleCode, gl.TaskId, gl.NextTaskId, gl.RecordType, gl.WorkflowId");
 		sql.append(" From Loan_Letter_Manual").append(tableType.getSuffix()).append(" gl");
-		sql.append(" Left Join FinanceMain fm on fm.FinID = gl.FinID");
-		sql.append(" Left Join RMTFinancetypes ft on ft.fintype = fm.finType");
-		sql.append(" Left Join customers cu on cu.custID = fm.CustID");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = gl.FinID");
+		sql.append(" Inner Join RMTFinancetypes ft on ft.fintype = fm.finType");
+		sql.append(" Inner Join Customers cu on cu.custID = fm.CustID");
 
 		return sql;
 	}

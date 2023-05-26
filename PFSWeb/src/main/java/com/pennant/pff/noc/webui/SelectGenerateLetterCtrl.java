@@ -113,8 +113,10 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
-		if (!letterMapping.stream().anyMatch(l -> l.getLetterType().equals(getComboboxValue(letterType)))) {
-			MessageUtil.showError("Loan Type Letter mapping not available the selected Letter Type");
+		String sellectedLetterType = getComboboxValue(letterType);
+		if (!letterMapping.stream().anyMatch(l -> l.getLetterType().equals(sellectedLetterType))) {
+			MessageUtil.showError(
+					"Loan Type Letter mapping not available for the selected Letter Type : " + sellectedLetterType);
 			return false;
 		}
 

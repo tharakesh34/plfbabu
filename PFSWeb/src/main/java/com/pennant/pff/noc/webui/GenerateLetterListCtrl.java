@@ -281,7 +281,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 
 		String coreBankId = this.coreBankID.getValue();
 		if (StringUtils.isNotEmpty(coreBankId)) {
-			search.getFilters().add(new Filter("gl.CoreBankID", coreBankId, this.corebankidSort.getSelectedIndex()));
+			search.getFilters().add(new Filter("gl.CustCoreBank", coreBankId, this.corebankidSort.getSelectedIndex()));
 		}
 
 		String custCIF = this.custCIF.getValue();
