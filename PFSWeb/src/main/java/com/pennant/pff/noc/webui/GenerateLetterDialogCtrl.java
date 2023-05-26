@@ -671,9 +671,9 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.bouncesPaid.setValue(CurrencyUtil.format(bouncPaid, ccyFormatter));
 		this.bouncesWaived.setValue(CurrencyUtil.format(bouncWaived, ccyFormatter));
 
-		this.totalOtherFee.setValue(String.valueOf(adviseAmt));
-		this.feePaid.setValue(String.valueOf(receivedAmt));
-		this.feeWaived.setValue(String.valueOf(waivedAmt));
+		this.totalOtherFee.setValue(CurrencyUtil.format(adviseAmt, ccyFormatter));
+		this.feePaid.setValue(CurrencyUtil.format(receivedAmt, ccyFormatter));
+		this.feeWaived.setValue(CurrencyUtil.format(waivedAmt, ccyFormatter));
 	}
 
 	private void dofillPaybleDetails(long finID) {
