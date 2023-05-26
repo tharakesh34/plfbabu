@@ -39,7 +39,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(" From FinExcessAmount ea");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ea.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  AmountType = ? and BalanceAmt > ?");
+		sql.append(" Where  AmountType = ? and BalanceAmt > ? and fm.ClosingStatus <> 'C'");
 		sql.append("  and fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
 		sql.append(" Union All");
 		sql.append(" Select CustId, CustCoreBank, FinId, ReferenceId, AmountType");
@@ -48,7 +48,7 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(", BalanceAmt From ManualAdvise ma");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ma.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ?");
+		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ? and fm.ClosingStatus <> 'C'");
 		sql.append("  and fm.WriteoffLoan = ?) it ");
 		sql.append(" group by it.CustId, it.CustCoreBank, it.FinID, it.ReferenceId, it.AmountType) T");
 
