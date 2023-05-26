@@ -18775,7 +18775,7 @@
 	<changeSet id="01.1.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD','transaction','clientspecfication-HDFC',1,'Table is used to store Data of amount hold on a CASA Account through upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_LOAN_ARCHIVE) values ('HOLD_MARKING_UPLOAD','transaction','clientspecfication-HDFC',1,'Table is used to store Data of amount hold on a CASA Account through upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
  			]]>
 		</sql>
 	</changeSet>
@@ -18828,7 +18828,7 @@
 	<changeSet id="03.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
- 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_UPLOAD_LOG','transaction','clientspecfication-HDFC',1,'Table is used to store Log Data of amount hold on a CASA Account through upload','saikrishna.b',current_timestamp,0,null,null,null,0);
+ 				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_LOAN_ARCHIVE) values ('HOLD_MARKING_UPLOAD_LOG','transaction','clientspecfication-HDFC',1,'Table is used to store Log Data of amount hold on a CASA Account through upload','saikrishna.b',current_timestamp,0,null,null,null,0);
   			]]>
 		</sql>
 	</changeSet>
@@ -19006,7 +19006,7 @@
 	<changeSet id="10.1.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_HEADER','transaction','clientspecfication-HDFC',1,'Table is used to store the header details of the Data of amount hold on a CASA Account throught frontend and upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_LOAN_ARCHIVE) values ('HOLD_MARKING_HEADER','transaction','clientspecfication-HDFC',1,'Table is used to store the header details of the Data of amount hold on a CASA Account throught frontend and upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
   		]]>
 		</sql>
 	</changeSet>
@@ -19057,7 +19057,7 @@
 	<changeSet id="13.PRE1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
-				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_CONDITION_COLUMN) values ('HOLD_MARKING_DETAILS','transaction','clientspecfication-HDFC',1,'Table is used to store the all details of the Data of amount hold and removal on a CASA Account throught frontend and upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
+				Insert into PLF_TABLES (TABLE_NAME,CATEGORY,SUB_CATEGORY,PART_OF_CLEANUP,TABLE_DESCRIPTION,CREATED_BY,CREATED_ON,TABLE_BLOCKED,TABLE_BLOCKED_BY,TABLE_BLOCKED_ON,REMARKS,IS_LOAN_ARCHIVE) values ('HOLD_MARKING_DETAILS','transaction','clientspecfication-HDFC',1,'Table is used to store the all details of the Data of amount hold and removal on a CASA Account throught frontend and upload','Saikrishna.b',current_timestamp,0,null,null,null,0);
   			]]>
 		</sql>
 	</changeSet>
