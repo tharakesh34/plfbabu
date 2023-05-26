@@ -25,7 +25,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 	private static final String REJECTED_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
 	private static final String UNDERLINE_HEADER = "-----------------||||||||||||||||||||||||||||||||||";
 	private static final String MAIN_HEADER = "AGREEMENTNO|RECEIPTNO|RECEIPT_CHANNEL|AGENCYID|CHEQUE NO.|DEALINGBANKID|DRAWNON|TOWARDS|RECEIPT AMT|CHEQUEDATE|CITY|RECEIPT DATE|RECEIPT";
-	private static final String VALID_RECORDS_HEADER = "REJECTED RECORDS:||||||||||||||||||||||||||||||||||";
+	private static final String VALID_RECORDS_HEADER = "VALID RECORDS:||||||||||||||||||||||||||||||||||";
 
 	public void processCollectionResponseFileWriting(String fileName, Date appDate,
 			List<CollReceiptDetail> fileRecordsList, CollReceiptHeader errorReceiptHeader,
