@@ -88,8 +88,8 @@ public class LetterService {
 
 			if ((letterType == LetterType.CANCELLATION
 					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus()))
-					|| (letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
-							&& FinanceUtil.isClosedNow(fm)) {
+					|| ((letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
+							&& FinanceUtil.isClosedNow(fm))) {
 
 				GenerateLetter gl = new GenerateLetter();
 				gl.setFinID(fm.getFinID());
@@ -211,7 +211,7 @@ public class LetterService {
 		}
 
 		try {
-			notificationService.parseMail(mailTemplate, letter);
+			notificationService.parseMail(mailTemplate, letter.getDeclaredFieldValues());
 		} catch (Exception e) {
 			throw new AppException("LetterService", e);
 		}

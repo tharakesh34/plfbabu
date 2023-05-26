@@ -3,6 +3,8 @@ package com.pennant.backend.model.letter;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.mail.MailTemplate;
@@ -969,6 +971,28 @@ public class LoanLetter implements Serializable {
 
 	public void setCustSubDistrict(String custSubDistrict) {
 		this.custSubDistrict = custSubDistrict;
+	}
+
+	public Map<String, Object> getDeclaredFieldValues() {
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("CustCif", this.custCif);
+		map.put("CustCoreBank", this.custCoreBank);
+		map.put("CustShrtName", this.custShrtName);
+		map.put("FinType", this.finType);
+		map.put("FinTypeDesc", this.finTypeDesc);
+		map.put("FinBranch", this.finBranch);
+		map.put("FinReference", this.finReference);
+		map.put("FinStartDate", this.finStartDate);
+		map.put("ClosureDate", this.closureDate);
+		map.put("CancelDate", this.cancelDate);
+		map.put("ClosureType", this.closureType);
+		map.put("FileName", this.fileName);
+		map.put("LetterSeqNo", this.letterSeqNo);
+		map.put("CSBCode", this.csbCode);
+		map.put("CSBDescription", this.csbDescription);
+
+		return map;
 	}
 
 }

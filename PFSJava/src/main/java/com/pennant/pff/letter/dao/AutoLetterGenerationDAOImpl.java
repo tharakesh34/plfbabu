@@ -27,8 +27,8 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	public long save(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTERS_STAGE");
 		sql.append("(FinID, RequestType, LetterType");
-		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, ModeOfTransfer, FeeID)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, EmailTemplate, ModeOfTransfer, FeeID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -48,6 +48,7 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
 					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
 					ps.setLong(++index, gl.getAgreementTemplate());
+					ps.setObject(++index, gl.getEmailTemplate());
 					ps.setString(++index, gl.getModeofTransfer());
 					ps.setObject(++index, gl.getFeeID());
 

@@ -3,6 +3,7 @@ package com.pennanttech.pff.notifications.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -510,8 +511,7 @@ public class NotificationService extends GenericService<Notification> {
 		Template template = null;
 		Template templateSubject = null;
 		if (mailTemplate.isEmailTemplate()) {
-			loader.putTemplate("mailTemplate",
-					new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
+			loader.putTemplate("mailTemplate", new String(mailTemplate.getEmailContent(), StandardCharsets.UTF_16));
 			freemarkerMailConfiguration.setTemplateLoader(loader);
 			template = freemarkerMailConfiguration.getTemplate("mailTemplate");
 
