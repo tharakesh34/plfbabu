@@ -236,11 +236,11 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 				continue;
 
 			}
-
-			if (amount.compareTo(BigDecimal.ZERO) != 0) {
-				setError(detail, BulkFeeWaiverUploadError.FWU_006);
-				return fwh;
-			}
+		}
+		
+		if (amount.compareTo(BigDecimal.ZERO) != 0) {
+			setError(detail, BulkFeeWaiverUploadError.FWU_006);
+			return fwh;
 		}
 
 		if (!feeExists) {
