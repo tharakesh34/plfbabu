@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.backend.dao.finance.PaymentMethodUploadDAO;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.pff.mandate.MandateStatus;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUploadHeader;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -23,6 +25,7 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload> implements PaymentMethodUploadDAO {
@@ -232,4 +235,35 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, mandateId) > 0;
 	}
+
+	@Override
+	public boolean isValidMandate(PaymentMethodUpload pmu) {
+
+		Long custID = pmu.getFinanceMain().getCustID();
+		Long mandateId = pmu.getMandateId();
+		String rpyMethod = pmu.getFinRepayMethod();
+		String finReference = pmu.getFinReference();
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" MandateID From Mandates Where ((CustID = ?)");
+		sql.append(" And (MandateType = ?) And (Active = ?) And (MandateID = ?) And (");
+		sql.append(" (OpenMandate = 1 OR ((MandateID in (Select fm.MandateID From FinanceMain fm");
+		sql.append(" Inner Join Mandates m on m.MandateID = fm.MandateID and m.OpenMandate = 1");
+		sql.append(" Where fm.CustID= ? And fm.FinReference != ? ))");
+		sql.append(" OR MandateID In (Select MandateID From FinanceMain fm  Where fm.FinReference = ?)");
+		sql.append(" OR MandateID In(Select MandateID From Mandates");
+		sql.append(" Where (CustID = ? and OrgReference = ? and");
+		sql.append(" (MandateType = ?)))) And Status != ?))");
+		sql.append(" ) Order By MandateID ASC");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, custID, rpyMethod, 1, mandateId,
+					custID, finReference, finReference, custID, finReference, rpyMethod, MandateStatus.REJECTED) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return false;
+		}
+
+	}
+
 }
