@@ -30,10 +30,6 @@
 							contentStyle="padding:0px;">
 							<div align="right">
 								<hbox>
-								<vbox>
-									<button type="button" id="recordXpathComp" label="Rec Xpath" width="120px" sclass="z-toolbarbutton"></button>									
-										<a id="xpathDownload" label="Download Xpath" target=' _self' />									
-									</vbox>
 									<vbox align="center" sclass="vbox_Userbar">
 										<label id="label_currentDate" value="Date" sclass="label_UserBar" />
 										<label id="label_currentTime" value="Time" sclass="label_UserBar" />

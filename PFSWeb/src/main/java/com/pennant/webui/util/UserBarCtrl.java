@@ -33,17 +33,11 @@
  */
 package com.pennant.webui.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.sql.Timestamp;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
@@ -52,9 +46,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zul.A;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Menu;
 import org.zkoss.zul.Menuitem;
@@ -62,8 +53,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.util.PennantConstants;
-import com.pennant.util.AutomationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -100,24 +89,8 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 	protected Menuitem menuitem_global_logout;
 	LoggedInUser user = null;
 
-	private boolean recordXpath = false;
-	private boolean generateXpath = false;
-
-	protected Button recordXpathComp;
-	// protected Button generateXpathFile;
-	protected A xpathDownload;
-
-	@Value("${xpath.storge.path}")
-	private String xpathGenPath;
-
-	@Value("${xpath.storage.filename}")
-	private String xpathFileName;
-
 	@Value("${authentication.sso:false}")
 	private boolean sso;
-
-	@Autowired
-	AutomationUtil automationUtil;
 
 	/**
 	 * Default constructor.
@@ -144,8 +117,6 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 		label_currentDate.setValue(appDate);
 		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("HH:mm");
 		label_currentTime.setValue(dateFormat.format(DateUtility.getSysDate()));
-		recordXpathComp.setLabel("Start Rec Xpath");
-		xpathDownload.setDisabled(true);
 
 		doShowLabel();
 
@@ -333,71 +304,5 @@ public class UserBarCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 
 	public String get_DepartmentCodeText() {
 		return this._DepartmentCodeText;
-	}
-
-	public boolean isRecordXpath() {
-		return recordXpath;
-	}
-
-	public void setRecordXpath(boolean recordXpath) {
-		this.recordXpath = recordXpath;
-	}
-
-	public boolean isGenerateXpath() {
-		return generateXpath;
-	}
-
-	public void setGenerateXpath(boolean generateXpath) {
-		this.generateXpath = generateXpath;
-	}
-
-	public void onClick$recordXpathComp(Event event) {
-		this.recordXpath = !this.recordXpath;
-
-		AutomationUtil.getSingleton().setRecordXpath(recordXpath);
-
-		if (!recordXpath) {
-			recordXpathComp.setLabel("Start Rec Xpath");
-			xpathDownload.setDisabled(false);
-		} else {
-			recordXpathComp.setLabel("Stop Rec Xpath");
-			xpathDownload.setDisabled(true);
-		}
-	}
-
-	public void onClick$xpathDownload(Event event) {
-		System.out.println("on click download event");
-
-		try {
-
-			String filePath = xpathGenPath;
-			// String fileName = "xpath.csv";
-
-			if (filePath != null && xpathFileName != null) {
-				filePath = filePath.concat("/").concat(xpathFileName);
-			}
-
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-			InputStream inputStream = new FileInputStream(filePath);
-			int data;
-			while ((data = inputStream.read()) >= 0) {
-				stream.write(data);
-			}
-
-			inputStream.close();
-
-			inputStream = null;
-			String contentType = "text/plain";
-			if (StringUtils.endsWith(xpathFileName.toUpperCase(), PennantConstants.DOC_TYPE_CSV_EXT)) {
-				contentType = "text/csv";
-			}
-			Filedownload.save(stream.toByteArray(), contentType,
-					new Timestamp(System.currentTimeMillis()) + "_" + xpathFileName);
-
-			stream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
