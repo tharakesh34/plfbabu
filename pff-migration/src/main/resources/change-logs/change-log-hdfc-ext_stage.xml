@@ -300,4 +300,33 @@
 		</createProcedure>
 	</changeSet>
 
+	<changeSet id="004.2" author="sreeram.r">
+		<modifyDataType tableName="ALM_REPORT" columnName="ACCRUED_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="INTT_RATE" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="LIFE_CEILING" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="LIFE_FLOOR" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="TOTAL_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="BILLED_INTEREST" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="BILLED_NOT_RECEIVED_INTEREST"
+			newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="BILLED_NOT_RECEIVED_PRINCIPAL"
+			newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="PRETAXIRR" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="INTT_PAYMT_FREQ" newDataType="bigint" />
+		<modifyDataType tableName="ALM_REPORT" columnName="INSTALMENT" newDataType="decimal(18,2)" />
+	</changeSet>
+	
+		<changeSet id="003.1" author="sreeram.r">
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="REG_EMI" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="EXCESS_MONEY" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="ACCRUED_INT" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="UN_EARNED_INT" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="GROSS_RCVBL" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="SUS_INT" newDataType="decimal(18,2)" />
+		<modifyDataType tableName="EXT_BASEL_ONE" columnName="ANNUAL_TURNOVER"
+			newDataType="decimal(18,2)" />
+		<modifyDataType tableName="ALM_REPORT" columnName="TENURE"
+			newDataType="int" />
+	</changeSet>
+
 </databaseChangeLog>

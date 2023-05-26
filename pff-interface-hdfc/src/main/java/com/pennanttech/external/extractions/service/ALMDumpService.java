@@ -1,8 +1,13 @@
 package com.pennanttech.external.extractions.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.finance.CustEODEvent;
 import com.pennant.backend.model.finance.FinEODEvent;
@@ -11,8 +16,10 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennanttech.external.app.config.dao.ExtStagingDao;
 import com.pennanttech.external.extractions.model.AlmExtract;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ALMDumpService {
+	private static final Logger logger = LogManager.getLogger(ALMDumpService.class);
 	private ExtStagingDao extStageDao;
 
 	public void processALM(CustEODEvent custEODEvent) {
@@ -22,10 +29,10 @@ public class ALMDumpService {
 			FinanceMain fm = finEOD.getFinanceMain();
 			AlmExtract almExtract = new AlmExtract();
 			almExtract.setAlmReportType("RD");// DEFAULT
-			almExtract.setAlmReportDate(finEOD.getAppDate());
+			almExtract.setAlmReportDate(custEODEvent.getEventProperties().getAppDate());
 			almExtract.setAccountNumber(fpd.getFinReference());
 			almExtract.setAccrualBasis("B");// DEFAULT
-			almExtract.setAccruedInterest(fpd.getAmzTillLBDPD());
+			almExtract.setAccruedInterest(fpd.getAmzTillLBD());
 			almExtract.setBankNumber("");// FIXME // Fetch from query
 			almExtract.setBranch(fpd.getFinBranch());
 			almExtract.setCompFreq(0l);// DEFAULT
@@ -44,17 +51,18 @@ public class ALMDumpService {
 			}
 
 			almExtract.setCurrentBalance((fpd.getTotalPriBal().subtract(excessBalance)));
-			almExtract.setDueDate(fpd.getNSchdDate());
+			almExtract.setDueDate(formatData(fpd.getNSchdDate()));
 			almExtract.setInitRate(fm.getRepayProfitRate());
 			almExtract.setLifeCeiling(fm.getRepayProfitRate());
 			almExtract.setLifeFloor(fm.getRepayProfitRate());
 			almExtract.setLoanType(fm.getFinType());
-			almExtract.setMaturity(fm.getMaturityDate());
+			almExtract.setMaturity(formatData(fm.getMaturityDate()));
 			almExtract.setOriginalBalance(fm.getFinAmount());
 			almExtract.setOriginalTerm(fpd.getTotalTenor());
 			almExtract.setOriginationDate(fm.getFinApprovedDate());
 			almExtract.setInstalment(fpd.getNSchdPri().add(fpd.getNSchdPft()));
 			almExtract.setPaymentFreq(fpd.getRepayFrq());
+			almExtract.setInitPaymentFreq(1);
 			almExtract.setPaymentType(7);
 			almExtract.setPctOwned(100);
 			almExtract.setRateFlag("F");
@@ -74,6 +82,17 @@ public class ALMDumpService {
 			almExtract.setWeakerSectionDesc("");// FIXME TBD
 			extStageDao.saveAlmExtractionDataToTable(almExtract);
 		}
+	}
+
+	private Date formatData(Date date) {
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yy");
+			String strDate = formatter.format(date);
+			return formatter.parse(strDate);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		return null;
 	}
 
 	public void setExtStageDao(ExtStagingDao extStageDao) {
