@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
@@ -497,61 +498,61 @@ public class NotificationService extends GenericService<Notification> {
 		return emailMessage;
 	}
 
-	public void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
-		logger.debug("Entering");
+	public void parseMail(MailTemplate mailTemplate, Map<String, Object> dataMap) {
+		logger.debug(Literal.EXCEPTION);
 
-		String subject = "";
-		String result = "";
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("vo", templateData);
+		Map<String, Object> model = new HashMap<>();
+		model.put("vo", dataMap);
 
-		Map<String, Object> tempMap = (Map<String, Object>) model.get("vo");
-		Map<String, Object> notificationDataMap = new HashMap<String, Object>();
+		Map<String, Object> notificationDataMap = new HashMap<>();
 		StringTemplateLoader loader = new StringTemplateLoader();
 		Template template = null;
 		Template templateSubject = null;
-		if (mailTemplate.isEmailTemplate()) {
-			loader.putTemplate("mailTemplate", new String(mailTemplate.getEmailContent(), StandardCharsets.UTF_16));
-			freemarkerMailConfiguration.setTemplateLoader(loader);
-			template = freemarkerMailConfiguration.getTemplate("mailTemplate");
 
+		if (mailTemplate.isEmailTemplate()) {
+			loader.putTemplate("mailTemplate", new String(mailTemplate.getEmailContent(), StandardCharsets.UTF_8));
+			freemarkerMailConfiguration.setTemplateLoader(loader);
 			try {
-				Pattern pattern = Pattern.compile("\\{(.*?)\\}");
-				Matcher matchPattern = pattern.matcher(template.toString());
-				while (matchPattern.find()) {
-					String[] array = matchPattern.group(1).split("\\.");
-					String key = array[1];
-					notificationDataMap.put(matchPattern.group(1), tempMap.get(key));
-				}
+				template = freemarkerMailConfiguration.getTemplate("mailTemplate");
 			} catch (Exception e) {
-				throw new Exception("Error While Preparing NotificationData", e);
+				throw new AppException("9999", e);
 			}
+
+			Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+			Matcher matchPattern = pattern.matcher(template.toString());
+
+			while (matchPattern.find()) {
+				String[] array = matchPattern.group(1).split("\\.");
+				String key = array[1];
+				notificationDataMap.put(matchPattern.group(1), dataMap.get(key));
+			}
+
+			String result = "";
 			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-			} catch (IOException e) {
-				throw new AppException("Unable to read or process freemarker configuration or template", e);
-			} catch (TemplateException e) {
-				logger.error("Template {}", template);
-				throw new AppException("Problem initializing freemarker or rendering template ", e);
+			} catch (Exception e) {
+				throw new AppException("9999", e);
 			}
 
 			StringTemplateLoader subloader = new StringTemplateLoader();
 			subloader.putTemplate("mailSubject", mailTemplate.getEmailSubject());
 			freemarkerMailConfiguration.setTemplateLoader(subloader);
-			templateSubject = freemarkerMailConfiguration.getTemplate("mailSubject");
-
 			try {
-				Pattern subPattern = Pattern.compile("\\{(.*?)\\}");
-				Matcher subMatchPattern = subPattern.matcher(templateSubject.toString());
-				while (subMatchPattern.find()) {
-					String[] array = subMatchPattern.group(1).split("\\.");
-					String key = array[1];
-					notificationDataMap.put(subMatchPattern.group(1), tempMap.get(key));
-				}
+				templateSubject = freemarkerMailConfiguration.getTemplate("mailSubject");
 			} catch (Exception e) {
-				throw new AppException("Error While Preparing NotificationData", e);
+				throw new AppException("9999", e);
 
 			}
+
+			Pattern subPattern = Pattern.compile("\\{(.*?)\\}");
+			Matcher subMatchPattern = subPattern.matcher(templateSubject.toString());
+			while (subMatchPattern.find()) {
+				String[] array = subMatchPattern.group(1).split("\\.");
+				String key = array[1];
+				notificationDataMap.put(subMatchPattern.group(1), dataMap.get(key));
+			}
+
+			String subject = "";
 
 			try {
 				subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, model);
@@ -569,37 +570,42 @@ public class NotificationService extends GenericService<Notification> {
 			loader = new StringTemplateLoader();
 			loader.putTemplate("smsTemplate", mailTemplate.getSmsContent());
 			freemarkerMailConfiguration.setTemplateLoader(loader);
-			template = freemarkerMailConfiguration.getTemplate("smsTemplate");
 
 			try {
-				Pattern smsPattern = Pattern.compile("\\{(.*?)\\}");
-				Matcher smsMatchPattern = smsPattern.matcher(template.toString());
-				while (smsMatchPattern.find()) {
-					String[] array = smsMatchPattern.group(1).split("\\.");
-					String key = array[1];
-					notificationDataMap.put(smsMatchPattern.group(1), tempMap.get(key));
-				}
-			} catch (Exception e) {
-				throw new AppException("Error While Preparing NotificationData", e);
+				template = freemarkerMailConfiguration.getTemplate("smsTemplate");
+			} catch (IOException e) {
+				throw new AppException("9999", e);
 			}
+
+			Pattern smsPattern = Pattern.compile("\\{(.*?)\\}");
+			Matcher smsMatchPattern = smsPattern.matcher(template.toString());
+			while (smsMatchPattern.find()) {
+				String[] array = smsMatchPattern.group(1).split("\\.");
+				String key = array[1];
+				notificationDataMap.put(smsMatchPattern.group(1), dataMap.get(key));
+			}
+
+			String result = "";
 
 			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 				mailTemplate.setSmsMessage(result);
-			} catch (IOException e) {
-				logger.error(Literal.EXCEPTION, e);
-				throw new AppException("Unable to read or process freemarker configuration or template", e);
-			} catch (TemplateException e) {
-				logger.debug(Literal.EXCEPTION, e);
-				throw new AppException("Problem initializing freemarker or rendering template ", e);
+			} catch (Exception e) {
+				throw new AppException("9999", e);
 			}
 		}
 
 		notificationDataMap.put("contentCode", mailTemplate.getTemplateCode());
-		String json = new ObjectMapper().writeValueAsString(notificationDataMap);
-		mailTemplate.setNotificationData(json);
 
-		logger.debug("Leaving");
+		String json;
+		try {
+			json = new ObjectMapper().writeValueAsString(notificationDataMap);
+			mailTemplate.setNotificationData(json);
+		} catch (JsonProcessingException e) {
+			throw new AppException("9999", e);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void sendMailtoCustomer(long templateId, String mailId, Object vo) throws TemplateException, Exception {

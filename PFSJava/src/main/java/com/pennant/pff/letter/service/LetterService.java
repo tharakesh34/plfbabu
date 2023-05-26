@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -112,8 +114,17 @@ public class LetterService {
 
 		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID);
 
+		loanLetter.setId(letterID);
+		loanLetter.setFinID(gl.getFinID());
+		loanLetter.setSaveFormat(SaveFormat.PDF);
+		loanLetter.setLetterType(gl.getLetterType());
+		loanLetter.setLetterMode(gl.getModeofTransfer());
+		loanLetter.setCreatedDate(gl.getCreatedDate());
+		loanLetter.setBusinessDate(appDate);
+
 		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0) {
 			loanLetter.setBlocked(true);
+			return loanLetter;
 		}
 
 		LetterType letterType = LetterType.getType(gl.getLetterType());
@@ -128,14 +139,8 @@ public class LetterService {
 
 		AgreementDefinition ad = agreementDefinitionDAO.getTemplate(templateId);
 
-		loanLetter.setId(letterID);
-		loanLetter.setFinID(gl.getFinID());
-		loanLetter.setSaveFormat(SaveFormat.PDF);
 		loanLetter.setLetterDesc(ad.getAggDesc());
-		loanLetter.setLetterType(gl.getLetterType());
-		loanLetter.setLetterMode(gl.getModeofTransfer());
-		loanLetter.setCreatedDate(gl.getCreatedDate());
-		loanLetter.setBusinessDate(appDate);
+
 		loanLetter.setEmailTemplate(emailtemplateId);
 
 		LetterMode letterMode = LetterMode.getMode(loanLetter.getLetterMode());
@@ -199,6 +204,7 @@ public class LetterService {
 		loanLetter.setCsbAddrL2(serviceBranch.getAddrLine2());
 		loanLetter.setCsbPoBox(serviceBranch.getPoBox());
 		loanLetter.setCsbCounty(serviceBranch.getCountry());
+		loanLetter.setCsbState(serviceBranch.getCpProvince());
 		loanLetter.setCsbCity(serviceBranch.getCity());
 		loanLetter.setCsbPinCode(serviceBranch.getPinCode());
 		loanLetter.setCsbFolderPath(serviceBranch.getFolderPath());
@@ -234,10 +240,14 @@ public class LetterService {
 		address.setRecipientType(RecipientType.TO.getKey());
 		emailMessage.getAddressesList().add(address);
 
+		Map<String, byte[]> map = new HashMap<>();
+		map.put(letter.getLetterName(), letter.getContent());
+		emailMessage.setAttachments(map);
+
 		try {
 			emailEngine.sendEmail(emailMessage);
 
-			letter.setTrackingID(emailMessage.getId());
+			letter.setEmailNotificationID(emailMessage.getId());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new AppException("Unable to save the email notification", e);
@@ -248,6 +258,10 @@ public class LetterService {
 		LetterMode letterMode = LetterMode.getMode(letter.getLetterMode());
 
 		if (letterMode == null) {
+			return;
+		}
+
+		if (letterMode == LetterMode.EMAIL && letter.getEmail() != null) {
 			return;
 		}
 
@@ -293,12 +307,14 @@ public class LetterService {
 		GenerateLetter gl = new GenerateLetter();
 
 		long letterID = letter.getId();
+
 		gl.setId(letterID);
+		gl.setGenerated(letter.getGenerated());
 		gl.setFeeID(letter.getFeeID());
 		gl.setGeneratedDate(letter.getBusinessDate());
 		gl.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
 		gl.setAdviseID(letter.getAdviseID());
-		gl.setTrackingID(letter.getTrackingID());
+		gl.setEmailNotificationID(letter.getEmailNotificationID());
 		gl.setStatus(letter.getStatus());
 		gl.setRemarks(letter.getRemarks());
 
@@ -352,6 +368,44 @@ public class LetterService {
 		}
 
 		letter.setLetterName(builder.toString());
+		letter.setFileName(letter.getFileName());
+
+	}
+
+	private void setCustomerData(LoanLetter letter, CustomerDetails customerDetails) {
+		Customer customer = customerDetails.getCustomer();
+
+		letter.setCustCif(StringUtils.trimToEmpty(customer.getCustCIF()));
+		letter.setCustCoreBank(StringUtils.trimToEmpty(customer.getCustCoreBank()));
+		letter.setSalutation(StringUtils.trimToEmpty(customer.getCustGenderCode()));
+		letter.setCustShrtName(StringUtils.trimToEmpty(customer.getCustShrtName()));
+
+		List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
+
+		if (!customerEMailList.isEmpty()) {
+			CustomerEMail customerEMail = customerEMailList.get(0);
+			letter.setEmail(customerEMail.getCustEMail());
+		}
+
+		List<CustomerAddres> customerAddresList = customerDetails.getAddressList();
+
+		if (!customerAddresList.isEmpty()) {
+			CustomerAddres ca = customerAddresList.get(0);
+
+			letter.setCustCountry(StringUtils.trimToEmpty(ca.getCustAddrCountry()));
+			letter.setCustFlatNo(StringUtils.trimToEmpty(ca.getCustFlatNbr()));
+			letter.setCustLandMark(StringUtils.trimToEmpty(ca.getCustAddrLine1()));
+			letter.setCustCareOf(StringUtils.trimToEmpty(ca.getCustAddrLine3()));
+			letter.setCustDistrict(StringUtils.trimToEmpty(ca.getCustDistrict()));
+			letter.setCustSubDistrict(StringUtils.trimToEmpty(ca.getCustAddrLine4()));
+			letter.setCustHouseBullingNo(StringUtils.trimToEmpty(ca.getCustAddrHNbr()));
+			letter.setCustLocalty(StringUtils.trimToEmpty(ca.getCustAddrLine2()));
+			letter.setCustPoBox(StringUtils.trimToEmpty(ca.getCustPOBox()));
+			letter.setCustState(StringUtils.trimToEmpty(ca.getCustAddrProvince()));
+			letter.setCustPinCode(StringUtils.trimToEmpty(ca.getCustAddrZIP()));
+			letter.setCustStreet(StringUtils.trimToEmpty(ca.getCustAddrStreet()));
+			letter.setCustCity(StringUtils.trimToEmpty(ca.getCustAddrCity()));
+		}
 
 	}
 
@@ -371,36 +425,8 @@ public class LetterService {
 		letter.setFinTypeDesc(fm.getLovDescFinTypeName());
 
 		CustomerDetails customerDetails = fd.getCustomerDetails();
-		Customer customer = customerDetails.getCustomer();
 
-		letter.setSalutation(StringUtils.trimToEmpty(customer.getCustGenderCode()));
-		letter.setCustShrtName(StringUtils.trimToEmpty(customer.getCustShrtName()));
-
-		List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
-
-		if (!customerEMailList.isEmpty()) {
-			CustomerEMail customerEMail = customerEMailList.get(0);
-			letter.setEmail(customerEMail.getCustEMail());
-		}
-
-		List<CustomerAddres> customerAddresList = customerDetails.getAddressList();
-
-		if (!customerAddresList.isEmpty()) {
-			CustomerAddres customerAddres = customerAddresList.get(0);
-
-			letter.setCustCountry(StringUtils.trimToEmpty(customerAddres.getCustAddrCountry()));
-			letter.setCustFlatNo(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
-			letter.setCustLandMark(StringUtils.trimToEmpty(customerAddres.getCustAddrLine1()));
-			letter.setCustCareOf(StringUtils.trimToEmpty(customerAddres.getCustAddrLine3()));
-			letter.setCustDistrict(StringUtils.trimToEmpty(customerAddres.getCustDistrict()));
-			letter.setCustSubDistrict(StringUtils.trimToEmpty(customerAddres.getCustAddrLine4()));
-			letter.setCustHouseBullingNo(StringUtils.trimToEmpty(customerAddres.getCustAddrHNbr()));
-			letter.setCustLocalty(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
-			letter.setCustPoBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
-			letter.setCustState(StringUtils.trimToEmpty(customerAddres.getCustAddrProvince()));
-			letter.setCustPinCode(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
-			letter.setCustStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
-		}
+		setCustomerData(letter, customerDetails);
 
 		Branch branch = branchDAO.getBranchById(letter.getFinBranch(), "_AView");
 		if (branch != null) {
@@ -450,6 +476,8 @@ public class LetterService {
 		manualAdvise.setWorkflowId(0);
 
 		manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
+
+		letter.setAdviseID(manualAdvise.getAdviseID());
 
 		logger.debug(Literal.LEAVING);
 	}

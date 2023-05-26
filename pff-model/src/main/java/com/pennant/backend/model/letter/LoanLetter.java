@@ -38,7 +38,6 @@ public class LoanLetter implements Serializable {
 	private String status;
 	private String email;
 	private String fileName;
-	private Long trackingID;
 	private String remarks;
 	private Long adviseID;
 	private GenerateLetter befImage;
@@ -46,6 +45,7 @@ public class LoanLetter implements Serializable {
 	private FinanceDetail financeDetail;
 	private long agreementTemplate;
 	private Long emailTemplate;
+	private Long emailNotificationID;
 
 	private int sequence;
 	private Date businessDate;
@@ -309,14 +309,6 @@ public class LoanLetter implements Serializable {
 		this.fileName = fileName;
 	}
 
-	public Long getTrackingID() {
-		return trackingID;
-	}
-
-	public void setTrackingID(Long trackingID) {
-		this.trackingID = trackingID;
-	}
-
 	public String getRemarks() {
 		return remarks;
 	}
@@ -371,6 +363,14 @@ public class LoanLetter implements Serializable {
 
 	public void setEmailTemplate(Long emailTemplate) {
 		this.emailTemplate = emailTemplate;
+	}
+
+	public Long getEmailNotificationID() {
+		return emailNotificationID;
+	}
+
+	public void setEmailNotificationID(Long emailNotificationID) {
+		this.emailNotificationID = emailNotificationID;
 	}
 
 	public int getSequence() {
