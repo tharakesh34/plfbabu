@@ -387,7 +387,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		}
 
 		try {
-			if (this.effManualAssetSubClassification.getSelectedIndex() <= 0) {
+			if (this.effManualAssetSubClassification.getSelectedIndex() < 0) {
 				provision.setManualAssetSubClassID(null);
 			} else {
 				provision.setManualAssetSubClassID(getSelectedValue(effManualAssetSubClassification));
