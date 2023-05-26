@@ -45,6 +45,7 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 	private CrossLoanTransfer befImage;
 	private LoggedInUser userDetails;
 	private Date valueDate;
+	private Date excessValueDate;
 	private String source;
 	private String excessType;
 	private long createdBy;
@@ -72,6 +73,7 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 		excludeFields.add("moduleType");
 		excludeFields.add("process");
 		excludeFields.add("valueDate");
+		excludeFields.add("excessValueDate");
 
 		return excludeFields;
 	}
@@ -326,6 +328,14 @@ public class CrossLoanTransfer extends AbstractWorkflowEntity {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public Date getExcessValueDate() {
+		return excessValueDate;
+	}
+
+	public void setExcessValueDate(Date excessValueDate) {
+		this.excessValueDate = excessValueDate;
 	}
 
 	public String getSource() {

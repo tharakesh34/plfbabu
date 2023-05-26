@@ -325,10 +325,12 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			clt.setExcessAmount(fea.getAmount());
 			clt.setReserveAmount(fea.getReservedAmt());
 			clt.setAvailableAmount(fea.getBalanceAmt().subtract(payableAmount));
+			clt.setExcessValueDate(fea.getValueDate() != null ? fea.getValueDate() : receiptDt);
 
 			CrossLoanKnockOff clko = prepareKnockOffBean(header, clk, toFm, receiptDt, payableAmount);
 			clko.setCrossLoanTransfer(clt);
 			clko.setValueDate(clt.getValueDate());
+			clko.setExcessValueDate(fea.getValueDate() != null ? fea.getValueDate() : receiptDt);
 			clko.getFinServiceInstruction().setAdviseId(fea.getExcessID());
 
 			if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {
@@ -378,6 +380,7 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 			CrossLoanKnockOff clko = prepareKnockOffBean(header, clk, toFm, receiptDt, payableAmount);
 			clko.setCrossLoanTransfer(clt);
 			clko.setValueDate(clt.getValueDate());
+			clko.setExcessValueDate(clt.getValueDate());
 			clko.getFinServiceInstruction().setAdviseId(ma.getAdviseID());
 
 			if (clk.getProgress() != EodConstants.PROGRESS_FAILED) {

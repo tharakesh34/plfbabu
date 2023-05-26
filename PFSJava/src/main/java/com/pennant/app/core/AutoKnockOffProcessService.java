@@ -119,6 +119,7 @@ public class AutoKnockOffProcessService {
 			Date appDate = knockOffData.getEventProperties().getAppDate();
 			valueDt = receiptService.getExcessBasedValueDate(valueDt, knockOffData.getFinID(), appDate, fea,
 					FinServiceEvent.SCHDRPY);
+			knockOffData.setValueDate(valueDt);
 		}
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();

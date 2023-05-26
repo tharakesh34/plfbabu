@@ -20,6 +20,7 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 	private CrossLoanKnockOff befImage;
 	private LoggedInUser userDetails;
 	private Date valueDate;
+	private Date excessValueDate;
 	private CrossLoanTransfer crossLoanTransfer;
 	private FinReceiptData finReceiptData;
 	private long receiptID = 0;
@@ -78,6 +79,7 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 		excludeFields.add("crossLoanKnockoffUpload");
 		excludeFields.add("cancelProcess");
 		excludeFields.add("transferID");
+		excludeFields.add("excessValueDate");
 
 		return excludeFields;
 	}
@@ -136,6 +138,14 @@ public class CrossLoanKnockOff extends AbstractWorkflowEntity {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public Date getExcessValueDate() {
+		return excessValueDate;
+	}
+
+	public void setExcessValueDate(Date excessValueDate) {
+		this.excessValueDate = excessValueDate;
 	}
 
 	public CrossLoanTransfer getCrossLoanTransfer() {

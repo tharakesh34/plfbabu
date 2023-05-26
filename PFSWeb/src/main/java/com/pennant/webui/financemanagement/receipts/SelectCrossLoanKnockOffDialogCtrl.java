@@ -794,8 +794,18 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		}
 
 		Date appDate = SysParamUtil.getAppDate();
-
 		cLKHeader.setValueDate(this.receiptDate.getValue());
+
+		String knockOff = getComboboxValue(knockOffFrom);
+		if (!ReceiptMode.PAYABLE.equals(knockOff) && !PennantConstants.List_Select.equals(knockOff)) {
+			FinExcessAmount fea = (FinExcessAmount) this.referenceId.getObject();
+			if (fea != null && fea.getValueDate() != null) {
+				cLKHeader.setExcessValueDate(fea.getValueDate());
+			}
+		} else {
+			cLKHeader.setExcessValueDate(cLKHeader.getValueDate());
+		}
+
 		cLKHeader.setPostDate(appDate);
 
 		CrossLoanTransfer crossLoanTransfer = new CrossLoanTransfer();
@@ -806,6 +816,7 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		crossLoanTransfer.setToFinID(ComponentUtil.getFinID(this.toFinReference));
 		crossLoanTransfer.setToFinReference(this.toFinReference.getValidatedValue());
 		crossLoanTransfer.setTransferAmount(receiptData.getReceiptHeader().getReceiptAmount());
+		crossLoanTransfer.setExcessValueDate(cLKHeader.getExcessValueDate());
 
 		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptData.getReceiptHeader().getReceiptMode())) {
 			ManualAdvise ma = (ManualAdvise) this.referenceId.getObject();
@@ -1160,7 +1171,8 @@ public class SelectCrossLoanKnockOffDialogCtrl extends GFCBaseCtrl<FinReceiptHea
 		if (fea != null && fea.getValueDate() != null) {
 			isDisabled = true;
 		}
-		receiptDt = receiptService.getExcessBasedValueDate(receiptDt, finID, appDate, fea, getComboboxValue(receiptPurpose));
+		receiptDt = receiptService.getExcessBasedValueDate(receiptDt, finID, appDate, fea,
+				getComboboxValue(receiptPurpose));
 		this.receiptDate.setValue(receiptDt);
 		this.receiptDate.setDisabled(isDisabled);
 	}
