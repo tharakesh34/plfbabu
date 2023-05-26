@@ -1,5 +1,6 @@
 package com.pennant.pff.presentment.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import com.pennant.eod.constants.EodConstants;
 import com.pennant.pff.presentment.dao.PresentmentRespUploadDAO;
 import com.pennant.pff.presentment.exception.PresentmentError;
 import com.pennant.pff.upload.model.FileUploadHeader;
+import com.pennant.pff.upload.model.UploadDetails;
 import com.pennant.pff.upload.service.impl.AUploadServiceImpl;
 import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.model.presentment.PresentmentRespUpload;
@@ -69,9 +71,22 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
 
+		try {
+			new BigDecimal(detail.getAmountCleared());
+		} catch (NumberFormatException e) {
+			setFailureStatus(detail, PresentmentError.REPRMNT523.name(), "Amount Cleared is invalid format");
+			return;
+		}
+
 		if (presentmentRespUploadDAO.isDuplicateKeyPresent(reference, detail.getClearingStatus(),
 				detail.getClearingDate())) {
 			setError(detail, PresentmentError.FC_601);
+			return;
+		}
+
+		if (!(RepayConstants.PEXC_BOUNCE.equals(detail.getClearingStatus()))
+				&& !(RepayConstants.PEXC_SUCCESS.equals(detail.getClearingStatus()))) {
+			setError(detail, PresentmentError.FC_609);
 			return;
 		}
 
@@ -228,6 +243,18 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 				transactionManager.rollback(txStatus);
 			}
 		}
+	}
+
+	protected void setFailureStatus(UploadDetails detail, String errorCode, String errorDesc) {
+		errorDesc = StringUtils.trimToEmpty(errorDesc);
+		if (errorDesc.length() > 1999) {
+			errorDesc = errorDesc.substring(0, 1999);
+		}
+
+		detail.setProgress(EodConstants.PROGRESS_FAILED);
+		detail.setStatus("F");
+		detail.setErrorCode(errorCode);
+		detail.setErrorDesc(errorDesc);
 	}
 
 	@Override
