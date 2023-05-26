@@ -1,12 +1,20 @@
 package com.pennant.util;
 
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.IdSpace;
@@ -18,28 +26,49 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Window;
 
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.net.SystemUtils;
+
 public class ComponentIdGenerator implements IdGenerator {
 	private static final Logger logger = LogManager.getLogger(ComponentIdGenerator.class);
 
 	private static final String DEFAULT_PREFIX = "zk_comp_";
 	private static final String[] COMPONENTS = { "Textbox", "Intbox", "Decimalbox", "Datebox", "Checkbox", "Radio",
-			"Radiogroup", "Combobox", "Listbox", "Button", "Menu", "Menuitem", "Tab" };
+			"Radiogroup", "Combobox", "Listbox", "Listheader", "Listitem", "Button", "Menu", "Menuitem", "Tab",
+			"Groupbox" };
 	private static final String[] CUSTOM_COMPONENTS = { "Uppercasebox", "ExtendedCombobox", "CurrencyBox",
-			"AccountSelectionBox", "ExtendedSearchListBox", "FrequencyBox" };
+			"AccountSelectionBox", "ExtendedSearchListBox", "FrequencyBox", "ExtendedMultipleSearchListBox",
+			"ExtendedStaticListBox", "MultiSelectionSearchListBox", "MultiSelectionStaticListBox" };
 	private static final boolean LOG_REQUESTED = false;
 	private static final String LOG_PATH = "D:/IDLog.txt";
+
+	private List<String[]> xpathData = new ArrayList<String[]>();
+	private XSSFWorkbook workbook = new XSSFWorkbook();
+	private XSSFSheet sheet = null;
+	private String windowId = null;
+	private String prevWindowId = null;
+
+	private static final String xpathGenPath = App.getProperty("xpath.storge.path");
+	private static final String xpathFileName = App.getProperty("xpath.storage.filename");
 
 	public ComponentIdGenerator() {
 		super();
 	}
 
+	public List<String[]> getXpathData() {
+		return xpathData;
+	}
+
 	@Override
 	public String nextComponentUuid(Desktop desktop, Component comp, ComponentInfo compInfo) {
 		// Generate the default UUID for unlisted components
+
 		if (!contains(COMPONENTS, comp.getClass().getSimpleName())
 				&& !contains(CUSTOM_COMPONENTS, comp.getClass().getSimpleName())) {
 			return null;
 		}
+
+		String id = null;
 
 		// Use "id" if one available
 		String uuid = getId(comp, compInfo);
@@ -49,7 +78,7 @@ public class ComponentIdGenerator implements IdGenerator {
 			uuid = getCustomComponentChildId(comp);
 			if (comp.getParent() != null && comp.getParent().getParent() != null
 					&& "FrequencyBox".equals(comp.getParent().getParent().getClass().getSimpleName())
-					&& uuid.contains("Combobox")) {
+					&& uuid.contains("Combobox") && uuid.contains("Listbox")) {
 				uuid = getNextFrqboxID(desktop, uuid);
 			}
 		}
@@ -65,17 +94,38 @@ public class ComponentIdGenerator implements IdGenerator {
 			// Unable to generate "UUID"
 			logInfo(comp, compInfo);
 
-			return DEFAULT_PREFIX + getNextIndex(desktop);
+			id = DEFAULT_PREFIX + getNextIndex(desktop);
 		} else {
 			if (desktop.getComponentByUuidIfAny(uuid) == null) {
-				return uuid;
+				id = uuid;
 			} else {
 				// The UUID already exist within the desktop
 				logInfo(comp, compInfo);
 
-				return uuid + "_dupl_" + getNextIndex(desktop);
+				id = uuid + "_dupl_" + getNextIndex(desktop);
 			}
 		}
+
+		if (contains(COMPONENTS, comp.getClass().getSimpleName())
+				|| contains(CUSTOM_COMPONENTS, comp.getClass().getSimpleName())) {
+
+			try {
+
+				if (AutomationUtil.getSingleton().isRecordXpath()) {
+					generateXpath(desktop, comp, compInfo, id);
+				} else {
+					xpathData.clear();
+					for (int i = workbook.getNumberOfSheets() - 1; i >= 0; i--) {
+						workbook.removeSheetAt(i);
+					}
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return id;
+
 	}
 
 	private String getNextFrqboxID(Desktop desktop, String uuid) {
@@ -147,17 +197,27 @@ public class ComponentIdGenerator implements IdGenerator {
 			if (contains(CUSTOM_COMPONENTS, parent.getClass().getSimpleName())) {
 				String suffix = orig.getClass().getSimpleName();
 
-				if ("ExtendedSearchListBox".equals(parent.getClass().getSimpleName())) {
-					if ("Button".equals(orig.getClass().getSimpleName())) {
-						Button button = (Button) orig;
+				if ("Button".equals(orig.getClass().getSimpleName())) {
+					Button button = (Button) orig;
 
-						if (!"".equals(button.getLabel())) {
-							suffix += "_" + button.getLabel();
-						}
+					if (!"".equals(button.getLabel())) {
+						suffix += "_" + button.getLabel();
 					}
 				}
 
 				return parent.getUuid() + "_" + suffix;
+			} else if ("Window".equals(parent.getClass().getSimpleName())) {
+				String suffix = orig.getClass().getSimpleName();
+				if ("Button".equals(orig.getClass().getSimpleName())) {
+					Button button = (Button) orig;
+
+					if (!"".equals(button.getLabel())) {
+						suffix += "_" + button.getLabel();
+					}
+				}
+
+				return parent.getId() + "_" + suffix;
+
 			}
 
 			if (level == 6) {
@@ -268,5 +328,189 @@ public class ComponentIdGenerator implements IdGenerator {
 		}
 
 		return result;
+	}
+
+	public void generateXpath(Desktop desktop, Component comp, ComponentInfo compInfo, String id) throws IOException {
+
+		try {
+
+			String compType = comp.getClass().getSimpleName();
+			switch (compType) {
+
+			case "Combobox":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//*[@id='" + id + "']//input[1])[1]", comp);
+				break;
+
+			case "Radio":
+			case "Radiogroup":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//*[@id='" + id + "'])[1]", comp);
+				break;
+
+			case "Datebox":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//span[@id='" + id + "']//input[1])[1]", comp);
+				break;
+
+			case "Intbox":
+			case "Decimalbox":
+			case "Checkbox":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//span[@id='" + id + "'])[1]", comp);
+				break;
+
+			case "Listbox":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//select[@id='" + id + "'])[1]", comp);
+				break;
+			//
+			// case "Listheader":
+			// addXpathData(comp.getClass().getSimpleName(), id, "(.//th[@id='" + id + "']//div//span[1])[1]", comp);
+
+			case "Textbox":
+			case "Uppercasebox":
+				if (id.contains("notesDialog_remarksText")) {
+					addXpathData(comp.getClass().getSimpleName(), id, "(.//textarea[@id='" + id + "'])[1]", comp);
+				} else {
+					addXpathData(comp.getClass().getSimpleName(), id, "(.//input[@id='" + id + "'])[1]", comp);
+				}
+
+				break;
+
+			case "Button":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//button[@id='" + id + "'])[1]", comp);
+				break;
+
+			case "Tab":
+				addXpathData(comp.getClass().getSimpleName(), id,
+						"(.//li[@id='" + id + "']//following::span[text()][1])[1]", comp);
+				break;
+
+			case "Menuitem":
+			case "Menu":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//div[@id='" + id + "'])[1]", comp);
+				break;
+			case "ExtendedCombobox":
+				addXpathData(comp.getClass().getSimpleName(), id, "(.//table[@id='" + id + "'])[1]", comp);
+				break;
+
+			// default:
+			// addXpathData(comp.getClass().getSimpleName(), id, "Default " + id, comp);
+			// break;
+			}
+
+			if (AutomationUtil.getSingleton().isRecordXpath()) {
+				generateXpathFile();
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+
+	}
+
+	public void addXpathData(String compname, String id, String xpath, Component comp) {
+		/* not to add the xpath if it already contains the list */
+
+		IdSpace idSpace = comp.getSpaceOwner();
+
+		if (idSpace instanceof Window) {
+			// windowId = ((Window) idSpace).getId();
+			/*
+			 * New sheet created with windowId is the name given to sheet.
+			 * 
+			 * Excel UI doesn't allow to set the sheet name having length greater than 31 characters, truncating the
+			 * length if exceeds beyond 31 char max
+			 */
+			windowId = StringUtils.truncate(((Window) idSpace).getId(), 31);
+
+			if ("".contentEquals(windowId)) {
+				windowId = StringUtils.truncate(((Window) idSpace).getParent().getId() + "_Ext", 31);
+			}
+		}
+
+		/* Remove old data from the list if the window changes */
+		if (!StringUtils.equals(prevWindowId, windowId)) {
+			xpathData.clear();
+		}
+		prevWindowId = windowId;
+
+		/* check if sheet founds in the workbook */
+		sheet = workbook.getSheet(windowId);
+
+		if (sheet == null) {
+			xpathData.clear();
+			sheet = workbook.createSheet(windowId);
+		}
+
+		boolean flag = false;
+		if (!getXpathData().isEmpty()) { /* initial state */
+			for (String[] xpathList : xpathData) { /* iterate over the existing list to check duplicates */
+				flag = xpathList[2].contains(
+						xpath); /*
+								 * check xpath from the list contains in the existing list or not to avoid duplication
+								 */
+				if (flag) {
+					break;
+				}
+			}
+			if (!flag) {
+				xpathData.add(new String[] { compname, id, xpath });
+			}
+		} else {
+			xpathData.add(new String[] { compname, id, xpath });
+		}
+	}
+
+	public void generateXpathFile() throws IOException {
+
+		List<String[]> data = new ArrayList<>();
+		data.add(new String[] { "Property", "Component Id", "Xpath" });
+		data.addAll(getXpathData());
+
+		int rownum = 0;
+		for (int i = 0; i < data.size(); i++) {
+			Row row = sheet.createRow(rownum++);
+			String[] list = data.get(i);
+			int cellnum = 0;
+
+			for (Object obj : list) {
+
+				// This line creates a cell in the next
+				// column of that row
+				Cell cell = row.createCell(cellnum++);
+
+				if (obj instanceof String)
+					cell.setCellValue((String) obj);
+
+				else if (obj instanceof Integer)
+					cell.setCellValue((Integer) obj);
+			}
+
+		}
+
+		// Try block to check for exceptions
+		try {
+
+			String filePath = xpathGenPath.concat("/").concat(xpathFileName);
+			filePath = SystemUtils.appendseparatorsToSystem(filePath);
+			logInfo("filePath" + filePath);
+
+			// Writing the workbook
+			FileOutputStream out = new FileOutputStream(new File(filePath));
+			workbook.write(out);
+
+			// Closing file output connections
+			// out.close();
+
+			// Console message for successful execution of
+			// program
+		} // Catch block to handle exceptions
+		catch (Exception e) {
+
+			// Display exceptions along with line number
+			// using printStackTrace() method
+			e.printStackTrace();
+		} finally {
+			// workbook.close();
+
+		}
+
 	}
 }

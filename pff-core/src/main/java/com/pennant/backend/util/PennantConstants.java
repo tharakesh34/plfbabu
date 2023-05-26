@@ -266,6 +266,7 @@ public class PennantConstants {
 	public static final String DOC_TYPE_WORD_EXT = ".docx";
 	public static final String DOC_TYPE_JPG_EXT = ".jpg";
 	public static final String DOC_TYPE_PNG_EXT = ".png";
+	public static final String DOC_TYPE_CSV_EXT = ".CSV";
 
 	// Commitment Constants
 	public static final String CMT_TOTALCMT = "TotCommitments";
