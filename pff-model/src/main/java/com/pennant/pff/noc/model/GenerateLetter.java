@@ -15,6 +15,8 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private long id;
 	private long finID;
 	private String finReference;
+	private String custCIF;
+	private String coreBankId;
 	private String letterType;
 	private String requestType;
 	private Long feeID;
@@ -104,6 +106,22 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getCoreBankId() {
+		return coreBankId;
+	}
+
+	public void setCoreBankId(String coreBankId) {
+		this.coreBankId = coreBankId;
 	}
 
 	public String getLetterType() {
