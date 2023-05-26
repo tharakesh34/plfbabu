@@ -128,15 +128,6 @@ public class LoanLetterUploadDAOImpl extends SequenceDao<LoanLetterUpload> imple
 	}
 
 	@Override
-	public int getFinTypeLtrMap(String finType) {
-		String sql = "Select count(ID) From LOANTYPE_LETTER_MAPPING Where FinType = ?";
-
-		logger.debug(Literal.SQL.concat(sql));
-
-		return this.jdbcOperations.queryForObject(sql, Integer.class, finType);
-	}
-
-	@Override
 	public String getCanceltype(String finReference) {
 		String sql = "Select CancelType From ReasonHeader Where Reference= ?";
 
