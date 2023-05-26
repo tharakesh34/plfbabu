@@ -125,8 +125,8 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 			return;
 		}
 
-		List<LoanTypeLetterMapping> letterMapping = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
-		if (!letterMapping.stream().anyMatch(p -> p.getLetterType().contentEquals(detail.getLetterType()))) {
+		List<LoanTypeLetterMapping> ltrmap = loanTypeLetterMappingDAO.getLetterMapping(fm.getFinType());
+		if (!ltrmap.stream().anyMatch(l -> l.getLetterType().equals(detail.getLetterType()))) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_08);
 			return;
 		}
