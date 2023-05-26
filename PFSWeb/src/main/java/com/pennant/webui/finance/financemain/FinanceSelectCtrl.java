@@ -113,7 +113,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.WorkFlowUtil;
-import com.pennant.pff.fincancelupload.exception.FinCancelUploadError;
 import com.pennant.pff.mandate.InstrumentType;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinanceMainSelectItemRenderer;
@@ -1118,16 +1117,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELRPY)) {
 			// whereClause.append(" OR (FinIsActive = 0 AND ClosingStatus = 'M') ");
 		} else if (moduleDefiner.equals(FinServiceEvent.CANCELFIN)) {
-			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
-			backValueDate = DateUtil.addDays(appDate, backValueDays);
-			String backValDate = DateUtil.formatToFullDate(backValueDate);
 
 			// whereClause.append(" AND MigratedFinance = 0 ");
-			whereClause.append(" AND (");
 			if (!ImplementationConstants.ALLOW_CANCEL_LOAN_AFTER_PAYMENTS) {
-				whereClause.append(" FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
+				whereClause.append(" AND ( FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate ) ");
 			}
-			whereClause.append(" FinStartDate >= '" + backValDate + "')");
+
 			whereClause.append(" AND AllowCancelFin = 1");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 			whereClause.append(" AND RcdMaintainSts = 'CancelFinance' AND FinIsActive = 1 ");
@@ -2197,12 +2192,12 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		fm.setFinSourceID(RequestSource.UI.name());
-		FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
-
-		if (error != null) {
-			MessageUtil.showError(financeCancelValidator.getOverrideDescription(error, schdData.getFinanceMain()));
-			return;
-		}
+		/*
+		 * FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
+		 * 
+		 * if (error != null) { MessageUtil.showError(financeCancelValidator.getOverrideDescription(error,
+		 * schdData.getFinanceMain())); return; }
+		 */
 
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 			String[] errParm = new String[1];

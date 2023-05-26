@@ -116,7 +116,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -820,8 +819,9 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		FinCancelUploadError errorDetail = financeCancelValidator.validLoan(fm, schedules);
 
 		if (errorDetail != null) {
-			MessageUtil.showError(FinCancelUploadError.getOverrideDescription(errorDetail, fm));
-			return auditHeader;
+			auditDetail.setErrorDetail(
+					new ErrorDetail("CL", FinanceCancelValidator.getOverrideDescription(errorDetail, fm), null));
+			auditDetails.add(auditDetail);
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
