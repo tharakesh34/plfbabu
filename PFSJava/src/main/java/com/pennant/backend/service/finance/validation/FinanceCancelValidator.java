@@ -77,7 +77,7 @@ public class FinanceCancelValidator {
 		}
 
 		if (finReceiptHeaderDAO.isLoanEarlySetteled(finReference)) {
-			return FinCancelUploadError.LANCLUP008;
+			return FinCancelUploadError.LANCLUP010;
 		}
 
 		if (ImplementationConstants.DISB_REVERSAL_REQ_BEFORE_LOAN_CANCEL) {
@@ -150,7 +150,7 @@ public class FinanceCancelValidator {
 		return null;
 	}
 
-	public String getOverrideDescription(FinCancelUploadError error, FinanceMain fm) {
+	public static String getOverrideDescription(FinCancelUploadError error, FinanceMain fm) {
 		String description = error.description();
 
 		switch (error) {
