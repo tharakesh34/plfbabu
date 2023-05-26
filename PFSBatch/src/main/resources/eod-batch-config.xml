@@ -331,6 +331,11 @@
 		</step>
 		<step id="ucicExtraction">
 			<tasklet ref="ucicExtractionTasklet" />
+			<next on="*" to="extRBIADFExtraction" />
+			<fail on="FAILED" />
+		</step>
+		<step id="extRBIADFExtraction">
+			<tasklet ref="extRBIADFExtractionTasklet" />
 			<next on="*" to="endOfMonthDecider" />
 			<fail on="FAILED" />
 		</step>

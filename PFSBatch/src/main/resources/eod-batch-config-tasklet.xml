@@ -19,6 +19,9 @@
 
 	<!-- UCICEXTRACTION -->
 	<bean id="ucicExtractionTasklet" class="com.pennant.backend.endofday.tasklet.UCICExtractionTasklet" />
+	
+	<!-- RBIADFEXTRACTION -->
+	<bean id="extRBIADFExtractionTasklet" class="com.pennant.backend.endofday.tasklet.ExtRBIADFExtractionTasklet" />	
 
 	<!-- MicroEOD -->
 	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD" />

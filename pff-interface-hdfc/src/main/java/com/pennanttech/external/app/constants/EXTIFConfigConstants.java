@@ -49,5 +49,6 @@ public interface EXTIFConfigConstants {
 	String SP_ALM_REPORT = "SP_ALM_REPORT";
 	String SP_FINCON_GL = "SP_FINCON_GL";
 	String SP_FINCON_WRITE_FILE = "SP_FINCON_WRITE_FILE";
+	String SP_RBIADF = "SP_RBIADFEXTRACT";
 
 }

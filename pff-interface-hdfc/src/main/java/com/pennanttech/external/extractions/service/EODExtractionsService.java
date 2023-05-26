@@ -187,4 +187,10 @@ public class EODExtractionsService implements EODExtractionsHook, InterfaceConst
 		extExtractionDao.executeSp(SP_ALM_REPORT);
 	}
 
+	@Override
+	public void processExtRBIADFExtarction() {
+		extExtractionDao.executeSp(SP_RBIADF);
+
+	}
+
 }
