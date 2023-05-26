@@ -22,6 +22,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -539,4 +540,39 @@ public class ServiceBranchDAOImpl extends SequenceDao<ServiceBranch> implements 
 			return sb;
 		}
 	}
+
+	@Override
+	public ServiceBranchesLoanType getServiceBranchesLoanType(String finType, String branch, String code) {
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" cs.Code, csb.FinType, csb.Branch");
+		sql.append(" From Service_Branches_LoanType csb");
+		sql.append(" Inner join Service_Branches cs On cs.Id =  csb.HeaderId");
+		sql.append(" Where csb.FinType = ? And csb.Branch = ? And cs.Code <> ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<ServiceBranchesLoanType>() {
+
+				@Override
+				public ServiceBranchesLoanType mapRow(ResultSet rs, int rowNum) throws SQLException {
+					ServiceBranchesLoanType sbl = new ServiceBranchesLoanType();
+					
+					sbl.setCode(rs.getString("Code"));
+					sbl.setFinType(rs.getString("FinType"));
+					sbl.setBranch(rs.getString("Branch"));
+					
+					return sbl;
+				}
+
+			}, finType, branch, code);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+	
+		}
+
+	}
+
 }

@@ -21,6 +21,7 @@ public class ServiceBranchesLoanType extends AbstractWorkflowEntity {
 	private long approvedBy;
 	private Timestamp approvedOn;
 	private int keyValue = 0;
+	private String code;
 
 	public ServiceBranchesLoanType() {
 		super();
@@ -118,6 +119,14 @@ public class ServiceBranchesLoanType extends AbstractWorkflowEntity {
 
 	public void setKeyValue(int keyValue) {
 		this.keyValue = keyValue;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }
