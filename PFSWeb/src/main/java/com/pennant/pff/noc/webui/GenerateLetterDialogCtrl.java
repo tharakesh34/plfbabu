@@ -479,7 +479,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.coreBankID.setValue(customer.getCustCoreBank());
 		this.finStartDate.setValue(fm.getFinStartDate());
 		this.branch.setValue(fm.getFinBranch());
-		this.finAmount.setValue(fm.getFinAmount());
+		this.finAmount.setValue(CurrencyUtil.parse(fm.getFinAmount(), this.ccyFormatter));
 		this.finClosureDate.setValue(fm.getClosedDate());
 		this.sourcingOfcr.setValue(String.valueOf(fm.getAccountsOfficer()));
 		this.letterType.setValue(gl.getLetterType());
