@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
@@ -104,6 +106,18 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
+		List<LoanTypeLetterMapping> letterMapping = generateLetterService.getFinTypeMap(fm.getFinType());
+
+		if (CollectionUtils.isEmpty(letterMapping)) {
+			MessageUtil.showError("Loan Type Letter mapping not available");
+			return false;
+		}
+
+		if (!letterMapping.stream().anyMatch(l -> l.getLetterType().equals(getComboboxValue(letterType)))) {
+			MessageUtil.showError("Loan Type Letter mapping not available the selected Letter Type");
+			return false;
+		}
+
 		this.generateLetter.setFinID(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinID());
 
 		if (generateLetterService.isLetterInitiated(fm.getFinID(), this.generateLetter.getLetterType())) {
@@ -120,15 +134,15 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
-				&& !this.generateLetter.getLetterType().equals("CANCELLATION")) {
+				&& !this.generateLetter.getLetterType().equals(LetterType.CANCELLATION.name())) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
 					+ " for ".concat(this.finReference.getValue()));
 			return false;
 		}
 
 		if ((FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())
-				&& !(this.generateLetter.getLetterType().equals("NOC")
-						|| this.generateLetter.getLetterType().equals("CLOSURE")))) {
+				&& !(this.generateLetter.getLetterType().equals(LetterType.NOC.name())
+						|| this.generateLetter.getLetterType().equals(LetterType.CLOSURE.name())))) {
 			MessageUtil.showError("Invalid " + Labels.getLabel("label_listheader_LetterType")
 					+ " for ".concat(this.finReference.getValue()));
 			return false;
@@ -139,23 +153,13 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 			return false;
 		}
 
-		List<LoanTypeLetterMapping> letterMapping = generateLetterService.getFinTypeMap(fm.getFinType());
-
-		/*
-		 * if (CollectionUtils.isEmpty(letterMapping)) {
-		 * MessageUtil.showError("Loan Type Letter mapping not available"); return false; }
-		 * 
-		 * if (!letterMapping.stream().anyMatch(l -> l.getLetterType().equals(getComboboxValue(letterType)))) {
-		 * MessageUtil.showError("Loan Type Letter mapping not available the selected Letter Type"); return false; }
-		 */
-
 		logger.debug(Literal.LEAVING);
 
 		return true;
 	}
 
 	public void doWriteComponentsToBean() throws Exception {
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
 			if ("#".equals(getComboboxValue(this.letterType))) {

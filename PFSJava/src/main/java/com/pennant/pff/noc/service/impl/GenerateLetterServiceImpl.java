@@ -311,6 +311,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Override
 	public void getFinanceDetailById(GenerateLetter gl) {
 		FinanceDetail fd = new FinanceDetail();
+
+		gl.setFinanceDetail(fd);
+
 		String finReference = gl.getFinReference();
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "_View", false);
 
@@ -348,8 +351,6 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		prepareODSummary(fd, summary);
 
 		schdData.setFinanceSummary(summary);
-
-		gl.setFinanceDetail(fd);
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
 			gl.getFinanceDetail().setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(fm.getFinType(),
