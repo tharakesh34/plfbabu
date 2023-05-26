@@ -815,15 +815,15 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
+		if (!"doReject".equals(method)) {
+			FinCancelUploadError errorDetail = financeCancelValidator.validLoan(fm, schedules);
 
-		FinCancelUploadError errorDetail = financeCancelValidator.validLoan(fm, schedules);
-
-		if (errorDetail != null) {
-			auditDetail.setErrorDetail(
-					new ErrorDetail("CL", FinanceCancelValidator.getOverrideDescription(errorDetail, fm), null));
-			auditDetails.add(auditDetail);
+			if (errorDetail != null) {
+				auditDetail.setErrorDetail(
+						new ErrorDetail("CL", FinanceCancelValidator.getOverrideDescription(errorDetail, fm), null));
+				auditDetails.add(auditDetail);
+			}
 		}
-
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
