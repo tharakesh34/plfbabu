@@ -206,6 +206,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String eventCode = "";
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
+	private Object finHeaderList = new ArrayList();
 
 	private FeeDetailService feeDetailService;
 
@@ -277,6 +278,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			if (arguments.containsKey("eventCode")) {
 				eventCode = (String) arguments.get("eventCode");
+			}
+
+			if (arguments.containsKey("finHeaderList")) {
+				finHeaderList = (Object) arguments.get("finHeaderList");
 			}
 
 			if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -2530,6 +2535,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		try {
 			final Map<String, Object> map = new HashMap<String, Object>();
 			map.put("parentCtrl", this);
+			map.put("finHeaderList", this.finHeaderList);
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {
