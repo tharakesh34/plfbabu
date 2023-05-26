@@ -2507,6 +2507,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 					if ("EXCESS".equals(rpaymentType) || "PAYABLE".equals(rpaymentType)) {
 						soaTranReport.setDebitAmount(rd.getAmount());
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
 					} else {
 						soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					}
@@ -3033,7 +3034,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaTranReport.setValueDate(valueDate);
 		soaTranReport.setCreditAmount(BigDecimal.ZERO);
 		soaTranReport.setDebitAmount(debitAmount);
-		soaTranReport.setPriority(19);
+		soaTranReport.setPriority(9);
 		soaTransactionReports.add(soaTranReport);
 		return soaTranReport;
 	}
