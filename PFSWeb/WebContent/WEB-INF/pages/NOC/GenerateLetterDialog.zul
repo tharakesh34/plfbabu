@@ -136,7 +136,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
 											<hbox>
 												<space spacing="2px" />
-												<datebox id="finClosureDate" maxlength="8" width="200px" readonly="true" />
+												<datebox id="finClosureDate" maxlength="50" width="200px" readonly="true" />
 											</hbox>
 										</row>
 										<row>
