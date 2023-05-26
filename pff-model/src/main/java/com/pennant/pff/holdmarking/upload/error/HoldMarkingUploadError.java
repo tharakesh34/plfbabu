@@ -8,7 +8,9 @@ public enum HoldMarkingUploadError {
 
 	HM_03("Hold Marking Details not available against the loan."),
 
-	HM_05("Type is mandatory.");
+	HM_05("Type is mandatory."),
+
+	HM_06("Amount should not be negative.");
 
 	private String description;
 

@@ -13,17 +13,11 @@
 		font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif; font-size: 11px; font-weight: bold; }
 	</style>
 	<window>
-		<window id="windowHoldEnquiryDialog" border="normal" width="100%" height="100%" sizable="false"
+		<window id="windowHoldEnquiryDialog" title="${c:l('window_HoldEnquiryDialog.title')}" border="normal" width="100%" height="100%" sizable="false"
 			apply="${holdEnquiryDialogCtrl}">
 
 			<div sclass="z-toolbar" style="padding:0">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
-
-
-					<!-- SEARCH AREA -->
-					<toolbar align="center" sclass="toolbar-center">
-						<label id="windowTitle" value="${c:l('window_HoldEnquiryDialog.title')}" sclass="label-heading" />
-					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
