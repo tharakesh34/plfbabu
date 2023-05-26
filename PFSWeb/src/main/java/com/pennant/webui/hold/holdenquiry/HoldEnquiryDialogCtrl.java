@@ -16,6 +16,9 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.holdmarking.model.HoldMarkingDetail;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -67,7 +70,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 				headerType = (boolean) arguments.get("header");
 			}
 
-			doShowDialog(holdDetail, headerType);
+			doShowDialog(holdDetail);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -76,13 +79,9 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doShowDialog(List<HoldMarkingDetail> holdDetail, boolean headerType) {
+	private void doShowDialog(List<HoldMarkingDetail> holdDetail) {
 		try {
-			doFillHeaderList(holdDetail, headerType);
-
-			if (!headerType) {
-				listheaderHoldReference.setLabel(Labels.getLabel("label_SelectHoldEnquiryList_accNum.value"));
-			}
+			doFillHeaderList(holdDetail);
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
@@ -91,24 +90,24 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doFillHeaderList(List<HoldMarkingDetail> lu, boolean headerType) {
+	private void doFillHeaderList(List<HoldMarkingDetail> lu) {
 		for (HoldMarkingDetail hd : lu) {
 			Listitem li = new Listitem();
+
+			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
 			li.appendChild(new Listcell(String.valueOf(hd.getAccountNumber())));
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldReference())));
 			if (PennantConstants.HOLD_MARKING.equals(String.valueOf(hd.getHoldType()))) {
-				li.appendChild(new Listcell(String.valueOf(hd.getHoldAmount())));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
 				li.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
-				li.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getBalance(), formatter)));
 			} else {
-
 				BigDecimal releaseAmount = hd.getReleaseAmount();
-				releaseAmount = releaseAmount.add(hd.getReleaseAmount());
-				li.appendChild(new Listcell(String.valueOf(hd.getAmount())));
-				li.appendChild(new Listcell(String.valueOf(releaseAmount)));
-				li.appendChild(new Listcell(String.valueOf(hd.getBalance())));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getAmount(), formatter)));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getBalance(), formatter)));
 			}
 
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldType())));

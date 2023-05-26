@@ -87,9 +87,18 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			return;
 		}
 
+		BigDecimal amount = detail.getAmount();
+
+		if (amount.compareTo(BigDecimal.ZERO) < 0) {
+			setError(detail, HoldMarkingUploadError.HM_06);
+			return;
+		}
+
 		validateType(detail, type);
 
-		setSuccesStatus(detail);
+		if (detail.getProgress() != EodConstants.PROGRESS_FAILED) {
+			setSuccesStatus(detail);
+		}
 	}
 
 	@Override

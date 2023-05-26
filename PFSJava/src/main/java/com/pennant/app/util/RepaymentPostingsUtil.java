@@ -1024,14 +1024,16 @@ public class RepaymentPostingsUtil {
 
 	public FinanceMain updateStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
-			String receiptPurpose) {
+			FinReceiptHeader rch) {
 
-		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose);
+		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, rch);
 	}
 
 	private FinanceMain updateRepayStatus(FinanceMain fm, Date dateValueDate, List<FinanceScheduleDetail> schedules,
-			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, String receiptPurpose) {
+			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, FinReceiptHeader rch) {
 		logger.debug(Literal.ENTERING);
+
+		String receiptPurpose = rch.getReceiptPurpose();
 
 		// Finance Profit Details Updation
 		String oldFinStatus = fm.getFinStatus();
@@ -1123,6 +1125,7 @@ public class RepaymentPostingsUtil {
 			holdMarkingService.removeHold(fm);
 		}
 
+		fm.setClosureType(rch.getClosureType());
 		letterService.logForAutoLetter(fm, appDate);
 
 		pftDetail.setFinStatus(fm.getFinStatus());

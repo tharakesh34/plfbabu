@@ -47,6 +47,7 @@ import com.pennant.pff.noc.dao.LoanTypeLetterMappingDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.LoanTypeLetterMapping;
 import com.pennant.pff.noc.model.ServiceBranch;
+import com.pennant.pff.receipt.ClosureType;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.net.FTPUtil;
@@ -86,7 +87,14 @@ public class LetterService {
 				continue;
 			}
 
+			String closureType = fm.getClosureType();
+
 			LetterType letterType = LetterType.getType(ltlp.getLetterType());
+
+			if (letterType == LetterType.CLOSURE
+					&& !(ClosureType.isClosure(closureType) || ClosureType.isForeClosure(closureType))) {
+				continue;
+			}
 
 			if ((letterType == LetterType.CANCELLATION
 					&& FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus()))

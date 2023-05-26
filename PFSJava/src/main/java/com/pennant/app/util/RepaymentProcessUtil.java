@@ -373,6 +373,7 @@ public class RepaymentProcessUtil {
 			holdMarkingService.removeHold(fm);
 		}
 
+		fm.setClosureType(rch.getClosureType());
 		letterService.logForAutoLetter(fm, appDate);
 
 		logger.debug(Literal.LEAVING);
@@ -1952,9 +1953,9 @@ public class RepaymentProcessUtil {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
-			List<FinODDetails> overdueList, String receiptPurpose) {
+			List<FinODDetails> overdueList, FinReceiptHeader rch) {
 		return repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
-				receiptPurpose);
+				rch);
 	}
 
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
@@ -2481,7 +2482,7 @@ public class RepaymentProcessUtil {
 			finODDetailsDAO.updateList(overdueList);
 		}
 
-		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch.getReceiptPurpose());
+		fm = updateStatus(fm, appDate, scheduleDetails, profitDetail, overdueList, rch);
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customerDetails.getCustomer(), priPaynow);

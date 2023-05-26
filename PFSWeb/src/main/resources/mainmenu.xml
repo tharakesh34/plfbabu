@@ -1688,6 +1688,10 @@
 		<menu id="menu_Category_LienEnquiry">
 			<menuItem id="menu_Item_LienEnquiry" zulNavigation="/WEB-INF/pages/LienEnquiry/SelectLienEnquiry.zul" rightName="menu_Item_Lien_Enquiry"/>
 		</menu>
+		<menu id="menu_Category_HoldEnquiry">
+		<menuItem id="menu_Item_HoldEnquiry" zulNavigation="/WEB-INF/pages/HoldEnquiry/SelectHoldEnquiry.zul"
+			rightName="menu_Item_Hold_Enquiry" />
+	</menu>
 	</menu>
 
 	<menu id="menu_Category_CIBIL">
@@ -2732,9 +2736,5 @@
 	<menuItem id="menu_Item_JobsMonitoring" zulNavigation="/~./pages/job/JobMonitoring.zul"
 	rightName="menu_Item_JobsMonitoring" />
 	
-	<menu id="menu_Category_HoldEnquiry">
-		<menuItem id="menu_Item_HoldEnquiry" zulNavigation="/WEB-INF/pages/HoldEnquiry/SelectHoldEnquiry.zul"
-			rightName="" />
-	</menu>
 
 </ns2:XMLRootMenu>

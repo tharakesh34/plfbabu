@@ -2117,7 +2117,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		boolean finIsActive = fm.isFinIsActive();
 		fm.setClosureType(rch.getClosureType());
-		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch.getReceiptPurpose());
+		repaymentProcessUtil.updateStatus(fm, valueDate, schdList, pfd, overdueList, rch);
 
 		if (finIsActive && !fm.isFinIsActive() && receiptPurpose == ReceiptPurpose.SCHDRPY
 				&& (RepayConstants.PAYSTATUS_DEPOSITED.equals(rmStatus))) {
@@ -8576,7 +8576,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		BigDecimal prvMthAmz = fpd.getPrvMthAmz();
 
 		fm.setClosureType(rch.getClosureType());
-		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch.getReceiptPurpose());
+		fm = repaymentProcessUtil.updateStatus(fm, valueDate, schdList, fpd, overdueList, rch);
 
 		String closingStatus = fm.getClosingStatus();
 		if (isLoanActiveBef && !fm.isFinIsActive() && (FinServiceEvent.SCHDRPY.equals(receiptPurpose))

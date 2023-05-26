@@ -46,6 +46,10 @@ public enum ClosureType {
 		return isEqual(CLOSURE, getType(closureType));
 	}
 
+	public static boolean isForeClosure(String closureType) {
+		return isEqual(FORE_CLOSURE, getType(closureType));
+	}
+
 	private static boolean isEqual(ClosureType closureType, ClosureType type) {
 		return type == null ? false : type == closureType;
 	}
