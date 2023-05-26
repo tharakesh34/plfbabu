@@ -260,6 +260,9 @@ public class SingelFeeUtil {
 				}
 
 				String amountRule = item.getAmountRule();
+
+				amountRule = removeSpaces(amountRule);
+
 				tsb = tsb.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
 			}
 
@@ -394,6 +397,14 @@ public class SingelFeeUtil {
 		}
 
 		return false;
+	}
+
+	private static String removeSpaces(String amountRule) {
+		amountRule = amountRule.replace("Result=", "Result=");
+		amountRule = amountRule.replace("Result =", "Result=");
+		amountRule = amountRule.replace("Result= ", "Result=");
+		amountRule = amountRule.replace("Result = ", "Result=");
+		return amountRule = amountRule.replace("Result = ", "Result=");
 	}
 
 	private static String[] getAmountCodes(String amountRule) {
