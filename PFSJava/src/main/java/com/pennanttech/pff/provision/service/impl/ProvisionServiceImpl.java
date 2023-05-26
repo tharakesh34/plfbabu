@@ -53,7 +53,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 	private PostingsDAO postingsDAO;
 	private AuditHeaderDAO auditHeaderDAO;
 	private AssetClassSetupDAO assetClassSetupDAO;
-	
+
 	@Override
 	public long prepareQueueForSOM() {
 		provisionDao.deleteQueue();
@@ -280,10 +280,8 @@ public class ProvisionServiceImpl implements ProvisionService {
 	public boolean isAssetClassCodeValid(long finID, String assetClassCode) {
 		List<String> assetClassCodes = assetClassSetupDAO.getAssetClassSetCodes(finID);
 		boolean isclassCodeExists = false;
-		for (String code : assetClassCodes) {
-			if (!code.equals(assetClassCode)) {
-				isclassCodeExists = true;
-			}
+		if (!assetClassCodes.contains(assetClassCode)) {
+			isclassCodeExists = true;
 		}
 		return isclassCodeExists;
 	}
