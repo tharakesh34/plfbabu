@@ -8909,12 +8909,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			}
 		}
 
-		Date maxReceiptDt = financeRepaymentsDAO.getMaxValueDate(finID);
-
-		if (DateUtil.compare(receiptDt, maxReceiptDt) <= 0) {
-			receiptDt = maxReceiptDt;
-		}
-
 		return receiptDt;
 	}
 

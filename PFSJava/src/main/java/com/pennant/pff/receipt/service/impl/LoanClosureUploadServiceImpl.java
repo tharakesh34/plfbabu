@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +43,8 @@ import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -174,9 +178,15 @@ public class LoanClosureUploadServiceImpl extends AUploadServiceImpl<LoanClosure
 	private void createReceipt(LoanClosureUpload lcu, FileUploadHeader header) {
 		String entityCode = header.getEntityCode();
 
-		ReceiptUploadDetail rud = new ReceiptUploadDetail();
 		Date appDate = header.getAppDate();
-
+		ReceiptUploadDetail rud = new ReceiptUploadDetail();
+		if (CollectionUtils.isNotEmpty(lcu.getExcessList())) {
+			List<FinExcessAmount> excessList = lcu.getExcessList().stream()
+					.sorted((l1, l2) -> DateUtil.compare(l2.getValueDate(), l1.getValueDate()))
+					.collect(Collectors.toList());
+			appDate = receiptService.getExcessBasedValueDate(header.getAppDate(), lcu.getReferenceID(),
+					header.getAppDate(), excessList.get(0), FinServiceEvent.EARLYSETTLE);
+		}
 		rud.setReference(lcu.getReference());
 		rud.setFinID(lcu.getReferenceID());
 		rud.setValueDate(appDate);
