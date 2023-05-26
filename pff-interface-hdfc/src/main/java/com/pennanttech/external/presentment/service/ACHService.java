@@ -120,7 +120,6 @@ public class ACHService extends TextFileUtil implements InterfaceConstants, Erro
 			if (itemList.size() > 0) {
 
 				StringBuilder emptyLine = new StringBuilder();
-				emptyLine.append("\n");
 				itemList.add(emptyLine);
 
 				long fileSeq = externalPresentmentDAO.getSeqNumber(SEQ_PRMNT_ACH);
