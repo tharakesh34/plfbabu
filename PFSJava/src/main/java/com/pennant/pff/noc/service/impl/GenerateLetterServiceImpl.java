@@ -492,9 +492,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		if (CollectionUtils.isNotEmpty(odDetails)) {
 			for (FinODDetails odDetail : odDetails) {
 				totalLPP = totalLPP.add(odDetail.getTotPenaltyAmt());
-				totalLPI = totalLPI.add(odDetail.getTotPenaltyPaid());
-				lppPaid = lppPaid.add(odDetail.getTotWaived());
-				lppWaived = lppWaived.add(odDetail.getLPIAmt());
+				totalLPI = totalLPI.add(odDetail.getLPIAmt());
+				lppPaid = lppPaid.add(odDetail.getTotPenaltyPaid());
+				lppWaived = lppWaived.add(odDetail.getTotWaived());
 				lpiPaid = lpiPaid.add(odDetail.getLPIPaid());
 				lpiWaived = lpiWaived.add(odDetail.getLPIWaived());
 
@@ -566,7 +566,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	public void deleteAutoLetterGeneration(long finID, String letterType) {
 		this.generateLetterDAO.deleteAutoLetterGeneration(finID, letterType);
 	}
-	
+
 	@Autowired
 	public void setAutoLetterGenerationDAO(AutoLetterGenerationDAO autoLetterGenerationDAO) {
 		this.autoLetterGenerationDAO = autoLetterGenerationDAO;
