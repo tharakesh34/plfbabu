@@ -219,6 +219,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String entityDesc;
 	private String sourceId;
 	private BigDecimal closureThresholdLimit = BigDecimal.ZERO;
+	private String loanCancellationType;;
 
 	public FinReceiptHeader() {
 		super();
@@ -359,7 +360,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("closureThresholdLimit");
 		excludeFields.add("fromLanReference");
 		excludeFields.add("fromLanFinId");
-
+		excludeFields.add("loanCancellationType");
 		return excludeFields;
 	}
 
@@ -560,7 +561,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setClosureWithFullWaiver(this.isClosureWithFullWaiver);
 		entity.setModuleType(this.moduleType);
 		entity.setClosureThresholdLimit(this.closureThresholdLimit);
-
+		entity.setLoanCancellationType(this.loanCancellationType);
 		return entity;
 	}
 
@@ -2018,4 +2019,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		this.fromLanFinId = fromLanFinId;
 	}
 
+	public String getLoanCancellationType() {
+		return loanCancellationType;
+	}
+
+	public void setLoanCancellationType(String loanCancellationType) {
+		this.loanCancellationType = loanCancellationType;
+	}
 }

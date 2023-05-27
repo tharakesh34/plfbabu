@@ -534,7 +534,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 						.calculateFees(receiptService.prepareFinReceiptData(serviceInstr, fd));
 				serviceInstr.setFinFeeDetails(frd.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
 				serviceInstr.setLoanCancellation(true);
-
+				serviceInstr.setLoanCancellationType(fm.getCancelType());
 				FinanceDetail detail = receiptService.receiptTransaction(serviceInstr);
 				FinScheduleData schd = detail.getFinScheduleData();
 

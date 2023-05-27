@@ -1107,7 +1107,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					processCompleted = true;
 				} else {
 					FinanceDetail tFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-					setNextTaskDetails(taskId, tFinanceDetail.getFinScheduleData().getFinanceMain());
+					FinanceMain fm = tFinanceDetail.getFinScheduleData().getFinanceMain();
+					fm.setCancelType(getComboboxValue(this.cancelType));
+					setNextTaskDetails(taskId, fm);
 					auditHeader.getAuditDetail().setModelData(tFinanceDetail);
 					processCompleted = doSaveProcess(auditHeader, method);
 
