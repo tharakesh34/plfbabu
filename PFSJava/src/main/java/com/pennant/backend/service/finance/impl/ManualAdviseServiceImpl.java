@@ -434,6 +434,8 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = getFinanceDetails(manualAdvise.getFinID());
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain);
+		financeMain.setTaxPercentages(taxPercentages);
 		AEEvent aeEvent = prepareAccSetData(manualAdvise, "", financeMain);
 		aeEvent = postingsPreparationUtil.getAccounting(aeEvent);
 
@@ -470,8 +472,16 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
 		TaxHeader taxHeader = null;
+		BigDecimal gstAmount = BigDecimal.ZERO;
 		if (taxApplicable) {
 			taxHeader = getTaxHeader(fm, taxType, adviseAmount, eventMapping);
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+				for (Taxes taxDetails : taxHeader.getTaxDetails()) {
+					gstAmount = gstAmount.add(taxDetails.getPaidTax());
+				}
+				adviseAmount = adviseAmount.add(gstAmount);
+			}
 
 			ManualAdviseMovements mam = new ManualAdviseMovements();
 			mam.setFeeTypeCode(advise.getFeeTypeCode());
@@ -539,11 +549,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_UGST));
 		taxDetails.add(getTax(taxPercentages, taxSplit, RuleConstants.CODE_CESS));
 
-		eventMapping.put("ae_feeCSGT", taxSplit.getcGST());
-		eventMapping.put("ae_feeSSGT", taxSplit.getcGST());
-		eventMapping.put("ae_feeUSGT", taxSplit.getcGST());
-		eventMapping.put("ae_feeISGT", taxSplit.getcGST());
-		eventMapping.put("ae_feeCESS", taxSplit.getcGST());
+		eventMapping.put("ae_feeCGST", taxSplit.getcGST());
+		eventMapping.put("ae_feeSGST", taxSplit.getsGST());
+		eventMapping.put("ae_feeUGST", taxSplit.getuGST());
+		eventMapping.put("ae_feeIGST", taxSplit.getiGST());
+		eventMapping.put("ae_feeCESS", taxSplit.getCess());
 		eventMapping.put("ae_feeGST_TOT", taxSplit.gettGST());
 
 		return taxHeader;
@@ -553,7 +563,31 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		Taxes tax = new Taxes();
 		tax.setTaxType(taxType);
 		tax.setTaxPerc(taxPer.get(taxType));
-		tax.setPaidTax(split.getcGST());
+
+		switch (taxType) {
+		case RuleConstants.CODE_CGST:
+			tax.setPaidTax(split.getcGST());
+			tax.setRemFeeTax(tax.getActualTax().subtract(split.getcGST()));
+			break;
+		case RuleConstants.CODE_SGST:
+			tax.setPaidTax(split.getsGST());
+			tax.setRemFeeTax(tax.getActualTax().subtract(split.getsGST()));
+			break;
+		case RuleConstants.CODE_IGST:
+			tax.setPaidTax(split.getiGST());
+			tax.setRemFeeTax(tax.getActualTax().subtract(split.getiGST()));
+			break;
+		case RuleConstants.CODE_UGST:
+			tax.setPaidTax(split.getuGST());
+			tax.setRemFeeTax(tax.getActualTax().subtract(split.getuGST()));
+			break;
+		case RuleConstants.CODE_CESS:
+			tax.setPaidTax(split.getCess());
+			tax.setRemFeeTax(tax.getActualTax().subtract(split.getCess()));
+			break;
+		default:
+			break;
+		}
 
 		return tax;
 	}
