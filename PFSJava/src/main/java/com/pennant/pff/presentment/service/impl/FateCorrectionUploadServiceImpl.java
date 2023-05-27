@@ -84,12 +84,6 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl {
 			return;
 		}
 
-		if (!(RepayConstants.PEXC_BOUNCE.equals(detail.getClearingStatus()))
-				&& !(RepayConstants.PEXC_SUCCESS.equals(detail.getClearingStatus()))) {
-			setError(detail, PresentmentError.FC_609);
-			return;
-		}
-
 		PresentmentDetail pd = presentmentRespUploadDAO.getPresentmentDetail(reference, detail.getClearingDate());
 
 		if (pd == null) {
