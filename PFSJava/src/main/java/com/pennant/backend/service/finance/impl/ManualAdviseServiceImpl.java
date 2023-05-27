@@ -260,6 +260,10 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				manualAdviseDAO.update(manualAdvise, TableType.MAIN_TAB);
 			}
 
+			if (PennantConstants.MANUALADVISE_CANCEL.equals(manualAdvise.getStatus())) {
+				postingsPreparationUtil.postReversalsByLinkedTranID(manualAdvise.getLinkedTranId());
+			}
+
 			// Document Details
 			List<DocumentDetails> documentsList = manualAdvise.getDocumentDetails();
 			if (CollectionUtils.isNotEmpty(documentsList)) {
