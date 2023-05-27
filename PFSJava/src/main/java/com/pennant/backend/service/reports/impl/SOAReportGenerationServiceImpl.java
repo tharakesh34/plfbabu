@@ -3004,8 +3004,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						soaTranReport.setEvent(penaltyUnAccrued + DateUtil.format(detail.getValueDate(), "dd/MM/yyyy"));
 						soaTranReport.setTransactionDate(detail.getPostDate());
 						soaTranReport.setValueDate(detail.getValueDate());
-						soaTranReport.setDebitAmount(detail.getReceivedAmount());
-						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+						soaTranReport.setCreditAmount(detail.getReceivedAmount());
 						soaTranReport.setPriority(27);
 						soaTransactionReports.add(soaTranReport);
 					}
