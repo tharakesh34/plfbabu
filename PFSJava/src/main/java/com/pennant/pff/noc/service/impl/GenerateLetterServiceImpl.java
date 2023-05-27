@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -357,7 +358,10 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 					getLetterType(gl), "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 			processfees(gl, letterInfo);
 		}
-
+		
+		if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
+			gl.setReasonCode(StringUtils.trimToEmpty(generateLetterDAO.getReasonCode(finID)));
+		}
 	}
 
 	@Override

@@ -419,7 +419,11 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 
 	@Override
 	public void deleteAutoLetterGeneration(long finID, String letterType) {
-		// TODO Auto-generated method stub
+		//
+	}
 
+	@Override
+	public String getReasonCode(long finID) {
+		return null;
 	}
 }
