@@ -460,19 +460,27 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		this.custName.setValue(customer.getCustShrtName());
 		this.finType.setValue(fm.getFinType());
 
+		String closureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
+
 		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
-			this.closureType.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.closureType.setValue(closureType);
 			this.closureReason.setValue(Labels.getLabel("label_Status_Cancelled"));
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
-			String closureType = finReceiptHeaderDAO.getClosureTypeValue(fm.getFinID());
 
 			if (closureType != null) {
 				this.finStatusReason.setValue(closureType);
 				this.closureType.setValue(closureType);
 				this.closureReason.setValue(closureType);
+			}
+
+		} else if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())) {
+			this.finStatus.setValue(Labels.getLabel("label_Matured"));
+			this.finStatusReason.setValue(Labels.getLabel("label_normal"));
+			if (closureType != null) {
+				this.closureType.setValue(closureType);
 			}
 		}
 
