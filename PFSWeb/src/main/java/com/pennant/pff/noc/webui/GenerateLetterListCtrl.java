@@ -130,7 +130,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 	}
 
 	private void doSetFieldProperties() {
-		this.branch.setModuleName("BankBranch");
+		this.branch.setModuleName("CSDBranch");
 		this.branch.setDisplayStyle(2);
 		this.branch.setValueColumn("BranchCode");
 		this.branch.setDescColumn("BranchDesc");
