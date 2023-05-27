@@ -757,12 +757,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
 		FinanceMain finMain = fsd.getFinanceMain();
 
-		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(), FinServiceEvent.EARLYSETTLE)
-				&& DateUtil.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
-			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
-			return;
-		}
-
 		errorDetail = receiptService.getWaiverValidation(finMain.getFinID(),
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
 
@@ -1334,7 +1328,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" })));
 				}
 
-				if ("EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
+				if (isForeClosure && "EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
 					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()
 							.add(receiptData.getReceiptHeader().getClosureThresholdLimit())) > 0) {
 						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
@@ -1523,7 +1517,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (!financeMain.isFinIsActive()
 				|| DateUtil.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
 			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
-					",EarlyPayment, EarlySettlement, FeePayment,");
+					",EarlyPayment,FeePayment,");
 			receiptPurpose.setDisabled(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
 			String excludeFields = ",FeePayment,EarlySettlement,";

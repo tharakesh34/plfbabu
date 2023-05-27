@@ -4640,13 +4640,14 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		ReceiptPurpose receiptPurpose = fsi.getReceiptPurpose();
-		if (receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+		if (receiptPurpose == ReceiptPurpose.EARLYRPY) {
 			setError(schdData, "RU0043", fm.getFinReference());
 			return;
 		}
 
 		String excessAdjustTo = fsi.getExcessAdjustTo().toUpperCase();
-		if (StringUtils.isBlank(excessAdjustTo)) {
+
+		if (ReceiptPurpose.EARLYRPY != receiptPurpose && StringUtils.isBlank(excessAdjustTo)) {
 			setError(schdData, "90502", EXCESS_ADJUST_TO);
 			return;
 		}
