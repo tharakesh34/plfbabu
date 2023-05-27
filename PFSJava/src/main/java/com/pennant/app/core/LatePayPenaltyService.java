@@ -73,7 +73,6 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennant.pff.eod.cache.RuleConfigCache;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.pennanttech.pff.core.util.FinanceUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
 import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.overdue.constants.ChargeType;
@@ -132,6 +131,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
 				penalty = odChargeAmtOrPerc.multiply(new BigDecimal(numberOfMonths));
 			}
+
+			if (penalty.compareTo(fod.getOdMinAmount()) < 0 && valueDate.compareTo(fod.getFinODSchdDate()) != 0) {
+				penalty = fod.getOdMinAmount();
+			}
 			break;
 		case ChargeType.PERC_ONE_TIME:
 			/* Percentage ON OD Amount. One Time */
@@ -150,9 +153,19 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				valueDate = deriveValueDate(fod, valueDate, odcrList, repayments);
 				int numberOfMonths = getMonthsBetween(fod, schedules, valueDate);
-				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
-				penalty = balanceForCal.multiply(amtOrPercetage).multiply(new BigDecimal(numberOfMonths))
-						.divide(new BigDecimal(100));
+
+				for (int i = 0; i < numberOfMonths; i++) {
+					BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
+					BigDecimal calPenalty = balanceForCal.multiply(amtOrPercetage).multiply(BigDecimal.ONE)
+							.divide(new BigDecimal(100));
+
+					if (calPenalty.compareTo(fod.getOdMinAmount()) < 0
+							&& valueDate.compareTo(fod.getFinODSchdDate()) != 0) {
+						calPenalty = fod.getOdMinAmount();
+					}
+
+					penalty = penalty.add(calPenalty);
+				}
 			}
 
 			break;
@@ -171,16 +184,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		penalty = CalculationUtil.roundAmount(penalty, fm.getCalRoundingMode(), fm.getRoundingTarget());
 		fod.setTotPenaltyAmt(penalty); // ### 03-12-2018 PSD Ticket ID: 130669
-		if (FinanceUtil.isMinimunODCChargeReq(odChargeType)) {
-			if (valueDate.compareTo(fod.getFinODSchdDate()) != 0) {
-				if (penalty.compareTo(fod.getOdMinAmount()) < 0) {
-					fod.setTotPenaltyAmt(fod.getOdMinAmount());
-				}
-			}
-		}
-
 		fod.setFinODTillDate(valueDate);
-
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 
 		if (fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) <= 0) {

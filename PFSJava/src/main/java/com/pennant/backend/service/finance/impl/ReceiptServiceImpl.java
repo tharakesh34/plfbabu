@@ -2068,6 +2068,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rch.setWorkflowId(0);
 
 		fm.setRcdMaintainSts("");
+		rch.setLoanCancellationType(fm.getCancelType());
 		repaymentProcessUtil.doSaveReceipts(rch, scheduleData.getFinFeeDetailList(), true);
 		long receiptID = rch.getReceiptID();
 
@@ -6419,6 +6420,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		setFinanceMain(schdData, receiptPurpose);
 
 		FinanceMain fm = schdData.getFinanceMain();
+		fm.setCancelType(fsi.getLoanCancellationType());
 		fm.setUserDetails(userDetails);
 
 		if (DateUtil.compare(fm.getFinStartDate(), fsi.getValueDate()) > 0) {
@@ -7099,7 +7101,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		RequestSource requestSource = fsi.getRequestSource();
 
 		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
-			if (!RequestSource.EOD.equals(requestSource)) {
+			if (!RequestSource.EOD.equals(requestSource) && !fsi.isClosureReceipt()) {
 				adjustToExcess(rd);
 			}
 

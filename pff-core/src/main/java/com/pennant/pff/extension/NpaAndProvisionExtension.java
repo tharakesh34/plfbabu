@@ -29,7 +29,7 @@ public class NpaAndProvisionExtension {
 				ProvisionReversalStage.SOM);
 		ALLOW_EXTENDEDFIELDS_IN_WORKFLOW = getValueAsBoolean("ALLOW_EXTENDEDFIELDS_IN_WORKFLOW", false);
 		PROVISION_POSTINGS_REQ = getValueAsBoolean("PROVISION_POSTINGS_REQ", true);
-		ALLOW_MANUAL_PROVISION = getValueAsBoolean("ALLOW_MANUAL_PROVISION", true);
+		ALLOW_MANUAL_PROVISION = getValueAsBoolean("ALLOW_MANUAL_PROVISION", false);
 		NPA_FOR_WRIREOFF_LOANS = getValueAsBoolean("NPA_FOR_WRIREOFF_LOANS", false);
 	}
 

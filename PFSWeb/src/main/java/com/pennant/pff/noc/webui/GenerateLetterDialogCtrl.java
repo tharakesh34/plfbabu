@@ -466,14 +466,14 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.closureType.setValue(closureType);
-			this.closureReason.setValue(Labels.getLabel("label_Status_Cancelled"));
+			this.closureReason.setValue(gl.getReasonCode());
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
 
 			if (closureType != null) {
 				this.finStatusReason.setValue(closureType);
 				this.closureType.setValue(closureType);
-				this.closureReason.setValue(closureType);
+				this.closureReason.setValue(gl.getReasonCode());
 			}
 
 		} else if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())) {

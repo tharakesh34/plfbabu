@@ -849,7 +849,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			appendRow(Step.effAssetClassification.name(), StepUtil.EFF_NPA_CLASSIFICATION.getName());
 		}
 
-		if (NpaAndProvisionExtension.ALLOW_PROVISION) {
+		if (NpaAndProvisionExtension.ALLOW_PROVISION || NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION) {
 			appendRow(Step.provisionCalc.name(), StepUtil.PROVISION_CALC.getName());
 		}
 		// Auto Write Off

@@ -30,6 +30,7 @@ public class ServiceBranchesLoanType extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("keyValue");
+		excludeFields.add("code");
 		return excludeFields;
 	}
 

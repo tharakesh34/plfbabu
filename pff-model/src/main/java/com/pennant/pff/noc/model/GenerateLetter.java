@@ -47,6 +47,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private long agreementTemplate;
 	private Long emailTemplate;
 	private Long emailNotificationID;
+	private String reasonCode;
 
 	public GenerateLetter() {
 		super();
@@ -82,6 +83,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("emailTemplate");
 		excludeFields.add("agreementTemplate");
 		excludeFields.add("emailNotificationID");
+		excludeFields.add("reasonCode");
 
 		return excludeFields;
 	}
@@ -366,4 +368,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.emailNotificationID = emailNotificationID;
 	}
 
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+	}
 }
