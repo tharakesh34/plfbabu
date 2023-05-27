@@ -2396,7 +2396,7 @@ public class ReceiptCalculator {
 				if (allocate.getAllocationTo() >= 0) {
 					continue;
 				}
-				if (!allocate.getFeeTypeCode().equals(dueData.getFeeTypeCode())) {
+				if (dueData != null && !allocate.getFeeTypeCode().equals(dueData.getFeeTypeCode())) {
 					continue;
 				}
 			} else {
