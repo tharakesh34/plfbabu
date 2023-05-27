@@ -7,8 +7,7 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window>
-		<window id="windowSelectHoldEnquiryList" title="${c:l('window_SelectHoldEnquiryList.title')}" style="align:start;" border="normal"
-			apply="${selectHoldEnquiryListCtrl}" width="650px" height="260px">
+		<window id="windowSelectHoldEnquiryList"  style="align:start;" border="normal" apply="${selectHoldEnquiryListCtrl}" width="650px" height="260px">
 
 			<borderlayout id="borderlayoutSelectFintypeDialog">
 				<north size="30px" border="none">
@@ -17,6 +16,11 @@
 
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start" />
+							<!-- SEARCH AREA -->
+							<toolbar align="center" sclass="toolbar-center">
+								<label id="windowTitle" value="${c:l('window_SelectHoldEnquiryList.title')}"
+									sclass="label-heading" />
+							</toolbar>
 
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
@@ -48,7 +52,7 @@
 							<row id="finTypeRow" spans="1,3">
 								<label id="label_SelectHoldEnquiryList_finReference"
 									value="${c:l('label_SelectHoldEnquiryList_finReference.value')}" />
-								<textbox id="finReference" width="171px" />
+								<extendedcombobox id="finReference" width="171px" />
 							</row>
 							<row id="finAccNum" spans="1,3">
 								<label id="label_SelectHoldEnquiryList_accNum"
