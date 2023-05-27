@@ -148,7 +148,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ClosureType')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="closureType" maxlength="8" width="200px" readonly="true" />
+												<textbox id="closureType" maxlength="50" width="200px" readonly="true" />
 											</hbox>
 										</row>
 										<row>
@@ -160,7 +160,7 @@
 											<label value="${c:l('label_GenerateLetterDialog_ClosureReason')}" />
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="closureReason" maxlength="8" width="200px" readonly="true" />
+												<textbox id="closureReason" maxlength="50" width="200px" readonly="true" />
 											</hbox>
 										</row>
 										</rows>
