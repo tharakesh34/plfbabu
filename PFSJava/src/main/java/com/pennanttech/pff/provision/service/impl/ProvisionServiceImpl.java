@@ -101,7 +101,7 @@ public class ProvisionServiceImpl implements ProvisionService {
 	public Provision getProvision(long finID, Date appDate, Provision mp) {
 		ProvisionRuleData prd = provisionDao.getProvisionData(finID);
 
-		if (prd == null) {
+		if (prd == null && mp != null) {
 			prd = provisionDao.getProvisionDataForUpload(finID);
 		}
 
@@ -113,99 +113,101 @@ public class ProvisionServiceImpl implements ProvisionService {
 
 		BigDecimal manProvsnPer = BigDecimal.ZERO;
 		boolean manualProvision = false;
+		if (prd != null) {
+			if (p == null) {
+				p = new Provision();
+				p.setFinID(prd.getFinID());
+				p.setFinReference(prd.getFinReference());
+				p.setManualProvision(mp.isManualProvision());
 
-		if (p == null) {
-			p = new Provision();
-			p.setFinID(prd.getFinID());
-			p.setFinReference(prd.getFinReference());
-			p.setManualProvision(mp.isManualProvision());
+				p.setCreatedBy(mp.getLastMntBy());
+				p.setCreatedOn(timeStamp);
 
-			p.setCreatedBy(mp.getLastMntBy());
-			p.setCreatedOn(timeStamp);
+				manProvsnPer = p.getManProvsnPer();
 
-			manProvsnPer = p.getManProvsnPer();
-
-			newRecord = true;
-		} else {
-			manProvsnPer = mp.getManProvsnPer();
-		}
-
-		if (mp != null) {
-			manualProvision = true;
-			if (mp.getManualAssetClassID() != null) {
-				p.setManualAssetClassID(mp.getManualAssetClassID());
-				p.setManualAssetClassCode(mp.getManualAssetClassCode());
+				newRecord = true;
 			} else {
-				p.setManualAssetClassID(prd.getEffNpaClassID());
-				p.setManualAssetClassCode(prd.getEffNpaClassCode());
+				manProvsnPer = mp.getManProvsnPer();
 			}
 
-			if (mp.getManualAssetSubClassID() != null) {
-				p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
-				p.setManualAssetSubClassCode(mp.getManualAssetSubClassCode());
-			} else {
-				p.setManualAssetSubClassID(prd.getEffNpaSubbClassID());
-				p.setManualAssetSubClassCode(prd.getEffNpaSubClassCode());
+			if (mp != null) {
+				manualProvision = true;
+				if (mp.getManualAssetClassID() != null) {
+					p.setManualAssetClassID(mp.getManualAssetClassID());
+					p.setManualAssetClassCode(mp.getManualAssetClassCode());
+				} else {
+					p.setManualAssetClassID(prd.getEffNpaClassID());
+					p.setManualAssetClassCode(prd.getEffNpaClassCode());
+				}
+
+				if (mp.getManualAssetSubClassID() != null) {
+					p.setManualAssetSubClassID(mp.getManualAssetSubClassID());
+					p.setManualAssetSubClassCode(mp.getManualAssetSubClassCode());
+				} else {
+					p.setManualAssetSubClassID(prd.getEffNpaSubbClassID());
+					p.setManualAssetSubClassCode(prd.getEffNpaSubClassCode());
+				}
+
+				p.setOverrideProvision(mp.isOverrideProvision());
+
+				manProvsnPer = mp.getManProvsnPer();
+				p.setManProvsnPer(manProvsnPer);
+				p.setManualProvision(mp.isManualProvision());
 			}
 
-			p.setOverrideProvision(mp.isOverrideProvision());
+			p.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-			manProvsnPer = mp.getManProvsnPer();
-			p.setManProvsnPer(manProvsnPer);
-			p.setManualProvision(mp.isManualProvision());
-		}
+			if (p.isManualProvision() || mp.isOverrideProvision()) {
+				prd.setEffNpaClassCode(p.getManualAssetClassCode());
+				prd.setEffNpaSubClassCode(p.getManualAssetSubClassCode());
 
-		p.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				executeProvisionRule(prd, p);
+				BigDecimal osPrincipal = prd.getOutstandingprincipal();
+				p.setManProvsnAmt(osPrincipal.multiply(manProvsnPer.divide(new BigDecimal(100))));
 
-		if (p.isManualProvision() || mp.isOverrideProvision()) {
-			prd.setEffNpaClassCode(p.getManualAssetClassCode());
-			prd.setEffNpaSubClassCode(p.getManualAssetSubClassCode());
+			} else {
+				executeProvisionRule(prd, p);
+			}
 
-			executeProvisionRule(prd, p);
-			BigDecimal osPrincipal = prd.getOutstandingprincipal();
-			p.setManProvsnAmt(osPrincipal.multiply(manProvsnPer.divide(new BigDecimal(100))));
+			p.setProvisionDate(appDate);
+			p.setPastDueDays(prd.getPastDueDays());
+			p.setNpaAging(prd.getNpaAge());
+			p.setEffNpaAging(prd.getEffNpaAge());
+			p.setNpaPastDueDays(prd.getNpaPastDueDays());
+			p.setEffNpaPastDueDays(prd.getEffNpaPastDueDays());
+			p.setNpaClassID(prd.getNpaClassID());
+			p.setEffNpaClassCode(prd.getEffNpaClassCode());
+			p.setEffNpaSubClassCode(prd.getEffNpaSubClassCode());
 
-		} else {
-			executeProvisionRule(prd, p);
-		}
+			if (newRecord || p.getNpaClassID() != prd.getNpaClassID()) {
+				p.setNpaClassChng(true);
+			} else {
+				p.setNpaClassChng(false);
+			}
 
-		p.setProvisionDate(appDate);
-		p.setPastDueDays(prd.getPastDueDays());
-		p.setNpaAging(prd.getNpaAge());
-		p.setEffNpaAging(prd.getEffNpaAge());
-		p.setNpaPastDueDays(prd.getNpaPastDueDays());
-		p.setEffNpaPastDueDays(prd.getEffNpaPastDueDays());
-		p.setNpaClassID(prd.getNpaClassID());
-		p.setEffNpaClassCode(prd.getEffNpaClassCode());
-		p.setEffNpaSubClassCode(prd.getEffNpaSubClassCode());
+			p.setEffNpaClassID(prd.getEffNpaClassID());
+			p.setOsPrincipal(prd.getOutstandingprincipal());
+			p.setOsProfit(prd.getOsProfit());
+			p.setOdPrincipal(prd.getOdPrincipal());
+			p.setOdProfit(prd.getOdProfit());
+			p.setTotPftAccrued(prd.getTotPftAccrued());
+			p.setTillDateSchdPri(prd.getTillDateSchdPri());
 
-		if (newRecord || p.getNpaClassID() != prd.getNpaClassID()) {
-			p.setNpaClassChng(true);
-		} else {
-			p.setNpaClassChng(false);
-		}
+			p.setCustID(prd.getCustID());
+			p.setFinBranch(prd.getFinBranch());
+			p.setFinCcy(prd.getFinCCY());
+			p.setFinType(prd.getFinType());
+			p.setEntityCode(prd.getEntityCode());
 
-		p.setEffNpaClassID(prd.getEffNpaClassID());
-		p.setOsPrincipal(prd.getOutstandingprincipal());
-		p.setOsProfit(prd.getOsProfit());
-		p.setOdPrincipal(prd.getOdPrincipal());
-		p.setOdProfit(prd.getOdProfit());
-		p.setTotPftAccrued(prd.getTotPftAccrued());
-		p.setTillDateSchdPri(prd.getTillDateSchdPri());
+			if (manualProvision && newRecord && mp.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+				provisionDao.save(p, TableType.MAIN_TAB);
+				Provision p1 = provisionDao.getProvision(finID);
 
-		p.setCustID(prd.getCustID());
-		p.setFinBranch(prd.getFinBranch());
-		p.setFinCcy(prd.getFinCCY());
-		p.setFinType(prd.getFinType());
-		p.setEntityCode(prd.getEntityCode());
+				p.setId(p1.getId());
 
-		if (manualProvision && newRecord) {
-			provisionDao.save(p, TableType.MAIN_TAB);
-			Provision p1 = provisionDao.getProvision(finID);
+				provisionDao.save(p, TableType.TEMP_TAB);
+			}
 
-			p.setId(p1.getId());
-
-			provisionDao.save(p, TableType.TEMP_TAB);
 		}
 
 		return p;
