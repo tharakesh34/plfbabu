@@ -170,14 +170,12 @@ public class CrossLoanKnockOffUploadServiceImpl extends AUploadServiceImpl<Cross
 
 							if (CollectionUtils.isEmpty(mbList)) {
 								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
-								return;
 							}
 
 							clk.setAdvises(mbList);
 
 							if (ManualAdviceUtil.getBalanceAmount(mbList).compareTo(clk.getExcessAmount()) < 0) {
 								setError(clk, CrossLoanKnockOffUploadError.CLKU_020);
-								return;
 							}
 						}
 					}
