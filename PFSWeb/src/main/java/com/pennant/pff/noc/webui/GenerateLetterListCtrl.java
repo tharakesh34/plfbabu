@@ -26,7 +26,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -144,7 +144,7 @@ public class GenerateLetterListCtrl extends GFCBaseListCtrl<GenerateLetter> {
 			this.branch.setValue("");
 			this.branch.setDescription("");
 		} else {
-			BankBranch details = (BankBranch) dataObject;
+			Branch details = (Branch) dataObject;
 			if (details != null) {
 				this.branch.setValue(String.valueOf(details.getBranchCode()));
 				this.branch.setDescription(details.getBranchDesc());
