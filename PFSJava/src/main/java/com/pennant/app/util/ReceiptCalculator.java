@@ -2028,7 +2028,7 @@ public class ReceiptCalculator {
 			return rd;
 		}
 
-		if (AllocationType.AUTO.equals(rch.getAllocationType()) || rd.isAdjSchedule()) {
+		if (AllocationType.AUTO.equals(rch.getAllocationType())) {
 			recalAutoAllocationHierarchy(rd, isPresentment);
 			return rd;
 		}
