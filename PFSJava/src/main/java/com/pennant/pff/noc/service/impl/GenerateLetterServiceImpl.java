@@ -362,6 +362,9 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			gl.setReasonCode(StringUtils.trimToEmpty(generateLetterDAO.getReasonCode(finID)));
 		}
+		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
+			gl.setReasonCode(StringUtils.trimToEmpty(generateLetterDAO.getCancelReasons(finReference)));
+		}
 	}
 
 	@Override

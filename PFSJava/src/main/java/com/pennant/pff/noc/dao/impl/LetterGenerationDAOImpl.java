@@ -426,4 +426,9 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public String getReasonCode(long finID) {
 		return null;
 	}
+
+	@Override
+	public String getCancelReasons(String reference) {
+		return null;
+	}
 }

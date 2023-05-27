@@ -466,4 +466,20 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			return null;
 		}
 	}
+
+	@Override
+	public String getCancelReasons(String reference) {
+		StringBuilder sql = new StringBuilder("select code From ReasonHeader rh");
+		sql.append(" Inner Join ReasonDetails rd on rd.HeaderID = rh.ID");
+		sql.append(" Inner Join Reasons r on r.id = rd.ReasonID");
+		sql.append(" Where rh.Reference = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, reference);
+		} catch (Exception e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
+	}
 }
