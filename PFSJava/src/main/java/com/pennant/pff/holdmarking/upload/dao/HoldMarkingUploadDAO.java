@@ -20,6 +20,4 @@ public interface HoldMarkingUploadDAO {
 
 	boolean isValidateType(long finid, String accountNumber);
 
-	long save(HoldMarkingUpload hm);
-
 }
