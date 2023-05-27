@@ -1345,7 +1345,7 @@ public class JavaScriptBuilder extends Groupbox {
 						comboBox = (Combobox) treeCell.getFellowIfAny(uUID + "_rightOperandType");
 						comboBoxValue = comboBox.getSelectedItem().getValue();
 
-						if (StringUtils.equals(((Combobox) operand).getSelectedItem().getValue(), "ClosureType")) {
+						if (StringUtils.equals(((Combobox) operand).getSelectedItem().getValue(), "fm_ClosureType")) {
 							excludeFields = " , " + RuleConstants.CALCVALUE + " , " + RuleConstants.STATICTEXT + " , "
 									+ RuleConstants.DBVALUE + " , ";
 						}
@@ -1887,7 +1887,7 @@ public class JavaScriptBuilder extends Groupbox {
 					Combobox leftOperand = (Combobox) treeCell.getFellowIfAny(treeCell.getId() + "_leftOperand");
 					String selectedItem = leftOperand.getSelectedItem().getValue();
 
-					if (StringUtils.equals(selectedItem, "ClosureType")) {
+					if (StringUtils.equals(selectedItem, "fm_ClosureType")) {
 						for (int i = 0; i < this.closureTypeList.size(); i++) {
 							ValueLabel closureDetails = this.closureTypeList.get(i);
 							String closureDetailsValue = closureDetails.getValue();
@@ -2260,7 +2260,7 @@ public class JavaScriptBuilder extends Groupbox {
 					} else {
 						if (StringUtils.equals(rightOperandTypeValue, RuleConstants.STATICTEXT)
 								|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)
-								|| StringUtils.equals("ClosureType", leftOperandValue)
+								|| StringUtils.equals("fm_ClosureType", leftOperandValue)
 								|| StringUtils.equals("PrvLetterCourierDeliveryStatus", leftOperandValue)) {
 							rightOperandValue = "'" + rightOperandValue + "'";
 						}

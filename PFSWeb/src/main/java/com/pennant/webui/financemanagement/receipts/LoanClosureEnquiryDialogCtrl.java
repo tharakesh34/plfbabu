@@ -1234,6 +1234,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			rch.setValueDate(valueDate);
 			FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+			financeMain.setClosureType(this.closureType.getValue());
 
 			receiptData.setReceiptHeader(rch);
 			receiptData.setFinID(financeMain.getFinID());
