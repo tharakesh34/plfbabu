@@ -1654,6 +1654,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		String excessAmt = Labels.getLabel("label_SOA_Unadjustedamount.value");
 		BigDecimal unAdjustedAmt = BigDecimal.ZERO;
 
+		finExcessAmountsList = groupByAmountType(finExcessAmountsList);
+
 		if (CollectionUtils.isEmpty(finExcessAmountsList)) {
 			soaSummaryReport = new SOASummaryReport();
 			soaSummaryReport.setComponent(excessAmt);
@@ -1666,8 +1668,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaSummaryReportsList.add(soaSummaryReport);
 			}
 		}
-
-		finExcessAmountsList = groupByAmountType(finExcessAmountsList);
 
 		for (FinExcessAmount finExcessAmount : finExcessAmountsList) {
 			due = finExcessAmount.getBalanceAmt();
