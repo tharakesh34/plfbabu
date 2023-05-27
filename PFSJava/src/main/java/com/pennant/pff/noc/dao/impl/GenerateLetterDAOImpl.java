@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.reports.ReportListDetail;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -21,6 +22,7 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -446,5 +448,22 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		logger.debug(Literal.SQL.concat(sql));
 
 		jdbcOperations.update(sql, finID, letterType, "A");
+	}
+
+	@Override
+	public String getReasonCode(long finID) {
+		StringBuilder sql = new StringBuilder("Select Code From FinReceiptHeader fh");
+		sql.append(" Inner Join Reasons r on r.id = fh.ReasonCode");
+		sql.append(" Where FinID = ? and ReceiptPurpose = ? and ReceiptModeStatus = ?");
+
+		logger.debug(Literal.SQL.concat(sql.toString()));
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID, FinServiceEvent.EARLYSETTLE,
+					RepayConstants.PAYSTATUS_REALIZED);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 }

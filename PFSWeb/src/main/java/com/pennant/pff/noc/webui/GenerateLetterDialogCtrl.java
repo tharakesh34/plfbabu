@@ -473,7 +473,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			if (closureType != null) {
 				this.finStatusReason.setValue(closureType);
 				this.closureType.setValue(closureType);
-				this.closureReason.setValue(closureType);
+				this.closureReason.setValue(gl.getReasonCode());
 			}
 
 		} else if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())) {

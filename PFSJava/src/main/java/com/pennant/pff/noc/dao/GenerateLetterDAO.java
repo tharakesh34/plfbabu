@@ -37,4 +37,6 @@ public interface GenerateLetterDAO {
 	boolean letterIsInQueu(long finID, String letterType);
 
 	void deleteAutoLetterGeneration(long finID, String letterType);
+
+	String getReasonCode(long finID);
 }

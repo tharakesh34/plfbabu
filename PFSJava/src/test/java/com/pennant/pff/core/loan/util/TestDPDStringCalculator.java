@@ -501,4 +501,23 @@ public class TestDPDStringCalculator {
 		return null;
 	}
 
+	@Test
+	public void Monthlyprocess() {
+		String curDPDStr = null;
+		FinanceMain fm = new FinanceMain();
+		fm.setDueBucket(1);
+		fm.setRepayFrq("D0000");
+		fm.getEventProperties().setBusinessDate(DateUtil.getDate(2020, 02, 01));
+		fm.setMaturityDate(DateUtil.getDate(2020, 03, 01));
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		schedules.add(getScheduleWithRepayFalse(DateUtil.getDate(2020, 01, 25)));// disb Date
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 26)));// 1st Inst
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 27)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 28)));
+		schedules.add(getSchedule(DateUtil.getDate(2020, 01, 29)));
+
+		Assert.assertEquals(null, DPDStringCalculator.getDpdString(false, fm, schedules, curDPDStr));
+	}
+
 }
