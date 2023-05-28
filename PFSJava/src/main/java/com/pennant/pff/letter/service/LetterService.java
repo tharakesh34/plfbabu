@@ -91,7 +91,7 @@ public class LetterService {
 
 			LetterType letterType = LetterType.getType(ltlp.getLetterType());
 
-			if (letterType == LetterType.CLOSURE
+			if ((letterType == LetterType.NOC || letterType == LetterType.CLOSURE)
 					&& !(ClosureType.isClosure(closureType) || ClosureType.isForeClosure(closureType))) {
 				continue;
 			}
