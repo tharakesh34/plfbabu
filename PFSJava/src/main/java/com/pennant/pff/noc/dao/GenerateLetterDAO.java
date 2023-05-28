@@ -39,4 +39,6 @@ public interface GenerateLetterDAO {
 	void deleteAutoLetterGeneration(long finID, String letterType);
 
 	String getReasonCode(long finID);
+
+	String getCancelReasons(String reference);
 }

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -311,9 +312,36 @@ public class AccountEngineExecution {
 
 			if (txnEntry.getAccount() == null || StringUtils.isEmpty(StringUtils.trimToEmpty(txnEntry.getAccount()))) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
-					throw new AppException(String.format(
-							"Accounting for %S Event is invalid for order id : %S , please contact administrator",
-							aeEvent.getAccountingEvent(), txnEntry.getTransOrder()));
+
+					String subHeadRule = txnEntry.getAmountRule();
+
+					StringBuilder sb = new StringBuilder();
+					sb.append("Accounting with Event [");
+					sb.append(aeEvent.getAccountingEvent());
+					sb.append("]");
+					sb.append(" and Tranaction Entry [");
+					sb.append(txnEntry.getTransDesc());
+					sb.append("]");
+					sb.append(" Failed,");
+					sb.append(" Please check Account Sub Head Rule[");
+					sb.append(txnEntry.getAccountSubHeadRule());
+					sb.append("] or ");
+					sb.append(" ");
+					sb.append(" Rule [");
+					sb.append(subHeadRule);
+					sb.append("]");
+					sb.append(" ");
+
+					sb.append(" DataMap [");
+					for (Entry<String, Object> item : aeEvent.getDataMap().entrySet()) {
+						if (subHeadRule.contains(item.getKey())) {
+							sb.append(item.toString());
+						}
+					}
+
+					sb.append("]");
+
+					throw new AppException(sb.toString());
 				}
 				continue;
 			}

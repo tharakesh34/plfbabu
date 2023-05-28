@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -129,7 +130,6 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 						setSuccesStatus(detail);
 
 						try {
-							process(detail);
 							processHoldMarking(detail);
 							setSuccesStatus(detail);
 						} catch (Exception e) {
@@ -214,30 +214,6 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void process(HoldMarkingUpload detail) {
-		int count = holdMarkingUploadDAO.getReference(detail.getReference(), detail.getAccountNumber(),
-				EodConstants.PROGRESS_SUCCESS);
-
-		TransactionStatus txnStatus = getTransactionStatus();
-		try {
-			if (count > 0) {
-				holdMarkingUploadDAO.delete(detail.getReference(), detail.getAccountNumber(),
-						EodConstants.PROGRESS_SUCCESS);
-			}
-
-			holdMarkingUploadDAO.save(detail);
-
-			setSuccesStatus(detail);
-			transactionManager.commit(txnStatus);
-		} catch (Exception e) {
-			if (txnStatus != null) {
-				transactionManager.rollback(txnStatus);
-			}
-
-			setFailureStatus(detail, e.getMessage());
-		}
-	}
-
 	private void processHoldMarking(HoldMarkingUpload detail) {
 		int count = 0;
 
@@ -275,6 +251,13 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			hmd.setApprovedBy(userId);
 
 			holdMarkingDetailDAO.saveDetail(hmd);
+
+			Map<String, String> map = new HashMap<>();
+			if (hmd != null) {
+				map.put("Hold ID", String.valueOf(hmd.getHoldID()));
+				detail.setExtendedFields(map);
+			}
+
 		} else {
 			List<HoldMarkingHeader> list = holdMarkingHeaderDAO.getHoldByFinId(detail.getReferenceID(),
 					detail.getAccountNumber());
@@ -337,7 +320,9 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			hmd.setApprovedBy(userId);
 
 			holdMarkingDetailDAO.saveDetail(hmd);
+
 		}
+
 	}
 
 	private void validateType(HoldMarkingUpload detail, String type) {
@@ -347,7 +332,7 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 		}
 
 		if (PennantConstants.REMOVE_HOLD_MARKING.equals(type)
-				&& holdMarkingUploadDAO.isValidateType(detail.getReferenceID(), detail.getAccountNumber())) {
+				&& !(holdMarkingUploadDAO.isValidateType(detail.getReferenceID(), detail.getAccountNumber()))) {
 			setError(detail, HoldMarkingUploadError.HM_03);
 			return;
 		}

@@ -263,6 +263,11 @@ public class SingelFeeUtil {
 
 				amountRule = removeSpaces(amountRule);
 
+				amountRule = amountRule.replace(";", "");
+				amountRule = amountRule.replace(" ;", "");
+				amountRule = amountRule.replace("; ", "");
+				amountRule = amountRule.replace(" ; ", "");
+
 				tsb = tsb.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
 			}
 

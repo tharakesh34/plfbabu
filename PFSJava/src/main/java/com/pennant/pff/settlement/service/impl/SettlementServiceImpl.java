@@ -58,6 +58,7 @@ import com.pennant.pff.settlement.model.FinSettlementHeader;
 import com.pennant.pff.settlement.model.SettlementAllocationDetail;
 import com.pennant.pff.settlement.model.SettlementSchedule;
 import com.pennant.pff.settlement.service.SettlementService;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -847,6 +848,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
+			throw new AppException(e.getMessage());
 		}
 
 	}

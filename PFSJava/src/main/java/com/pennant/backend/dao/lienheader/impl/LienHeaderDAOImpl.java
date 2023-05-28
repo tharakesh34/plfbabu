@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.BadSqlGrammarException;
 
 import com.pennant.backend.dao.lienheader.LienHeaderDAO;
 import com.pennanttech.model.lien.LienHeader;
@@ -38,6 +37,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 		}
 
 		lu.setLienReference(String.valueOf(lu.getLienID()));
+
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
@@ -66,30 +66,27 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public void update(LienHeader lu) {
 		StringBuilder sql = new StringBuilder("Update Lien_Header");
-		sql.append(" Set ");
+		sql.append(" Set");
 		sql.append(" AccNumber = ?, Marking = ?, MarkingDate = ?, DeMarking = ?, DemarkingDate = ?");
 		sql.append(", LienReference = ?, LienStatus = ?, InterfaceStatus = ?");
 		sql.append(" Where LienID = ? and Reference = ?");
 
-		logger.debug(Literal.SQL + sql.toString());
-		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
-				int index = 0;
-				ps.setString(++index, lu.getAccountNumber());
-				ps.setString(++index, lu.getMarking());
-				ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
-				ps.setString(++index, lu.getDemarking());
-				ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
-				ps.setString(++index, lu.getLienReference());
-				ps.setBoolean(++index, lu.isLienStatus());
-				ps.setString(++index, lu.getInterfaceStatus());
-				ps.setLong(++index, lu.getLienID());
-				ps.setString(++index, lu.getReference());
+		logger.debug(Literal.SQL.concat(sql.toString()));
 
-			});
-		} catch (BadSqlGrammarException e) {
-			logger.warn(e);
-		}
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 0;
+			ps.setString(++index, lu.getAccountNumber());
+			ps.setString(++index, lu.getMarking());
+			ps.setDate(++index, JdbcUtil.getDate(lu.getMarkingDate()));
+			ps.setString(++index, lu.getDemarking());
+			ps.setDate(++index, JdbcUtil.getDate(lu.getDemarkingDate()));
+			ps.setString(++index, lu.getLienReference());
+			ps.setBoolean(++index, lu.isLienStatus());
+			ps.setString(++index, lu.getInterfaceStatus());
+			ps.setLong(++index, lu.getLienID());
+			ps.setString(++index, lu.getReference());
+
+		});
 	}
 
 	@Override
@@ -117,8 +114,9 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public LienHeader getLienByReference(String finreference, String accNum) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate,");
-		sql.append(" lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus, lh.InterfaceStatus");
+		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate");
+		sql.append(", lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus");
+		sql.append(", lh.InterfaceStatus, lh.InterfaceRemarks");
 		sql.append(" From Lien_Header lh");
 		sql.append(" Inner Join Lien_Details ld ON lh.LienID = ld.LienID");
 		sql.append(" Where ld.Reference = ? and lh.AccNumber = ?");
@@ -139,6 +137,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
 				return lu;
 
 			}, finreference, accNum);
@@ -151,8 +150,9 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public LienHeader getLienByAcc(String accnumber) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate,");
-		sql.append(" DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus");
+		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate");
+		sql.append(", DeMarking, DemarkingDate, LienReference, LienStatus");
+		sql.append(", InterfaceStatus, InterfaceRemarks");
 		sql.append(" From  Lien_Header");
 		sql.append(" Where AccNumber = ?");
 
@@ -173,6 +173,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
 				return lu;
 
 			}, accnumber);
@@ -185,8 +186,9 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public List<LienHeader> getLienHeaderList(String reference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate,");
-		sql.append(" lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus, lh.InterfaceStatus");
+		sql.append(" lh.LienID, lh.Reference, lh.AccNumber, lh.Marking, lh.MarkingDate");
+		sql.append(", lh.DeMarking, lh.DemarkingDate, lh.LienReference, lh.LienStatus");
+		sql.append(", lh.InterfaceStatus, lh.InterfaceRemarks");
 		sql.append(" From Lien_Header lh");
 		sql.append(" Inner Join Lien_Details ld ON lh.LienID = ld.LienID");
 		sql.append(" Where ld.Reference = ?");
@@ -207,6 +209,7 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
 				return lu;
 
 			}, reference);
@@ -219,10 +222,11 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 	@Override
 	public LienHeader getLienByAccAndStatus(String accnumber, Boolean isActive) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate,");
-		sql.append(" DeMarking, DemarkingDate, LienReference, LienStatus, InterfaceStatus");
-		sql.append(" From  Lien_Header");
-		sql.append(" Where AccNumber = ? and LienStatus = ? ");
+		sql.append(" ID, LienID, Reference, AccNumber, Marking, MarkingDate");
+		sql.append(", DeMarking, DemarkingDate, LienReference, LienStatus");
+		sql.append(", InterfaceStatus, InterfaceRemarks");
+		sql.append(" From Lien_Header");
+		sql.append(" Where AccNumber = ? and LienStatus = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -241,6 +245,8 @@ public class LienHeaderDAOImpl extends SequenceDao<LienHeader> implements LienHe
 				lu.setLienReference(rs.getString("LienReference"));
 				lu.setLienStatus(rs.getBoolean("LienStatus"));
 				lu.setInterfaceStatus(rs.getString("InterfaceStatus"));
+				lu.setInterfaceRemarks(rs.getString("InterfaceRemarks"));
+
 				return lu;
 
 			}, accnumber, isActive);

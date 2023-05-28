@@ -20,8 +20,8 @@ public interface CollectionReceiptDataSplit {
 			collectionData.setDrawnOn(setStringData(dataArray, 7, collectionData));
 			collectionData.setTowards(setStringData(dataArray, 8, collectionData));
 			collectionData.setGrandTotal(setBigDecimalData(dataArray, 9, collectionData));
-			collectionData.setReceiptDate(setDateData(dataArray, 10, collectionData));
-			collectionData.setChequeDate(setDateData(dataArray, 11, collectionData));
+			collectionData.setReceiptDate(setStringData(dataArray, 10, collectionData));
+			collectionData.setChequeDate(setStringData(dataArray, 11, collectionData));
 			collectionData.setReceiptType(setStringData(dataArray, 12, collectionData));
 			collectionData.setReceiptNumber(setLongData(dataArray, 13, collectionData));
 			collectionData.setChequeStatus(setStringData(dataArray, 14, collectionData));

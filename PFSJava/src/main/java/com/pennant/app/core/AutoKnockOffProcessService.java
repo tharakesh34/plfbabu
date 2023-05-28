@@ -115,7 +115,7 @@ public class AutoKnockOffProcessService {
 		Date valueDt = knockOffData.getValueDate();
 
 		if ("E".equals(knockOffData.getPayableType())) {
-			FinExcessAmount fea = finExcessAmountDAO.getFinExcessAmountById(knockOffData.getPayableId(), "");
+			FinExcessAmount fea = finExcessAmountDAO.getFinExcessByID(knockOffData.getPayableId());
 			Date appDate = knockOffData.getEventProperties().getAppDate();
 			valueDt = receiptService.getExcessBasedValueDate(valueDt, knockOffData.getFinID(), appDate, fea,
 					FinServiceEvent.SCHDRPY);

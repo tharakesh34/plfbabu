@@ -60,17 +60,21 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 			return;
 		}
 
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
+		Long finID = financeMainDAO.getFinID(reference);
 
-		if (fm == null) {
+		if (finID == null) {
 			setError(detail, PresentmentError.REPRMNT514);
 			return;
 		}
 
-		if (!fm.isFinIsActive()) {
+		Long activeFinID = financeMainDAO.getActiveFinID(reference);
+
+		if (activeFinID == null) {
 			setError(detail, PresentmentError.REPRMNT515);
 			return;
 		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
 		detail.setFm(fm);
 		detail.setReferenceID(fm.getFinID());
@@ -152,6 +156,8 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 
 				TransactionStatus txStatus = getTransactionStatus();
 
+				presentmentRespUploadDAO.update(details);
+
 				try {
 					process(header);
 
@@ -167,8 +173,6 @@ public class FateCorrectionUploadServiceImpl extends AUploadServiceImpl<Presentm
 				} finally {
 					txStatus = null;
 				}
-
-				presentmentRespUploadDAO.update(details);
 
 				List<FileUploadHeader> headerList = new ArrayList<>();
 				headerList.add(header);

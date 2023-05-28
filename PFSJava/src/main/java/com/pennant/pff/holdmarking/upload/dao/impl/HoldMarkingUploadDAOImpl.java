@@ -151,36 +151,4 @@ public class HoldMarkingUploadDAOImpl extends SequenceDao<HoldMarkingUpload> imp
 		this.jdbcOperations.update(sql, reference, accountNumber, progressSuccess);
 	}
 
-	@Override
-	public long save(HoldMarkingUpload hm) {
-		StringBuilder sql = new StringBuilder("Insert into Hold_Marking_Upload_Log");
-		sql.append(" (ID, HeaderId, FinID, Type, AccountNumber, Amount, Reference, Progress, Remarks, Status");
-		sql.append(", ErrorCode, ErrorDesc, CreatedOn, CreatedBy, ApprovedOn, ApprovedBy)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-		logger.debug(Literal.SQL.concat(sql.toString()));
-
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 0;
-
-			ps.setLong(++index, hm.getId());
-			ps.setLong(++index, hm.getHeaderId());
-			ps.setObject(++index, hm.getReferenceID());
-			ps.setString(++index, hm.getType());
-			ps.setString(++index, hm.getAccountNumber());
-			ps.setBigDecimal(++index, hm.getAmount());
-			ps.setString(++index, hm.getReference());
-			ps.setInt(++index, hm.getProgress());
-			ps.setString(++index, hm.getRemarks());
-			ps.setString(++index, hm.getStatus());
-			ps.setString(++index, hm.getErrorCode());
-			ps.setString(++index, hm.getErrorDesc());
-			ps.setTimestamp(++index, hm.getCreatedOn());
-			ps.setObject(++index, hm.getCreatedBy());
-			ps.setTimestamp(++index, hm.getApprovedOn());
-			ps.setLong(++index, hm.getApprovedBy());
-		});
-
-		return hm.getId();
 	}
-}

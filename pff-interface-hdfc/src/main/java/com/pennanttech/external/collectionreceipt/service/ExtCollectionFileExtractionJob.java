@@ -116,6 +116,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 					List<CollReceiptDetail> extCollectionLineList = new ArrayList<CollReceiptDetail>();
 
 					int rowNumber = 0;
+					int dataRows = 0;
 					while (sc.hasNextLine()) {
 						rowNumber = rowNumber + 1;
 
@@ -162,6 +163,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 							crd.setRecordData(lineData);
 							crd.setReceiptId(0);
 							extCollectionLineList.add(crd);
+							dataRows = dataRows + 1;
 						} else {
 							// set header status as error
 							extReceiptHeader.setErrorCode(errorCode);
@@ -177,6 +179,11 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 						// total check sum
 						int gTotalChk = 0;
 						String mainChksum = extCollectionLineList.get(extCollectionLineList.size() - 1).getRecordData();
+						String[] row1Str = mainChksum.split("\\|", -1);
+						if (row1Str != null && row1Str.length > 2) {
+							mainChksum = row1Str[1];
+						}
+
 						extCollectionLineList.remove(extCollectionLineList.size() - 1);
 
 						for (CollReceiptDetail lineData : extCollectionLineList) {
@@ -192,7 +199,10 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 
 							String qualifiedChk = collectionData.getRowNum() + "" + totalChk;
 
-							gTotalChk = gTotalChk + Integer.parseInt(collectionData.getRowNum() + "" + totalChk);
+							gTotalChk = gTotalChk + Integer.parseInt(qualifiedChk);
+
+							logger.debug(dataValid + "ROWCHKSUM:::: qualifiedChk:" + qualifiedChk
+									+ ", collectionData.getChecksum():" + collectionData.getChecksum());
 
 							if (!qualifiedChk.equals(collectionData.getChecksum())) {
 								dataValid = false;
@@ -200,8 +210,9 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 								break;
 							}
 						}
-
-						if (dataValid && !mainChksum.equals(String.valueOf(gTotalChk))) {
+						logger.debug(dataValid + "MAINCHKSUM:::: mainChksum:" + mainChksum + ", gTotalChk:"
+								+ (dataRows - 1) + "" + gTotalChk);
+						if (dataValid && !mainChksum.equals((dataRows - 1) + "" + gTotalChk)) {
 							dataValid = false;
 						}
 
@@ -215,7 +226,7 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 							// set header status as error
 							extReceiptHeader.setErrorCode(F400);
 							extReceiptHeader.setExtraction(COMPLETED);
-							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F401));
+							extReceiptHeader.setErrorMessage(InterfaceErrorCodeUtil.getErrorMessage(F400));
 						}
 
 					}

@@ -212,7 +212,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 				case 24:
 					String bounceDate = rowCell.toString();
 					if (bounceDate != null) {
-						cru.setBounceDate(DateUtil.getDate(bounceDate));
+						cru.setBounceDate(DateUtil.parse(bounceDate, DateFormat.LONG_DATE.getPattern()));
 					}
 					break;
 				case 25:
@@ -792,8 +792,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
 			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
-			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), subReceiptMode,
-					pb.getPartnerBankId());
+			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), receiptMode, pb.getPartnerBankId());
 			if (pb == null || partnerbankid == 0) {
 				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;

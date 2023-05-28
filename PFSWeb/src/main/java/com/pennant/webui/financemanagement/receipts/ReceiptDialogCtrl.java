@@ -7078,8 +7078,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// Finance Should not allow for Partial Settlement & Early settlement
 		// when Maturity Date reaches Current application Date
-		if ((receiptPurposeCtg == 1 || receiptPurposeCtg == 2) && !receiptData.isForeClosure()) {
-
+		if ((receiptPurposeCtg == 1) && !receiptData.isForeClosure()) {
 			if (financeMain.getMaturityDate().compareTo(receiptValueDate) < 0) {
 				MessageUtil.showError(
 						Labels.getLabel("label_ReceiptDialog_Valid_MaturityDate", new String[] { PennantApplicationUtil

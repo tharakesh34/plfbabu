@@ -45,7 +45,7 @@ public class LeinFileProcesserJob extends AbstractJob
 	private static final String RESPONSE_END = "--------------";
 	private static final String CONTROL_SPACES = "      ";
 	private static final String RESP_SUCCESS = "SUCCESS";
-	private static final String RESP_REJECTED = "FAILED";
+	private static final String RESP_REJECTED = "REJECTED";
 
 	private ExtLienMarkingDAO externalLienMarkingDAO;
 	private FileInterfaceConfig lienConfig;

@@ -27,7 +27,7 @@ public class ProvisionCalcQueue implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
-		if (!NpaAndProvisionExtension.ALLOW_PROVISION) {
+		if (!NpaAndProvisionExtension.ALLOW_PROVISION && !NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION) {
 			return RepeatStatus.FINISHED;
 		}
 
@@ -42,7 +42,7 @@ public class ProvisionCalcQueue implements Tasklet {
 			count = provisionService.prepareQueueForSOM();
 		}
 
-		if (appDate.compareTo(monthEnd) == 0) {
+		if (appDate.compareTo(monthEnd) == 0 || NpaAndProvisionExtension.ALLOW_MANUAL_PROVISION) {
 			count = provisionService.prepareQueueForEOM();
 		}
 

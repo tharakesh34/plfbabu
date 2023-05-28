@@ -123,7 +123,7 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 					continue;
 				}
 
-				String reqFileNameInRespFile = getReqFileNameFromRespFileName(fNameArray, fileExtension);
+				String reqFileNameInRespFile = fNameArray[1];
 				boolean isValid = requestFileNames.contains(reqFileNameInRespFile);
 
 				if (!isValid) {
@@ -155,18 +155,5 @@ public class LienFileReadingJob extends AbstractJob implements InterfaceConstant
 			}
 		}
 		return requestFileNames;
-	}
-
-	private String getReqFileNameFromRespFileName(String[] fNameArray, String fileExtension) {
-		logger.debug(Literal.ENTERING);
-		String reqFileNameInRespFile = "";
-
-		if (fNameArray[1].contains(fileExtension)) {
-			reqFileNameInRespFile = fNameArray[1].substring(0, fNameArray[1].indexOf(fileExtension));
-		} else {
-			reqFileNameInRespFile = fNameArray[1];
-		}
-		logger.debug(Literal.LEAVING);
-		return reqFileNameInRespFile;
 	}
 }
