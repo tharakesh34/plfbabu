@@ -296,8 +296,8 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setListAllocationDetails(list);
 
 		if (AllocationType.MANUAL.equals(reaceipt.getAllocationType()) && list != null) {
-			logger.debug("reaceipt.getReceiptAmount()::" + reaceipt.getReceiptAmount());
-			logger.debug("getSumOfAllocations(list)::" + getSumOfAllocations(list));
+			// logger.debug("reaceipt.getReceiptAmount()::" + reaceipt.getReceiptAmount());
+			// logger.debug("getSumOfAllocations(list)::" + getSumOfAllocations(list));
 			if (!(reaceipt.getReceiptAmount().equals(getSumOfAllocations(list)))) {
 				reaceipt.setProgress(EodConstants.PROGRESS_FAILED);
 				reaceipt.setErrorDesc("RECEIPT Amount and Allocations amount should be same");

@@ -214,7 +214,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 	@Override
 	public void updateExtCollectionReceiptDetailStatus(CollReceiptDetail collectionReceiptDetail) {
 		StringBuilder sql = new StringBuilder("UPDATE COLL_RECEIPT_DETAIL");
-		sql.append(" SET RECEIPT_ID=?,RECEIPT_CREATED_DATE=?  ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
+		sql.append(" SET RECEIPT_ID=?,RECEIPT_CREATED_DATE=? ,ERROR_CODE = ?, ERROR_MESSAGE = ? WHERE ID= ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
