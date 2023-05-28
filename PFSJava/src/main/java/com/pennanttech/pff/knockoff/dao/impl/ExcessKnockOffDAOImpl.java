@@ -8,6 +8,7 @@ import org.springframework.dao.DuplicateKeyException;
 import com.pennant.backend.model.customermasters.CustomerCoreBank;
 import com.pennant.backend.model.finance.AutoKnockOff;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.pff.extension.CustomerExtension;
 import com.pennant.pff.fee.AdviseType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -39,8 +40,8 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(" From FinExcessAmount ea");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ea.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  AmountType = ? and BalanceAmt > ? and fm.ClosingStatus <> 'C'");
-		sql.append("  and fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
+		sql.append(" Where  AmountType = ? and BalanceAmt > ? and (fm.ClosingStatus is null or fm.ClosingStatus <> ?)");
+		sql.append(" and fm.WriteoffLoan = ? Group by c.CustId, c.CustCoreBank, fm.FinID, ea.ExcessId, ea.AmountType");
 		sql.append(" Union All");
 		sql.append(" Select CustId, CustCoreBank, FinId, ReferenceId, AmountType");
 		sql.append(", sum(BalanceAmt) BalanceAmt from ");
@@ -48,7 +49,8 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 		sql.append(", BalanceAmt From ManualAdvise ma");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ma.FinID");
 		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
-		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ? and fm.ClosingStatus <> 'C'");
+		sql.append(" Where  ma.AdviseType = ? and BalanceAmt > ?");
+		sql.append(" and (fm.ClosingStatus is null or fm.ClosingStatus <> ?)");
 		sql.append("  and fm.WriteoffLoan = ?) it ");
 		sql.append(" group by it.CustId, it.CustCoreBank, it.FinID, it.ReferenceId, it.AmountType) T");
 
@@ -63,10 +65,12 @@ public class ExcessKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements 
 				ps.setString(++index, thresholdValue);
 				ps.setString(++index, "E");
 				ps.setInt(++index, 0);
+				ps.setString(++index, FinanceConstants.CLOSE_STATUS_CANCELLED);
 				ps.setInt(++index, 0);
 				ps.setString(++index, "P");
 				ps.setInt(++index, 2);
 				ps.setInt(++index, 0);
+				ps.setString(++index, FinanceConstants.CLOSE_STATUS_CANCELLED);
 				ps.setInt(++index, 0);
 			});
 		} catch (DuplicateKeyException e) {
