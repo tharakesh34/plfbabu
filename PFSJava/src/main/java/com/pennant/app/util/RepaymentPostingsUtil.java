@@ -1033,7 +1033,11 @@ public class RepaymentPostingsUtil {
 			FinanceProfitDetail pftDetail, List<FinODDetails> overdueList, FinReceiptHeader rch) {
 		logger.debug(Literal.ENTERING);
 
-		String receiptPurpose = rch.getReceiptPurpose();
+		String receiptPurpose = null;
+
+		if (rch != null) {
+			receiptPurpose = rch.getReceiptPurpose();
+		}
 
 		// Finance Profit Details Updation
 		String oldFinStatus = fm.getFinStatus();
@@ -1076,8 +1080,8 @@ public class RepaymentPostingsUtil {
 			schdFullyPaid = false;
 		}
 
-		if (schdFullyPaid && (!fm.isSanBsdSchdle() || (fm.isSanBsdSchdle()
-				&& ((receiptPurpose != null && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)))))) {
+		if (schdFullyPaid && (!fm.isSanBsdSchdle()
+				|| (fm.isSanBsdSchdle() && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)))) {
 			boolean fullyPaid = true;
 
 			if (overDraft && DateUtil.compare(appDate, fm.getMaturityDate()) < 0) {
@@ -1125,7 +1129,7 @@ public class RepaymentPostingsUtil {
 			holdMarkingService.removeHold(fm);
 		}
 
-		fm.setClosureType(rch.getClosureType());
+		fm.setClosureType(rch == null ? null : rch.getClosureType());
 		letterService.logForAutoLetter(fm, appDate);
 
 		pftDetail.setFinStatus(fm.getFinStatus());
