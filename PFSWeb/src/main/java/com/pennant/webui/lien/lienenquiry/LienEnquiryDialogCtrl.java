@@ -102,6 +102,7 @@ public class LienEnquiryDialogCtrl extends GFCBaseCtrl<LienDetails> {
 			li.appendChild(new Listcell(ld.getMarkingReason()));
 			li.appendChild(new Listcell(ld.isLienStatus() ? "ACTIVE" : "IN-ACTIVE"));
 			li.appendChild(new Listcell(ld.getInterfaceStatus()));
+			li.appendChild(new Listcell(ld.getInterfaceRemarks()));
 			li.appendChild(new Listcell(DateUtil.formatToLongDate(ld.getDemarkingDate())));
 			li.appendChild(new Listcell(ld.getDemarking()));
 			li.appendChild(new Listcell(ld.getDemarkingReason()));

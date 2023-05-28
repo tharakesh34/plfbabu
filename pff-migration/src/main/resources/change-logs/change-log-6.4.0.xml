@@ -18750,5 +18750,9 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1526.4_1" author="Sandeepkumar.M">
+		<renameColumn tableName="LIEN_HEADER" oldColumnName="REJECT_REASON" newColumnName="InterfaceRemarks"/>
+	</changeSet>
 
 </databaseChangeLog> 

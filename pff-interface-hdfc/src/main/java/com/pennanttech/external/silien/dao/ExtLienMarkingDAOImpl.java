@@ -50,7 +50,7 @@ public class ExtLienMarkingDAOImpl extends SequenceDao implements ExtLienMarking
 	@Override
 	public void updateLienRecordStatus(LienMarkDetail lienMarkDetail) {
 		logger.debug(Literal.ENTERING);
-		String queryStr = "UPDATE LIEN_HEADER SET INTERFACESTATUS = ?, REJECT_REASON= ? WHERE ACCNUMBER= ?";
+		String queryStr = "UPDATE LIEN_HEADER SET INTERFACESTATUS = ?, InterfaceRemarks = ? WHERE ACCNUMBER= ?";
 		logger.debug(Literal.SQL + queryStr);
 		mainNamedJdbcTemplate.getJdbcOperations().update(queryStr.toString(), ps -> {
 			int index = 1;

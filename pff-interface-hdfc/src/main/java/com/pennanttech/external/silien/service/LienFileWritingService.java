@@ -86,6 +86,13 @@ public class LienFileWritingService extends TextFileUtil
 						lienMarkDetail.setInterfaceStatus(LIEN_FAILED);
 						lienMarkDetail.setErrCode(errCode);
 						lienMarkDetail.setErrMsg(e.getMessage());
+
+						String errorDesc = StringUtils.trimToEmpty(e.getMessage());
+						if (errorDesc.length() > 255) {
+							errorDesc = errorDesc.substring(0, 255);
+						}
+
+						lienMarkDetail.setInterfaceReason(errorDesc);
 						externalLienMarkingDAO.updateLienRecordStatus(lienMarkDetail);
 					}
 				}

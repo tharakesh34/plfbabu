@@ -1178,7 +1178,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else {
 				if (aFinanceMain.isFinIsActive()) {
 					this.finStatus.setValue(Labels.getLabel("label_Active"));
-				} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)) {
+				} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(closingStatus)
+						|| !aFinanceMain.isFinIsActive()) {
 					this.finStatus.setValue(Labels.getLabel("label_Closed"));
 				} else {
 					this.finStatus.setValue(Labels.getLabel("label_Matured"));
