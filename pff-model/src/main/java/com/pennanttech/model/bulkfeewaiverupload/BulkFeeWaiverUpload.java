@@ -2,6 +2,7 @@ package com.pennanttech.model.bulkfeewaiverupload;
 
 import java.math.BigDecimal;
 
+import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.upload.model.UploadDetails;
 
@@ -13,6 +14,7 @@ public class BulkFeeWaiverUpload extends UploadDetails {
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private String remarks;
 	private FinanceMain financeMain;
+	private FeeWaiverHeader waiverHeader;
 
 	public BulkFeeWaiverUpload() {
 		super();
@@ -56,6 +58,14 @@ public class BulkFeeWaiverUpload extends UploadDetails {
 
 	public void setFinanceMain(FinanceMain financeMain) {
 		this.financeMain = financeMain;
+	}
+
+	public FeeWaiverHeader getWaiverHeader() {
+		return waiverHeader;
+	}
+
+	public void setWaiverHeader(FeeWaiverHeader waiverHeader) {
+		this.waiverHeader = waiverHeader;
 	}
 
 }

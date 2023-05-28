@@ -101,7 +101,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			return;
 		}
 
-		prepare(detail, header);
+		detail.setWaiverHeader(prepare(detail, header));
 	}
 
 	@Override
@@ -114,24 +114,17 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 			for (FileUploadHeader header : headers) {
 				logger.info("Processing the File {}", header.getFileName());
 				List<BulkFeeWaiverUpload> details = bulkFeeWaiverUploadDAO.getDetails(header.getId());
+				header.getUploadDetails().addAll(details);
 
 				for (BulkFeeWaiverUpload detail : details) {
 					detail.setUserDetails(header.getUserDetails());
 					detail.setAppDate(appDate);
-					detail.setUserDetails(header.getUserDetails());
+					prepareUserDetails(header, detail);
 
 					doValidate(header, detail);
 
 					if (EodConstants.PROGRESS_SUCCESS == detail.getProgress()) {
 						processWaiver(detail, header);
-					}
-
-					header.getUploadDetails().add(detail);
-
-					if (EodConstants.PROGRESS_FAILED == detail.getProgress()) {
-						setFailureStatus(detail);
-					} else {
-						setSuccesStatus(detail);
 					}
 				}
 
@@ -152,20 +145,19 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 	private void processWaiver(BulkFeeWaiverUpload detail, FileUploadHeader header) {
 		TransactionStatus txStatus = getTransactionStatus();
-		AuditHeader ah = getAuditHeader(prepare(detail, header), PennantConstants.TRAN_WF);
+		AuditHeader ah = getAuditHeader(detail.getWaiverHeader(), PennantConstants.TRAN_WF);
 
 		try {
 			ah = feeWaiverHeaderService.doApprove(ah);
 			transactionManager.commit(txStatus);
 		} catch (AppException e) {
-			setFailureStatus(detail, e.getMessage());
-
 			logger.error(Literal.EXCEPTION, e);
 
 			if (txStatus != null) {
 				transactionManager.rollback(txStatus);
 			}
 
+			setFailureStatus(detail, e.getMessage());
 			return;
 		}
 
@@ -177,6 +169,8 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		if (ah.getErrorMessage() != null) {
 			setFailureStatus(detail, ah.getErrorMessage().get(0));
 		}
+
+		setSuccesStatus(detail);
 	}
 
 	@Override
@@ -233,11 +227,9 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 					fwd.setWaivedAmount(amount);
 				}
 				amount = amount.subtract(fwd.getWaivedAmount());
-				continue;
-
 			}
 		}
-		
+
 		if (amount.compareTo(BigDecimal.ZERO) != 0) {
 			setError(detail, BulkFeeWaiverUploadError.FWU_006);
 			return fwh;
