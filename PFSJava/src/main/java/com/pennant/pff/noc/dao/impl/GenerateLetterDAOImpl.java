@@ -254,10 +254,12 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, LetterType");
-		sql.append(", GeneratedBy, ApprovedBy, ApprovedOn");
+		sql.append(", GeneratedBy, ll.ApprovedBy, ll.ApprovedOn");
 		sql.append(", Status, Remarks, EmailID, FileName");
 		sql.append(", CourierAgency, DispatchDate, DeliveryDate, DeliveryStatus");
-		sql.append(" From Loan_Letters");
+		sql.append(", su.UsrLogin ApproverName");
+		sql.append(" From Loan_Letters ll");
+		sql.append(" Left Join SecUsers su on su.UsrId = ll.ApprovedBy");
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -280,6 +282,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			letter.setDispatchDate(rs.getDate("DispatchDate"));
 			letter.setDeliveryDate(rs.getDate("DeliveryDate"));
 			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
+			letter.setApproverName(rs.getString("ApproverName"));
 
 			return letter;
 		}, finID);

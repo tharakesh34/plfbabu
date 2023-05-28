@@ -38,7 +38,6 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String courierAgencyName;
 	private String status;
 	private String fileName;
-	private Long trackingID;
 	private String remarks;
 	private Long adviseID;
 	private GenerateLetter befImage;
@@ -96,6 +95,7 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("deliveryStatus");
 		excludeFields.add("deliveryDate");
 		excludeFields.add("dispatchDate");
+		excludeFields.add("approverName");
 
 		return excludeFields;
 	}
@@ -306,14 +306,6 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	public Long getTrackingID() {
-		return trackingID;
-	}
-
-	public void setTrackingID(Long trackingID) {
-		this.trackingID = trackingID;
 	}
 
 	public String getRemarks() {

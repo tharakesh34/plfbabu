@@ -474,6 +474,7 @@ public class LetterService {
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
 		manualAdvise.setAdviseType(AdviseType.RECEIVABLE.id());
+		manualAdvise.setFinID(letter.getFinID());
 		manualAdvise.setFinReference(letter.getFinReference());
 		manualAdvise.setFeeTypeID(finFeeDetail.getFeeTypeID());
 		manualAdvise.setAdviseAmount(remainingFee);
@@ -482,9 +483,10 @@ public class LetterService {
 		manualAdvise.setPostDate(letter.getBusinessDate());
 		manualAdvise.setBalanceAmt(remainingFee);
 
-		manualAdvise.setVersion(0);
+		manualAdvise.setVersion(1);
 		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		manualAdvise.setLastMntBy(letter.getApprovedBy());
 		manualAdvise.setWorkflowId(0);
 
 		manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);

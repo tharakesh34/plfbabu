@@ -281,13 +281,11 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		letter.setCustomerType(customer.getCustTypeCode());
 		letter.setLoanClosureAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
 		letter.setLoanCancellationAge(DateUtil.getDaysBetween(fm.getClosedDate(), appDate));
+
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
 			letter.setSequenceNo(letterInfo.size());
 			letter.setStatusOfpreviousletters(letterInfo.get(letterInfo.size() - 1).getStatus());
 		}
-
-		letter.setSequenceNo(0);
-		letter.setStatusOfpreviousletters("");
 
 		fm.setLoanLetter(letter);
 	}
@@ -389,13 +387,13 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	@Override
 	public LoanLetter generateLetter(GenerateLetter gl) {
 
-		if (gl.getFeeID() != null) {
-			saveFees(gl);
-		}
+		saveFees(gl);
 
 		long letterID = saveLoanLetterdetails(gl);
 
 		LoanLetter letter = letterService.generate(letterID, SysParamUtil.getAppDate());
+
+		letter.setFeeID(gl.getFeeID());
 
 		if (letter.isBlocked()) {
 			letter.setGenerated(-1);

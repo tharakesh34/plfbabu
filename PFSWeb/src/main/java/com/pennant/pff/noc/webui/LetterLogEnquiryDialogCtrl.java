@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -169,23 +170,23 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				String modeofTransfer = data.getModeofTransfer();
+				String requestType = data.getRequestType();
 
-				if ("A".equals(modeofTransfer)) {
-					modeofTransfer = "Auto";
+				if ("A".equals(requestType)) {
+					requestType = "Auto";
 				} else {
-					modeofTransfer = "Manual";
+					requestType = "Manual";
 				}
 
-				lc = new Listcell(modeofTransfer);
+				lc = new Listcell(data.getModeofTransfer());
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getRequestType());
+				lc = new Listcell(requestType);
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(String.valueOf(data.getApproverName()));
+				lc = new Listcell(StringUtils.trimToEmpty(data.getApproverName()));
 				lc.setSpan(1);
 				lc.setParent(item);
 
