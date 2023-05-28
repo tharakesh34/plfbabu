@@ -6166,7 +6166,9 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 			rcd.setAmount(payableAmount);
 			rcd.setReference(fea.getFinReference());
 			rcd.setPayAgainstID(fea.getExcessID());
+			rcd.setNoReserve(true);
 			rcd.setValueDate(fea.getValueDate());
+			rcd.setPaymentType(ReceiptMode.EXCESS);
 			if (fea.getValueDate() == null) {
 				rcd.setValueDate(rud.getValueDate());
 			}
@@ -6210,9 +6212,11 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 			FinReceiptDetail rcd = prepareRCD(rud, partnerBank);
 			rcd.setPayAgainstID(ma.getAdviseID());
+			rcd.setNoReserve(true);
 			rcd.setReference(ma.getFinReference());
 			rcd.setValueDate(ma.getValueDate());
 			rcd.setAmount(payableAmount);
+			rcd.setPaymentType(ReceiptMode.PAYABLE);
 			if (ma.getValueDate() == null) {
 				rcd.setValueDate(rud.getValueDate());
 			}
@@ -6241,7 +6245,6 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		rcd.setNoReserve(true);
 		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		rcd.setPaymentType(rud.getReceiptMode());
 
 		if (partnerBank != null) {
 			rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
@@ -6839,7 +6842,7 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 
 		rd.setTotalPastDues(receiptCalculator.getTotalNetPastDue(rd));
 
-		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && !fsi.isClosureReceipt()) {
 			rch.getReceiptDetails().clear();
 			createXcessRCD(rd);
 			rcd.setPayOrder(rch.getReceiptDetails().size() + 1);

@@ -6239,7 +6239,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.RoleCode, fm.DownPaySupl, fm.RateChgAnyDay, fm.AvailedReAgeH, fm.NextRoleCode, fm.LimitValid");
 		sql.append(", fm.AvailedDefRpyChange, fm.DroppingMethod, fm.PftServicingODLimit");
 		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc");
-		sql.append(", fm.UnderSettlement, fm.UnderNpa");
+		sql.append(", fm.UnderSettlement, fm.UnderNpa, c.CustCoreBank");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
 		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
@@ -6460,6 +6460,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setLovDescFinBranchName(rs.getString("BranchDesc"));
 				fm.setUnderSettlement(rs.getBoolean("UnderSettlement"));
 				fm.setUnderNpa(rs.getBoolean("UnderNpa"));
+				fm.setCustCoreBank(rs.getString("CustCoreBank"));
 
 				return fm;
 			}, finID);

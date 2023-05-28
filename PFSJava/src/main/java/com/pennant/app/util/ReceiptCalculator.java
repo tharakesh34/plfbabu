@@ -2095,6 +2095,18 @@ public class ReceiptCalculator {
 				rd = eventFeeAndAdviseApportion(rd, false);
 			}
 		}
+
+		if (rd.getFinanceDetail().getFinScheduleData().getFinServiceInstruction().isClosureReceipt()
+				&& rd.isAdjSchedule()) {
+			rd = earlySettleAllocation(rd);
+			if (rd.isSetPaidValues()) {
+				setPaidValues(rd);
+			}
+			rd.setSetPaidValues(true);
+			setTotals(rd, 0);
+			return rd;
+		}
+
 		setEmi(rd);
 
 		setTotals(rd, 0);

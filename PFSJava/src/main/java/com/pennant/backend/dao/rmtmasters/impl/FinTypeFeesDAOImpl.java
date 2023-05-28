@@ -45,6 +45,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -731,7 +732,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setString(index++, "fees");
+			ps.setString(index++, RuleConstants.MODULE_FEES);
 			ps.setString(index++, finType);
 			ps.setString(index++, finEvent);
 			ps.setInt(index++, 1);
