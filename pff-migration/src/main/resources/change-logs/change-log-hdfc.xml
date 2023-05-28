@@ -658,7 +658,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.1" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -666,7 +666,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.2" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -676,8 +676,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="003.2" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -689,7 +689,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#215851" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -700,8 +700,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="PSD#207349.1" author="saikrishna.b">
 		<sql>
 			<![CDATA[
@@ -709,7 +709,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#2160471.1" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -717,7 +717,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.2_post" author="Gopal.p">
 		<sql>
 			<![CDATA[
@@ -725,7 +725,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="002.3_post" author="SaiKrian.n">
 		<sql>
 			<![CDATA[
@@ -733,7 +733,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="UDGAP#72.1" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -896,7 +896,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1470.1_01" author="saikrihna.b">
 		<sql>
 		   <![CDATA[
@@ -1021,8 +1021,8 @@
 		   ]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="UDGAP#72.2" author="Gireesh.G">
+
+	<changeSet id="UDGAP#72.2" author="Gireesh.G">
 		<sql>
 			<![CDATA[
 				DELETE FROM PSLENDUSE;
@@ -1144,7 +1144,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="UDGAP#72.3" author="Gireesh.G">
 		<sql>
 			<![CDATA[
@@ -1152,7 +1152,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.3" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -1162,7 +1162,7 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#1528.39" author="Sravani.S">
 		<sql>
 			<![CDATA[
@@ -1191,8 +1191,8 @@
  			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="ST#1470.1_02" author="saikrihna.b">
 		<sql>
 		   <![CDATA[
@@ -1223,16 +1223,16 @@
  			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#713.008" author="sainaveen.y">
-	  <sql>
+		<sql>
 		 <![CDATA[ 
 		 	   UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0/2 * 1/1 * ? *', EXECUTION_RETENTION_DAYS = 1 WHERE JOBKEY = 'LPP_LOAN_JOB';
 		 	   UPDATE JOB_DETAILS SET CRON_EXPRESSION = '0 0/2 * 1/1 * ? *', EXECUTION_RETENTION_DAYS = 1 WHERE JOBKEY = 'LPP_LOAN_TYPE_JOB';
 		 	 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="002.6" author="goutham.ch">
 		<sql>
 			<![CDATA[
@@ -1240,7 +1240,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#227187" author="nagavamsi.p">
 		<sql>
 			<![CDATA[
@@ -1248,7 +1248,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="12" author="goutham.ch">
 		<createTable tableName="FINCON_GL_STG">
 			<column name="ACCOUNT" type="VARCHAR(50)" />
@@ -1298,7 +1298,7 @@
 			<column name="EMP_NUM" type="VARCHAR(50)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="13" author="SREERAM.R" dbms="oracle">
 		<createProcedure>
 			CREATE OR REPLACE procedure SP_FINCON_GL(exe_postdate date) AS
@@ -1348,7 +1348,8 @@
 			po.postbranch,PO.DRORCR,AM.HOSTACCOUNT;
 			END;
 			COMMIT;
-			end SP_FINCON_GL;
+			end
+			SP_FINCON_GL;
 		</createProcedure>
 	</changeSet>
 
@@ -1433,20 +1434,20 @@
 			<column name="CME" type="VARCHAR(50)" />
 			<column name="REAL_ESTATE" type="VARCHAR(50)" />
 			<column name="PDC_AC_NO" type="bigint" />
-			<column name="TOT_CLOSURE_AMT" type="decimal(19,2)" />
-			<column name="TOT_CLOSURE_AMT_COL" type="decimal(19,2)" />
-			<column name="TOT_WAIVE_OFF" type="decimal(19,2)" />
-			<column name="CLOSURE_AMT" type="decimal(19,2)" />
-			<column name="CLOSURE_AMT_COL" type="decimal(19,2)" />
-			<column name="WAIVE_OFF" type="decimal(19,2)" />
-			<column name="PRINCIPAL_PAID_T" type="decimal(19,2)" />
-			<column name="INTEREST_PAID_T" type="decimal(19,2)" />
+			<column name="TOT_CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="TOT_CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="TOT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="WAIVE_OFF" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_T" type="decimal(18,2)" />
+			<column name="INTEREST_PAID_T" type="decimal(18,2)" />
 			<column name="TERMIN_DATE" type="DATETIME" />
 			<column name="RESTRUCTURE_FLAG" type="VARCHAR(1)" />
 			<column name="RESCHEDULE_FLAG" type="VARCHAR(1)" />
 			<column name="RESTRUCTURE_DATE" type="DATETIME" />
 			<column name="RESTRUCTURE_TENURE" type="bigint" />
-			<column name="RESTRUCTURE_AMOUNT" type="decimal(19,2)" />
+			<column name="RESTRUCTURE_AMOUNT" type="decimal(18,2)" />
 			<column name="RESTRUCTURE_TYPE" type="VARCHAR(50)" />
 			<column name="BRANCH_DESC" type="VARCHAR(50)" />
 			<column name="B_CITY" type="VARCHAR(50)" />
@@ -1473,9 +1474,9 @@
 			<column name="DOI" type="DATETIME" />
 			<column name="PAN" type="VARCHAR(50)" />
 			<column name="VAT_AC_NO" type="bigint" />
-			<column name="MONTHLY_INCOME" type="decimal(19,2)" />
-			<column name="YEARLY_INCOME" type="decimal(19,2)" />
-			<column name="ANNUAL_TURNOVER" type="decimal(19,2)" />
+			<column name="MONTHLY_INCOME" type="decimal(18,2)" />
+			<column name="YEARLY_INCOME" type="decimal(18,2)" />
+			<column name="ANNUAL_TURNOVER" type="decimal(18,2)" />
 			<column name="CUST_RATING" type="VARCHAR(50)" />
 			<column name="CURRENT_COMPANY" type="VARCHAR(200)" />
 			<column name="EDUCATION_CODE" type="VARCHAR(50)" />
@@ -1507,65 +1508,66 @@
 			<column name="LAND_UNIT" type="VARCHAR(50)" />
 			<column name="NATURE_OF_BUSINESS_DESC" type="VARCHAR(50)" />
 			<column name="MARITAL_STATUS" type="VARCHAR(50)" />
-			<column name="OVERDUE_EMI_AMT" type="decimal(19,2)" />
-			<column name="OVERDUE_EMI_CNT" type="decimal(19,2)" />
-			<column name="OVERDUE_PRINCIPAL" type="decimal(19,2)" />
-			<column name="OVERDUE_INTEREST" type="decimal(19,2)" />
-			<column name="TOTAL_POS" type="decimal(19,2)" />
-			<column name="TOTAL_IOS" type="decimal(19,2)" />
+			<column name="OVERDUE_EMI_AMT" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_CNT" type="decimal(18,2)" />
+			<column name="OVERDUE_PRINCIPAL" type="decimal(18,2)" />
+			<column name="OVERDUE_INTEREST" type="decimal(18,2)" />
+			<column name="TOTAL_POS" type="decimal(18,2)" />
+			<column name="TOTAL_IOS" type="decimal(18,2)" />
 			<column name="LAST_EMI_BILLED_ON" type="DATETIME" />
-			<column name="BILLED_PROPINSTLID" type="decimal(19,2)" />
-			<column name="FUTURE_POS" type="decimal(19,2)" />
-			<column name="FUTURE_IOS" type="decimal(19,2)" />
+			<column name="BILLED_PROPINSTLID" type="decimal(18,2)" />
+			<column name="FUTURE_POS" type="decimal(18,2)" />
+			<column name="FUTURE_IOS" type="decimal(18,2)" />
 			<column name="MATURITY_DATE" type="DATETIME" />
-			<column name="INTEREST_PAID_L" type="decimal(19,2)" />
-			<column name="PRINCIPAL_PAID_L" type="decimal(19,2)" />
-			<column name="BILLED_EMI_L" type="decimal(19,2)" />
-			<column name="EMI_COLLECTED_L" type="decimal(19,2)" />
-			<column name="OVERDUE_EMI_AMT_L" type="decimal(19,2)" />
-			<column name="LPP_CHARGED" type="decimal(19,2)" />
-			<column name="LPP_OUTSTANDING" type="decimal(19,2)" />
-			<column name="TOTAL_OTH_CHRG" type="decimal(19,2)" />
-			<column name="TOTAL_OTH_CHRG_OS" type="decimal(19,2)" />
-			<column name="GR_CR_L" type="decimal(19,2)" />
-			<column name="GR_DR_L" type="decimal(19,2)" />
-			<column name="RE_CR_L" type="decimal(19,2)" />
-			<column name="RE_DR_L" type="decimal(19,2)" />
-			<column name="IS_CR_L" type="decimal(19,2)" />
-			<column name="IS_DR_L" type="decimal(19,2)" />
-			<column name="UI_CR_L" type="decimal(19,2)" />
-			<column name="UI_DR_L" type="decimal(19,2)" />
-			<column name="AI_CR_L" type="decimal(19,2)" />
-			<column name="AI_DR_L" type="decimal(19,2)" />
-			<column name="EX_CR_L" type="decimal(19,2)" />
-			<column name="EX_DR_L" type="decimal(19,2)" />
-			<column name="AIA_CR_L" type="decimal(19,2)" />
-			<column name="AIA_DR_L" type="decimal(19,2)" />
+			<column name="INTEREST_PAID_L" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_L" type="decimal(18,2)" />
+			<column name="BILLED_EMI_L" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED_L" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_AMT_L" type="decimal(18,2)" />
+			<column name="LPP_CHARGED" type="decimal(18,2)" />
+			<column name="LPP_OUTSTANDING" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG_OS" type="decimal(18,2)" />
+			<column name="GR_CR_L" type="decimal(18,2)" />
+			<column name="GR_DR_L" type="decimal(18,2)" />
+			<column name="RE_CR_L" type="decimal(18,2)" />
+			<column name="RE_DR_L" type="decimal(18,2)" />
+			<column name="IS_CR_L" type="decimal(18,2)" />
+			<column name="IS_DR_L" type="decimal(18,2)" />
+			<column name="UI_CR_L" type="decimal(18,2)" />
+			<column name="UI_DR_L" type="decimal(18,2)" />
+			<column name="AI_CR_L" type="decimal(18,2)" />
+			<column name="AI_DR_L" type="decimal(18,2)" />
+			<column name="EX_CR_L" type="decimal(18,2)" />
+			<column name="EX_DR_L" type="decimal(18,2)" />
+			<column name="AIA_CR_L" type="decimal(18,2)" />
+			<column name="AIA_DR_L" type="decimal(18,2)" />
 			<column name="LAST_PAYMENT_DT" type="DATETIME" />
 			<column name="CHQ_BOUNCE" type="bigint" />
-			<column name="GR_CR" type="decimal(19,2)" />
-			<column name="GR_DR" type="decimal(19,2)" />
-			<column name="RE_CR" type="decimal(19,2)" />
-			<column name="RE_DR" type="decimal(19,2)" />
-			<column name="IS_CR" type="decimal(19,2)" />
-			<column name="IS_DR" type="decimal(19,2)" />
-			<column name="UI_CR" type="decimal(19,2)" />
-			<column name="UI_DR" type="decimal(19,2)" />
-			<column name="AI_CR" type="decimal(19,2)" />
-			<column name="AI_DR" type="decimal(19,2)" />
-			<column name="AIA_CR" type="decimal(19,2)" />
-			<column name="AIA_DR" type="decimal(19,2)" />
-			<column name="EX_CR" type="decimal(19,2)" />
-			<column name="EX_DR" type="decimal(19,2)" />
-			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(19,2)" />
-			<column name="PREVIOUS_EMI_DUE" type="decimal(19,2)" />
-			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(19,2)" />
-			<column name="INTEREST_PAID" type="decimal(19,2)" />
-			<column name="PRINCIPAL_PAID" type="decimal(19,2)" />
-			<column name="BILLED_EMI" type="decimal(19,2)" />
-			<column name="EMI_COLLECTED" type="decimal(19,2)" />
+			<column name="GR_CR" type="decimal(18,2)" />
+			<column name="GR_DR" type="decimal(18,2)" />
+			<column name="RE_CR" type="decimal(18,2)" />
+			<column name="RE_DR" type="decimal(18,2)" />
+			<column name="IS_CR" type="decimal(18,2)" />
+			<column name="IS_DR" type="decimal(18,2)" />
+			<column name="UI_CR" type="decimal(18,2)" />
+			<column name="UI_DR" type="decimal(18,2)" />
+			<column name="AI_CR" type="decimal(18,2)" />
+			<column name="AI_DR" type="decimal(18,2)" />
+			<column name="AIA_CR" type="decimal(18,2)" />
+			<column name="AIA_DR" type="decimal(18,2)" />
+			<column name="EX_CR" type="decimal(18,2)" />
+			<column name="EX_DR" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(18,2)" />
+			<column name="PREVIOUS_EMI_DUE" type="decimal(18,2)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(18,2)" />
+			<column name="INTEREST_PAID" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID" type="decimal(18,2)" />
+			<column name="BILLED_EMI" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED" type="decimal(18,2)" />
 		</createTable>
 	</changeSet>
+
 
 
 	<changeSet id="003" author="goutham.ch">
@@ -1649,20 +1651,20 @@
 			<column name="CME" type="VARCHAR(50)" />
 			<column name="REAL_ESTATE" type="VARCHAR(50)" />
 			<column name="PDC_AC_NO" type="bigint" />
-			<column name="TOT_CLOSURE_AMT" type="decimal(19,2)" />
-			<column name="TOT_CLOSURE_AMT_COL" type="decimal(19,2)" />
-			<column name="TOT_WAIVE_OFF" type="decimal(19,2)" />
-			<column name="CLOSURE_AMT" type="decimal(19,2)" />
-			<column name="CLOSURE_AMT_COL" type="decimal(19,2)" />
-			<column name="WAIVE_OFF" type="decimal(19,2)" />
-			<column name="PRINCIPAL_PAID_T" type="decimal(19,2)" />
-			<column name="INTEREST_PAID_T" type="decimal(19,2)" />
+			<column name="TOT_CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="TOT_CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="TOT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="WAIVE_OFF" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_T" type="decimal(18,2)" />
+			<column name="INTEREST_PAID_T" type="decimal(18,2)" />
 			<column name="TERMIN_DATE" type="DATETIME" />
 			<column name="RESTRUCTURE_FLAG" type="VARCHAR(1)" />
 			<column name="RESCHEDULE_FLAG" type="VARCHAR(1)" />
 			<column name="RESTRUCTURE_DATE" type="DATETIME" />
 			<column name="RESTRUCTURE_TENURE" type="bigint" />
-			<column name="RESTRUCTURE_AMOUNT" type="decimal(19,2)" />
+			<column name="RESTRUCTURE_AMOUNT" type="decimal(18,2)" />
 			<column name="RESTRUCTURE_TYPE" type="VARCHAR(50)" />
 			<column name="BRANCH_DESC" type="VARCHAR(50)" />
 			<column name="B_CITY" type="VARCHAR(50)" />
@@ -1689,9 +1691,9 @@
 			<column name="DOI" type="DATETIME" />
 			<column name="PAN" type="VARCHAR(50)" />
 			<column name="VAT_AC_NO" type="bigint" />
-			<column name="MONTHLY_INCOME" type="decimal(19,2)" />
-			<column name="YEARLY_INCOME" type="decimal(19,2)" />
-			<column name="ANNUAL_TURNOVER" type="decimal(19,2)" />
+			<column name="MONTHLY_INCOME" type="decimal(18,2)" />
+			<column name="YEARLY_INCOME" type="decimal(18,2)" />
+			<column name="ANNUAL_TURNOVER" type="decimal(18,2)" />
 			<column name="CUST_RATING" type="VARCHAR(50)" />
 			<column name="CURRENT_COMPANY" type="VARCHAR(200)" />
 			<column name="EDUCATION_CODE" type="VARCHAR(50)" />
@@ -1723,389 +1725,390 @@
 			<column name="LAND_UNIT" type="VARCHAR(50)" />
 			<column name="NATURE_OF_BUSINESS_DESC" type="VARCHAR(50)" />
 			<column name="MARITAL_STATUS" type="VARCHAR(50)" />
-			<column name="OVERDUE_EMI_AMT" type="decimal(19,2)" />
-			<column name="OVERDUE_EMI_CNT" type="decimal(19,2)" />
-			<column name="OVERDUE_PRINCIPAL" type="decimal(19,2)" />
-			<column name="OVERDUE_INTEREST" type="decimal(19,2)" />
-			<column name="TOTAL_POS" type="decimal(19,2)" />
-			<column name="TOTAL_IOS" type="decimal(19,2)" />
+			<column name="OVERDUE_EMI_AMT" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_CNT" type="decimal(18,2)" />
+			<column name="OVERDUE_PRINCIPAL" type="decimal(18,2)" />
+			<column name="OVERDUE_INTEREST" type="decimal(18,2)" />
+			<column name="TOTAL_POS" type="decimal(18,2)" />
+			<column name="TOTAL_IOS" type="decimal(18,2)" />
 			<column name="LAST_EMI_BILLED_ON" type="DATETIME" />
-			<column name="BILLED_PROPINSTLID" type="decimal(19,2)" />
-			<column name="FUTURE_POS" type="decimal(19,2)" />
-			<column name="FUTURE_IOS" type="decimal(19,2)" />
+			<column name="BILLED_PROPINSTLID" type="decimal(18,2)" />
+			<column name="FUTURE_POS" type="decimal(18,2)" />
+			<column name="FUTURE_IOS" type="decimal(18,2)" />
 			<column name="MATURITY_DATE" type="DATETIME" />
-			<column name="INTEREST_PAID_L" type="decimal(19,2)" />
-			<column name="PRINCIPAL_PAID_L" type="decimal(19,2)" />
-			<column name="BILLED_EMI_L" type="decimal(19,2)" />
-			<column name="EMI_COLLECTED_L" type="decimal(19,2)" />
-			<column name="OVERDUE_EMI_AMT_L" type="decimal(19,2)" />
-			<column name="LPP_CHARGED" type="decimal(19,2)" />
-			<column name="LPP_OUTSTANDING" type="decimal(19,2)" />
-			<column name="TOTAL_OTH_CHRG" type="decimal(19,2)" />
-			<column name="TOTAL_OTH_CHRG_OS" type="decimal(19,2)" />
-			<column name="GR_CR_L" type="decimal(19,2)" />
-			<column name="GR_DR_L" type="decimal(19,2)" />
-			<column name="RE_CR_L" type="decimal(19,2)" />
-			<column name="RE_DR_L" type="decimal(19,2)" />
-			<column name="IS_CR_L" type="decimal(19,2)" />
-			<column name="IS_DR_L" type="decimal(19,2)" />
-			<column name="UI_CR_L" type="decimal(19,2)" />
-			<column name="UI_DR_L" type="decimal(19,2)" />
-			<column name="AI_CR_L" type="decimal(19,2)" />
-			<column name="AI_DR_L" type="decimal(19,2)" />
-			<column name="EX_CR_L" type="decimal(19,2)" />
-			<column name="EX_DR_L" type="decimal(19,2)" />
-			<column name="AIA_CR_L" type="decimal(19,2)" />
-			<column name="AIA_DR_L" type="decimal(19,2)" />
+			<column name="INTEREST_PAID_L" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_L" type="decimal(18,2)" />
+			<column name="BILLED_EMI_L" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED_L" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_AMT_L" type="decimal(18,2)" />
+			<column name="LPP_CHARGED" type="decimal(18,2)" />
+			<column name="LPP_OUTSTANDING" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG_OS" type="decimal(18,2)" />
+			<column name="GR_CR_L" type="decimal(18,2)" />
+			<column name="GR_DR_L" type="decimal(18,2)" />
+			<column name="RE_CR_L" type="decimal(18,2)" />
+			<column name="RE_DR_L" type="decimal(18,2)" />
+			<column name="IS_CR_L" type="decimal(18,2)" />
+			<column name="IS_DR_L" type="decimal(18,2)" />
+			<column name="UI_CR_L" type="decimal(18,2)" />
+			<column name="UI_DR_L" type="decimal(18,2)" />
+			<column name="AI_CR_L" type="decimal(18,2)" />
+			<column name="AI_DR_L" type="decimal(18,2)" />
+			<column name="EX_CR_L" type="decimal(18,2)" />
+			<column name="EX_DR_L" type="decimal(18,2)" />
+			<column name="AIA_CR_L" type="decimal(18,2)" />
+			<column name="AIA_DR_L" type="decimal(18,2)" />
 			<column name="LAST_PAYMENT_DT" type="DATETIME" />
 			<column name="CHQ_BOUNCE" type="bigint" />
-			<column name="GR_CR" type="decimal(19,2)" />
-			<column name="GR_DR" type="decimal(19,2)" />
-			<column name="RE_CR" type="decimal(19,2)" />
-			<column name="RE_DR" type="decimal(19,2)" />
-			<column name="IS_CR" type="decimal(19,2)" />
-			<column name="IS_DR" type="decimal(19,2)" />
-			<column name="UI_CR" type="decimal(19,2)" />
-			<column name="UI_DR" type="decimal(19,2)" />
-			<column name="AI_CR" type="decimal(19,2)" />
-			<column name="AI_DR" type="decimal(19,2)" />
-			<column name="AIA_CR" type="decimal(19,2)" />
-			<column name="AIA_DR" type="decimal(19,2)" />
-			<column name="EX_CR" type="decimal(19,2)" />
-			<column name="EX_DR" type="decimal(19,2)" />
-			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(19,2)" />
-			<column name="PREVIOUS_EMI_DUE" type="decimal(19,2)" />
-			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(19,2)" />
-			<column name="INTEREST_PAID" type="decimal(19,2)" />
-			<column name="PRINCIPAL_PAID" type="decimal(19,2)" />
-			<column name="BILLED_EMI" type="decimal(19,2)" />
-			<column name="EMI_COLLECTED" type="decimal(19,2)" />
+			<column name="GR_CR" type="decimal(18,2)" />
+			<column name="GR_DR" type="decimal(18,2)" />
+			<column name="RE_CR" type="decimal(18,2)" />
+			<column name="RE_DR" type="decimal(18,2)" />
+			<column name="IS_CR" type="decimal(18,2)" />
+			<column name="IS_DR" type="decimal(18,2)" />
+			<column name="UI_CR" type="decimal(18,2)" />
+			<column name="UI_DR" type="decimal(18,2)" />
+			<column name="AI_CR" type="decimal(18,2)" />
+			<column name="AI_DR" type="decimal(18,2)" />
+			<column name="AIA_CR" type="decimal(18,2)" />
+			<column name="AIA_DR" type="decimal(18,2)" />
+			<column name="EX_CR" type="decimal(18,2)" />
+			<column name="EX_DR" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(18,2)" />
+			<column name="PREVIOUS_EMI_DUE" type="decimal(18,2)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(18,2)" />
+			<column name="INTEREST_PAID" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID" type="decimal(18,2)" />
+			<column name="BILLED_EMI" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED" type="decimal(18,2)" />
 		</createTable>
 	</changeSet>
 
 
 
-<changeSet id="16" author="goutham.ch">
-<createTable tableName="RBIADFEXTRACTHIST1">
-<column name="RNUM"  type="bigint" />
-<column name="AGREEMENT_ID"                     type="VARCHAR(18)" />
-<column name="CUSTOMER_ID"                      type="VARCHAR(18)" />
-<column name="PRODUCT_CODE"                     type="VARCHAR(8)" />
-<column name="SCHEME_ID"                        type="bigint" />
-<column name="CREDIT_PROMO_SCHEME_ID"           type="VARCHAR(50)" />
-<column name="CREDIT_PROMO_SCHEME_DESC"         type="VARCHAR(50)" />
-<column name="APPLICATION_DATE"                 type="DATETIME" />
-<column name="APPROVAL_DATE"                    type="DATETIME" />
-<column name="INSTLMODE"                        type="VARCHAR(50)" />
-<column name="LOAN_AMT"                         type="decimal(13,2)" />
-<column name="NO_OF_INSTALLMENTS"               type="bigint" />
-<column name="DISBURSAL_DATE"                   type="DATETIME" />
-<column name="LOAN_START_DATE"                  type="DATETIME" />
-<column name="CLOSURE_DATE"                     type="DATETIME" />
-<column name="LOAN_BOARDING_DATE"               type="DATETIME" />
-<column name="APP_SERIAL_NO"                    type="bigint" />
-<column name="TENURE"                           type="bigint" />
-<column name="TOTAL_DISBURSED_AMT"              type="decimal(18,2)" />
-<column name="LOAN_AMT_REQ"                     type="decimal(18,2)" />
-<column name="LOAN_PURPOSE"                     type="VARCHAR(50)" />
-<column name="INSTALLMENT_TYPE"                 type="VARCHAR(50)" />
-<column name="INSTALLMENT_TYPE_DESC"            type="VARCHAR(50)" />
-<column name="FREQUENCY"                        type="VARCHAR(50)" />
-<column name="STS_CD"                           type="VARCHAR(50)" />
-<column name="LOAN_STATUS"                      type="VARCHAR(50)" />
-<column name="SECOND_SOURCE"                    type="VARCHAR(50)" />
-<column name="DPD"                              type="bigint" />
-<column name="NPA_STAGE_ID"                     type="VARCHAR(50)" />
-<column name="ASSET_CLASS_ID"                   type="VARCHAR(50)" />
-<column name="PSL_CATEGORY_ID"                  type="bigint" />
-<column name="PSL_CATEGORY_DESC"                type="VARCHAR(50)" />
-<column name="INTEREST_RATE"                    type="decimal(10,7)" />
-<column name="MARKUP"                           type="decimal(10,7)" />
-<column name="RATE_TYPE"                        type="VARCHAR(50)" />
-<column name="PLR_RATE"                         type="decimal(10,7)" />
-<column name="PLR_TYPE"                         type="VARCHAR(50)" />
-<column name="WEAKER_SECTION"                   type="VARCHAR(50)" />
-<column name="WEAKER_SECTION_DESC"              type="VARCHAR(50)" />
-<column name="BANK_RATE"                        type="decimal(10,7)" />
-<column name="BROKERID"                         type="bigint" />
-<column name="BRANCH_ID"                        type="bigint" />
-<column name="PSL_SUB_CATEGORY"                 type="bigint" />
-<column name="PSL_SUB_CAT_DESC"                 type="VARCHAR(50)" />
-<column name="SCHEME_DESC"                      type="int" />
-<column name="LPP_RATE"                         type="VARCHAR(50)" />
-<column name="PRODUCT_DESC"                     type="VARCHAR(50)" />
-<column name="PRODUCT_TYPE"                     type="VARCHAR(50)" />
-<column name="SECURITISED_FLAG"                 type="VARCHAR(1)" />
-<column name="RUNDATE"                          type="DATETIME" />
-<column name="UI_LMS_GL"                        type="bigint" />
-<column name="UI_OFS_GL"                        type="bigint" />
-<column name="GR_LMS_GL"                        type="bigint" />
-<column name="GR_OFS_GL"                        type="bigint" />
-<column name="RE_LMS_GL"                        type="bigint" />
-<column name="RE_OFS_GL"                        type="bigint" />
-<column name="EX_LMS_GL"                        type="bigint" />
-<column name="EX_OFS_GL"                        type="bigint" />
-<column name="AI_LMS_GL"                        type="bigint" />
-<column name="AI_OFS_GL"                        type="bigint" />
-<column name="IS_LMS_GL"                        type="bigint" />
-<column name="IS_OFS_GL"                        type="bigint" />
-<column name="AIA_LMS_GL"                       type="bigint" />
-<column name="AIA_OFS_GL"                       type="bigint" />
-<column name="LAND_VALUE"                       type="decimal(18,2)" />
-<column name="DSA_CODE"                         type="bigint" />
-<column name="DSA_DESC"                         type="VARCHAR(50)" />
-<column name="HUB_BRANCH_ID"                    type="bigint" />
-<column name="HUB_BRANCH_DESC"                  type="VARCHAR(50)" />
-<column name="ADDITIONAL_DISBURSAL_AMT_L"       type="decimal(18,2)" />
-<column name="ADDITIONAL_PARTPAID_AMT_L"        type="decimal(18,2)" />
-<column name="INTEREST_ACCRUED"                 type="decimal(13,5)" />
-<column name="SUB_INDUSTRY"                     type="bigint" />
-<column name="SUB_INDUSTRY_DESC"                type="VARCHAR(50)" />
-<column name="LAND_AREA"                        type="bigint" />
-<column name="LAND_UNIT_CD"                     type="VARCHAR(50)" />
-<column name="CME"                              type="VARCHAR(50)" />
-<column name="REAL_ESTATE"                      type="VARCHAR(50)" />
-<column name="PDC_AC_NO"                        type="bigint" />
-<column name="TOT_CLOSURE_AMT"                  type="decimal(19,2)" />
-<column name="TOT_CLOSURE_AMT_COL"              type="decimal(19,2)" />
-<column name="TOT_WAIVE_OFF"                    type="decimal(19,2)" />
-<column name="CLOSURE_AMT"                      type="decimal(19,2)" />
-<column name="CLOSURE_AMT_COL"                  type="decimal(19,2)" />
-<column name="WAIVE_OFF"                        type="decimal(19,2)" />
-<column name="PRINCIPAL_PAID_T"                 type="decimal(19,2)" />
-<column name="INTEREST_PAID_T"                  type="decimal(19,2)" />
-<column name="TERMIN_DATE"         type="DATETIME" />
-<column name="RESTRUCTURE_FLAG"                 type="VARCHAR(1)" />
-<column name="RESCHEDULE_FLAG"     type="VARCHAR(1)" />
-<column name="RESTRUCTURE_DATE"                 type="DATETIME" />
-<column name="RESTRUCTURE_TENURE"               type="bigint" />
-<column name="RESTRUCTURE_AMOUNT"               type="decimal(19,2)" />
-<column name="RESTRUCTURE_TYPE"                 type="VARCHAR(50)" />
-<column name="BRANCH_DESC"                      type="VARCHAR(50)" />
-<column name="B_CITY"                           type="VARCHAR(50)" />
-<column name="B_STATE"                          type="VARCHAR(50)" />
-<column name="B_PINCODE"                        type="bigint" />
-<column name="SALUTATION"                       type="VARCHAR(5)" />
-<column name="CUSTOMER_NAME"                    type="VARCHAR(50)" />
-<column name="CUSTOMER_TYPE"                    type="VARCHAR(50)" />
-<column name="GENDER"                           type="VARCHAR(50)" />
-<column name="MARITAL_STATUS_CD"                type="VARCHAR(5)" />
-<column name="RESIDENT_FLAG"                    type="VARCHAR(50)" />
-<column name="NATIONALITY_CODE"                 type="VARCHAR(50)" />
-<column name="PROFESSION"                       type="VARCHAR(50)" />
-<column name="NATURE_OF_BUSINESS"               type="VARCHAR(50)" />
-<column name="MB_AC_NO"                         type="bigint" />
-<column name="DEPENDENTS"                       type="bigint" />
-<column name="RELIGION"                         type="VARCHAR(50)" />
-<column name="GROUP_ID"                         type="bigint" />
-<column name="CUSTOMER_INDUSTRY"                type="bigint" />
-<column name="CUSTOMER_INDUSTRY_DESC"           type="VARCHAR(100)" />
-<column name="CASTE"                            type="VARCHAR(50)" />
-<column name="CASTE_DESC"                       type="VARCHAR(100)" />
-<column name="DOB"                              type="DATETIME" />
-<column name="DOI"                              type="DATETIME" />
-<column name="PAN"                              type="VARCHAR(50)" />
-<column name="VAT_AC_NO"                        type="bigint" />
-<column name="MONTHLY_INCOME"                   type="decimal(19,2)" />
-<column name="YEARLY_INCOME"                    type="decimal(19,2)" />
-<column name="ANNUAL_TURNOVER"                  type="decimal(19,2)" />
-<column name="CUST_RATING"                      type="VARCHAR(50)" />
-<column name="CURRENT_COMPANY"                  type="VARCHAR(200)" />
-<column name="EDUCATION_CODE"                   type="VARCHAR(50)" />
-<column name="DISABLED_FLAG"                    type="VARCHAR(50)" />
-<column name="GROUP_DESC"                       type="VARCHAR(50)" />
-<column name="CONSTITUTION"                     type="bigint" />
-<column name="CONSTITUTION_DESC"                type="VARCHAR(50)" />
-<column name="RESIDENT_SINCE"                   type="VARCHAR(50)" />
-<column name="M_ADDRESS1"                       type="VARCHAR(50)" />
-<column name="M_ADDRESS2"                       type="VARCHAR(50)" />
-<column name="M_ADDRESS3"                       type="VARCHAR(50)" />
-<column name="M_ADDRESS4"                       type="VARCHAR(50)" />
-<column name="M_LANDMARK"                       type="VARCHAR(50)" />
-<column name="M_PHONE1"                         type="VARCHAR(50)" />
-<column name="M_PHONE2"                         type="VARCHAR(50)" />
-<column name="M_MOBILE1"                        type="VARCHAR(50)" />
-<column name="M_MOBILE2"                        type="VARCHAR(50)" />
-<column name="M_EMAIL"                          type="VARCHAR(50)" />
-<column name="M_CITY"                           type="VARCHAR(50)" />
-<column name="M_STATE"                          type="VARCHAR(50)" />
-<column name="M_PINCODE"                        type="bigint" />
-<column name="M_DISTRICT"                       type="VARCHAR(50)" />
-<column name="M_COUNTRY"                        type="VARCHAR(50)" />
-<column name="POPULATION_CAT"                   type="bigint" />
-<column name="RELIGION_DESC"                    type="VARCHAR(50)" />
-<column name="CUST_RATING_DESC"                 type="VARCHAR(50)" />
-<column name="EDUCATION_DESC"                   type="VARCHAR(50)" />
-<column name="PROFESSION_DESC"                  type="VARCHAR(50)" />
-<column name="LAND_UNIT"                        type="VARCHAR(50)" />
-<column name="NATURE_OF_BUSINESS_DESC"          type="VARCHAR(50)" />
-<column name="MARITAL_STATUS"                   type="VARCHAR(50)" />
-<column name="OVERDUE_EMI_AMT"                  type="decimal(19,2)" />
-<column name="OVERDUE_EMI_CNT"                  type="decimal(19,2)" />
-<column name="OVERDUE_PRINCIPAL"                type="decimal(19,2)" />
-<column name="OVERDUE_INTEREST"                 type="decimal(19,2)" />
-<column name="TOTAL_POS"                        type="decimal(19,2)" />
-<column name="TOTAL_IOS"                        type="decimal(19,2)" />
-<column name="LAST_EMI_BILLED_ON"               type="DATETIME" />
-<column name="BILLED_PROPINSTLID"               type="decimal(19,2)" />
-<column name="FUTURE_POS"                       type="decimal(19,2)" />
-<column name="FUTURE_IOS"                       type="decimal(19,2)" />
-<column name="MATURITY_DATE"                    type="DATETIME" />
-<column name="INTEREST_PAID_L"                  type="decimal(19,2)" />
-<column name="PRINCIPAL_PAID_L"                 type="decimal(19,2)" />
-<column name="BILLED_EMI_L"                     type="decimal(19,2)" />
-<column name="EMI_COLLECTED_L"                  type="decimal(19,2)" />
-<column name="OVERDUE_EMI_AMT_L"                type="decimal(19,2)" />
-<column name="LPP_CHARGED"                      type="decimal(19,2)" />
-<column name="LPP_OUTSTANDING"                  type="decimal(19,2)" />
-<column name="TOTAL_OTH_CHRG"                   type="decimal(19,2)" />
-<column name="TOTAL_OTH_CHRG_OS"                type="decimal(19,2)" />
-<column name="GR_CR_L"                          type="decimal(19,2)" />
-<column name="GR_DR_L"                          type="decimal(19,2)" />
-<column name="RE_CR_L"                          type="decimal(19,2)" />
-<column name="RE_DR_L"                          type="decimal(19,2)" />
-<column name="IS_CR_L"                          type="decimal(19,2)" />
-<column name="IS_DR_L"                          type="decimal(19,2)" />
-<column name="UI_CR_L"                          type="decimal(19,2)" />
-<column name="UI_DR_L"                          type="decimal(19,2)" />
-<column name="AI_CR_L"                          type="decimal(19,2)" />
-<column name="AI_DR_L"                          type="decimal(19,2)" />
-<column name="EX_CR_L"                          type="decimal(19,2)" />
-<column name="EX_DR_L"                          type="decimal(19,2)" />
-<column name="AIA_CR_L"                         type="decimal(19,2)" />
-<column name="AIA_DR_L"                         type="decimal(19,2)" />
-<column name="LAST_PAYMENT_DT"                  type="DATETIME" />
-<column name="CHQ_BOUNCE"                       type="bigint" />
-<column name="GR_CR"                            type="decimal(19,2)" />
-<column name="GR_DR"                            type="decimal(19,2)" />
-<column name="RE_CR"                            type="decimal(19,2)" />
-<column name="RE_DR"                            type="decimal(19,2)" />
-<column name="IS_CR"                            type="decimal(19,2)" />
-<column name="IS_DR"                            type="decimal(19,2)" />
-<column name="UI_CR"                            type="decimal(19,2)" />
-<column name="UI_DR"                            type="decimal(19,2)" />
-<column name="AI_CR"                            type="decimal(19,2)" />
-<column name="AI_DR"                            type="decimal(19,2)" />
-<column name="AIA_CR"                           type="decimal(19,2)" />
-<column name="AIA_DR"                           type="decimal(19,2)" />
-<column name="EX_CR"                            type="decimal(19,2)" />
-<column name="EX_DR"                            type="decimal(19,2)" />
-<column name="ADDITIONAL_PARTPAID_AMT"          type="decimal(19,2)" />
-<column name="PREVIOUS_EMI_DUE"                 type="decimal(19,2)" />
-<column name="ADDITIONAL_DISBURSAL_AMT"         type="decimal(19,2)" />
-<column name="INTEREST_PAID"                    type="decimal(19,2)" />
-<column name="PRINCIPAL_PAID"                   type="decimal(19,2)" />
-<column name="BILLED_EMI"                       type="decimal(19,2)" />
-<column name="EMI_COLLECTED"                    type="decimal(19,2)" />
-</createTable>
-</changeSet>
-	
+	<changeSet id="16" author="goutham.ch">
+		<createTable tableName="RBIADFEXTRACTHIST1">
+			<column name="RNUM" type="bigint" />
+			<column name="AGREEMENT_ID" type="VARCHAR(18)" />
+			<column name="CUSTOMER_ID" type="VARCHAR(18)" />
+			<column name="PRODUCT_CODE" type="VARCHAR(8)" />
+			<column name="SCHEME_ID" type="bigint" />
+			<column name="CREDIT_PROMO_SCHEME_ID" type="VARCHAR(50)" />
+			<column name="CREDIT_PROMO_SCHEME_DESC" type="VARCHAR(50)" />
+			<column name="APPLICATION_DATE" type="DATETIME" />
+			<column name="APPROVAL_DATE" type="DATETIME" />
+			<column name="INSTLMODE" type="VARCHAR(50)" />
+			<column name="LOAN_AMT" type="decimal(13,2)" />
+			<column name="NO_OF_INSTALLMENTS" type="bigint" />
+			<column name="DISBURSAL_DATE" type="DATETIME" />
+			<column name="LOAN_START_DATE" type="DATETIME" />
+			<column name="CLOSURE_DATE" type="DATETIME" />
+			<column name="LOAN_BOARDING_DATE" type="DATETIME" />
+			<column name="APP_SERIAL_NO" type="bigint" />
+			<column name="TENURE" type="bigint" />
+			<column name="TOTAL_DISBURSED_AMT" type="decimal(18,2)" />
+			<column name="LOAN_AMT_REQ" type="decimal(18,2)" />
+			<column name="LOAN_PURPOSE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE" type="VARCHAR(50)" />
+			<column name="INSTALLMENT_TYPE_DESC" type="VARCHAR(50)" />
+			<column name="FREQUENCY" type="VARCHAR(50)" />
+			<column name="STS_CD" type="VARCHAR(50)" />
+			<column name="LOAN_STATUS" type="VARCHAR(50)" />
+			<column name="SECOND_SOURCE" type="VARCHAR(50)" />
+			<column name="DPD" type="bigint" />
+			<column name="NPA_STAGE_ID" type="VARCHAR(50)" />
+			<column name="ASSET_CLASS_ID" type="VARCHAR(50)" />
+			<column name="PSL_CATEGORY_ID" type="bigint" />
+			<column name="PSL_CATEGORY_DESC" type="VARCHAR(50)" />
+			<column name="INTEREST_RATE" type="decimal(10,7)" />
+			<column name="MARKUP" type="decimal(10,7)" />
+			<column name="RATE_TYPE" type="VARCHAR(50)" />
+			<column name="PLR_RATE" type="decimal(10,7)" />
+			<column name="PLR_TYPE" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION" type="VARCHAR(50)" />
+			<column name="WEAKER_SECTION_DESC" type="VARCHAR(50)" />
+			<column name="BANK_RATE" type="decimal(10,7)" />
+			<column name="BROKERID" type="bigint" />
+			<column name="BRANCH_ID" type="bigint" />
+			<column name="PSL_SUB_CATEGORY" type="bigint" />
+			<column name="PSL_SUB_CAT_DESC" type="VARCHAR(50)" />
+			<column name="SCHEME_DESC" type="int" />
+			<column name="LPP_RATE" type="VARCHAR(50)" />
+			<column name="PRODUCT_DESC" type="VARCHAR(50)" />
+			<column name="PRODUCT_TYPE" type="VARCHAR(50)" />
+			<column name="SECURITISED_FLAG" type="VARCHAR(1)" />
+			<column name="RUNDATE" type="DATETIME" />
+			<column name="UI_LMS_GL" type="bigint" />
+			<column name="UI_OFS_GL" type="bigint" />
+			<column name="GR_LMS_GL" type="bigint" />
+			<column name="GR_OFS_GL" type="bigint" />
+			<column name="RE_LMS_GL" type="bigint" />
+			<column name="RE_OFS_GL" type="bigint" />
+			<column name="EX_LMS_GL" type="bigint" />
+			<column name="EX_OFS_GL" type="bigint" />
+			<column name="AI_LMS_GL" type="bigint" />
+			<column name="AI_OFS_GL" type="bigint" />
+			<column name="IS_LMS_GL" type="bigint" />
+			<column name="IS_OFS_GL" type="bigint" />
+			<column name="AIA_LMS_GL" type="bigint" />
+			<column name="AIA_OFS_GL" type="bigint" />
+			<column name="LAND_VALUE" type="decimal(18,2)" />
+			<column name="DSA_CODE" type="bigint" />
+			<column name="DSA_DESC" type="VARCHAR(50)" />
+			<column name="HUB_BRANCH_ID" type="bigint" />
+			<column name="HUB_BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT_L" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT_L" type="decimal(18,2)" />
+			<column name="INTEREST_ACCRUED" type="decimal(13,5)" />
+			<column name="SUB_INDUSTRY" type="bigint" />
+			<column name="SUB_INDUSTRY_DESC" type="VARCHAR(50)" />
+			<column name="LAND_AREA" type="bigint" />
+			<column name="LAND_UNIT_CD" type="VARCHAR(50)" />
+			<column name="CME" type="VARCHAR(50)" />
+			<column name="REAL_ESTATE" type="VARCHAR(50)" />
+			<column name="PDC_AC_NO" type="bigint" />
+			<column name="TOT_CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="TOT_CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="TOT_WAIVE_OFF" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT" type="decimal(18,2)" />
+			<column name="CLOSURE_AMT_COL" type="decimal(18,2)" />
+			<column name="WAIVE_OFF" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_T" type="decimal(18,2)" />
+			<column name="INTEREST_PAID_T" type="decimal(18,2)" />
+			<column name="TERMIN_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_FLAG" type="VARCHAR(1)" />
+			<column name="RESCHEDULE_FLAG" type="VARCHAR(1)" />
+			<column name="RESTRUCTURE_DATE" type="DATETIME" />
+			<column name="RESTRUCTURE_TENURE" type="bigint" />
+			<column name="RESTRUCTURE_AMOUNT" type="decimal(18,2)" />
+			<column name="RESTRUCTURE_TYPE" type="VARCHAR(50)" />
+			<column name="BRANCH_DESC" type="VARCHAR(50)" />
+			<column name="B_CITY" type="VARCHAR(50)" />
+			<column name="B_STATE" type="VARCHAR(50)" />
+			<column name="B_PINCODE" type="bigint" />
+			<column name="SALUTATION" type="VARCHAR(5)" />
+			<column name="CUSTOMER_NAME" type="VARCHAR(50)" />
+			<column name="CUSTOMER_TYPE" type="VARCHAR(50)" />
+			<column name="GENDER" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS_CD" type="VARCHAR(5)" />
+			<column name="RESIDENT_FLAG" type="VARCHAR(50)" />
+			<column name="NATIONALITY_CODE" type="VARCHAR(50)" />
+			<column name="PROFESSION" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS" type="VARCHAR(50)" />
+			<column name="MB_AC_NO" type="bigint" />
+			<column name="DEPENDENTS" type="bigint" />
+			<column name="RELIGION" type="VARCHAR(50)" />
+			<column name="GROUP_ID" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY" type="bigint" />
+			<column name="CUSTOMER_INDUSTRY_DESC" type="VARCHAR(100)" />
+			<column name="CASTE" type="VARCHAR(50)" />
+			<column name="CASTE_DESC" type="VARCHAR(100)" />
+			<column name="DOB" type="DATETIME" />
+			<column name="DOI" type="DATETIME" />
+			<column name="PAN" type="VARCHAR(50)" />
+			<column name="VAT_AC_NO" type="bigint" />
+			<column name="MONTHLY_INCOME" type="decimal(18,2)" />
+			<column name="YEARLY_INCOME" type="decimal(18,2)" />
+			<column name="ANNUAL_TURNOVER" type="decimal(18,2)" />
+			<column name="CUST_RATING" type="VARCHAR(50)" />
+			<column name="CURRENT_COMPANY" type="VARCHAR(200)" />
+			<column name="EDUCATION_CODE" type="VARCHAR(50)" />
+			<column name="DISABLED_FLAG" type="VARCHAR(50)" />
+			<column name="GROUP_DESC" type="VARCHAR(50)" />
+			<column name="CONSTITUTION" type="bigint" />
+			<column name="CONSTITUTION_DESC" type="VARCHAR(50)" />
+			<column name="RESIDENT_SINCE" type="VARCHAR(50)" />
+			<column name="M_ADDRESS1" type="VARCHAR(50)" />
+			<column name="M_ADDRESS2" type="VARCHAR(50)" />
+			<column name="M_ADDRESS3" type="VARCHAR(50)" />
+			<column name="M_ADDRESS4" type="VARCHAR(50)" />
+			<column name="M_LANDMARK" type="VARCHAR(50)" />
+			<column name="M_PHONE1" type="VARCHAR(50)" />
+			<column name="M_PHONE2" type="VARCHAR(50)" />
+			<column name="M_MOBILE1" type="VARCHAR(50)" />
+			<column name="M_MOBILE2" type="VARCHAR(50)" />
+			<column name="M_EMAIL" type="VARCHAR(50)" />
+			<column name="M_CITY" type="VARCHAR(50)" />
+			<column name="M_STATE" type="VARCHAR(50)" />
+			<column name="M_PINCODE" type="bigint" />
+			<column name="M_DISTRICT" type="VARCHAR(50)" />
+			<column name="M_COUNTRY" type="VARCHAR(50)" />
+			<column name="POPULATION_CAT" type="bigint" />
+			<column name="RELIGION_DESC" type="VARCHAR(50)" />
+			<column name="CUST_RATING_DESC" type="VARCHAR(50)" />
+			<column name="EDUCATION_DESC" type="VARCHAR(50)" />
+			<column name="PROFESSION_DESC" type="VARCHAR(50)" />
+			<column name="LAND_UNIT" type="VARCHAR(50)" />
+			<column name="NATURE_OF_BUSINESS_DESC" type="VARCHAR(50)" />
+			<column name="MARITAL_STATUS" type="VARCHAR(50)" />
+			<column name="OVERDUE_EMI_AMT" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_CNT" type="decimal(18,2)" />
+			<column name="OVERDUE_PRINCIPAL" type="decimal(18,2)" />
+			<column name="OVERDUE_INTEREST" type="decimal(18,2)" />
+			<column name="TOTAL_POS" type="decimal(18,2)" />
+			<column name="TOTAL_IOS" type="decimal(18,2)" />
+			<column name="LAST_EMI_BILLED_ON" type="DATETIME" />
+			<column name="BILLED_PROPINSTLID" type="decimal(18,2)" />
+			<column name="FUTURE_POS" type="decimal(18,2)" />
+			<column name="FUTURE_IOS" type="decimal(18,2)" />
+			<column name="MATURITY_DATE" type="DATETIME" />
+			<column name="INTEREST_PAID_L" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID_L" type="decimal(18,2)" />
+			<column name="BILLED_EMI_L" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED_L" type="decimal(18,2)" />
+			<column name="OVERDUE_EMI_AMT_L" type="decimal(18,2)" />
+			<column name="LPP_CHARGED" type="decimal(18,2)" />
+			<column name="LPP_OUTSTANDING" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG" type="decimal(18,2)" />
+			<column name="TOTAL_OTH_CHRG_OS" type="decimal(18,2)" />
+			<column name="GR_CR_L" type="decimal(18,2)" />
+			<column name="GR_DR_L" type="decimal(18,2)" />
+			<column name="RE_CR_L" type="decimal(18,2)" />
+			<column name="RE_DR_L" type="decimal(18,2)" />
+			<column name="IS_CR_L" type="decimal(18,2)" />
+			<column name="IS_DR_L" type="decimal(18,2)" />
+			<column name="UI_CR_L" type="decimal(18,2)" />
+			<column name="UI_DR_L" type="decimal(18,2)" />
+			<column name="AI_CR_L" type="decimal(18,2)" />
+			<column name="AI_DR_L" type="decimal(18,2)" />
+			<column name="EX_CR_L" type="decimal(18,2)" />
+			<column name="EX_DR_L" type="decimal(18,2)" />
+			<column name="AIA_CR_L" type="decimal(18,2)" />
+			<column name="AIA_DR_L" type="decimal(18,2)" />
+			<column name="LAST_PAYMENT_DT" type="DATETIME" />
+			<column name="CHQ_BOUNCE" type="bigint" />
+			<column name="GR_CR" type="decimal(18,2)" />
+			<column name="GR_DR" type="decimal(18,2)" />
+			<column name="RE_CR" type="decimal(18,2)" />
+			<column name="RE_DR" type="decimal(18,2)" />
+			<column name="IS_CR" type="decimal(18,2)" />
+			<column name="IS_DR" type="decimal(18,2)" />
+			<column name="UI_CR" type="decimal(18,2)" />
+			<column name="UI_DR" type="decimal(18,2)" />
+			<column name="AI_CR" type="decimal(18,2)" />
+			<column name="AI_DR" type="decimal(18,2)" />
+			<column name="AIA_CR" type="decimal(18,2)" />
+			<column name="AIA_DR" type="decimal(18,2)" />
+			<column name="EX_CR" type="decimal(18,2)" />
+			<column name="EX_DR" type="decimal(18,2)" />
+			<column name="ADDITIONAL_PARTPAID_AMT" type="decimal(18,2)" />
+			<column name="PREVIOUS_EMI_DUE" type="decimal(18,2)" />
+			<column name="ADDITIONAL_DISBURSAL_AMT" type="decimal(18,2)" />
+			<column name="INTEREST_PAID" type="decimal(18,2)" />
+			<column name="PRINCIPAL_PAID" type="decimal(18,2)" />
+			<column name="BILLED_EMI" type="decimal(18,2)" />
+			<column name="EMI_COLLECTED" type="decimal(18,2)" />
+		</createTable>
+	</changeSet>
+
 	<changeSet id="17" author="SREERAM.R" dbms="oracle">
-	<createProcedure>
-		create or replace PROCEDURE SP_RBIADFEXTRACT AS
-		BEGIN
-		EXECUTE IMMEDIATE 'TRUNCATE TABLE
-		RBIADFEXTRACTHIST1';
-		EXECUTE IMMEDIATE 'INSERT INTO RBIADFEXTRACTHIST1
-		SELECT * FROM RBIADFEXTRACTHIST';
-		EXECUTE
-		IMMEDIATE 'TRUNCATE TABLE RBIADFEXTRACTHIST';
-		EXECUTE IMMEDIATE 'INSERT INTO RBIADFEXTRACTHIST
-		SELECT * FROM
-		RBIADFEXTRACT';
-		EXECUTE IMMEDIATE 'TRUNCATE TABLE RBIADFEXTRACT';
-		INSERT INTO
-		RBIADFEXTRACT(RNUM,AGREEMENT_ID,CUSTOMER_ID,PRODUCT_CODE,SCHEME_ID,
-		CREDIT_PROMO_SCHEME_ID,CREDIT_PROMO_SCHEME_DESC,APPLICATION_DATE,APPROVAL_DATE,INSTLMODE,
-		LOAN_AMT,NO_OF_INSTALLMENTS,DISBURSAL_DATE,LOAN_START_DATE,CLOSURE_DATE,LOAN_BOARDING_DATE,
-		APP_SERIAL_NO,TENURE,TOTAL_DISBURSED_AMT,LOAN_AMT_REQ,LOAN_PURPOSE,INSTALLMENT_TYPE,
-		INSTALLMENT_TYPE_DESC,FREQUENCY,STS_CD,LOAN_STATUS,SECOND_SOURCE,DPD,NPA_STAGE_ID,ASSET_CLASS_ID,
-		PSL_CATEGORY_ID,PSL_CATEGORY_DESC,INTEREST_RATE,MARKUP,RATE_TYPE,PLR_RATE,PLR_TYPE,WEAKER_SECTION,
-		WEAKER_SECTION_DESC,BANK_RATE,BROKERID,BRANCH_ID,PSL_SUB_CATEGORY,PSL_SUB_CAT_DESC,SCHEME_DESC,
-		LPP_RATE,PRODUCT_DESC,PRODUCT_TYPE,SECURITISED_FLAG,RUNDATE,UI_LMS_GL,UI_OFS_GL,GR_LMS_GL,
-		GR_OFS_GL,RE_LMS_GL,RE_OFS_GL,EX_LMS_GL,EX_OFS_GL,AI_LMS_GL,AI_OFS_GL,IS_LMS_GL,IS_OFS_GL,
-		AIA_LMS_GL,AIA_OFS_GL,LAND_VALUE,DSA_CODE,DSA_DESC,HUB_BRANCH_ID,HUB_BRANCH_DESC,
-		ADDITIONAL_DISBURSAL_AMT_L,ADDITIONAL_PARTPAID_AMT_L,INTEREST_ACCRUED,SUB_INDUSTRY,
-		SUB_INDUSTRY_DESC,LAND_AREA,LAND_UNIT_CD,CME,REAL_ESTATE,PDC_AC_NO,TOT_CLOSURE_AMT,
-		TOT_CLOSURE_AMT_COL,TOT_WAIVE_OFF,CLOSURE_AMT,CLOSURE_AMT_COL,WAIVE_OFF,PRINCIPAL_PAID_T,
-		INTEREST_PAID_T,TERMIN_DATE,RESTRUCTURE_FLAG,RESCHEDULE_FLAG,RESTRUCTURE_DATE,RESTRUCTURE_TENURE,
-		RESTRUCTURE_AMOUNT,RESTRUCTURE_TYPE,BRANCH_DESC,B_CITY,B_STATE,B_PINCODE,SALUTATION,CUSTOMER_NAME,
-		CUSTOMER_TYPE,GENDER,MARITAL_STATUS_CD,RESIDENT_FLAG,NATIONALITY_CODE,PROFESSION,NATURE_OF_BUSINESS,
-		MB_AC_NO,DEPENDENTS,RELIGION,GROUP_ID,CUSTOMER_INDUSTRY,CUSTOMER_INDUSTRY_DESC,CASTE,CASTE_DESC,
-		DOB,DOI,PAN,VAT_AC_NO,MONTHLY_INCOME,YEARLY_INCOME,ANNUAL_TURNOVER,CUST_RATING,CURRENT_COMPANY,
-		EDUCATION_CODE,DISABLED_FLAG,GROUP_DESC,CONSTITUTION,CONSTITUTION_DESC,RESIDENT_SINCE,M_ADDRESS1,
-		M_ADDRESS2,M_ADDRESS3,M_ADDRESS4,M_LANDMARK,M_PHONE1,M_PHONE2,M_MOBILE1,M_MOBILE2,M_EMAIL,M_CITY,
-		M_STATE,M_PINCODE,M_DISTRICT,M_COUNTRY,POPULATION_CAT,RELIGION_DESC,CUST_RATING_DESC,EDUCATION_DESC,
-		PROFESSION_DESC,LAND_UNIT,NATURE_OF_BUSINESS_DESC,MARITAL_STATUS,OVERDUE_EMI_AMT,OVERDUE_EMI_CNT,
-		OVERDUE_PRINCIPAL,OVERDUE_INTEREST,TOTAL_POS,TOTAL_IOS,LAST_EMI_BILLED_ON,BILLED_PROPINSTLID,
-		FUTURE_POS,FUTURE_IOS,MATURITY_DATE,INTEREST_PAID_L,PRINCIPAL_PAID_L,BILLED_EMI_L,EMI_COLLECTED_L,
-		OVERDUE_EMI_AMT_L,LPP_CHARGED,LPP_OUTSTANDING,TOTAL_OTH_CHRG,TOTAL_OTH_CHRG_OS,GR_CR_L,GR_DR_L,
-		RE_CR_L,RE_DR_L,IS_CR_L,IS_DR_L,UI_CR_L,UI_DR_L,AI_CR_L,AI_DR_L,EX_CR_L,EX_DR_L,AIA_CR_L,AIA_DR_L,
-		LAST_PAYMENT_DT,CHQ_BOUNCE,GR_CR,GR_DR,RE_CR,RE_DR,IS_CR,IS_DR,UI_CR,UI_DR,AI_CR,AI_DR,AIA_CR,
-		AIA_DR,EX_CR,EX_DR,ADDITIONAL_PARTPAID_AMT,PREVIOUS_EMI_DUE,ADDITIONAL_DISBURSAL_AMT,INTEREST_PAID,
-		PRINCIPAL_PAID,BILLED_EMI,EMI_COLLECTED)
-		select SEQ_RBIADF.NEXTVAL RNUM,FPD.FINREFERENCE AGREEMENT_ID,FPD.CUSTCIF
-		CUSTOMER_ID,
-		FPD.FINTYPE PRODUCT_CODE,FM.PROMOTIONCODE SCHEME_ID,0,'',FM.INITIATEDATE APPLICATION_DATE,
-		FM.APPROVEDON
-		APPROVAL_DATE,'',FM.FINCURRASSETVALUE LOAN_AMT,FM.NUMBEROFTERMS NO_OF_INSTALLMENTS,
-		FM.FINSTARTDATE
-		DISBURSAL_DATE,NULL,FM.CLOSEDDATE CLOSURE_DATE,FM.FINAPPROVEDDATE LOAN_BOARDING_DATE,
-		FM.APPLICATIONNO
-		APP_SERIAL_NO,0,FAD.AMTTOBERELEASED TOTAL_DISBURSED_AMT,0,'','','','','','','',
-		FPD.CURODDAYS DPD,(SELECT NPASTAGE FROM
-		NPA_LOAN_INFO WHERE FINREFERENCE=FPD.FINREFERENCE) NPA_STAGE_ID,
-		(SELECT NPACLASSID FROM NPA_LOAN_INFO WHERE
-		FINREFERENCE=FPD.FINREFERENCE) ASSET_CLASS_ID,0,'',
-		FM.REPAYPROFITRATE INTEREST_RATE,FM.REPAYMARGIN
-		MARKUP,FM.REPAYBASERATE RATE_TYPE,0,FM.REPAYBASERATE PLR_TYPE,
-		'','',FM.REPAYPROFITRATE BANK_RATE,0,FM.FINBRANCH
-		BRANCH_ID,0,'','',(SELECT ODMAXWAIVERPERC FROM FINODPENALTYRATES WHERE
-		FINREFERENCE=FPD.FINREFERENCE)
-		LPP_RATE,'','','',(SELECT (TO_DATE(SYSPARMVALUE,'YYYY-MM-DD')) FROM SMTPARAMETERS WHERE SYSPARMCODE='APP_DATE')
-		RUNDATE,
-		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,FM.DSACODE DSA_CODE,FM.DSACODE DSA_DESC,(SELECT BRANCHSWIFTBANKCDE FROM
-		RMTBRANCHES
-		WHERE BRANCHCODE=FM.FINBRANCH) HUB_BRANCH_ID,(SELECT BRANCHDESC FROM RMTBRANCHES WHERE
-		BRANCHCODE=FM.FINBRANCH) HUB_BRANCH_DESC,(FM.FINCURRASSETVALUE - FM.FINAMOUNT)
-		ADDITIONAL_DISBURSAL_AMT_L,(SELECT
-		SUM(PARTIALPAIDAMT) FROM FINSCHEDULEDETAILS WHERE FINREFERENCE=FPD.FINREFERENCE)
-		ADDITIONAL_PARTPAID_AMT_L,FPD.AMZTILLLBD INTEREST_ACCRUED,0,'',0,'','','',0,0,0,0,0,0,0,0,0,NULL,CASE WHEN ((SELECT
-		COUNT(*) FROM RESTRUCTURE_DETAILS WHERE FINREFERENCE=FPD.FINREFERENCE)>0) THEN 'Y' ELSE 'N' END
-		RESTRUCTURE_FLAG,'',(SELECT RESTRUCTUREDATE FROM RESTRUCTURE_DETAILS WHERE FINREFERENCE = FPD.FINREFERENCE)
-		RESTRUCTURE_DATE,0,0,'',(SELECT
-		BRANCHDESC FROM RMTBRANCHES WHERE BRANCHCODE=FM.FINBRANCH) BRANCH_DESC,(SELECT
-		BRANCHCITY FROM RMTBRANCHES WHERE BRANCHCODE=FM.FINBRANCH) B_CITY,(SELECT BRANCHPROVINCE FROM RMTBRANCHES WHERE
-		BRANCHCODE=FM.FINBRANCH) B_STATE,(SELECT PINCODEID FROM RMTBRANCHES WHERE BRANCHCODE=FM.FINBRANCH)
-		B_PINCODE,CUST.CUSTSALUTATIONCODE
-		SALUTATION,CUST.CUSTSHRTNAME CUSTOMER_NAME,CUST.CUSTCTGCODE
-		CUSTOMER_TYPE,CUST.CUSTGENDERCODE GENDER,CUST.CUSTMARITALSTS MARITAL_STATUS_CD,'',CUST.CUSTNATIONALITY
-		NATIONALITY_CODE,CUST.CUSTPROFESSION
-		PROFESSION,CUST.NATUREOFBUSINESS NATURE_OF_BUSINESS,0,CUST.NOOFDEPENDENTS
-		DEPENDENTS,CUST.RELIGIONID RELIGION,0,CUST.CUSTINDUSTRY CUSTOMER_INDUSTRY,CUST.CUSTINDUSTRY
-		CUSTOMER_INDUSTRY,CUST.CASTEID CASTE,CUST.CASTEID CASTE_DESC,CUST.CUSTDOB DOB,CUST.CUSTDOB
-		DOI,'',0,0,0,0,'','','','','',0,'','','','','','','','','','','','','','',0,'','',0,CUST.RELIGIONID
-		RELIGION_DESC,'','','','',CUST.NATUREOFBUSINESS NATURE_OF_BUSINESS_DESC,CUST.CUSTMARITALSTS MARITAL_STATUS,
-		(FPD.ODPROFIT + FPD.ODPRINCIPAL) OVERDUE_EMI_AMT,0 OVERDUE_EMI_CNT,FPD.ODPRINCIPAL OVERDUE_PRINCIPAL,FPD.ODPROFIT
-		OVERDUE_INTEREST,FPD.TOTALPRIBAL TOTAL_POS,FPD.TOTALPFTBAL TOTAL_IOS,FPD.LATESTRPYDATE
-		LAST_EMI_BILLED_ON,0,(FPD.TOTALPRIBAL-FPD.ODPRINCIPAL) FUTURE_POS,(FPD.TOTALPFTBAL - FPD.ODPROFIT)
-		FUTURE_IOS,FM.MATURITYDATE MATURITY_DATE,FPD.TOTALPFTPAID INTEREST_PAID_L,FPD.TOTALPRIPAID
-		PRINCIPAL_PAID_L,0,(FPD.TOTALPRIPAID+FPD.TOTALPFTPAID) EMI_COLLECTED_L,(FPD.ODPROFIT + FPD.ODPRINCIPAL)
-		OVERDUE_EMI_AMT_L,FPD.PENALTYPAID LPP_CHARGED,FPD.PENALTYDUE
-		LPP_OUTSTANDING,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,NULL,(SELECT COUNT(*) FROM MANUALADVISE WHERE BOUNCEID >0 AND
-		FINREFERENCE =
-		FPD.FINREFERENCE) CHQ_BOUNCE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		FROM FINANCEMAIN FM
-		INNER JOIN
-		FINPFTDETAILS FPD ON FPD.FINREFERENCE=FM.FINREFERENCE
-		INNER JOIN FINADVANCEPAYMENTS FAD ON
-		FAD.FINREFERENCE=FM.FINREFERENCE
-		INNER JOIN RESTRUCTURE_DETAILS RSD ON RSD.FINREFERENCE=FM.FINREFERENCE
-		INNER JOIN
-		CUSTOMERS CUST ON CUST.CUSTID=FM.CUSTID;
-		COMMIT;
-		END SP_RBIADFEXTRACT;
-	</createProcedure>
-</changeSet>
-	
+		<createProcedure>
+			create or replace PROCEDURE SP_RBIADFEXTRACT AS
+			BEGIN
+			EXECUTE IMMEDIATE 'TRUNCATE TABLE
+			RBIADFEXTRACTHIST1';
+			EXECUTE IMMEDIATE 'INSERT INTO RBIADFEXTRACTHIST1
+			SELECT * FROM RBIADFEXTRACTHIST';
+			EXECUTE
+			IMMEDIATE 'TRUNCATE TABLE RBIADFEXTRACTHIST';
+			EXECUTE IMMEDIATE 'INSERT INTO RBIADFEXTRACTHIST
+			SELECT * FROM
+			RBIADFEXTRACT';
+			EXECUTE IMMEDIATE 'TRUNCATE TABLE RBIADFEXTRACT';
+			INSERT INTO
+			RBIADFEXTRACT(RNUM,AGREEMENT_ID,CUSTOMER_ID,PRODUCT_CODE,SCHEME_ID,
+			CREDIT_PROMO_SCHEME_ID,CREDIT_PROMO_SCHEME_DESC,APPLICATION_DATE,APPROVAL_DATE,INSTLMODE,
+			LOAN_AMT,NO_OF_INSTALLMENTS,DISBURSAL_DATE,LOAN_START_DATE,CLOSURE_DATE,LOAN_BOARDING_DATE,
+			APP_SERIAL_NO,TENURE,TOTAL_DISBURSED_AMT,LOAN_AMT_REQ,LOAN_PURPOSE,INSTALLMENT_TYPE,
+			INSTALLMENT_TYPE_DESC,FREQUENCY,STS_CD,LOAN_STATUS,SECOND_SOURCE,DPD,NPA_STAGE_ID,ASSET_CLASS_ID,
+			PSL_CATEGORY_ID,PSL_CATEGORY_DESC,INTEREST_RATE,MARKUP,RATE_TYPE,PLR_RATE,PLR_TYPE,WEAKER_SECTION,
+			WEAKER_SECTION_DESC,BANK_RATE,BROKERID,BRANCH_ID,PSL_SUB_CATEGORY,PSL_SUB_CAT_DESC,SCHEME_DESC,
+			LPP_RATE,PRODUCT_DESC,PRODUCT_TYPE,SECURITISED_FLAG,RUNDATE,UI_LMS_GL,UI_OFS_GL,GR_LMS_GL,
+			GR_OFS_GL,RE_LMS_GL,RE_OFS_GL,EX_LMS_GL,EX_OFS_GL,AI_LMS_GL,AI_OFS_GL,IS_LMS_GL,IS_OFS_GL,
+			AIA_LMS_GL,AIA_OFS_GL,LAND_VALUE,DSA_CODE,DSA_DESC,HUB_BRANCH_ID,HUB_BRANCH_DESC,
+			ADDITIONAL_DISBURSAL_AMT_L,ADDITIONAL_PARTPAID_AMT_L,INTEREST_ACCRUED,SUB_INDUSTRY,
+			SUB_INDUSTRY_DESC,LAND_AREA,LAND_UNIT_CD,CME,REAL_ESTATE,PDC_AC_NO,TOT_CLOSURE_AMT,
+			TOT_CLOSURE_AMT_COL,TOT_WAIVE_OFF,CLOSURE_AMT,CLOSURE_AMT_COL,WAIVE_OFF,PRINCIPAL_PAID_T,
+			INTEREST_PAID_T,TERMIN_DATE,RESTRUCTURE_FLAG,RESCHEDULE_FLAG,RESTRUCTURE_DATE,RESTRUCTURE_TENURE,
+			RESTRUCTURE_AMOUNT,RESTRUCTURE_TYPE,BRANCH_DESC,B_CITY,B_STATE,B_PINCODE,SALUTATION,CUSTOMER_NAME,
+			CUSTOMER_TYPE,GENDER,MARITAL_STATUS_CD,RESIDENT_FLAG,NATIONALITY_CODE,PROFESSION,NATURE_OF_BUSINESS,
+			MB_AC_NO,DEPENDENTS,RELIGION,GROUP_ID,CUSTOMER_INDUSTRY,CUSTOMER_INDUSTRY_DESC,CASTE,CASTE_DESC,
+			DOB,DOI,PAN,VAT_AC_NO,MONTHLY_INCOME,YEARLY_INCOME,ANNUAL_TURNOVER,CUST_RATING,CURRENT_COMPANY,
+			EDUCATION_CODE,DISABLED_FLAG,GROUP_DESC,CONSTITUTION,CONSTITUTION_DESC,RESIDENT_SINCE,M_ADDRESS1,
+			M_ADDRESS2,M_ADDRESS3,M_ADDRESS4,M_LANDMARK,M_PHONE1,M_PHONE2,M_MOBILE1,M_MOBILE2,M_EMAIL,M_CITY,
+			M_STATE,M_PINCODE,M_DISTRICT,M_COUNTRY,POPULATION_CAT,RELIGION_DESC,CUST_RATING_DESC,EDUCATION_DESC,
+			PROFESSION_DESC,LAND_UNIT,NATURE_OF_BUSINESS_DESC,MARITAL_STATUS,OVERDUE_EMI_AMT,OVERDUE_EMI_CNT,
+			OVERDUE_PRINCIPAL,OVERDUE_INTEREST,TOTAL_POS,TOTAL_IOS,LAST_EMI_BILLED_ON,BILLED_PROPINSTLID,
+			FUTURE_POS,FUTURE_IOS,MATURITY_DATE,INTEREST_PAID_L,PRINCIPAL_PAID_L,BILLED_EMI_L,EMI_COLLECTED_L,
+			OVERDUE_EMI_AMT_L,LPP_CHARGED,LPP_OUTSTANDING,TOTAL_OTH_CHRG,TOTAL_OTH_CHRG_OS,GR_CR_L,GR_DR_L,
+			RE_CR_L,RE_DR_L,IS_CR_L,IS_DR_L,UI_CR_L,UI_DR_L,AI_CR_L,AI_DR_L,EX_CR_L,EX_DR_L,AIA_CR_L,AIA_DR_L,
+			LAST_PAYMENT_DT,CHQ_BOUNCE,GR_CR,GR_DR,RE_CR,RE_DR,IS_CR,IS_DR,UI_CR,UI_DR,AI_CR,AI_DR,AIA_CR,
+			AIA_DR,EX_CR,EX_DR,ADDITIONAL_PARTPAID_AMT,PREVIOUS_EMI_DUE,ADDITIONAL_DISBURSAL_AMT,INTEREST_PAID,
+			PRINCIPAL_PAID,BILLED_EMI,EMI_COLLECTED)
+			select SEQ_RBIADF.NEXTVAL RNUM,FPD.FINREFERENCE AGREEMENT_ID,FPD.CUSTCIF
+			CUSTOMER_ID,
+			FPD.FINTYPE PRODUCT_CODE,FM.PROMOTIONCODE SCHEME_ID,0,'',FM.INITIATEDATE APPLICATION_DATE,
+			FM.APPROVEDON
+			APPROVAL_DATE,'',FM.FINCURRASSETVALUE LOAN_AMT,FM.NUMBEROFTERMS NO_OF_INSTALLMENTS,
+			FM.FINSTARTDATE
+			DISBURSAL_DATE,NULL,FM.CLOSEDDATE CLOSURE_DATE,FM.FINAPPROVEDDATE LOAN_BOARDING_DATE,
+			FM.APPLICATIONNO
+			APP_SERIAL_NO,0,FAD.AMTTOBERELEASED TOTAL_DISBURSED_AMT,0,'','','','','','','',
+			FPD.CURODDAYS DPD,(SELECT NPASTAGE
+			FROM
+			NPA_LOAN_INFO WHERE FINREFERENCE=FPD.FINREFERENCE) NPA_STAGE_ID,
+			(SELECT NPACLASSID FROM NPA_LOAN_INFO WHERE
+			FINREFERENCE=FPD.FINREFERENCE) ASSET_CLASS_ID,0,'',
+			FM.REPAYPROFITRATE INTEREST_RATE,FM.REPAYMARGIN
+			MARKUP,FM.REPAYBASERATE RATE_TYPE,0,FM.REPAYBASERATE PLR_TYPE,
+			'','',FM.REPAYPROFITRATE BANK_RATE,0,FM.FINBRANCH
+			BRANCH_ID,0,'','',(SELECT ODMAXWAIVERPERC FROM FINODPENALTYRATES WHERE
+			FINREFERENCE=FPD.FINREFERENCE)
+			LPP_RATE,'','','',(SELECT (TO_DATE(SYSPARMVALUE,'YYYY-MM-DD')) FROM SMTPARAMETERS WHERE SYSPARMCODE='APP_DATE')
+			RUNDATE,
+			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,FM.DSACODE DSA_CODE,FM.DSACODE DSA_DESC,(SELECT BRANCHSWIFTBANKCDE FROM
+			RMTBRANCHES
+			WHERE BRANCHCODE=FM.FINBRANCH) HUB_BRANCH_ID,(SELECT BRANCHDESC FROM RMTBRANCHES WHERE
+			BRANCHCODE=FM.FINBRANCH) HUB_BRANCH_DESC,(FM.FINCURRASSETVALUE - FM.FINAMOUNT)
+			ADDITIONAL_DISBURSAL_AMT_L,(SELECT
+			SUM(PARTIALPAIDAMT) FROM FINSCHEDULEDETAILS WHERE FINREFERENCE=FPD.FINREFERENCE)
+			ADDITIONAL_PARTPAID_AMT_L,FPD.AMZTILLLBD INTEREST_ACCRUED,0,'',0,'','','',0,0,0,0,0,0,0,0,0,NULL,CASE WHEN ((SELECT
+			COUNT(*) FROM RESTRUCTURE_DETAILS WHERE FINREFERENCE=FPD.FINREFERENCE)>0) THEN 'Y' ELSE 'N' END
+			RESTRUCTURE_FLAG,'',(SELECT RESTRUCTUREDATE FROM RESTRUCTURE_DETAILS WHERE FINREFERENCE = FPD.FINREFERENCE)
+			RESTRUCTURE_DATE,0,0,'',(SELECT
+			BRANCHDESC FROM RMTBRANCHES WHERE BRANCHCODE=FM.FINBRANCH) BRANCH_DESC,(SELECT
+			BRANCHCITY FROM RMTBRANCHES WHERE BRANCHCODE=FM.FINBRANCH) B_CITY,(SELECT BRANCHPROVINCE FROM RMTBRANCHES WHERE
+			BRANCHCODE=FM.FINBRANCH) B_STATE,(SELECT PINCODEID FROM RMTBRANCHES WHERE BRANCHCODE=FM.FINBRANCH)
+			B_PINCODE,CUST.CUSTSALUTATIONCODE
+			SALUTATION,CUST.CUSTSHRTNAME CUSTOMER_NAME,CUST.CUSTCTGCODE
+			CUSTOMER_TYPE,CUST.CUSTGENDERCODE GENDER,CUST.CUSTMARITALSTS MARITAL_STATUS_CD,'',CUST.CUSTNATIONALITY
+			NATIONALITY_CODE,CUST.CUSTPROFESSION
+			PROFESSION,CUST.NATUREOFBUSINESS NATURE_OF_BUSINESS,0,CUST.NOOFDEPENDENTS
+			DEPENDENTS,CUST.RELIGIONID RELIGION,0,CUST.CUSTINDUSTRY CUSTOMER_INDUSTRY,CUST.CUSTINDUSTRY
+			CUSTOMER_INDUSTRY,CUST.CASTEID CASTE,CUST.CASTEID CASTE_DESC,CUST.CUSTDOB DOB,CUST.CUSTDOB
+			DOI,'',0,0,0,0,'','','','','',0,'','','','','','','','','','','','','','',0,'','',0,CUST.RELIGIONID
+			RELIGION_DESC,'','','','',CUST.NATUREOFBUSINESS NATURE_OF_BUSINESS_DESC,CUST.CUSTMARITALSTS MARITAL_STATUS,
+			(FPD.ODPROFIT + FPD.ODPRINCIPAL) OVERDUE_EMI_AMT,0 OVERDUE_EMI_CNT,FPD.ODPRINCIPAL OVERDUE_PRINCIPAL,FPD.ODPROFIT
+			OVERDUE_INTEREST,FPD.TOTALPRIBAL TOTAL_POS,FPD.TOTALPFTBAL TOTAL_IOS,FPD.LATESTRPYDATE
+			LAST_EMI_BILLED_ON,0,(FPD.TOTALPRIBAL-FPD.ODPRINCIPAL) FUTURE_POS,(FPD.TOTALPFTBAL - FPD.ODPROFIT)
+			FUTURE_IOS,FM.MATURITYDATE MATURITY_DATE,FPD.TOTALPFTPAID INTEREST_PAID_L,FPD.TOTALPRIPAID
+			PRINCIPAL_PAID_L,0,(FPD.TOTALPRIPAID+FPD.TOTALPFTPAID) EMI_COLLECTED_L,(FPD.ODPROFIT + FPD.ODPRINCIPAL)
+			OVERDUE_EMI_AMT_L,FPD.PENALTYPAID LPP_CHARGED,FPD.PENALTYDUE
+			LPP_OUTSTANDING,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,NULL,(SELECT COUNT(*) FROM MANUALADVISE WHERE BOUNCEID >0 AND
+			FINREFERENCE =
+			FPD.FINREFERENCE) CHQ_BOUNCE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+			FROM FINANCEMAIN FM
+			INNER JOIN
+			FINPFTDETAILS FPD ON FPD.FINREFERENCE=FM.FINREFERENCE
+			INNER JOIN FINADVANCEPAYMENTS FAD ON
+			FAD.FINREFERENCE=FM.FINREFERENCE
+			INNER JOIN RESTRUCTURE_DETAILS RSD ON RSD.FINREFERENCE=FM.FINREFERENCE
+			INNER JOIN
+			CUSTOMERS CUST ON CUST.CUSTID=FM.CUSTID;
+			COMMIT;
+			END SP_RBIADFEXTRACT;
+		</createProcedure>
+	</changeSet>
+
 </databaseChangeLog>
