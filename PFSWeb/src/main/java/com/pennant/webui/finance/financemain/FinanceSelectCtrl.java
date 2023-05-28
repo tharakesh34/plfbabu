@@ -103,6 +103,7 @@ import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.RepaymentCancellationService;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.service.finance.validation.FinanceCancelValidator;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
@@ -2964,7 +2965,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)
-				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts) ? isValidateCancelManualAdvise(finID) : true)) {
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts)
+						? ManualAdviceUtil
+								.isValidateCancelManualAdvise(manualAdviseService.getCancelledManualAdvise(finID))
+						: true)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return;
 		}
@@ -3060,11 +3064,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private boolean isValidateCancelManualAdvise(long finID) {
-		List<ManualAdvise> list = manualAdviseService.getCancelledManualAdvise(finID);
-		return list.stream().anyMatch(m -> m.getStatus() == null) ? true : false;
 	}
 
 	private void openLinkDelinkMaintenanceDialog(Listitem item) {

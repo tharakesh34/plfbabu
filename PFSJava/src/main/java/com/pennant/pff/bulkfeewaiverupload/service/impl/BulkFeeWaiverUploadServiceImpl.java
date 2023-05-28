@@ -19,6 +19,7 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeeType;
@@ -28,6 +29,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FeeWaiverUploadHeaderService;
+import com.pennant.backend.service.finance.impl.ManualAdviceUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -48,6 +50,7 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 
 	private BulkFeeWaiverUploadDAO bulkFeeWaiverUploadDAO;
 	private FinanceMainDAO financeMainDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 	private FeeWaiverUploadHeaderService feeWaiverUploadHeaderService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
 
@@ -241,7 +244,12 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 		}
 
 		String rcdMaintainSts = feeWaiverUploadHeaderService.getFinanceMainByRcdMaintenance(detail.getReferenceID());
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+
+		if (StringUtils.isNotEmpty(rcdMaintainSts)
+				&& (FinServiceEvent.MANUALADVISE.equals(rcdMaintainSts)
+						? ManualAdviceUtil.isValidateCancelManualAdvise(
+								manualAdviseDAO.getAdvises(detail.getReferenceID(), "_Temp"))
+						: true)) {
 			setFailureStatus(detail, "FWU_999", Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return fwh;
 		}
@@ -407,6 +415,11 @@ public class BulkFeeWaiverUploadServiceImpl extends AUploadServiceImpl<BulkFeeWa
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	@Autowired
