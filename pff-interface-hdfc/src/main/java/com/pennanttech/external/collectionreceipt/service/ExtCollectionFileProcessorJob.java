@@ -275,7 +275,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 	}
 
 	private BigDecimal getRoundAmount(String strAmount) {
-		BigDecimal convertedAmt = new BigDecimal("15000");
+		BigDecimal convertedAmt = new BigDecimal(strAmount);
 		return convertedAmt.setScale(2);
 	}
 

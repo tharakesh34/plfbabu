@@ -132,21 +132,21 @@ public class ExtCollectionResponseFileJob extends AbstractJob
 					if ("Y".equals(StringUtils.stripToEmpty(respConfig.getIsSftp()))) {
 						try {
 							ExtSFTPUtil extSFTPUtil = new ExtSFTPUtil(respConfig);
-							String respFileTB = extReceiptHeader.getRequestFileName();
+							String localReqFileName = extReceiptHeader.getRequestFileName();
 
 							// Backup now local file to SFTP backup location
-							File localFile = new File(
-									App.getResourcePath(reqConfig.getFileLocation()) + File.separator + respFileTB);
+							File localFile = new File(App.getResourcePath(reqConfig.getFileLocation()) + File.separator
+									+ localReqFileName);
 							FtpClient ftpClient = extSFTPUtil.getSFTPConnection();
 							ftpClient.upload(localFile, reqConfig.getFileBackupLocation());
 
-							respFileTB = respFileTB.substring(0, respFileTB.indexOf(reqConfig.getFileExtension()));
-							String remReqPath = reqConfig.getFileSftpLocation();
-							String deleteInproc = remReqPath.concat("/") + respFileTB + ".inproc";
-							File file = new File(deleteInproc);
+							String reqFileTB = localReqFileName.substring(0,
+									localReqFileName.indexOf(reqConfig.getFileExtension()));
+							String finalFile = reqFileTB + ".inproc";
+							String deleteInproc = reqConfig.getFileSftpLocation().concat("/") + finalFile;
 
 							// Delete .inproc file
-							extSFTPUtil.deleteFile(file.getAbsolutePath());
+							extSFTPUtil.deleteFile(deleteInproc);
 
 						} catch (Exception e) {
 							logger.debug(Literal.EXCEPTION, e);
