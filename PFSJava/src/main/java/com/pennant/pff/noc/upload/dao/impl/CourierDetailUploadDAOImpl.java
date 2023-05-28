@@ -169,7 +169,7 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 	@Override
 	public void update(CourierDetailUpload cdu, long id) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS");
-		sql.append(" Set CourierAgency = ?, DeliveryStatus = ?, DeliveryDate = ?");
+		sql.append(" Set CourierAgency = ?, DispatchDate = ?, DeliveryStatus = ?, DeliveryDate = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -178,6 +178,7 @@ public class CourierDetailUploadDAOImpl extends SequenceDao<CourierDetailUpload>
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 				ps.setString(++index, cdu.getCourierAgency());
+				ps.setDate(++index, JdbcUtil.getDate(cdu.getDispatchDate()));
 				ps.setString(++index, cdu.getDeliveryStatus());
 				ps.setDate(++index, JdbcUtil.getDate(cdu.getDeliveryDate()));
 

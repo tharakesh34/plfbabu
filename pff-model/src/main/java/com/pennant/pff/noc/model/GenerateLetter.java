@@ -22,12 +22,13 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private Long feeID;
 	private Date createdDate;
 	private Date createdOn;
-	private long createdBy;
+	private Long createdBy;
 	private int generated;
 	private Date generatedDate;
 	private Date generatedOn;
-	private long generatedBy;
-	private long approvedBy;
+	private Long generatedBy;
+	private Long approvedBy;
+	private String approverName;
 	private Timestamp approvedOn;
 	private String custAcctHolderName;
 	private String custCoreBank;
@@ -36,7 +37,6 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private String modeofTransfer;
 	private String courierAgencyName;
 	private String status;
-	private String email;
 	private String fileName;
 	private Long trackingID;
 	private String remarks;
@@ -47,7 +47,13 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	private long agreementTemplate;
 	private Long emailTemplate;
 	private Long emailNotificationID;
+	private String emailID;
+	private String letterName;
 	private String reasonCode;
+	private String courierAgency;
+	private String deliveryStatus;
+	private Date deliveryDate;
+	private Date dispatchDate;
 
 	public GenerateLetter() {
 		super();
@@ -84,6 +90,12 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		excludeFields.add("agreementTemplate");
 		excludeFields.add("emailNotificationID");
 		excludeFields.add("reasonCode");
+		excludeFields.add("emailID");
+		excludeFields.add("letterName");
+		excludeFields.add("courierAgency");
+		excludeFields.add("deliveryStatus");
+		excludeFields.add("deliveryDate");
+		excludeFields.add("dispatchDate");
 
 		return excludeFields;
 	}
@@ -168,11 +180,11 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.createdOn = createdOn;
 	}
 
-	public long getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(long createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
@@ -200,20 +212,28 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 		this.generatedOn = generatedOn;
 	}
 
-	public long getGeneratedBy() {
+	public Long getGeneratedBy() {
 		return generatedBy;
 	}
 
-	public void setGeneratedBy(long generatedBy) {
+	public void setGeneratedBy(Long generatedBy) {
 		this.generatedBy = generatedBy;
 	}
 
-	public long getApprovedBy() {
+	public Long getApprovedBy() {
 		return approvedBy;
 	}
 
-	public void setApprovedBy(long approvedBy) {
+	public void setApprovedBy(Long approvedBy) {
 		this.approvedBy = approvedBy;
+	}
+
+	public String getApproverName() {
+		return approverName;
+	}
+
+	public void setApproverName(String approverName) {
+		this.approverName = approverName;
 	}
 
 	public Timestamp getApprovedOn() {
@@ -278,14 +298,6 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getFileName() {
@@ -375,4 +387,53 @@ public class GenerateLetter extends AbstractWorkflowEntity {
 	public void setReasonCode(String reasonCode) {
 		this.reasonCode = reasonCode;
 	}
+
+	public String getEmailID() {
+		return emailID;
+	}
+
+	public void setEmailID(String emailID) {
+		this.emailID = emailID;
+	}
+
+	public String getLetterName() {
+		return letterName;
+	}
+
+	public void setLetterName(String letterName) {
+		this.letterName = letterName;
+	}
+
+	public String getCourierAgency() {
+		return courierAgency;
+	}
+
+	public void setCourierAgency(String courierAgency) {
+		this.courierAgency = courierAgency;
+	}
+
+	public String getDeliveryStatus() {
+		return deliveryStatus;
+	}
+
+	public void setDeliveryStatus(String deliveryStatus) {
+		this.deliveryStatus = deliveryStatus;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public Date getDispatchDate() {
+		return dispatchDate;
+	}
+
+	public void setDispatchDate(Date dispatchDate) {
+		this.dispatchDate = dispatchDate;
+	}
+
 }

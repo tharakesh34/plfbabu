@@ -107,8 +107,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
 		try {
-			GenerateLetter csb = this.jdbcOperations.queryForObject(sql.toString(), new GenerateLetterRM(), id, id);
-			return csb;
+			return this.jdbcOperations.queryForObject(sql.toString(), new GenerateLetterRM(), id, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
@@ -234,7 +233,7 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	public List<ReceiptAllocationDetail> getPrinAndPftWaiver(String finReference) {
 		long id = getEarltSettleReceipt(finReference);
 		if (id == 0) {
-			return null;
+			return new ArrayList<>();
 		}
 
 		String sql = "Select WaivedAmount,AllocationType From  ReceiptAllocationDetail Where ReceiptId = ? and AllocationType in (?, ?, ?, ?)";
@@ -254,23 +253,35 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	@Override
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, EmailNotificationId, Status, Remarks");
-		sql.append(" From Loan_Letters Where FinID = ?");
+		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, LetterType");
+		sql.append(", GeneratedBy, ApprovedBy, ApprovedOn");
+		sql.append(", Status, Remarks, EmailID, FileName");
+		sql.append(", CourierAgency, DispatchDate, DeliveryDate, DeliveryStatus");
+		sql.append(" From Loan_Letters");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			GenerateLetter fm = new GenerateLetter();
+			GenerateLetter letter = new GenerateLetter();
 
-			fm.setGeneratedDate(rs.getDate("GeneratedDate"));
-			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
-			fm.setRequestType(rs.getString("RequestType"));
-			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setTrackingID(rs.getLong("EmailNotificationId"));
-			fm.setStatus(rs.getString("Status"));
-			fm.setRemarks(rs.getString("Remarks"));
+			letter.setGeneratedBy(JdbcUtil.getLong(rs.getObject("GeneratedBy")));
+			letter.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			letter.setGeneratedDate(rs.getDate("GeneratedDate"));
+			letter.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			letter.setModeofTransfer(rs.getString("ModeOfTransfer"));
+			letter.setRequestType(rs.getString("RequestType"));
+			letter.setLetterType(rs.getString("LetterType"));
+			letter.setStatus(rs.getString("Status"));
+			letter.setRemarks(rs.getString("Remarks"));
+			letter.setEmailID(rs.getString("EmailID"));
+			letter.setFileName(rs.getString("FileName"));
+			letter.setCourierAgency(rs.getString("CourierAgency"));
+			letter.setDispatchDate(rs.getDate("DispatchDate"));
+			letter.setDeliveryDate(rs.getDate("DeliveryDate"));
+			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
 
-			return fm;
+			return letter;
 		}, finID);
 	}
 
@@ -389,26 +400,41 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	}
 
 	@Override
-	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
+	public List<GenerateLetter> getLoanLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, Status, Remarks");
-		sql.append(" From Loan_Letters");
-		sql.append(" Where FinID = ? and LetterType = ?");
+		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, LetterType");
+		sql.append(", GeneratedBy, ll.ApprovedBy, ll.ApprovedOn");
+		sql.append(", Status, Remarks, EmailID, FileName");
+		sql.append(", CourierAgency, DispatchDate, DeliveryDate, DeliveryStatus");
+		sql.append(", su.UsrLogin ApproverName");
+		sql.append(" From Loan_Letters ll");
+		sql.append(" Left Join SecUsers su on su.UsrId = ll.ApprovedBy");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			GenerateLetter fm = new GenerateLetter();
+			GenerateLetter letter = new GenerateLetter();
 
-			fm.setGeneratedDate(rs.getDate("GeneratedDate"));
-			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
-			fm.setRequestType(rs.getString("RequestType"));
-			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setStatus(rs.getString("Status"));
-			fm.setRemarks(rs.getString("Remarks"));
+			letter.setGeneratedBy(JdbcUtil.getLong(rs.getObject("GeneratedBy")));
+			letter.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			letter.setGeneratedDate(rs.getDate("GeneratedDate"));
+			letter.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			letter.setModeofTransfer(rs.getString("ModeOfTransfer"));
+			letter.setRequestType(rs.getString("RequestType"));
+			letter.setLetterType(rs.getString("LetterType"));
+			letter.setStatus(rs.getString("Status"));
+			letter.setRemarks(rs.getString("Remarks"));
+			letter.setEmailID(rs.getString("EmailID"));
+			letter.setFileName(rs.getString("FileName"));
+			letter.setCourierAgency(rs.getString("CourierAgency"));
+			letter.setDispatchDate(rs.getDate("DispatchDate"));
+			letter.setDeliveryDate(rs.getDate("DeliveryDate"));
+			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
+			letter.setApproverName(rs.getString("ApproverName"));
 
-			return fm;
-		}, finID, letterType);
+			return letter;
+		}, finID);
 	}
 
 	@Override
@@ -481,5 +507,10 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
 		}
+	}
+
+	@Override
+	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
+		return new ArrayList<>();
 	}
 }

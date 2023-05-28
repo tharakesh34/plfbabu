@@ -122,6 +122,8 @@ public class LetterService {
 
 		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID);
 
+		String requestType = gl.getRecordType();
+
 		loanLetter.setId(letterID);
 		loanLetter.setFinID(gl.getFinID());
 		loanLetter.setSaveFormat(SaveFormat.PDF);
@@ -129,6 +131,7 @@ public class LetterService {
 		loanLetter.setLetterMode(gl.getModeofTransfer());
 		loanLetter.setCreatedDate(gl.getCreatedDate());
 		loanLetter.setBusinessDate(appDate);
+		loanLetter.setRequestType(requestType);
 
 		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0) {
 			loanLetter.setBlocked(true);
@@ -153,13 +156,14 @@ public class LetterService {
 
 		LetterMode letterMode = LetterMode.getMode(loanLetter.getLetterMode());
 
-		if (letterMode == LetterMode.EMAIL) {
+		if (letterMode == LetterMode.EMAIL && "A".equals(requestType)) {
 			loanLetter.setMailTemplate(mailTemplateDAO.getMailTemplateById(emailtemplateId, "_AView"));
 		}
 
 		setData(loanLetter);
 
 		setServiceBranchData(loanLetter);
+
 		loanLetter.setEventProperties(autoLetterGenerationDAO.getEventProperties("CSD_STORAGE"));
 
 		setLetterName(loanLetter);
@@ -201,6 +205,11 @@ public class LetterService {
 		String finType = loanLetter.getFinType();
 
 		ServiceBranch serviceBranch = autoLetterGenerationDAO.getServiceBranch(finType, finBranch);
+
+		if (serviceBranch == null) {
+			throw new AppException("Customer Service Branch not found with Loan Type [" + finType + "] and Fin Barnch ["
+					+ finBranch + "]");
+		}
 
 		loanLetter.setServiceBranch(serviceBranch);
 		loanLetter.setCsbCode(serviceBranch.getCode());
@@ -244,12 +253,12 @@ public class LetterService {
 		}
 
 		MessageAddress address = new MessageAddress();
-		address.setEmailId(letter.getEmail());
+		address.setEmailId(letter.getEmailID());
 		address.setRecipientType(RecipientType.TO.getKey());
 		emailMessage.getAddressesList().add(address);
 
 		Map<String, byte[]> map = new HashMap<>();
-		map.put(letter.getLetterName(), letter.getContent());
+		map.put(letter.getFileName(), letter.getContent());
 		emailMessage.setAttachments(map);
 
 		try {
@@ -269,7 +278,7 @@ public class LetterService {
 			return;
 		}
 
-		if (letterMode == LetterMode.EMAIL && letter.getEmail() != null) {
+		if (letterMode == LetterMode.EMAIL && letter.getEmailID() != null) {
 			return;
 		}
 
@@ -289,12 +298,12 @@ public class LetterService {
 
 		String csdCode = serviceBranch.getCode();
 		String parentFolder = serviceBranch.getFolderPath();
-
 		Date appDate = letter.getBusinessDate();
 
-		String fileName = letter.getLetterName();
-		String remotePath = parentFolder.concat(File.separator).concat(csdCode).concat(File.separator)
-				.concat(DateUtil.format(appDate, "ddMMyyyy"));
+		String letterLocation = csdCode.concat(File.separator).concat(DateUtil.format(appDate, "ddMMyyyy"));
+
+		String fileName = letter.getFileName();
+		String remotePath = parentFolder.concat(letterLocation);
 		byte[] fileContent = letter.getContent();
 
 		String host = ep.getHostName();
@@ -304,6 +313,8 @@ public class LetterService {
 
 		remotePath = ep.getBucketName().concat(File.separator).concat(remotePath);
 
+		letter.setLetterLocation(letterLocation);
+
 		try {
 			FTPUtil.writeBytesToFTP(Protocol.SFTP, host, port, username, password, remotePath, fileName, fileContent);
 		} catch (Exception e) {
@@ -312,21 +323,12 @@ public class LetterService {
 	}
 
 	public void update(LoanLetter letter) {
-		GenerateLetter gl = new GenerateLetter();
-
 		long letterID = letter.getId();
 
-		gl.setId(letterID);
-		gl.setGenerated(letter.getGenerated());
-		gl.setFeeID(letter.getFeeID());
-		gl.setGeneratedDate(letter.getBusinessDate());
-		gl.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
-		gl.setAdviseID(letter.getAdviseID());
-		gl.setEmailNotificationID(letter.getEmailNotificationID());
-		gl.setStatus(letter.getStatus());
-		gl.setRemarks(letter.getRemarks());
+		letter.setGeneratedDate(letter.getBusinessDate());
+		letter.setGeneratedOn(new Timestamp(System.currentTimeMillis()));
 
-		autoLetterGenerationDAO.update(gl);
+		autoLetterGenerationDAO.update(letter);
 
 		autoLetterGenerationDAO.moveFormStage(letterID);
 
@@ -364,6 +366,9 @@ public class LetterService {
 
 		builder.append(DateUtil.format(appDate, "ddMMyyyy"));
 		builder.append(letterSeqNo);
+
+		letter.setLetterName(builder.toString());
+
 		builder.append(".");
 
 		int saveFormat = letter.getSaveFormat();
@@ -375,8 +380,7 @@ public class LetterService {
 			builder.append("doc");
 		}
 
-		letter.setLetterName(builder.toString());
-		letter.setFileName(letter.getFileName());
+		letter.setFileName(builder.toString());
 
 	}
 
@@ -392,7 +396,7 @@ public class LetterService {
 
 		if (!customerEMailList.isEmpty()) {
 			CustomerEMail customerEMail = customerEMailList.get(0);
-			letter.setEmail(customerEMail.getCustEMail());
+			letter.setEmailID(customerEMail.getCustEMail());
 		}
 
 		List<CustomerAddres> customerAddresList = customerDetails.getAddressList();

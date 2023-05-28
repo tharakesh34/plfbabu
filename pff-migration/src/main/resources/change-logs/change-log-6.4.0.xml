@@ -12516,7 +12516,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="PSD#225974_pre" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="PSD#225974_01_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_view');
@@ -12524,7 +12524,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#225974" author="Gireesh.G">
+	<changeSet id="PSD#225974_01" author="Gireesh.G">
 		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -12710,7 +12710,8 @@
 					T1.CREATEDBY,
 				    T1.CREATEDON,
 				    T1.APPROVEDBY,
-					T1.APPROVEDON
+					T1.APPROVEDON,
+					NULL CLOSEDDATE
 				FROM WIFFINANCEMAIN_TEMP T1
 				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
 				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
@@ -12900,7 +12901,8 @@
 					T1.CREATEDBY,
 				    T1.CREATEDON,
 				    T1.APPROVEDBY,
-					T1.APPROVEDON
+					T1.APPROVEDON,
+					NULL CLOSEDDATE
 				FROM WIFFINANCEMAIN T1
 				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
 				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
@@ -12911,7 +12913,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#225974_post" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="PSD#225974_01_post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinancemain_view');
@@ -12919,7 +12921,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#225974.1_pre" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="PSD#225974_02_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_aview');
@@ -12927,7 +12929,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#225974.1" author="Gireesh.G">
+	<changeSet id="PSD#225974_02" author="Gireesh.G">
 		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -13109,7 +13111,8 @@
 					T1.CREATEDBY,
 				    T1.CREATEDON,
 				    T1.APPROVEDBY,
-					T1.APPROVEDON
+					T1.APPROVEDON,
+					NULL CLOSEDDATE
 				FROM WIFFINANCEMAIN T1
 				LEFT JOIN WIFINDICATIVETERMDETAIL_TEMP T14 ON T14.FINREFERENCE = T1.FINREFERENCE
 				LEFT JOIN CUSTOMERS T15 ON T15.CUSTID = T1.CUSTID
@@ -13119,7 +13122,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#225974.1_post" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="PSD#225974_02_post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinancemain_aview');
@@ -16142,174 +16145,6 @@
 		<renameColumn tableName="PRESENTMENT_RESP_UPLOAD" oldColumnName="HEADER_ID" newColumnName="HeaderID" />
 	</changeSet>
 
-	<changeSet id="ST#1561.71" author="Mounika.M">
-		<createTable tableName="LETTER_GENERATION">
-			<column name="ID" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="FinID" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="RequestType" type="char(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="LetterType" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="AgreementTemplate" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="FeeTypeId" type="bigint" />
-			<column name="ModeOfTransfer" type="varchar(8)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CreatedDate" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="CreatedOn" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="EmailTemplate" type="bigint" />
-			<column name="Generated" type="boolean">
-				<constraints nullable="false" />
-			</column>
-			<column name="GeneratedDate" type="datetime" />
-			<column name="GeneratedOn" type="datetime" />
-			<column name="GeneratedBy" type="bigint" />
-			<column name="AdviseID" type="bigint" />
-			<column name="TrackingID" type="bigint" />
-			<column name="Status" type="char(1)" />
-			<column name="Remarks" type="varchar(1000)" />
-		</createTable>
-	</changeSet>
-
-	<changeSet id="ST#1561.72" author="Mounika.M">
-		<addPrimaryKey tableName="LETTER_GENERATION" columnNames="ID" constraintName="PK_LETTER_GENERATION_ID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.73" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LG_FM_FinID" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="Letter_Generation" referencedColumnNames="FinID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.74" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LG_BMTAD_AgreeTemp"
-			referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="Letter_Generation"
-			referencedColumnNames="AggId" />
-	</changeSet>
-
-	<changeSet id="ST#1561.76" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LG_Template_ET" referencedTableName="Templates"
-			baseColumnNames="EmailTemplate" baseTableName="Letter_Generation" referencedColumnNames="TemplateID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.77" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LG_MA_AdviseID" referencedTableName="ManualAdvise"
-			baseColumnNames="AdviseID" baseTableName="Letter_Generation" referencedColumnNames="AdviseID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.78" author="Mounika.M">
-		<createIndex tableName="LETTER_GENERATION" indexName="idx_Ltr_Gen_finid">
-			<column name="FinID"></column>
-		</createIndex>
-	</changeSet>
-
-	<changeSet id="ST#1561.79" author="Mounika.M" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Generated" tableName="Letter_Generation" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="ST#1561.79" author="Mounika.M" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE LETTER_GENERATION ADD CONSTRAINT DF_LG_GENERATED DEFAULT 0 FOR GENERATED;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1561.80" author="Mounika.M">
-		<createTable tableName="LETTER_GENERATION_STAGE">
-			<column name="ID" type="bigint" autoIncrement="true">
-				<constraints nullable="false" />
-			</column>
-			<column name="FinID" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="RequestType" type="char(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="LetterType" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="AgreementTemplate" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="FeeTypeId" type="bigint" />
-			<column name="ModeOfTransfer" type="varchar(8)">
-				<constraints nullable="false" />
-			</column>
-			<column name="CreatedDate" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="CreatedOn" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="EmailTemplate" type="bigint" />
-			<column name="Generated" type="boolean">
-				<constraints nullable="false" />
-			</column>
-			<column name="GeneratedDate" type="datetime" />
-			<column name="GeneratedOn" type="datetime" />
-			<column name="GeneratedBy" type="bigint" />
-			<column name="AdviseID" type="bigint" />
-			<column name="TrackingID" type="bigint" />
-			<column name="Status" type="char(1)" />
-			<column name="Remarks" type="varchar(1000)" />
-		</createTable>
-	</changeSet>
-
-	<changeSet id="ST#1561.81" author="Mounika.M">
-		<addPrimaryKey tableName="LETTER_GENERATION_STAGE" columnNames="ID"
-			constraintName="PK_LETTER_GENERATION_STAGE_ID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.82" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LGS_FM_FinID" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="FinID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.83" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LGS_AT_AGT" referencedTableName="BMTAggrementDef"
-			baseColumnNames="AgreementTemplate" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="AggId" />
-	</changeSet>
-
-	<changeSet id="ST#1561.84" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_LGS_TEMPLATE_ET" referencedTableName="Templates"
-			baseColumnNames="EmailTemplate" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="TemplateID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.85" author="Mounika.M">
-		<addForeignKeyConstraint constraintName="FK_MA_AdviseID" referencedTableName="ManualAdvise"
-			baseColumnNames="AdviseID" baseTableName="LETTER_GENERATION_STAGE" referencedColumnNames="AdviseID" />
-	</changeSet>
-
-	<changeSet id="ST#1561.86" author="Mounika.M">
-		<createIndex tableName="LETTER_GENERATION_STAGE" indexName="idx_LGS_finid">
-			<column name="FinID"></column>
-		</createIndex>
-	</changeSet>
-
-	<changeSet id="ST#1561.87" author="Mounika.M" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Generated" tableName="LETTER_GENERATION_STAGE" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="ST#1561.87" author="Mounika.M" dbms="mssql">
-		<sql>
-			<![CDATA[	
-				ALTER TABLE LETTER_GENERATION_STAGE ADD CONSTRAINT DF_LG_GENERATED DEFAULT 0 FOR GENERATED;
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="ST#15956.88.1" author="Mounika.M">
 		<sql>
 			<![CDATA[
@@ -16714,115 +16549,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#15956.104" author="NagaVamsi.P">
-		<renameTable newTableName="LOAN_LETTERS" oldTableName="LETTER_GENERATION" />
-	</changeSet>
-
-	<changeSet id="ST#15956.105" author="NagaVamsi.P">
-		<renameTable newTableName="LOAN_LETTERS_STAGE" oldTableName="LETTER_GENERATION_STAGE" />
-	</changeSet>
-
-	<changeSet id="ST#15956.106" author="NagaVamsi.P">
-		<renameTable newTableName="LOAN_LETTER_MANUAL_TEMP" oldTableName="LETTER_GENERATE_MANUAL_TEMP" />
-	</changeSet>
-
-	<changeSet id="ST#15956.107" author="NagaVamsi.P">
-		<renameTable newTableName="LOAN_LETTER_MANUAL" oldTableName="LETTER_GENERATE_MANUAL" />
-	</changeSet>
-
-	<changeSet id="ST#15956.108" author="NagaVamsi.P">
-		<renameTable newTableName="LOAN_LETTER_BLOCKING" oldTableName="LETTER_BLOCKING" />
-	</changeSet>
-
-	<changeSet id="ST#15956.109" author="NagaVamsi.P">
-		<renameTable newTableName="LOAN_LETTER_BLOCKING_LOG" oldTableName="LETTER_BLOCKING_LOG" />
-	</changeSet>
-
-	<changeSet id="ST#15956.1" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS">
-			<column name="LetterName" type="varchar(500)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.2" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS">
-			<column name="LetterLocation" type="varchar(500)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.3" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS">
-			<column name="CourierAgency" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.4" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS">
-			<column name="DeliveryStatus" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.5" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS">
-			<column name="DeliveryDate" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.6" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS_STAGE">
-			<column name="LetterName" type="varchar(500)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.7" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS_STAGE">
-			<column name="LetterLocation" type="varchar(500)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.2.8" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS_STAGE">
-			<column name="CourierAgency" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.2.3" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS_STAGE">
-			<column name="DeliveryStatus" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.2.4" author="NagaVamsi.P">
-		<addColumn tableName="LOAN_LETTERS_STAGE">
-			<column name="DeliveryDate" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="ST#15956.4.3" author="NagaVamsi.P">
-		<renameColumn tableName="LOAN_LETTERS" oldColumnName="TRACKINGID" newColumnName="EMAILNOTIFICATIONID" />
-	</changeSet>
-
-	<changeSet id="ST#15956.4.4" author="NagaVamsi.P">
-		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="TRACKINGID"
-			newColumnName="EMAILNOTIFICATIONID" />
-	</changeSet>
-
-	<changeSet id="ST#15956.4.8" author="nagavamsi.p">
-		<createIndex tableName="LOAN_LETTERS_STAGE" indexName="idx_lls_fid_lt_gd" unique="true">
-			<column name="FinID" type="bigint" />
-			<column name="LetterType" type="varchar(20)" />
-			<column name="GeneratedDate" type="datetime" />
-		</createIndex>
-	</changeSet>
-
-	<changeSet id="ST#15956.4.9" author="NagaVamsi.P">
-		<renameColumn tableName="LOAN_LETTERS" oldColumnName="FeeTypeId" newColumnName="FeeID" />
-	</changeSet>
-
-	<changeSet id="ST#15956.5.0" author="NagaVamsi.P">
-		<renameColumn tableName="LOAN_LETTERS_STAGE" oldColumnName="FeeTypeId" newColumnName="FeeID" />
-	</changeSet>
-
 	<changeSet id="ST#1561.37.1" author="Mounika.M">
 		<addColumn tableName="Loan_Letter_Manual_Temp">
 			<column name="FinReference" type="varchar(20)" />
@@ -16951,27 +16677,6 @@
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'loan_letters');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#15956.2.4_2_pre" author="nagavamsi.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'loan_letters_stage');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#15956.2.4_2" author="nagavamsi.p">
-		<modifyDataType tableName="LOAN_LETTERS_STAGE" columnName="DeliveryDate" newDataType="datetime" />
-	</changeSet>
-
-
-	<changeSet id="ST#15956.2.4_2_post" author="nagavamsi.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'loan_letters_stage');
 			]]>
 		</sql>
 	</changeSet>
@@ -18753,6 +18458,204 @@
 	
 	<changeSet id="ST#1526.4_1" author="Sandeepkumar.M">
 		<renameColumn tableName="LIEN_HEADER" oldColumnName="REJECT_REASON" newColumnName="InterfaceRemarks"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.100_delete" author="Mounika.M">
+		<dropTable tableName="LOAN_LETTERS_STAGE" />
+		<dropTable tableName="LOAN_LETTERS" />
+	</changeSet>
+
+	<changeSet id="ST#1561.100" author="Mounika.M">
+		<createTable tableName="LOAN_LETTERS">
+			<column name="ID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequestType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LetterType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgreementTemplate" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeID" type="bigint" />
+			<column name="ModeOfTransfer" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTemplate" type="bigint" />
+			<column name="Generated" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseID" type="bigint" />
+			<column name="EmailID" type="varchar(200)" />
+			<column name="EmailnotificationID" type="bigint" />
+			<column name="LetterName" type="varchar(500)" />
+			<column name="FileName" type="varchar(500)" />
+			<column name="LetterLocation" type="varchar(500)" />
+			<column name="GeneratedDate" type="datetime" />
+			<column name="GeneratedOn" type="datetime" />
+			<column name="GeneratedBy" type="bigint" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="varchar(1000)" />
+			<column name="CourierAgency" type="varchar(50)" />
+			<column name="DispatchDate" type="datetime" />
+			<column name="DeliveryDate" type="datetime" />
+			<column name="DeliveryStatus" type="varchar(20)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.101" author="Mounika.M">
+		<addPrimaryKey tableName="LOAN_LETTERS" columnNames="ID" constraintName="PK_LOAN_LETTERS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.102" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LOAN_LETTERS_FM_FinID"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="LOAN_LETTERS" referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.103" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LL_BMTAD_ID"
+			referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="LOAN_LETTERS"
+			referencedColumnNames="AggId" />
+	</changeSet>
+
+	<changeSet id="ST#1561.104" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LS_Template_ET"
+			referencedTableName="Templates" baseColumnNames="EmailTemplate" baseTableName="LOAN_LETTERS"
+			referencedColumnNames="TemplateID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.105" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LS_MA_ADVISEID"
+			referencedTableName="ManualAdvise" baseColumnNames="AdviseID" baseTableName="LOAN_LETTERS"
+			referencedColumnNames="AdviseID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.106" author="Mounika.M">
+		<createIndex tableName="LOAN_LETTERS" indexName="IDX_LOAN_LETTERS_FINID">
+			<column name="FinID"></column>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1561.107" author="Mounika.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Generated" tableName="LOAN_LETTERS" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1561.108" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_LETTERS ADD CONSTRAINT DF_LL_GENERATED DEFAULT 0 FOR GENERATED;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#1561.109" author="Mounika.M">
+		<createTable tableName="LOAN_LETTERS_STAGE">
+			<column name="ID" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequestType" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="LetterType" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AgreementTemplate" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FeeID" type="bigint" />
+			<column name="ModeOfTransfer" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="CreatedOn" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="EmailTemplate" type="bigint" />
+			<column name="Generated" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="AdviseID" type="bigint" />
+			<column name="EmailID" type="varchar(200)" />
+			<column name="EmailnotificationID" type="bigint" />
+			<column name="LetterName" type="varchar(500)" />
+			<column name="FileName" type="varchar(500)" />
+			<column name="LetterLocation" type="varchar(500)" />
+			<column name="GeneratedDate" type="datetime" />
+			<column name="GeneratedOn" type="datetime" />
+			<column name="GeneratedBy" type="bigint" />
+			<column name="ApprovedBy" type="bigint" />
+			<column name="ApprovedOn" type="datetime" />
+			<column name="Status" type="char(1)" />
+			<column name="Remarks" type="varchar(1000)" />
+			<column name="CourierAgency" type="varchar(50)" />
+			<column name="DispatchDate" type="datetime" />
+			<column name="DeliveryDate" type="datetime" />
+			<column name="DeliveryStatus" type="varchar(20)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#1561.110" author="Mounika.M">
+		<addPrimaryKey tableName="LOAN_LETTERS_STAGE" columnNames="ID" constraintName="PK_LLS_ID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.112" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LLS_FM_FinID"
+			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="LOAN_LETTERS_STAGE"
+			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.113" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LLS_BMTAD_ID"
+			referencedTableName="BMTAggrementDef" baseColumnNames="AgreementTemplate" baseTableName="LOAN_LETTERS_STAGE"
+			referencedColumnNames="AggId" />
+	</changeSet>
+
+	<changeSet id="ST#1561.114" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LLS_Template_ET"
+			referencedTableName="Templates" baseColumnNames="EmailTemplate" baseTableName="LOAN_LETTERS_STAGE"
+			referencedColumnNames="TemplateID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.115" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_LLS_MA_ADVISEID"
+			referencedTableName="ManualAdvise" baseColumnNames="AdviseID" baseTableName="LOAN_LETTERS_STAGE"
+			referencedColumnNames="AdviseID" />
+	</changeSet>
+
+	<changeSet id="ST#1561.116" author="Mounika.M">
+		<createIndex tableName="LOAN_LETTERS_STAGE" indexName="IDX_LOAN_LETTERS_STAGE_FINID">
+			<column name="FinID"></column>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="ST#1561.117" author="Mounika.M" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Generated" tableName="LOAN_LETTERS_STAGE" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#1561.118" author="Mounika.M" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE LOAN_LETTERS_STAGE ADD CONSTRAINT DF_LLS_GENERATED DEFAULT 0 FOR GENERATED;
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog> 

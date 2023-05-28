@@ -36,8 +36,9 @@ public class LoanLetter implements Serializable {
 	private String modeofTransfer;
 	private String courierAgencyName;
 	private String status;
-	private String email;
+	private String emailID;
 	private String fileName;
+	private String letterLocation;
 	private String remarks;
 	private Long adviseID;
 	private GenerateLetter befImage;
@@ -293,12 +294,12 @@ public class LoanLetter implements Serializable {
 		this.status = status;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getEmailID() {
+		return emailID;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmailID(String emailID) {
+		this.emailID = emailID;
 	}
 
 	public String getFileName() {
@@ -307,6 +308,14 @@ public class LoanLetter implements Serializable {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getLetterLocation() {
+		return letterLocation;
+	}
+
+	public void setLetterLocation(String letterLocation) {
+		this.letterLocation = letterLocation;
 	}
 
 	public String getRemarks() {
@@ -605,6 +614,14 @@ public class LoanLetter implements Serializable {
 		this.custCountry = custCountry;
 	}
 
+	public String getCustSubDistrict() {
+		return custSubDistrict;
+	}
+
+	public void setCustSubDistrict(String custSubDistrict) {
+		this.custSubDistrict = custSubDistrict;
+	}
+
 	public String getCsbCode() {
 		return csbCode;
 	}
@@ -715,6 +732,14 @@ public class LoanLetter implements Serializable {
 
 	public void setCsbFax(String csbFax) {
 		this.csbFax = csbFax;
+	}
+
+	public String getCsbFolderPath() {
+		return csbFolderPath;
+	}
+
+	public void setCsbFolderPath(String csbFolderPath) {
+		this.csbFolderPath = csbFolderPath;
 	}
 
 	public String getFbCode() {
@@ -957,22 +982,6 @@ public class LoanLetter implements Serializable {
 		this.letterSeqNo = letterSeqNo;
 	}
 
-	public String getCsbFolderPath() {
-		return csbFolderPath;
-	}
-
-	public void setCsbFolderPath(String csbFolderPath) {
-		this.csbFolderPath = csbFolderPath;
-	}
-
-	public String getCustSubDistrict() {
-		return custSubDistrict;
-	}
-
-	public void setCustSubDistrict(String custSubDistrict) {
-		this.custSubDistrict = custSubDistrict;
-	}
-
 	public Map<String, Object> getDeclaredFieldValues() {
 		Map<String, Object> map = new HashMap<>();
 
@@ -988,6 +997,7 @@ public class LoanLetter implements Serializable {
 		map.put("CancelDate", this.cancelDate);
 		map.put("ClosureType", this.closureType);
 		map.put("FileName", this.fileName);
+		map.put("LetterName", this.letterName);
 		map.put("LetterSeqNo", this.letterSeqNo);
 		map.put("CSBCode", this.csbCode);
 		map.put("CSBDescription", this.csbDescription);

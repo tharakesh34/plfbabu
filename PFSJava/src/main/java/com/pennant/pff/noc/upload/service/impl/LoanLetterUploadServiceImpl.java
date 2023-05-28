@@ -284,6 +284,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					}
 
 					autoLetterGenerationDAO.save(gl);
+
 					if (detail.getErrorCode() != null) {
 						setFailureStatus(detail);
 					} else {
@@ -322,11 +323,8 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 
 		if (CollectionUtils.isNotEmpty(letterInfo)) {
 			letter.setSequenceNo(letterInfo.size());
-			letter.setStatusOfpreviousletters(letterInfo.get(letterInfo.size() - 1).getStatus());
+			letter.setStatusOfpreviousletters(letterInfo.get(0).getDeliveryStatus());
 		}
-
-		letter.setSequenceNo(0);
-		letter.setStatusOfpreviousletters("");
 
 		fm.setLoanLetter(letter);
 	}

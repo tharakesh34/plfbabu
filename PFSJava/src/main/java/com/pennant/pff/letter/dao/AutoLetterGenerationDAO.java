@@ -2,6 +2,7 @@ package com.pennant.pff.letter.dao;
 
 import java.util.Date;
 
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.ServiceBranch;
@@ -11,7 +12,7 @@ public interface AutoLetterGenerationDAO {
 
 	long save(GenerateLetter gl);
 
-	void update(GenerateLetter gl);
+	void update(LoanLetter gl);
 
 	GenerateLetter getLetter(long id);
 

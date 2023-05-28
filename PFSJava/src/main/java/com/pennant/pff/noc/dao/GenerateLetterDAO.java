@@ -30,7 +30,7 @@ public interface GenerateLetterDAO {
 
 	List<GenerateLetter> getLetterInfo(long finID);
 
-	List<GenerateLetter> getLoanLetterInfo(long finID, String letterType);
+	List<GenerateLetter> getLoanLetterInfo(long finID);
 
 	boolean isLetterInitiated(long finID, String letterType);
 
@@ -41,4 +41,6 @@ public interface GenerateLetterDAO {
 	String getReasonCode(long finID);
 
 	String getCancelReasons(String reference);
+
+	List<GenerateLetter> getLoanLetterInfo(long finID, String letterType);
 }

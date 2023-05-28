@@ -1,6 +1,7 @@
 package com.pennant.pff.noc.service.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -205,6 +206,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 				gl.setRecordType("");
 				gl.setAgreementTemplate(0);
 				gl.setModeofTransfer(gl.getRequestType());
+				gl.setApprovedBy(gl.getLastMntBy());
+				gl.setApprovedOn(new Timestamp(System.currentTimeMillis()));
 				generateLetterDAO.save(gl, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -238,6 +241,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 			gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 			gl.setEmailTemplate(ltlp.getEmailTemplateId());
 			gl.setModeofTransfer(ltlp.getLetterMode());
+
 			return autoLetterGenerationDAO.save(gl);
 		}
 		return 0;
@@ -338,7 +342,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		if (custID != 0 && custID != Long.MIN_VALUE) {
 			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
 		}
-		List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(), gl.getLetterType());
+		List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID());
 
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 		schdData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_View"));
@@ -358,7 +362,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 					getLetterType(gl), "_AView", false, FinanceConstants.MODULEID_FINTYPE));
 			processfees(gl, letterInfo);
 		}
-		
+
 		if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			gl.setReasonCode(StringUtils.trimToEmpty(generateLetterDAO.getReasonCode(finID)));
 		}
@@ -384,29 +388,39 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public LoanLetter generateLetter(GenerateLetter gl) {
-		LoanLetter letter = new LoanLetter();
-		saveFees(gl);
+
+		if (gl.getFeeID() != null) {
+			saveFees(gl);
+		}
+
 		long letterID = saveLoanLetterdetails(gl);
-		if (letterID != 0) {
-			letter = letterService.generate(letterID, SysParamUtil.getAppDate());
 
-			if (letter.isBlocked()) {
-				letter.setGenerated(-1);
-				letter.setStatus("B");
-				letter.setRemarks(BLOCKED_MSG);
-			} else {
-				letterService.sendEmail(letter);
+		LoanLetter letter = letterService.generate(letterID, SysParamUtil.getAppDate());
 
-				letterService.storeLetter(letter);
-				letterService.createAdvise(letter);
+		if (letter.isBlocked()) {
+			letter.setGenerated(-1);
+			letter.setStatus("B");
+			letter.setRemarks(BLOCKED_MSG);
+		} else {
+			letterService.createAdvise(letter);
 
-				letter.setGenerated(1);
-				letter.setStatus("S");
+			letter.setGenerated(1);
+			letter.setStatus("S");
+		}
+
+		if ("Submit".equals(gl.getRecordType())) {
+			letterService.update(letter);
+
+			generateLetterDAO.delete(gl, TableType.MAIN_TAB);
+		} else {
+			autoLetterGenerationDAO.deleteFromStage(letterID);
+
+			if (gl.getFeeID() != null) {
+				finFeeDetailDAO.getFinFeeDetail(gl.getFeeID());
 			}
 
-			letterService.update(letter);
-			generateLetterDAO.delete(gl, TableType.MAIN_TAB);
 		}
+
 		return letter;
 	}
 

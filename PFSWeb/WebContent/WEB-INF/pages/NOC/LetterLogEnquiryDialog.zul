@@ -65,7 +65,7 @@
 								</groupbox>
 								</div>
 								<listbox id="listBoxLetterLog" multiple="true" style="white-space:nowrap;margin-top:15px;" width="100%"
-									span="true" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true">
+									span="true" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true" height="100%">
 										<listhead sizable="true">
 												<listheader width="60px" id="listheaderletterTypeDialogButton" />
 												<listheader label="${c:l('IssueDateHeader.label')}" sort="false" hflex="min" />

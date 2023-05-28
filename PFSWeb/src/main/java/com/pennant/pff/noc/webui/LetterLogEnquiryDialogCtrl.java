@@ -20,7 +20,6 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
-import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Window;
 
@@ -28,7 +27,6 @@ import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
-import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -41,7 +39,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	protected Listbox listBoxLetterLog;
 	protected Borderlayout blGenLetterEnquiry;
 	private Component parent = null;
-	private Tab parentTab = null;
 	private Tabpanel tabPanel_dialogWindow;
 
 	protected Label finType;
@@ -51,7 +48,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	protected Label finReference;
 	protected Label custName;
 
-	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl;
 	private GenerateLetter generateLetter;
 	private transient GenerateLetterService generateLetterService;
 
@@ -71,10 +67,6 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 		if (event.getTarget().getParent() != null) {
 			parent = event.getTarget().getParent();
-		}
-
-		if (arguments.containsKey("parentTab")) {
-			parentTab = (Tab) arguments.get("parentTab");
 		}
 
 		if (arguments.containsKey("generateLetter")) {
@@ -100,16 +92,8 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 
 			if (tabPanel_dialogWindow != null) {
 				getBorderLayoutHeight();
-				int rowsHeight;
-				if (financeEnquiryHeaderDialogCtrl != null) {
-					rowsHeight = (financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20)
-							+ 1;
-				} else {
-					rowsHeight = 20;
-				}
-
-				this.listBoxLetterLog.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
-				this.windowLetterLogEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight + "px");
+				this.listBoxLetterLog.setHeight("100%");
+				this.windowLetterLogEnquiryDialog.setHeight("100%");
 				tabPanel_dialogWindow.appendChild(this.windowLetterLogEnquiryDialog);
 
 			}
@@ -147,10 +131,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		int divHeight = this.borderLayoutHeight - 80;
-		int semiBorderlayoutHeights = divHeight / 2;
-
-		this.listBoxLetterLog.setHeight(semiBorderlayoutHeights - 105 + "px");
+		this.listBoxLetterLog.setHeight("100%");
 
 		if (parent != null) {
 			this.windowLetterLogEnquiryDialog.setHeight(borderLayoutHeight - 75 + "px");
@@ -180,11 +161,23 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			} else {
 
 				Listcell lc;
+				lc = new Listcell("");
+				lc.setSpan(1);
+				lc.setParent(item);
+
 				lc = new Listcell(DateUtil.formatToLongDate(data.getGeneratedDate()));
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getModeofTransfer());
+				String modeofTransfer = data.getModeofTransfer();
+
+				if ("A".equals(modeofTransfer)) {
+					modeofTransfer = "Auto";
+				} else {
+					modeofTransfer = "Manual";
+				}
+
+				lc = new Listcell(modeofTransfer);
 				lc.setSpan(1);
 				lc.setParent(item);
 
@@ -192,7 +185,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(String.valueOf(data.getApprovedBy()));
+				lc = new Listcell(String.valueOf(data.getApproverName()));
 				lc.setSpan(1);
 				lc.setParent(item);
 
@@ -200,19 +193,19 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtil.formatToLongDate(data.getGeneratedDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(data.getDispatchDate()));
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getStatus());
+				lc = new Listcell(data.getDeliveryStatus());
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(DateUtil.formatToLongDate(data.getGeneratedDate()));
+				lc = new Listcell(DateUtil.formatToLongDate(data.getDeliveryDate()));
 				lc.setSpan(1);
 				lc.setParent(item);
 
-				lc = new Listcell(data.getEmail());
+				lc = new Listcell(data.getEmailID());
 				lc.setSpan(1);
 				lc.setParent(item);
 

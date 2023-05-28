@@ -232,7 +232,7 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public List<ReceiptAllocationDetail> getPrinAndPftWaiver(String finReference) {
 		long id = getEarltSettleReceipt(finReference);
 		if (id == 0) {
-			return null;
+			return new ArrayList<>();
 		}
 
 		String sql = "Select WaivedAmount,AllocationType From  ReceiptAllocationDetail Where ReceiptId = ? and AllocationType in (?, ?, ?, ?)";
@@ -264,25 +264,36 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 
 	public List<GenerateLetter> getLetterInfo(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
-		sql.append(" From LOAN_LETTERS gl");
-		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
+		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, LetterType");
+		sql.append(", GeneratedBy, ApprovedBy, ApprovedOn");
+		sql.append(", Status, Remarks, EmailID, FileName");
+		sql.append(", CourierAgency, DispatchDate, DeliveryDate, DeliveryStatus");
+		sql.append(" From Loan_Letters");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			GenerateLetter fm = new GenerateLetter();
+			GenerateLetter letter = new GenerateLetter();
 
-			fm.setGeneratedDate(rs.getDate("GeneratedDate"));
-			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
-			fm.setRequestType(rs.getString("RequestType"));
-			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setTrackingID(rs.getLong("TrackingID"));
-			fm.setStatus(rs.getString("Status"));
-			fm.setRemarks(rs.getString("Remarks"));
+			letter.setGeneratedBy(JdbcUtil.getLong(rs.getObject("GeneratedBy")));
+			letter.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
+			letter.setGeneratedDate(rs.getDate("GeneratedDate"));
+			letter.setApprovedOn(rs.getTimestamp("ApprovedOn"));
+			letter.setModeofTransfer(rs.getString("ModeOfTransfer"));
+			letter.setRequestType(rs.getString("RequestType"));
+			letter.setLetterType(rs.getString("LetterType"));
+			letter.setStatus(rs.getString("Status"));
+			letter.setRemarks(rs.getString("Remarks"));
+			letter.setEmailID(rs.getString("EmailID"));
+			letter.setFileName(rs.getString("FileName"));
+			letter.setCourierAgency(rs.getString("CourierAgency"));
+			letter.setDispatchDate(rs.getDate("DispatchDate"));
+			letter.setDeliveryDate(rs.getDate("DeliveryDate"));
+			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
 
-			return fm;
-		}, finID, 1);
+			return letter;
+		}, finID);
 	}
 
 	@Override
@@ -384,27 +395,17 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 
 	@Override
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, GeneratedBy, TrackingID, Status, Remarks");
-		sql.append(" From Letter_Generation gl");
-		sql.append(" Inner Join Templates c on c.TemplateID = gl.EmailTemplate");
-		sql.append(" Where FinID = ? and LetterType = ?");
+		String sql = "Select DeliveryStatus From LOAN_LETTERS Where FinID = ? and LetterType = ? and Generated = ? order by ID Desc";
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			GenerateLetter fm = new GenerateLetter();
 
-			fm.setGeneratedDate(rs.getDate("GeneratedDate"));
-			fm.setModeofTransfer(rs.getString("ModeOfTransfer"));
-			fm.setRequestType(rs.getString("RequestType"));
-			fm.setGeneratedBy(rs.getLong("GeneratedBy"));
-			fm.setTrackingID(rs.getLong("TrackingID"));
-			fm.setStatus(rs.getString("Status"));
-			fm.setRemarks(rs.getString("Remarks"));
+			fm.setDeliveryStatus(rs.getString("DeliveryStatus"));
 
 			return fm;
-		}, finID, letterType);
+		}, finID, letterType, 1);
 	}
 
 	@Override
@@ -430,5 +431,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	@Override
 	public String getCancelReasons(String reference) {
 		return null;
+	}
+
+	@Override
+	public List<GenerateLetter> getLoanLetterInfo(long finID) {
+		return new ArrayList();
 	}
 }

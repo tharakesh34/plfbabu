@@ -60,7 +60,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onCreate$windowSelectGenerateLetter(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(windowSelectGenerateLetter);
 
@@ -72,11 +72,11 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
 		this.windowSelectGenerateLetter.doModal();
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnProceed(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		doWriteComponentsToBean();
 		if (!validateReference()) {
@@ -86,7 +86,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 		doShowDialog();
 		this.windowSelectGenerateLetter.onClose();
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean validateReference() throws Exception {
@@ -137,7 +137,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 				generateLetterService.deleteAutoLetterGeneration(fm.getFinID(), this.generateLetter.getLetterType());
 				return true;
 			}
-			
+
 			return false;
 		}
 
@@ -225,11 +225,11 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		this.windowSelectGenerateLetter.onClose();
 
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setGenerateLetterListCtrl(GenerateLetterListCtrl generateLetterListCtrl) {

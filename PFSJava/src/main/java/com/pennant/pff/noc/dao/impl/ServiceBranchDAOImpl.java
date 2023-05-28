@@ -22,7 +22,6 @@ import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.resource.Message;
 import com.pennanttech.pennapps.jdbc.search.ISearch;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -548,7 +547,7 @@ public class ServiceBranchDAOImpl extends SequenceDao<ServiceBranch> implements 
 		sql.append(" cs.Code, csb.FinType, csb.Branch");
 		sql.append(" From Service_Branches_LoanType csb");
 		sql.append(" Inner join Service_Branches cs On cs.Id =  csb.HeaderId");
-		sql.append(" Where csb.FinType = ? And csb.Branch = ? And cs.Code <> ?");
+		sql.append(" Where csb.FinType = ? and csb.Branch = ? and cs.Code <> ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -558,11 +557,11 @@ public class ServiceBranchDAOImpl extends SequenceDao<ServiceBranch> implements 
 				@Override
 				public ServiceBranchesLoanType mapRow(ResultSet rs, int rowNum) throws SQLException {
 					ServiceBranchesLoanType sbl = new ServiceBranchesLoanType();
-					
+
 					sbl.setCode(rs.getString("Code"));
 					sbl.setFinType(rs.getString("FinType"));
 					sbl.setBranch(rs.getString("Branch"));
-					
+
 					return sbl;
 				}
 
@@ -570,7 +569,7 @@ public class ServiceBranchDAOImpl extends SequenceDao<ServiceBranch> implements 
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
-	
+
 		}
 
 	}

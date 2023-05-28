@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.backend.model.letter.LoanLetter;
 import com.pennant.pff.letter.LetterType;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.model.ServiceBranch;
@@ -27,8 +28,9 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	public long save(GenerateLetter gl) {
 		StringBuilder sql = new StringBuilder("Insert Into LOAN_LETTERS_STAGE");
 		sql.append("(FinID, RequestType, LetterType");
-		sql.append(", CreatedDate, CreatedOn, AgreementTemplate, EmailTemplate, ModeOfTransfer, FeeID)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", CreatedDate, CreatedOn, GeneratedBy, ApprovedBy, ApprovedOn");
+		sql.append(", AgreementTemplate, EmailTemplate, ModeOfTransfer, FeeID)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
 
@@ -47,6 +49,9 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 					ps.setString(++index, gl.getLetterType());
 					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedDate()));
 					ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
+					ps.setObject(++index, gl.getGeneratedBy());
+					ps.setObject(++index, gl.getApprovedBy());
+					ps.setTimestamp(++index, gl.getApprovedOn());
 					ps.setLong(++index, gl.getAgreementTemplate());
 					ps.setObject(++index, gl.getEmailTemplate());
 					ps.setString(++index, gl.getModeofTransfer());
@@ -56,7 +61,13 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 				}
 			}, keyHolder);
 
-			return keyHolder.getKey().longValue();
+			Number key = keyHolder.getKey();
+
+			if (key == null) {
+				return 0;
+			}
+
+			return key.longValue();
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -97,10 +108,12 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 	}
 
 	@Override
-	public void update(GenerateLetter gl) {
+	public void update(LoanLetter letter) {
 		StringBuilder sql = new StringBuilder("Update LOAN_LETTERS_STAGE");
-		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?, AdviseID = ?");
-		sql.append(", EmailNotificationID = ?, Status = ?, Remarks = ?");
+		sql.append(" Set Generated = ?, GeneratedDate = ?, GeneratedOn = ?");
+		sql.append(", LetterName = ?, FileName = ?, LetterLocation = ?");
+		sql.append(", AdviseID = ?, EmailID = ?, EmailNotificationID = ?");
+		sql.append(", Status = ?, Remarks = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL.concat(sql.toString()));
@@ -109,15 +122,19 @@ public class AutoLetterGenerationDAOImpl extends SequenceDao<GenerateLetter> imp
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 0;
 
-				ps.setInt(++index, gl.getGenerated());
-				ps.setDate(++index, JdbcUtil.getDate(gl.getGeneratedDate()));
-				ps.setDate(++index, JdbcUtil.getDate(gl.getCreatedOn()));
-				ps.setObject(++index, gl.getAdviseID());
-				ps.setObject(++index, gl.getEmailNotificationID());
-				ps.setString(++index, gl.getStatus());
-				ps.setString(++index, gl.getRemarks());
+				ps.setInt(++index, letter.getGenerated());
+				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedDate()));
+				ps.setDate(++index, JdbcUtil.getDate(letter.getGeneratedOn()));
+				ps.setString(++index, letter.getLetterName());
+				ps.setString(++index, letter.getFileName());
+				ps.setString(++index, letter.getLetterLocation());
+				ps.setObject(++index, letter.getAdviseID());
+				ps.setString(++index, letter.getEmailID());
+				ps.setObject(++index, letter.getEmailNotificationID());
+				ps.setString(++index, letter.getStatus());
+				ps.setString(++index, letter.getRemarks());
 
-				ps.setLong(++index, gl.getId());
+				ps.setLong(++index, letter.getId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
