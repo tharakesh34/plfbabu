@@ -1,7 +1,6 @@
 package com.pennanttech.external.collectionreceipt.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 public class ExtCollectionReceiptData {
 	private long agreementNumber;
@@ -13,8 +12,8 @@ public class ExtCollectionReceiptData {
 	private String drawnOn;
 	private String towards;
 	private BigDecimal grandTotal;
-	private Date receiptDate;
-	private Date chequeDate;
+	private String receiptDate;
+	private String chequeDate;
 	private String receiptType;
 	private long receiptNumber;
 	private String chequeStatus;
@@ -109,19 +108,19 @@ public class ExtCollectionReceiptData {
 		this.grandTotal = grandTotal;
 	}
 
-	public Date getReceiptDate() {
+	public String getReceiptDate() {
 		return receiptDate;
 	}
 
-	public void setReceiptDate(Date receiptDate) {
+	public void setReceiptDate(String receiptDate) {
 		this.receiptDate = receiptDate;
 	}
 
-	public Date getChequeDate() {
+	public String getChequeDate() {
 		return chequeDate;
 	}
 
-	public void setChequeDate(Date chequeDate) {
+	public void setChequeDate(String chequeDate) {
 		this.chequeDate = chequeDate;
 	}
 

@@ -309,7 +309,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(detail.getRemarks());
 		item.append(pipeSeperator);
-		item.append("");// USER ID
+		item.append("PLF");// FIXEM USER ID
 		item.append(pipeSeperator);
 		item.append(appDate);
 		item.append(pipeSeperator);
@@ -458,7 +458,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		item.append(pipeSeperator);
 		item.append(detail.getRemarks());
 		item.append(pipeSeperator);
-		item.append("");// USER ID
+		item.append("PLF");// FIXME USER ID
 		item.append(pipeSeperator);
 		item.append(appDate);
 		item.append(pipeSeperator);

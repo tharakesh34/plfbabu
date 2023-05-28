@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -56,13 +59,14 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 	@Override
 	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
+
 		applicationContext = ApplicationContextProvider.getApplicationContext();
 		dataSource = applicationContext.getBean("extDataSource", DataSource.class);
 		extCollectionReceiptDao = applicationContext.getBean("extCollectionReceiptDao", ExtCollectionReceiptDao.class);
 		transactionManager = applicationContext.getBean("transactionManager", PlatformTransactionManager.class);
 		extReceiptServiceHook = applicationContext.getBean(ExtReceiptServiceHook.class);
 
-		if (extReceiptServiceHook != null) {
+		if (extReceiptServiceHook == null) {
 			return;
 		}
 
@@ -76,8 +80,8 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 			public CollReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CollReceiptHeader collectionFile = new CollReceiptHeader();
 				collectionFile.setId(rs.getLong("ID"));
-				collectionFile.setRequestFileName(rs.getString("REQUEST_FILE_NAME"));
-				collectionFile.setRequestFileLocation(rs.getString("REQUEST_FILE_LOCATION"));
+				collectionFile.setRequestFileName(rs.getString("REQ_FILE_NAME"));
+				collectionFile.setRequestFileLocation(rs.getString("REQ_FILE_LOCATION"));
 				collectionFile.setErrorCode(rs.getString("ERROR_CODE"));
 				collectionFile.setErrorMessage(rs.getString("ERROR_MESSAGE"));
 				return collectionFile;
@@ -178,7 +182,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		cru.setAllocationType("M");
 		cru.setAppDate(SysParamUtil.getAppDate());
 		cru.setValueDate(SysParamUtil.getAppDate());
-		cru.setRealizationDate(collectionData.getReceiptDate());
+		cru.setRealizationDate(getFormattedDate(collectionData.getReceiptDate()));
 		cru.setReceiptAmount(collectionData.getGrandTotal());
 		cru.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		// collectionData
@@ -191,10 +195,10 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 
 		if (isCheque) {
 			cru.setReceiptMode(ReceiptMode.CHEQUE);
-			cru.setDepositDate(collectionData.getChequeDate());
+			cru.setDepositDate(getFormattedDate(collectionData.getChequeDate()));
 		} else {
 			cru.setReceiptMode(ReceiptMode.CASH);
-			cru.setDepositDate(collectionData.getReceiptDate());
+			cru.setDepositDate(getFormattedDate(collectionData.getReceiptDate()));
 		}
 		cru.setBankCode(String.valueOf(collectionData.getDealingBankId()));
 		cru.setEffectSchdMethod("");
@@ -273,6 +277,16 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 	private BigDecimal getRoundAmount(String strAmount) {
 		BigDecimal convertedAmt = new BigDecimal("15000");
 		return convertedAmt.setScale(2);
+	}
+
+	private Date getFormattedDate(String str_date) {
+		try {
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+			return formatter.parse(str_date);
+		} catch (Exception e) {
+
+		}
+		return null;
 	}
 
 }
