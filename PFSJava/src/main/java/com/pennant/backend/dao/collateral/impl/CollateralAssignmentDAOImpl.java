@@ -59,7 +59,6 @@ import com.pennanttech.pff.core.TableType;
  * DAO methods implementation for the <b>CollateralAssignment model</b> class.<br>
  * 
  */
-
 public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement> implements CollateralAssignmentDAO {
 	private static Logger logger = LogManager.getLogger(CollateralAssignmentDAOImpl.class);
 
@@ -93,9 +92,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, reference);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setString(1, reference));
 	}
 
 	@Override
@@ -327,9 +324,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql, ps -> {
-			setPreparedStatements(ps, movement);
-		});
+		this.jdbcOperations.update(sql, ps -> setPreparedStatements(ps, movement));
 	}
 
 	@Override

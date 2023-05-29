@@ -100,9 +100,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.update(sql, ps -> {
-				setPreparedStatement(irr, ps);
-			});
+			jdbcOperations.update(sql, ps -> setPreparedStatement(irr, ps));
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
@@ -158,9 +156,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		});
+		jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, finID));
 	}
 
 	@Override

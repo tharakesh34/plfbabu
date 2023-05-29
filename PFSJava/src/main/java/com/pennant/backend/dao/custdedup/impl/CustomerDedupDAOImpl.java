@@ -173,9 +173,7 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 				ps.setString(1, "CUSTOMER");
 				ps.setString(2, subModuleName);
 				ps.setInt(3, 1);
-			}, (rs, rowNum) -> {
-				return rs.getString(1);
-			});
+			}, (rs, rowNum) -> rs.getString(1));
 		}
 
 		return new ArrayList<>();

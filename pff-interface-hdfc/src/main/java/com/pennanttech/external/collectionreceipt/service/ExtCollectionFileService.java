@@ -80,13 +80,12 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 			int chqDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getChequeDate()));
 			int receiptDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getReceiptDate()));
 			int chqTypeCHK = generateChecksum(String.valueOf(collectionReceiptData.getReceiptType()));
-
+			rejectRowNum = rejectRowNum + 1;
 			int totalChk = agreementCHK + grTotalCHK + chqDateCHK + receiptDateCHK + chqTypeCHK;
 			String qualifiedChk = rejectRowNum + "" + totalChk;
 
 			totalRChecksum = totalRChecksum + Integer.parseInt(qualifiedChk);
 
-			rejectRowNum = rejectRowNum + 1;
 			StringBuilder itemStr = getRejectItem(collectionReceiptData, appDate, rejectDetail.getErrorMessage(),
 					rejectRowNum, errorReceiptHeader);
 			itemList.add(itemStr);
@@ -113,7 +112,7 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 		int totalSChecksum = 0;
 		for (CollReceiptDetail successDetail : successList) {
 			ExtCollectionReceiptData collectionReceiptData = splitAndSetData(successDetail.getRecordData());
-
+			successRowNum = successRowNum + 1;
 			int agreementCHK = generateChecksum(String.valueOf(collectionReceiptData.getAgreementNumber()));
 			int grTotalCHK = generateChecksum(String.valueOf(collectionReceiptData.getGrandTotal()));
 			int chqDateCHK = generateChecksum(String.valueOf(collectionReceiptData.getChequeDate()));
@@ -125,7 +124,6 @@ public class ExtCollectionFileService extends TextFileUtil implements InterfaceC
 
 			totalSChecksum = totalSChecksum + Integer.parseInt(qualifiedChk);
 
-			successRowNum = successRowNum + 1;
 			StringBuilder itemStr = getSuccessItem(collectionReceiptData, successDetail.getReceiptId(),
 					successDetail.getReceiptCreatedDate(), successRowNum, qualifiedChk);
 			itemList.add(itemStr);

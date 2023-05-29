@@ -34,10 +34,7 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, new FinDeviationRowMapper(type));
-
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), new FinDeviationRowMapper(type));
 	}
 
 	@Override

@@ -279,9 +279,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, headerId);
-		}, (rs, num) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerId), (rs, num) -> {
 			FinFeeRefundDetails fr = new FinFeeRefundDetails();
 
 			fr.setId(rs.getLong("Id"));
@@ -400,9 +398,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, frd.getId());
-			});
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, frd.getId()));
 
 			if (recordCount == 0) {
 				throw new ConcurrencyException();

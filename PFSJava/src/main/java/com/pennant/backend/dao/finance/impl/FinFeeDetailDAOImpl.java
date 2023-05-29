@@ -495,9 +495,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-			return rs.getInt(1);
-		}, fd.getFinReference(), fd.getFinEvent());
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> rs.getInt(1), fd.getFinReference(),
+				fd.getFinEvent());
 	}
 
 	@Override

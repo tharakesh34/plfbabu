@@ -259,9 +259,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		logger.debug(Literal.SQL + sql);
 
-		this.jdbcOperations.update(sql, ps -> {
-			updateTotals(od, ps);
-		});
+		this.jdbcOperations.update(sql, ps -> updateTotals(od, ps));
 	}
 
 	@Override
