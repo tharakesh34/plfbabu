@@ -59,13 +59,7 @@ public enum ReceiptStatusUploadError {
 	}
 
 	public static boolean isValidation(String errorCode) {
-		ReceiptStatusUploadError error = getError(errorCode);
-
-		if (error == null) {
-			return false;
-		}
-
-		return true;
+		return getError(errorCode) != null;
 	}
 
 	private static ReceiptStatusUploadError getError(String errorCode) {

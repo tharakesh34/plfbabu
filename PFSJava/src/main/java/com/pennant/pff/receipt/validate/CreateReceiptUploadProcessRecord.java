@@ -453,7 +453,7 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 		}
 
 		long receiptid = rud.getReceiptID();
-		if (!(receiptid == 0) && !(receiptid == Long.MIN_VALUE)) {
+		if ((receiptid != 0) && (receiptid != Long.MIN_VALUE)) {
 			if (Long.toString(receiptid).length() > 50) {
 				setError(rud, "[RECEIPTNUMBER] with length more than 50 characters");
 				return;
@@ -798,8 +798,8 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
 			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
-			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), pbMode, pb.getPartnerBankId());
-			if (pb == null || partnerbankid == 0) {
+			int count = partnerBankDAO.getValidPartnerBank(fm.getFinType(), pbMode, pb.getPartnerBankId());
+			if (pb == null || count == 0) {
 				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;
 			}

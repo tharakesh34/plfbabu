@@ -3027,20 +3027,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		return soaTransactionReports;
 	}
 
-	private SOATransactionReport getlppTrnscEvent(String finODCDue, List<SOATransactionReport> soaTransactionReports,
-			FinanceScheduleDetail finSchdDetail, FinOverDueCharges odc, Date valueDate, BigDecimal debitAmount) {
-		SOATransactionReport soaTranReport;
-		soaTranReport = new SOATransactionReport();
-		soaTranReport.setEvent(finODCDue.concat(String.valueOf(finSchdDetail.getInstNumber())));
-		soaTranReport.setTransactionDate(odc.getPostDate());
-		soaTranReport.setValueDate(valueDate);
-		soaTranReport.setCreditAmount(BigDecimal.ZERO);
-		soaTranReport.setDebitAmount(debitAmount);
-		soaTranReport.setPriority(9);
-		soaTransactionReports.add(soaTranReport);
-		return soaTranReport;
-	}
-
 	// Getting Reversal Transactions for Cancel Loan.
 	private void getCancelLoanTransactionDetails(String finReference, List<SOATransactionReport> soaTransactionReports,
 			List<PaymentInstruction> paymentInstructionsList, List<ManualAdvise> manualAdviseList,

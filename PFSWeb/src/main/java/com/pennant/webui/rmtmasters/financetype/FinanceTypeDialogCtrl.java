@@ -7170,7 +7170,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.oDAllowWaiver.setDisabled(true);
 			this.oDMaxWaiverPerc.setDisabled(true);
 			this.oDMinCapAmount.setDisabled(true);
-			// this.odMinAmount.setDisabled(true);
 			checkAction = true;
 			if (isOverdraft) {
 				this.collectionAmt.setReadonly(!isCompReadonly);

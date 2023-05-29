@@ -102,8 +102,8 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 		detail.setReferenceID(fm.getFinID());
 
 		LetterType letterType = LetterType.getType(detail.getLetterType());
-		if (!(LetterType.NOC == letterType) && !(LetterType.CLOSURE == letterType)
-				&& !(LetterType.CANCELLATION == letterType)) {
+		if ((LetterType.NOC != letterType) && (LetterType.CLOSURE != letterType)
+				&& (LetterType.CANCELLATION != letterType)) {
 			setError(detail, LoanLetterUploadError.LOAN_LTR_02);
 			return;
 		}

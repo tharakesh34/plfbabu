@@ -130,9 +130,9 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReference(detail.getReference());
 		rud.setFinID(detail.getReferenceID());
 		rud.setAllocationType(detail.getAllocationType());
-		rud.setValueDate(detail.getAppDate());
-		rud.setRealizationDate(detail.getAppDate());
-		rud.setReceivedDate(detail.getAppDate());
+		rud.setValueDate(detail.getValueDate());
+		rud.setRealizationDate(detail.getRealizationDate());
+		rud.setReceivedDate(detail.getValueDate());
 		rud.setReceiptAmount(detail.getReceiptAmount());
 		rud.setExcessAdjustTo(detail.getExcessAdjustTo());
 		rud.setReceiptMode(detail.getReceiptMode());
@@ -267,7 +267,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 		rud.setReceiptMode(detail.getReceiptMode());
 		rud.setSubReceiptMode(detail.getSubReceiptMode());
 		rud.setReceiptPurpose(detail.getReceiptPurpose());
-		rud.setStatus(detail.getStatus());
+		rud.setStatus(detail.getReceiptModeStatus());
 		rud.setReceiptChannel(detail.getReceiptChannel());
 		rud.setDepositDate(detail.getDepositDate());
 		rud.setBankCode(detail.getBankCode());

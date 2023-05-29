@@ -132,9 +132,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 				penalty = odChargeAmtOrPerc.multiply(new BigDecimal(numberOfMonths));
 			}
 
-			if (penalty.compareTo(fod.getOdMinAmount()) < 0 && valueDate.compareTo(fod.getFinODSchdDate()) != 0) {
-				penalty = fod.getOdMinAmount();
-			}
 			break;
 		case ChargeType.PERC_ONE_TIME:
 			/* Percentage ON OD Amount. One Time */
@@ -143,6 +140,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (balanceForCal.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal amtOrPercetage = odChargeAmtOrPerc.divide(new BigDecimal(100));
 				penalty = balanceForCal.multiply(amtOrPercetage).divide(new BigDecimal(100));
+			}
+
+			if (penalty.compareTo(fod.getOdMinAmount()) < 0 && valueDate.compareTo(fod.getFinODSchdDate()) != 0) {
+				penalty = fod.getOdMinAmount();
 			}
 
 			break;
