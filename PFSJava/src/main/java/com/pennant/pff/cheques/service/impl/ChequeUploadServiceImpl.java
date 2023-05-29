@@ -312,11 +312,6 @@ public class ChequeUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		cd.setBankBranchID(bankBranch.getBankBranchID());
-
-		upload.setProgress(EodConstants.PROGRESS_SUCCESS);
-		upload.setStatus("S");
-		upload.setErrorCode("");
-		upload.setErrorDesc("");
 	}
 
 	@Override

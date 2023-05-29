@@ -312,9 +312,8 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl {
 			maxWaiver = BigDecimal.ZERO;
 		}
 
-		if (amountOrPercent.compareTo(BigDecimal.ZERO) == 0) {
-			setError(detail, LPPUploadError.LPP25);
-			return;
+		if (amountOrPercent == null) {
+			amountOrPercent = BigDecimal.ZERO;
 		}
 
 		if (PennantConstants.NO.equals(detail.getApplyOverDue())

@@ -50,9 +50,7 @@ public enum LPPUploadError {
 
 	LPP23("Calculated On should not blank if you are penalty type captured as 'P','D','M' OR 'E'."),
 
-	LPP24("Not allowed to maintain the LAN as It is already initiated."),
-
-	LPP25("Amount/Percentage Should not be blank if penalty type captured as 'F' OR 'A'.");
+	LPP24("Not allowed to maintain the LAN as It is already initiated.");
 
 	private String description;
 
