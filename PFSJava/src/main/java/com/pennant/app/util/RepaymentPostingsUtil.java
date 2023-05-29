@@ -197,7 +197,7 @@ public class RepaymentPostingsUtil {
 			if (aeEvent != null) {
 				aeEvent.setSimulateAccounting(fm.isSimulateAccounting());
 				if (!aeEvent.isPostingSucess()) {
-					actReturnList = new ArrayList<Object>(2);
+					actReturnList = new ArrayList<>(2);
 					actReturnList.add(false);
 					actReturnList.add(aeEvent.getErrorMessage());
 					return actReturnList;
@@ -298,8 +298,6 @@ public class RepaymentPostingsUtil {
 			Date dateValueDate, FinanceMain fm, FinRepayQueueHeader repayQueueHeader) throws AppException {
 		logger.info(Literal.ENTERING);
 
-		// repayQueueHeader.setLppAmzReqonME(feeType.isAmortzReq());
-
 		ManualAdviseMovements movement = getManualAdvise(finRepayQueueList, dateValueDate);
 
 		if (movement != null) {
@@ -322,28 +320,6 @@ public class RepaymentPostingsUtil {
 			}
 
 			taxIncome = (FinTaxIncomeDetail) returnList.get(1);
-
-			// Commented updating finOddetails table because updation is being done in Scheduleupdate()
-			// Overdue Details Updation for Paid Penalty
-			/*
-			 * for (FinRepayQueue repayQueue : finRepayQueueList) { if (repayQueue.getRpyDate().compareTo(dateValueDate)
-			 * >= 0) { continue; }
-			 * 
-			 * BigDecimal totPenalty = repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount());
-			 * 
-			 * if (totPenalty.compareTo(BigDecimal.ZERO) <= 0) { continue; }
-			 * 
-			 * FinODDetails detail = new FinODDetails(); detail.setFinReference(financeMain.getFinReference());
-			 * detail.setFinODSchdDate(repayQueue.getRpyDate()); detail.setFinODFor(repayQueue.getFinRpyFor());
-			 * detail.setTotPenaltyAmt(BigDecimal.ZERO); detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
-			 * 
-			 * if (repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount()).compareTo(BigDecimal.ZERO) < 0) {
-			 * detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate()); }
-			 * else { detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount()))); }
-			 * detail.setTotWaived(repayQueue.getWaivedAmount());
-			 * 
-			 * if (!aeEvent.isSimulateAccounting()) { finODDetailsDAO.updateTotals(detail); } }
-			 */
 		}
 
 		List<Object> returnList = new ArrayList<>();
@@ -1099,6 +1075,8 @@ public class RepaymentPostingsUtil {
 				if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 					fm.setClosingStatus(FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 					pftDetail.setSvnAcrTillLBD(pftDetail.getTotalSvnAmount());
+				} else {
+					rch.setClosureType(ClosureType.CLOSURE.code());
 				}
 
 				if (fm.getClosureType() != null && FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)
@@ -1131,6 +1109,8 @@ public class RepaymentPostingsUtil {
 
 		fm.setClosureType(rch == null ? null : rch.getClosureType());
 		letterService.logForAutoLetter(fm, appDate);
+
+		System.out.println("");
 
 		pftDetail.setFinStatus(fm.getFinStatus());
 		pftDetail.setFinStsReason(fm.getFinStsReason());
@@ -1194,11 +1174,6 @@ public class RepaymentPostingsUtil {
 		if (PennantConstants.APP_PHASE_EOD.equalsIgnoreCase(rqh.getPostBranch())) {
 			aeEvent.setEOD(true);
 		}
-
-		BigDecimal priDuePaid = BigDecimal.ZERO;
-		BigDecimal priDueWaived = BigDecimal.ZERO;
-		BigDecimal pftDuePaid = BigDecimal.ZERO;
-		BigDecimal pftDueWaived = BigDecimal.ZERO;
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes.setBusinessvertical(fm.getBusinessVerticalCode());
@@ -1286,11 +1261,11 @@ public class RepaymentPostingsUtil {
 		amountCodes.setFuturePriPaid(rqh.getFutPrincipal());
 		amountCodes.setFuturePriWaived(rqh.getFutPriWaived());
 
-		priDuePaid = rqh.getPrincipal().subtract(rqh.getFutPrincipal());
-		priDueWaived = rqh.getPriWaived().subtract(rqh.getFutPriWaived());
+		BigDecimal priDuePaid = rqh.getPrincipal().subtract(rqh.getFutPrincipal());
+		BigDecimal priDueWaived = rqh.getPriWaived().subtract(rqh.getFutPriWaived());
 
-		pftDuePaid = rqh.getProfit().subtract(rqh.getFutProfit());
-		pftDueWaived = rqh.getPftWaived().subtract(rqh.getFutPftWaived());
+		BigDecimal pftDuePaid = rqh.getProfit().subtract(rqh.getFutProfit());
+		BigDecimal pftDueWaived = rqh.getPftWaived().subtract(rqh.getFutPftWaived());
 
 		amountCodes.setPriDuePaid(priDuePaid);
 		amountCodes.setPriDueWaived(priDueWaived);
@@ -1662,21 +1637,6 @@ public class RepaymentPostingsUtil {
 				gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
 			}
 		}
-
-		// Overdue Details Updation for Paid Penalty
-		/*
-		 * if (aeEvent.isPostingSucess() && StringUtils.equals(financeMain.getProductCategory(),
-		 * FinanceConstants.PRODUCT_GOLD)) { BigDecimal penaltyAmt =
-		 * rpyQueueHeader.getPenalty().add(rpyQueueHeader.getPenaltyWaived());
-		 * 
-		 * //Overdue Details Updation for Totals if (penaltyAmt.compareTo(BigDecimal.ZERO) > 0) { FinODDetails detail =
-		 * new FinODDetails(); detail.setFinReference(financeMain.getFinReference());
-		 * detail.setFinODSchdDate(financeMain.getMaturityDate());
-		 * detail.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE); detail.setTotPenaltyAmt(BigDecimal.ZERO);
-		 * detail.setTotPenaltyPaid(rpyQueueHeader.getPenalty());
-		 * detail.setTotPenaltyBal((rpyQueueHeader.getPenalty().add(rpyQueueHeader.getPenaltyWaived())).negate());
-		 * detail.setTotWaived(rpyQueueHeader.getPenaltyWaived()); getFinODDetailsDAO().updateTotals(detail); } }
-		 */
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent;
@@ -2485,18 +2445,13 @@ public class RepaymentPostingsUtil {
 		}
 
 		FinStatusDetail statusDetail = new FinStatusDetail();
-		List<FinStatusDetail> custStatuses = new ArrayList<FinStatusDetail>(1);
+		List<FinStatusDetail> custStatuses = new ArrayList<>(1);
 		statusDetail.setCustId(financeMain.getCustID());
 		statusDetail.setFinStatus(custSts);
 		statusDetail.setValueDate(suspFromdate);
 		custStatuses.add(statusDetail);
 
 		finStatusDetailDAO.updateCustStatuses(custStatuses);
-
-		statusDetail = null;
-		custStatuses = null;
-		suspDateSts = null;
-		custIdList = null;
 
 		actReturnList.add(true);
 		actReturnList.add(linkedTranId);
