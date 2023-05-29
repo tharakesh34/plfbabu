@@ -819,9 +819,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		return this.jdbcOperations.query(sql, (rs, rownum) -> {
-			return rs.getString(1);
-		}, AdviseType.RECEIVABLE.id(), 1);
+		return this.jdbcOperations.query(sql, (rs, rownum) -> rs.getString(1), AdviseType.RECEIVABLE.id(), 1);
 	}
 
 	@Override
