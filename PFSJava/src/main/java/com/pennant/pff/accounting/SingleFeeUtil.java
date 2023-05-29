@@ -409,7 +409,7 @@ public class SingleFeeUtil {
 		amountRule = amountRule.replace("Result =", "Result=");
 		amountRule = amountRule.replace("Result= ", "Result=");
 		amountRule = amountRule.replace("Result = ", "Result=");
-		return amountRule = amountRule.replace("Result = ", "Result=");
+		return amountRule.replace("Result = ", "Result=");
 	}
 
 	private static String[] getAmountCodes(String amountRule) {
