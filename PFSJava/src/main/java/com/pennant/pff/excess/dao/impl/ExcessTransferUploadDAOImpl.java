@@ -113,8 +113,12 @@ public class ExcessTransferUploadDAOImpl extends SequenceDao<ExcessTransferUploa
 		sql.append(" ru.FinReference, ru.TransferFromType");
 		sql.append(", ru.TransferToType, ru.TransferAmount, ru.Progress, ru.ErrorCode, ru.ErrorDesc,");
 		sql.append(" Case When ru.Status = 'C' then 'Cleared' else 'Rejected' end Status");
+		sql.append(", uh.CreatedOn, uh.CreatedBy, uh.ApprovedOn, uh.ApprovedBy");
+		sql.append(", su1.UsrLogin CreatedName, su2.UsrLogin ApprovedName");
 		sql.append(" From EXCESS_TRANSFER_DETAILS_UPLOAD ru");
 		sql.append(" Inner Join FILE_UPLOAD_HEADER uh on uh.ID = ru.HeaderID");
+		sql.append(" Inner Join SecUsers su1 on su1.UsrID = uh.CreatedBy");
+		sql.append(" Left Join SecUsers su2 on su2.UsrID = uh.ApprovedBy");
 		sql.append(" Where uh.ID = :HEADER_ID");
 
 		return sql.toString();

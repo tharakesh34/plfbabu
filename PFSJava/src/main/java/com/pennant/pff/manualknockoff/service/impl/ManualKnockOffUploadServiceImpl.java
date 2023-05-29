@@ -193,6 +193,7 @@ public class ManualKnockOffUploadServiceImpl extends AUploadServiceImpl {
 		}
 
 		detail.setProgress(EodConstants.PROGRESS_SUCCESS);
+		detail.setStatus("S");
 		detail.setErrorCode("");
 		detail.setErrorDesc("");
 
