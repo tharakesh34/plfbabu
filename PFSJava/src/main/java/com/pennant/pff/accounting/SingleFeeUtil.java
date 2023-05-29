@@ -251,8 +251,7 @@ public class SingleFeeUtil {
 		for (Entry<String, List<TransactionEntry>> items : bulkingEntries.entrySet()) {
 			TransactionEntry newTxnEntry = null;
 
-			StringBuilder tsb = new StringBuilder();
-			StringBuilder arsb = new StringBuilder();
+			StringBuilder builder = new StringBuilder();
 
 			for (TransactionEntry item : items.getValue()) {
 				if (newTxnEntry == null) {
@@ -268,13 +267,21 @@ public class SingleFeeUtil {
 				amountRule = amountRule.replace("; ", "");
 				amountRule = amountRule.replace(" ; ", "");
 
-				tsb = tsb.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
+				amountRule = amountRule.replace(PennantConstants.RESULT, "");
+
+				amountRule = StringUtils.trim(amountRule);
+
+				if (builder.length() > 0) {
+					builder.append("+");
+				}
+
+				builder.append("(").append(amountRule).append(")");
 			}
 
-			arsb.append(PennantConstants.RESULT.concat(tsb.replace(tsb.length() - 1, tsb.length(), ";").toString()));
+			String finalRule = PennantConstants.RESULT.concat(builder.toString()).concat(";");
 
 			if (newTxnEntry != null) {
-				newTxnEntry.setAmountRule(arsb.toString());
+				newTxnEntry.setAmountRule(finalRule);
 
 				list.add(newTxnEntry);
 			}
