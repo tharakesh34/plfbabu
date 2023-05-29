@@ -344,7 +344,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 
 		Long manualAssetSubClassID = p.getManualAssetSubClassID();
 		this.effManualAssetSubClassification.setValue(String.valueOf(manualAssetSubClassID));
-		fillList(this.effManualAssetSubClassification, String.valueOf(manualAssetSubClassID),
+		fillComboBox(this.effManualAssetSubClassification, String.valueOf(manualAssetSubClassID),
 				getAssetSubClassCodes(manualAssetClassID));
 
 		this.newProvisionRegPercentage.setValue(p.getNewRegProvisionPer());

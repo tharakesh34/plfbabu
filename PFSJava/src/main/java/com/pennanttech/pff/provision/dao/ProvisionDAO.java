@@ -56,4 +56,6 @@ public interface ProvisionDAO {
 	List<NpaProvisionStage> getNPAProvisionDetails(long finID);
 
 	ProvisionRuleData getProvisionDataForUpload(long finID);
+
+	Provision getAssetClassSetIDByCode(String code, String effNpaClassCode);
 }

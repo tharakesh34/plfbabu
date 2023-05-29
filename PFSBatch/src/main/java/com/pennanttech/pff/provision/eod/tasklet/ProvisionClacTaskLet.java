@@ -30,7 +30,6 @@ import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.eod.step.StepUtil;
-import com.pennanttech.pff.npa.model.AssetClassification;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.provision.ProvisionReversalStage;
 import com.pennanttech.pff.provision.model.Provision;
@@ -219,26 +218,18 @@ public class ProvisionClacTaskLet implements Tasklet {
 				provisionService.updateProgress(finID, EodConstants.PROGRESS_IN_PROCESS);
 
 				Provision mp = new Provision();
-				AssetClassification napMovement = assetClassificationService.getNpaMovemnt(finID);
-
-				if (napMovement != null) {
-					mp.setManualAssetClassCode(napMovement.getNpaClassCode());
-					mp.setManualAssetSubClassCode(napMovement.getNpaSubClassCode());
-					mp.setManualAssetClassID(napMovement.getNpaClassID());
-					mp.setManualAssetSubClassID(napMovement.getNpaClassID());
-					mp.setEffectiveAssetClassID(napMovement.getNpaClassID());
-					mp.setEffectiveAssetSubClassID(napMovement.getEffNpaClassID());
-				}
-
 				mp.setOverrideProvision(false);
 				mp.setManProvsnPer(BigDecimal.ZERO);
 				mp.setFinID(finID);
-				mp.setManualProvision(true);
 				mp.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				mp.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-
 				Provision provision = provisionService.getProvision(finID, appDate, mp);
-
+				mp = provisionService.getAssetClassSetIDByCode(provision.getManualAssetClassCode(),
+						provision.getEffNpaSubClassCode());
+				if (mp != null) {
+					provision.setManualAssetClassID(mp.getManualAssetClassID());
+					provision.setManualAssetSubClassID(mp.getManualAssetSubClassID());
+				}
 				if (provision != null) {
 					txStatus = transactionManager.getTransaction(txDef);
 					if (provision.getId() == null) {

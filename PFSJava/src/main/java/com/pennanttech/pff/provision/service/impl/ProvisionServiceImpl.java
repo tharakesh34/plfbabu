@@ -691,6 +691,12 @@ public class ProvisionServiceImpl implements ProvisionService {
 		return vasFee;
 	}
 
+	@Override
+	public Provision getAssetClassSetIDByCode(String code, String effNpaClassCode) {
+		return provisionDao.getAssetClassSetIDByCode(code, effNpaClassCode);
+
+	}
+
 	@Autowired
 	public void setProvisionDao(ProvisionDAO provisionDao) {
 		this.provisionDao = provisionDao;

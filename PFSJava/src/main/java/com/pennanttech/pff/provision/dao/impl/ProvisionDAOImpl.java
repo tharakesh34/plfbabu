@@ -958,4 +958,31 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		}
 	}
 
+	@Override
+	public Provision getAssetClassSetIDByCode(String code, String effNpaClassCode) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select acc.Id , ascc.ID ManualAssetSubClassId, acc.Code ManualAssetClassCode");
+		sql.append(", ascc.Code ManualAssetSubClassCode");
+		sql.append(" From Asset_Class_Codes acc");
+		sql.append(" Inner Join  Asset_Sub_Class_Codes ascc on ascc.AssetClassID = acc.ID");
+		sql.append(" Where acc.Code = ?  and ascc.Code = ?");
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Provision item = new Provision();
+				item.setManualAssetClassID(JdbcUtil.getLong(rs.getObject("Id")));
+				item.setManualAssetSubClassID(JdbcUtil.getLong(rs.getObject("ManualAssetSubClassId")));
+				item.setManualAssetClassCode(rs.getString("ManualAssetClassCode"));
+				item.setManualAssetSubClassCode(rs.getString("ManualAssetSubClassCode"));
+
+				return item;
+			}, code, effNpaClassCode);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+		}
+
+		return null;
+	}
+
 }
