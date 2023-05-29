@@ -348,8 +348,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.listheader_FeeDetailList_Terms.setVisible(false);
 		}
 
-		if (FinServiceEvent.ADDDISB.equals(this.moduleDefiner)
-				|| FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)) {
+		if (FinServiceEvent.ADDDISB.equals(this.moduleDefiner) || FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)
+				|| "GenerateLetter".equals(this.moduleDefiner)) {
 			this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(true);
 			this.listheader_FeeDetailList_PaidAmount.setVisible(false);
 		}
@@ -1673,6 +1673,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				} else {
 					waiverBox.setDisabled(true);
 				}
+
+				if (("GenerateLetter".equals(this.moduleDefiner))
+						&& finFeeDetail.getMaxWaiverPerc().compareTo(BigDecimal.ZERO) > 0) {
+
+					waiverBox.setDisabled(readOnly);
+				}
 				waiverBox.setId(getComponentId(FEE_UNIQUEID_WAIVEDAMOUNT, finFeeDetail));
 				waiverBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getWaivedAmount(), formatter));
 				lc = new Listcell();
@@ -1906,6 +1912,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod)) {
 					feeScheduleMethod = "";
 				}
+
 				Combobox feeSchdMethCombo = new Combobox();
 				fillComboBox(feeSchdMethCombo, feeScheduleMethod, remFeeSchList, excludeFields);
 				feeSchdMethCombo.setWidth("135px");
@@ -1925,6 +1932,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (finFeeDetail.isRestructureFee()
 						|| (getFinanceDetail().getFinScheduleData().getRestructureDetail() != null
 								&& FinServiceEvent.RESTRUCTURE.equals(getFinanceDetail().getModuleDefiner()))) {
+					feeSchdMethCombo.setDisabled(true);
+				}
+
+				if ("GenerateLetter".equals(this.moduleDefiner)) {
+					feeSchdMethCombo.setValue(Labels.getLabel("label_CreateReceivable_Advise"));
 					feeSchdMethCombo.setDisabled(true);
 				}
 

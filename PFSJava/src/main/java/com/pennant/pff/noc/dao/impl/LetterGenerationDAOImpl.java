@@ -412,8 +412,8 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	}
 
 	@Override
-	public boolean isLetterInitiated(long finID, String letterType) {
-		return false;
+	public long getInitiatedLoan(long finID, String letterType) {
+		return finID;
 	}
 
 	@Override

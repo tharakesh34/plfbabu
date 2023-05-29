@@ -30,7 +30,7 @@ public interface GenerateLetterDAO {
 
 	List<GenerateLetter> getLetterInfo(long finID);
 
-	boolean isLetterInitiated(long finID, String letterType);
+	long getInitiatedLoan(long finID, String letterType);
 
 	boolean letterIsInQueu(long finID, String letterType);
 

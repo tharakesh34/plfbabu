@@ -110,9 +110,8 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 	protected Label totalOtherFee;
 	protected Label feePaid;
 	protected Label feeWaived;
-
+	protected Label generateLetterDialogClosureDate;
 	protected Listbox listBoxPaybles;
-
 	protected String selectMethodName = "onSelectTab";
 
 	private GenerateLetter generateLetter;
@@ -469,6 +468,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.closureType.setValue(Labels.getLabel("label_ClosureType_Cancel"));
 			this.closureReason.setValue(gl.getReasonCode());
+			this.generateLetterDialogClosureDate.setValue(Labels.getLabel("label_GenerateLetterDialog_CancellationDate"));
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
 

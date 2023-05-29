@@ -44,7 +44,7 @@ public interface GenerateLetterService {
 
 	String getCanceltype(String finReference);
 
-	boolean isLetterInitiated(long finID, String letterType);
+	long getInitiatedLoan(long finID, String letterType);
 
 	LoanLetter generateLetter(GenerateLetter generateLetter);
 

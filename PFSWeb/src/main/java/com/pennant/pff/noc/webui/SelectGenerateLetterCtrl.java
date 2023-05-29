@@ -122,7 +122,7 @@ public class SelectGenerateLetterCtrl extends GFCBaseCtrl<Object> {
 
 		this.generateLetter.setFinID(this.generateLetter.getFinanceDetail().getFinScheduleData().getFinID());
 
-		if (generateLetterService.isLetterInitiated(fm.getFinID(), this.generateLetter.getLetterType())) {
+		if (generateLetterService.getInitiatedLoan(fm.getFinID(), this.generateLetter.getLetterType()) > 0) {
 			MessageUtil.showError(Labels.getLabel("label_listheader_LetterType")
 					+ " is Already Initiated For".concat(this.finReference.getValue()));
 			return false;

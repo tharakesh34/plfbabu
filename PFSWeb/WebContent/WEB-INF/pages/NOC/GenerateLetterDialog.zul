@@ -133,7 +133,7 @@
 												<space spacing="2px" />
 												<currencyBox id="finAmount" width="180px" readonly="true" removeSpace = "true"/>
 											</hbox>
-											<label value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
+											<label id = "generateLetterDialogClosureDate" value="${c:l('label_GenerateLetterDialog_ClosureDate')}" />
 											<hbox>
 												<space spacing="2px" />
 												<datebox id="finClosureDate" maxlength="50" width="200px" readonly="true" />

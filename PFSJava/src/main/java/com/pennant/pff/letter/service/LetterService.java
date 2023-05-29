@@ -156,7 +156,7 @@ public class LetterService {
 
 		LetterMode letterMode = LetterMode.getMode(loanLetter.getLetterMode());
 
-		if (letterMode == LetterMode.EMAIL && "A".equals(requestType)) {
+		if (letterMode == LetterMode.EMAIL) {
 			loanLetter.setMailTemplate(mailTemplateDAO.getMailTemplateById(emailtemplateId, "_AView"));
 		}
 
@@ -303,7 +303,7 @@ public class LetterService {
 		String letterLocation = csdCode.concat(File.separator).concat(DateUtil.format(appDate, "ddMMyyyy"));
 
 		String fileName = letter.getFileName();
-		String remotePath = parentFolder.concat(letterLocation);
+		String remotePath = parentFolder.concat(File.separator).concat(letterLocation);
 		byte[] fileContent = letter.getContent();
 
 		String host = ep.getHostName();

@@ -36,6 +36,7 @@ import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.letter.service.LetterService;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
@@ -240,7 +241,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 			gl.setAgreementTemplate(ltlp.getAgreementCodeId());
 			gl.setEmailTemplate(ltlp.getEmailTemplateId());
-			gl.setModeofTransfer(ltlp.getLetterMode());
+			gl.setModeofTransfer(LetterMode.OTC.name());
 
 			return autoLetterGenerationDAO.save(gl);
 		}
@@ -572,8 +573,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 	}
 
 	@Override
-	public boolean isLetterInitiated(long finID, String letterType) {
-		return generateLetterDAO.isLetterInitiated(finID, letterType);
+	public long getInitiatedLoan(long finID, String letterType) {
+		return generateLetterDAO.getInitiatedLoan(finID, letterType);
 	}
 
 	@Override

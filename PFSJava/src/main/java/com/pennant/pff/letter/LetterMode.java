@@ -6,7 +6,9 @@ import java.util.List;
 public enum LetterMode {
 	COURIER("Courier"),
 
-	EMAIL("Email");
+	EMAIL("Email"),
+
+	OTC("OTC");
 
 	private String description;
 
