@@ -786,7 +786,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		ExcessAmountRowMapper rowMapper = new ExcessAmountRowMapper();
 
-		return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, excessID);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, excessID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Message.NO_RECORD_FOUND);
+			return null;
+		}
 	}
 
 	@Override
