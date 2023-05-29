@@ -162,14 +162,16 @@ public class ManualKnockOffUploadProcessRecord implements ProcessRecord {
 		manualKnockOffUploadServiceImpl.doValidate(header, mku);
 
 		if (mku.getProgress() == EodConstants.PROGRESS_FAILED) {
+			mku.setStatus("F");
+			record.addValue("STATUS", mku.getStatus());
 			record.addValue("ERRORCODE", mku.getErrorCode());
 			record.addValue("ERRORDESC", mku.getErrorDesc());
-
-			List<ManualKnockOffUpload> details = new ArrayList<>();
-			details.add(mku);
-
-			manualKnockOffUploadDAO.update(details);
 		}
+
+		List<ManualKnockOffUpload> details = new ArrayList<>();
+		details.add(mku);
+
+		manualKnockOffUploadDAO.update(details);
 
 		logger.debug(Literal.LEAVING);
 	}

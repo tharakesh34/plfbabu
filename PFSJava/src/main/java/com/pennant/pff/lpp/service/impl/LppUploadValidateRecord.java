@@ -56,6 +56,8 @@ public class LppUploadValidateRecord implements ValidateRecord {
 		lPPUploadService.doValidate(header, details);
 
 		if (details.getProgress() == EodConstants.PROGRESS_FAILED) {
+			details.setStatus("F");
+			record.addValue("STATUS", details.getStatus());
 			record.addValue("ERRORCODE", details.getErrorCode());
 			record.addValue("ERRORDESC", details.getErrorDesc());
 		}

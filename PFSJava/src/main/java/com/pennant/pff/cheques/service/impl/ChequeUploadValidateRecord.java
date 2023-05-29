@@ -56,6 +56,8 @@ public class ChequeUploadValidateRecord implements ValidateRecord {
 		chequeUploadService.doValidate(header, detail);
 
 		if (detail.getProgress() == EodConstants.PROGRESS_FAILED) {
+			detail.setStatus("F");
+			record.addValue("STATUS", detail.getStatus());
 			record.addValue("ERRORCODE", detail.getErrorCode());
 			record.addValue("ERRORDESC", detail.getErrorDesc());
 		}
