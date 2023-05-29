@@ -19,6 +19,9 @@
 			<div sclass="z-toolbar" style="padding:0">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 
+					<!-- COMMON BUTTONS -->
+					<toolbar align="start" sclass="toolbar-start">
+					</toolbar>
 
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
