@@ -340,7 +340,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		if (custID != 0 && custID != Long.MIN_VALUE) {
 			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
 		}
-		List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID());
+		List<GenerateLetter> letterInfo = generateLetterDAO.getLoanLetterInfo(fm.getFinID(), gl.getLetterType());
 
 		schdData.setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 		schdData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_View"));
@@ -424,7 +424,7 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 
 	@Override
 	public List<ManualAdvise> getManualAdvises(long finID) {
-		return manualAdviseDAO.getReceivableAdvises(finID, SysParamUtil.getAppDate(), "_AView");
+		return manualAdviseDAO.getManualAdvise(finID, true);
 	}
 
 	private String getLetterType(GenerateLetter gl) {

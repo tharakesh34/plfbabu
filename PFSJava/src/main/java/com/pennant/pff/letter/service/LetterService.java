@@ -122,7 +122,7 @@ public class LetterService {
 
 		GenerateLetter gl = autoLetterGenerationDAO.getLetter(letterID);
 
-		String requestType = gl.getRecordType();
+		String requestType = gl.getRequestType();
 
 		loanLetter.setId(letterID);
 		loanLetter.setFinID(gl.getFinID());
@@ -133,7 +133,7 @@ public class LetterService {
 		loanLetter.setBusinessDate(appDate);
 		loanLetter.setRequestType(requestType);
 
-		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0) {
+		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0 && "A".equals(requestType)) {
 			loanLetter.setBlocked(true);
 			return loanLetter;
 		}

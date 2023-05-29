@@ -435,9 +435,4 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public String getCancelReasons(String reference) {
 		return null;
 	}
-
-	@Override
-	public List<GenerateLetter> getLoanLetterInfo(long finID) {
-		return new ArrayList();
-	}
 }

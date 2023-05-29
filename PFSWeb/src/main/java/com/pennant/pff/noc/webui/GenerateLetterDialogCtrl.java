@@ -467,7 +467,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
-			this.closureType.setValue(loanClosureType);
+			this.closureType.setValue(Labels.getLabel("label_ClosureType_Cancel"));
 			this.closureReason.setValue(gl.getReasonCode());
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
@@ -481,15 +481,14 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 		} else if (FinanceConstants.CLOSE_STATUS_MATURED.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Matured"));
 			this.finStatusReason.setValue(Labels.getLabel("label_normal"));
-			if (loanClosureType != null) {
-				this.closureType.setValue(loanClosureType);
-			}
+			this.closureType.setValue(Labels.getLabel("label_ClosureType_Closure"));
+			this.closureReason.setValue(gl.getReasonCode());
 		}
 
 		this.coreBankID.setValue(customer.getCustCoreBank());
 		this.finStartDate.setValue(fm.getFinStartDate());
 		this.branch.setValue(fm.getFinBranch());
-		this.finAmount.setValue(CurrencyUtil.parse(fm.getFinCurrAssetValue(), this.ccyFormatter));
+		this.finAmount.setValue(CurrencyUtil.parse(fm.getFinAmount(), this.ccyFormatter));
 		this.finClosureDate.setValue(fm.getClosedDate());
 		this.sourcingOfcr.setValue(String.valueOf(fm.getAccountsOfficer()));
 		this.letterType.setValue(gl.getLetterType());

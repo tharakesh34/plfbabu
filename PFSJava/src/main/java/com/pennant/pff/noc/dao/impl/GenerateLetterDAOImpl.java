@@ -403,44 +403,6 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 	}
 
 	@Override
-	public List<GenerateLetter> getLoanLetterInfo(long finID) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" GeneratedDate, ModeOfTransfer, RequestType, LetterType");
-		sql.append(", GeneratedBy, ll.ApprovedBy, ll.ApprovedOn");
-		sql.append(", Status, Remarks, EmailID, FileName");
-		sql.append(", CourierAgency, DispatchDate, DeliveryDate, DeliveryStatus");
-		sql.append(", su.UsrLogin ApproverName");
-		sql.append(" From Loan_Letters ll");
-		sql.append(" Left Join SecUsers su on su.UsrId = ll.ApprovedBy");
-		sql.append(" Where FinID = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		return jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			GenerateLetter letter = new GenerateLetter();
-
-			letter.setGeneratedBy(JdbcUtil.getLong(rs.getObject("GeneratedBy")));
-			letter.setApprovedBy(JdbcUtil.getLong(rs.getObject("ApprovedBy")));
-			letter.setGeneratedDate(rs.getDate("GeneratedDate"));
-			letter.setApprovedOn(rs.getTimestamp("ApprovedOn"));
-			letter.setModeofTransfer(rs.getString("ModeOfTransfer"));
-			letter.setRequestType(rs.getString("RequestType"));
-			letter.setLetterType(rs.getString("LetterType"));
-			letter.setStatus(rs.getString("Status"));
-			letter.setRemarks(rs.getString("Remarks"));
-			letter.setEmailID(rs.getString("EmailID"));
-			letter.setFileName(rs.getString("FileName"));
-			letter.setCourierAgency(rs.getString("CourierAgency"));
-			letter.setDispatchDate(rs.getDate("DispatchDate"));
-			letter.setDeliveryDate(rs.getDate("DeliveryDate"));
-			letter.setDeliveryStatus(rs.getString("DeliveryStatus"));
-			letter.setApproverName(rs.getString("ApproverName"));
-
-			return letter;
-		}, finID);
-	}
-
-	@Override
 	public boolean isLetterInitiated(long finID, String letterType) {
 		String sql = "Select count(FinID) From Loan_Letter_Manual_Temp Where FinID = ? and LetterType = ?";
 
@@ -514,6 +476,16 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public List<GenerateLetter> getLoanLetterInfo(long finID, String letterType) {
-		return new ArrayList<>();
+		String sql = "Select Status From Loan_Letters Where FinID = ? And LetterType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		return jdbcOperations.query(sql, (rs, rowNum) -> {
+			GenerateLetter letter = new GenerateLetter();
+
+			letter.setStatus(rs.getString("Status"));
+
+			return letter;
+		}, finID, letterType);
 	}
 }
