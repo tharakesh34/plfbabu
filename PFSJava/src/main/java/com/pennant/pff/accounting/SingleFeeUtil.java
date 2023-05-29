@@ -19,8 +19,8 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennapps.core.util.ObjectUtil;
 
-public class SingelFeeUtil {
-	private SingelFeeUtil() {
+public class SingleFeeUtil {
+	private SingleFeeUtil() {
 		super();
 	}
 

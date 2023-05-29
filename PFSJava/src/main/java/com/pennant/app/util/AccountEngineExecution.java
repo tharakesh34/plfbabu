@@ -58,7 +58,7 @@ import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennant.pff.accounting.SingelFeeUtil;
+import com.pennant.pff.accounting.SingleFeeUtil;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -215,7 +215,7 @@ public class AccountEngineExecution {
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 
-		List<TransactionEntry> txnEntries = SingelFeeUtil.getTransactionEntries(aeEvent);
+		List<TransactionEntry> txnEntries = SingleFeeUtil.getTransactionEntries(aeEvent);
 
 		for (TransactionEntry txnEntry : txnEntries) {
 			addFeeCodes(dataMap, txnEntry);
