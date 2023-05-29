@@ -15655,8 +15655,9 @@
 		<sql>
             <![CDATA[
               	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'ClosureType';
+              	DELETE FROM RBFIELDDETAILS WHERE  RBMODULE= 'FEES' and RBEVENT = 'EARLYSTL' and RBFLDNAME = 'fm_ClosureType';
               	
-              	INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'EARLYSTL', 'ClosureType', 'ClosureType', 'nvarchar',  12,  '0', '1', 'Closure_Types', 'static,global,dbvalue', 'ClosureType');
+              	INSERT INTO RBFIELDDETAILS (RBMODULE, RBEVENT, RBFLDNAME, RBFLDDESC, RBFLDTYPE, RBFLDLEN, RBFORCALFLDS, RBFORBLDFLDS, RBFLDTABLENAME, RBSTFLDS, MODULECODE) VALUES ('FEES', 'EARLYSTL', 'fm_ClosureType', 'Closure Type', 'nvarchar',  12,  '0', '1', 'Closure_Types', 'static,global,dbvalue', 'ClosureType');
 			]]>
 		</sql>
 	</changeSet>
