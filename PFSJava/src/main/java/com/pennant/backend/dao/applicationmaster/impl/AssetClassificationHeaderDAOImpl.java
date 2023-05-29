@@ -496,9 +496,7 @@ public class AssetClassificationHeaderDAOImpl extends SequenceDao<AssetClassific
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, templateId);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, templateId), (rs, rowNum) -> {
 			AssetClassificationHeader ah = new AssetClassificationHeader();
 
 			ah.setId(rs.getLong("Id"));

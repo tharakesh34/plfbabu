@@ -76,9 +76,7 @@ public class LedgerDownloadProcess implements Tasklet {
 		JdbcCursorItemReader<Long> itemReader = new JdbcCursorItemReader<>();
 		itemReader.setSql(QUEUE_QUERY);
 		itemReader.setDataSource(dataSource);
-		itemReader.setRowMapper((rs, rowNum) -> {
-			return rs.getLong("LinkedTranID");
-		});
+		itemReader.setRowMapper((rs, rowNum) -> rs.getLong("LinkedTranID"));
 		itemReader.setPreparedStatementSetter(ps -> {
 			ps.setLong(1, threadId);
 			ps.setInt(2, EodConstants.PROGRESS_WAIT);

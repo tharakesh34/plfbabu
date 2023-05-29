@@ -423,9 +423,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, id);
-		}, (rs, rowNum) -> {
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, id), (rs, rowNum) -> {
 			AutoKnockOffExcessDetails excessDetails = new AutoKnockOffExcessDetails();
 			excessDetails.setID(rs.getLong("ID"));
 			excessDetails.setExcessID(rs.getLong("ExcessID"));

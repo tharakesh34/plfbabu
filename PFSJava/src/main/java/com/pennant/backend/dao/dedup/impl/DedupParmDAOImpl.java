@@ -77,9 +77,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
-				return getTypeRowMapper(rs);
-			}, id, querySubCode, queryModule);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> getTypeRowMapper(rs), id, querySubCode,
+					queryModule);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 		}
