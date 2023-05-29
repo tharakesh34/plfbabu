@@ -59,7 +59,7 @@
 											<listhead sizable="false" style="padding:0px;position:relative;">
 												<listheader label="${c:l('listheader_HoldDialog_HoldId.label')}"
 													align="right" sort="false" hflex="min" />
-												<listheader label="${c:l('listheader_HoldDialog_HoldAccountNumber.label')}"
+												<listheader id = "listheaderHoldReference" label="${c:l('listheader_HoldDialog_HoldAccountNumber.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_HoldDialog_HoldReference.label')}"
 													align="right" sort="false" hflex="min" />
@@ -75,7 +75,7 @@
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_HoldDialog_HoldMarking.label')}"
 													align="right" sort="false" hflex="min" />
-												<listheader id = "listheaderHoldReference" label="${c:l('listheader_HoldDialog_Finreference.label')}"
+												<listheader label="${c:l('listheader_HoldDialog_Finreference.label')}"
 													align="right" sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_HoldDialog_HoldStatus.label')}"
 													align="right" sort="false" hflex="min" />
