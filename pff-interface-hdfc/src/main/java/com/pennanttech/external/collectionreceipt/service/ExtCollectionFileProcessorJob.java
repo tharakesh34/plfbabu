@@ -189,7 +189,7 @@ public class ExtCollectionFileProcessorJob extends AbstractJob
 		if ("Q".equals(StringUtils.stripToEmpty(collectionData.getReceiptType()))) {
 			isCheque = true;
 		}
-		cru.setReceiptPurpose("SP");
+		cru.setReceiptPurpose("SP");// FIXME
 		cru.setStatus(RepayConstants.PAYSTATUS_REALIZED);
 		cru.setReceiptChannel(PennantConstants.List_Select);
 

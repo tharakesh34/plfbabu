@@ -35,6 +35,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.file.UploadTypes;
 import com.pennanttech.pff.receipt.constants.Allocation;
@@ -346,6 +347,7 @@ public class CreateReceiptUploadServiceImpl extends AUploadServiceImpl<CreateRec
 			fsi.setClosureType(detail.getClosureType());
 		}
 
+		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		FinanceDetail fd = receiptService.receiptTransaction(fsi);
 
 		FinScheduleData schd = fd.getFinScheduleData();

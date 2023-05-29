@@ -152,7 +152,7 @@ public class ExtCollectionReceiptDaoImpl extends SequenceDao implements ExtColle
 		StringBuilder query = new StringBuilder();
 		query.append(
 				" SELECT ID,HEADER_ID,RECORD_DATA,RECEIPT_ID,RECEIPT_CREATED_DATE,CREATED_DATE,ERROR_CODE,ERROR_MESSAGE FROM COLL_RECEIPT_DETAIL ");
-		query.append(" WHERE  HEADER_ID= ? AND RECEIPT_ID=0");
+		query.append(" WHERE  HEADER_ID= ?");
 
 		logger.debug(Literal.SQL + query.toString());
 

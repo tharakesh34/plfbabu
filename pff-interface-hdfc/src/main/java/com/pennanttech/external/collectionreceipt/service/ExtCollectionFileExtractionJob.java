@@ -242,9 +242,12 @@ public class ExtCollectionFileExtractionJob extends AbstractJob
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
 
 				} catch (Exception e) {
+					logger.debug(Literal.EXCEPTION, e);
 					extReceiptHeader.setStatus(FAILED);
 					extReceiptHeader.setWriteResponse(DISABLED);
 					extReceiptHeader.setExtraction(UNPROCESSED);
+					extReceiptHeader.setErrorCode(F702);
+					extReceiptHeader.setErrorMessage(e.getMessage());
 					extCollectionReceiptDao.updateFileExtraction(extReceiptHeader);
 				}
 			}
