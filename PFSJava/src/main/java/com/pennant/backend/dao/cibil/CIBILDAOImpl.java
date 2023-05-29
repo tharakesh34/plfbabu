@@ -782,9 +782,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			return rs.getLong("CustID");
-		}, finID);
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getLong("CustID"), finID);
 	}
 
 	@Override
@@ -815,9 +813,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.query(sql, (rs, rowNum) -> {
-			return rs.getString(1);
-		}, 1);
+		return jdbcOperations.query(sql, (rs, rowNum) -> rs.getString(1), 1);
 
 	}
 

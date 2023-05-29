@@ -279,19 +279,18 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 		sql.append(" From DPDBUCKETSCONFIG");
 		sql.append(" Where ProductCode = ?");
 
-		List<DPDBucketConfiguration> dpdConfig = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, productCode);
-		}, (rs, rowNum) -> {
-			DPDBucketConfiguration bc = new DPDBucketConfiguration();
+		List<DPDBucketConfiguration> dpdConfig = this.jdbcOperations.query(sql.toString(),
+				ps -> ps.setString(1, productCode), (rs, rowNum) -> {
+					DPDBucketConfiguration bc = new DPDBucketConfiguration();
 
-			bc.setConfigID(rs.getLong("ConfigID"));
-			bc.setProductCode(rs.getString("ProductCode"));
-			bc.setBucketID(rs.getLong("BucketID"));
-			bc.setDueDays(rs.getInt("DueDays"));
-			bc.setSuspendProfit(rs.getBoolean("SuspendProfit"));
+					bc.setConfigID(rs.getLong("ConfigID"));
+					bc.setProductCode(rs.getString("ProductCode"));
+					bc.setBucketID(rs.getLong("BucketID"));
+					bc.setDueDays(rs.getInt("DueDays"));
+					bc.setSuspendProfit(rs.getBoolean("SuspendProfit"));
 
-			return bc;
-		});
+					return bc;
+				});
 		return dpdConfig.stream().sorted((dpd1, dpd2) -> Integer.compare(dpd1.getDueDays(), dpd2.getDueDays()))
 				.collect(Collectors.toList());
 	}

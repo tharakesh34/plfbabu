@@ -284,9 +284,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			if (this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setString(1, collateralSetup.getCollateralRef());
-			}) <= 0) {
+			if (this.jdbcOperations.update(sql.toString(),
+					ps -> ps.setString(1, collateralSetup.getCollateralRef())) <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
@@ -358,9 +357,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-			return rs.getLong("Depositorid");
-		}, collateralRef);
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getLong("Depositorid"),
+				collateralRef);
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -507,9 +505,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		List<String> references = jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			return rs.getString(1);
-		}, collateralRef, collateralRef);
+		List<String> references = jdbcOperations.query(sql.toString(), (rs, rowNum) -> rs.getString(1), collateralRef,
+				collateralRef);
 
 		if (references.isEmpty()) {
 			return true;

@@ -380,9 +380,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finType);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finType), (rs, i) -> {
 			NPAProvisionHeader ah = new NPAProvisionHeader();
 
 			ah.setId(rs.getLong("Id"));

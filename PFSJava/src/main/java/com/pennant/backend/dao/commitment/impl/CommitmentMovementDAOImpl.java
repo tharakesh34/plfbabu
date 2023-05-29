@@ -135,9 +135,8 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-				ps.setString(1, commitmentMovement.getCmtReference());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(),
+					ps -> ps.setString(1, commitmentMovement.getCmtReference()));
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -155,9 +154,7 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, cmtReference);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setString(1, cmtReference));
 	}
 
 	@Override

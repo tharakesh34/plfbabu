@@ -298,9 +298,7 @@ public class BounceReasonDAOImpl extends SequenceDao<BounceReason> implements Bo
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
-				return JdbcUtil.getLong(rs.getObject(1));
-			}, returnCode);
+			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> JdbcUtil.getLong(rs.getObject(1)), returnCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Message.NO_RECORD_FOUND);
 			return null;
