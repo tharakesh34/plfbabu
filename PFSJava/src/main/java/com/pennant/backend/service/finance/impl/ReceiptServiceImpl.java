@@ -256,6 +256,7 @@ import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.LoanCancelationUtil;
 import com.pennanttech.pff.core.util.ProductUtil;
+import com.pennanttech.pff.core.util.SchdUtil;
 import com.pennanttech.pff.npa.service.AssetClassificationService;
 import com.pennanttech.pff.overdraft.dao.OverdraftScheduleDetailDAO;
 import com.pennanttech.pff.overdue.constants.PenaltyCalculator;
@@ -8916,6 +8917,32 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 		}
 
 		return receiptDt;
+	}
+
+	@Override
+	public BigDecimal[] getEmiSplitForManualAlloc(FinanceMain fm, Date valueDate, BigDecimal emiAllocAmt) {
+		FinReceiptData frd = new FinReceiptData();
+
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getSchedulesForLMSEvent(fm.getFinID());
+
+		FinScheduleData fsd = new FinScheduleData();
+		fsd.setFinanceMain(fm);
+		fsd.setFinanceScheduleDetails(schedules);
+
+		FinReceiptHeader rch = new FinReceiptHeader();
+		frd.setReceiptHeader(rch);
+
+		FinanceDetail fd = new FinanceDetail();
+		fd.setFinScheduleData(fsd);
+
+		frd.setFinanceDetail(fd);
+
+		BigDecimal emiAmount = SchdUtil.getOverDueEMI(valueDate, schedules);
+		if (emiAllocAmt.compareTo(emiAmount) > 0) {
+			throw new AppException("EMI balance is " + emiAmount);
+		}
+
+		return receiptCalculator.getEmiSplit(frd, emiAmount);
 	}
 
 	@Autowired
