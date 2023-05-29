@@ -1518,7 +1518,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				|| DateUtil.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
 			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
 					",EarlyPayment,FeePayment,");
-			receiptPurpose.setDisabled(true);
+			receiptPurpose.setDisabled(false);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
 			String excludeFields = ",FeePayment,EarlySettlement,";
 			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
