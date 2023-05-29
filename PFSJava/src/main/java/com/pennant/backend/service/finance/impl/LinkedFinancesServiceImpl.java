@@ -123,6 +123,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				linkedFin.setRecordStatus(fmi.getRecordStatus());
 				linkedFin.setLastMntBy(fmi.getLastMntBy());
 				linkedFin.setLastMntOn(fmi.getLastMntOn());
+				financeMainDAO.updateMaintainceStatus(linkedFin.getFinID(), FinServiceEvent.LINKDELINK);
 			}
 
 			if (fmi.isNewRecord()) {

@@ -417,7 +417,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 	public boolean isSettlementTypeUsed(long settlementType, TableType tableType) {
 		Object[] parameters = new Object[] { settlementType };
 
-		String sql = new String();
+		String sql = "";
 		String whereClause = " settlementType = ? ";
 		switch (tableType) {
 		case MAIN_TAB:
@@ -433,7 +433,7 @@ public class SettlementDAOImpl extends SequenceDao<FinSettlementHeader> implemen
 			break;
 		}
 
-		logger.debug(Literal.SQL.concat(sql.toString()));
+		logger.debug(Literal.SQL.concat(sql));
 
 		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 

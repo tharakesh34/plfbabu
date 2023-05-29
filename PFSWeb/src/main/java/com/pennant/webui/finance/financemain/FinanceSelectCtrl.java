@@ -2193,12 +2193,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		fm.setFinSourceID(RequestSource.UI.name());
-		/*
-		 * FinCancelUploadError error = financeCancelValidator.validLoan(schdData.getFinanceMain(), schedules);
-		 * 
-		 * if (error != null) { MessageUtil.showError(financeCancelValidator.getOverrideDescription(error,
-		 * schdData.getFinanceMain())); return; }
-		 */
 
 		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
 			String[] errParm = new String[1];
@@ -2969,7 +2963,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 						? ManualAdviceUtil
 								.isValidateCancelManualAdvise(manualAdviseService.getCancelledManualAdvise(finID))
 						: true)) {
-			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_".concat(rcdMaintainSts)));
 			return;
 		}
 

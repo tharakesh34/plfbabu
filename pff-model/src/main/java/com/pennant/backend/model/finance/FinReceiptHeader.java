@@ -219,7 +219,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String entityDesc;
 	private String sourceId;
 	private BigDecimal closureThresholdLimit = BigDecimal.ZERO;
-	private String loanCancellationType;;
+	private String loanCancellationType;
 
 	public FinReceiptHeader() {
 		super();
