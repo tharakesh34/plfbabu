@@ -292,9 +292,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
-			setPrepareStatementSetter(schd, ps);
-		});
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> setPrepareStatementSetter(schd, ps));
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -407,9 +405,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
-		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, rowMapper);
+		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID),
+				rowMapper);
 
 		return ScheduleCalculator.sortSchdDetails(schedules);
 	}
@@ -423,9 +420,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(false);
 
-		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, rowMapper);
+		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID),
+				rowMapper);
 
 		return ScheduleCalculator.sortSchdDetails(schedules);
 	}
@@ -515,38 +511,37 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" from FinScheduleDetails");
 		sql.append(" Where FinID = ?");
 
-		List<FinanceScheduleDetail> finSchdDetails = jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
-			FinanceScheduleDetail schd = new FinanceScheduleDetail();
+		List<FinanceScheduleDetail> finSchdDetails = jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID),
+				(rs, rowNum) -> {
+					FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
-			schd.setSchDate(rs.getTimestamp("SchDate"));
-			schd.setSchSeq(rs.getInt("SchSeq"));
-			schd.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
-			schd.setCpzOnSchDate(rs.getBoolean("CpzOnSchDate"));
-			schd.setRepayOnSchDate(rs.getBoolean("RepayOnSchDate"));
-			schd.setRvwOnSchDate(rs.getBoolean("RvwOnSchDate"));
-			schd.setBalanceForPftCal(rs.getBigDecimal("BalanceForPftCal"));
-			schd.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
-			schd.setCalculatedRate(rs.getBigDecimal("CalculatedRate"));
-			schd.setNoOfDays(rs.getInt("NoOfDays"));
-			schd.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
-			schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
-			schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
-			schd.setDisbAmount(rs.getBigDecimal("DisbAmount"));
-			schd.setDownPaymentAmount(rs.getBigDecimal("DownPaymentAmount"));
-			schd.setCpzAmount(rs.getBigDecimal("CpzAmount"));
-			schd.setCpzBalance(rs.getBigDecimal("CpzBalance"));
-			schd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-			schd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
-			schd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
-			schd.setSchPftPaid(rs.getBoolean("SchPftPaid"));
-			schd.setSchPriPaid(rs.getBoolean("SchPriPaid"));
-			schd.setSpecifier(rs.getString("Specifier"));
-			schd.setSchdPftWaiver(rs.getBigDecimal("SchdPftWaiver"));
+					schd.setSchDate(rs.getTimestamp("SchDate"));
+					schd.setSchSeq(rs.getInt("SchSeq"));
+					schd.setPftOnSchDate(rs.getBoolean("PftOnSchDate"));
+					schd.setCpzOnSchDate(rs.getBoolean("CpzOnSchDate"));
+					schd.setRepayOnSchDate(rs.getBoolean("RepayOnSchDate"));
+					schd.setRvwOnSchDate(rs.getBoolean("RvwOnSchDate"));
+					schd.setBalanceForPftCal(rs.getBigDecimal("BalanceForPftCal"));
+					schd.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
+					schd.setCalculatedRate(rs.getBigDecimal("CalculatedRate"));
+					schd.setNoOfDays(rs.getInt("NoOfDays"));
+					schd.setProfitCalc(rs.getBigDecimal("ProfitCalc"));
+					schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+					schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+					schd.setDisbAmount(rs.getBigDecimal("DisbAmount"));
+					schd.setDownPaymentAmount(rs.getBigDecimal("DownPaymentAmount"));
+					schd.setCpzAmount(rs.getBigDecimal("CpzAmount"));
+					schd.setCpzBalance(rs.getBigDecimal("CpzBalance"));
+					schd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+					schd.setSchdPriPaid(rs.getBigDecimal("SchdPriPaid"));
+					schd.setSchdPftPaid(rs.getBigDecimal("SchdPftPaid"));
+					schd.setSchPftPaid(rs.getBoolean("SchPftPaid"));
+					schd.setSchPriPaid(rs.getBoolean("SchPriPaid"));
+					schd.setSpecifier(rs.getString("Specifier"));
+					schd.setSchdPftWaiver(rs.getBigDecimal("SchdPftWaiver"));
 
-			return schd;
-		});
+					return schd;
+				});
 
 		return ScheduleCalculator.sortSchdDetails(finSchdDetails);
 	}
@@ -821,19 +816,18 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" From FinScheduleDetails");
 		sql.append(" Where FinID = ?");
 
-		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
-			FinanceScheduleDetail schd = new FinanceScheduleDetail();
+		List<FinanceScheduleDetail> schedules = this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID),
+				(rs, rowNum) -> {
+					FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
-			schd.setSchDate(JdbcUtil.getDate(rs.getDate("SchDate")));
-			schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
-			schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
-			schd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
-			schd.setInstNumber(rs.getInt("InstNumber"));
+					schd.setSchDate(JdbcUtil.getDate(rs.getDate("SchDate")));
+					schd.setPrincipalSchd(rs.getBigDecimal("PrincipalSchd"));
+					schd.setProfitSchd(rs.getBigDecimal("ProfitSchd"));
+					schd.setRepayAmount(rs.getBigDecimal("RepayAmount"));
+					schd.setInstNumber(rs.getInt("InstNumber"));
 
-			return schd;
-		});
+					return schd;
+				});
 
 		return schedules.stream().sorted((sch1, sch2) -> DateUtil.compare(sch1.getSchDate(), sch2.getSchDate()))
 				.collect(Collectors.toList());
@@ -1158,9 +1152,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper(isWIF);
 
-		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, rowMapper);
+		return this.jdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> ps.setLong(1, finID), rowMapper);
 	}
 
 	@Override
@@ -1205,9 +1197,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		List<Date> list = this.jdbcOperations.query(sql, ps -> {
 			ps.setLong(1, finID);
 			ps.setDate(2, JdbcUtil.getDate(valueDate));
-		}, (rs, i) -> {
-			return rs.getDate(1);
-		});
+		}, (rs, i) -> rs.getDate(1));
 
 		return list.stream().sorted((l1, l2) -> l1.compareTo(l2)).collect(Collectors.toList());
 	}

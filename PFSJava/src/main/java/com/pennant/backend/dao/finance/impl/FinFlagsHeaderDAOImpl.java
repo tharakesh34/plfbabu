@@ -187,9 +187,6 @@ public class FinFlagsHeaderDAOImpl extends BasicDao<FinanceFlag> implements FinF
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, ff.getFinID());
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, ff.getFinID()));
 	}
-
 }

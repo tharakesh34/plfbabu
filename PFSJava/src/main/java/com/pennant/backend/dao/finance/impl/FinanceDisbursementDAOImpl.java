@@ -501,29 +501,28 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		List<FinanceDisbursement> list = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
-			FinanceDisbursement finDisb = new FinanceDisbursement();
+		List<FinanceDisbursement> list = this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID),
+				(rs, rowNum) -> {
+					FinanceDisbursement finDisb = new FinanceDisbursement();
 
-			finDisb.setFinID(rs.getLong("FinID"));
-			finDisb.setFinReference(rs.getString("FinReference"));
-			finDisb.setDisbDate(rs.getTimestamp("DisbDate"));
-			finDisb.setDisbSeq(rs.getInt("DisbSeq"));
-			finDisb.setDisbDesc(rs.getString("DisbDesc"));
-			finDisb.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-			finDisb.setDisbAmount(rs.getBigDecimal("DisbAmount"));
-			finDisb.setDisbReqDate(rs.getTimestamp("DisbReqDate"));
-			finDisb.setDisbIsActive(rs.getBoolean("DisbIsActive"));
-			finDisb.setDisbRemarks(rs.getString("DisbRemarks"));
-			finDisb.setDisbStatus(rs.getString("DisbStatus"));
-			finDisb.setAutoDisb(rs.getBoolean("AutoDisb"));
-			finDisb.setLastMntBy(rs.getLong("LastMntBy"));
-			finDisb.setLastMntOn(rs.getTimestamp("LastMntOn"));
-			finDisb.setQuickDisb(rs.getBoolean("QuickDisb"));
+					finDisb.setFinID(rs.getLong("FinID"));
+					finDisb.setFinReference(rs.getString("FinReference"));
+					finDisb.setDisbDate(rs.getTimestamp("DisbDate"));
+					finDisb.setDisbSeq(rs.getInt("DisbSeq"));
+					finDisb.setDisbDesc(rs.getString("DisbDesc"));
+					finDisb.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+					finDisb.setDisbAmount(rs.getBigDecimal("DisbAmount"));
+					finDisb.setDisbReqDate(rs.getTimestamp("DisbReqDate"));
+					finDisb.setDisbIsActive(rs.getBoolean("DisbIsActive"));
+					finDisb.setDisbRemarks(rs.getString("DisbRemarks"));
+					finDisb.setDisbStatus(rs.getString("DisbStatus"));
+					finDisb.setAutoDisb(rs.getBoolean("AutoDisb"));
+					finDisb.setLastMntBy(rs.getLong("LastMntBy"));
+					finDisb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					finDisb.setQuickDisb(rs.getBoolean("QuickDisb"));
 
-			return finDisb;
-		});
+					return finDisb;
+				});
 
 		return list.stream().sorted((l1, l2) -> l1.getDisbDate().compareTo(l1.getDisbDate()))
 				.collect(Collectors.toList());

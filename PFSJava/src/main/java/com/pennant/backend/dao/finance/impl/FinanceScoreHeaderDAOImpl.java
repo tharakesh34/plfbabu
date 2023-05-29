@@ -38,9 +38,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			FinanceScoreHeader fsh = new FinanceScoreHeader();
 
 			fsh.setHeaderId(rs.getLong("HeaderId"));
@@ -78,9 +76,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
-		}, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finReference), (rs, rowNum) -> {
 			FinanceScoreHeader fsh = new FinanceScoreHeader();
 
 			fsh.setHeaderId(rs.getLong("HeaderId"));
@@ -142,9 +138,7 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, finID);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, finID));
 	}
 
 	@Override
@@ -273,9 +267,6 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setLong(1, headerId);
-		});
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, headerId));
 	}
-
 }
