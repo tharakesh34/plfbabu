@@ -811,6 +811,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		rch.setReceiptAmount(actualReceiptAmount);
+		rch.setClosureType("Settled");
 		for (XcessPayables xcess : rch.getXcessPayables()) {
 			BigDecimal balAmount = xcess.getBalanceAmt();
 			if (actualReceiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -974,7 +975,7 @@ public class SettlementServiceImpl extends GenericService<FinSettlementHeader> i
 	public void updateProgress(long settlementId, int progress) {
 		settlementDAO.updateProgress(settlementId, progress);
 	}
-	
+
 	@Override
 	public boolean isSettlementInitiated(long finId) {
 		return settlementDAO.isSettlementInitiated(finId);
