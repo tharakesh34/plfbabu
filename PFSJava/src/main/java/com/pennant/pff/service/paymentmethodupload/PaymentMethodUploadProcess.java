@@ -260,7 +260,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 					}
 
 				error = " Selected Mandate ID : " + mandate.getMandateID() + " is Not Valid.";
-				if (paymentMethodUploadDAO.isValidMandate(pmu)) {
+				if (!paymentMethodUploadDAO.isValidMandate(pmu)) {
 					setErrorDeatils(pmu, remarks, error, "CPU001");
 					continue;
 				}
