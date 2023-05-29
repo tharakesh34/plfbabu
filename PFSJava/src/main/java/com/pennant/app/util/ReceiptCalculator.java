@@ -562,6 +562,7 @@ public class ReceiptCalculator {
 			rd.setEarlySettle(true);
 		}
 		FinanceMain fm = rd.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		fm.setClosureType(rd.getReceiptHeader().getClosureType());
 		List<FinFeeDetail> oldFinFeeDtls = rd.getFinFeeDetails();
 		List<FinFeeDetail> finFeedetails = null;
 
