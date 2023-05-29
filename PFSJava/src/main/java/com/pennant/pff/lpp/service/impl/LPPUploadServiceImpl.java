@@ -309,7 +309,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 
 	@Override
 	public void uploadProcess() {
-		uploadProcess(UploadTypes.LPP_LOAN_TYPE.name(), lPPUploadProcessRecord, this, "LPPLoanTypeUploadHeader");
+		uploadProcess(UploadTypes.LPP_LOAN.name(), this, "LPPLoanUploadHeader");
 	}
 
 	@Override
