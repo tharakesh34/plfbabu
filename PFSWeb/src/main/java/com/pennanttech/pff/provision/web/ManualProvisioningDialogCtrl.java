@@ -508,7 +508,7 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 					Labels.getLabel("STATIC_INVALID", new String[] {
 							Labels.getLabel("label_ManualProvisioningDialog_EffManualAssetClassification.value") }));
 		}
-		if (this.effManualAssetSubClassification.getSelectedIndex() < 0) {
+		if (this.manualProvision.isChecked() && this.effManualAssetSubClassification.getSelectedIndex() < 0) {
 			throw new WrongValueException(this.effManualAssetSubClassification,
 					Labels.getLabel("STATIC_INVALID", new String[] {
 							Labels.getLabel("label_ManualProvisioningDialog_EffManualAssetSubClassification.value") }));
