@@ -1,9 +1,10 @@
 package com.pennant.webui.hold.holdenquiry;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -70,7 +71,7 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 				headerType = (boolean) arguments.get("header");
 			}
 
-			doShowDialog(holdDetail);
+			doShowDialog(holdDetail, headerType);
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
@@ -79,9 +80,13 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doShowDialog(List<HoldMarkingDetail> holdDetail) {
+	private void doShowDialog(List<HoldMarkingDetail> holdDetail, boolean headerType) {
 		try {
-			doFillHeaderList(holdDetail);
+			doFillHeaderList(holdDetail, headerType);
+
+			if (headerType) {
+				listheaderHoldReference.setLabel(Labels.getLabel("label_SelectHoldEnquiryList_FinReference.value"));
+			}
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
@@ -90,23 +95,27 @@ public class HoldEnquiryDialogCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doFillHeaderList(List<HoldMarkingDetail> lu) {
+	private void doFillHeaderList(List<HoldMarkingDetail> lu, boolean headerType) {
 		for (HoldMarkingDetail hd : lu) {
+
+			if (CollectionUtils.isNotEmpty(lu)) {
+				lu = lu.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
+						.collect(Collectors.toList());
+			}
+
 			Listitem li = new Listitem();
 
 			int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
 			li.appendChild(new Listcell(String.valueOf(hd.getHoldID())));
-			li.appendChild(new Listcell(String.valueOf(hd.getAccountNumber())));
-			li.appendChild(new Listcell(String.valueOf(hd.getHoldReference())));
+			li.appendChild(new Listcell(headerType ? hd.getFinReference() : hd.getAccountNumber()));
 			if (PennantConstants.HOLD_MARKING.equals(String.valueOf(hd.getHoldType()))) {
 				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getHoldAmount(), formatter)));
-				li.appendChild(new Listcell(String.valueOf(BigDecimal.ZERO)));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getReleaseAmount(), formatter)));
 				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getBalance(), formatter)));
 			} else {
-				BigDecimal releaseAmount = hd.getReleaseAmount();
 				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getAmount(), formatter)));
-				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(releaseAmount, formatter)));
+				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getReleaseAmount(), formatter)));
 				li.appendChild(new Listcell(PennantApplicationUtil.amountFormate(hd.getBalance(), formatter)));
 			}
 

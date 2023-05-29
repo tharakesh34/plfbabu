@@ -268,33 +268,37 @@ public class HoldMarkingUploadServiceImpl extends AUploadServiceImpl<HoldMarking
 			}
 
 			if (CollectionUtils.isNotEmpty(list)) {
-				list = list.stream().sorted((l1, l2) -> Long.compare(l2.getHoldID(), l1.getHoldID()))
+				list = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
 						.collect(Collectors.toList());
 			}
 
 			for (HoldMarkingHeader headerList : list) {
 
-				if (detail.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal detailAmount = detail.getAmount();
 
-					if (detail.getAmount().compareTo(headerList.getBalance()) > 0) {
+				if (detailAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+					if (detailAmount.compareTo(headerList.getBalance()) > 0) {
 						headerList.setBalance(BigDecimal.ZERO);
 						headerList.setReleaseAmount(headerList.getHoldAmount());
-					} else {
-						headerList.setBalance(headerList.getBalance().subtract(detail.getAmount()));
-						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detail.getAmount()));
-					}
 
-					detail.getAmount().subtract(headerList.getHoldAmount());
+						detailAmount = detailAmount.subtract(headerList.getHoldAmount());
+					} else {
+						headerList.setBalance(headerList.getBalance().subtract(detailAmount));
+						headerList.setReleaseAmount(headerList.getReleaseAmount().add(detailAmount));
+
+						detailAmount = BigDecimal.ZERO;
+					}
 
 					holdMarkingHeaderDAO.updateHeader(headerList);
 				}
-				detail.getAmount().subtract(headerList.getReleaseAmount());
+
 			}
 
 			HoldMarkingHeader hmh = new HoldMarkingHeader();
 
 			if (CollectionUtils.isNotEmpty(list)) {
-				hmh = list.stream().sorted((l1, l2) -> Long.compare(l2.getHoldID(), l1.getHoldID()))
+				hmh = list.stream().sorted((l1, l2) -> Long.compare(l1.getHoldID(), l2.getHoldID()))
 						.collect(Collectors.toList()).get(0);
 			}
 

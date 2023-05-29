@@ -143,7 +143,7 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		Map<String, Object> aruments = new HashMap<>();
 		aruments.put("hold", hold);
 		aruments.put("enquiryModule", true);
-		aruments.put("header", !StringUtils.isEmpty(finReference));
+		aruments.put("header", !StringUtils.isEmpty(accountNumber));
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/HoldEnquiry/HoldEnquiyDialog.zul", null, aruments);
