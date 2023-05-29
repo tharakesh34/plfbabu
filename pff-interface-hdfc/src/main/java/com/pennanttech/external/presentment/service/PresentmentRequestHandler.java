@@ -114,8 +114,8 @@ public class PresentmentRequestHandler implements ExternalPresentmentHook, Inter
 		}
 
 		Date schDate = presentmentList.get(0).getSchDate();
-		String batchRef = String.valueOf(presentmentHeader.getId());// presentmentList.get(0).getPresentmentRef();
-		achService.processACHRequest(externalConfig, presentmentList, schDate, batchRef, appDate);
+		String batchRef = String.valueOf(presentmentHeader.getId());
+	achService.processACHRequest(externalConfig, presentmentList, schDate, batchRef, appDate);
 
 		logger.debug(Literal.LEAVING);
 	}

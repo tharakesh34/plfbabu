@@ -28,9 +28,7 @@ public class ExternalSIHoldMarkingDAOImpl extends SequenceDao implements Externa
 		List<SIHoldDetails> unprocessedHoldDetailsList = new ArrayList<SIHoldDetails>();
 
 		queryStr = fetchUnprocessedHoldMarkQuery();
-		jdbcOperations.query(queryStr, ps -> {
-			ps.setInt(1, fileStatus);
-		}, rs -> {
+		jdbcOperations.query(queryStr, ps -> ps.setInt(1, fileStatus), rs -> {
 			SIHoldDetails holdDetails = new SIHoldDetails();
 			holdDetails.setAccount(rs.getString("Account"));
 			holdDetails.setFileStatus(rs.getInt("FileStatus"));
@@ -54,7 +52,7 @@ public class ExternalSIHoldMarkingDAOImpl extends SequenceDao implements Externa
 		logger.debug(Literal.ENTERING);
 		String queryStr = "UPDATE LOAN_SIHOLD SET FileStatus = ? WHERE Account= ? AND LoanRef = ? AND SchDate=?";
 		logger.debug(Literal.SQL + queryStr);
-		jdbcOperations.update(queryStr.toString(), ps -> {
+		jdbcOperations.update(queryStr, ps -> {
 			int index = 1;
 			ps.setInt(index++, fileStatus);
 			ps.setString(index++, accNumber);

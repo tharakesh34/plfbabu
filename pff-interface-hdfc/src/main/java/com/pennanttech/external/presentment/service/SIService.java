@@ -124,7 +124,7 @@ public class SIService extends TextFileUtil implements InterfaceConstants {
 
 		ExtPresentmentFile presentment = new ExtPresentmentFile();
 
-		String[] dataArray = lineData.toString().split("~");
+		String[] dataArray = lineData.split("~");
 
 		long txnRef = -1;
 
@@ -145,7 +145,7 @@ public class SIService extends TextFileUtil implements InterfaceConstants {
 
 		ExtPresentmentFile presentment = new ExtPresentmentFile();
 
-		String[] dataArray = lineData.toString().split("~");
+		String[] dataArray = lineData.split("~");
 
 		if (dataArray.length >= 6) {
 			presentment.setBounceReason(dataArray[5]);

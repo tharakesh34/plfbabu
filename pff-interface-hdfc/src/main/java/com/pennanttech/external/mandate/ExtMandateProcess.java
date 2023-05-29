@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -253,7 +254,7 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 		logger.info("Connecting into SFTP Shared location to Retreive Files..");
 
 		if (eventProperty == null) {
-			return null;
+			return new ArrayList<>();
 		}
 
 		List<String> fileNames = null;
@@ -318,7 +319,7 @@ public class ExtMandateProcess extends AbstractInterface implements MandateProce
 			 * if (ftpClient != null) { ftpClient.disconnect(); }
 			 */
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 	private EventProperties getPostEvent(Map<String, EventProperties> properties, String postEvent) {

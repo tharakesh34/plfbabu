@@ -78,7 +78,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 
 	public CreditReviewData getCreditReviewDataByRef(String finReference, CreditReviewDetails crd) {
 
-		//public CreditReviewData getCreditReviewData(String finReference, String templateName, int templateVersion) {
+		// public CreditReviewData getCreditReviewData(String finReference, String templateName, int templateVersion) {
 		logger.debug(Literal.ENTERING);
 		CreditReviewData crdata = null;
 		StringBuilder selectSql = new StringBuilder();
@@ -135,7 +135,7 @@ public class SpreadSheetDataAccess extends BasicDao<FinCreditReviewDetails> {
 				}
 			});
 		} catch (Exception e) {
-
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return list;
