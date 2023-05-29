@@ -790,9 +790,15 @@ public class CreateReceiptUploadProcessRecord implements ProcessRecord {
 
 		}
 
+		String pbMode = receiptMode;
+
+		if (ReceiptMode.ONLINE.equals(pbMode)) {
+			pbMode = subReceiptMode;
+		}
+
 		if (StringUtils.isNotBlank(rud.getPartnerBankCode())) {
 			PartnerBank pb = partnerBankDAO.getPartnerBankByCode(rud.getPartnerBankCode(), "");
-			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), receiptMode, pb.getPartnerBankId());
+			int partnerbankid = partnerBankDAO.getValidPartnerBank(fm.getFinType(), pbMode, pb.getPartnerBankId());
 			if (pb == null || partnerbankid == 0) {
 				setError(rud, "[PARTNERBANKCODE] is not Valid ");
 				return;
