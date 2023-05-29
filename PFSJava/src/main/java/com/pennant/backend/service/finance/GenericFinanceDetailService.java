@@ -1764,8 +1764,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finFeeChargesDAO.deleteChargesBatch(finID, finEvent, isWIF, tableType);
 		}
 
-		if (!isWIF) {
-			finODPenaltyRateDAO.delete(finID, scheduleData.getFinODPenaltyRate().getFinEffectDate(), tableType);
+		if (!isWIF && scheduleData.getFinODPenaltyRate() != null) {
+			Date finEffectDate = scheduleData.getFinODPenaltyRate().getFinEffectDate();
+			if (finEffectDate != null) {
+				finODPenaltyRateDAO.delete(finID, finEffectDate, tableType);
+			}
 		}
 
 		logger.debug("Leaving ");
