@@ -2837,4 +2837,9 @@
 		<dropTable tableName="UCIC_RESP_FILE_DATA" />
 	</changeSet>
 	
+	<changeSet id="29" author="sreeram.r">
+	   <createSequence sequenceName="SEQ_RNUM" incrementBy="1" startValue="1" minValue="1"
+		maxValue="9223372036854775807" />
+    </changeSet>
+	
 </databaseChangeLog>
