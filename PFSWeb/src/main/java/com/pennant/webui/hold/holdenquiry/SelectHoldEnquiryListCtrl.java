@@ -146,7 +146,7 @@ public class SelectHoldEnquiryListCtrl extends GFCBaseCtrl<HoldMarkingDetail> {
 		aruments.put("header", !StringUtils.isEmpty(accountNumber));
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/HoldEnquiry/HoldEnquiyDialog.zul", null, aruments);
+			Executions.createComponents("/WEB-INF/pages/HoldEnquiry/HoldEnquiryDialog.zul", null, aruments);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
