@@ -8095,47 +8095,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#201401_pre" author="Alekhya.T" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header');
-				select deps_save_and_drop_dependencies ('plf', 'asset_class_setup_header_temp');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="PSD#201401" author="Alekhya.T">
-		<modifyDataType tableName="ASSET_CLASS_SETUP_HEADER" columnName="repayhierarchy"
-			newDataType="varchar(20)" />
-	</changeSet>
-
-	<changeSet id="PSD#201401.1" author="Alekhya.T">
-		<modifyDataType tableName="ASSET_CLASS_SETUP_HEADER_TEMP" columnName="repayhierarchy"
-			newDataType="varchar(20)" />
-	</changeSet>
-
-	<changeSet id="PSD#201401_post" author="Alekhya.T" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'asset_class_setup_header');
-				select deps_restore_dependencies ('plf', 'asset_class_setup_header_temp');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="PSD#201401.2" author="Alekhya.T">
-		<sql>
-			<![CDATA[	
-				UPDATE ASSET_CLASS_SETUP_HEADER SET REPAYHIERARCHY = 'P,I,O,M,B,L,F' WHERE REPAYHIERARCHY = 'PICF';
-				UPDATE ASSET_CLASS_SETUP_HEADER_TEMP SET REPAYHIERARCHY = 'P,I,O,M,B,L,F' WHERE REPAYHIERARCHY = 'PICF';
-				UPDATE ASSET_CLASS_SETUP_HEADER SET REPAYHIERARCHY = 'P,I,F,O,M,B,L' WHERE REPAYHIERARCHY = 'PIFC';
-				UPDATE ASSET_CLASS_SETUP_HEADER_TEMP SET REPAYHIERARCHY = 'P,I,F,O,M,B,L' WHERE REPAYHIERARCHY = 'PIFC';
-			]]>
-		</sql>
-	</changeSet>
-
-
-
 	<changeSet id="PSD#200634.1" author="Saikiran.n">
 		<addColumn tableName="Secusers_temp">
 			<column name="Deleted" type="boolean" />
