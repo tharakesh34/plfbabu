@@ -7111,7 +7111,8 @@ public class ReceiptServiceImpl extends GenericService<FinReceiptHeader> impleme
 					&& (RequestSource.API.equals(requestSource) && !rd.isDueAdjusted())) {
 				rd.setExcessType(excessAdjustTo);
 				return;
-			} else if (totalClosureAmt.compareTo(calcClosureAmt) >= 0 && !RequestSource.API.equals(requestSource)) {
+			} else if (!fsi.isClosureReceipt() && totalClosureAmt.compareTo(calcClosureAmt) >= 0
+					&& !RequestSource.API.equals(requestSource)) {
 				waiveThresholdLimit(rd);
 				for (ReceiptAllocationDetail rad : rd.getReceiptHeader().getAllocations()) {
 					String allocationType = rad.getAllocationType();
