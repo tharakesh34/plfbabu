@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
@@ -86,6 +86,7 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 						process(detail, header);
 					}
 				}
+				updateFailures(details);
 
 				try {
 					lppUploadDAO.update(details);
@@ -297,16 +298,6 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		}
 	}
 
-	private void setError(LPPUpload detail, LPPUploadError error) {
-		setFailureStatus(detail, error.name(), error.description());
-	}
-
-	private AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
-		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
-				afinanceDetail.getUserDetails(), new HashMap<>());
-	}
-
 	@Override
 	public void uploadProcess() {
 		uploadProcess(UploadTypes.LPP_LOAN.name(), this, "LPPLoanUploadHeader");
@@ -355,6 +346,61 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void updateFailures(List<LPPUpload> details) {
+		List<LPPUpload> loanTypeDetail = new ArrayList<>();
+
+		for (LPPUpload detail : details) {
+			if (StringUtils.isEmpty(detail.getReference())) {
+				loanTypeDetail.add(detail);
+			}
+		}
+
+		for (LPPUpload lppUpload : loanTypeDetail) {
+			String errorDesc = "";
+			
+			for (LPPUpload detail : details) {
+				if (detail.getReference() == null || detail.getLoanType().equals(lppUpload.getLoanType())) {
+					continue;
+				}
+
+				if (detail.getErrorDesc() != null) {
+					if (errorDesc.length() > 0) {
+						errorDesc = errorDesc.concat(",");
+					}
+
+					errorDesc = errorDesc.concat(detail.getReference().concat("-").concat(detail.getErrorDesc()));
+				}
+			}
+
+			if (errorDesc.length() > 1999) {
+				errorDesc = errorDesc.substring(0, 1999);
+			}
+
+			if (StringUtils.isNotEmpty(errorDesc)) {
+				lppUpload.setErrorCode("LTR_001");
+				lppUpload.setErrorDesc(errorDesc);
+			}
+
+			lppUpload.setStatus("S");
+			lppUpload.setProgress(EodConstants.PROGRESS_SUCCESS);
+		}
+	}
+
+	private void setError(LPPUpload detail, LPPUploadError error) {
+		setFailureStatus(detail, error.name(), error.description());
+	}
+
+	private AuditHeader getAuditHeader(FinanceDetail afinanceDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, afinanceDetail.getBefImage(), afinanceDetail);
+		return new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null, null, null, auditDetail,
+				afinanceDetail.getUserDetails(), new HashMap<>());
+	}
+
+	private AuditHeader getAuditHeader(FinanceType financetype, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, financetype.getBefImage(), financetype);
+		return new AuditHeader(null, null, null, null, auditDetail, financetype.getUserDetails(), new HashMap<>());
+	}
+
 	@Autowired
 	public void setLPPUploadDAO(LPPUploadDAO lppUploadDAO) {
 		this.lppUploadDAO = lppUploadDAO;
@@ -384,10 +430,4 @@ public class LPPUploadServiceImpl extends AUploadServiceImpl<LPPUpload> {
 	public void setlPPUploadProcessRecord(LPPUploadProcessRecord lPPUploadProcessRecord) {
 		this.lPPUploadProcessRecord = lPPUploadProcessRecord;
 	}
-
-	private AuditHeader getAuditHeader(FinanceType financetype, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, financetype.getBefImage(), financetype);
-		return new AuditHeader(null, null, null, null, auditDetail, financetype.getUserDetails(), new HashMap<>());
-	}
-
 }
