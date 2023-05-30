@@ -826,9 +826,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.query(sql, ps -> ps.setInt(1, 0), (rs, rowNum) -> {
-			return JdbcUtil.getLong(rs.getObject(1));
-		});
+		return this.jdbcOperations.query(sql, ps -> ps.setInt(1, 0), (rs, rowNum) -> JdbcUtil.getLong(rs.getObject(1)));
 	}
 
 	@Override
@@ -937,9 +935,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				ps.setString(index, fsi.getFavourNumber());
 			}
 
-		}, (rs, roNum) -> {
-			return rs.getLong(1);
-		});
+		}, (rs, roNum) -> rs.getLong(1));
 	}
 
 	@Override
@@ -1509,9 +1505,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getChequeNo());
 			ps.setString(index, rud.getTransactionRef());
 
-		}, (rs, roNum) -> {
-			return rs.getLong(1);
-		}).size() > 0;
+		}, (rs, roNum) -> rs.getLong(1)).size() > 0;
 	}
 
 	@Override
@@ -1533,9 +1527,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getChequeNumber());
 			ps.setString(index, rud.getTransactionRef());
 
-		}, (rs, roNum) -> {
-			return rs.getLong(1);
-		}).isEmpty());
+		}, (rs, roNum) -> rs.getLong(1)).isEmpty());
 	}
 
 	@Override
@@ -1568,9 +1560,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getBankCode());
 			ps.setString(index++, "B");
 			ps.setString(index, "C");
-		}, (rs, rowNum) -> {
-			return rs.getLong(1);
-		}).size() > 0;
+		}, (rs, rowNum) -> rs.getLong(1)).size() > 0;
 	}
 
 	@Override
@@ -1603,9 +1593,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getBankCode());
 			ps.setString(index++, "B");
 			ps.setString(index, "C");
-		}, (rs, rowNum) -> {
-			return rs.getLong(1);
-		}).size() > 0;
+		}, (rs, rowNum) -> rs.getLong(1)).size() > 0;
 	}
 
 	@Override
@@ -1636,9 +1624,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getTransactionRef());
 			ps.setString(index++, "B");
 			ps.setString(index, "C");
-		}, (rs, rowNum) -> {
-			return rs.getLong(1);
-		}).size() > 0;
+		}, (rs, rowNum) -> rs.getLong(1)).size() > 0;
 	}
 
 	@Override
@@ -1669,9 +1655,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rud.getTransactionRef());
 			ps.setString(index++, "B");
 			ps.setString(index, "C");
-		}, (rs, rowNum) -> {
-			return rs.getLong(1);
-		}).size() > 0;
+		}, (rs, rowNum) -> rs.getLong(1)).size() > 0;
 	}
 
 	@Override
@@ -1916,6 +1900,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		logger.debug(Literal.SQL.concat(sql));
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, finReference, FinServiceEvent.EARLYRPY,
-				FinServiceEvent.EARLYSETTLE, RepayConstants.PAYSTATUS_REALIZED) >0;
+				FinServiceEvent.EARLYSETTLE, RepayConstants.PAYSTATUS_REALIZED) > 0;
 	}
 }

@@ -1340,19 +1340,18 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				ps.setString(1, finReference);
-			}, new ResultSetExtractor<Map<Long, Integer>>() {
+			return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finReference),
+					new ResultSetExtractor<Map<Long, Integer>>() {
 
-				@Override
-				public Map<Long, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					Map<Long, Integer> rcMap = new HashMap<>();
-					while (rs.next()) {
-						rcMap.put(rs.getLong("ReceiptId"), rs.getInt("InstNumber"));
-					}
-					return rcMap;
-				}
-			});
+						@Override
+						public Map<Long, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+							Map<Long, Integer> rcMap = new HashMap<>();
+							while (rs.next()) {
+								rcMap.put(rs.getLong("ReceiptId"), rs.getInt("InstNumber"));
+							}
+							return rcMap;
+						}
+					});
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records are not found in FinScheduleDetails table for the FinReference >> " + finReference);
 		}
@@ -1435,9 +1434,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
-		}, (rs, i) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finReference), (rs, i) -> {
 			CrossLoanTransfer clt = new CrossLoanTransfer();
 
 			clt.setId(rs.getLong("ID"));
