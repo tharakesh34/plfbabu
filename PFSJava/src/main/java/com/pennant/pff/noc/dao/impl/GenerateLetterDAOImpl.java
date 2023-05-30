@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.reports.ReportListDetail;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.noc.dao.GenerateLetterDAO;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -440,11 +441,20 @@ public class GenerateLetterDAOImpl extends SequenceDao<GenerateLetter> implement
 
 	@Override
 	public void deleteAutoLetterGeneration(long finID, String letterType) {
-		String sql = "Delete From Loan_Letters_Stage Where FinID = ? and LetterType = ? and RequestType = ?";
+		String sql = "Update Loan_Letters_Stage set RequestType = ? Where FinID = ? and LetterType = ? and RequestType = ?";
 
 		logger.debug(Literal.SQL.concat(sql));
 
-		jdbcOperations.update(sql, finID, letterType, "A");
+		jdbcOperations.update(sql, LetterMode.OTC.name(), finID, letterType, "A");
+	}
+
+	@Override
+	public void updateAutoLetterGeneration(long finID, String letterType) {
+		String sql = "Update Loan_Letters_Stage set RequestType = ? Where FinID = ? and LetterType = ? and RequestType = ?";
+
+		logger.debug(Literal.SQL.concat(sql));
+
+		jdbcOperations.update(sql, "A", finID, letterType, LetterMode.OTC.name());
 	}
 
 	@Override

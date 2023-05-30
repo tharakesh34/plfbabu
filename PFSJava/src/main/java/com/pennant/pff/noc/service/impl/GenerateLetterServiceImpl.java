@@ -306,6 +306,8 @@ public class GenerateLetterServiceImpl extends GenericFinanceDetailService imple
 		ah.setAuditTranType(PennantConstants.TRAN_WF);
 		generateLetterDAO.delete(gl, TableType.TEMP_TAB);
 
+		generateLetterDAO.updateAutoLetterGeneration(gl.getFinID(), gl.getLetterType());
+
 		auditHeaderDAO.addAudit(ah);
 
 		logger.info(Literal.LEAVING);

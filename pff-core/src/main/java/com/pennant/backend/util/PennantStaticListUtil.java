@@ -1334,6 +1334,7 @@ public class PennantStaticListUtil {
 			}
 
 			enquiryTypes.add(new ValueLabel("FINSUM", Labels.getLabel("label_FinancialSummary")));
+			enquiryTypes.add(new ValueLabel("LTRENQ", Labels.getLabel("label_LetterLogEnquiry.value")));
 		}
 		return enquiryTypes;
 	}

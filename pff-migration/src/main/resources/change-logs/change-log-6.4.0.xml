@@ -18699,5 +18699,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#1561.40" author="Mounika.M">
+		<modifyDataType tableName="Loan_Letters_Stage" columnName="RequestType" newDataType="varchar(3)"/>
+	</changeSet>
+	
+	<changeSet id="ST#1561.42" author="Mounika.M">
+		<modifyDataType tableName="Loan_Letters" columnName="RequestType" newDataType="varchar(3)"/>
+	</changeSet>
 
 </databaseChangeLog> 

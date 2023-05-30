@@ -41,4 +41,6 @@ public interface GenerateLetterDAO {
 	String getCancelReasons(String reference);
 
 	List<GenerateLetter> getLoanLetterInfo(long finID, String letterType);
+
+	void updateAutoLetterGeneration(long finID, String letterType);
 }

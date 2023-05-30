@@ -53,6 +53,7 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.letter.LetterUtil;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
@@ -224,7 +225,7 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 
 	private void doWriteComponentsToBean(GenerateLetter geneLtr) {
 		Date appDate = SysParamUtil.getAppDate();
-		geneLtr.setRequestType("M");
+		geneLtr.setRequestType(LetterMode.OTC.name());
 		geneLtr.setCreatedOn(DateUtil.getSysDate());
 		geneLtr.setCreatedDate(appDate);
 		geneLtr.setGeneratedBy(getUserWorkspace().getUserId());
@@ -468,7 +469,8 @@ public class GenerateLetterDialogCtrl extends GFCBaseCtrl<GenerateLetter> {
 			this.finStatusReason.setValue(Labels.getLabel("label_Status_Cancelled"));
 			this.closureType.setValue(Labels.getLabel("label_ClosureType_Cancel"));
 			this.closureReason.setValue(gl.getReasonCode());
-			this.generateLetterDialogClosureDate.setValue(Labels.getLabel("label_GenerateLetterDialog_CancellationDate"));
+			this.generateLetterDialogClosureDate
+					.setValue(Labels.getLabel("label_GenerateLetterDialog_CancellationDate"));
 		} else if (FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fm.getClosingStatus())) {
 			this.finStatus.setValue(Labels.getLabel("label_Closed"));
 

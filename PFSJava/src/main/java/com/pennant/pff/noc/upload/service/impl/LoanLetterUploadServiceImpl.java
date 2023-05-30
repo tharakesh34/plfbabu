@@ -266,7 +266,7 @@ public class LoanLetterUploadServiceImpl extends AUploadServiceImpl<LoanLetterUp
 					}
 
 					gl.setFinID(finID);
-					gl.setRequestType("A");
+					gl.setRequestType("M");
 					gl.setCreatedDate(appDate);
 					gl.setCreatedOn(new Timestamp(System.currentTimeMillis()));
 					gl.setModeofTransfer(detail.getModeOfTransfer());

@@ -435,4 +435,10 @@ public class LetterGenerationDAOImpl extends SequenceDao<GenerateLetter> impleme
 	public String getCancelReasons(String reference) {
 		return null;
 	}
+
+	@Override
+	public void updateAutoLetterGeneration(long finID, String letterType) {
+		// TODO Auto-generated method stub
+
+	}
 }

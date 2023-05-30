@@ -7,12 +7,14 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -26,8 +28,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.pff.letter.LetterMode;
 import com.pennant.pff.noc.model.GenerateLetter;
 import com.pennant.pff.noc.service.GenerateLetterService;
+import com.pennant.webui.finance.enquiry.FinanceEnquiryHeaderDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -41,6 +45,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	protected Borderlayout blGenLetterEnquiry;
 	private Component parent = null;
 	private Tabpanel tabPanel_dialogWindow;
+	private Groupbox gb_finBasicDetails;
 
 	protected Label finType;
 	protected Label finccy;
@@ -48,9 +53,12 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	protected Label profitbasis;
 	protected Label finReference;
 	protected Label custName;
+	private String moduleDefiner = "";
+	private boolean enquiry;
 
 	private GenerateLetter generateLetter;
 	private transient GenerateLetterService generateLetterService;
+	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 
 	public LetterLogEnquiryDialogCtrl() {
 		super();
@@ -74,6 +82,19 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 			this.generateLetter = (GenerateLetter) arguments.get("generateLetter");
 		}
 
+		if (arguments.containsKey("moduleDefiner")) {
+			moduleDefiner = (String) arguments.get("moduleDefiner");
+		}
+
+		if (arguments.containsKey("enquiry")) {
+			this.enquiry = (boolean) arguments.get("enquiry");
+		}
+
+		if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
+			this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
+					.get("financeEnquiryHeaderDialogCtrl");
+		}
+
 		GenerateLetter genLtr = new GenerateLetter();
 		BeanUtils.copyProperties(this.generateLetter, genLtr);
 
@@ -86,15 +107,28 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 	public void doShowDialog(GenerateLetter genLtr) {
 		logger.debug(Literal.ENTERING);
 
-		fillHeaderData(genLtr);
+		if (StringUtil.isNotBlank(moduleDefiner)) {
+			this.gb_finBasicDetails.setVisible(true);
+			fillHeaderData(genLtr);
+		}
 
 		try {
 			fillEnquirly(genLtr);
 
 			if (tabPanel_dialogWindow != null) {
 				getBorderLayoutHeight();
-				this.listBoxLetterLog.setHeight("100%");
-				this.windowLetterLogEnquiryDialog.setHeight("100%");
+
+				int rowsHeight;
+
+				if (financeEnquiryHeaderDialogCtrl != null) {
+					rowsHeight = (financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20)
+							+ 1;
+				} else {
+					rowsHeight = 20;
+				}
+
+				this.listBoxLetterLog.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
+				this.windowLetterLogEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight + "px");
 				tabPanel_dialogWindow.appendChild(this.windowLetterLogEnquiryDialog);
 
 			}
@@ -133,7 +167,7 @@ public class LetterLogEnquiryDialogCtrl extends GFCBaseCtrl<FinExcessAmount> {
 		logger.debug("Entering");
 
 		this.listBoxLetterLog.setHeight("100%");
-
+		this.gb_finBasicDetails.setVisible(false);
 		if (parent != null) {
 			this.windowLetterLogEnquiryDialog.setHeight(borderLayoutHeight - 75 + "px");
 			parent.appendChild(this.windowLetterLogEnquiryDialog);

@@ -1613,6 +1613,9 @@
 			<menuItem id="menu_Item_MaturedLoanClosureEnquiry"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul?module=Matured"
 				rightName="menuItem_MaturedLoanClosureEnquiry" />
+			<menuItem id="menu_Item_LetterLogEnquiry"
+				zulNavigation="/WEB-INF/pages/NOC/LetterLogEnquiryList.zul"
+				rightName="menuItem_Enquiry_LetterLogEnquiry" />
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry"

@@ -133,7 +133,8 @@ public class LetterService {
 		loanLetter.setBusinessDate(appDate);
 		loanLetter.setRequestType(requestType);
 
-		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0 && "A".equals(requestType)) {
+		if (autoLetterGenerationDAO.getCountBlockedItems(gl.getFinID()) > 0
+				&& !LetterMode.OTC.name().equals(requestType)) {
 			loanLetter.setBlocked(true);
 			return loanLetter;
 		}
@@ -394,7 +395,7 @@ public class LetterService {
 
 		List<CustomerEMail> customerEMailList = customerDetails.getCustomerEMailList();
 
-		if (!customerEMailList.isEmpty()) {
+		if (!customerEMailList.isEmpty() && LetterMode.EMAIL.name().equals(letter.getLetterMode())) {
 			CustomerEMail customerEMail = customerEMailList.get(0);
 			letter.setEmailID(customerEMail.getCustEMail());
 		}
