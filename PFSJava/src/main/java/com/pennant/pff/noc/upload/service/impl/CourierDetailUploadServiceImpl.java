@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.NOCConstants;
 import com.pennant.pff.letter.dao.AutoLetterGenerationDAO;
 import com.pennant.pff.noc.upload.dao.CourierDetailUploadDAO;
@@ -53,19 +52,15 @@ public class CourierDetailUploadServiceImpl extends AUploadServiceImpl<CourierDe
 		String letterType = detail.getLetterType();
 		String reference = detail.getReference();
 		String deliveryStatus = detail.getDeliveryStatus();
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference, header.getEntityCode());
 
-		if (fm == null) {
+		Long finID = financeMainDAO.getFinID(reference);
+
+		if (finID == null) {
 			setError(detail, CourierDetailUploadError.LCD_001);
 			return;
 		}
 
-		if (!fm.isFinIsActive()) {
-			setError(detail, CourierDetailUploadError.LCD_002);
-			return;
-		}
-
-		detail.setReferenceID(fm.getFinID());
+		detail.setReferenceID(finID);
 
 		if (!isValidLetterType(letterType)) {
 			setError(detail, CourierDetailUploadError.LCD_003);

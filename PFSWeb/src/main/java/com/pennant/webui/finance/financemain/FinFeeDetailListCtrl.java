@@ -206,7 +206,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private String eventCode = "";
 	private Map<String, FeeRule> feeRuleDetailsMap = null;
 	private Map<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
-	private Object finHeaderList = new ArrayList();
+	private Object finHeaderList = new ArrayList<>();
 
 	private FeeDetailService feeDetailService;
 
