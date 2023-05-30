@@ -18467,10 +18467,10 @@
 		<renameColumn tableName="LIEN_HEADER" oldColumnName="REJECT_REASON" newColumnName="InterfaceRemarks"/>
 	</changeSet>
 	
-	<changeSet id="ST#1561.100_delete" author="Mounika.M">
+<!-- 	<changeSet id="ST#1561.100_delete" author="Mounika.M">
 		<dropTable tableName="LOAN_LETTERS_STAGE" />
 		<dropTable tableName="LOAN_LETTERS" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="ST#1561.100" author="Mounika.M">
 		<createTable tableName="LOAN_LETTERS">
