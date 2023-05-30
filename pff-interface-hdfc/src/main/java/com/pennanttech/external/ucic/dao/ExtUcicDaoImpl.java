@@ -233,7 +233,7 @@ public class ExtUcicDaoImpl extends SequenceDao<ExtUcicCust> implements ExtUcicD
 
 	}
 
-	public void setExtDataSource(DataSource extDataSource) {
+	public void setMainDataSource(DataSource extDataSource) {
 		this.mainNamedJdbcTemplate = new NamedParameterJdbcTemplate(extDataSource);
 	}
 }
